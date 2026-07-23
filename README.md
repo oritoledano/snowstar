@@ -53,16 +53,29 @@ python3 -m http.server 8742
 # → http://localhost:8742
 ```
 
-## Deploy free
+## Live deployment (GitHub Pages — free)
 
-Works as-is on any static host. Recommended: **Cloudflare Pages** (free, global CDN, SSL):
+**Live at → https://oritoledano.github.io/snowstar/**
+Repo: https://github.com/oritoledano/snowstar · served from `main` branch root, free SSL.
 
-1. Push this folder to a GitHub repo.
-2. Cloudflare Pages → Create project → connect the repo → no build command, output dir `/`.
-3. Add custom domain `snowstar.company` and update the DNS records it shows you
-   (at your registrar, replacing the Wix records).
+### To update the live site
+Edit files, then:
+```
+git add -A && git commit -m "your change" && git push
+```
+GitHub rebuilds automatically (~1 min). That's the whole workflow.
 
-GitHub Pages or Netlify free tier work identically.
+### Point snowstar.company at it (when ready to leave Wix)
+1. GitHub → repo **Settings → Pages → Custom domain** → enter `snowstar.company`, Save.
+   (This adds a `CNAME` file to the repo.)
+2. At your domain registrar, replace the Wix DNS records with GitHub's:
+   - Four `A` records for the apex → `185.199.108.153`, `185.199.109.153`,
+     `185.199.110.153`, `185.199.111.153`
+   - (optional) `CNAME` for `www` → `oritoledano.github.io`
+3. Back in Settings → Pages, tick **Enforce HTTPS** once the cert issues.
+
+DNS changes take a little while to propagate. Cancel the Wix subscription only
+**after** the custom domain is live AND the Wix-hosted videos are re-hosted (see below).
 
 ## Video sources — IMPORTANT
 
