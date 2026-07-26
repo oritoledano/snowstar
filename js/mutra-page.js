@@ -1,9 +1,9 @@
-/* ═══════════ MutrA page — catalog, filters, sticky player w/ working seek ═══════════ */
+/* ═══════════ Mutra page — catalog, filters, sticky player w/ working seek ═══════════ */
 (function () {
   const $ = s => document.querySelector(s);
   const fmt = t => (isNaN(t) || t == null) ? '0:00' : Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
   const mailto = title =>
-    'mailto:hello@snowstar.company?subject=' + encodeURIComponent('MutrA license: ' + title) +
+    'mailto:hello@snowstar.company?subject=' + encodeURIComponent('Mutra license: ' + title) +
     '&body=' + encodeURIComponent(`Hi Snowstar,\n\nI'd like to license "${title}".\n\nUsage / media:\nTimeline:\n\nThanks!`);
 
   // deterministic pseudo-waveform so each track looks distinct but stable
