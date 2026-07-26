@@ -1,4 +1,4 @@
-// MutrA music licensing database — recovered from the Wix MUSICLIBRARY collection.
+// Mutra music licensing database — recovered from the Wix MUSICLIBRARY collection.
 // preview = self-hosted audio (128k AAC). download = full track (Dropbox). Composed by Snowstar.
 const MUTRA = {
  "tracks": [

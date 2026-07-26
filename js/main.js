@@ -80,14 +80,27 @@ document.getElementById('showAll').addEventListener('click', e => {
   e.target.closest('.work-more').style.display = 'none';
 });
 
-// Clients
+// Clients — two infinite marquee rows scrolling opposite directions
 const cg = document.getElementById('clientsGrid');
-CLIENT_LOGOS.forEach(src => {
-  const d = document.createElement('div');
-  d.className = 'client';
-  d.innerHTML = `<img src="${src}" alt="Client logo" loading="lazy">`;
-  cg.appendChild(d);
-});
+cg.classList.add('marquee');
+function buildMarqueeRow(logos, dir) {
+  const row = document.createElement('div');
+  row.className = 'marq-row';
+  const track = document.createElement('div');
+  track.className = 'marq-track';
+  track.dataset.dir = dir;
+  // duplicate the set so the loop is seamless
+  logos.concat(logos).forEach(src => {
+    const d = document.createElement('div');
+    d.className = 'client';
+    d.innerHTML = `<img src="${src}" alt="Client logo" loading="lazy">`;
+    track.appendChild(d);
+  });
+  row.appendChild(track);
+  return row;
+}
+cg.appendChild(buildMarqueeRow(CLIENT_LOGOS, 'left'));
+cg.appendChild(buildMarqueeRow([...CLIENT_LOGOS].reverse(), 'right'));
 
 // Reveal on scroll
 const obs = new IntersectionObserver(es => es.forEach(e => {
@@ -101,7 +114,7 @@ const cardObserver = new IntersectionObserver(es => es.forEach((e, i) => {
     cardObserver.unobserve(e.target);
   }
 }), { threshold: 0.08 });
-document.querySelectorAll('.work-card:not(.hidden-card), .client').forEach((el, i) => {
+document.querySelectorAll('.work-card:not(.hidden-card)').forEach((el, i) => {
   el.dataset.d = (i % 6) * 60;
   cardObserver.observe(el);
 });

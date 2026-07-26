@@ -7,8 +7,8 @@
   --text: #eef3fb;
   --muted: #93a0b8;
   --ice: #8fd8ff;
-  --violet: #a48fff;
-  --grad: linear-gradient(92deg, #8fd8ff 0%, #a48fff 55%, #ff9ad5 110%);
+  --violet: #22d3ee;
+  --grad: linear-gradient(96deg, #6ee7b7 0%, #22d3ee 50%, #3b82f6 112%);
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
   --nav-h: 72px;
@@ -74,7 +74,7 @@ body.menu-open .nav-x{opacity:1}
 .menu-overlay{
   position:fixed;inset:0;z-index:40;
   background:
-    radial-gradient(58% 60% at 82% 8%, rgba(164,143,255,.16), transparent 60%),
+    radial-gradient(58% 60% at 82% 8%, rgba(52,211,153,.15), transparent 60%),
     radial-gradient(52% 55% at 8% 92%, rgba(143,216,255,.13), transparent 62%),
     rgba(5,7,14,.98);
   backdrop-filter:blur(6px);
@@ -239,7 +239,7 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   position:relative;text-align:center;
   padding:clamp(90px,12vw,160px) 24px;
   background:
-    radial-gradient(60% 80% at 50% 120%, rgba(164,143,255,.16) 0%, transparent 70%),
+    radial-gradient(60% 80% at 50% 120%, rgba(52,211,153,.15) 0%, transparent 70%),
     radial-gradient(50% 60% at 50% -20%, rgba(143,216,255,.12) 0%, transparent 70%),
     var(--bg);
   border-top:1px solid var(--line);border-bottom:1px solid var(--line);
@@ -289,7 +289,7 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ice);
   border:1px solid rgba(143,216,255,.25);border-radius:99px;padding:3px 9px;
 }
-.mt-tag.mood{color:var(--violet);border-color:rgba(164,143,255,.28)}
+.mt-tag.mood{color:var(--violet);border-color:rgba(52,211,153,.3)}
 .mt-progress{
   grid-column:2/3;height:4px;border-radius:3px;background:rgba(151,183,255,.14);
   margin-top:12px;cursor:pointer;overflow:hidden;display:none;
@@ -315,27 +315,38 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .mt-progress{grid-column:1/3}
 }
 
-/* ————— clients ————— */
-.clients-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;
+/* ————— clients — dual infinite marquee ————— */
+.marquee{
+  display:flex;flex-direction:column;gap:14px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
 }
-.clients-grid .client{
-  aspect-ratio:1;display:grid;place-items:center;border-radius:12px;
-  background:rgba(13,19,34,.5);border:1px solid transparent;transition:.3s;
-  opacity:0;transform:scale(.92);
+.marq-row{overflow:hidden}
+.marq-track{display:flex;gap:14px;width:max-content;animation:marq 55s linear infinite;will-change:transform}
+.marq-track[data-dir="right"]{animation-direction:reverse}
+.marquee:hover .marq-track{animation-play-state:paused}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee .client{
+  flex:none;width:clamp(128px,14vw,170px);height:96px;display:grid;place-items:center;
+  border-radius:14px;background:rgba(13,19,34,.5);border:1px solid transparent;transition:border-color .3s,background .3s;
 }
-.clients-grid .client.in{opacity:1;transform:none;transition:opacity .5s ease,transform .5s ease,border-color .3s}
-.clients-grid .client:hover{border-color:var(--line);background:var(--panel)}
-.clients-grid img{width:78%;opacity:.82;transition:opacity .3s}
-.clients-grid .client:hover img{opacity:1}
+.marquee .client:hover{border-color:var(--line);background:var(--panel)}
+.marquee .client img{width:66%;max-height:54%;object-fit:contain;opacity:.82;transition:opacity .3s}
+.marquee .client:hover img{opacity:1}
+@media (prefers-reduced-motion:reduce){.marq-track{animation:none}}
 
 /* ————— about ————— */
-.about-inner{display:grid;grid-template-columns:1fr 1.2fr;gap:clamp(30px,6vw,90px);align-items:start}
-.about-copy p{color:#c0cadb;margin-bottom:20px;font-size:1.05rem}
-.about-copy strong{color:var(--text)}
+.about-inner{max-width:900px;margin:0 auto}
+.about-inner .eyebrow{margin-bottom:22px}
+.about-copy p{
+  color:var(--text);margin-bottom:20px;
+  font-family:var(--font-display);font-weight:500;letter-spacing:-.01em;
+  font-size:clamp(1.4rem,3vw,2.15rem);line-height:1.32;
+}
+.about-copy strong{color:var(--text);font-weight:600}
 .about-locales{
   font-family:var(--font-display);letter-spacing:.22em;text-transform:uppercase;
-  font-size:.8rem!important;color:var(--ice)!important;margin-top:30px;
+  font-size:.8rem!important;font-weight:500!important;color:var(--ice)!important;margin-top:30px;line-height:1!important;
 }
 
 /* ————— contact ————— */
