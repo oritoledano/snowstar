@@ -3,15 +3,17 @@
 // The official showreel ("SHOWREEL FINAL 2018", from the Wix collection). Same film as the muted hero bg.
 const SHOWREEL = {
  "title": "Snowstar Showreel",
- "mp4": "https://video.wixstatic.com/video/64aee5_5998499233cb455589cef99f38131def/1080p/mp4/file.mp4",
+ "mp4": "assets/work/showreel.mp4",
  "thumb": "assets/showreel-poster.jpg",
- "credits": { "work": "Original music, lyrical writing, sound design & vocal performance by Ori Toledano" }
+ "credits": {
+  "work": "Original music, lyrical writing, sound design & vocal performance by Ori Toledano"
+ }
 };
 const PROJECTS = [
  {
   "title": "DAN HOTELS - EILAT",
   "thumb": "assets/thumbs/dan-hotels-eilat.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_1cc741d9a96141ec96e9faa7e968871e/480p/mp4/file.mp4",
+  "mp4": "assets/work/dan-hotels-eilat.mp4",
   "credits": {
    "work": "Original Cover",
    "production": "We Do",
@@ -22,7 +24,7 @@ const PROJECTS = [
  {
   "title": "GOLDSTAR UF",
   "thumb": "assets/thumbs/goldstar-uf.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_35720ef6fac445779c1d8cf2b38eee47/720p/mp4/file.mp4",
+  "mp4": "assets/work/goldstar-uf.mp4",
   "credits": {
    "work": "Original music, vocal performance",
    "production": "Jiminy Creative",
@@ -33,7 +35,7 @@ const PROJECTS = [
  {
   "title": "PEPSI - VIETNAM",
   "thumb": "assets/thumbs/pepsi-vietnam.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_ffb1098b0f1847748a92205d197aea51/720p/mp4/file.mp4",
+  "mp4": "assets/work/pepsi-vietnam.mp4",
   "credits": {
    "work": "Original Music",
    "production": "May Production",
@@ -43,7 +45,7 @@ const PROJECTS = [
  {
   "title": "STING - PEPSICO",
   "thumb": "assets/thumbs/sting-pepsico.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_b2f821ba0c834fabb066bcd7423f8f69/1080p/mp4/file.mp4",
+  "mp4": "assets/work/sting-pepsico.mp4",
   "credits": {
    "work": "Original music, lyrics, vocal performance & sound design",
    "production": "May Production Vietnam",
@@ -53,7 +55,7 @@ const PROJECTS = [
  {
   "title": "FIVERR - DIRECTOR'S CUT",
   "thumb": "assets/thumbs/fiverr-director-s-cut.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_5000e6115ad8483e8de2747c596a5cc1/1080p/mp4/file.mp4",
+  "mp4": "assets/work/fiverr-director-s-cut.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Green Productions",
@@ -63,7 +65,7 @@ const PROJECTS = [
  {
   "title": "SACARA - NETA",
   "thumb": "assets/thumbs/sacara-neta.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_701a30b73bd34db2a3803bd66ec55405/720p/mp4/file.mp4",
+  "mp4": "assets/work/sacara-neta.mp4",
   "credits": {
    "work": "Original music, lyrics & vocal performance",
    "director": "Rotem Solomon"
@@ -72,7 +74,7 @@ const PROJECTS = [
  {
   "title": "MITSUBISHI - ASX",
   "thumb": "assets/thumbs/mitsubishi-asx.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_df3196938145400c93c33fbb933dddab/720p/mp4/file.mp4",
+  "mp4": "assets/work/mitsubishi-asx.mp4",
   "credits": {
    "work": "Catalog music placement",
    "agency": "Gitam B.B.D.O"
@@ -81,7 +83,7 @@ const PROJECTS = [
  {
   "title": "VIP 2 PROMO",
   "thumb": "assets/thumbs/vip-2-promo.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_6f6ff387d39d4402a5b2e6d7a9c5fc18/1080p/mp4/file.mp4",
+  "mp4": "assets/work/vip-2-promo.mp4",
   "credits": {
    "work": "Original music, lyrics & vocal performance",
    "production": "Shoshi & Udi",
@@ -92,7 +94,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL COSMETICS",
   "thumb": "assets/thumbs/shufersal-cosmetics.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_5953a4a94ca645d18dcf61ff1ce1a724/1080p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-cosmetics.mp4",
   "credits": {
    "work": "Original music",
    "production": "Shoshi & Udi",
@@ -103,7 +105,7 @@ const PROJECTS = [
  {
   "title": "FLORENTIN SQUARE",
   "thumb": "assets/thumbs/florentin-square.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_87bbfe4ac07a4eadb70ef40ac9c615de/1080p/mp4/file.mp4",
+  "mp4": "assets/work/florentin-square.mp4",
   "credits": {
    "work": "Original music, sound design, lyrics & vocal performance",
    "production": "3dvision",
@@ -114,7 +116,7 @@ const PROJECTS = [
  {
   "title": "SHABABNIKIM",
   "thumb": "assets/thumbs/shababnikim.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_8c0915004417442b9ac2ae2d9f88c5bb/1080p/mp4/file.mp4",
+  "mp4": "assets/work/shababnikim.mp4",
   "credits": {
    "work": "Original music, sound design, lyrics & vocal performance",
    "production": "Shoshi & Udi",
@@ -125,12 +127,12 @@ const PROJECTS = [
  {
   "title": "BIG FASHION - BUNNY",
   "thumb": "assets/thumbs/big-fashion-bunny.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_07373f33957e4a959a63906f1467efc6/720p/mp4/file.mp4"
+  "mp4": "assets/work/big-fashion-bunny.mp4"
  },
  {
   "title": "DAN HOTELS - TEL AVIV",
   "thumb": "assets/thumbs/dan-hotels-tel-aviv.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_4f6e0d2f15f540709bd8c15f530198b9/1080p/mp4/file.mp4",
+  "mp4": "assets/work/dan-hotels-tel-aviv.mp4",
   "credits": {
    "work": "Original Music",
    "production": "We Do",
@@ -141,7 +143,7 @@ const PROJECTS = [
  {
   "title": "ATLETICO MADRID",
   "thumb": "assets/thumbs/atletico-madrid.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_4df9231118e44ffeb3efc738e460932d/1080p/mp4/file.mp4",
+  "mp4": "assets/work/atletico-madrid.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Mamash Productions",
@@ -152,7 +154,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL GALA",
   "thumb": "assets/thumbs/shufersal-gala.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_29c599ddff6e4eea86c6bf1a6bc0533d/1080p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-gala.mp4",
   "credits": {
    "work": "Original music, sound design, lyrics & vocal performance",
    "production": "Shoshi & Udi",
@@ -164,7 +166,7 @@ const PROJECTS = [
   "title": "SODASTREAM",
   "thumb": "assets/thumbs/sodastream.jpg",
   "vimeo": 155393974,
-  "mp4": "https://video.wixstatic.com/video/64aee5_5465d7edd2254b19bf3cea5eb246acb8/480p/mp4/file.mp4",
+  "mp4": "assets/work/sodastream.mp4",
   "credits": {
    "work": "Original music, lyrics & vocal performance",
    "production": "Rabel",
@@ -175,7 +177,7 @@ const PROJECTS = [
  {
   "title": "BIGI TV",
   "thumb": "assets/thumbs/bigi-tv.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_dc791c27ac68437c9c4401c6ea5c4f1a/720p/mp4/file.mp4",
+  "mp4": "assets/work/bigi-tv.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "WeDo Productions",
@@ -187,7 +189,7 @@ const PROJECTS = [
   "title": "ALL JOBS",
   "thumb": "assets/thumbs/all-jobs.jpg",
   "vimeo": 125021584,
-  "mp4": "https://video.wixstatic.com/video/64aee5_9af29e52c8f34ae4906ca43521f85e7e/1080p/mp4/file.mp4",
+  "mp4": "assets/work/all-jobs.mp4",
   "credits": {
    "work": "Original music, vocal performance, sound design & voice over",
    "production": "We Do",
@@ -200,7 +202,7 @@ const PROJECTS = [
   "thumb": "assets/thumbs/castro.jpg",
   "preview": "assets/thumbs/castro.mp4",
   "vimeo": 178864373,
-  "mp4": "https://video.wixstatic.com/video/64aee5_86c235a00f114901898edab499cd1aa5/1080p/mp4/file.mp4",
+  "mp4": "assets/work/castro.mp4",
   "credits": {
    "work": "Original music",
    "production": "Rabel",
@@ -211,7 +213,7 @@ const PROJECTS = [
  {
   "title": "HISHGAD - MEFUNAKCHIK",
   "thumb": "assets/thumbs/hishgad-mefunakchik.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_066e30c8ca2e4d76b6b992fb83de1e60/720p/mp4/file.mp4",
+  "mp4": "assets/work/hishgad-mefunakchik.mp4",
   "credits": {
    "work": "Original music",
    "production": "EKO Creative",
@@ -222,7 +224,7 @@ const PROJECTS = [
  {
   "title": "FATAL & FRIENDS",
   "thumb": "assets/thumbs/fatal-friends.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_066486c0cd0141c29cd9edd64169fb03/1080p/mp4/file.mp4",
+  "mp4": "assets/work/fatal-friends.mp4",
   "credits": {
    "work": "Original music",
    "production": "Mamash Productions",
@@ -234,7 +236,7 @@ const PROJECTS = [
   "thumb": "assets/thumbs/zemach-hammerman.jpg",
   "preview": "assets/thumbs/zemach-hammerman.mp4",
   "vimeo": 146577451,
-  "mp4": "https://video.wixstatic.com/video/64aee5_4983ffcaf4394df3ac2ce64e9a454520/1080p/mp4/file.mp4",
+  "mp4": "assets/work/zemach-hammerman.mp4",
   "credits": {
    "work": "Original music (cover)",
    "production": "Og",
@@ -246,7 +248,7 @@ const PROJECTS = [
   "title": "WHITE NIGHT TLV",
   "thumb": "assets/thumbs/white-night-tlv.jpg",
   "vimeo": 130773885,
-  "mp4": "https://video.wixstatic.com/video/64aee5_181ff748e2dd4e93bd81d2082c891ab9/1080p/mp4/file.mp4",
+  "mp4": "assets/work/white-night-tlv.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Citymedia",
@@ -256,7 +258,7 @@ const PROJECTS = [
  {
   "title": "AHAVA",
   "thumb": "assets/thumbs/ahava.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_1655faa740a64df9a3fd865f9dd26b0f/1080p/mp4/file.mp4",
+  "mp4": "assets/work/ahava.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Mamash Productions",
@@ -266,7 +268,7 @@ const PROJECTS = [
  {
   "title": "SHILTON HATSLALIM",
   "thumb": "assets/thumbs/shilton-hatslalim.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_319762b47d5f401da6295930bcf82418/720p/mp4/file.mp4",
+  "mp4": "assets/work/shilton-hatslalim.mp4",
   "credits": {
    "work": "Original music, lyrics & vocal performance",
    "production": "Koda",
@@ -278,7 +280,7 @@ const PROJECTS = [
   "thumb": "assets/thumbs/johnnie-walker.jpg",
   "preview": "assets/thumbs/johnnie-walker.mp4",
   "vimeo": 150880105,
-  "mp4": "https://video.wixstatic.com/video/64aee5_4496f63886fb4591850d40d46bfa5ef4/1080p/mp4/file.mp4",
+  "mp4": "assets/work/johnnie-walker.mp4",
   "credits": {
    "work": "Original music",
    "production": "We do productions",
@@ -289,7 +291,7 @@ const PROJECTS = [
  {
   "title": "FLORENTIN SQUARE - SOFT",
   "thumb": "assets/thumbs/florentin-square-soft.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_368f207fa9bf4e608fc6dfeffb81c22c/1080p/mp4/file.mp4",
+  "mp4": "assets/work/florentin-square-soft.mp4",
   "credits": {
    "work": "Original music",
    "production": "3D Vision",
@@ -300,7 +302,7 @@ const PROJECTS = [
  {
   "title": "CELLCOM SUPER WIFI",
   "thumb": "assets/thumbs/cellcom-super-wifi.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_1b99bfdb7342432b960975b0e2b0b27f/1080p/mp4/file.mp4",
+  "mp4": "assets/work/cellcom-super-wifi.mp4",
   "credits": {
    "work": "Original music, sound design & vocal performance",
    "production": "Green Productions",
@@ -313,7 +315,7 @@ const PROJECTS = [
   "thumb": "assets/thumbs/spotlight-id.jpg",
   "preview": "assets/thumbs/spotlight-id.mp4",
   "vimeo": 183543308,
-  "mp4": "https://video.wixstatic.com/video/64aee5_3e6a96a0dbfd472ca8b0f49b1f98ae5b/720p/mp4/file.mp4",
+  "mp4": "assets/work/spotlight-id.mp4",
   "credits": {
    "work": "Music score & video edit",
    "production": "Mula Productions",
@@ -324,7 +326,7 @@ const PROJECTS = [
  {
   "title": "LIHI TOLEDANO - STORM",
   "thumb": "assets/thumbs/lihi-toledano-storm.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_3f9a1c22fade484ab07c2a297db77b33/720p/mp4/file.mp4",
+  "mp4": "assets/work/lihi-toledano-storm.mp4",
   "credits": {
    "work": "Original music and video edit by Ori Toledano"
   }
@@ -333,7 +335,7 @@ const PROJECTS = [
   "title": "MASKIT",
   "thumb": "assets/thumbs/maskit.jpg",
   "preview": "assets/thumbs/maskit.mp4",
-  "mp4": "https://video.wixstatic.com/video/64aee5_76c26ef77591473889289f49839631d0/360p/mp4/file.mp4",
+  "mp4": "assets/work/maskit.mp4",
   "credits": {
    "work": "Original music & sound design",
    "director": "Eyal Nevo"
@@ -344,7 +346,7 @@ const PROJECTS = [
   "thumb": "assets/thumbs/pepsi-max.jpg",
   "preview": "assets/thumbs/pepsi-max.mp4",
   "vimeo": 174502281,
-  "mp4": "https://video.wixstatic.com/video/64aee5_ec19b95a03844b9bbd1c0f7c16139f8d/1080p/mp4/file.mp4",
+  "mp4": "assets/work/pepsi-max.mp4",
   "credits": {
    "work": "Original music",
    "agency": "Allenby",
@@ -355,7 +357,7 @@ const PROJECTS = [
   "title": "HOT",
   "thumb": "assets/thumbs/hot.jpg",
   "vimeo": 123962938,
-  "mp4": "https://video.wixstatic.com/video/64aee5_60c676f6827845a28ad7c2f035cf84a7/720p/mp4/file.mp4",
+  "mp4": "assets/work/hot.mp4",
   "credits": {
    "work": "Original music cover \"Shalom Aleichem\" (vocals by Ori Toledano)",
    "production": "Shoshi & Udi",
@@ -366,7 +368,7 @@ const PROJECTS = [
  {
   "title": "WIX - MARVEL",
   "thumb": "assets/thumbs/wix-marvel.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_8b7807d1839e4b5bb3a3d3527282be9f/1080p/mp4/file.mp4",
+  "mp4": "assets/work/wix-marvel.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Wix Broadcast"
@@ -375,7 +377,7 @@ const PROJECTS = [
  {
   "title": "IS ABOUT",
   "thumb": "assets/thumbs/is-about.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_aa1b8e1bda15431e9ff189c9cff56b1f/1080p/mp4/file.mp4",
+  "mp4": "assets/work/is-about.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "We do productions",
@@ -387,7 +389,7 @@ const PROJECTS = [
   "title": "WAVES AUDIO",
   "thumb": "assets/thumbs/waves-audio.jpg",
   "vimeo": 146581664,
-  "mp4": "https://video.wixstatic.com/video/64aee5_b003bab0fe0b4557bf85030b0776ced9/720p/mp4/file.mp4",
+  "mp4": "assets/work/waves-audio.mp4",
   "credits": {
    "work": "Original music",
    "production": "Yafo Creative",
@@ -398,7 +400,7 @@ const PROJECTS = [
   "title": "LANDWER",
   "thumb": "assets/thumbs/landwer.jpg",
   "vimeo": 123957816,
-  "mp4": "https://video.wixstatic.com/video/64aee5_f47bc7ef367f4fbd98d12f86ca72cb73/1080p/mp4/file.mp4",
+  "mp4": "assets/work/landwer.mp4",
   "credits": {
    "work": "Original music, lyrics & vocal performance",
    "agency": "OPEN",
@@ -408,7 +410,7 @@ const PROJECTS = [
  {
   "title": "TABOR",
   "thumb": "assets/thumbs/tabor.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_0537d0fe69624a2eb865d4b4f6d2d636/1080p/mp4/file.mp4",
+  "mp4": "assets/work/tabor.mp4",
   "credits": {
    "work": "Original music, lyrics & vocal performance",
    "agency": "Hooligans",
@@ -418,7 +420,7 @@ const PROJECTS = [
  {
   "title": "NOVO",
   "thumb": "assets/thumbs/novo.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_ba17958465cb450898cf4f9be57c3d43/1080p/mp4/file.mp4",
+  "mp4": "assets/work/novo.mp4",
   "credits": {
    "work": "video edit, music & voice over",
    "production": "Snowstar.Company",
@@ -428,7 +430,7 @@ const PROJECTS = [
  {
   "title": "PARIS",
   "thumb": "assets/thumbs/paris.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_504fcef0517e4d79a555bc9e7af3abe4/720p/mp4/file.mp4",
+  "mp4": "assets/work/paris.mp4",
   "credits": {
    "work": "Sound design",
    "director": "Guy Trefler"
@@ -437,7 +439,7 @@ const PROJECTS = [
  {
   "title": "CAROLINA LEMKE",
   "thumb": "assets/thumbs/carolina-lemke.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_5298d064ef864a9f8929153eb20a1010/1080p/mp4/file.mp4",
+  "mp4": "assets/work/carolina-lemke.mp4",
   "credits": {
    "work": "Catalog music placement",
    "director": "Eyal Nevo"
@@ -447,7 +449,7 @@ const PROJECTS = [
   "title": "AZRIELI SARONA",
   "thumb": "assets/thumbs/azrieli-sarona.jpg",
   "vimeo": 175620874,
-  "mp4": "https://video.wixstatic.com/video/64aee5_5c26f1f782634eea87fdaae5b8a5c27f/1080p/mp4/file.mp4",
+  "mp4": "assets/work/azrieli-sarona.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Identity",
@@ -457,7 +459,7 @@ const PROJECTS = [
  {
   "title": "TV FROM THE FUTURE",
   "thumb": "assets/thumbs/tv-from-the-future.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_3e06f1ca3a0f423cb4cec59294699bcb/1080p/mp4/file.mp4",
+  "mp4": "assets/work/tv-from-the-future.mp4",
   "credits": {
    "work": "Original music",
    "production": "Pre2Post",
@@ -469,7 +471,7 @@ const PROJECTS = [
   "title": "STARTAPP",
   "thumb": "assets/thumbs/startapp.jpg",
   "vimeo": 161345520,
-  "mp4": "https://video.wixstatic.com/video/64aee5_5c57b305121a45939dc8a18be74ad381/1080p/mp4/file.mp4",
+  "mp4": "assets/work/startapp.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Startapp.com",
@@ -479,7 +481,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL - HOLIDAY NIGHT",
   "thumb": "assets/thumbs/shufersal-holiday-night.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_fabdba9276404eb3a018814b0d058778/480p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-holiday-night.mp4",
   "credits": {
    "work": "Original music, lyrics & vocal performance",
    "production": "Shoshi & Udi",
@@ -492,7 +494,7 @@ const PROJECTS = [
   "thumb": "assets/thumbs/doritos-usa.jpg",
   "preview": "assets/thumbs/doritos-usa.mp4",
   "vimeo": 178539480,
-  "mp4": "https://video.wixstatic.com/video/64aee5_04dfb2eb4e9e4ddba4ad0523371147a3/1080p/mp4/file.mp4",
+  "mp4": "assets/work/doritos-usa.mp4",
   "credits": {
    "work": "Original music & sound design",
    "agency": "Goodby Silverstein & Partners",
@@ -507,7 +509,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL - BELLA CHAO",
   "thumb": "assets/thumbs/shufersal-bella-chao.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_f702210d6f9e4d098aaa5bce57c4600a/1080p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-bella-chao.mp4",
   "credits": {
    "work": "Original music & vocal performance",
    "production": "Shoshi & Udi",
@@ -518,7 +520,7 @@ const PROJECTS = [
  {
   "title": "TEVA - ALERGIX",
   "thumb": "assets/thumbs/teva-alergix.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_d660c937baec486f9fb8f7001eb7dcca/720p/mp4/file.mp4",
+  "mp4": "assets/work/teva-alergix.mp4",
   "credits": {
    "work": "Original music & vocal performance",
    "production": "Poly Creative",
@@ -529,7 +531,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL - MONDIAL",
   "thumb": "assets/thumbs/shufersal-mondial.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_9142b969086641c990aef2d4422731b1/360p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-mondial.mp4",
   "credits": {
    "work": "Original music",
    "production": "Shoshi & Udi",
@@ -540,7 +542,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL ONLINE",
   "thumb": "assets/thumbs/shufersal-online.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_82cc28da25b648f181db6e3356c46a63/1080p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-online.mp4",
   "credits": {
    "work": "Original music",
    "production": "Shoshi & Udi",
@@ -552,7 +554,7 @@ const PROJECTS = [
   "title": "24 OPTION - PHOTOSHOT",
   "thumb": "assets/thumbs/24-option-photoshot.jpg",
   "vimeo": 150879005,
-  "mp4": "https://video.wixstatic.com/video/64aee5_32be1612abbe4405a4e5e5d9170c2ed9/1080p/mp4/file.mp4",
+  "mp4": "assets/work/24-option-photoshot.mp4",
   "credits": {
    "work": "Original music, sound design",
    "production": "Citymedia",
@@ -566,7 +568,7 @@ const PROJECTS = [
  {
   "title": "TEL-HAI",
   "thumb": "assets/thumbs/tel-hai.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_87860bcd724743e6ae78ac42906fefce/1080p/mp4/file.mp4",
+  "mp4": "assets/work/tel-hai.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Yesh",
@@ -577,7 +579,7 @@ const PROJECTS = [
  {
   "title": "AMDOCS",
   "thumb": "assets/thumbs/amdocs.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_b4dc98d275d048d98dfcf2bed7ef9c3f/720p/mp4/file.mp4",
+  "mp4": "assets/work/amdocs.mp4",
   "credits": {
    "work": "Catalog music placement"
   }
@@ -585,7 +587,7 @@ const PROJECTS = [
  {
   "title": "LIPTON",
   "thumb": "assets/thumbs/lipton.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_5203d248d1704276875098f408777378/720p/mp4/file.mp4",
+  "mp4": "assets/work/lipton.mp4",
   "credits": {
    "work": "Original music direction",
    "production": "Borax",
@@ -597,7 +599,7 @@ const PROJECTS = [
   "title": "SUBARO - XV",
   "thumb": "assets/thumbs/subaro-xv.jpg",
   "vimeo": 116263390,
-  "mp4": "https://video.wixstatic.com/video/64aee5_f15d71c994f44760bfd7dd2d5f87bf6a/720p/mp4/file.mp4",
+  "mp4": "assets/work/subaro-xv.mp4",
   "credits": {
    "work": "Original music",
    "production": "Mulla",
@@ -608,7 +610,7 @@ const PROJECTS = [
  {
   "title": "PEPPER - SOLDIERS",
   "thumb": "assets/thumbs/pepper-soldiers.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_1a3888fc4b414b8081d31a6f8d578def/720p/mp4/file.mp4",
+  "mp4": "assets/work/pepper-soldiers.mp4",
   "credits": {
    "work": "Original music (cover)",
    "production": "Mccann",
@@ -619,7 +621,7 @@ const PROJECTS = [
  {
   "title": "888 HOLDINGS",
   "thumb": "assets/thumbs/888-holdings.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_3f894cd470204baf829aeeae4337268b/1080p/mp4/file.mp4",
+  "mp4": "assets/work/888-holdings.mp4",
   "credits": {
    "work": "Video producrtion, creative, original music, sound design & voice over",
    "production": "Snowstar.Company & Evolve",
@@ -630,7 +632,7 @@ const PROJECTS = [
  {
   "title": "GAMADIM",
   "thumb": "assets/thumbs/gamadim.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_0a8a66d6c5404e1bb3ee49f90f8d8603/1080p/mp4/file.mp4",
+  "mp4": "assets/work/gamadim.mp4",
   "credits": {
    "work": "Original music, sound design, narration & voice over",
    "production": "Firma",
@@ -641,7 +643,7 @@ const PROJECTS = [
  {
   "title": "TIVALL - VEGETABLES",
   "thumb": "assets/thumbs/tivall-vegetables.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_e3cc05bb913c474d97f361b9d550916c/720p/mp4/file.mp4",
+  "mp4": "assets/work/tivall-vegetables.mp4",
   "credits": {
    "work": "Original music, sound design & voice over",
    "production": "Babushka ",
@@ -653,7 +655,7 @@ const PROJECTS = [
   "title": "24 OPTION - DINNER",
   "thumb": "assets/thumbs/24-option-dinner.jpg",
   "vimeo": 150878977,
-  "mp4": "https://video.wixstatic.com/video/64aee5_f87bdb8c57e645afaf43cf5a7545e496/1080p/mp4/file.mp4",
+  "mp4": "assets/work/24-option-dinner.mp4",
   "credits": {
    "work": "Original music, sound design",
    "production": "Citymedia",
@@ -663,7 +665,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL ONLINE - CHINA",
   "thumb": "assets/thumbs/shufersal-online-china.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_6e448ba7ad4f433db9de0cb88e3103b6/1080p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-online-china.mp4",
   "credits": {
    "work": "Original music",
    "production": "Shoshi & Udi",
@@ -674,7 +676,7 @@ const PROJECTS = [
  {
   "title": "FIVERR",
   "thumb": "assets/thumbs/fiverr.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_df624c2794ff406ab70d897acb2d2ce0/1080p/mp4/file.mp4",
+  "mp4": "assets/work/fiverr.mp4",
   "credits": {
    "work": "Catalog music placement",
    "director": "Nadav Pessach"
@@ -683,7 +685,7 @@ const PROJECTS = [
  {
   "title": "H2",
   "thumb": "assets/thumbs/h2.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_bd8a1a908f754ca69183417d25b3aac1/1080p/mp4/file.mp4",
+  "mp4": "assets/work/h2.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Kookooruza",
@@ -693,7 +695,7 @@ const PROJECTS = [
  {
   "title": "BAGEL BAGEL",
   "thumb": "assets/thumbs/bagel-bagel.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_72fbbc09b4684e9dad88ff1ee4b77169/1080p/mp4/file.mp4",
+  "mp4": "assets/work/bagel-bagel.mp4",
   "credits": {
    "work": "Original music & sound design",
    "production": "Borax",
@@ -704,7 +706,7 @@ const PROJECTS = [
  {
   "title": "MINISTRY OF ENVIRONMENTAL PROTECTION",
   "thumb": "assets/thumbs/ministry-of-environmental-protection.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_76c26ef77591473889289f49839631d0/360p/mp4/file.mp4",
+  "mp4": "assets/work/ministry-of-environmental-protection.mp4",
   "credits": {
    "work": "Jingle",
    "production": "Awesome TLV",
@@ -714,7 +716,7 @@ const PROJECTS = [
  {
   "title": "MERETZ",
   "thumb": "assets/thumbs/meretz.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_728feb02f6f845cc865a6afe0e1f4cf3/360p/mp4/file.mp4",
+  "mp4": "assets/work/meretz.mp4",
   "credits": {
    "work": "Original music (election jingle) & vocal performance"
   }
@@ -723,7 +725,7 @@ const PROJECTS = [
   "title": "LILY",
   "thumb": "assets/thumbs/lily.jpg",
   "vimeo": 121602329,
-  "mp4": "https://video.wixstatic.com/video/64aee5_521b29c85c134ad3826383aa0847c6b7/1080p/mp4/file.mp4",
+  "mp4": "assets/work/lily.mp4",
   "credits": {
    "work": "Original music (cover)",
    "production": "Rabel",
@@ -734,7 +736,7 @@ const PROJECTS = [
  {
   "title": "MIKI BUGANIM",
   "thumb": "assets/thumbs/miki-buganim.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_e9cedcb881d343c5b0434ef393ef0929/1080p/mp4/file.mp4",
+  "mp4": "assets/work/miki-buganim.mp4",
   "credits": {
    "work": "Catalog music placement",
    "director": "Asaf Revivo"
@@ -744,7 +746,7 @@ const PROJECTS = [
   "title": "24 OPTION - HAIRDRESSER",
   "thumb": "assets/thumbs/24-option-hairdresser.jpg",
   "vimeo": 150879007,
-  "mp4": "https://video.wixstatic.com/video/64aee5_6eeaf3ab24db4c93a9561e42adb8f016/1080p/mp4/file.mp4",
+  "mp4": "assets/work/24-option-hairdresser.mp4",
   "credits": {
    "work": "Original music, sound design",
    "production": "Citymedia",
@@ -754,7 +756,7 @@ const PROJECTS = [
  {
   "title": "MINISTRY OF ECONOMY",
   "thumb": "assets/thumbs/ministry-of-economy.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_4449dee06e5548fca4976b7fc976e79b/1080p/mp4/file.mp4",
+  "mp4": "assets/work/ministry-of-economy.mp4",
   "credits": {
    "work": "Original music",
    "production": "Gustavo",
@@ -766,7 +768,7 @@ const PROJECTS = [
   "title": "SWITCH",
   "thumb": "assets/thumbs/switch.jpg",
   "vimeo": 150882613,
-  "mp4": "https://video.wixstatic.com/video/64aee5_ddd3f5a537964e69abfc139d96ea66d1/1080p/mp4/file.mp4",
+  "mp4": "assets/work/switch.mp4",
   "credits": {
    "work": "Original music & Jingle",
    "agency": "Hooligans",
@@ -776,7 +778,7 @@ const PROJECTS = [
  {
   "title": "TELMA - CHAMPIONS",
   "thumb": "assets/thumbs/telma-champions.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_4e357996515f4aeba2a08e89dd3c7cfa/1080p/mp4/file.mp4",
+  "mp4": "assets/work/telma-champions.mp4",
   "credits": {
    "work": "Catalog music placement",
    "agency": "Great"
@@ -785,7 +787,7 @@ const PROJECTS = [
  {
   "title": "SHUFERSAL ONLINE - DELIVERY",
   "thumb": "assets/thumbs/shufersal-online-delivery.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_2faa64df07694676943842938b40b899/1080p/mp4/file.mp4",
+  "mp4": "assets/work/shufersal-online-delivery.mp4",
   "credits": {
    "work": "Original music",
    "production": "Shoshi & Udi",
@@ -796,7 +798,7 @@ const PROJECTS = [
  {
   "title": "FITMATE",
   "thumb": "assets/thumbs/fitmate.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_c1a5c1af9af344908dcfbee5897522cf/720p/mp4/file.mp4",
+  "mp4": "assets/work/fitmate.mp4",
   "credits": {
    "work": "Original music & sound design",
    "director": "Leor Belgazal"
@@ -805,7 +807,7 @@ const PROJECTS = [
  {
   "title": "VIOLA",
   "thumb": "assets/thumbs/viola.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_8a8c9854c2a54aa5b6f60b1f4ba8a7d2/720p/mp4/file.mp4",
+  "mp4": "assets/work/viola.mp4",
   "credits": {
    "work": "Original music (cover)",
    "production": "Mamash Productions",
@@ -816,7 +818,7 @@ const PROJECTS = [
  {
   "title": "ZAP NINJA",
   "thumb": "assets/thumbs/zap-ninja.jpg",
-  "mp4": "https://video.wixstatic.com/video/64aee5_fda444d227a645fcb90ae99e4b9e894b/360p/mp4/file.mp4",
+  "mp4": "assets/work/zap-ninja.mp4",
   "credits": {
    "work": "Voice over & sound design",
    "agency": "Hooligans"
