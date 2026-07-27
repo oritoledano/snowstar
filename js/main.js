@@ -55,7 +55,7 @@ addEventListener('resize', seedStars);
 
 // Work grid
 const grid = document.getElementById('workGrid');
-const INITIAL = 18;
+const INITIAL = 20; // 5 full rows of 4 on a 14" MacBook Pro at full width
 PROJECTS.forEach((p, i) => {
   const card = document.createElement('article');
   card.className = 'work-card reveal-card' + (i >= INITIAL ? ' hidden-card' : '');
