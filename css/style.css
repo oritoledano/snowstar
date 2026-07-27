@@ -60,7 +60,7 @@ h2{font-size:clamp(2rem,4.6vw,3.4rem);font-weight:600}
 body.menu-open .nav-morph{opacity:0}
 body.menu-open .nav-x{opacity:1}
 .nav-brand{display:flex;align-items:center;margin-right:auto;z-index:2}
-.nav-word{height:12px;width:auto;display:block;filter:drop-shadow(0 0 5px rgba(143,216,255,.3))}
+.nav-word{height:14.4px;width:auto;display:block;filter:drop-shadow(0 0 5px rgba(143,216,255,.3))}
 .nav-menu-label{
   z-index:2;background:none;border:0;cursor:pointer;color:var(--muted);font-family:var(--font-display);
   font-weight:500;font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;transition:color .2s;
@@ -421,7 +421,7 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .about-inner{grid-template-columns:1fr}
 }
 @media (max-width: 760px){
-  .nav-word{height:11px}
+  .nav-word{height:13.2px}
   .nav-morph{height:38px;width:38px}
   .nav-menu-label{display:none}
   .menu-overlay{justify-content:flex-start;padding-top:calc(var(--nav-h) + 26px)}
