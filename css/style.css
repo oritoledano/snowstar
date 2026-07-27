@@ -80,8 +80,8 @@ body.menu-open .nav-x{opacity:1}
   backdrop-filter:blur(6px);
   clip-path:inset(0 0 100% 0);pointer-events:none;
   transition:clip-path .6s cubic-bezier(.76,0,.24,1);
-  display:flex;flex-direction:column;justify-content:center;
-  padding:var(--nav-h) clamp(24px,7vw,120px) 44px;
+  display:flex;flex-direction:column;justify-content:safe center;overflow-y:auto;
+  padding:calc(var(--nav-h) + 10px) clamp(24px,7vw,120px) 32px;
 }
 body.menu-open .menu-overlay{clip-path:inset(0 0 0 0);pointer-events:auto}
 body.menu-open{overflow:hidden}
@@ -89,7 +89,7 @@ body.menu-open{overflow:hidden}
 .menu-nav a{
   display:flex;align-items:baseline;gap:clamp(14px,2vw,30px);width:max-content;max-width:100%;
   font-family:var(--font-display);font-weight:600;line-height:1.04;letter-spacing:-.02em;
-  font-size:clamp(2.1rem,7.4vw,5rem);color:var(--text);
+  font-size:clamp(1.4rem,min(7.2vw,8.2vh),5rem);color:var(--text);
   opacity:0;transform:translateY(42px);transition:opacity .5s ease,transform .5s ease;
 }
 .menu-nav a i{
