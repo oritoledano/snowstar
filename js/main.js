@@ -99,8 +99,13 @@ function buildMarqueeRow(logos, dir) {
   row.appendChild(track);
   return row;
 }
-cg.appendChild(buildMarqueeRow(CLIENT_LOGOS, 'left'));
-cg.appendChild(buildMarqueeRow([...CLIENT_LOGOS].reverse(), 'right'));
+// Enough logos now to fill a 3rd row too — split into 3 distinct sets (interleaved so
+// each row has variety) rather than repeating the full list three times.
+const ROWS = 3;
+const rowSets = Array.from({ length: ROWS }, (_, i) => CLIENT_LOGOS.filter((_, j) => j % ROWS === i));
+cg.appendChild(buildMarqueeRow(rowSets[0], 'left'));
+cg.appendChild(buildMarqueeRow([...rowSets[1]].reverse(), 'right'));
+cg.appendChild(buildMarqueeRow(rowSets[2], 'left')); // 3rd strip — same direction as the first
 
 // Reveal on scroll
 const obs = new IntersectionObserver(es => es.forEach(e => {
