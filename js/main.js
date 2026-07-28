@@ -53,12 +53,42 @@ addEventListener('resize', seedStars);
   requestAnimationFrame(twinkle);
 })(0);
 
-// Work grid
+// Work grid + category filters
 const grid = document.getElementById('workGrid');
+const workFilters = document.getElementById('workFilters');
 const INITIAL = 20; // 5 full rows of 4 on a 14" MacBook Pro at full width
-PROJECTS.forEach((p, i) => {
+
+// Categories are derived from each project's existing credits text (no manual re-tagging
+// of 78 hand-authored entries) — three parameters as requested: Original Music, Sound
+// Design, Voice Over. "vocal performance" always co-occurs with "music" in this data, so
+// it naturally falls under Original Music rather than Voice Over (which means narration).
+const FILTERS = [
+  { key: 'ALL', label: 'All' },
+  { key: 'ORIGINAL_MUSIC', label: 'Original Music' },
+  { key: 'SOUND_DESIGN', label: 'Sound Design' },
+  { key: 'VOICE_OVER', label: 'Voice Over' },
+];
+function categorize(p) {
+  const text = ((p.credits && p.credits.work) || '').toLowerCase();
+  const cats = [];
+  if (/sound design/.test(text)) cats.push('SOUND_DESIGN');
+  if (/voice over|narration/.test(text)) cats.push('VOICE_OVER');
+  if (/music|jingle|score|cover/.test(text)) cats.push('ORIGINAL_MUSIC');
+  return cats;
+}
+
+const cardObserver = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) {
+    setTimeout(() => e.target.classList.add('in'), (e.target.dataset.d || 0));
+    cardObserver.unobserve(e.target);
+  }
+}), { threshold: 0.08 });
+
+const workCards = PROJECTS.map((p, i) => {
   const card = document.createElement('article');
   card.className = 'work-card reveal-card' + (i >= INITIAL ? ' hidden-card' : '');
+  card.dataset.cats = categorize(p).join(',');
+  card.dataset.d = (i % 6) * 60;
   card.innerHTML = `
     <img src="${p.thumb}" alt="${p.title}" loading="lazy">
     ${p.preview ? `<video muted loop playsinline preload="none"><source src="${p.preview}" type="video/mp4"></video>` : ''}
@@ -73,11 +103,42 @@ PROJECTS.forEach((p, i) => {
   }
   card.addEventListener('click', () => openLightbox(p));
   grid.appendChild(card);
+  return card;
 });
+document.querySelectorAll('.work-card:not(.hidden-card)').forEach(el => cardObserver.observe(el));
+
 document.getElementById('workCount').textContent = PROJECTS.length;
-document.getElementById('showAll').addEventListener('click', e => {
-  document.querySelectorAll('.hidden-card').forEach(c => { c.classList.remove('hidden-card'); cardObserver.observe(c); });
-  e.target.closest('.work-more').style.display = 'none';
+
+let activeFilter = 'ALL';
+let workExpanded = false;
+const showAllBtn = document.getElementById('showAll');
+const workMore = showAllBtn.closest('.work-more');
+
+function applyWorkFilter() {
+  workCards.forEach((card, i) => {
+    const cats = card.dataset.cats ? card.dataset.cats.split(',') : [];
+    const matches = activeFilter === 'ALL' || cats.includes(activeFilter);
+    const visible = matches && (activeFilter !== 'ALL' || workExpanded || i < INITIAL);
+    const wasHidden = card.classList.contains('hidden-card');
+    card.classList.toggle('hidden-card', !visible);
+    if (visible && wasHidden) cardObserver.observe(card);
+  });
+  workMore.style.display = (activeFilter === 'ALL' && !workExpanded && PROJECTS.length > INITIAL) ? '' : 'none';
+}
+
+showAllBtn.addEventListener('click', () => { workExpanded = true; applyWorkFilter(); });
+
+FILTERS.forEach(({ key, label }) => {
+  const chip = document.createElement('button');
+  chip.className = 'work-chip' + (key === 'ALL' ? ' active' : '');
+  chip.textContent = label;
+  chip.addEventListener('click', () => {
+    workFilters.querySelectorAll('.work-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = key;
+    applyWorkFilter();
+  });
+  workFilters.appendChild(chip);
 });
 
 // Clients — two infinite marquee rows scrolling opposite directions
@@ -112,17 +173,6 @@ const obs = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
 }), { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-const cardObserver = new IntersectionObserver(es => es.forEach((e, i) => {
-  if (e.isIntersecting) {
-    setTimeout(() => e.target.classList.add('in'), (e.target.dataset.d || 0));
-    cardObserver.unobserve(e.target);
-  }
-}), { threshold: 0.08 });
-document.querySelectorAll('.work-card:not(.hidden-card)').forEach((el, i) => {
-  el.dataset.d = (i % 6) * 60;
-  cardObserver.observe(el);
-});
 
 // Lightbox
 const lb = document.getElementById('lightbox');
