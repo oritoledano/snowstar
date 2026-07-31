@@ -59,22 +59,26 @@ const workFilters = document.getElementById('workFilters');
 const INITIAL = 20; // 5 full rows of 4 on a 14" MacBook Pro at full width
 
 // Categories are derived from each project's existing credits text (no manual re-tagging
-// of 78 hand-authored entries) — three parameters as requested: Original Music, Sound
-// Design, Voice Over. "vocal performance" always co-occurs with "music" in this data, so
-// it naturally falls under Original Music rather than Voice Over (which means narration).
+// of most hand-authored entries) — Original Music, Sound Design, Voice Over. "vocal
+// performance" always co-occurs with "music" in this data, so it naturally falls under
+// Original Music rather than Voice Over (which means narration). A project can also carry
+// an explicit "tags" array in data.js for one-off categories the text can't safely imply
+// (e.g. "Performance" — added only where the credits say so, not inferred from "vocal
+// performance" everywhere, which would over-tag unrelated projects).
 const FILTERS = [
   { key: 'ALL', label: 'All' },
   { key: 'ORIGINAL_MUSIC', label: 'Original Music' },
   { key: 'SOUND_DESIGN', label: 'Sound Design' },
   { key: 'VOICE_OVER', label: 'Voice Over' },
+  { key: 'PERFORMANCE', label: 'Performance' },
 ];
 function categorize(p) {
   const text = ((p.credits && p.credits.work) || '').toLowerCase();
-  const cats = [];
-  if (/sound design/.test(text)) cats.push('SOUND_DESIGN');
-  if (/voice over|narration/.test(text)) cats.push('VOICE_OVER');
-  if (/music|jingle|score|cover/.test(text)) cats.push('ORIGINAL_MUSIC');
-  return cats;
+  const cats = new Set(p.tags || []);
+  if (/sound design/.test(text)) cats.add('SOUND_DESIGN');
+  if (/voice over|narration/.test(text)) cats.add('VOICE_OVER');
+  if (/music|jingle|score|cover|song/.test(text)) cats.add('ORIGINAL_MUSIC');
+  return [...cats];
 }
 
 const cardObserver = new IntersectionObserver(es => es.forEach(e => {
