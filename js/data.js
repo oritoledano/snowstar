@@ -127,7 +127,13 @@ const PROJECTS = [
  {
   "title": "BIG FASHION - BUNNY",
   "thumb": "assets/thumbs/big-fashion-bunny.jpg",
-  "mp4": "assets/work/big-fashion-bunny.mp4"
+  "mp4": "assets/work/big-fashion-bunny.mp4",
+  "credits": {
+   "work": "Performance and original song (\"Bunny\") by Ori Toledano a.k.a KAYMA",
+   "agency": "Peach",
+   "production": "Shaked & Perry"
+  },
+  "tags": ["PERFORMANCE"]
  },
  {
   "title": "DAN HOTELS - TEL AVIV",
@@ -504,7 +510,10 @@ const PROJECTS = [
  {
   "title": "TIVALL FACTORY",
   "thumb": "assets/thumbs/tivall-factory.jpg",
-  "preview": "assets/thumbs/tivall-factory.mp4"
+  "preview": "assets/thumbs/tivall-factory.mp4",
+  "credits": {
+   "work": "Original Music"
+  }
  },
  {
   "title": "SHUFERSAL - BELLA CHAO",
@@ -560,10 +569,6 @@ const PROJECTS = [
    "production": "Citymedia",
    "director": "Guy Bolandi"
   }
- },
- {
-  "title": "DRAMA",
-  "thumb": "assets/thumbs/drama.jpg"
  },
  {
   "title": "TEL-HAI",
