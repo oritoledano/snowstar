@@ -71,6 +71,7 @@ const FILTERS = [
   { key: 'SOUND_DESIGN', label: 'Sound Design' },
   { key: 'VOICE_OVER', label: 'Voice Over' },
   { key: 'PERFORMANCE', label: 'Performance' },
+  { key: 'KAYMA', label: 'KAYMA' },
 ];
 function categorize(p) {
   const text = ((p.credits && p.credits.work) || '').toLowerCase();
@@ -113,21 +114,24 @@ document.querySelectorAll('.work-card:not(.hidden-card)').forEach(el => cardObse
 
 document.getElementById('workCount').textContent = PROJECTS.length;
 
-let activeFilter = 'ALL';
+// Multi-select: activeFilters is a set of specific category keys; empty set = "All"
+// (OR semantics — a card shows if it matches ANY selected filter).
+const activeFilters = new Set();
 let workExpanded = false;
 const showAllBtn = document.getElementById('showAll');
 const workMore = showAllBtn.closest('.work-more');
 
 function applyWorkFilter() {
+  const noFilter = activeFilters.size === 0;
   workCards.forEach((card, i) => {
     const cats = card.dataset.cats ? card.dataset.cats.split(',') : [];
-    const matches = activeFilter === 'ALL' || cats.includes(activeFilter);
-    const visible = matches && (activeFilter !== 'ALL' || workExpanded || i < INITIAL);
+    const matches = noFilter || cats.some(c => activeFilters.has(c));
+    const visible = matches && (!noFilter || workExpanded || i < INITIAL);
     const wasHidden = card.classList.contains('hidden-card');
     card.classList.toggle('hidden-card', !visible);
     if (visible && wasHidden) cardObserver.observe(card);
   });
-  workMore.style.display = (activeFilter === 'ALL' && !workExpanded && PROJECTS.length > INITIAL) ? '' : 'none';
+  workMore.style.display = (noFilter && !workExpanded && PROJECTS.length > INITIAL) ? '' : 'none';
 }
 
 showAllBtn.addEventListener('click', () => { workExpanded = true; applyWorkFilter(); });
@@ -136,10 +140,17 @@ FILTERS.forEach(({ key, label }) => {
   const chip = document.createElement('button');
   chip.className = 'work-chip' + (key === 'ALL' ? ' active' : '');
   chip.textContent = label;
+  chip.dataset.key = key;
   chip.addEventListener('click', () => {
-    workFilters.querySelectorAll('.work-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    activeFilter = key;
+    if (key === 'ALL') {
+      activeFilters.clear();
+    } else {
+      activeFilters.has(key) ? activeFilters.delete(key) : activeFilters.add(key);
+    }
+    const noFilter = activeFilters.size === 0;
+    workFilters.querySelectorAll('.work-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.key === 'ALL' ? noFilter : activeFilters.has(c.dataset.key));
+    });
     applyWorkFilter();
   });
   workFilters.appendChild(chip);

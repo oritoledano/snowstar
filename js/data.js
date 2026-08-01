@@ -327,7 +327,8 @@ const PROJECTS = [
    "production": "Mula Productions",
    "agency": "Open",
    "director": "Gil Borax"
-  }
+  },
+  "tags": ["PERFORMANCE"]
  },
  {
   "title": "LIHI TOLEDANO - STORM",
@@ -828,6 +829,87 @@ const PROJECTS = [
    "work": "Voice over & sound design",
    "agency": "Hooligans"
   }
+ },
+ {
+  "title": "ONSITELOVER (OFFICIAL VIDEO)",
+  "thumb": "assets/thumbs/onsitelover-official.jpg",
+  "mp4": "assets/work/onsitelover-official.mp4",
+  "credits": {
+   "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "ONSITELOVER (LIVE FROM IMMANUEL CHURCH)",
+  "thumb": "assets/thumbs/onsitelover-live-immanuel-church.jpg",
+  "mp4": "assets/work/onsitelover-live-immanuel-church.mp4",
+  "credits": {
+   "work": "Live performance of an original song by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "BUNNY (OFFICIAL VIDEO)",
+  "thumb": "assets/thumbs/bunny-official-video.jpg",
+  "mp4": "assets/work/bunny-official-video.mp4",
+  "credits": {
+   "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "LEARN TO SAY NO (OFFICIAL VIDEO)",
+  "thumb": "assets/thumbs/learn-to-say-no-official.jpg",
+  "mp4": "assets/work/learn-to-say-no-official.mp4",
+  "credits": {
+   "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "NEW TRYING OUTS (OFFICIAL VIDEO)",
+  "thumb": "assets/thumbs/new-trying-outs-official.jpg",
+  "mp4": "assets/work/new-trying-outs-official.mp4",
+  "credits": {
+   "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "DANCING ON DUST",
+  "thumb": "assets/thumbs/dancing-on-dust.jpg",
+  "mp4": "assets/work/dancing-on-dust.mp4",
+  "credits": {
+   "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "LEARN TO SAY NO (LIVE FROM BARBY TEL AVIV)",
+  "thumb": "assets/thumbs/learn-to-say-no-live-barby.jpg",
+  "mp4": "assets/work/learn-to-say-no-live-barby.mp4",
+  "credits": {
+   "work": "Live performance of an original song by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "BAD BLOOD (LIVE FROM BARBY TEL AVIV)",
+  "thumb": "assets/thumbs/bad-blood-live-barby.jpg",
+  "mp4": "assets/work/bad-blood-live-barby.mp4",
+  "credits": {
+   "work": "Live performance of an original song by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC", "PERFORMANCE", "KAYMA"]
+ },
+ {
+  "title": "BLUE",
+  "thumb": "assets/thumbs/blue.jpg",
+  "mp4": "assets/work/blue.mp4",
+  "credits": {
+   "work": "Original song by Ori Toledano a.k.a KAYMA"
+  },
+  "tags": ["ORIGINAL_MUSIC"]
  }
 ];
 const CLIENT_LOGOS = ['assets/clients/logo00.png', 'assets/clients/logo01.png', 'assets/clients/logo02.png', 'assets/clients/logo03.png', 'assets/clients/logo04.png', 'assets/clients/logo05.png', 'assets/clients/logo06.png', 'assets/clients/logo07.png', 'assets/clients/logo08.png', 'assets/clients/logo09.png', 'assets/clients/logo10.png', 'assets/clients/logo11.png', 'assets/clients/logo12.png', 'assets/clients/logo13.png', 'assets/clients/logo14.png', 'assets/clients/logo15.png', 'assets/clients/logo16.png', 'assets/clients/logo17.png', 'assets/clients/logo18.png', 'assets/clients/logo19.png', 'assets/clients/logo20.png', 'assets/clients/logo21.png', 'assets/clients/logo22.png', 'assets/clients/logo23.png', 'assets/clients/logo24.png', 'assets/clients/logo25.png', 'assets/clients/logo26.png', 'assets/clients/logo27.png', 'assets/clients/logo28.png', 'assets/clients/logo29.png', 'assets/clients/logo30.png'];
