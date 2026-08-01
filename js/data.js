@@ -133,7 +133,7 @@ const PROJECTS = [
    "agency": "Peach",
    "production": "Shaked & Perry"
   },
-  "tags": ["PERFORMANCE"]
+  "tags": ["PERFORMANCE", "KAYMA"]
  },
  {
   "title": "DAN HOTELS - TEL AVIV",
