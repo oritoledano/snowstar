@@ -868,7 +868,7 @@ const PROJECTS = [
  },
  {
   "title": "NEW TRYING OUTS (OFFICIAL VIDEO)",
-  "thumb": "assets/thumbs/new-trying-outs-official.jpg",
+  "thumb": "assets/thumbs/new-trying-outs-official.jpg?v=2",
   "mp4": "assets/work/new-trying-outs-official.mp4",
   "credits": {
    "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
