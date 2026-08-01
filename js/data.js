@@ -832,7 +832,7 @@ const PROJECTS = [
  },
  {
   "title": "ONSITELOVER (OFFICIAL VIDEO)",
-  "thumb": "assets/thumbs/onsitelover-official.jpg",
+  "thumb": "assets/thumbs/onsitelover-official.jpg?v=2",
   "mp4": "assets/work/onsitelover-official.mp4",
   "credits": {
    "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
@@ -850,7 +850,7 @@ const PROJECTS = [
  },
  {
   "title": "BUNNY (OFFICIAL VIDEO)",
-  "thumb": "assets/thumbs/bunny-official-video.jpg",
+  "thumb": "assets/thumbs/bunny-official-video.jpg?v=2",
   "mp4": "assets/work/bunny-official-video.mp4",
   "credits": {
    "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
@@ -859,7 +859,7 @@ const PROJECTS = [
  },
  {
   "title": "LEARN TO SAY NO (OFFICIAL VIDEO)",
-  "thumb": "assets/thumbs/learn-to-say-no-official.jpg",
+  "thumb": "assets/thumbs/learn-to-say-no-official.jpg?v=2",
   "mp4": "assets/work/learn-to-say-no-official.mp4",
   "credits": {
    "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
@@ -877,7 +877,7 @@ const PROJECTS = [
  },
  {
   "title": "DANCING ON DUST",
-  "thumb": "assets/thumbs/dancing-on-dust.jpg",
+  "thumb": "assets/thumbs/dancing-on-dust.jpg?v=2",
   "mp4": "assets/work/dancing-on-dust.mp4",
   "credits": {
    "work": "Original song, vocal performance & production by Ori Toledano a.k.a KAYMA"
@@ -895,7 +895,7 @@ const PROJECTS = [
  },
  {
   "title": "BAD BLOOD (LIVE FROM BARBY TEL AVIV)",
-  "thumb": "assets/thumbs/bad-blood-live-barby.jpg",
+  "thumb": "assets/thumbs/bad-blood-live-barby.jpg?v=2",
   "mp4": "assets/work/bad-blood-live-barby.mp4",
   "credits": {
    "work": "Live performance of an original song by Ori Toledano a.k.a KAYMA"
