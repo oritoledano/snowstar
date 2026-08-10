@@ -51,7 +51,7 @@
     if (current) current.row.classList.remove('playing');
     current = { track, row };
     row.classList.add('playing');
-    audio.src = track.preview;
+    audio.src = track.audio;
     audio.currentTime = 0;
     audio.play().catch(() => {});
     plTitle.textContent = track.title;
@@ -122,32 +122,39 @@
   });
 
   // ── render catalog ──
+  // Artlist-style faceted browse: "packages" (the licensing bundles the catalog is
+  // organized into on the Wix side) and "genres" are each multi-select (OR within a
+  // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
   const tracksEl = $('#tracks'), countEl = $('#catCount');
-  const state = { genre: 'ALL', mood: 'ALL', q: '' };
+  const INITIAL = 40;
+  const state = { packages: new Set(), genres: new Set(), q: '' };
+  let expanded = false;
 
   function matches(t) {
-    if (state.genre !== 'ALL' && !t.genres.includes(state.genre)) return false;
-    if (state.mood !== 'ALL' && !t.moods.includes(state.mood)) return false;
+    if (state.packages.size && !t.packages.some(p => state.packages.has(p))) return false;
+    if (state.genres.size && !t.genres.some(g => state.genres.has(g))) return false;
     if (state.q && !t.title.toLowerCase().includes(state.q)) return false;
     return true;
   }
 
   function render() {
-    const list = MUTRA.tracks.filter(matches);
-    countEl.textContent = list.length + (list.length === 1 ? ' track' : ' tracks');
+    const full = MUTRA.tracks.filter(matches);
+    const list = expanded ? full : full.slice(0, INITIAL);
+    countEl.textContent = full.length + (full.length === 1 ? ' track' : ' tracks');
     tracksEl.innerHTML = '';
-    if (!list.length) { tracksEl.innerHTML = '<p class="cat-empty">No tracks match those filters — try clearing one.</p>'; return; }
+    if (!full.length) { tracksEl.innerHTML = '<p class="cat-empty">No tracks match those filters — try clearing one.</p>'; }
     list.forEach(track => {
       const i = MUTRA.tracks.indexOf(track);
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
       const bars = waveform(i + 1).map(h => `<span class="bar" style="height:${h}%"></span>`).join('');
       const tags = [
-        ...track.genres.map(g => `<span class="tag">${g}</span>`),
-        ...track.moods.slice(0, 2).map(m => `<span class="tag mood">${m}</span>`),
+        ...track.packages.slice(0, 1).map(p => `<span class="tag">${p}</span>`),
+        ...track.genres.slice(0, 2).map(g => `<span class="tag mood">${g}</span>`),
       ].join('');
       row.innerHTML = `
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
+        <img class="trk-cover" src="${track.cover}" alt="" loading="lazy">
         <div class="trk-id">
           <div class="trk-title">${track.title}</div>
           <div class="trk-artist">${track.artist}</div>
@@ -170,31 +177,53 @@
       if (current && current.track === track) paintWave(row, audio.duration ? audio.currentTime / audio.duration : 0);
       tracksEl.appendChild(row);
     });
+    showMoreBtn.style.display = (!expanded && full.length > INITIAL) ? '' : 'none';
+    if (showMoreBtn.style.display === '') showMoreBtn.textContent = `Show all ${full.length} tracks`;
     // keep the live "playing" row reference valid after re-render
     if (current) {
-      const live = [...tracksEl.querySelectorAll('.trk')].find((_, idx) => MUTRA.tracks.filter(matches)[idx] === current.track);
+      const live = [...tracksEl.querySelectorAll('.trk')].find((_, idx) => list[idx] === current.track);
       if (live) current.row = live;
     }
   }
 
-  // ── filter chips ──
-  function buildChips(rowEl, values, key) {
-    ['ALL', ...values].forEach((v, i) => {
+  // "Show all" button, inserted right after the track list (mirrors the homepage's work-more pattern)
+  const showMoreBtn = document.createElement('button');
+  showMoreBtn.className = 'mbtn mbtn-ghost cat-more';
+  showMoreBtn.style.display = 'none';
+  showMoreBtn.addEventListener('click', () => { expanded = true; render(); });
+  tracksEl.insertAdjacentElement('afterend', showMoreBtn);
+
+  // ── filter chips (multi-select, Set-based, OR within a facet) ──
+  function buildChips(rowEl, values, stateKey, allLabel) {
+    const allChip = document.createElement('button');
+    allChip.className = 'chip active';
+    allChip.textContent = allLabel;
+    allChip.addEventListener('click', () => {
+      state[stateKey].clear();
+      rowEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      allChip.classList.add('active');
+      expanded = false;
+      render();
+    });
+    rowEl.appendChild(allChip);
+    values.forEach(v => {
       const c = document.createElement('button');
-      c.className = 'chip' + (key === 'mood' ? ' mood' : '') + (i === 0 ? ' active' : '');
-      c.textContent = v === 'ALL' ? (key === 'genre' ? 'All genres' : 'All moods') : v;
+      c.className = 'chip';
+      c.textContent = v;
       c.addEventListener('click', () => {
-        rowEl.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-        c.classList.add('active');
-        state[key] = v;
+        if (state[stateKey].has(v)) state[stateKey].delete(v); else state[stateKey].add(v);
+        const none = state[stateKey].size === 0;
+        allChip.classList.toggle('active', none);
+        c.classList.toggle('active', state[stateKey].has(v));
+        expanded = false;
         render();
       });
       rowEl.appendChild(c);
     });
   }
-  buildChips($('#genreRow'), MUTRA.genres, 'genre');
-  buildChips($('#moodRow'), MUTRA.moods, 'mood');
-  $('#search').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); render(); });
+  buildChips($('#packageRow'), MUTRA.packages, 'packages', 'All packages');
+  buildChips($('#genreRow'), MUTRA.genres, 'genres', 'All genres');
+  $('#search').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); expanded = false; render(); });
 
   render();
 

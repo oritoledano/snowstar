@@ -105,7 +105,7 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 .cat-head h2{font-size:clamp(1.5rem,2.6vw,2rem)}
 .cat-count{color:var(--muted);font-size:.9rem}
 .tracks{display:flex;flex-direction:column}
-.trk{display:grid;grid-template-columns:52px 2.1fr 3fr auto auto;align-items:center;gap:18px;
+.trk{display:grid;grid-template-columns:52px 40px 2.1fr 3fr auto auto;align-items:center;gap:18px;
   padding:14px 16px;border-radius:14px;border:1px solid transparent;transition:background .2s,border-color .2s;cursor:default}
 .trk:hover{background:var(--panel)}
 .trk.playing{background:var(--panel-2);border-color:var(--line-2)}
@@ -114,6 +114,7 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
   color:var(--coral);cursor:pointer;display:grid;place-items:center;transition:.2s;flex:none}
 .trk-play:hover{background:var(--coral);color:#1a0a08;border-color:transparent}
 .trk.playing .trk-play{background:var(--grad);color:#1a0a08;border-color:transparent}
+.trk-cover{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:none;background:var(--panel-2)}
 .trk-id{min-width:0}
 .trk-title{font-family:var(--font-display);font-weight:600;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trk-artist{color:var(--dim);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
@@ -131,6 +132,7 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
   border:1px solid var(--line-2);border-radius:99px;padding:8px 16px;transition:.2s;white-space:nowrap}
 .trk-lic:hover{background:var(--amber);color:#1a0a08;border-color:transparent}
 .cat-empty{text-align:center;color:var(--muted);padding:60px 0}
+.cat-more{display:flex;margin:28px auto 0}
 
 /* ───────── value props ───────── */
 .value{padding:80px 0;background:linear-gradient(180deg,var(--bg),var(--bg-2) 40%,var(--bg-2) 60%,var(--bg))}
@@ -196,9 +198,13 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 /* ───────── responsive ───────── */
 @media (max-width:920px){
   .value-grid{grid-template-columns:1fr}
-  .trk{grid-template-columns:48px 1fr auto;gap:14px}
+  .trk{grid-template-columns:48px 36px 1fr auto;gap:12px}
   .trk-wave{display:none}
   .trk-tags{display:none}
+}
+@media (max-width:560px){
+  .trk-cover{display:none}
+  .trk{grid-template-columns:48px 1fr auto}
 }
 @media (max-width:760px){
   .mnav-links{position:fixed;inset:70px 0 auto 0;flex-direction:column;background:rgba(11,7,16,.98);
