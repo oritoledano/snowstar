@@ -1,21 +1,10 @@
-// Mutra — full music licensing catalog (528 tracks), recovered from the Wix Music
-// business app + legacy MUSICLIBRARY collection. Composed by Snowstar (Ori Toledano /
-// Dalit Nemirovsky). Audio + cover art self-hosted on Cloudflare R2 (free tier, zero
-// egress fees) rather than in the git repo, to keep the site repo small.
+// Mutra — full music licensing catalog, recovered from the Wix Music
+// business app + legacy MUSICLIBRARY collection, deduplicated against the
+// original mu-tra.com store export (260 canonical titles) and cross-checked
+// for mangled titles. Audio + cover art self-hosted on Cloudflare R2 (free
+// tier, zero egress fees) rather than the git repo, to keep the site repo small.
 const MUTRA = {
  "tracks": [
-  {
-   "title": "80'S PARODY PLAYBACK",
-   "slug": "s-parody-playback",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 65,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4746450078531584.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
   {
    "title": "*",
    "slug": "",
@@ -68,6 +57,30 @@ const MUTRA = {
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
+   "title": "80'S PARODY PLAYBACK",
+   "slug": "s-parody-playback",
+   "artist": "Ori Toledano",
+   "genres": [],
+   "packages": [
+    "Catalog"
+   ],
+   "duration": 65,
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4746450078531584.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
+  },
+  {
+   "title": "9 SHUTTLE",
+   "slug": "shuttle",
+   "artist": "Ori Toledano",
+   "genres": [],
+   "packages": [
+    "Catalog"
+   ],
+   "duration": 464,
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6413980090236928.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
+  },
+  {
    "title": "ACID JAZZ (CLOCK)",
    "slug": "acid-jazz-clock",
    "artist": "Ori Toledano",
@@ -83,27 +96,16 @@ const MUTRA = {
    "title": "ACTION TENSION",
    "slug": "action-tension",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 110,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6734367101550592.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "ACTION TENSION",
-   "slug": "action-tension-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Shilton Haztlalim"
    ],
    "duration": 110,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6232260351098880.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_5954634c6b753368746551~mv2_d_5184_3456_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6734367101550592.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "ACTION TENSION - EPIC ENDING",
@@ -159,26 +161,15 @@ const MUTRA = {
    "title": "ALTERNATIVE UPLIFTING (H2)",
    "slug": "alternative-uplifting-h2",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 111,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5238518643163136.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "ALTERNATIVE UPLIFTING (H2)",
-   "slug": "alternative-uplifting-h2-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
    ],
    "duration": 111,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6539690259775488.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5238518643163136.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -187,22 +178,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 77,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5519993619873792.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "AMERICAN BOOTY",
-   "slug": "american-booty-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 77,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5286581944451072.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5519993619873792.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -211,22 +191,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5062596782718976.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "ANGELS CHOIR",
-   "slug": "angels-choir-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5424253832790016.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5062596782718976.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -269,27 +238,16 @@ const MUTRA = {
    "title": "BACKFLIPTOYS",
    "slug": "backfliptoys",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 233,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5243434770104320.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BACKFLIPTOYS",
-   "slug": "backfliptoys-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 233,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5765628017246208.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5243434770104320.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -298,22 +256,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 173,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5933922636529664.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BALLOON 6",
-   "slug": "balloon-6-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 173,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6060638130405376.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5933922636529664.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -370,34 +317,12 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 38,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5913618782617600.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BASEGROUND (SHORT)",
-   "slug": "baseground-short-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 38,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5494622576967680.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BASEGROUND (SHORT)",
-   "slug": "baseground-short-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
+    "Advertising Essentials",
     "Selected"
    ],
    "duration": 38,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6034249851338752.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5913618782617600.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -416,27 +341,16 @@ const MUTRA = {
    "title": "BE WITH ME (INSTRUMENTAL)",
    "slug": "be-with-me-instrumental",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 240,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4961959793393664.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BE WITH ME (INSTRUMENTAL)",
-   "slug": "be-with-me-instrumental-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 240,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4639728110403584.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4961959793393664.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -445,22 +359,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 10,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5625546736140288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BEAUTY & FEMININE 10 SEC",
-   "slug": "beauty-feminine-10-sec-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 10,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5213147600257024.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5625546736140288.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -469,39 +372,16 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Advertising Essentials"
    ],
    "duration": 5,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6188496689561600.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "BEAUTY & FEMININE 5 SEC",
-   "slug": "beauty-feminine-5-sec-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 5,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6550153739632640.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "BETTER DAYS AHEAD",
    "slug": "better-days-ahead",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 152,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6576037427150848.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BETTER DAYS AHEAD",
-   "slug": "better-days-ahead-2",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -509,37 +389,27 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 152,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5441791241224192.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6576037427150848.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "BEVERLY HILLS MAHARAJA",
    "slug": "beverly-hills-maharaja",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 163,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4750853560860672.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BEVERLY HILLS MAHARAJA",
-   "slug": "beverly-hills-maharaja-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 163,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4921203087114240.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4750853560860672.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -579,23 +449,12 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog"
    ],
    "duration": 191,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6446039840063488.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_7435565a4b657665517749~mv2_d_6000_4000_s_4_2.jpg"
-  },
-  {
-   "title": "BICYCLETTE (INSTRUMENTAL)",
-   "slug": "bicyclette-instrumental-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 191,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4974635852496896.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "BIG FAT FUNERAL",
@@ -603,22 +462,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 102,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6540340410449920.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BIG FAT FUNERAL",
-   "slug": "big-fat-funeral-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 102,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5568056921161728.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6540340410449920.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -664,27 +512,16 @@ const MUTRA = {
    "title": "BITCHES",
    "slug": "bitches",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 241,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5173066025926656.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "BITCHES",
-   "slug": "bitches-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 241,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5484153040535552.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5173066025926656.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -801,53 +638,31 @@ const MUTRA = {
    "title": "BY YOU",
    "slug": "by-you",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Electronica"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Electronica"
    ],
    "duration": 273,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6593116968583168.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "BY YOU",
-   "slug": "by-you-2",
+   "title": "C'EST POUR TOI",
+   "slug": "c-est-pour-toi",
    "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
-   ],
-   "duration": 273,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6587925292646400.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_374c48584f584163315755~mv2_d_1943_2915_s_2.jpg"
-  },
-  {
-   "title": "C'EST POUR TOI",
-   "slug": "c-est-pour-toi",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 228,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4763529619963904.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "C'EST POUR TOI",
-   "slug": "c-est-pour-toi-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Electronica"
-   ],
-   "packages": [
-    "Electronica"
-   ],
-   "duration": 228,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4758337944027136.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6972316376705231784f67~mv2_d_6000_4000_s_4_2.jpg"
   },
   {
    "title": "CAIRO BLACKOUT",
@@ -877,39 +692,17 @@ const MUTRA = {
    "title": "CAN'T STOP THE SUMMER FUN",
    "slug": "can-t-stop-the-summer-fun",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 116,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6369334676946944.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CAN'T STOP THE SUMMER FUN",
-   "slug": "can-t-stop-the-summer-fun-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
-    "Dance Pop"
-   ],
-   "duration": 116,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4710096854581248.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CAN'T STOP THE SUMMER FUN",
-   "slug": "can-t-stop-the-summer-fun-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
+    "Dance Pop",
     "Selected"
    ],
    "duration": 116,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4582894502674432.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6369334676946944.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -930,48 +723,26 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 39,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5290370441150464.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "CAPTAIN TURBO",
-   "slug": "captain-turbo-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 39,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5189824921206784.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "CAPTURE",
    "slug": "capture",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 205,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6505156038361088.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CAPTURE",
-   "slug": "capture-2",
    "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
    ],
    "duration": 205,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4710102911156224.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6505156038361088.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -992,22 +763,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 49,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6435299938795520.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CASINO GAZA",
-   "slug": "casino-gaza-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 49,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5471299897917440.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6435299938795520.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1028,22 +788,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 38,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5853320394571776.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CHASING LIGHTS",
-   "slug": "chasing-lights-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 38,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6315724828049408.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5853320394571776.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1074,28 +823,17 @@ const MUTRA = {
    "title": "CHOCOLATE MILK FACTORY",
    "slug": "chocolate-milk-factory",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 45,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5007088625385472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CHOCOLATE MILK FACTORY",
-   "slug": "chocolate-milk-factory-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 45,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5944239064088576.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5007088625385472.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1114,28 +852,17 @@ const MUTRA = {
    "title": "CLIMAX - DRAMATIC TRAILER",
    "slug": "climax-dramatic-trailer",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6555200997294080.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CLIMAX - DRAMATIC TRAILER",
-   "slug": "climax-dramatic-trailer-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5240551622311936.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6555200997294080.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1166,54 +893,32 @@ const MUTRA = {
    "title": "COMING HOME",
    "slug": "coming-home",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 99,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6532056962039808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "COMING HOME",
-   "slug": "coming-home-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 99,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5343053919289344.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6532056962039808.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "CUT ME LOOSE (INSTRUMENTAL)",
    "slug": "cut-me-loose-instrumental",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 159,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6733854456938496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "CUT ME LOOSE (INSTRUMENTAL)",
-   "slug": "cut-me-loose-instrumental-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
    ],
    "duration": 159,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6047109050531840.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6733854456938496.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1222,49 +927,27 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Advertising Essentials"
    ],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6751446642982912.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "CUT ME LOOSE (SHORT)",
-   "slug": "cut-me-loose-short-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5987203786211328.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "DANCE FOR TRIOMPHE",
    "slug": "dance-for-triomphe",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 91,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5454541002637312.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "DANCE FOR TRIOMPHE",
-   "slug": "dance-for-triomphe-2",
    "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 91,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6610052947378176.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5454541002637312.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1303,18 +986,6 @@ const MUTRA = {
    ],
    "duration": 141,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5600329422864384.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "DAY DREAMER",
-   "slug": "day-dreamer-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 141,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4742582443704320.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1395,22 +1066,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 15,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4506243899064320.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "DRAMATIC CLIMAX TIZER (GUITAR FEEDBACK)",
-   "slug": "dramatic-climax-tizer-guitar-feedback-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 15,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5142778856079360.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4506243899064320.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1419,65 +1079,31 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Advertising Essentials"
    ],
    "duration": 11,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5632143805906944.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "DRAMATIC STING",
-   "slug": "dramatic-sting-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 11,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6268678762921984.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "DVASH (PLAYBACK)",
    "slug": "dvash-playback",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Rock"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Rock"
    ],
    "duration": 156,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4675568689741824.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "DVASH (PLAYBACK)",
-   "slug": "dvash-playback-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Rock"
-   ],
-   "packages": [
-    "Rock"
-   ],
-   "duration": 156,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5836002817998848.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "EASTCOUNTRY",
    "slug": "eastcountry",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 79,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5230235194753024.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "EASTCOUNTRY",
-   "slug": "eastcountry-2",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -1485,10 +1111,23 @@ const MUTRA = {
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 79,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4887798710534144.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5230235194753024.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
+  },
+  {
+   "title": "EITAN CHINITZ - PRAY",
+   "slug": "pray",
+   "artist": "Ori Toledano",
+   "genres": [],
+   "packages": [
+    "Catalog"
+   ],
+   "duration": 170,
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6417707752751104.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1519,56 +1158,34 @@ const MUTRA = {
    "title": "ELVES LAND (AGGRESSED)",
    "slug": "elves-land-aggressed",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Orchestral",
+    "Classical",
+    "Disney"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Orchestral Collection Vol. 02"
    ],
    "duration": 61,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6414463508938752.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "ELVES LAND (AGGRESSED)",
-   "slug": "elves-land-aggressed-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Orchestral",
-    "Classical",
-    "Disney"
-   ],
-   "packages": [
-    "Orchestral Collection Vol. 02"
-   ],
-   "duration": 61,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6507189017509888.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "ELVES LAND (SOFT)",
    "slug": "elves-land-soft",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 61,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6132988532228096.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "ELVES LAND (SOFT)",
-   "slug": "elves-land-soft-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 61,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4818339157245952.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6132988532228096.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1577,22 +1194,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 11,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5069193852485632.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "EMOTIONAL STING",
-   "slug": "emotional-sting-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 11,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4861303879368704.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5069193852485632.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1623,17 +1229,22 @@ const MUTRA = {
    "title": "EPIC FAST DRUMS",
    "slug": "epic-fast-drums",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Orchestral",
+    "Classical",
+    "Disney"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Orchestral Collection Vol. 02"
    ],
    "duration": 21,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5758000776085504.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "EPIC FAST DRUMS",
-   "slug": "epic-fast-drums-2",
+   "title": "EPIC HANYE BEST",
+   "slug": "epic-hanye-best",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -1641,66 +1252,28 @@ const MUTRA = {
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
-   ],
-   "duration": 21,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5172232265400320.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "EPIC HANYE BEST",
-   "slug": "epic-hanye-best",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 144,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4725613648674816.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "EPIC HANYE BEST",
-   "slug": "epic-hanye-best-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Orchestral",
-    "Classical",
-    "Disney"
-   ],
-   "packages": [
-    "Orchestral Collection Vol. 02"
-   ],
-   "duration": 144,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4677601668890624.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "EPIC JOURNEY",
    "slug": "epic-journey",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 45,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5570038578806784.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "EPIC JOURNEY",
-   "slug": "epic-journey-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 45,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6225714040799232.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5570038578806784.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1755,91 +1328,47 @@ const MUTRA = {
    "title": "EVILOVE",
    "slug": "evilove",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Instrumental"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Shilton Haztlalim"
    ],
    "duration": 98,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5590362364051456.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "EVILOVE",
-   "slug": "evilove-2",
+   "title": "EVILOVE CHAOS",
+   "slug": "evilove-chaos",
    "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Shilton Haztlalim"
-   ],
-   "duration": 98,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5999756310478848.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6f755641736269777a6c6f~mv2_d_4000_6000_s_4_2.jpg"
-  },
-  {
-   "title": "EVILOVE CHAOS",
-   "slug": "evilove-chaos",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 89,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6153312317472768.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "EVILOVE CHAOS",
-   "slug": "evilove-chaos-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 89,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5005106967740416.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "EVILOVE CHAOS",
-   "slug": "evilove-chaos-3",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Instrumental"
-   ],
-   "packages": [
-    "Shilton Haztlalim"
-   ],
-   "duration": 89,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6323888042541056.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_636d7376354b5550324577~mv2_d_3840_2556_s_4_2.jpg"
-  },
-  {
    "title": "FALLING OUT OF LOVE (INSTRUMENTAL)",
    "slug": "falling-out-of-love-instrumental",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 214,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4610116072505344.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "FALLING OUT OF LOVE (INSTRUMENTAL)",
-   "slug": "falling-out-of-love-instrumental-2",
    "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 214,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4991571831291904.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4610116072505344.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1860,22 +1389,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 128,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4808022729687040.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "FAR WE ARE",
-   "slug": "far-we-are-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 128,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5497688176984064.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4808022729687040.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1918,27 +1436,16 @@ const MUTRA = {
    "title": "FREEDOM CITY (INSTRUMENTAL)",
    "slug": "freedom-city-instrumental",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 334,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5806384723525632.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "FREEDOM CITY (INSTRUMENTAL)",
-   "slug": "freedom-city-instrumental-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 334,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6680421691555840.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5806384723525632.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1969,27 +1476,16 @@ const MUTRA = {
    "title": "FUNKY WURLI TRIPLET",
    "slug": "funky-wurli-triplet",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 109,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5606945635434496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "FUNKY WURLI TRIPLET",
-   "slug": "funky-wurli-triplet-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Latin",
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Vintage"
    ],
    "duration": 109,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6445188211802112.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5606945635434496.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -1998,22 +1494,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6013087473729536.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "FUZZY CATS",
-   "slug": "fuzzy-cats-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5330562409562112.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6013087473729536.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2034,22 +1519,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 22,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6559253064056832.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "GIRL IN RED",
-   "slug": "girl-in-red-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 22,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4908349944496128.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6559253064056832.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2152,54 +1626,32 @@ const MUTRA = {
    "title": "HAILO OF THE MOON (INSTRUMENTAL)",
    "slug": "hailo-of-the-moon-instrumental",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Dance",
+    "Pop"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Dance Pop"
    ],
    "duration": 223,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5736015979347968.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "HAILO OF THE MOON (INSTRUMENTAL)",
-   "slug": "hailo-of-the-moon-instrumental-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Dance",
-    "Pop"
-   ],
-   "packages": [
-    "Dance Pop"
-   ],
-   "duration": 223,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6398946714845184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "HEAVY ACTION",
    "slug": "heavy-action",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 35,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5379768776130560.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HEAVY ACTION",
-   "slug": "heavy-action-2",
    "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Shilton Haztlalim"
    ],
    "duration": 35,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5098153164406784.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_513871546572735739466b~mv2_d_2602_3903_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5379768776130560.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "HEAVY ACTION - FULL MIX",
@@ -2219,34 +1671,12 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 32,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6074660124884992.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HEAVY PULSES",
-   "slug": "heavy-pulses-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 32,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5141336552374272.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HEAVY PULSES",
-   "slug": "heavy-pulses-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
+    "Advertising Essentials",
     "Selected"
    ],
    "duration": 32,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4934738223562752.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6074660124884992.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2265,17 +1695,22 @@ const MUTRA = {
    "title": "HELLO WORLD (EPIC)",
    "slug": "hello-world-epic",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Orchestral",
+    "Disney",
+    "Classical"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Orchestral Collection Vol. 01"
    ],
    "duration": 37,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5126989616775168.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "HELLO WORLD (EPIC)",
-   "slug": "hello-world-epic-2",
+   "title": "HELLO WORLD (SOFT)",
+   "slug": "hello-world-soft",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -2283,76 +1718,27 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
-   ],
-   "duration": 37,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6100300995756032.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HELLO WORLD (SOFT)",
-   "slug": "hello-world-soft",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 34,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6252889523617792.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "HELLO WORLD (SOFT)",
-   "slug": "hello-world-soft-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Orchestral",
-    "Disney",
-    "Classical"
-   ],
-   "packages": [
-    "Orchestral Collection Vol. 01"
-   ],
-   "duration": 34,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5537351042334720.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "HERE COMES THE BEST",
    "slug": "here-comes-the-best",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 60,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5801468596584448.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HERE COMES THE BEST",
-   "slug": "here-comes-the-best-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 60,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6553219339649024.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HERE COMES THE BEST",
-   "slug": "here-comes-the-best-3",
-   "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Rock"
    ],
    "duration": 60,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5273052864577536.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5801468596584448.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2361,22 +1747,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 129,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6602425706217472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HERE WE GO AGAIN",
-   "slug": "here-we-go-again-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 129,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4794000735207424.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6602425706217472.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2385,22 +1760,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 28,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6195093759328256.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HI-TECH INNOVATIVE (SHORT PIANO REFF)",
-   "slug": "hi-tech-innovative-short-piano-reff-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 28,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5705728809500672.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6195093759328256.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2431,28 +1795,17 @@ const MUTRA = {
    "title": "HONEY I'M HOME",
    "slug": "honey-i-m-home",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 51,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4772838357598208.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "HONEY I'M HOME",
-   "slug": "honey-i-m-home-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Disney",
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 51,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5797217501708288.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4772838357598208.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2489,23 +1842,12 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog"
    ],
    "duration": 30,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6164564863352832.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_594b57304a6a5037726c55~mv2_d_3482_4642_s_4_2.jpg"
-  },
-  {
-   "title": "HUMANOID LOVE",
-   "slug": "humanoid-love-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 30,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6100535759339520.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "I CAN'T STOP",
@@ -2529,23 +1871,12 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog"
    ],
    "duration": 161,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5601614909931520.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_636e366658327932687355~mv2_d_5502_3668_s_4_2.jpg"
-  },
-  {
-   "title": "I SAY YY",
-   "slug": "i-say-yy-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 161,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6522748224405504.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "ICY ROLLER",
@@ -2557,23 +1888,12 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog"
    ],
    "duration": 134,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6727514816774144.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_326f6448476e6a41444930~mv2_d_6000_4000_s_4_2.jpg"
-  },
-  {
-   "title": "ICY ROLLER",
-   "slug": "icy-roller-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 134,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5819060782628864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "INDIE POP WHISTLE",
@@ -2617,97 +1937,52 @@ const MUTRA = {
    "title": "JACK BLACK (SHORT)",
    "slug": "jack-black-short",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Rock"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Rock"
    ],
    "duration": 15,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5942206084939776.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "JACK BLACK (SHORT)",
-   "slug": "jack-black-short-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Rock"
-   ],
-   "packages": [
-    "Rock"
-   ],
-   "duration": 15,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6680427748130816.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "JANE",
    "slug": "jane",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 207,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6298965932769280.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "JANE",
-   "slug": "jane-2",
    "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 207,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5202678063824896.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6298965932769280.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "JANE SINATRA",
    "slug": "jane-sinatra",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Latin",
+    "Instrumental"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Vintage"
    ],
    "duration": 153,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6169895588855808.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "JANE SINATRA",
-   "slug": "jane-sinatra-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Latin",
-    "Instrumental"
-   ],
-   "packages": [
-    "Vintage"
-   ],
-   "duration": 153,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6163713235091456.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "JAPAN FIGHT",
    "slug": "japan-fight",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 33,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6461688217862144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "JAPAN FIGHT",
-   "slug": "japan-fight-2",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -2715,10 +1990,11 @@ const MUTRA = {
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 33,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6468953826131968.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6461688217862144.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2809,64 +2085,31 @@ const MUTRA = {
    "title": "JOKER UP MY SLEEVE",
    "slug": "joker-up-my-sleeve-2",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Instrumental"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected",
+    "Shilton Haztlalim"
    ],
    "duration": 143,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6646406171328512.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "JOKER UP MY SLEEVE",
-   "slug": "joker-up-my-sleeve-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 143,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6174987339694080.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "JOKER UP MY SLEEVE",
-   "slug": "joker-up-my-sleeve-4",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Instrumental"
-   ],
-   "packages": [
-    "Shilton Haztlalim"
-   ],
-   "duration": 143,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4732904447934464.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_566c2d5652546e64555a67~mv2_d_4464_3448_s_4_2.jpg"
-  },
-  {
    "title": "JUST LIKE ME",
    "slug": "just-like-me",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 222,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5097781154807808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "JUST LIKE ME",
-   "slug": "just-like-me-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
    ],
    "duration": 222,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6398952771420160.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5097781154807808.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -2875,61 +2118,28 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected",
+    "Vintage"
    ],
    "duration": 206,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5043995682013184.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "KAVIAR WOMAN (LONG)",
-   "slug": "kaviar-woman-long-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 206,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6623588083826688.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "KAVIAR WOMAN (LONG)",
-   "slug": "kaviar-woman-long-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Vintage"
-   ],
-   "duration": 206,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5218791522828288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "KAVIAR WOMAN (SHORT)",
    "slug": "kaviar-woman-short",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 30,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6732845542277120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "KAVIAR WOMAN (SHORT)",
-   "slug": "kaviar-woman-short-2",
    "artist": "Ori Toledano",
    "genres": [
     "Latin",
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Vintage"
    ],
    "duration": 30,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5319288304959488.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6732845542277120.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3011,28 +2221,17 @@ const MUTRA = {
    "title": "KUZO'S DREAM",
    "slug": "kuzo-s-dream",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 42,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4704777151709184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "KUZO'S DREAM",
-   "slug": "kuzo-s-dream-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Disney",
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 42,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5818826019045376.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4704777151709184.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3101,40 +2300,18 @@ const MUTRA = {
    "title": "LIES & DECEPTION",
    "slug": "lies-deception",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 128,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6695938485649408.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "LIES & DECEPTION",
-   "slug": "lies-deception-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 128,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6271744362938368.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "LIES & DECEPTION",
-   "slug": "lies-deception-3",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 128,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5662764087377920.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6695938485649408.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3143,51 +2320,16 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 224,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6426503845773312.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "LILY WEST",
-   "slug": "lily-west-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 224,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5779163153694720.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "LITTLE BIG ADVENTURE",
    "slug": "little-big-adventure",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 41,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5830677058551808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "LITTLE BIG ADVENTURE",
-   "slug": "little-big-adventure-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 41,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5708794409517056.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "LITTLE BIG ADVENTURE",
-   "slug": "little-big-adventure-3",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -3195,10 +2337,12 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 41,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4692926112202752.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5830677058551808.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3265,27 +2409,16 @@ const MUTRA = {
    "title": "LOVE NEVER END (INSTRUMENTAL)",
    "slug": "love-never-end-instrumental",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 289,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6650809653657600.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "LOVE NEVER END (INSTRUMENTAL)",
-   "slug": "love-never-end-instrumental-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 289,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5273046808002560.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6650809653657600.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3316,28 +2449,17 @@ const MUTRA = {
    "title": "MAGICAL MORNING",
    "slug": "magical-morning",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 50,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5267727105130496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "MAGICAL MORNING",
-   "slug": "magical-morning-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Disney",
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 50,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5959563507400704.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5267727105130496.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3404,27 +2526,16 @@ const MUTRA = {
    "title": "MARIMBA FOREST",
    "slug": "marimba-forest",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 222,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5889429526806528.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "MARIMBA FOREST",
-   "slug": "marimba-forest-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
    ],
    "duration": 222,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5884237850869760.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_5038506c4b326e47777141~mv2_d_2329_1639_s_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5889429526806528.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "MASSIVE ATTACK - DEAR DROP (ORI TOLEDANO",
@@ -3468,27 +2579,16 @@ const MUTRA = {
    "title": "MEGASTAR (INSTRUMENTAL)",
    "slug": "megastar-instrumental",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 196,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6087859700236288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "MEGASTAR (INSTRUMENTAL)",
-   "slug": "megastar-instrumental-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 196,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5554521784713216.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6087859700236288.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3509,22 +2609,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 150,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5511710171463680.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "MONDRIAN DESERT DRIFT",
-   "slug": "mondrian-desert-drift-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 150,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6342113107116032.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5511710171463680.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3583,51 +2672,16 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 67,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4605712590176256.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "MUSICAL FAIRY",
-   "slug": "musical-fairy-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 67,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5049087432851456.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "MUTANTS",
    "slug": "mutants",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 73,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5828369520263168.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "MUTANTS",
-   "slug": "mutants-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 73,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6160759656546304.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "MUTANTS",
-   "slug": "mutants-3",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -3635,10 +2689,12 @@ const MUTRA = {
     "Disney"
    ],
    "packages": [
+    "Catalog",
+    "Advertising Essentials",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 73,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5340113947066368.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5828369520263168.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3705,54 +2761,32 @@ const MUTRA = {
    "title": "NEVERENDING DAY",
    "slug": "neverending-day",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Dance",
+    "Pop"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Dance Pop"
    ],
    "duration": 234,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5524909746814976.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "NEVERENDING DAY",
-   "slug": "neverending-day-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Dance",
-    "Pop"
-   ],
-   "packages": [
-    "Dance Pop"
-   ],
-   "duration": 234,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6117471738134528.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "NEWS BREAK THEME",
    "slug": "news-break-theme",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 79,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5027412410630144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "NEWS BREAK THEME",
-   "slug": "news-break-theme-2",
    "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Shilton Haztlalim"
    ],
    "duration": 79,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4553477424414720.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_4234697831595561547363~mv2_d_5184_3456_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5027412410630144.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "NEWS THEME - THE WORLD TODAY",
@@ -3760,34 +2794,12 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 79,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5520506264485888.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "NEWS THEME - THE WORLD TODAY",
-   "slug": "news-theme-the-world-today-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 79,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6409296126410752.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "NEWS THEME - THE WORLD TODAY",
-   "slug": "news-theme-the-world-today-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
+    "Advertising Essentials",
     "Selected"
    ],
    "duration": 79,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6456462316404736.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5520506264485888.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3796,34 +2808,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 26,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5784389055152128.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "NINJA ASSASSIN",
-   "slug": "ninja-assassin-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 26,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5350668829196288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "NINJA ASSASSIN",
-   "slug": "ninja-assassin-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 26,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4579828902658048.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5784389055152128.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3842,39 +2831,17 @@ const MUTRA = {
    "title": "NOBODY KNOWS NOTHING ANYWHERE",
    "slug": "nobody-knows-nothing-anywhere",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 210,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6645893526716416.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "NOBODY KNOWS NOTHING ANYWHERE",
-   "slug": "nobody-knows-nothing-anywhere-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 210,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5849531897872384.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "NOBODY KNOWS NOTHING ANYWHERE",
-   "slug": "nobody-knows-nothing-anywhere-3",
-   "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Shilton Haztlalim"
    ],
    "duration": 210,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5074390116990976.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6e373258536d6333526c63~mv2_d_5184_3456_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6645893526716416.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "NORMALITY",
@@ -3891,7 +2858,7 @@ const MUTRA = {
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6534494a50394158675f45~mv2_d_5747_3831_s_4_2.jpg"
   },
   {
-   "title": "OFF THE GRID",
+   "title": "OFF THE GRID (PLAYBACK)",
    "slug": "off-the-grid",
    "artist": "Ori Toledano",
    "genres": [],
@@ -3900,6 +2867,21 @@ const MUTRA = {
    ],
    "duration": 195,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5617263287730176.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
+  },
+  {
+   "title": "OK AT THE STATION",
+   "slug": "ok-at-the-station",
+   "artist": "Ori Toledano",
+   "genres": [
+    "Pop"
+   ],
+   "packages": [
+    "Catalog",
+    "Vintage"
+   ],
+   "duration": 125,
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5659722193567744.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3915,53 +2897,16 @@ const MUTRA = {
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "OK AT THE STATION)",
-   "slug": "ok-at-the-station",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 125,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5659722193567744.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "OK AT THE STATION)",
-   "slug": "ok-at-the-station-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Pop"
-   ],
-   "packages": [
-    "Vintage"
-   ],
-   "duration": 125,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5280166739705856.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "OLD BROADWAY",
    "slug": "old-broadway",
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 55,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5731612497018880.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "OLD BROADWAY",
-   "slug": "old-broadway-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 55,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5612037386272768.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5731612497018880.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -3980,28 +2925,17 @@ const MUTRA = {
    "title": "OPHELIA'S DOUBT",
    "slug": "ophelia-s-doubt",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 101,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5851513555517440.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "OPHELIA'S DOUBT",
-   "slug": "ophelia-s-doubt-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 101,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5381289110667264.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5851513555517440.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4014,23 +2948,12 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog"
    ],
    "duration": 210,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4528491561222144.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_4b3157394f6a4567616349~mv2_d_8521_10538_s_4_2.jpg"
-  },
-  {
-   "title": "OUZO",
-   "slug": "ouzo-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 210,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5396848317562880.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "OWLS",
@@ -4038,39 +2961,16 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 45,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6134795371282432.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "OWLS",
-   "slug": "owls-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 45,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5752774874628096.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "PAM PAM PAM",
    "slug": "pam-pam-pam",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 6,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5300603938930688.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "PAM PAM PAM",
-   "slug": "pam-pam-pam-2",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -4078,10 +2978,11 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 6,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5522026599022592.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5300603938930688.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4106,23 +3007,12 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog"
    ],
    "duration": 209,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5320139933220864.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_52397a326f695031666449~mv2_d_6676_10000_s_4_2.jpg"
-  },
-  {
-   "title": "PATRICIA",
-   "slug": "patricia-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 209,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5256110829207552.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "PEPPER - ALERT",
@@ -4272,28 +3162,17 @@ const MUTRA = {
    "title": "PIECES OF A WHOLE",
    "slug": "pieces-of-a-whole",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 30,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6393627011973120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "PIECES OF A WHOLE",
-   "slug": "pieces-of-a-whole-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Disney",
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 30,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6522513460822016.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6393627011973120.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4302,63 +3181,16 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 54,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5309400031952896.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "PINK TRAP",
-   "slug": "pink-trap-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 54,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4767612456140800.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "PIZZI DARK COMIC",
    "slug": "pizzi-dark-comic",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 26,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6434787294183424.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "PIZZI DARK COMIC",
-   "slug": "pizzi-dark-comic-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 26,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5273703015251968.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "PIZZI DARK COMIC",
-   "slug": "pizzi-dark-comic-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 26,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5239031287775232.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "PIZZI DARK COMIC",
-   "slug": "pizzi-dark-comic-4",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -4366,10 +3198,11 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 26,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5225067191468032.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6434787294183424.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4412,39 +3245,16 @@ const MUTRA = {
    "title": "POWER TO GO ON",
    "slug": "power-to-go-on",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 268,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6017490956058624.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "POWER TO GO ON",
-   "slug": "power-to-go-on-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 268,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6047102993956864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "PRAY",
-   "slug": "pray",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 170,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6417707752751104.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6017490956058624.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4465,22 +3275,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6476568736038912.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "PURIFIED",
-   "slug": "purified-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4931672623546368.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6476568736038912.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4499,80 +3298,47 @@ const MUTRA = {
    "title": "R&B (TALMA - ALL MY TIME)",
    "slug": "r-b-talma-all-my-time",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Latin",
+    "Instrumental"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Vintage"
    ],
    "duration": 248,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5096772240146432.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "R&B (TALMA - ALL MY TIME)",
-   "slug": "r-b-talma-all-my-time-2",
+   "title": "R&B SOUL (TALMA - MAN IS GONE)",
+   "slug": "r-b-soul-talma-man-is-gone",
    "artist": "Ori Toledano",
    "genres": [
     "Latin",
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Vintage"
-   ],
-   "duration": 248,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4527639932960768.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "R&B SOUL (TALMA - MAN IS GONE)",
-   "slug": "r-b-soul-talma-man-is-gone",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 162,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6222672146989056.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "R&B SOUL (TALMA - MAN IS GONE)",
-   "slug": "r-b-soul-talma-man-is-gone-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Latin",
-    "Instrumental"
-   ],
-   "packages": [
-    "Vintage"
-   ],
-   "duration": 162,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5090589886382080.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "RABELS",
    "slug": "rabels",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 63,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6364418550005760.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "RABELS",
-   "slug": "rabels-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
    ],
    "duration": 63,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5413790352932864.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6364418550005760.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4581,49 +3347,27 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 105,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6065864031862784.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "RAINBOW DISCO",
-   "slug": "rainbow-disco-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 105,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5075475711918080.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "REAL FEEL (BLEND 08)",
    "slug": "real-feel-blend-08",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 261,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6580440909479936.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "REAL FEEL (BLEND 08)",
-   "slug": "real-feel-blend-08-2",
    "artist": "Ori Toledano",
    "genres": [
     "Dance",
     "Pop"
    ],
    "packages": [
+    "Catalog",
     "Dance Pop"
    ],
    "duration": 261,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6328577970667520.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6580440909479936.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4644,22 +3388,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 126,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6743163194572800.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "REVENGENCE",
-   "slug": "revengence-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 126,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6201375618760704.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6743163194572800.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4668,74 +3401,41 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Advertising Essentials"
    ],
    "duration": 38,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5406157055197184.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "ROCK TENSION",
-   "slug": "rock-tension-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 38,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5704286505795584.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "ROCK'N'ROLL",
    "slug": "rock-n-roll",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Rock"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Rock"
    ],
    "duration": 23,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6223681061650432.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "ROCK'N'ROLL",
-   "slug": "rock-n-roll-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Rock"
-   ],
-   "packages": [
-    "Rock"
-   ],
-   "duration": 23,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5765634073821184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "ROCK'N'ROLL SURF",
    "slug": "rock-n-roll-surf",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 31,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4816306178097152.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "ROCK'N'ROLL SURF",
-   "slug": "rock-n-roll-surf-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
    ],
    "duration": 31,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4639734166978560.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4816306178097152.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -4768,49 +3468,27 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 248,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5010332869197824.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "RUBI",
-   "slug": "rubi-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 248,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5638425665339392.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "SAD GAMEBOY",
    "slug": "sad-gameboy",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 136,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5326479573385216.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SAD GAMEBOY",
-   "slug": "sad-gameboy-2",
    "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
    ],
    "duration": 136,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5321287897448448.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/64aee5_19cea008b3ea4580a10b17218c6ffedc~mv2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5326479573385216.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "SAME",
@@ -4830,49 +3508,27 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Advertising Essentials"
    ],
    "duration": 49,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4787718875774976.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "SECOND HAND (PLAYBACK)",
-   "slug": "second-hand-playback-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 49,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6620522483810304.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "SHADING TO GREY",
    "slug": "shading-to-grey",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 250,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4904267108319232.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SHADING TO GREY",
-   "slug": "shading-to-grey-2",
    "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
    ],
    "duration": 250,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6447187804291072.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_38394c6c49747450627251~mv2_d_1530_2636_s_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4904267108319232.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "SHADING TO PHRASE",
@@ -4884,61 +3540,27 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog"
    ],
    "duration": 145,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5654391468064768.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6e77784b325a6e722d6973~mv2_d_3938_5907_s_4_2.jpg"
   },
   {
-   "title": "SHADING TO PHRASE",
-   "slug": "shading-to-phrase-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 145,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4693160875786240.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "SHADY TALK PULSE",
    "slug": "shady-talk-pulse",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 86,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5871837340762112.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SHADY TALK PULSE",
-   "slug": "shady-talk-pulse-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 86,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4851490550185984.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SHADY TALK PULSE",
-   "slug": "shady-talk-pulse-3",
    "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Shilton Haztlalim"
    ],
    "duration": 86,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5632118598139904.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_676e523735707448667a4d~mv2_d_5596_3800_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5871837340762112.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "SHALOM ALECHEM (RED ARMY STYLE)",
@@ -4970,34 +3592,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 120,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6416270347993088.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SHORDITCH 14",
-   "slug": "shorditch-14-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 120,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4626874967785472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SHUTTLE",
-   "slug": "shuttle",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 464,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6413980090236928.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6416270347993088.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5028,27 +3627,16 @@ const MUTRA = {
    "title": "SLOW SMOOTH JAZZ",
    "slug": "slow-smooth-jazz",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 145,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4815297263435776.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SLOW SMOOTH JAZZ",
-   "slug": "slow-smooth-jazz-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Latin",
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Vintage"
    ],
    "duration": 145,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5653539839803392.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4815297263435776.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5057,22 +3645,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4646981387419648.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SOFT ORCHESTRAL STING",
-   "slug": "soft-orchestral-sting-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6057572530388992.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4646981387419648.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5091,53 +3668,31 @@ const MUTRA = {
    "title": "SOMEBODY ELSE (TRIBAL)",
    "slug": "somebody-else-tribal",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Rock"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Rock"
    ],
    "duration": 72,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5379256131518464.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "SOMEBODY ELSE (TRIBAL)",
-   "slug": "somebody-else-tribal-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Rock"
-   ],
-   "packages": [
-    "Rock"
-   ],
-   "duration": 72,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4991577887866880.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "SOMEWHERE IN THE MIDDLE",
    "slug": "somewhere-in-the-middle",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 40,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4605199945564160.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SOMEWHERE IN THE MIDDLE",
-   "slug": "somewhere-in-the-middle-2",
    "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Shilton Haztlalim"
    ],
    "duration": 40,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5913593574850560.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_4e6c687743343559644767~mv2_d_5184_3456_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4605199945564160.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "SORROW",
@@ -5155,27 +3710,16 @@ const MUTRA = {
    "title": "SPACE LOTUS",
    "slug": "space-lotus",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 96,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6030167015161856.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SPACE LOTUS",
-   "slug": "space-lotus-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
    ],
    "duration": 96,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5039812920737792.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_2d702d4b436d3678423949~mv2_d_3000_2000_s_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6030167015161856.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "SPANISH TARANTULA",
@@ -5183,22 +3727,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 51,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6153824962084864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SPANISH TARANTULA",
-   "slug": "spanish-tarantula-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 51,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6597199804760064.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6153824962084864.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5219,22 +3752,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 31,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5467729706352640.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "STREAM OF LOVE",
-   "slug": "stream-of-love-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 31,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6737937293115392.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5467729706352640.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5277,40 +3799,18 @@ const MUTRA = {
    "title": "SUGARY SALT MOUNTAIN",
    "slug": "sugary-salt-mountain",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 117,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4549691788230656.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SUGARY SALT MOUNTAIN",
-   "slug": "sugary-salt-mountain-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 117,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4864369479385088.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SUGARY SALT MOUNTAIN",
-   "slug": "sugary-salt-mountain-3",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 117,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4536864180535296.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4549691788230656.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5319,22 +3819,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 48,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6699182729461760.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SUIT YOURSELF",
-   "slug": "suit-yourself-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 48,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4512525758496768.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6699182729461760.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5377,28 +3866,17 @@ const MUTRA = {
    "title": "SUPERHEROS",
    "slug": "superheros",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 58,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5288563602096128.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "SUPERHEROS",
-   "slug": "superheros-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 58,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5803501575733248.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5288563602096128.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5407,49 +3885,27 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 74,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6004291380707328.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "SUPERSIZE BASS",
-   "slug": "supersize-bass-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 74,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5216213200273408.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "TALMA - GREAT POWERS",
    "slug": "talma-great-powers",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 210,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5941197170278400.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TALMA - GREAT POWERS",
-   "slug": "talma-great-powers-2",
    "artist": "Ori Toledano",
    "genres": [
     "Latin",
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Vintage"
    ],
    "duration": 210,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6726663188512768.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5941197170278400.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5462,35 +3918,13 @@ const MUTRA = {
     "Indian Pop"
    ],
    "packages": [
-    "Hipster"
+    "Hipster",
+    "Catalog",
+    "Selected"
    ],
    "duration": 157,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5790387312525312.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_5049444837625a4e537141~mv2_d_3024_4032_s_4_2.jpg"
-  },
-  {
-   "title": "TANGIBLE",
-   "slug": "tangible-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 157,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5959798270984192.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TANGIBLE",
-   "slug": "tangible-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 157,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5990269386227712.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "TANGO SHMANGO",
@@ -5498,72 +3932,27 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 220,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5008895464439808.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "TANGO SHMANGO",
-   "slug": "tango-shmango-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 220,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6667568548937728.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "TASTE OF PASSION (80'S PARODY)",
    "slug": "taste-of-passion-80-s-parody",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 48,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5607954550095872.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TASTE OF PASSION (80'S PARODY)",
-   "slug": "taste-of-passion-80-s-parody-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 48,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5660731108229120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TASTE OF PASSION (80'S PARODY)",
-   "slug": "taste-of-passion-80-s-parody-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 48,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5427319432806400.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TASTE OF PASSION (80'S PARODY)",
-   "slug": "taste-of-passion-80-s-parody-4",
    "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Rock"
    ],
    "duration": 48,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5202684120399872.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5607954550095872.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5606,77 +3995,32 @@ const MUTRA = {
    "title": "THE ARRIVAL",
    "slug": "the-arrival",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Electronica"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Electronica"
    ],
    "duration": 153,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6663485712760832.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "THE ARRIVAL",
-   "slug": "the-arrival-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 153,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5185742085029888.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE ARRIVAL",
-   "slug": "the-arrival-3",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Electronica"
-   ],
-   "packages": [
-    "Electronica"
-   ],
-   "duration": 153,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5187518725095424.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6a474e374a554b5a635530~mv2_d_4642_3095_s_4_2.jpg"
-  },
-  {
    "title": "THE DEVIOUS FOX",
    "slug": "the-devious-fox",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 144,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5977390457028608.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE DEVIOUS FOX",
-   "slug": "the-devious-fox-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 144,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6131006874583040.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE DEVIOUS FOX",
-   "slug": "the-devious-fox-3",
    "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Shilton Haztlalim"
    ],
    "duration": 144,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6630409993453568.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6c5277474d65314d466a34~mv2_d_3408_2490_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5977390457028608.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "THE FREAK FUNK SHOW - FULL",
@@ -5684,34 +4028,12 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 39,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6575524782538752.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE FREAK FUNK SHOW - FULL",
-   "slug": "the-freak-funk-show-full-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Advertising Essentials"
-   ],
-   "duration": 39,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6267236459216896.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE FREAK FUNK SHOW - FULL",
-   "slug": "the-freak-funk-show-full-3",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
+    "Advertising Essentials",
     "Selected"
    ],
    "duration": 39,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6412481851293696.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6575524782538752.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5730,27 +4052,16 @@ const MUTRA = {
    "title": "THE FREAK SHOW - 1",
    "slug": "the-freak-show-1",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 27,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4957043666452480.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE FREAK SHOW - 1",
-   "slug": "the-freak-show-1-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Instrumental"
    ],
    "packages": [
+    "Catalog",
     "Shilton Haztlalim"
    ],
    "duration": 27,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5655722060677120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6a72495a65484b6c545651~mv2_d_3456_5184_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4957043666452480.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "THE FREAK SHOW 2",
@@ -5770,28 +4081,17 @@ const MUTRA = {
    "title": "THE GREAT KINGDOM",
    "slug": "the-great-kingdom",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 53,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5675591695073280.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE GREAT KINGDOM",
-   "slug": "the-great-kingdom-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Classical",
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
    ],
    "duration": 53,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5099814133956608.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5675591695073280.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -5822,43 +4122,37 @@ const MUTRA = {
    "title": "THE RACE (INSTRUMENTAL)",
    "slug": "the-race-instrumental",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Rock"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Rock"
    ],
    "duration": 281,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6452379480227840.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "THE RACE (INSTRUMENTAL)",
-   "slug": "the-race-instrumental-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Rock"
-   ],
-   "packages": [
-    "Rock"
-   ],
-   "duration": 281,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6117477794709504.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "THE RISE AND FALL (LONG VER.)",
    "slug": "the-rise-and-fall-long-ver",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Orchestral",
+    "Classical",
+    "Disney"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Orchestral Collection Vol. 02"
    ],
    "duration": 120,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5265419566841856.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "THE RISE AND FALL (LONG VER.)",
-   "slug": "the-rise-and-fall-long-ver-2",
+   "title": "THE RISE AND FALL (ORGANIC VER.)",
+   "slug": "the-rise-and-fall-organic-ver",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -5866,27 +4160,16 @@ const MUTRA = {
     "Disney"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 02"
-   ],
-   "duration": 120,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6621220281778176.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE RISE AND FALL (ORGANIC VER.)",
-   "slug": "the-rise-and-fall-organic-ver",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 98,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4983944590131200.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "THE RISE AND FALL (ORGANIC VER.)",
-   "slug": "the-rise-and-fall-organic-ver-2",
+   "title": "THE RISE AND FALL (ORIGINAL VER.)",
+   "slug": "the-rise-and-fall-original-ver",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -5894,39 +4177,17 @@ const MUTRA = {
     "Disney"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Orchestral Collection Vol. 02"
-   ],
-   "duration": 98,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5495320374935552.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE RISE AND FALL (ORIGINAL VER.)",
-   "slug": "the-rise-and-fall-original-ver",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 98,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6391319473684480.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "THE RISE AND FALL (ORIGINAL VER.)",
-   "slug": "the-rise-and-fall-original-ver-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 98,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6482850595471360.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE RISE AND FALL (ORIGINAL VER.)",
-   "slug": "the-rise-and-fall-original-ver-3",
+   "title": "THE SECRET GARDEN",
+   "slug": "the-secret-garden",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -5934,67 +4195,17 @@ const MUTRA = {
     "Disney"
    ],
    "packages": [
+    "Catalog",
+    "Selected",
     "Orchestral Collection Vol. 02"
-   ],
-   "duration": 98,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6058270328356864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE SECRET GARDEN",
-   "slug": "the-secret-garden",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 87,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5112641741651968.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "THE SECRET GARDEN",
-   "slug": "the-secret-garden-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 87,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5145844456095744.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE SECRET GARDEN",
-   "slug": "the-secret-garden-3",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Orchestral",
-    "Classical",
-    "Disney"
-   ],
-   "packages": [
-    "Orchestral Collection Vol. 02"
-   ],
-   "duration": 87,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6735887436087296.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "THE TERRIBLE TWOS",
    "slug": "the-terrible-twos",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 19,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4986252128419840.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THE TERRIBLE TWOS",
-   "slug": "the-terrible-twos-2",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -6002,37 +4213,27 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 19,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4833663600558080.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4986252128419840.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "THEM ALL FEARS",
    "slug": "them-all-fears",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 302,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6311641991872512.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "THEM ALL FEARS",
-   "slug": "them-all-fears-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
    ],
    "duration": 302,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6165712827580416.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_7856694b666f63412d5563~mv2_d_3441_4301_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6311641991872512.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "THIS IS HOW I TRICKED YA",
@@ -6062,56 +4263,34 @@ const MUTRA = {
    "title": "TIK TAK TOE",
    "slug": "tik-tak-toe",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Orchestral",
+    "Disney",
+    "Classical"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Orchestral Collection Vol. 01"
    ],
    "duration": 8,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6112152035262464.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "TIK TAK TOE",
-   "slug": "tik-tak-toe-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Orchestral",
-    "Disney",
-    "Classical"
-   ],
-   "packages": [
-    "Orchestral Collection Vol. 01"
-   ],
-   "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5396613553979392.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "TIK TAK TOE (PIANO)",
    "slug": "tik-tak-toe-piano",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4845514640064512.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TIK TAK TOE (PIANO)",
-   "slug": "tik-tak-toe-piano-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Disney",
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4622557368025088.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4845514640064512.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -6130,39 +4309,16 @@ const MUTRA = {
    "title": "TOKYO SHAKE",
    "slug": "tokyo-shake",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 60,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4622792131608576.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TOKYO SHAKE",
-   "slug": "tokyo-shake-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 60,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5467217061740544.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TOKYO SHAKE",
-   "slug": "tokyo-shake-3",
-   "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
    ],
    "duration": 60,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4624568771674112.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_574d644b794b706d594449~mv2_d_6016_4016_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4622792131608576.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "TOO MUCH OF EVERYTHING",
@@ -6216,78 +4372,45 @@ const MUTRA = {
    "title": "TRUMP",
    "slug": "trump",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Rock"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Rock"
    ],
    "duration": 186,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6170904503517184.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "TRUMP",
-   "slug": "trump-2",
+   "title": "TV SHOW INTRO (SKA ROCK)",
+   "slug": "tv-show-intro-ska-rock",
    "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
-   ],
-   "duration": 186,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6328584027242496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "TV SHOW INTRO (SKA ROCK)",
-   "slug": "tv-show-intro-ska-rock",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4534831201386496.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "TV SHOW INTRO (SKA ROCK)",
-   "slug": "tv-show-intro-ska-rock-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Rock"
-   ],
-   "packages": [
-    "Rock"
-   ],
-   "duration": 18,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4921209143689216.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "UNBAN THAT SHIT",
    "slug": "unban-that-shit",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 245,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5045004596674560.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "UNBAN THAT SHIT",
-   "slug": "unban-that-shit-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Rock"
    ],
    "packages": [
+    "Catalog",
     "Rock"
    ],
    "duration": 245,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5554527841288192.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5045004596674560.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -6318,44 +4441,21 @@ const MUTRA = {
    "title": "VINTAGE UPLIFTING ADVENTURE",
    "slug": "vintage-uplifting-adventure",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Latin",
+    "Instrumental"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Vintage"
    ],
    "duration": 166,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5378247216857088.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "VINTAGE UPLIFTING ADVENTURE",
-   "slug": "vintage-uplifting-adventure-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Latin",
-    "Instrumental"
-   ],
-   "packages": [
-    "Vintage"
-   ],
-   "duration": 166,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5600763281670144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "WAR AND THE TOLL",
    "slug": "war-and-the-toll",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 62,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5971414546907136.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "WAR AND THE TOLL",
-   "slug": "war-and-the-toll-2",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -6363,10 +4463,11 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 62,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5255876065624064.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5971414546907136.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -6385,39 +4486,16 @@ const MUTRA = {
    "title": "WHAT IF IT'S REAL",
    "slug": "what-if-it-s-real",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 178,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5537585805918208.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "WHAT IF IT'S REAL",
-   "slug": "what-if-it-s-real-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 178,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5748692038451200.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "WHAT IF IT'S REAL",
-   "slug": "what-if-it-s-real-3",
-   "artist": "Ori Toledano",
    "genres": [
     "Electronica"
    ],
    "packages": [
+    "Catalog",
     "Electronica"
    ],
    "duration": 178,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5750468678516736.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_62686f6a3974486c736959~mv2_d_4928_3264_s_4_2.jpg"
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5537585805918208.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
    "title": "WHOOPSY DOOPS",
@@ -6449,22 +4527,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5772881294262272.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "WORLD STING",
-   "slug": "world-sting-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Advertising Essentials"
    ],
    "duration": 8,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6339047507099648.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5772881294262272.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -6473,39 +4540,33 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Selected"
    ],
    "duration": 99,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4561732125065216.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "WOW",
-   "slug": "wow-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Selected"
-   ],
-   "duration": 99,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4653263246852096.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "XMAS CLARINET",
    "slug": "xmas-clarinet",
    "artist": "Ori Toledano",
-   "genres": [],
+   "genres": [
+    "Orchestral",
+    "Disney",
+    "Classical"
+   ],
    "packages": [
-    "Catalog"
+    "Catalog",
+    "Orchestral Collection Vol. 01"
    ],
    "duration": 12,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5689939570196480.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "XMAS CLARINET",
-   "slug": "xmas-clarinet-2",
+   "title": "XMAS CLARINET (SLOW)",
+   "slug": "xmas-clarinet-slow",
    "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
@@ -6513,66 +4574,28 @@ const MUTRA = {
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
-   ],
-   "duration": 12,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6663250949177344.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "XMAS CLARINET (SLOW)",
-   "slug": "xmas-clarinet-slow",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
    ],
    "duration": 14,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5408464593485824.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "XMAS CLARINET (SLOW)",
-   "slug": "xmas-clarinet-slow-2",
-   "artist": "Ori Toledano",
-   "genres": [
-    "Orchestral",
-    "Disney",
-    "Classical"
-   ],
-   "packages": [
-    "Orchestral Collection Vol. 01"
-   ],
-   "duration": 14,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4974401088913408.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
    "title": "XMAS DANCE",
    "slug": "xmas-dance",
    "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 13,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6534364500328448.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "XMAS DANCE",
-   "slug": "xmas-dance-2",
-   "artist": "Ori Toledano",
    "genres": [
     "Orchestral",
     "Disney",
     "Classical"
    ],
    "packages": [
+    "Catalog",
     "Orchestral Collection Vol. 01"
    ],
    "duration": 13,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6381775972466688.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6534364500328448.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -6581,22 +4604,11 @@ const MUTRA = {
    "artist": "Ori Toledano",
    "genres": [],
    "packages": [
-    "Catalog"
-   ],
-   "duration": 20,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5450137520308224.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "YO KA YAY",
-   "slug": "yo-ka-yay-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
+    "Catalog",
     "Selected"
    ],
    "duration": 20,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5893512362983424.mp3",
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5450137520308224.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
@@ -6624,7 +4636,7 @@ const MUTRA = {
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "Z GERAMN",
+   "title": "Z GERMAN",
    "slug": "z-geramn",
    "artist": "Ori Toledano",
    "genres": [
@@ -6682,18 +4694,6 @@ const MUTRA = {
    ],
    "duration": 53,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4992228038541312.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "ZE POPCORN (MINIMAL)",
-   "slug": "ze-popcorn-minimal-2",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Catalog"
-   ],
-   "duration": 53,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6083456217907200.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   }
  ],
