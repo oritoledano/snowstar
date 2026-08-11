@@ -5,7 +5,7 @@
 const MUTRA = {
  "tracks": [
   {
-   "title": "'S PARODY PLAYBACK",
+   "title": "80'S PARODY PLAYBACK",
    "slug": "s-parody-playback",
    "artist": "Ori Toledano",
    "genres": [],
