@@ -46,7 +46,8 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
   justify-content:space-between;padding:0 clamp(20px,5vw,56px);transition:background .3s,border-color .3s;
   border-bottom:1px solid transparent}
 .mnav.scrolled{background:rgba(11,7,16,.8);backdrop-filter:blur(16px);border-color:var(--line)}
-.mlogo{display:flex;align-items:baseline;gap:9px}
+.mlogo{display:flex;align-items:baseline;gap:10px}
+.ml-img{height:21px;width:auto;display:block;align-self:center}
 .ml-word{
   font-family:"Unbounded",var(--font-display);font-weight:700;font-size:1.6rem;letter-spacing:-.02em;
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
