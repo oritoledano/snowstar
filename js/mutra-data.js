@@ -170,7 +170,7 @@ const MUTRA = {
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_682d7250354b5343325730~mv2_d_7000_5128_s_4_2.jpg"
   },
   {
-   "title": "ARCAIDIA",
+   "title": "ARCADIA",
    "slug": "arcadia",
    "artist": "Ori Toledano",
    "genres": [
@@ -954,7 +954,7 @@ const MUTRA = {
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "DEMOLISION MISSION",
+   "title": "DEMOLITION MISSION",
    "slug": "demolition-mission",
    "artist": "Ori Toledano",
    "genres": [
@@ -2661,19 +2661,7 @@ const MUTRA = {
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
-   "title": "OK AT THE STATION (PLAYBACK)",
-   "slug": "ok-at-the-station-playback",
-   "artist": "Ori Toledano",
-   "genres": [],
-   "packages": [
-    "Vintage"
-   ],
-   "duration": 125,
-   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4533822286725120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
-  },
-  {
-   "title": "OK AT THE STATION)",
+   "title": "OK AT THE STATION",
    "slug": "ok-at-the-station",
    "artist": "Ori Toledano",
    "genres": [
@@ -2684,6 +2672,18 @@ const MUTRA = {
    ],
    "duration": 125,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5659722193567744.mp3",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
+  },
+  {
+   "title": "OK AT THE STATION (PLAYBACK)",
+   "slug": "ok-at-the-station-playback",
+   "artist": "Ori Toledano",
+   "genres": [],
+   "packages": [
+    "Vintage"
+   ],
+   "duration": 125,
+   "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4533822286725120.mp3",
    "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg"
   },
   {
