@@ -6,8 +6,9 @@
     'mailto:hello@snowstar.company?subject=' + encodeURIComponent('Mutra license: ' + title) +
     '&body=' + encodeURIComponent(`Hi Snowstar,\n\nI'd like to license "${title}".\n\nUsage / media:\nTimeline:\n\nThanks!`);
 
-  // deterministic pseudo-waveform so each track looks distinct but stable
-  const waveform = (seed, n = 42) => {
+  // real per-track waveform (42 RMS peaks precomputed in mutra-waves.js);
+  // deterministic pseudo-waveform as fallback for any track missing one
+  const pseudoWave = (seed, n = 42) => {
     const bars = [];
     let x = seed * 9301 + 49297;
     for (let i = 0; i < n; i++) {
@@ -17,6 +18,8 @@
     }
     return bars;
   };
+  const waveform = (track, seed) =>
+    (typeof MUTRA_WAVES !== 'undefined' && MUTRA_WAVES[track.slug]) || pseudoWave(seed);
 
   const ICON_PLAY = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
   const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
@@ -147,7 +150,7 @@
       const i = MUTRA.tracks.indexOf(track);
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
-      const bars = waveform(i + 1).map(h => `<span class="bar" style="height:${h}%"></span>`).join('');
+      const bars = waveform(track, i + 1).map(h => `<span class="bar" style="height:${h}%"></span>`).join('');
       const tags = [
         ...track.packages.slice(0, 1).map(p => `<span class="tag">${p}</span>`),
         ...track.genres.slice(0, 2).map(g => `<span class="tag mood">${g}</span>`),
