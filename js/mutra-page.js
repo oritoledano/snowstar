@@ -130,13 +130,18 @@
   // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
   const tracksEl = $('#tracks'), countEl = $('#catCount');
   const INITIAL = 40;
-  const state = { packages: new Set(), genres: new Set(), q: '' };
+  const state = { packages: new Set(), genres: new Set(), moods: new Set(), q: '' };
   let expanded = false;
 
   function matches(t) {
     if (state.packages.size && !t.packages.some(p => state.packages.has(p))) return false;
     if (state.genres.size && !t.genres.some(g => state.genres.has(g))) return false;
-    if (state.q && !t.title.toLowerCase().includes(state.q)) return false;
+    if (state.moods.size && !(t.moods || []).some(x => state.moods.has(x))) return false;
+    if (state.q) {
+      const hay = (t.title + ' ' + t.genres.join(' ') + ' ' + (t.moods || []).join(' ') + ' ' +
+        (t.instruments || []).join(' ')).toLowerCase();
+      if (!hay.includes(state.q)) return false;
+    }
     return true;
   }
 
@@ -152,8 +157,8 @@
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
       const bars = waveform(track, i + 1).map(h => `<span class="bar" style="height:${h}%"></span>`).join('');
       const tags = [
-        ...track.packages.slice(0, 1).map(p => `<span class="tag">${p}</span>`),
-        ...track.genres.slice(0, 2).map(g => `<span class="tag mood">${g}</span>`),
+        ...track.genres.slice(0, 2).map(g => `<span class="tag">${g}</span>`),
+        ...(track.moods || []).slice(0, 2).map(x => `<span class="tag mood">${x}</span>`),
       ].join('');
       row.innerHTML = `
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
@@ -226,6 +231,7 @@
   }
   buildChips($('#packageRow'), MUTRA.packages, 'packages', 'All packages');
   buildChips($('#genreRow'), MUTRA.genres, 'genres', 'All genres');
+  buildChips($('#moodRow'), MUTRA.moods, 'moods', 'All moods');
   $('#search').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); expanded = false; render(); });
 
   render();
