@@ -17,7 +17,7 @@ const MUTRA = {
    ],
    "duration": 156,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5835996761423872.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/123-clap.jpg",
    "moods": [
     "Party"
    ],
@@ -37,7 +37,7 @@ const MUTRA = {
    "packages": [],
    "duration": 84,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5356950688628736.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/25-booms-a-bang.jpg",
    "moods": [
     "Party"
    ],
@@ -56,7 +56,7 @@ const MUTRA = {
    "packages": [],
    "duration": 65,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4746450078531584.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/s-parody-playback.jpg",
    "moods": [
     "Sad"
    ],
@@ -78,7 +78,7 @@ const MUTRA = {
    ],
    "duration": 464,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6413980090236928.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shuttle.jpg",
    "moods": [
     "Chill"
    ],
@@ -98,7 +98,7 @@ const MUTRA = {
    "packages": [],
    "duration": 96,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5159866450575360.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/acid-jazz-clock.jpg",
    "moods": [
     "Chill"
    ],
@@ -117,7 +117,7 @@ const MUTRA = {
    "packages": [],
    "duration": 96,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/acid-jazz-clock-rhythm-only.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/acid-jazz-clock-rhythm-only.jpg",
    "moods": [
     "Party"
    ],
@@ -137,7 +137,7 @@ const MUTRA = {
    "packages": [],
    "duration": 110,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6734367101550592.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/action-tension.jpg",
    "moods": [
     "Dramatic",
     "Tense"
@@ -159,7 +159,7 @@ const MUTRA = {
    "packages": [],
    "duration": 110,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5449624875696128.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/action-tension-epic-ending.jpg",
    "moods": [
     "Dramatic",
     "Tense"
@@ -181,7 +181,7 @@ const MUTRA = {
    "packages": [],
    "duration": 110,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/action-tension-drums.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/action-tension-drums.jpg",
    "moods": [
     "Dramatic",
     "Tense"
@@ -204,7 +204,7 @@ const MUTRA = {
    ],
    "duration": 248,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5678835938885632.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/all-my-time.jpg",
    "moods": [
     "Uplifting",
     "Chill",
@@ -227,7 +227,7 @@ const MUTRA = {
    ],
    "duration": 111,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5238518643163136.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/alternative-uplifting-h2.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -251,7 +251,7 @@ const MUTRA = {
    ],
    "duration": 77,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5519993619873792.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/american-booty.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -273,7 +273,7 @@ const MUTRA = {
    ],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5062596782718976.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/angels-choir.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -293,7 +293,7 @@ const MUTRA = {
    "packages": [],
    "duration": 84,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5661103117828096.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_682d7250354b5343325730~mv2_d_7000_5128_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/aggressive-exit.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -315,7 +315,7 @@ const MUTRA = {
    ],
    "duration": 51,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-extra/arcadia.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/arcadia.jpg",
    "moods": [
     "Party"
    ],
@@ -335,7 +335,7 @@ const MUTRA = {
    "packages": [],
    "duration": 252,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5502914078441472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/arctic-monkeys-r-u-mine-ori-toledano-remix.jpg",
    "moods": [
     "Party"
    ],
@@ -355,7 +355,7 @@ const MUTRA = {
    ],
    "duration": 233,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5243434770104320.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/backfliptoys.jpg",
    "moods": [
     "Party"
    ],
@@ -373,7 +373,7 @@ const MUTRA = {
    "packages": [],
    "duration": 58,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/bad-acid-in-goa.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bad-acid-in-goa.jpg",
    "moods": [
     "Party"
    ],
@@ -393,7 +393,7 @@ const MUTRA = {
    "packages": [],
    "duration": 173,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5933922636529664.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/balloon-6.jpg",
    "moods": [
     "Party"
    ],
@@ -412,7 +412,7 @@ const MUTRA = {
    "packages": [],
    "duration": 236,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5661243752841216.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/baseground-bass-guitar.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -434,7 +434,7 @@ const MUTRA = {
    "packages": [],
    "duration": 236,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5098293799419904.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/baseground-bass-keys.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -457,7 +457,7 @@ const MUTRA = {
    "packages": [],
    "duration": 236,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6224193706262528.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/baseground-original-mix.jpg",
    "moods": [
     "Happy",
     "Playful"
@@ -479,7 +479,7 @@ const MUTRA = {
    "packages": [],
    "duration": 236,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5370972683108352.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/baseground-playback.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -504,7 +504,7 @@ const MUTRA = {
    ],
    "duration": 38,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5913618782617600.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/baseground-short.jpg",
    "moods": [
     "Happy",
     "Playful"
@@ -525,7 +525,7 @@ const MUTRA = {
    "packages": [],
    "duration": 130,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5969107008618496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/basslia.jpg",
    "moods": [
     "Chill"
    ],
@@ -546,7 +546,7 @@ const MUTRA = {
    ],
    "duration": 240,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4961959793393664.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/be-with-me-instrumental.jpg",
    "moods": [
     "Party"
    ],
@@ -569,7 +569,7 @@ const MUTRA = {
    ],
    "duration": 10,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5625546736140288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/beauty-feminine-10-sec.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -592,7 +592,7 @@ const MUTRA = {
    ],
    "duration": 5,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6188496689561600.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/beauty-feminine-5-sec.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -615,7 +615,7 @@ const MUTRA = {
    ],
    "duration": 152,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6576037427150848.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/better-days-ahead.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -636,7 +636,7 @@ const MUTRA = {
    ],
    "duration": 163,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4750853560860672.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/beverly-hills-maharaja.jpg",
    "moods": [
     "Party"
    ],
@@ -658,7 +658,7 @@ const MUTRA = {
    ],
    "duration": 172,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5479986133729280.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/beverly-hills-maharaja-minimal-edit.jpg",
    "moods": [
     "Party"
    ],
@@ -680,7 +680,7 @@ const MUTRA = {
    ],
    "duration": 191,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6382010736050176.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bicyclette.jpg",
    "moods": [
     "Party"
    ],
@@ -701,7 +701,7 @@ const MUTRA = {
    ],
    "duration": 191,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6446039840063488.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_7435565a4b657665517749~mv2_d_6000_4000_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bicyclette-instrumental.jpg",
    "moods": [
     "Party"
    ],
@@ -722,7 +722,7 @@ const MUTRA = {
    ],
    "duration": 102,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6540340410449920.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/big-fat-funeral.jpg",
    "moods": [
     "Dramatic",
     "Dark",
@@ -746,7 +746,7 @@ const MUTRA = {
    ],
    "duration": 79,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6467358069620736.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_75364f6e70624d755a4173~mv2_d_4466_2978_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/big-fat-funeral-3.jpg",
    "moods": [
     "Dramatic",
     "Dark",
@@ -769,7 +769,7 @@ const MUTRA = {
    "packages": [],
    "duration": 79,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6082943573295104.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/big-fat-funeral-remastered.jpg",
    "moods": [
     "Dramatic",
     "Dark",
@@ -794,7 +794,7 @@ const MUTRA = {
    ],
    "duration": 89,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-extra/binary-romance.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/binary-romance.jpg",
    "moods": [
     "Party",
     "Romantic"
@@ -817,7 +817,7 @@ const MUTRA = {
    ],
    "duration": 241,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5173066025926656.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bitches.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -841,7 +841,7 @@ const MUTRA = {
    ],
    "duration": 113,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5858804354777088.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_73696f454141706d317145~mv2_d_6016_4016_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bitter-sweet-mystery-theme.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -859,7 +859,7 @@ const MUTRA = {
    "packages": [],
    "duration": 113,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5414440503607296.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bitter-sweet-mystery-theme-epic-ending.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -877,7 +877,7 @@ const MUTRA = {
    "packages": [],
    "duration": 335,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4632100869242880.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/blonde-like-disco.jpg",
    "moods": [
     "Party"
    ],
@@ -898,7 +898,7 @@ const MUTRA = {
    "packages": [],
    "duration": 33,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4596916497154048.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bolero-hyped-folk-whistle.jpg",
    "moods": [
     "Party"
    ],
@@ -917,7 +917,7 @@ const MUTRA = {
    "packages": [],
    "duration": 26,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6496872589950976.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bossa-funk-music.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -938,7 +938,7 @@ const MUTRA = {
    "packages": [],
    "duration": 44,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5027925055242240.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-mid-rider.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -960,7 +960,7 @@ const MUTRA = {
    "packages": [],
    "duration": 147,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5868482350546944.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/bright-memories.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -981,7 +981,7 @@ const MUTRA = {
    "packages": [],
    "duration": 23,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4843207101775872.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/browny.jpg",
    "moods": [
     "Party"
    ],
@@ -1003,7 +1003,7 @@ const MUTRA = {
    ],
    "duration": 273,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6593116968583168.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/by-you.jpg",
    "moods": [
     "Party"
    ],
@@ -1025,7 +1025,7 @@ const MUTRA = {
    ],
    "duration": 228,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4763529619963904.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/c-est-pour-toi.jpg",
    "moods": [
     "Party"
    ],
@@ -1045,7 +1045,7 @@ const MUTRA = {
    "packages": [],
    "duration": 234,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4814214310920192.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/cairo-blackout.jpg",
    "moods": [
     "Dark"
    ],
@@ -1065,7 +1065,7 @@ const MUTRA = {
    ],
    "duration": 310,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5006605206683648.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/can-t-deny-it.jpg",
    "moods": [
     "Party"
    ],
@@ -1088,7 +1088,7 @@ const MUTRA = {
    ],
    "duration": 116,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6369334676946944.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/can-t-stop-the-summer-fun.jpg",
    "moods": [
     "Party",
     "Playful"
@@ -1110,7 +1110,7 @@ const MUTRA = {
    "packages": [],
    "duration": 81,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6250581985329152.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/cannibals.jpg",
    "moods": [
     "Party"
    ],
@@ -1129,7 +1129,7 @@ const MUTRA = {
    "packages": [],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/captain-galactic.m4a",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/captain-galactic.jpg",
    "moods": [
     "Dark",
     "Sad"
@@ -1150,7 +1150,7 @@ const MUTRA = {
    "packages": [],
    "duration": 39,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5290370441150464.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/captain-turbo.jpg",
    "moods": [
     "Sad"
    ],
@@ -1170,7 +1170,7 @@ const MUTRA = {
    ],
    "duration": 205,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6505156038361088.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/capture.jpg",
    "moods": [
     "Sad"
    ],
@@ -1191,7 +1191,7 @@ const MUTRA = {
    "packages": [],
    "duration": 114,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5670488116297728.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/cash-flow.jpg",
    "moods": [
     "Chill"
    ],
@@ -1210,7 +1210,7 @@ const MUTRA = {
    "packages": [],
    "duration": 49,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6435299938795520.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/casino-gaza.jpg",
    "moods": [
     "Party"
    ],
@@ -1230,7 +1230,7 @@ const MUTRA = {
    "packages": [],
    "duration": 124,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/casino-gaza-minimal.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/casino-gaza-minimal.jpg",
    "moods": [
     "Chill"
    ],
@@ -1250,7 +1250,7 @@ const MUTRA = {
    "packages": [],
    "duration": 196,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5793185148174336.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/celebrishit.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -1272,7 +1272,7 @@ const MUTRA = {
    "packages": [],
    "duration": 38,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5853320394571776.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/chasing-lights.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1294,7 +1294,7 @@ const MUTRA = {
    ],
    "duration": 41,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5305532397125632.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/chasing-nights.jpg",
    "moods": [
     "Party",
     "Playful"
@@ -1314,7 +1314,7 @@ const MUTRA = {
    "packages": [],
    "duration": 42,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/chasing-nights-vox-square.m4a",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/chasing-nights-vox-square.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -1335,7 +1335,7 @@ const MUTRA = {
    "packages": [],
    "duration": 180,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5124682078486528.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/chicho-lindo.jpg",
    "moods": [
     "Party"
    ],
@@ -1356,7 +1356,7 @@ const MUTRA = {
    ],
    "duration": 45,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5007088625385472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/chocolate-milk-factory.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1376,7 +1376,7 @@ const MUTRA = {
    "packages": [],
    "duration": 144,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/circus.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/circus.jpg",
    "moods": [
     "Party"
    ],
@@ -1398,7 +1398,7 @@ const MUTRA = {
    ],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6555200997294080.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/climax-dramatic-trailer.jpg",
    "moods": [
     "Epic"
    ],
@@ -1417,7 +1417,7 @@ const MUTRA = {
    "packages": [],
    "duration": 36,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4870403203792896.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/cold-summer-day.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -1437,7 +1437,7 @@ const MUTRA = {
    "packages": [],
    "duration": 182,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5546894543552512.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/collins-ave.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -1461,7 +1461,7 @@ const MUTRA = {
    ],
    "duration": 99,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6532056962039808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/coming-home.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1482,7 +1482,7 @@ const MUTRA = {
    "packages": [],
    "duration": 90,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/coming-home-piano-only.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/coming-home-piano-only.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1503,7 +1503,7 @@ const MUTRA = {
    "packages": [],
    "duration": 169,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/confrontation.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/confrontation.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1525,7 +1525,7 @@ const MUTRA = {
    ],
    "duration": 159,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6733854456938496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/cut-me-loose-instrumental.jpg",
    "moods": [
     "Aggressive",
     "Happy",
@@ -1550,7 +1550,7 @@ const MUTRA = {
    ],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6751446642982912.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/cut-me-loose-short.jpg",
    "moods": [
     "Aggressive",
     "Happy",
@@ -1573,7 +1573,7 @@ const MUTRA = {
    "packages": [],
    "duration": 41,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/cyber-tunnel.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/cyber-tunnel.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -1593,7 +1593,7 @@ const MUTRA = {
    "packages": [],
    "duration": 68,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/daffodil-without-a-sunlight.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/daffodil-without-a-sunlight.jpg",
    "moods": [
     "Happy"
    ],
@@ -1614,7 +1614,7 @@ const MUTRA = {
    ],
    "duration": 91,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5454541002637312.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dance-for-triomphe.jpg",
    "moods": [
     "Party"
    ],
@@ -1636,7 +1636,7 @@ const MUTRA = {
    ],
    "duration": 82,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4571895989010432.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_7533344a4e424f49513130~mv2_d_6000_4000_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dark-dots.jpg",
    "moods": [
     "Dramatic",
     "Dark",
@@ -1659,7 +1659,7 @@ const MUTRA = {
    ],
    "duration": 73,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-extra/dark-factory.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dark-factory.jpg",
    "moods": [
     "Dark",
     "Party"
@@ -1683,7 +1683,7 @@ const MUTRA = {
    ],
    "duration": 141,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5600329422864384.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/day-dreamer.jpg",
    "moods": [
     "Chill"
    ],
@@ -1703,7 +1703,7 @@ const MUTRA = {
    "packages": [],
    "duration": 211,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5722816403996672.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/deep-underwater.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1727,7 +1727,7 @@ const MUTRA = {
    ],
    "duration": 297,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-extra/demolition-mission.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/demolition-mission.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -1749,7 +1749,7 @@ const MUTRA = {
    "packages": [],
    "duration": 194,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6628813985284096.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/depeche-mode-tainted-love-ori-toledano-musical-remix.jpg",
    "moods": [
     "Playful",
     "Romantic"
@@ -1768,7 +1768,7 @@ const MUTRA = {
    "packages": [],
    "duration": 64,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5335788311019520.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dirty-dancefloor.jpg",
    "moods": [
     "Party"
    ],
@@ -1789,7 +1789,7 @@ const MUTRA = {
    "packages": [],
    "duration": 102,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4702469613420544.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dirty-money.jpg",
    "moods": [
     "Party"
    ],
@@ -1809,7 +1809,7 @@ const MUTRA = {
    "packages": [],
    "duration": 42,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/do-it-major.m4a",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/do-it-major.jpg",
    "moods": [
     "Happy",
     "Playful"
@@ -1832,7 +1832,7 @@ const MUTRA = {
    ],
    "duration": 15,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4506243899064320.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dramatic-climax-tizer-guitar-feedback.jpg",
    "moods": [
     "Epic"
    ],
@@ -1853,7 +1853,7 @@ const MUTRA = {
    ],
    "duration": 11,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5632143805906944.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dramatic-sting.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1876,7 +1876,7 @@ const MUTRA = {
    ],
    "duration": 156,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4675568689741824.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/dvash-playback.jpg",
    "moods": [
     "Chill"
    ],
@@ -1898,7 +1898,7 @@ const MUTRA = {
    ],
    "duration": 79,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5230235194753024.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/eastcountry.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -1920,7 +1920,7 @@ const MUTRA = {
    "packages": [],
    "duration": 170,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/eitan-chinitz-pray.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/eitan-chinitz-pray.jpg",
    "moods": [
     "Party"
    ],
@@ -1939,7 +1939,7 @@ const MUTRA = {
    "packages": [],
    "duration": 233,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5538098450530304.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/electro-swetheart.jpg",
    "moods": [
     "Party"
    ],
@@ -1951,7 +1951,7 @@ const MUTRA = {
   },
   {
    "title": "ELEGANCE STING",
-   "slug": "",
+   "slug": "elegance-sting",
    "artist": "Ori Toledano",
    "genres": [
     "Electronic"
@@ -1959,7 +1959,7 @@ const MUTRA = {
    "packages": [],
    "duration": 8,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5367532330418176.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/elegance-sting.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -1980,7 +1980,7 @@ const MUTRA = {
    ],
    "duration": 61,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6414463508938752.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/elves-land-aggressed.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -2003,7 +2003,7 @@ const MUTRA = {
    ],
    "duration": 61,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6132988532228096.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/elves-land-soft.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -2025,7 +2025,7 @@ const MUTRA = {
    ],
    "duration": 11,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5069193852485632.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/emotional-sting.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -2043,7 +2043,7 @@ const MUTRA = {
    "packages": [],
    "duration": 58,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5695915480317952.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ep.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -2062,7 +2062,7 @@ const MUTRA = {
    "packages": [],
    "duration": 82,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6716262270894080.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ep-2-q26-dark-dots.jpg",
    "moods": [
     "Dramatic",
     "Dark",
@@ -2086,7 +2086,7 @@ const MUTRA = {
    ],
    "duration": 21,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5758000776085504.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/epic-fast-drums.jpg",
    "moods": [
     "Chill"
    ],
@@ -2108,7 +2108,7 @@ const MUTRA = {
    ],
    "duration": 144,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4725613648674816.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/epic-hanye-best.jpg",
    "moods": [
     "Chill"
    ],
@@ -2131,7 +2131,7 @@ const MUTRA = {
    ],
    "duration": 45,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5570038578806784.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/epic-journey.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -2151,7 +2151,7 @@ const MUTRA = {
    "packages": [],
    "duration": 32,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5942718729551872.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/epic-journey-tamed.jpg",
    "moods": [
     "Epic",
     "Sad"
@@ -2171,7 +2171,7 @@ const MUTRA = {
    "packages": [],
    "duration": 241,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4913575845953536.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ethnic-glam.jpg",
    "moods": [
     "Sad"
    ],
@@ -2191,7 +2191,7 @@ const MUTRA = {
    "packages": [],
    "duration": 85,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5195050822664192.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ethnic-pop.jpg",
    "moods": [
     "Party"
    ],
@@ -2211,7 +2211,7 @@ const MUTRA = {
    "packages": [],
    "duration": 187,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6637610078306304.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/every-right-to-be-with-you.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -2233,7 +2233,7 @@ const MUTRA = {
    ],
    "duration": 98,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5590362364051456.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/evilove.jpg",
    "moods": [
     "Dramatic",
     "Dark"
@@ -2256,7 +2256,7 @@ const MUTRA = {
    ],
    "duration": 89,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6153312317472768.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/evilove-chaos.jpg",
    "moods": [
     "Dramatic",
     "Dark"
@@ -2278,7 +2278,7 @@ const MUTRA = {
    ],
    "duration": 214,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4610116072505344.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/falling-out-of-love-instrumental.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -2299,7 +2299,7 @@ const MUTRA = {
    "packages": [],
    "duration": 31,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6672794450395136.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/family-girl-musical.jpg",
    "moods": [
     "Uplifting",
     "Romantic",
@@ -2323,7 +2323,7 @@ const MUTRA = {
    "packages": [],
    "duration": 128,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4808022729687040.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/far-we-are.jpg",
    "moods": [
     "Party"
    ],
@@ -2342,7 +2342,7 @@ const MUTRA = {
    "packages": [],
    "duration": 79,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/far-we-are-short-edit.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/far-we-are-short-edit.jpg",
    "moods": [
     "Uplifting"
    ],
@@ -2363,7 +2363,7 @@ const MUTRA = {
    ],
    "duration": 234,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4623304776220672.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/festigal.jpg",
    "moods": [
     "Party"
    ],
@@ -2383,7 +2383,7 @@ const MUTRA = {
    "packages": [],
    "duration": 45,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/five-rocks.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/five-rocks.jpg",
    "moods": [
     "Tense",
     "Aggressive"
@@ -2405,7 +2405,7 @@ const MUTRA = {
    ],
    "duration": 385,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6132505113526272.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/flawless.jpg",
    "moods": [
     "Party"
    ],
@@ -2427,7 +2427,7 @@ const MUTRA = {
    ],
    "duration": 373,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5569555160104960.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/franky-busty-boobs.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -2449,7 +2449,7 @@ const MUTRA = {
    ],
    "duration": 334,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5806384723525632.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/freedom-city-instrumental.jpg",
    "moods": [
     "Party"
    ],
@@ -2469,7 +2469,7 @@ const MUTRA = {
    "packages": [],
    "duration": 66,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6039475752796160.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/french-balkan.jpg",
    "moods": [
     "Chill"
    ],
@@ -2489,7 +2489,7 @@ const MUTRA = {
    "packages": [],
    "duration": 30,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6320950729506816.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/fun-summer-bass.jpg",
    "moods": [
     "Chill"
    ],
@@ -2511,7 +2511,7 @@ const MUTRA = {
    ],
    "duration": 109,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5606945635434496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/funky-wurli-triplet.jpg",
    "moods": [
     "Happy"
    ],
@@ -2532,7 +2532,7 @@ const MUTRA = {
    "packages": [],
    "duration": 61,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6149957327257600.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/desert-desire.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -2551,7 +2551,7 @@ const MUTRA = {
    "packages": [],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6013087473729536.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/fuzzy-cats.jpg",
    "moods": [
     "Party"
    ],
@@ -2570,7 +2570,7 @@ const MUTRA = {
    "packages": [],
    "duration": 49,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4588120404131840.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/gangsta-ride.jpg",
    "moods": [
     "Party"
    ],
@@ -2589,7 +2589,7 @@ const MUTRA = {
    "packages": [],
    "duration": 22,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6559253064056832.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/girl-in-red.jpg",
    "moods": [
     "Party"
    ],
@@ -2610,7 +2610,7 @@ const MUTRA = {
    "packages": [],
    "duration": 208,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5115885985464320.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/glida.jpg",
    "moods": [
     "Chill"
    ],
@@ -2628,7 +2628,7 @@ const MUTRA = {
    "packages": [],
    "duration": 430,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5714020310974464.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/gone-in-a-sec.jpg",
    "moods": [
     "Party"
    ],
@@ -2646,7 +2646,7 @@ const MUTRA = {
    "packages": [],
    "duration": 430,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5045517241286656.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/gone-in-a-sec-playback.jpg",
    "moods": [
     "Party"
    ],
@@ -2665,7 +2665,7 @@ const MUTRA = {
    "packages": [],
    "duration": 30,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6356135101595648.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/good-old-days.jpg",
    "moods": [
     "Happy"
    ],
@@ -2684,7 +2684,7 @@ const MUTRA = {
    "packages": [],
    "duration": 52,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5749204683063296.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/good-things.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -2704,7 +2704,7 @@ const MUTRA = {
    "packages": [],
    "duration": 52,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4948760218042368.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/good-things-playback.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -2726,7 +2726,7 @@ const MUTRA = {
    ],
    "duration": 210,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4834411008753664.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/great-powers.jpg",
    "moods": [
     "Happy",
     "Uplifting"
@@ -2745,7 +2745,7 @@ const MUTRA = {
    "packages": [],
    "duration": 292,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6241785892306944.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/great-powers-agressive-mix-playback.jpg",
    "moods": [
     "Party"
    ],
@@ -2766,7 +2766,7 @@ const MUTRA = {
    ],
    "duration": 223,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5736015979347968.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hailo-of-the-moon-instrumental.jpg",
    "moods": [
     "Party"
    ],
@@ -2786,7 +2786,7 @@ const MUTRA = {
    "packages": [],
    "duration": 165,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/halutzim-lies-playback.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/halutzim-lies-playback.jpg",
    "moods": [
     "Party"
    ],
@@ -2807,7 +2807,7 @@ const MUTRA = {
    "packages": [],
    "duration": 35,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5379768776130560.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/heavy-action.jpg",
    "moods": [
     "Dramatic",
     "Tense",
@@ -2828,7 +2828,7 @@ const MUTRA = {
    "packages": [],
    "duration": 32,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6074660124884992.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/heavy-pulses.jpg",
    "moods": [
     "Party"
    ],
@@ -2847,7 +2847,7 @@ const MUTRA = {
    "packages": [],
    "duration": 91,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5476525799374848.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/heilo-pad.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -2868,7 +2868,7 @@ const MUTRA = {
    ],
    "duration": 37,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5126989616775168.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hello-world-epic.jpg",
    "moods": [
     "Epic",
     "Sad"
@@ -2890,7 +2890,7 @@ const MUTRA = {
    ],
    "duration": 34,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6252889523617792.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hello-world-soft.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -2912,7 +2912,7 @@ const MUTRA = {
    ],
    "duration": 60,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5801468596584448.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/here-comes-the-best.jpg",
    "moods": [
     "Aggressive",
     "Happy",
@@ -2935,7 +2935,7 @@ const MUTRA = {
    "packages": [],
    "duration": 129,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6602425706217472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/here-we-go-again.jpg",
    "moods": [
     "Party"
    ],
@@ -2956,7 +2956,7 @@ const MUTRA = {
    ],
    "duration": 28,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6195093759328256.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hi-tech-innovative-short-piano-reff.jpg",
    "moods": [
     "Party"
    ],
@@ -2976,7 +2976,7 @@ const MUTRA = {
    "packages": [],
    "duration": 64,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4975148497108992.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hipsta-flitz.jpg",
    "moods": [
     "Party"
    ],
@@ -2996,7 +2996,7 @@ const MUTRA = {
    "packages": [],
    "duration": 67,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/hit-em-with-a-bass-drop.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hit-em-with-a-bass-drop.jpg",
    "moods": [
     "Party"
    ],
@@ -3015,7 +3015,7 @@ const MUTRA = {
    "packages": [],
    "duration": 242,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5151070357553152.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/home-instrumental.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -3037,7 +3037,7 @@ const MUTRA = {
    ],
    "duration": 51,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4772838357598208.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/honey-i-m-home.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -3057,7 +3057,7 @@ const MUTRA = {
    "packages": [],
    "duration": 54,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5872349985374208.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hoody-trap.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -3078,7 +3078,7 @@ const MUTRA = {
    ],
    "duration": 65,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5587007373836288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/hoolywood-cribs.jpg",
    "moods": [
     "Chill"
    ],
@@ -3099,7 +3099,7 @@ const MUTRA = {
    ],
    "duration": 30,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6164564863352832.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_594b57304a6a5037726c55~mv2_d_3482_4642_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/humanoid-love.jpg",
    "moods": [
     "Party",
     "Romantic"
@@ -3119,7 +3119,7 @@ const MUTRA = {
    "packages": [],
    "duration": 117,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5186254729641984.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/i-can-t-stop.jpg",
    "moods": [
     "Party"
    ],
@@ -3142,7 +3142,7 @@ const MUTRA = {
    ],
    "duration": 161,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5601614909931520.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_636e366658327932687355~mv2_d_5502_3668_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/i-say-yy.jpg",
    "moods": [
     "Chill"
    ],
@@ -3164,7 +3164,7 @@ const MUTRA = {
    ],
    "duration": 134,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6727514816774144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_326f6448476e6a41444930~mv2_d_6000_4000_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/icy-roller.jpg",
    "moods": [
     "Party"
    ],
@@ -3185,7 +3185,7 @@ const MUTRA = {
    "packages": [],
    "duration": 57,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6145028869062656.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/indie-pop-whistle.jpg",
    "moods": [
     "Chill"
    ],
@@ -3208,7 +3208,7 @@ const MUTRA = {
    ],
    "duration": 17,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5095950718599168.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_68346a5847686d38777541~mv2_d_6000_3376_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/intro.jpg",
    "moods": [
     "Chill"
    ],
@@ -3226,7 +3226,7 @@ const MUTRA = {
    "packages": [],
    "duration": 168,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5960310915596288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/isha.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -3248,7 +3248,7 @@ const MUTRA = {
    ],
    "duration": 15,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5942206084939776.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jack-black-short.jpg",
    "moods": [
     "Aggressive",
     "Happy"
@@ -3271,7 +3271,7 @@ const MUTRA = {
    ],
    "duration": 207,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6298965932769280.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jane.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -3294,7 +3294,7 @@ const MUTRA = {
    ],
    "duration": 153,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6169895588855808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jane-sinatra.jpg",
    "moods": [
     "Happy",
     "Uplifting"
@@ -3317,7 +3317,7 @@ const MUTRA = {
    ],
    "duration": 33,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6461688217862144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/japan-fight.jpg",
    "moods": [
     "Epic",
     "Tense"
@@ -3337,7 +3337,7 @@ const MUTRA = {
    "packages": [],
    "duration": 28,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5054313334308864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/japan-flutes.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -3357,7 +3357,7 @@ const MUTRA = {
    "packages": [],
    "duration": 66,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4517751659954176.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jaqleen-bieter.jpg",
    "moods": [
     "Party"
    ],
@@ -3376,7 +3376,7 @@ const MUTRA = {
    "packages": [],
    "duration": 56,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5080701613375488.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jazz-swing-sax-light.jpg",
    "moods": [
     "Romantic",
     "Chill",
@@ -3398,7 +3398,7 @@ const MUTRA = {
    "packages": [],
    "duration": 81,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6206601520218112.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jazz-swing-sax.jpg",
    "moods": [
     "Romantic",
     "Chill",
@@ -3421,7 +3421,7 @@ const MUTRA = {
    "packages": [],
    "duration": 220,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6276970264395776.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jazzy-funk-jam.jpg",
    "moods": [
     "Uplifting"
    ],
@@ -3445,7 +3445,7 @@ const MUTRA = {
    ],
    "duration": 116,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4566660583260160.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/jimmy-choo.jpg",
    "moods": [
     "Chill"
    ],
@@ -3466,7 +3466,7 @@ const MUTRA = {
    "packages": [],
    "duration": 143,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4710753061830656.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/4-joker-up-my-sleeve.jpg",
    "moods": [
     "Chill"
    ],
@@ -3488,7 +3488,7 @@ const MUTRA = {
    ],
    "duration": 222,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5097781154807808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/just-like-me.jpg",
    "moods": [
     "Aggressive"
    ],
@@ -3511,7 +3511,7 @@ const MUTRA = {
    ],
    "duration": 206,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5043995682013184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/kaviar-woman-long.jpg",
    "moods": [
     "Uplifting"
    ],
@@ -3533,7 +3533,7 @@ const MUTRA = {
    ],
    "duration": 30,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6732845542277120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/kaviar-woman-short.jpg",
    "moods": [
     "Uplifting"
    ],
@@ -3554,7 +3554,7 @@ const MUTRA = {
    ],
    "duration": 206,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4777163993645056.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/kaviar-woman-minimal-edit.jpg",
    "moods": [
     "Chill"
    ],
@@ -3574,7 +3574,7 @@ const MUTRA = {
    "packages": [],
    "duration": 16,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4957556311064576.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/kinder-fun.jpg",
    "moods": [
     "Chill"
    ],
@@ -3594,7 +3594,7 @@ const MUTRA = {
    "packages": [],
    "duration": 98,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4799226636664832.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/kingston-s-shake.jpg",
    "moods": [
     "Party"
    ],
@@ -3614,7 +3614,7 @@ const MUTRA = {
    "packages": [],
    "duration": 32,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4745937433919488.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/kneset-new-2-18-12-17.jpg",
    "moods": [
     "Chill"
    ],
@@ -3633,7 +3633,7 @@ const MUTRA = {
    "packages": [],
    "duration": 196,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5024057420414976.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/knock-knock.jpg",
    "moods": [
     "Party"
    ],
@@ -3652,7 +3652,7 @@ const MUTRA = {
    "packages": [],
    "duration": 196,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/knock-knock-drum-percs.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/knock-knock-drum-percs.jpg",
    "moods": [
     "Party"
    ],
@@ -3673,7 +3673,7 @@ const MUTRA = {
    "packages": [],
    "duration": 203,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5898738264440832.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/known-unknown.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -3696,7 +3696,7 @@ const MUTRA = {
    ],
    "duration": 42,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4704777151709184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/kuzo-s-dream.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -3717,7 +3717,7 @@ const MUTRA = {
    "packages": [],
    "duration": 228,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6431432303968256.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/laba-maze.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -3736,7 +3736,7 @@ const MUTRA = {
    "packages": [],
    "duration": 153,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/laladin-yaakov-playback-redo.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/laladin-yaakov-playback-redo.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -3756,7 +3756,7 @@ const MUTRA = {
    "packages": [],
    "duration": 5,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5925126543507456.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lapam-rav-sal-main-sagir-music-playback.jpg",
    "moods": [
     "Aggressive",
     "Happy"
@@ -3779,7 +3779,7 @@ const MUTRA = {
    ],
    "duration": 150,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5658900672020480.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_41523473516f4734747867~mv2_d_7500_5000_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/last-episodes-theme.jpg",
    "moods": [
     "Aggressive"
    ],
@@ -3800,7 +3800,7 @@ const MUTRA = {
    "packages": [],
    "duration": 43,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6452892124839936.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/later-swiss.jpg",
    "moods": [
     "Chill"
    ],
@@ -3821,7 +3821,7 @@ const MUTRA = {
    "packages": [],
    "duration": 212,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5397360962174976.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/latus.jpg",
    "moods": [
     "Chill"
    ],
@@ -3842,7 +3842,7 @@ const MUTRA = {
    ],
    "duration": 128,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6695938485649408.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lies-deception.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -3863,7 +3863,7 @@ const MUTRA = {
    "packages": [],
    "duration": 224,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6426503845773312.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lily-west.jpg",
    "moods": [
     "Party"
    ],
@@ -3886,7 +3886,7 @@ const MUTRA = {
    ],
    "duration": 41,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5830677058551808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/little-big-adventure.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -3906,7 +3906,7 @@ const MUTRA = {
    "packages": [],
    "duration": 191,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6171417148129280.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lola-marsh-wishing-girl-ori-toledano-gil-landau-remix.jpg",
    "moods": [
     "Chill"
    ],
@@ -3924,7 +3924,7 @@ const MUTRA = {
    "packages": [],
    "duration": 106,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4869595380842496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lonely-road.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -3944,7 +3944,7 @@ const MUTRA = {
    "packages": [],
    "duration": 205,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5995495287685120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lost-in-marakesh-full.jpg",
    "moods": [
     "Party"
    ],
@@ -3964,7 +3964,7 @@ const MUTRA = {
    "packages": [],
    "duration": 85,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5432545334263808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lost-in-marakesh-light.jpg",
    "moods": [
     "Chill"
    ],
@@ -3983,7 +3983,7 @@ const MUTRA = {
    "packages": [],
    "duration": 31,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6558445241106432.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/lost-in-marakesh-short.jpg",
    "moods": [
     "Party"
    ],
@@ -4004,7 +4004,7 @@ const MUTRA = {
    ],
    "duration": 289,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6650809653657600.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/love-never-end-instrumental.jpg",
    "moods": [
     "Party",
     "Romantic"
@@ -4026,7 +4026,7 @@ const MUTRA = {
    "packages": [],
    "duration": 170,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6523260869017600.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/love-to-love-you.jpg",
    "moods": [
     "Playful",
     "Romantic",
@@ -4047,7 +4047,7 @@ const MUTRA = {
    "packages": [],
    "duration": 110,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4728857892487168.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/low-low-low.jpg",
    "moods": [
     "Party"
    ],
@@ -4070,7 +4070,7 @@ const MUTRA = {
    ],
    "duration": 50,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5267727105130496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/magical-morning.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4091,7 +4091,7 @@ const MUTRA = {
    "packages": [],
    "duration": 114,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6101048403951616.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/magician.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -4110,7 +4110,7 @@ const MUTRA = {
    "packages": [],
    "duration": 150,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6294049805828096.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/main-intro-theme-action-tension-long-v.jpg",
    "moods": [
     "Tense"
    ],
@@ -4130,7 +4130,7 @@ const MUTRA = {
    "packages": [],
    "duration": 158,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5168149898985472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/main-intro-theme-full-mix-dark.jpg",
    "moods": [
     "Dramatic",
     "Dark"
@@ -4151,7 +4151,7 @@ const MUTRA = {
    "packages": [],
    "duration": 17,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5731099852406784.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/main-intro-theme-short-9-favorite.jpg",
    "moods": [
     "Chill"
    ],
@@ -4171,7 +4171,7 @@ const MUTRA = {
    ],
    "duration": 162,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4693673520398336.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/man-is-gone.jpg",
    "moods": [
     "Chill"
    ],
@@ -4194,7 +4194,7 @@ const MUTRA = {
    ],
    "duration": 222,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5889429526806528.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/marimba-forest.jpg",
    "moods": [
     "Chill"
    ],
@@ -4214,7 +4214,7 @@ const MUTRA = {
    "packages": [],
    "duration": 170,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4570015573475328.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/massive-attack-dear-drop-ori-toledano.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -4235,7 +4235,7 @@ const MUTRA = {
    ],
    "duration": 170,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6401431462477824.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6b765f464e6d4a4f56766f~mv2_d_5572_3715_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/massive-attack-tear-drop-techno-remix.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -4255,7 +4255,7 @@ const MUTRA = {
    "packages": [],
    "duration": 179,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/matter-1-4.m4a",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/matter-1-4.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4275,7 +4275,7 @@ const MUTRA = {
    "packages": [],
    "duration": 9,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5854757799329792.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/meduza-reef.jpg",
    "moods": [
     "Tense",
     "Aggressive"
@@ -4298,7 +4298,7 @@ const MUTRA = {
    ],
    "duration": 196,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6087859700236288.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/megastar-instrumental.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -4319,7 +4319,7 @@ const MUTRA = {
    "packages": [],
    "duration": 184,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5996303110635520.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/midroad-pads.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4339,7 +4339,7 @@ const MUTRA = {
    "packages": [],
    "duration": 150,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5511710171463680.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/mondrian-desert-drift.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -4358,7 +4358,7 @@ const MUTRA = {
    "packages": [],
    "duration": 114,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5362176590086144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/mondrians-emo-drift.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4379,7 +4379,7 @@ const MUTRA = {
    "packages": [],
    "duration": 306,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5801981241196544.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/mr-sandman-cover.jpg",
    "moods": [
     "Chill"
    ],
@@ -4399,7 +4399,7 @@ const MUTRA = {
    "packages": [],
    "duration": 67,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4605712590176256.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/musical-fairy.jpg",
    "moods": [
     "Uplifting"
    ],
@@ -4420,7 +4420,7 @@ const MUTRA = {
    ],
    "duration": 73,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5828369520263168.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/mutants.jpg",
    "moods": [
     "Chill"
    ],
@@ -4440,7 +4440,7 @@ const MUTRA = {
    "packages": [],
    "duration": 200,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6488076496928768.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/my-bell-mambo-bg-vox-ver.jpg",
    "moods": [
     "Party"
    ],
@@ -4461,7 +4461,7 @@ const MUTRA = {
    ],
    "duration": 273,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6695455066947584.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/my-love.jpg",
    "moods": [
     "Romantic"
    ],
@@ -4481,7 +4481,7 @@ const MUTRA = {
    "packages": [],
    "duration": 21,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6505668682973184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/my-love-short.jpg",
    "moods": [
     "Romantic"
    ],
@@ -4500,7 +4500,7 @@ const MUTRA = {
    "packages": [],
    "duration": 243,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5608467194707968.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/nazda-rovia.jpg",
    "moods": [
     "Happy",
     "Uplifting"
@@ -4521,7 +4521,7 @@ const MUTRA = {
    "packages": [],
    "duration": 191,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4658489148309504.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/nervs.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -4542,7 +4542,7 @@ const MUTRA = {
    "packages": [],
    "duration": 79,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5027412410630144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/news-break-theme.jpg",
    "moods": [
     "Chill"
    ],
@@ -4561,7 +4561,7 @@ const MUTRA = {
    "packages": [],
    "duration": 52,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/ni-korea.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ni-korea.jpg",
    "moods": [
     "Chill"
    ],
@@ -4583,7 +4583,7 @@ const MUTRA = {
    ],
    "duration": 26,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5784389055152128.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ninja-assassin.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4604,7 +4604,7 @@ const MUTRA = {
    "packages": [],
    "duration": 289,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5863553892352000.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/no-longer-need-help.jpg",
    "moods": [
     "Chill"
    ],
@@ -4623,7 +4623,7 @@ const MUTRA = {
    "packages": [],
    "duration": 291,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/no-longer-need-help-playback.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/no-longer-need-help-playback.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -4646,7 +4646,7 @@ const MUTRA = {
    ],
    "duration": 210,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6645893526716416.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/nobody-knows-nothing-anywhere.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -4669,7 +4669,7 @@ const MUTRA = {
    ],
    "duration": 77,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4541064297840640.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6534494a50394158675f45~mv2_d_5747_3831_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/normality.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4690,7 +4690,7 @@ const MUTRA = {
    "packages": [],
    "duration": 236,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/north-pulses.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/north-pulses.jpg",
    "moods": [
     "Chill"
    ],
@@ -4710,7 +4710,7 @@ const MUTRA = {
    "packages": [],
    "duration": 195,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5617263287730176.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/off-the-grid.jpg",
    "moods": [
     "Party"
    ],
@@ -4729,7 +4729,7 @@ const MUTRA = {
    "packages": [],
    "duration": 195,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/off-the-grid-playback.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/off-the-grid-playback.jpg",
    "moods": [
     "Chill"
    ],
@@ -4751,7 +4751,7 @@ const MUTRA = {
    ],
    "duration": 125,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5659722193567744.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ok-at-the-station.jpg",
    "moods": [
     "Happy",
     "Uplifting"
@@ -4773,7 +4773,7 @@ const MUTRA = {
    ],
    "duration": 125,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4533822286725120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ok-at-the-station-playback.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -4793,7 +4793,7 @@ const MUTRA = {
    "packages": [],
    "duration": 55,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5731612497018880.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/old-broadway.jpg",
    "moods": [
     "Uplifting",
     "Chill"
@@ -4814,7 +4814,7 @@ const MUTRA = {
    "packages": [],
    "duration": 168,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4676081334353920.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/one-day-tale-buza.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4837,7 +4837,7 @@ const MUTRA = {
    ],
    "duration": 101,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5851513555517440.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ophelia-s-doubt.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4860,7 +4860,7 @@ const MUTRA = {
    ],
    "duration": 210,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4528491561222144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_4b3157394f6a4567616349~mv2_d_8521_10538_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ouzo.jpg",
    "moods": [
     "Party",
     "Playful"
@@ -4882,7 +4882,7 @@ const MUTRA = {
    "packages": [],
    "duration": 44,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/owls.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/owls.jpg",
    "moods": [
     "Chill"
    ],
@@ -4900,7 +4900,7 @@ const MUTRA = {
    "packages": [],
    "duration": 176,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/paddy-east-wind.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/paddy-east-wind.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -4922,7 +4922,7 @@ const MUTRA = {
    ],
    "duration": 6,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5300603938930688.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pam-pam-pam.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -4942,7 +4942,7 @@ const MUTRA = {
    "packages": [],
    "duration": 146,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6382523380662272.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pashut.jpg",
    "moods": [
     "Chill"
    ],
@@ -4962,7 +4962,7 @@ const MUTRA = {
    ],
    "duration": 209,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5320139933220864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_52397a326f695031666449~mv2_d_6676_10000_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/patricia.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -4984,7 +4984,7 @@ const MUTRA = {
    ],
    "duration": 2,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5312963378413568.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-alert.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5000,7 +5000,7 @@ const MUTRA = {
    ],
    "duration": 10,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5875913331834880.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-confetti.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5016,7 +5016,7 @@ const MUTRA = {
    ],
    "duration": 3,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4750013424992256.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-gif-2-parts.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5032,7 +5032,7 @@ const MUTRA = {
    ],
    "duration": 1,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6579600773611520.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-gif-part-1.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5048,7 +5048,7 @@ const MUTRA = {
    ],
    "duration": 1,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5453700866768896.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-gif-part-2.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5064,7 +5064,7 @@ const MUTRA = {
    ],
    "duration": 4,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6016650820190208.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-main-money-in.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5080,7 +5080,7 @@ const MUTRA = {
    ],
    "duration": 1,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4890750913347584.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-received.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5096,7 +5096,7 @@ const MUTRA = {
    ],
    "duration": 4,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6298125796900864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-regular-push.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5112,7 +5112,7 @@ const MUTRA = {
    ],
    "duration": 1,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5172225890058240.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-sent.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5128,7 +5128,7 @@ const MUTRA = {
    ],
    "duration": 5,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5735175843479552.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-stars.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5144,7 +5144,7 @@ const MUTRA = {
    ],
    "duration": 139,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5552906877009920.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pepper-anthem.jpg",
    "moods": [],
    "instruments": []
   },
@@ -5159,7 +5159,7 @@ const MUTRA = {
    "packages": [],
    "duration": 82,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5291807845908480.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/petite-marionette.jpg",
    "moods": [
     "Uplifting",
     "Chill"
@@ -5181,7 +5181,7 @@ const MUTRA = {
    ],
    "duration": 30,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6393627011973120.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pieces-of-a-whole.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -5201,7 +5201,7 @@ const MUTRA = {
    "packages": [],
    "duration": 54,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5309400031952896.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pink-trap.jpg",
    "moods": [
     "Party"
    ],
@@ -5222,7 +5222,7 @@ const MUTRA = {
    ],
    "duration": 26,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6434787294183424.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pizzi-dark-comic.jpg",
    "moods": [
     "Dramatic",
     "Dark",
@@ -5244,7 +5244,7 @@ const MUTRA = {
    "packages": [],
    "duration": 21,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5221439101730816.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pop-rock-under.jpg",
    "moods": [
     "Happy",
     "Playful"
@@ -5266,7 +5266,7 @@ const MUTRA = {
    "packages": [],
    "duration": 46,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6347339008573440.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/positive-happy-folk.jpg",
    "moods": [
     "Uplifting",
     "Chill"
@@ -5287,7 +5287,7 @@ const MUTRA = {
    "packages": [],
    "duration": 34,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5582078915641344.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/positive-intimate-drift.jpg",
    "moods": [
     "Romantic",
     "Chill",
@@ -5311,7 +5311,7 @@ const MUTRA = {
    ],
    "duration": 268,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6017490956058624.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/power-to-go-on.jpg",
    "moods": [
     "Party",
     "Playful"
@@ -5332,7 +5332,7 @@ const MUTRA = {
    "packages": [],
    "duration": 170,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6417707752751104.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/pray.jpg",
    "moods": [
     "Party"
    ],
@@ -5352,7 +5352,7 @@ const MUTRA = {
    "packages": [],
    "duration": 330,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5326992217997312.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/precious-love.jpg",
    "moods": [
     "Party",
     "Romantic"
@@ -5375,7 +5375,7 @@ const MUTRA = {
    ],
    "duration": 8,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6476568736038912.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/purified.jpg",
    "moods": [
     "Chill"
    ],
@@ -5395,7 +5395,7 @@ const MUTRA = {
    "packages": [],
    "duration": 267,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4939964125020160.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/r-u-mine-dubstep-remix.jpg",
    "moods": [
     "Epic",
     "Party"
@@ -5417,7 +5417,7 @@ const MUTRA = {
    ],
    "duration": 63,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6364418550005760.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/rabels.jpg",
    "moods": [
     "Aggressive"
    ],
@@ -5437,7 +5437,7 @@ const MUTRA = {
    "packages": [],
    "duration": 105,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6065864031862784.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/rainbow-disco.jpg",
    "moods": [
     "Playful"
    ],
@@ -5458,7 +5458,7 @@ const MUTRA = {
    ],
    "duration": 261,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6580440909479936.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/real-feel-blend-08.jpg",
    "moods": [
     "Party"
    ],
@@ -5480,7 +5480,7 @@ const MUTRA = {
    ],
    "duration": 334,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4549208369528832.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/reborn.jpg",
    "moods": [
     "Party"
    ],
@@ -5501,7 +5501,7 @@ const MUTRA = {
    "packages": [],
    "duration": 126,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6743163194572800.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/revengence.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -5522,7 +5522,7 @@ const MUTRA = {
    "packages": [],
    "duration": 38,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5406157055197184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/rock-tension.jpg",
    "moods": [
     "Tense"
    ],
@@ -5545,7 +5545,7 @@ const MUTRA = {
    ],
    "duration": 23,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6223681061650432.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/rock-n-roll.jpg",
    "moods": [
     "Happy",
     "Playful"
@@ -5567,7 +5567,7 @@ const MUTRA = {
    ],
    "duration": 31,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4816306178097152.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/rock-n-roll-surf.jpg",
    "moods": [
     "Happy"
    ],
@@ -5588,7 +5588,7 @@ const MUTRA = {
    "packages": [],
    "duration": 237,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5819573427240960.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/route-de-l-amour.jpg",
    "moods": [
     "Party",
     "Playful",
@@ -5611,7 +5611,7 @@ const MUTRA = {
    ],
    "duration": 333,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5675108276371456.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/route-de-l-amour-2.jpg",
    "moods": [
     "Party",
     "Romantic"
@@ -5632,7 +5632,7 @@ const MUTRA = {
    "packages": [],
    "duration": 248,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5010332869197824.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/rubi.jpg",
    "moods": [
     "Party"
    ],
@@ -5653,7 +5653,7 @@ const MUTRA = {
    ],
    "duration": 136,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5326479573385216.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/sad-gameboy.jpg",
    "moods": [
     "Chill"
    ],
@@ -5672,7 +5672,7 @@ const MUTRA = {
    "packages": [],
    "duration": 189,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6136232776040448.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/same.jpg",
    "moods": [
     "Party"
    ],
@@ -5693,7 +5693,7 @@ const MUTRA = {
    ],
    "duration": 49,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4787718875774976.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/second-hand-playback.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -5715,7 +5715,7 @@ const MUTRA = {
    ],
    "duration": 95,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/second-hand-no-melody.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/second-hand-no-melody.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -5737,7 +5737,7 @@ const MUTRA = {
    ],
    "duration": 250,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4904267108319232.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shading-to-grey.jpg",
    "moods": [
     "Chill"
    ],
@@ -5759,7 +5759,7 @@ const MUTRA = {
    ],
    "duration": 145,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5654391468064768.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6e77784b325a6e722d6973~mv2_d_3938_5907_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shading-to-phrase.jpg",
    "moods": [
     "Party"
    ],
@@ -5781,7 +5781,7 @@ const MUTRA = {
    ],
    "duration": 86,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5871837340762112.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shady-talk-pulse.jpg",
    "moods": [
     "Chill"
    ],
@@ -5800,7 +5800,7 @@ const MUTRA = {
    "packages": [],
    "duration": 10,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5889942171418624.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shalom-alechem-red-army-style.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -5820,7 +5820,7 @@ const MUTRA = {
    "packages": [],
    "duration": 69,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/shifting-gears.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shifting-gears.jpg",
    "moods": [
     "Party"
    ],
@@ -5838,7 +5838,7 @@ const MUTRA = {
    "packages": [],
    "duration": 172,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4887187566886912.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shitty-worms.jpg",
    "moods": [
     "Party"
    ],
@@ -5858,7 +5858,7 @@ const MUTRA = {
    "packages": [],
    "duration": 120,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6416270347993088.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shorditch-14.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -5881,7 +5881,7 @@ const MUTRA = {
    "packages": [],
    "duration": 44,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/shorditch-14-2.m4a",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/shorditch-14-2.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -5903,7 +5903,7 @@ const MUTRA = {
    "packages": [],
    "duration": 32,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6285766357417984.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/simple-country-folk-guitar-whistle.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -5924,7 +5924,7 @@ const MUTRA = {
    "packages": [],
    "duration": 66,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4764042264576000.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/simple-things.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -5949,7 +5949,7 @@ const MUTRA = {
    ],
    "duration": 145,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4815297263435776.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/slow-smooth-jazz.jpg",
    "moods": [
     "Romantic",
     "Chill",
@@ -5974,7 +5974,7 @@ const MUTRA = {
    ],
    "duration": 8,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4646981387419648.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/soft-orchestral-sting.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -5994,7 +5994,7 @@ const MUTRA = {
    "packages": [],
    "duration": 203,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4552936032043008.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/somebody-else-glitch-mix.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -6015,7 +6015,7 @@ const MUTRA = {
    ],
    "duration": 72,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5379256131518464.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/somebody-else-tribal.jpg",
    "moods": [
     "Aggressive",
     "Playful"
@@ -6039,7 +6039,7 @@ const MUTRA = {
    ],
    "duration": 40,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4605199945564160.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/somewhere-in-the-middle.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -6059,7 +6059,7 @@ const MUTRA = {
    "packages": [],
    "duration": 146,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6593629613195264.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/sorrow.jpg",
    "moods": [
     "Chill"
    ],
@@ -6082,7 +6082,7 @@ const MUTRA = {
    ],
    "duration": 96,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6030167015161856.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/space-lotus.jpg",
    "moods": [
     "Chill"
    ],
@@ -6101,7 +6101,7 @@ const MUTRA = {
    "packages": [],
    "duration": 51,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6153824962084864.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/spanish-tarantula.jpg",
    "moods": [
     "Party"
    ],
@@ -6121,7 +6121,7 @@ const MUTRA = {
    "packages": [],
    "duration": 72,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5132965526896640.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/spooky-talk.jpg",
    "moods": [
     "Dramatic",
     "Dark",
@@ -6142,7 +6142,7 @@ const MUTRA = {
    "packages": [],
    "duration": 31,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5467729706352640.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/stream-of-love.jpg",
    "moods": [
     "Uplifting",
     "Romantic",
@@ -6164,7 +6164,7 @@ const MUTRA = {
    "packages": [],
    "duration": 31,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4878391473864704.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/stream-of-love-playback.jpg",
    "moods": [
     "Playful",
     "Romantic"
@@ -6186,7 +6186,7 @@ const MUTRA = {
    "packages": [],
    "duration": 110,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5433353157214208.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/stringfield.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6209,7 +6209,7 @@ const MUTRA = {
    ],
    "duration": 187,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6712907280678912.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/stringfield-minimal.jpg",
    "moods": [
     "Dramatic"
    ],
@@ -6232,7 +6232,7 @@ const MUTRA = {
    ],
    "duration": 117,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4549691788230656.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/sugary-salt-mountain.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6253,7 +6253,7 @@ const MUTRA = {
    "packages": [],
    "duration": 48,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6699182729461760.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/suit-yourself.jpg",
    "moods": [
     "Party",
     "Happy",
@@ -6274,7 +6274,7 @@ const MUTRA = {
    "packages": [],
    "duration": 48,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5168662543597568.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/suit-yourself-playback.jpg",
    "moods": [
     "Party"
    ],
@@ -6295,7 +6295,7 @@ const MUTRA = {
    ],
    "duration": 429,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5112158322950144.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/sunny-is-a-hopeless-girl.jpg",
    "moods": [
     "Chill"
    ],
@@ -6317,7 +6317,7 @@ const MUTRA = {
    ],
    "duration": 70,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5129610536681472.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/supaplex.jpg",
    "moods": [
     "Aggressive",
     "Party",
@@ -6340,7 +6340,7 @@ const MUTRA = {
    ],
    "duration": 58,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5288563602096128.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/superheros.jpg",
    "moods": [
     "Epic"
    ],
@@ -6359,7 +6359,7 @@ const MUTRA = {
    "packages": [],
    "duration": 74,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6004291380707328.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/supersize-bass.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -6382,7 +6382,7 @@ const MUTRA = {
    ],
    "duration": 157,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5790387312525312.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_5049444837625a4e537141~mv2_d_3024_4032_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/tangible.jpg",
    "moods": [
     "Party"
    ],
@@ -6401,7 +6401,7 @@ const MUTRA = {
    "packages": [],
    "duration": 220,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5008895464439808.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/tango-shmango.jpg",
    "moods": [
     "Party"
    ],
@@ -6423,7 +6423,7 @@ const MUTRA = {
    ],
    "duration": 48,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5607954550095872.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/taste-of-passion-80-s-parody.jpg",
    "moods": [
     "Uplifting",
     "Sad"
@@ -6444,7 +6444,7 @@ const MUTRA = {
    "packages": [],
    "duration": 66,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6294562450440192.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/tech-e-fashion.jpg",
    "moods": [
     "Party"
    ],
@@ -6465,7 +6465,7 @@ const MUTRA = {
    "packages": [],
    "duration": 27,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6567241334128640.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/telenovella-full.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6485,7 +6485,7 @@ const MUTRA = {
    "packages": [],
    "duration": 27,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4737653985509376.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/telenovella-piano.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6508,7 +6508,7 @@ const MUTRA = {
    ],
    "duration": 153,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6663485712760832.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-arrival.jpg",
    "moods": [
     "Chill"
    ],
@@ -6532,7 +6532,7 @@ const MUTRA = {
    ],
    "duration": 144,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5977390457028608.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-devious-fox.jpg",
    "moods": [
     "Chill"
    ],
@@ -6556,7 +6556,7 @@ const MUTRA = {
    ],
    "duration": 39,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6575524782538752.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-freak-funk-show-full.jpg",
    "moods": [
     "Party"
    ],
@@ -6578,7 +6578,7 @@ const MUTRA = {
    ],
    "duration": 27,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4723631991029760.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-freak-show.jpg",
    "moods": [
     "Party"
    ],
@@ -6600,7 +6600,7 @@ const MUTRA = {
    ],
    "duration": 27,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4957043666452480.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-freak-show-1.jpg",
    "moods": [
     "Party"
    ],
@@ -6622,7 +6622,7 @@ const MUTRA = {
    ],
    "duration": 39,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6752293850447872.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/nsplsh_6f4b3656486a736e487973~mv2_d_5772_4000_s_4_2.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-freak-show-2.jpg",
    "moods": [
     "Party"
    ],
@@ -6644,7 +6644,7 @@ const MUTRA = {
    ],
    "duration": 53,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5675591695073280.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-great-kingdom.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6664,7 +6664,7 @@ const MUTRA = {
    "packages": [],
    "duration": 53,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5019128962220032.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-kiss.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6688,7 +6688,7 @@ const MUTRA = {
    ],
    "duration": 281,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6452379480227840.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-race-instrumental.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -6712,7 +6712,7 @@ const MUTRA = {
    ],
    "duration": 120,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5265419566841856.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-rise-and-fall-long-ver.jpg",
    "moods": [
     "Party"
    ],
@@ -6733,7 +6733,7 @@ const MUTRA = {
    ],
    "duration": 98,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4983944590131200.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-rise-and-fall-organic-ver.jpg",
    "moods": [
     "Party"
    ],
@@ -6756,7 +6756,7 @@ const MUTRA = {
    ],
    "duration": 98,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6391319473684480.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-rise-and-fall-original-ver.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -6776,7 +6776,7 @@ const MUTRA = {
    "packages": [],
    "duration": 46,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-src/the-sad-pianist.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-sad-pianist.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6799,7 +6799,7 @@ const MUTRA = {
    ],
    "duration": 87,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5112641741651968.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-secret-garden.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6822,7 +6822,7 @@ const MUTRA = {
    ],
    "duration": 19,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4986252128419840.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/the-terrible-twos.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6845,7 +6845,7 @@ const MUTRA = {
    ],
    "duration": 302,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6311641991872512.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/them-all-fears.jpg",
    "moods": [
     "Chill"
    ],
@@ -6867,7 +6867,7 @@ const MUTRA = {
    ],
    "duration": 61,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-extra/this-is-how-i-tricked-ya.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/this-is-how-i-tricked-ya.jpg",
    "moods": [
     "Party"
    ],
@@ -6887,7 +6887,7 @@ const MUTRA = {
    "packages": [],
    "duration": 148,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6399602922094592.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/tigers-instrumental.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6910,7 +6910,7 @@ const MUTRA = {
    ],
    "duration": 8,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4845514640064512.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/tik-tak-toe-piano.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -6932,7 +6932,7 @@ const MUTRA = {
    ],
    "duration": 433,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6238058229792768.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/till-it-s-gone.jpg",
    "moods": [
     "Chill"
    ],
@@ -6954,7 +6954,7 @@ const MUTRA = {
    ],
    "duration": 60,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4622792131608576.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/tokyo-shake.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -6975,7 +6975,7 @@ const MUTRA = {
    "packages": [],
    "duration": 182,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5573282822619136.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/too-much-of-everything.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -6997,7 +6997,7 @@ const MUTRA = {
    "packages": [],
    "duration": 221,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5256623473819648.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/train-is-on.jpg",
    "moods": [
     "Chill"
    ],
@@ -7016,7 +7016,7 @@ const MUTRA = {
    "packages": [],
    "duration": 109,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4667285241331712.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/boston-shake.jpg",
    "moods": [
     "Party"
    ],
@@ -7036,7 +7036,7 @@ const MUTRA = {
    "packages": [],
    "duration": 104,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6707978822483968.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/trap-mass.jpg",
    "moods": [
     "Aggressive",
     "Party"
@@ -7059,7 +7059,7 @@ const MUTRA = {
    ],
    "duration": 186,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6170904503517184.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/trump.jpg",
    "moods": [
     "Aggressive"
    ],
@@ -7080,7 +7080,7 @@ const MUTRA = {
    ],
    "duration": 18,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4534831201386496.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/tv-show-intro-ska-rock.jpg",
    "moods": [
     "Aggressive",
     "Happy"
@@ -7102,7 +7102,7 @@ const MUTRA = {
    ],
    "duration": 245,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5045004596674560.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/unban-that-shit.jpg",
    "moods": [
     "Aggressive",
     "Happy"
@@ -7125,7 +7125,7 @@ const MUTRA = {
    ],
    "duration": 416,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4830683346239488.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/vicious-heart.jpg",
    "moods": [
     "Party"
    ],
@@ -7147,7 +7147,7 @@ const MUTRA = {
    ],
    "duration": 172,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5956583253082112.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/vintage-berlin-techno.jpg",
    "moods": [
     "Chill"
    ],
@@ -7168,7 +7168,7 @@ const MUTRA = {
    ],
    "duration": 166,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5378247216857088.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/vintage-uplifting-adventure.jpg",
    "moods": [
     "Happy",
     "Playful"
@@ -7191,7 +7191,7 @@ const MUTRA = {
    ],
    "duration": 62,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5971414546907136.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/war-and-the-toll.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -7211,7 +7211,7 @@ const MUTRA = {
    "packages": [],
    "duration": 139,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5687632031907840.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/western-moby-kick.jpg",
    "moods": [
     "Sad"
    ],
@@ -7233,7 +7233,7 @@ const MUTRA = {
    ],
    "duration": 178,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5537585805918208.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/what-if-it-s-real.jpg",
    "moods": [
     "Chill"
    ],
@@ -7255,7 +7255,7 @@ const MUTRA = {
    ],
    "duration": 79,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5692560490102784.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/whoopsy-doops.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -7275,7 +7275,7 @@ const MUTRA = {
    "packages": [],
    "duration": 62,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5308887387340800.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/wierd-to-rage-dist-beat.jpg",
    "moods": [
     "Chill"
    ],
@@ -7297,7 +7297,7 @@ const MUTRA = {
    ],
    "duration": 8,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5772881294262272.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/world-sting.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -7316,7 +7316,7 @@ const MUTRA = {
    "packages": [],
    "duration": 99,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4561732125065216.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/wow.jpg",
    "moods": [
     "Party"
    ],
@@ -7337,7 +7337,7 @@ const MUTRA = {
    ],
    "duration": 12,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5689939570196480.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/xmas-clarinet.jpg",
    "moods": [
     "Chill",
     "Sad"
@@ -7362,7 +7362,7 @@ const MUTRA = {
    ],
    "duration": 14,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5408464593485824.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/xmas-clarinet-slow.jpg",
    "moods": [
     "Dramatic",
     "Sad"
@@ -7385,7 +7385,7 @@ const MUTRA = {
    ],
    "duration": 13,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6534364500328448.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/xmas-dance.jpg",
    "moods": [
     "Party"
    ],
@@ -7405,7 +7405,7 @@ const MUTRA = {
    "packages": [],
    "duration": 20,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5450137520308224.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/yo-ka-yay.jpg",
    "moods": [
     "Uplifting",
     "Chill"
@@ -7424,7 +7424,7 @@ const MUTRA = {
    "packages": [],
    "duration": 417,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5643651566796800.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/you-already-know.jpg",
    "moods": [
     "Party"
    ],
@@ -7444,7 +7444,7 @@ const MUTRA = {
    "packages": [],
    "duration": 16,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/5441341427286016.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/youngsters.jpg",
    "moods": [
     "Party",
     "Playful"
@@ -7466,7 +7466,7 @@ const MUTRA = {
    ],
    "duration": 187,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-extra/z-geramn.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/z-geramn.jpg",
    "moods": [
     "Chill"
    ],
@@ -7486,7 +7486,7 @@ const MUTRA = {
    "packages": [],
    "duration": 183,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4904779752931328.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/z-house.jpg",
    "moods": [
     "Party"
    ],
@@ -7509,7 +7509,7 @@ const MUTRA = {
    ],
    "duration": 175,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio-extra/z-jew.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/z-jew.jpg",
    "moods": [
     "Party"
    ],
@@ -7529,7 +7529,7 @@ const MUTRA = {
    "packages": [],
    "duration": 53,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/6312154636484608.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ze-popcorn.jpg",
    "moods": [
     "Party"
    ],
@@ -7550,7 +7550,7 @@ const MUTRA = {
    "packages": [],
    "duration": 53,
    "audio": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/audio/4992228038541312.mp3",
-   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers/placeholder.jpg",
+   "cover": "https://pub-0ffafc4717cd49acaa7cacd824146185.r2.dev/covers-art-sm/ze-popcorn-minimal.jpg",
    "moods": [
     "Party"
    ],
