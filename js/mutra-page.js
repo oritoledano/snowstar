@@ -6,20 +6,57 @@
     'mailto:hello@snowstar.company?subject=' + encodeURIComponent('Mutra license: ' + title) +
     '&body=' + encodeURIComponent(`Hi Snowstar,\n\nI'd like to license "${title}".\n\nUsage / media:\nTimeline:\n\nThanks!`);
 
-  // real per-track waveform (42 RMS peaks precomputed in mutra-waves.js);
-  // deterministic pseudo-waveform as fallback for any track missing one
-  const pseudoWave = (seed, n = 42) => {
-    const bars = [];
+  // real per-track waveform: 240 hex-encoded peak columns (mutra-waves.js),
+  // drawn as a mirrored Artlist-style canvas; pseudo fallback if missing
+  const pseudoWave = (seed, n = 240) => {
+    const bars = new Uint8Array(n);
     let x = seed * 9301 + 49297;
     for (let i = 0; i < n; i++) {
       x = (x * 9301 + 49297) % 233280;
-      const r = x / 233280;
-      bars.push(18 + Math.round(r * r * 82)); // 18–100%
+      bars[i] = 10 + Math.round((x / 233280) * 70);
     }
     return bars;
   };
-  const waveform = (track, seed) =>
-    (typeof MUTRA_WAVES !== 'undefined' && MUTRA_WAVES[track.slug]) || pseudoWave(seed);
+  const waveCache = {};
+  function waveform(track, seed) {
+    if (waveCache[track.slug]) return waveCache[track.slug];
+    let w;
+    const hex = typeof MUTRA_WAVES !== 'undefined' && MUTRA_WAVES[track.slug];
+    if (hex) {
+      w = new Uint8Array(hex.length / 2);
+      for (let i = 0; i < w.length; i++) w[i] = parseInt(hex.substr(i * 2, 2), 16);
+    } else {
+      w = pseudoWave(seed);
+    }
+    waveCache[track.slug] = w;
+    return w;
+  }
+
+  // Artlist-style render: thin mirrored columns around the vertical center.
+  // base = warm faint; played = gradient coral→amber up to `frac`.
+  function drawWave(canvas, peaks, frac) {
+    const dpr = devicePixelRatio || 1;
+    const cw = canvas.clientWidth, ch = canvas.clientHeight;
+    if (!cw) return;
+    if (canvas.width !== cw * dpr) { canvas.width = cw * dpr; canvas.height = ch * dpr; }
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cw, ch);
+    const n = peaks.length;
+    const colW = cw / n;
+    const barW = Math.max(1, colW * 0.62);
+    const mid = ch / 2;
+    const head = frac == null ? -1 : Math.floor(frac * n);
+    for (let i = 0; i < n; i++) {
+      const h = Math.max(1, (peaks[i] / 99) * (ch * 0.96) / 2);
+      if (i <= head) {
+        ctx.fillStyle = i === head ? '#ffc24b' : '#ff6a4d';
+      } else {
+        ctx.fillStyle = 'rgba(255,180,140,0.22)';
+      }
+      ctx.fillRect(i * colW, mid - h, barW, h * 2);
+    }
+  }
 
   const ICON_PLAY = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
   const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
@@ -41,12 +78,8 @@
     if (current) paintWave(current.row, frac);
   }
   function paintWave(row, frac) {
-    const bars = row.querySelectorAll('.trk-wave .bar');
-    const head = Math.floor(frac * bars.length);
-    bars.forEach((b, i) => {
-      b.classList.toggle('on', i <= head);
-      b.classList.toggle('head', i === head);
-    });
+    const canvas = row.querySelector('.trk-wave canvas');
+    if (canvas && canvas._peaks) drawWave(canvas, canvas._peaks, frac);
   }
 
   function loadTrack(track, row) {
@@ -155,7 +188,6 @@
       const i = MUTRA.tracks.indexOf(track);
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
-      const bars = waveform(track, i + 1).map(h => `<span class="bar" style="height:${h}%"></span>`).join('');
       const tags = [
         ...track.genres.slice(0, 2).map(g => `<span class="tag">${g}</span>`),
         ...(track.moods || []).slice(0, 2).map(x => `<span class="tag mood">${x}</span>`),
@@ -167,7 +199,7 @@
           <div class="trk-title">${track.title}</div>
           <div class="trk-artist">${track.artist}</div>
         </div>
-        <div class="trk-wave" role="button" aria-label="Seek ${track.title}">${bars}</div>
+        <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
         <div class="trk-tags">${tags}</div>
         <div class="trk-right">
           <span class="trk-dur">${fmt(track.duration)}</span>
@@ -182,8 +214,12 @@
         const r = wave.getBoundingClientRect();
         audio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * audio.duration;
       });
-      if (current && current.track === track) paintWave(row, audio.duration ? audio.currentTime / audio.duration : 0);
+      const cnv = row.querySelector('.trk-wave canvas');
+      cnv._peaks = waveform(track, i + 1);
       tracksEl.appendChild(row);
+      const isCur = current && current.track === track;
+      requestAnimationFrame(() => drawWave(cnv, cnv._peaks,
+        isCur && audio.duration ? audio.currentTime / audio.duration : null));
     });
     showMoreBtn.style.display = (!expanded && full.length > INITIAL) ? '' : 'none';
     if (showMoreBtn.style.display === '') showMoreBtn.textContent = `Show all ${full.length} tracks`;
@@ -200,6 +236,20 @@
   showMoreBtn.style.display = 'none';
   showMoreBtn.addEventListener('click', () => { expanded = true; render(); });
   tracksEl.insertAdjacentElement('afterend', showMoreBtn);
+
+  // keep canvas waveforms crisp on window resize
+  let rsz;
+  addEventListener('resize', () => {
+    clearTimeout(rsz);
+    rsz = setTimeout(() => {
+      tracksEl.querySelectorAll('.trk-wave canvas').forEach(c => {
+        if (!c._peaks) return;
+        const row = c.closest('.trk');
+        const isCur = current && current.row === row;
+        drawWave(c, c._peaks, isCur && audio.duration ? audio.currentTime / audio.duration : null);
+      });
+    }, 150);
+  });
 
   // ── filter chips (multi-select, Set-based, OR within a facet) ──
   function buildChips(rowEl, values, stateKey, allLabel) {

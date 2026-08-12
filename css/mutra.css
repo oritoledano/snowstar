@@ -118,11 +118,9 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 .trk-id{min-width:0}
 .trk-title{font-family:var(--font-display);font-weight:600;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trk-artist{color:var(--dim);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
-/* waveform */
-.trk-wave{display:flex;align-items:center;gap:2px;height:38px;cursor:pointer;position:relative;min-width:0}
-.trk-wave .bar{flex:1;min-width:2px;border-radius:2px;background:rgba(255,180,140,.16);transition:background .15s}
-.trk.playing .trk-wave .bar.on{background:var(--coral)}
-.trk.playing .trk-wave .bar.head{background:var(--amber);box-shadow:0 0 8px rgba(255,194,75,.6)}
+/* waveform — Artlist-style mirrored canvas render */
+.trk-wave{height:38px;cursor:pointer;position:relative;min-width:0}
+.trk-wave canvas{width:100%;height:100%;display:block}
 .trk-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:230px}
 .tag{font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--line-2);color:var(--amber);white-space:nowrap}
 .tag.mood{color:var(--pink);border-color:rgba(255,61,139,.28)}
