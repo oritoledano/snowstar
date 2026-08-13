@@ -204,7 +204,6 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 @media (max-width:560px){
   .trk-cover{display:none}
   .trk{grid-template-columns:44px 1fr auto;gap:10px;padding:12px 8px}
-  .ml-by{display:none}
   /* every track is by Ori Toledano — the line only steals width from the title */
   .trk-artist{display:none}
   .trk-right{gap:8px}
