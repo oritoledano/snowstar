@@ -18,7 +18,7 @@
   function renderNav() {
     if (M.user) {
       const who = M.user.name || M.user.email.split('@')[0];
-      authWrap.innerHTML = `<button class="auth-link" id="authAccount">${who}</button>` +
+      authWrap.innerHTML = `<button class="auth-link auth-who" id="authAccount">${who}</button>` +
         `<button class="auth-link auth-out" id="authLogout">Sign out</button>`;
       authWrap.querySelector('#authLogout').addEventListener('click', () => M.logout());
       authWrap.querySelector('#authAccount').addEventListener('click', () => {
