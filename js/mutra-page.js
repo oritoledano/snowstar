@@ -100,6 +100,7 @@
   }
 
   function loadTrack(track, row) {
+    if (window.mutraTrack) mutraTrack('play', track.slug, { once: true });
     if (current && current.track === track) { toggle(); return; }
     if (current) current.row.classList.remove('playing');
     current = { track, row };
@@ -227,6 +228,9 @@
           <a class="trk-lic" href="${mailto(track.title)}">License</a>
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
+      row.querySelector('.trk-lic').addEventListener('click', () => {
+        if (window.mutraTrack) mutraTrack('license', track.slug);
+      });
 
       // favorite
       const favBtn = row.querySelector('.trk-fav');
@@ -236,6 +240,7 @@
       favBtn.addEventListener('click', e => {
         e.stopPropagation();
         if (window.MutraMembers) MutraMembers.toggleFavorite(track.slug);
+        if (window.mutraTrack && !favBtn.classList.contains('on')) mutraTrack('favorite', track.slug);
       });
 
       // copy a direct link to this track
@@ -332,7 +337,17 @@
   buildChips($('#packageRow'), MUTRA.packages, 'packages', 'All packages');
   buildChips($('#genreRow'), MUTRA.genres, 'genres', 'All genres');
   buildChips($('#moodRow'), MUTRA.moods, 'moods', 'All moods');
-  $('#search').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); expanded = false; render(); });
+  let searchLog;
+  $('#search').addEventListener('input', e => {
+    state.q = e.target.value.trim().toLowerCase();
+    expanded = false;
+    render();
+    clearTimeout(searchLog);
+    const term = state.q;
+    if (term.length >= 3) searchLog = setTimeout(() => {
+      if (window.mutraTrack) mutraTrack('search', term, { once: true });
+    }, 1200);
+  });
 
   /** Reset every chip row to its "All" state (used when a deep link needs to reveal a track). */
   function syncChips() {

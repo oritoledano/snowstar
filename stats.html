@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Mutra — Stats</title>
+<link rel="icon" href="assets/ssc-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/mutra.css?v=7">
+<style>
+  body{padding-bottom:40px}
+  .st-wrap{max-width:1180px;margin:0 auto;padding:90px clamp(18px,4vw,44px) 40px}
+  .st-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .st-head h1{font-size:clamp(1.8rem,3.4vw,2.6rem)}
+  .st-sub{color:var(--muted);font-size:.9rem;margin-bottom:26px}
+  .st-range{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+  .st-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+  .st-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .st-card b{font-family:var(--font-display);font-size:2rem;display:block;line-height:1}
+  .st-card span{color:var(--muted);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-top:6px;display:block}
+  .st-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:900px){.st-grid{grid-template-columns:1fr}}
+  .st-panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .st-panel h2{font-size:1.05rem;margin-bottom:14px}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th{text-align:left;color:var(--dim);font-weight:500;font-size:.72rem;letter-spacing:.12em;
+     text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:8px;border-bottom:1px solid rgba(255,180,140,.06);color:var(--text)}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+  tr.click{cursor:pointer}
+  tr.click:hover td{background:rgba(255,180,140,.06)}
+  .bar{height:6px;border-radius:3px;background:var(--grad);display:block;min-width:2px}
+  .st-empty{color:var(--dim);padding:18px 4px;font-size:.9rem}
+  .st-gate{max-width:420px;margin:120px auto;text-align:center}
+  .st-gate p{color:var(--muted);margin:14px 0 22px}
+  .jrn{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+  .jrn li{list-style:none;color:var(--muted);font-size:.84rem;padding:3px 0}
+  .jrn b{color:var(--text);font-weight:600}
+  .pill{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:99px;
+        border:1px solid var(--line-2);color:var(--amber)}
+</style>
+</head>
+<body>
+<header class="mnav scrolled" id="mnav">
+  <a class="mlogo" href="mutra.html" aria-label="Mutra"><img class="ml-img" src="assets/mutra-wordmark.png" alt="MUTRA"><span class="ml-by">stats</span></a>
+  <nav class="mnav-links">
+    <a href="mutra.html">← Catalog</a>
+  </nav>
+</header>
+
+<div class="st-wrap" id="app">
+  <p class="st-sub">Loading…</p>
+</div>
+
+<script src="js/mutra-members.js?v=1"></script>
+<script>
+(function () {
+  const app = document.getElementById('app');
+  const fmtDate = ts => new Date(ts * 1000).toLocaleString(undefined,
+    { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  let days = 30;
+
+  function gate(msg) {
+    app.innerHTML = `<div class="st-gate">
+      <h1>Stats</h1><p>${msg}</p>
+      <a class="mbtn mbtn-solid" href="mutra.html">Back to the catalog</a></div>`;
+  }
+
+  async function load() {
+    const res = await fetch('/api/stats?days=' + days, { credentials: 'same-origin' });
+    if (res.status === 403) { gate('This page is for the site owner. Sign in with the owner account on the catalog page.'); return; }
+    if (!res.ok) { gate('Couldn’t load stats right now.'); return; }
+    render(await res.json());
+  }
+
+  function table(rows, cols, opts = {}) {
+    if (!rows.length) return '<p class="st-empty">Nothing yet.</p>';
+    const max = opts.barKey ? Math.max(...rows.map(r => r[opts.barKey] || 0)) : 0;
+    return `<table><thead><tr>${cols.map(c => `<th${c.num ? ' style="text-align:right"' : ''}>${c.label}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r => `<tr${opts.rowAttr ? opts.rowAttr(r) : ''}>${cols.map(c => {
+        let v = c.get(r);
+        if (c.bar && max) v = `${v} <span class="bar" style="width:${Math.round((r[opts.barKey] / max) * 90)}px"></span>`;
+        return `<td class="${c.num ? 'num' : ''}">${v}</td>`;
+      }).join('')}</tr>`).join('')}</tbody></table>`;
+  }
+
+  function render(d) {
+    const t = d.totals || {};
+    app.innerHTML = `
+      <div class="st-head">
+        <h1>Stats</h1>
+        <div class="st-range">
+          ${[7, 30, 90].map(n => `<button class="chip ${n === days ? 'active' : ''}" data-days="${n}">${n} days</button>`).join('')}
+        </div>
+      </div>
+      <p class="st-sub">Anonymous, cookieless. No IPs or personal data are stored — a visit is a random id that disappears when the tab closes.</p>
+
+      <div class="st-cards">
+        <div class="st-card"><b class="grad-text">${t.visits || 0}</b><span>Visits</span></div>
+        <div class="st-card"><b class="grad-text">${t.plays || 0}</b><span>Track plays</span></div>
+        <div class="st-card"><b class="grad-text">${t.licenses || 0}</b><span>License clicks</span></div>
+        <div class="st-card"><b class="grad-text">${t.views || 0}</b><span>Page views</span></div>
+      </div>
+
+      <div class="st-grid">
+        <div class="st-panel">
+          <h2>Most played tracks</h2>
+          ${table(d.topTracks, [
+            { label: 'Track', get: r => r.slug },
+            { label: 'Plays', num: true, bar: true, get: r => r.plays },
+            { label: 'People', num: true, get: r => r.listeners },
+          ], { barKey: 'plays' })}
+        </div>
+        <div class="st-panel">
+          <h2>License clicks</h2>
+          ${table(d.licenses, [
+            { label: 'Track', get: r => r.slug },
+            { label: 'Clicks', num: true, bar: true, get: r => r.clicks },
+          ], { barKey: 'clicks' })}
+        </div>
+        <div class="st-panel">
+          <h2>Where they came from</h2>
+          ${table(d.referrers, [
+            { label: 'Source', get: r => r.src },
+            { label: 'Visits', num: true, bar: true, get: r => r.visits },
+          ], { barKey: 'visits' })}
+        </div>
+        <div class="st-panel">
+          <h2>Countries</h2>
+          ${table(d.countries, [
+            { label: 'Country', get: r => r.country },
+            { label: 'Visits', num: true, bar: true, get: r => r.visits },
+          ], { barKey: 'visits' })}
+        </div>
+        <div class="st-panel" style="grid-column:1/-1">
+          <h2>Recent visits <span class="pill">click a row for the journey</span></h2>
+          ${table(d.recent, [
+            { label: 'When', get: r => fmtDate(r.last_ts) },
+            { label: 'From', get: r => (r.country || '—') + (r.referrer ? ' · ' + r.referrer : '') },
+            { label: 'Views', num: true, get: r => r.views },
+            { label: 'Plays', num: true, get: r => r.plays },
+            { label: 'License', num: true, get: r => r.licenses || '' },
+          ], { rowAttr: r => ` class="click" data-sid="${r.session_id}"` })}
+          <div id="jrn"></div>
+        </div>
+        <div class="st-panel" style="grid-column:1/-1">
+          <h2>By day</h2>
+          ${table(d.daily, [
+            { label: 'Day', get: r => r.day },
+            { label: 'Visits', num: true, bar: true, get: r => r.visits },
+            { label: 'Plays', num: true, get: r => r.plays },
+          ], { barKey: 'visits' })}
+        </div>
+      </div>`;
+
+    app.querySelectorAll('[data-days]').forEach(b =>
+      b.addEventListener('click', () => { days = +b.dataset.days; load(); }));
+    app.querySelectorAll('tr.click').forEach(tr =>
+      tr.addEventListener('click', () => journey(tr.dataset.sid)));
+  }
+
+  async function journey(sid) {
+    const box = document.getElementById('jrn');
+    box.innerHTML = '<p class="st-empty">Loading journey…</p>';
+    const res = await fetch('/api/journey?sid=' + encodeURIComponent(sid), { credentials: 'same-origin' });
+    if (!res.ok) { box.innerHTML = '<p class="st-empty">Couldn’t load that journey.</p>'; return; }
+    const d = await res.json();
+    const verb = { view: 'opened', play: 'played', license: 'clicked License on',
+                   search: 'searched for', favorite: 'favorited' };
+    box.innerHTML = `<ul class="jrn">${d.events.map(e =>
+      `<li>${new Date(e.ts * 1000).toLocaleTimeString()} — ${verb[e.type] || e.type} <b>${e.detail || e.page || ''}</b></li>`
+    ).join('')}</ul>`;
+  }
+
+  // wait for the session check, then load
+  (function boot(n) {
+    if (window.MutraMembers && MutraMembers.ready) return load();
+    if (n > 40) return load();
+    setTimeout(() => boot(n + 1), 100);
+  })(0);
+})();
+</script>
+</body>
+</html>

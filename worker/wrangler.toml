@@ -14,5 +14,17 @@ binding = "DB"
 database_name = "snowstar-members"
 database_id = "88b958b0-2f50-4f45-a72f-2c46f45734a6"
 
+# lets the Worker email the owner; only verified destinations are allowed
+[[send_email]]
+name = "EMAIL"
+destination_address = "oritoledano@gmail.com"
+
+[vars]
+ALERT_TO = "oritoledano@gmail.com"
+
+# daily digest at 07:00 UTC
+[triggers]
+crons = ["0 7 * * *"]
+
 [observability]
 enabled = true

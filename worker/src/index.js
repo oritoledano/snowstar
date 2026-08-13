@@ -15,6 +15,8 @@
  *    on writes as CSRF defence-in-depth alongside SameSite
  */
 
+import { handleTrack, handleStats, handleJourney, sendDigest } from './analytics.js';
+
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
 const MAX_ATTEMPTS = 8;          // per window
@@ -114,7 +116,7 @@ async function currentUser(req, env) {
   if (!token) return null;
   const hash = await sha256b64(token);
   const row = await env.DB.prepare(
-    `SELECT u.id, u.email, u.name, u.newsletter, s.expires_at
+    `SELECT u.id, u.email, u.name, u.newsletter, u.admin, s.expires_at
        FROM sessions s JOIN users u ON u.id = s.user_id
       WHERE s.token_hash = ?`
   ).bind(hash).first();
@@ -129,13 +131,20 @@ function originOk(req) {
   return ALLOWED_ORIGINS.includes(o);
 }
 
-async function handle(req, env) {
+async function handle(req, env, ctx) {
   const url = new URL(req.url);
   const path = url.pathname.replace(/^\/api/, '') || '/';
   const method = req.method.toUpperCase();
   const ip = req.headers.get('cf-connecting-ip') || 'unknown';
 
   if (method !== 'GET' && !originOk(req)) return json({ error: 'bad_origin' }, 403);
+
+  // ── analytics beacon (anonymous, no auth) ──
+  if (path === '/track' && method === 'POST') return handleTrack(req, env, ctx);
+
+  // ── owner-only stats ──
+  if (path === '/stats' && method === 'GET') return handleStats(req, env, await currentUser(req, env));
+  if (path === '/journey' && method === 'GET') return handleJourney(req, env, await currentUser(req, env));
 
   // ── who am I ──
   if (path === '/me' && method === 'GET') {
@@ -144,7 +153,7 @@ async function handle(req, env) {
     const favs = await env.DB.prepare('SELECT slug FROM favorites WHERE user_id = ? ORDER BY created_at DESC')
       .bind(u.id).all();
     return json({
-      user: { email: u.email, name: u.name, newsletter: !!u.newsletter },
+      user: { email: u.email, name: u.name, newsletter: !!u.newsletter, admin: !!u.admin },
       favorites: (favs.results || []).map((r) => r.slug),
     });
   }
@@ -272,9 +281,13 @@ async function handle(req, env) {
 }
 
 export default {
-  async fetch(req, env) {
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(sendDigest(env));
+  },
+
+  async fetch(req, env, ctx) {
     try {
-      return await handle(req, env);
+      return await handle(req, env, ctx);
     } catch (err) {
       console.error('api error', err && err.stack ? err.stack : String(err));
       return json({ error: 'server_error' }, 500);
