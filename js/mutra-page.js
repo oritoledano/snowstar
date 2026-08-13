@@ -478,8 +478,14 @@
   const mnav = $('#mnav');
   addEventListener('scroll', () => mnav.classList.toggle('scrolled', scrollY > 24), { passive: true });
   const burger = $('#mnavBurger'), links = $('#mnavLinks');
-  burger.addEventListener('click', () => links.classList.toggle('open'));
-  links.addEventListener('click', e => { if (e.target.tagName === 'A') links.classList.remove('open'); });
+  const setMenu = (open) => {
+    links.classList.toggle('open', open);
+    mnav.classList.toggle('menu-open', open);   // turns the burger into an X
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
+  burger.addEventListener('click', () => setMenu(!links.classList.contains('open')));
+  links.addEventListener('click', e => { if (e.target.tagName === 'A') setMenu(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
 
   const obs = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); obs.unobserve(x.target); } }), { threshold: 0.12 });
   document.querySelectorAll('.rv').forEach(el => obs.observe(el));

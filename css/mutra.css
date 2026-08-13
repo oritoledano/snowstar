@@ -46,14 +46,19 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
   justify-content:space-between;padding:0 clamp(20px,5vw,56px);transition:background .3s,border-color .3s;
   border-bottom:1px solid transparent}
 .mnav.scrolled{background:rgba(11,7,16,.8);backdrop-filter:blur(16px);border-color:var(--line)}
-.mlogo{display:flex;align-items:baseline;gap:10px}
+.mlogo{display:flex;align-items:center;gap:10px;
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1}
 .ml-img{height:21px;width:auto;display:block;align-self:center}
 .ml-word{
   font-family:"Unbounded",var(--font-display);font-weight:700;font-size:1.6rem;letter-spacing:-.02em;
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
 }
 .ml-by{color:var(--dim);font-size:.66rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase}
-.mnav-links{display:flex;align-items:center;gap:clamp(16px,2.4vw,32px)}
+/* the links live behind the burger at every width, like the main site */
+.mnav-links{position:fixed;inset:70px 0 auto 0;z-index:59;display:flex;flex-direction:column;
+  align-items:center;gap:20px;padding:26px 0 32px;background:rgba(11,7,16,.98);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);transform:translateY(-130%);transition:transform .35s}
+.mnav-links.open{transform:none}
 .mnav-links a{font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:color .2s}
 .mnav-links a:hover{color:var(--text)}
 .mnav-back{color:var(--dim)!important}
@@ -65,8 +70,15 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 .mbtn-ghost{border:1px solid var(--line-2);color:var(--text);background:transparent}
 .mbtn-ghost:hover{border-color:var(--coral);color:var(--coral)}
 .mnav-cta{padding:9px 18px;font-size:.82rem}
-.mnav-burger{display:none;background:none;border:0;cursor:pointer;padding:8px}
-.mnav-burger span{display:block;width:24px;height:2px;background:var(--text);margin:5px 0;transition:.3s}
+.mnav-burger{display:grid;place-content:center;gap:5px;width:44px;height:44px;flex:none;z-index:2;
+  background:none;border:0;cursor:pointer;padding:0}
+.mnav-burger span{display:block;width:24px;height:2px;background:var(--text);
+  transition:transform .3s,opacity .2s}
+/* becomes an X while the menu is open, so it reads as "close" */
+.mnav.menu-open .mnav-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.mnav.menu-open .mnav-burger span:nth-child(2){opacity:0}
+.mnav.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mnav .mnav-auth{margin-right:0}
 
 /* ───────── hero ───────── */
 .mhero{position:relative;padding:150px 0 70px;overflow:hidden}
@@ -211,10 +223,6 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
   .trk-lic{padding:7px 12px;font-size:.72rem}
 }
 @media (max-width:760px){
-  .mnav-links{position:fixed;inset:70px 0 auto 0;flex-direction:column;background:rgba(11,7,16,.98);
-    backdrop-filter:blur(18px);padding:26px 0 32px;gap:20px;transform:translateY(-130%);transition:transform .35s;border-bottom:1px solid var(--line)}
-  .mnav-links.open{transform:none}
-  .mnav-burger{display:block}
   .mhero-eq{opacity:.25}
   .pl-actions .pl-lic{display:none}
   .player-in{grid-template-columns:1fr 1.4fr auto;gap:12px}
@@ -280,7 +288,7 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 /* the account control must stay reachable on phones, where the rest of the nav
    collapses behind the burger */
 @media (max-width:760px){
-  .mnav-auth{order:2;margin-left:auto;margin-right:14px;gap:12px}
+  .mnav-auth{gap:12px}
   .auth-link{font-size:.74rem}
   /* a long name would otherwise push the burger over the wordmark */
   .auth-who{max-width:9ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
