@@ -1,0 +1,18 @@
+name = "snowstar-api"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+workers_dev = false
+
+# Runs on the site's own domain so the session cookie is first-party.
+# Everything except /api/* falls through to GitHub Pages untouched.
+routes = [
+  { pattern = "snowstar.company/api/*", zone_name = "snowstar.company" }
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "snowstar-members"
+database_id = "88b958b0-2f50-4f45-a72f-2c46f45734a6"
+
+[observability]
+enabled = true

@@ -60,6 +60,23 @@
 
   const ICON_PLAY = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
   const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
+  const ICON_HEART = '<svg viewBox="0 0 24 24" width="15" height="15"><path d="M12 20.4l-1.4-1.3C5.6 14.6 2.7 12 2.7 8.7 2.7 6.1 4.7 4 7.3 4c1.5 0 2.9.7 3.8 1.8l.9 1.1.9-1.1C13.8 4.7 15.2 4 16.7 4c2.6 0 4.6 2.1 4.6 4.7 0 3.3-2.9 5.9-7.9 10.4L12 20.4z" fill="currentColor"/></svg>';
+  const ICON_LINK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l2-2A5 5 0 0 0 12.5 4.5l-1 1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2A5 5 0 0 0 11.5 19.5l1-1"/></svg>';
+  const ICON_SIM = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 17V9M9 17V5M14 17v-6M19 17v-9"/></svg>';
+
+  // small transient message (copy confirmations etc.)
+  let toastEl;
+  function toast(msg) {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'mutra-toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 1800);
+  }
 
   // ── shared audio ──
   const audio = new Audio();
@@ -163,10 +180,11 @@
   // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
   const tracksEl = $('#tracks'), countEl = $('#catCount');
   const INITIAL = 40;
-  const state = { packages: new Set(), genres: new Set(), moods: new Set(), q: '' };
+  const state = { packages: new Set(), genres: new Set(), moods: new Set(), q: '', favoritesOnly: false };
   let expanded = false;
 
   function matches(t) {
+    if (state.favoritesOnly && !(window.MutraMembers && MutraMembers.isFavorite(t.slug))) return false;
     if (state.packages.size && !t.packages.some(p => state.packages.has(p))) return false;
     if (state.genres.size && !t.genres.some(g => state.genres.has(g))) return false;
     if (state.moods.size && !(t.moods || []).some(x => state.moods.has(x))) return false;
@@ -202,10 +220,42 @@
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
         <div class="trk-tags">${tags}</div>
         <div class="trk-right">
+          <button class="trk-fav" aria-label="Save ${track.title}" title="Save to favorites">${ICON_HEART}</button>
+          <button class="trk-share" aria-label="Copy link to ${track.title}" title="Copy link">${ICON_LINK}</button>
+          <button class="trk-sim" aria-label="Similar to ${track.title}" title="Find similar">${ICON_SIM}</button>
           <span class="trk-dur">${fmt(track.duration)}</span>
           <a class="trk-lic" href="${mailto(track.title)}">License</a>
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
+
+      // favorite
+      const favBtn = row.querySelector('.trk-fav');
+      const syncFav = () => favBtn.classList.toggle('on', !!(window.MutraMembers && MutraMembers.isFavorite(track.slug)));
+      syncFav();
+      favBtn._sync = syncFav;
+      favBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (window.MutraMembers) MutraMembers.toggleFavorite(track.slug);
+      });
+
+      // copy a direct link to this track
+      row.querySelector('.trk-share').addEventListener('click', async e => {
+        e.stopPropagation();
+        const url = location.origin + location.pathname + '?track=' + encodeURIComponent(track.slug);
+        try {
+          await navigator.clipboard.writeText(url);
+          toast('Link copied');
+        } catch {
+          // clipboard blocked (insecure context / permissions) — show it to copy by hand
+          prompt('Copy this link:', url);
+        }
+      });
+
+      // similar tracks
+      row.querySelector('.trk-sim').addEventListener('click', e => {
+        e.stopPropagation();
+        showSimilar(track, row);
+      });
       // seeking by clicking a track's own waveform (only when it's the playing track)
       const wave = row.querySelector('.trk-wave');
       wave.addEventListener('click', e => {
@@ -284,7 +334,105 @@
   buildChips($('#moodRow'), MUTRA.moods, 'moods', 'All moods');
   $('#search').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); expanded = false; render(); });
 
+  /** Reset every chip row to its "All" state (used when a deep link needs to reveal a track). */
+  function syncChips() {
+    document.querySelectorAll('.filter-row').forEach(rowEl => {
+      const chips = [...rowEl.querySelectorAll('.chip')];
+      chips.forEach((c, i) => c.classList.toggle('active', i === 0));
+    });
+    const fav = $('#favToggle');
+    if (fav) fav.classList.remove('active');
+  }
+
+  // "My favorites" toggle, sitting with the filters
+  const favToggle = document.createElement('button');
+  favToggle.id = 'favToggle';
+  favToggle.className = 'chip fav-chip';
+  favToggle.innerHTML = ICON_HEART + '<span>My favorites</span>';
+  favToggle.addEventListener('click', () => {
+    state.favoritesOnly = !state.favoritesOnly;
+    favToggle.classList.toggle('active', state.favoritesOnly);
+    expanded = false;
+    render();
+  });
+  $('#moodRow').insertAdjacentElement('afterend',
+    Object.assign(document.createElement('div'), { className: 'filter-row fav-row' })).appendChild(favToggle);
+
   render();
+
+  // repaint hearts (and the favorites view) whenever membership state changes
+  if (window.MutraMembers) {
+    MutraMembers.onChange(() => {
+      tracksEl.querySelectorAll('.trk-fav').forEach(b => b._sync && b._sync());
+      if (state.favoritesOnly) render();
+      const c = $('#favCount');
+      if (c) c.textContent = MutraMembers.favorites.size || '';
+    });
+  }
+
+  // ── deep link: ?track=slug opens (and plays) that track ──
+  (function deepLink() {
+    const slug = new URLSearchParams(location.search).get('track');
+    if (!slug) return;
+    // wait a tick so the first render + waveforms exist
+    setTimeout(() => focusTrack(slug, true), 300);
+  })();
+
+  // ── "sounds like this" — neighbours precomputed from the audio itself ──
+  function showSimilar(track, row) {
+    document.querySelectorAll('.sim-panel').forEach(p => p.remove());
+    const slugs = (typeof MUTRA_SIMILAR !== 'undefined' && MUTRA_SIMILAR[track.slug]) || [];
+    const panel = document.createElement('div');
+    panel.className = 'sim-panel';
+    if (!slugs.length) {
+      panel.innerHTML = `<div class="sim-head">No close matches for <b>${track.title}</b></div>`;
+    } else {
+      const bySlug = Object.fromEntries(MUTRA.tracks.map(t => [t.slug, t]));
+      const items = slugs.map(s => bySlug[s]).filter(Boolean).map(t => `
+        <button class="sim-item" data-slug="${t.slug}">
+          <img src="${t.cover}" alt="" loading="lazy">
+          <span class="sim-t">${t.title}</span>
+          <span class="sim-m">${[...t.genres.slice(0,1), ...(t.moods||[]).slice(0,1)].join(' · ')}</span>
+        </button>`).join('');
+      panel.innerHTML = `<div class="sim-head">Sounds like <b>${track.title}</b>
+        <button class="sim-close" aria-label="Close">&times;</button></div>
+        <div class="sim-list">${items}</div>`;
+    }
+    row.insertAdjacentElement('afterend', panel);
+    const close = panel.querySelector('.sim-close');
+    if (close) close.addEventListener('click', () => panel.remove());
+    panel.querySelectorAll('.sim-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = MUTRA.tracks.find(x => x.slug === btn.dataset.slug);
+        if (t) focusTrack(t.slug, true);
+      });
+    });
+    panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  /** Scroll to a track (expanding the list if needed), optionally play it. */
+  function focusTrack(slug, play) {
+    const t = MUTRA.tracks.find(x => x.slug === slug);
+    if (!t) return false;
+    if (!matches(t)) { // clear filters that would hide it
+      state.packages.clear(); state.genres.clear(); state.moods.clear();
+      state.favoritesOnly = false; state.q = '';
+      const s = $('#search'); if (s) s.value = '';
+      syncChips();
+    }
+    if (MUTRA.tracks.filter(matches).indexOf(t) >= INITIAL) expanded = true;
+    render();
+    const rows = [...tracksEl.querySelectorAll('.trk')];
+    const list = MUTRA.tracks.filter(matches);
+    const row = rows[list.indexOf(t)];
+    if (!row) return false;
+    row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    row.classList.add('flash');
+    setTimeout(() => row.classList.remove('flash'), 1600);
+    if (play) loadTrack(t, row);
+    return true;
+  }
+  window.MutraFocusTrack = focusTrack;
 
   // ── hero equalizer bars ──
   const eq = $('#heroEq');
