@@ -441,3 +441,8 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .menu-overlay{justify-content:flex-start;padding-top:calc(var(--nav-h) + 26px)}
   .bp{display:none}
 }
+
+/* account control, mounted into the full-screen menu (see js/account-ui.js) */
+.menu-account{margin-bottom:16px}
+.menu-account .mnav-auth{margin:0;gap:18px}
+.menu-account .auth-link{font-size:.8rem;letter-spacing:.1em}

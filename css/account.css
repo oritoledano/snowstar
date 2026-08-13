@@ -1,0 +1,66 @@
+/* ═══════════ Snowstar account — shared by every product ═══════════
+   Loaded by both the main site (css/style.css) and Mutra (css/mutra.css),
+   so it may only rely on the variables BOTH define: --bg, --panel, --line,
+   --text, --muted, --grad, --font-body, --font-display. Anything else is
+   referenced with a fallback so the same markup themes itself on either page. */
+
+/* the sign-in / account entry point in the header */
+.mnav-auth{display:inline-flex;align-items:center;gap:14px;margin-left:auto;margin-right:18px}
+.auth-link{background:none;border:0;cursor:pointer;color:var(--muted);font-family:var(--font-body);
+  font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;padding:0}
+.auth-link:hover{color:var(--text)}
+.auth-out{color:var(--dim,var(--muted))}
+
+.auth-modal{position:fixed;inset:0;z-index:200;background:rgba(6,4,9,.78);backdrop-filter:blur(8px);
+  display:grid;place-items:center;padding:20px}
+.auth-card{position:relative;width:min(420px,100%);background:var(--panel-2,var(--panel));
+  border:1px solid var(--line-2,var(--line));border-radius:20px;padding:34px 30px 28px}
+.auth-card h3{font-size:1.5rem;margin-bottom:8px}
+.auth-sub{color:var(--muted);font-size:.9rem;margin-bottom:22px}
+.auth-close{position:absolute;top:14px;right:16px;background:none;border:0;color:var(--dim,var(--muted));
+  font-size:1.5rem;line-height:1;cursor:pointer}
+.auth-close:hover{color:var(--text)}
+.auth-field{display:block;margin-bottom:14px}
+.auth-field span{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim,var(--muted));margin-bottom:6px}
+.auth-field input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:11px;
+  padding:12px 14px;color:var(--text);font-family:var(--font-body);font-size:.95rem;outline:none;
+  transition:border-color .2s}
+.auth-field input:focus{border-color:var(--coral,var(--ice,#8fd8ff))}
+.auth-check{display:flex;gap:10px;align-items:flex-start;margin:4px 0 16px;
+  color:var(--muted);font-size:.84rem;line-height:1.45;cursor:pointer}
+.auth-check input{margin-top:3px;accent-color:var(--coral,var(--ice,#8fd8ff));flex:none}
+.auth-error{color:#ff8080;font-size:.85rem;margin-bottom:12px}
+.auth-submit{width:100%;justify-content:center}
+.auth-submit:disabled{opacity:.6;cursor:default;transform:none;box-shadow:none}
+.auth-switch{margin-top:18px;text-align:center;color:var(--muted);font-size:.85rem}
+.auth-switch button{background:none;border:0;color:var(--amber,var(--ice,#8fd8ff));cursor:pointer;
+  font-family:var(--font-body);font-size:.85rem;text-decoration:underline;padding:0}
+.auth-alt{margin:2px 0 18px;color:var(--dim,var(--muted));font-size:.78rem;text-align:center;
+  display:flex;align-items:center;gap:12px}
+.auth-alt::before,.auth-alt::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* A class-level `display` beats the UA's [hidden] rule, so an element the JS
+   thinks is hidden stays on screen — that once left this entire modal
+   permanently over the catalog. Make the attribute authoritative. */
+[hidden]{display:none!important}
+
+/* success state shown in the card for a beat before it closes itself */
+.auth-ok{text-align:center;padding:8px 0 4px}
+.auth-ok .auth-tick{width:52px;height:52px;border-radius:50%;background:var(--grad);
+  display:grid;place-items:center;margin:0 auto 16px}
+.auth-ok .auth-tick svg{stroke:#0d0a12;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.auth-ok h3{font-size:1.35rem;margin-bottom:6px}
+.auth-ok p{color:var(--muted);font-size:.9rem}
+
+/* toast for pages that don't ship one of their own (the catalog overrides this) */
+.acct-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,12px);
+  background:rgba(12,10,18,.96);border:1px solid var(--line-2,var(--line));color:var(--text);
+  padding:10px 18px;border-radius:99px;font-size:.86rem;z-index:240;
+  opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;backdrop-filter:blur(10px)}
+.acct-toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:560px){
+  .auth-close{top:8px;right:8px;padding:10px 14px;font-size:1.7rem}
+  .auth-card{max-height:calc(100vh - 40px);overflow-y:auto}
+}

@@ -1,19 +1,23 @@
-/* ═══════════ Mutra — sign in / create account UI ═══════════
-   A small modal driven by MutraMembers. The password never leaves this form
-   except over HTTPS to /api; the session lives in an HttpOnly cookie we can't read. */
+/* ═══════════ Snowstar account — sign in / create account UI ═══════════
+   A small modal driven by SnowstarAccount, shared by every page. The password
+   never leaves this form except over HTTPS to /api; the session lives in an
+   HttpOnly cookie we can't read.
+
+   The page says where the control belongs with data-account-mount — on Mutra
+   that's the header itself, so it stays reachable when the nav collapses
+   behind the burger on phones. */
 (function () {
-  const M = window.MutraMembers;
+  const M = window.SnowstarAccount;
   if (!M) return;
 
-  const nav = document.getElementById('mnavLinks');
-  const header = document.getElementById('mnav');
-  if (!nav || !header) return;
+  const host = document.querySelector('[data-account-mount]');
+  if (!host) return;
 
-  // ── entry point: lives in the header so it stays reachable when the nav
-  //    collapses behind the burger on phones ──
   const authWrap = document.createElement('span');
   authWrap.className = 'mnav-auth';
-  header.insertBefore(authWrap, header.querySelector('.mnav-burger'));
+  const before = host.getAttribute('data-account-before');
+  const anchor = before ? host.querySelector(before) : null;
+  anchor ? host.insertBefore(authWrap, anchor) : host.appendChild(authWrap);
 
   function renderNav() {
     if (M.user) {
@@ -21,14 +25,20 @@
       authWrap.innerHTML = `<button class="auth-link auth-who" id="authAccount">${who}</button>` +
         `<button class="auth-link auth-out" id="authLogout">Sign out</button>`;
       authWrap.querySelector('#authLogout').addEventListener('click', () => M.logout());
-      authWrap.querySelector('#authAccount').addEventListener('click', () => {
-        const fav = document.getElementById('favToggle');
-        if (fav && !fav.classList.contains('active')) fav.click();
-        document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
-      });
+      authWrap.querySelector('#authAccount').addEventListener('click', onAccountClick);
     } else {
       authWrap.innerHTML = `<button class="auth-link" id="authOpen">Sign in</button>`;
       authWrap.querySelector('#authOpen').addEventListener('click', () => open('login'));
+    }
+  }
+
+  /** On the catalog, "my account" means "show me my saved tracks". */
+  function onAccountClick() {
+    const fav = document.getElementById('favToggle');
+    const catalog = document.getElementById('catalog');
+    if (fav && catalog) {
+      if (!fav.classList.contains('active')) fav.click();
+      catalog.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
@@ -100,13 +110,31 @@
     server_error: 'Something went wrong on our end. Please try again.',
   };
 
+  const SUB = {
+    login: 'One Snowstar account — for Mutra and everything else we make.',
+    signup: 'One Snowstar account — for Mutra and everything else we make.',
+  };
+
+  /** Prefer the page's own toast (the catalog puts one above the player). */
+  let toastEl;
+  function toast(msg) {
+    if (window.mutraToast) return window.mutraToast(msg);
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.className = 'acct-toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
   function setMode(next) {
     mode = next;
     const signup = mode === 'signup';
     titleEl.textContent = signup ? 'Create an account' : 'Sign in';
-    subEl.textContent = signup
-      ? 'Save favorites across your devices.'
-      : 'Save tracks to your favorites and pick up where you left off.';
+    subEl.textContent = SUB[mode];
     submitEl.textContent = signup ? 'Create account' : 'Sign in';
     nameField.hidden = !signup;
     newsField.hidden = !signup;
@@ -123,6 +151,7 @@
     document.body.style.overflow = 'hidden';
     setTimeout(() => form.email.focus(), 50);
   }
+
   function close() {
     clearTimeout(okTimer);
     modal.hidden = true;
@@ -139,11 +168,9 @@
     okSub.textContent = who ? `Welcome, ${who}` : 'You’re all set.';
     bodyEl.hidden = true;
     okEl.hidden = false;
-    if (window.mutraToast) {
-      mutraToast(kind === 'signup'
-        ? `Account created — welcome${who ? ', ' + who : ''}`
-        : `Signed in${who ? ' as ' + who : ''}`);
-    }
+    toast(kind === 'signup'
+      ? `Account created — welcome${who ? ', ' + who : ''}`
+      : `Signed in${who ? ' as ' + who : ''}`);
     okTimer = setTimeout(close, 1300);
   }
 
@@ -191,6 +218,7 @@
   }
 
   // let the rest of the page ask for the sign-in modal
+  window.SnowstarOpenAuth = open;
   window.MutraOpenAuth = open;
 
   M.onChange(renderNav);

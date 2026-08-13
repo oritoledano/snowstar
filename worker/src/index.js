@@ -70,6 +70,26 @@ function safeEqual(a, b) {
 const validEmail = (e) =>
   typeof e === 'string' && e.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
 
+/** Which Snowstar product a set of favorites belongs to. */
+const PRODUCTS = new Set(['mutra', 'snowstar']);
+const product = (v) => (PRODUCTS.has(v) ? v : 'mutra');
+
+/** Public shape of a user — never leak hashes, salts or internal ids. */
+const publicUser = (u) => ({
+  email: u.email,
+  name: u.name,
+  newsletter: !!u.newsletter,
+  admin: !!u.admin,
+  avatar: u.avatar || null,
+});
+
+const favoritesFor = async (env, userId, prod) => {
+  const r = await env.DB.prepare(
+    'SELECT slug FROM favorites WHERE user_id = ? AND product = ? ORDER BY created_at DESC'
+  ).bind(userId, prod).all();
+  return (r.results || []).map((row) => row.slug);
+};
+
 /** Rate limiter keyed on IP + action + email, backed by D1. */
 async function throttle(env, key) {
   const t = now();
@@ -90,9 +110,18 @@ async function clearThrottle(env, key) {
   await env.DB.prepare('DELETE FROM attempts WHERE bucket = ?').bind(key).run();
 }
 
+/**
+ * One session for the whole of Snowstar.
+ *
+ * `Domain=snowstar.company` widens the cookie from host-only to the apex plus
+ * every subdomain, so a future product at e.g. app.snowstar.company shares the
+ * same signed-in user. Changing this later would sign everyone out, which is
+ * why it's set now while the account list is still small.
+ */
 function sessionCookie(token, maxAgeSec) {
   const parts = [
     `ss_session=${token}`,
+    'Domain=snowstar.company',
     'Path=/',
     'HttpOnly',
     'Secure',
@@ -116,7 +145,7 @@ async function currentUser(req, env) {
   if (!token) return null;
   const hash = await sha256b64(token);
   const row = await env.DB.prepare(
-    `SELECT u.id, u.email, u.name, u.newsletter, u.admin, s.expires_at
+    `SELECT u.id, u.email, u.name, u.newsletter, u.admin, u.avatar, s.expires_at
        FROM sessions s JOIN users u ON u.id = s.user_id
       WHERE s.token_hash = ?`
   ).bind(hash).first();
@@ -152,13 +181,9 @@ async function handle(req, env, ctx) {
   // ── who am I ──
   if (path === '/me' && method === 'GET') {
     const u = await currentUser(req, env);
-    if (!u) return json({ user: null });
-    const favs = await env.DB.prepare('SELECT slug FROM favorites WHERE user_id = ? ORDER BY created_at DESC')
-      .bind(u.id).all();
-    return json({
-      user: { email: u.email, name: u.name, newsletter: !!u.newsletter, admin: !!u.admin },
-      favorites: (favs.results || []).map((r) => r.slug),
-    });
+    if (!u) return json({ user: null, favorites: [] });
+    const prod = product(url.searchParams.get('product'));
+    return json({ user: publicUser(u), favorites: await favoritesFor(env, u.id, prod) });
   }
 
   // ── signup ──
@@ -168,6 +193,8 @@ async function handle(req, env, ctx) {
     const password = String(body.password || '');
     const name = String(body.name || '').trim().slice(0, 80) || null;
     const newsletter = body.newsletter ? 1 : 0;
+    const prod = product(body.product);
+    const source = String(body.source || prod).slice(0, 30);
 
     if (!validEmail(email)) return json({ error: 'invalid_email' }, 400);
     if (password.length < 8) return json({ error: 'weak_password' }, 400);
@@ -183,16 +210,16 @@ async function handle(req, env, ctx) {
     const id = crypto.randomUUID();
     const t = now();
     await env.DB.prepare(
-      `INSERT INTO users (id, email, name, pw_hash, pw_salt, pw_iters, newsletter, created_at, last_login_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(id, email, name, hash, salt, PBKDF2_ITERS, newsletter, t, t).run();
+      `INSERT INTO users (id, email, name, pw_hash, pw_salt, pw_iters, newsletter, signup_source, created_at, last_login_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(id, email, name, hash, salt, PBKDF2_ITERS, newsletter, source, t, t).run();
 
     const token = randB64(32);
     const maxAge = SESSION_DAYS * 86400;
     await env.DB.prepare('INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)')
       .bind(await sha256b64(token), id, t, t + maxAge).run();
 
-    return json({ user: { email, name, newsletter: !!newsletter }, favorites: [] }, 201,
+    return json({ user: publicUser({ email, name, newsletter }), favorites: [] }, 201,
       { 'set-cookie': sessionCookie(token, maxAge) });
   }
 
@@ -206,14 +233,17 @@ async function handle(req, env, ctx) {
     const key = `login:${ip}:${email}`;
     if (!(await throttle(env, key))) return json({ error: 'rate_limited' }, 429);
 
-    const u = await env.DB.prepare('SELECT id, email, name, newsletter, pw_hash, pw_salt, pw_iters FROM users WHERE email = ?')
-      .bind(email).first();
+    const u = await env.DB.prepare(
+      'SELECT id, email, name, newsletter, admin, avatar, pw_hash, pw_salt, pw_iters FROM users WHERE email = ?'
+    ).bind(email).first();
 
-    // Always run a derivation so response time doesn't reveal whether the email exists.
-    const salt = u ? u.pw_salt : randB64(16);
-    const iters = u ? u.pw_iters : PBKDF2_ITERS;
+    // Always run a derivation so response time doesn't reveal whether the email
+    // exists — or whether it's a social-only account with no password set.
+    const hasPw = !!(u && u.pw_hash && u.pw_salt);
+    const salt = hasPw ? u.pw_salt : randB64(16);
+    const iters = hasPw ? u.pw_iters : PBKDF2_ITERS;
     const candidate = await pbkdf2(password, salt, iters, env);
-    if (!u || !safeEqual(candidate, u.pw_hash)) return json({ error: 'invalid_credentials' }, 401);
+    if (!hasPw || !safeEqual(candidate, u.pw_hash)) return json({ error: 'invalid_credentials' }, 401);
 
     await clearThrottle(env, key);
     const t = now();
@@ -226,10 +256,8 @@ async function handle(req, env, ctx) {
       env.DB.prepare('DELETE FROM sessions WHERE expires_at <= ?').bind(t),
     ]);
 
-    const favs = await env.DB.prepare('SELECT slug FROM favorites WHERE user_id = ? ORDER BY created_at DESC')
-      .bind(u.id).all();
     return json(
-      { user: { email: u.email, name: u.name, newsletter: !!u.newsletter }, favorites: (favs.results || []).map((r) => r.slug) },
+      { user: publicUser(u), favorites: await favoritesFor(env, u.id, product(body.product)) },
       200, { 'set-cookie': sessionCookie(token, maxAge) }
     );
   }
@@ -243,23 +271,24 @@ async function handle(req, env, ctx) {
     return json({ ok: true }, 200, { 'set-cookie': sessionCookie('', 0) });
   }
 
-  // ── favorites ──
+  // ── favorites (scoped per product, so a second product can't collide) ──
   if (path === '/favorites' && (method === 'POST' || method === 'DELETE')) {
     const u = await currentUser(req, env);
     if (!u) return json({ error: 'unauthorized' }, 401);
     const body = await req.json().catch(() => ({}));
     const slug = String(body.slug || '').trim().slice(0, 120);
     if (!/^[a-z0-9-]+$/.test(slug)) return json({ error: 'invalid_slug' }, 400);
+    const prod = product(body.product);
 
     if (method === 'POST') {
-      await env.DB.prepare('INSERT OR IGNORE INTO favorites (user_id, slug, created_at) VALUES (?, ?, ?)')
-        .bind(u.id, slug, now()).run();
+      await env.DB.prepare(
+        'INSERT OR IGNORE INTO favorites (user_id, product, slug, created_at) VALUES (?, ?, ?, ?)'
+      ).bind(u.id, prod, slug, now()).run();
     } else {
-      await env.DB.prepare('DELETE FROM favorites WHERE user_id = ? AND slug = ?').bind(u.id, slug).run();
+      await env.DB.prepare('DELETE FROM favorites WHERE user_id = ? AND product = ? AND slug = ?')
+        .bind(u.id, prod, slug).run();
     }
-    const favs = await env.DB.prepare('SELECT slug FROM favorites WHERE user_id = ? ORDER BY created_at DESC')
-      .bind(u.id).all();
-    return json({ favorites: (favs.results || []).map((r) => r.slug) });
+    return json({ favorites: await favoritesFor(env, u.id, prod) });
   }
 
   // ── merge favorites saved before signing in ──
@@ -267,17 +296,17 @@ async function handle(req, env, ctx) {
     const u = await currentUser(req, env);
     if (!u) return json({ error: 'unauthorized' }, 401);
     const body = await req.json().catch(() => ({}));
+    const prod = product(body.product);
     const slugs = Array.isArray(body.slugs) ? body.slugs.slice(0, 500) : [];
     const valid = slugs.filter((s) => typeof s === 'string' && /^[a-z0-9-]+$/.test(s));
     if (valid.length) {
       const t = now();
       await env.DB.batch(valid.map((s) =>
-        env.DB.prepare('INSERT OR IGNORE INTO favorites (user_id, slug, created_at) VALUES (?, ?, ?)').bind(u.id, s, t)
+        env.DB.prepare('INSERT OR IGNORE INTO favorites (user_id, product, slug, created_at) VALUES (?, ?, ?, ?)')
+          .bind(u.id, prod, s, t)
       ));
     }
-    const favs = await env.DB.prepare('SELECT slug FROM favorites WHERE user_id = ? ORDER BY created_at DESC')
-      .bind(u.id).all();
-    return json({ favorites: (favs.results || []).map((r) => r.slug) });
+    return json({ favorites: await favoritesFor(env, u.id, prod) });
   }
 
   return json({ error: 'not_found' }, 404);
