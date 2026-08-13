@@ -6,12 +6,14 @@
   if (!M) return;
 
   const nav = document.getElementById('mnavLinks');
-  if (!nav) return;
+  const header = document.getElementById('mnav');
+  if (!nav || !header) return;
 
-  // ── nav entry point ──
+  // ── entry point: lives in the header so it stays reachable when the nav
+  //    collapses behind the burger on phones ──
   const authWrap = document.createElement('span');
   authWrap.className = 'mnav-auth';
-  nav.insertBefore(authWrap, nav.querySelector('.mnav-cta'));
+  header.insertBefore(authWrap, header.querySelector('.mnav-burger'));
 
   function renderNav() {
     if (M.user) {
