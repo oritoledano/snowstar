@@ -31,7 +31,12 @@
   color:var(--muted);font-size:.84rem;line-height:1.45;cursor:pointer}
 .auth-check input{margin-top:3px;accent-color:var(--coral,var(--ice,#8fd8ff));flex:none}
 .auth-error{color:#ff8080;font-size:.85rem;margin-bottom:12px}
-.auth-submit{width:100%;justify-content:center}
+/* styled here rather than borrowing Mutra's .mbtn, so the button looks right
+   on the main site too (which never loads mutra.css) */
+.auth-submit{width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--font-display);font-weight:600;font-size:.9rem;padding:12px 22px;
+  border:0;border-radius:99px;cursor:pointer;background:var(--grad);color:#0d0a12;transition:.25s}
+.auth-submit:hover{transform:translateY(-2px)}
 .auth-submit:disabled{opacity:.6;cursor:default;transform:none;box-shadow:none}
 .auth-switch{margin-top:18px;text-align:center;color:var(--muted);font-size:.85rem}
 .auth-switch button{background:none;border:0;color:var(--amber,var(--ice,#8fd8ff));cursor:pointer;
