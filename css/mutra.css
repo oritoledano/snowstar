@@ -239,7 +239,7 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 .mutra-toast{
   position:fixed;left:50%;bottom:calc(var(--player-h) + 18px);transform:translate(-50%,12px);
   background:rgba(24,16,32,.96);border:1px solid var(--line-2);color:var(--text);
-  padding:10px 18px;border-radius:99px;font-size:.86rem;z-index:120;
+  padding:10px 18px;border-radius:99px;font-size:.86rem;z-index:240;
   opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;backdrop-filter:blur(10px)}
 .mutra-toast.show{opacity:1;transform:translate(-50%,0)}
 
@@ -297,9 +297,19 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 .auth-switch button{background:none;border:0;color:var(--amber);cursor:pointer;
   font-family:var(--font-body);font-size:.85rem;text-decoration:underline;padding:0}
 @media (max-width:760px){.mnav-auth{gap:20px}}
-/* class-level display rules above would otherwise beat the UA's [hidden] rule,
-   leaving signup-only fields visible on the sign-in form */
-.auth-card [hidden]{display:none!important}
+/* A class-level `display` beats the UA's [hidden] rule, so an element the JS
+   thinks is hidden stays on screen. That left the whole auth modal (display:grid)
+   permanently over the page — open on load, and unclosable. Make the attribute
+   authoritative for everything this stylesheet touches. */
+[hidden]{display:none!important}
+
+/* success state shown in the card for a beat before it closes itself */
+.auth-ok{text-align:center;padding:8px 0 4px}
+.auth-ok .auth-tick{width:52px;height:52px;border-radius:50%;background:var(--grad);
+  display:grid;place-items:center;margin:0 auto 16px}
+.auth-ok .auth-tick svg{stroke:#1a0f14;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.auth-ok h3{font-size:1.35rem;margin-bottom:6px}
+.auth-ok p{color:var(--muted);font-size:.9rem}
 
 /* download sits with the other row actions */
 .trk-dl{background:none;border:0;padding:6px;cursor:pointer;color:var(--dim);

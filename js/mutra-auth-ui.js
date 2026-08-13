@@ -39,6 +39,7 @@
   modal.innerHTML = `
     <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
       <button class="auth-close" aria-label="Close" title="Close">&times;</button>
+      <div class="auth-body">
       <h3 id="authTitle">Sign in</h3>
       <p class="auth-sub">Save tracks to your favorites and pick up where you left off.</p>
       <form id="authForm" novalidate>
@@ -65,6 +66,12 @@
         <span class="auth-to-signup">New here? <button type="button">Create an account</button></span>
         <span class="auth-to-login" hidden>Already have an account? <button type="button">Sign in</button></span>
       </p>
+      </div>
+      <div class="auth-ok" hidden>
+        <div class="auth-tick"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M4 12.5l5 5L20 7"/></svg></div>
+        <h3 class="auth-ok-title">Signed in</h3>
+        <p class="auth-ok-sub"></p>
+      </div>
     </div>`;
   document.body.appendChild(modal);
 
@@ -77,7 +84,12 @@
   const newsField = modal.querySelector('.auth-news');
   const toSignup = modal.querySelector('.auth-to-signup');
   const toLogin = modal.querySelector('.auth-to-login');
+  const bodyEl = modal.querySelector('.auth-body');
+  const okEl = modal.querySelector('.auth-ok');
+  const okTitle = modal.querySelector('.auth-ok-title');
+  const okSub = modal.querySelector('.auth-ok-sub');
   let mode = 'login';
+  let okTimer = null;
 
   const MESSAGES = {
     invalid_credentials: 'That email and password don’t match.',
@@ -112,10 +124,27 @@
     setTimeout(() => form.email.focus(), 50);
   }
   function close() {
+    clearTimeout(okTimer);
     modal.hidden = true;
     document.body.style.overflow = '';
     form.reset();
     errEl.hidden = true;
+    okEl.hidden = true;      // back to the form for next time
+    bodyEl.hidden = false;
+  }
+
+  /** Confirm in the card itself — that's where the eyes are — then close. */
+  function succeed(kind, who) {
+    okTitle.textContent = kind === 'signup' ? 'Account created' : 'Signed in';
+    okSub.textContent = who ? `Welcome, ${who}` : 'You’re all set.';
+    bodyEl.hidden = true;
+    okEl.hidden = false;
+    if (window.mutraToast) {
+      mutraToast(kind === 'signup'
+        ? `Account created — welcome${who ? ', ' + who : ''}`
+        : `Signed in${who ? ' as ' + who : ''}`);
+    }
+    okTimer = setTimeout(close, 1300);
   }
 
   modal.querySelector('.auth-close').addEventListener('click', close);
@@ -139,9 +168,8 @@
       } else {
         await M.login({ email, password });
       }
-      const who = (M.user && (M.user.name || M.user.email)) || '';
-      close();
-      if (window.mutraToast) mutraToast(mode === 'signup' ? `Account created — welcome${who ? ', ' + who : ''}` : `Signed in${who ? ' as ' + who : ''}`);
+      const who = (M.user && (M.user.name || M.user.email.split('@')[0])) || '';
+      succeed(mode, who);
     } catch (err) {
       if (err.code === 'email_taken') { offerSignIn(email); return; }
       showErr(MESSAGES[err.code] || 'Couldn’t complete that. Please try again.');
