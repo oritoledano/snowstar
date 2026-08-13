@@ -16,11 +16,14 @@
  */
 
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
+import { sendMail, resetEmail } from './mail.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
 const MAX_ATTEMPTS = 8;          // per window
 const ATTEMPT_WINDOW = 15 * 60;  // 15 minutes
+const RESET_MINUTES = 45;        // how long a password-reset link stays good
+const VALID_TOKEN = /^[A-Za-z0-9_-]{20,120}$/;
 const ALLOWED_ORIGINS = ['https://snowstar.company', 'https://www.snowstar.company'];
 
 const enc = new TextEncoder();
@@ -34,6 +37,8 @@ const json = (data, status = 200, headers = {}) =>
 
 const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const randB64 = (n) => b64(crypto.getRandomValues(new Uint8Array(n)));
+/** URL-safe random token, for things that travel in a link. */
+const randToken = (n) => randB64(n).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
 async function sha256b64(str) {
   return b64(await crypto.subtle.digest('SHA-256', enc.encode(str)));
@@ -269,6 +274,87 @@ async function handle(req, env, ctx) {
       await env.DB.prepare('DELETE FROM sessions WHERE token_hash = ?').bind(await sha256b64(token)).run();
     }
     return json({ ok: true }, 200, { 'set-cookie': sessionCookie('', 0) });
+  }
+
+  // ── forgot password: issue a single-use link ──
+  if (path === '/reset/request' && method === 'POST') {
+    const body = await req.json().catch(() => ({}));
+    const email = String(body.email || '').trim().toLowerCase();
+    // The answer is identical either way — this endpoint must never reveal
+    // whether an address has an account.
+    if (!validEmail(email)) return json({ ok: true });
+    if (!(await throttle(env, `reset:${ip}`))) return json({ error: 'rate_limited' }, 429);
+
+    const u = await env.DB.prepare('SELECT id, email FROM users WHERE email = ?').bind(email).first();
+    if (!u) return json({ ok: true });
+
+    const token = randToken(32);
+    const t = now();
+    await env.DB.prepare(
+      'INSERT INTO password_resets (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)'
+    ).bind(await sha256b64(token), u.id, t, t + RESET_MINUTES * 60).run();
+
+    const link = `https://snowstar.company/reset.html?t=${token}`;
+    ctx.waitUntil((async () => {
+      try {
+        await sendMail(env, { to: u.email, ...resetEmail(link, RESET_MINUTES) });
+      } catch (e) {
+        console.error('reset mail failed', e && e.stack ? e.stack : String(e));
+      }
+    })());
+    return json({ ok: true });
+  }
+
+  // ── is this reset link still good? (so the page can say so up front) ──
+  if (path === '/reset/check' && method === 'GET') {
+    const token = url.searchParams.get('t') || '';
+    if (!VALID_TOKEN.test(token)) return json({ valid: false });
+    const row = await env.DB.prepare(
+      'SELECT expires_at, used_at FROM password_resets WHERE token_hash = ?'
+    ).bind(await sha256b64(token)).first();
+    return json({ valid: !!row && !row.used_at && row.expires_at > now() });
+  }
+
+  // ── set the new password ──
+  if (path === '/reset/confirm' && method === 'POST') {
+    const body = await req.json().catch(() => ({}));
+    const token = String(body.token || '');
+    const password = String(body.password || '');
+    if (!VALID_TOKEN.test(token)) return json({ error: 'invalid_token' }, 400);
+    if (password.length < 8) return json({ error: 'weak_password' }, 400);
+    if (password.length > 200) return json({ error: 'invalid' }, 400);
+    if (!(await throttle(env, `resetc:${ip}`))) return json({ error: 'rate_limited' }, 429);
+
+    const t = now();
+    const row = await env.DB.prepare(
+      `SELECT r.token_hash, r.user_id, r.expires_at, r.used_at,
+              u.email, u.name, u.newsletter, u.admin, u.avatar
+         FROM password_resets r JOIN users u ON u.id = r.user_id
+        WHERE r.token_hash = ?`
+    ).bind(await sha256b64(token)).first();
+    if (!row || row.used_at || row.expires_at <= t) return json({ error: 'invalid_token' }, 400);
+
+    const salt = randB64(16);
+    const hash = await pbkdf2(password, salt, PBKDF2_ITERS, env);
+    const sessionToken = randB64(32);
+    const maxAge = SESSION_DAYS * 86400;
+
+    await env.DB.batch([
+      env.DB.prepare('UPDATE users SET pw_hash = ?, pw_salt = ?, pw_iters = ? WHERE id = ?')
+        .bind(hash, salt, PBKDF2_ITERS, row.user_id),
+      env.DB.prepare('UPDATE password_resets SET used_at = ? WHERE token_hash = ?').bind(t, row.token_hash),
+      // a reset is how you take an account back, so every other session dies
+      env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(row.user_id),
+      env.DB.prepare('DELETE FROM password_resets WHERE user_id = ? AND used_at IS NULL').bind(row.user_id),
+      env.DB.prepare('INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)')
+        .bind(await sha256b64(sessionToken), row.user_id, t, t + maxAge),
+    ]);
+    await clearThrottle(env, `resetc:${ip}`);
+
+    return json(
+      { user: publicUser(row), favorites: await favoritesFor(env, row.user_id, product(body.product)) },
+      200, { 'set-cookie': sessionCookie(sessionToken, maxAge) }
+    );
   }
 
   // ── favorites (scoped per product, so a second product can't collide) ──

@@ -72,6 +72,7 @@
         <p class="auth-error" role="alert" hidden></p>
         <button type="submit" class="mbtn mbtn-solid auth-submit">Sign in</button>
       </form>
+      <p class="auth-forgot"><a href="/reset.html">Forgot your password?</a></p>
       <p class="auth-switch">
         <span class="auth-to-signup">New here? <button type="button">Create an account</button></span>
         <span class="auth-to-login" hidden>Already have an account? <button type="button">Sign in</button></span>
@@ -92,6 +93,7 @@
   const submitEl = modal.querySelector('.auth-submit');
   const nameField = modal.querySelector('.auth-name');
   const newsField = modal.querySelector('.auth-news');
+  const forgotEl = modal.querySelector('.auth-forgot');
   const toSignup = modal.querySelector('.auth-to-signup');
   const toLogin = modal.querySelector('.auth-to-login');
   const bodyEl = modal.querySelector('.auth-body');
@@ -138,6 +140,7 @@
     submitEl.textContent = signup ? 'Create account' : 'Sign in';
     nameField.hidden = !signup;
     newsField.hidden = !signup;
+    forgotEl.hidden = signup;
     toSignup.hidden = signup;
     toLogin.hidden = !signup;
     form.password.setAttribute('autocomplete', signup ? 'new-password' : 'current-password');

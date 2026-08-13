@@ -38,7 +38,10 @@
   border:0;border-radius:99px;cursor:pointer;background:var(--grad);color:#0d0a12;transition:.25s}
 .auth-submit:hover{transform:translateY(-2px)}
 .auth-submit:disabled{opacity:.6;cursor:default;transform:none;box-shadow:none}
-.auth-switch{margin-top:18px;text-align:center;color:var(--muted);font-size:.85rem}
+.auth-forgot{margin-top:14px;text-align:center}
+.auth-forgot a{color:var(--dim,var(--muted));font-size:.82rem;text-decoration:underline}
+.auth-forgot a:hover{color:var(--text)}
+.auth-switch{margin-top:14px;text-align:center;color:var(--muted);font-size:.85rem}
 .auth-switch button{background:none;border:0;color:var(--amber,var(--ice,#8fd8ff));cursor:pointer;
   font-family:var(--font-body);font-size:.85rem;text-decoration:underline;padding:0}
 .auth-alt{margin:2px 0 18px;color:var(--dim,var(--muted));font-size:.78rem;text-align:center;

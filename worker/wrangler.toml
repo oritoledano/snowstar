@@ -25,6 +25,11 @@ destination_address = "oritoledano@gmail.com"
 
 [vars]
 ALERT_TO = "oritoledano@gmail.com"
+# Resend sender. Until send.snowstar.company is verified in Resend, their shared
+# onboarding address is the only one available — and it can ONLY deliver to the
+# account owner. Swap this for "Snowstar <hello@send.snowstar.company>" the
+# moment the domain verifies, or resets to real members will silently fail.
+MAIL_FROM = "Snowstar <onboarding@resend.dev>"
 
 # daily digest at 07:00 UTC
 [triggers]
