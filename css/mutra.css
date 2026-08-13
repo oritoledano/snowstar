@@ -203,8 +203,13 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 }
 @media (max-width:560px){
   .trk-cover{display:none}
-  .trk{grid-template-columns:48px 1fr auto}
+  .trk{grid-template-columns:44px 1fr auto;gap:10px;padding:12px 8px}
   .ml-by{display:none}
+  /* every track is by Ori Toledano — the line only steals width from the title */
+  .trk-artist{display:none}
+  .trk-right{gap:8px}
+  .trk-dur{min-width:32px;font-size:.8rem}
+  .trk-lic{padding:7px 12px;font-size:.72rem}
 }
 @media (max-width:760px){
   .mnav-links{position:fixed;inset:70px 0 auto 0;flex-direction:column;background:rgba(11,7,16,.98);
