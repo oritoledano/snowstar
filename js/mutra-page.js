@@ -62,6 +62,7 @@
   const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>';
   const ICON_HEART = '<svg viewBox="0 0 24 24" width="15" height="15"><path d="M12 20.4l-1.4-1.3C5.6 14.6 2.7 12 2.7 8.7 2.7 6.1 4.7 4 7.3 4c1.5 0 2.9.7 3.8 1.8l.9 1.1.9-1.1C13.8 4.7 15.2 4 16.7 4c2.6 0 4.6 2.1 4.6 4.7 0 3.3-2.9 5.9-7.9 10.4L12 20.4z" fill="currentColor"/></svg>';
   const ICON_LINK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l2-2A5 5 0 0 0 12.5 4.5l-1 1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2A5 5 0 0 0 11.5 19.5l1-1"/></svg>';
+  const ICON_DL = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 19h16"/></svg>';
   const ICON_SIM = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 17V9M9 17V5M14 17v-6M19 17v-9"/></svg>';
 
   // small transient message (copy confirmations etc.)
@@ -77,6 +78,7 @@
     clearTimeout(toast._t);
     toast._t = setTimeout(() => toastEl.classList.remove('show'), 1800);
   }
+  window.mutraToast = toast;
 
   // ── shared audio ──
   const audio = new Audio();
@@ -222,6 +224,7 @@
         <div class="trk-tags">${tags}</div>
         <div class="trk-right">
           <button class="trk-fav" aria-label="Save ${track.title}" title="Save to favorites">${ICON_HEART}</button>
+          <button class="trk-dl" aria-label="Download ${track.title}" title="Download">${ICON_DL}</button>
           <button class="trk-share" aria-label="Copy link to ${track.title}" title="Copy link">${ICON_LINK}</button>
           <button class="trk-sim" aria-label="Similar to ${track.title}" title="Find similar">${ICON_SIM}</button>
           <span class="trk-dur">${fmt(track.duration)}</span>
@@ -241,6 +244,19 @@
         e.stopPropagation();
         if (window.MutraMembers) MutraMembers.toggleFavorite(track.slug);
         if (window.mutraTrack && !favBtn.classList.contains('on')) mutraTrack('favorite', track.slug);
+      });
+
+      // download — members only; everything else on the page stays open
+      row.querySelector('.trk-dl').addEventListener('click', async e => {
+        e.stopPropagation();
+        if (!(window.MutraMembers && MutraMembers.user)) {
+          toast('Create a free account to download');
+          if (window.MutraOpenAuth) MutraOpenAuth('signup', 'Sign up to download tracks — browsing and previews stay free.');
+          return;
+        }
+        if (window.mutraTrack) mutraTrack('download', track.slug);
+        toast('Preparing ' + track.title + '…');
+        location.href = '/api/download?slug=' + encodeURIComponent(track.slug);
       });
 
       // copy a direct link to this track

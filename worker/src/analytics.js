@@ -18,7 +18,7 @@ const json = (data, status = 200, headers = {}) =>
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers },
   });
 
-const VALID_TYPES = new Set(['view', 'play', 'license', 'search', 'favorite']);
+const VALID_TYPES = new Set(['view', 'play', 'license', 'search', 'favorite', 'download']);
 
 /** Reduce a referrer to its host so we never store query strings. */
 function refHost(ref) {
@@ -219,4 +219,33 @@ export async function sendDigest(env) {
   } catch (e) {
     console.error('digest failed', e && e.stack ? e.stack : String(e));
   }
+}
+
+/**
+ * Gated download. Streams the file from R2 with a human-readable filename.
+ *
+ * Note this is lead-capture friction, not DRM: previews stream from a public
+ * CDN URL by design, so a determined visitor can always fetch that. What this
+ * does is make the *convenient* path require an account, and give members a
+ * properly named, correctly tagged file.
+ */
+export async function handleDownload(req, env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const slug = new URL(req.url).searchParams.get('slug') || '';
+  if (!/^[a-z0-9-]+$/.test(slug)) return json({ error: 'invalid_slug' }, 400);
+
+  const row = await env.DB.prepare('SELECT title, audio_key FROM tracks WHERE slug = ?').bind(slug).first();
+  if (!row) return json({ error: 'not_found' }, 404);
+
+  const obj = await env.MEDIA.get(row.audio_key);
+  if (!obj) return json({ error: 'missing_file' }, 404);
+
+  const ext = row.audio_key.split('.').pop().toLowerCase();
+  // keep the filename safe for every OS while staying readable
+  const safe = row.title.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 90);
+  const headers = new Headers();
+  obj.writeHttpMetadata(headers);
+  headers.set('content-disposition', `attachment; filename="${safe}.${ext}"`);
+  headers.set('cache-control', 'private, no-store');
+  return new Response(obj.body, { headers });
 }

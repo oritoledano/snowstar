@@ -14,6 +14,10 @@ binding = "DB"
 database_name = "snowstar-members"
 database_id = "88b958b0-2f50-4f45-a72f-2c46f45734a6"
 
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "snowstar-mutra"
+
 # lets the Worker email the owner; only verified destinations are allowed
 [[send_email]]
 name = "EMAIL"

@@ -36,7 +36,7 @@
   modal.hidden = true;
   modal.innerHTML = `
     <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-      <button class="auth-close" aria-label="Close">&times;</button>
+      <button class="auth-close" aria-label="Close" title="Close">&times;</button>
       <h3 id="authTitle">Sign in</h3>
       <p class="auth-sub">Save tracks to your favorites and pick up where you left off.</p>
       <form id="authForm" novalidate>
@@ -102,8 +102,9 @@
     errEl.hidden = true;
   }
 
-  function open(next) {
+  function open(next, reason) {
     setMode(next || 'login');
+    if (reason) subEl.textContent = reason;
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
     setTimeout(() => form.email.focus(), 50);
@@ -136,8 +137,11 @@
       } else {
         await M.login({ email, password });
       }
+      const who = (M.user && (M.user.name || M.user.email)) || '';
       close();
+      if (window.mutraToast) mutraToast(mode === 'signup' ? `Account created — welcome${who ? ', ' + who : ''}` : `Signed in${who ? ' as ' + who : ''}`);
     } catch (err) {
+      if (err.code === 'email_taken') { offerSignIn(email); return; }
       showErr(MESSAGES[err.code] || 'Couldn’t complete that. Please try again.');
     } finally {
       submitEl.disabled = false;
@@ -146,6 +150,15 @@
   });
 
   function showErr(msg) { errEl.textContent = msg; errEl.hidden = false; }
+
+  /** Existing email on signup: switch to sign-in with it prefilled, rather than a dead end. */
+  function offerSignIn(email) {
+    setMode('login');
+    form.email.value = email;
+    form.password.value = '';
+    showErr('You already have an account with that email — enter your password to sign in.');
+    setTimeout(() => form.password.focus(), 50);
+  }
 
   // let the rest of the page ask for the sign-in modal
   window.MutraOpenAuth = open;

@@ -15,7 +15,7 @@
  *    on writes as CSRF defence-in-depth alongside SameSite
  */
 
-import { handleTrack, handleStats, handleJourney, sendDigest } from './analytics.js';
+import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -145,6 +145,9 @@ async function handle(req, env, ctx) {
   // ── owner-only stats ──
   if (path === '/stats' && method === 'GET') return handleStats(req, env, await currentUser(req, env));
   if (path === '/journey' && method === 'GET') return handleJourney(req, env, await currentUser(req, env));
+
+  // ── member download (the one thing that needs an account) ──
+  if (path === '/download' && method === 'GET') return handleDownload(req, env, await currentUser(req, env));
 
   // ── who am I ──
   if (path === '/me' && method === 'GET') {
