@@ -214,7 +214,7 @@
   // Artlist-style faceted browse: "packages" (the licensing bundles the catalog is
   // organized into on the Wix side) and "genres" are each multi-select (OR within a
   // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
-  const tracksEl = $('#tracks'), countEl = $('#catCount');
+  const tracksEl = $('#tracks');
   const INITIAL = 40;
   const state = {
     packages: new Set(), genres: new Set(), moods: new Set(), instruments: new Set(),
@@ -262,7 +262,6 @@
   function render() {
     const full = MUTRA.tracks.filter(matches);
     const list = expanded ? full : full.slice(0, INITIAL);
-    countEl.textContent = full.length + (full.length === 1 ? ' track' : ' tracks');
     tracksEl.innerHTML = '';
     if (!full.length) { tracksEl.innerHTML = '<p class="cat-empty">No tracks match those filters — try clearing one.</p>'; }
     list.forEach(track => {

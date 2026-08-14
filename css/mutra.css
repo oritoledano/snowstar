@@ -196,9 +196,6 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 
 /* ───────── track list ───────── */
 .catalog{padding:8px 0 90px}
-.cat-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap}
-.cat-head h2{font-size:clamp(1.5rem,2.6vw,2rem)}
-.cat-count{color:var(--muted);font-size:.9rem}
 .tracks{display:flex;flex-direction:column}
 .trk{display:grid;grid-template-columns:52px 40px 2.1fr 3fr auto auto;align-items:center;gap:18px;
   padding:14px 16px;border-radius:14px;border:1px solid transparent;transition:background .2s,border-color .2s;cursor:default}
@@ -243,15 +240,6 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .vcard-ico{width:46px;height:46px;border-radius:12px;background:var(--grad-soft);display:grid;place-items:center;color:var(--amber);margin-bottom:18px}
 .vcard h3{font-size:1.25rem;margin-bottom:10px}
 .vcard p{color:var(--muted);font-size:.95rem}
-
-/* ───────── makers ───────── */
-.makers{padding:70px 0;text-align:center}
-.makers .eyebrow{margin-bottom:14px;display:block}
-.makers h2{font-size:clamp(1.7rem,3vw,2.4rem);max-width:20ch;margin:0 auto}
-.makers p{color:var(--muted);max-width:56ch;margin:20px auto 0}
-.makers .mutra-meaning{margin-top:26px;font-size:1.02rem}
-.makers .mutra-meaning b{color:var(--text);font-family:"Unbounded",var(--font-display);font-weight:500}
-.makers .mutra-meaning em{font-style:normal;color:var(--amber);font-weight:600}
 
 /* ───────── cta ───────── */
 .mcta{padding:90px 0;text-align:center;position:relative;overflow:hidden}
