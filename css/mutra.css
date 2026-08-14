@@ -288,6 +288,16 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   .fcat-adv{padding:8px 10px}
   .fpills{justify-content:center}
 }
+/* at phone width the control row has to earn every pixel, so Filters keeps
+   its icon and drops its word */
+@media (max-width:560px){
+  .fbar{gap:4px}
+  .fcat{font-size:.8rem;padding:7px 8px}
+  .fcat-tgl{padding:7px 5px}
+  .fcat-adv{font-size:0;padding:7px 9px;border-radius:10px}
+  .fcat-adv svg{width:17px;height:17px}
+  .fsort #sortBtn{font-size:.8rem}
+}
 .chip{font-family:var(--font-display);font-size:.76rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
   color:var(--muted);cursor:pointer;padding:8px 15px;border-radius:99px;border:1px solid var(--line);background:var(--chip-bg);transition:.2s;white-space:nowrap}
 .chip:hover{color:var(--text);border-color:var(--line-2)}
