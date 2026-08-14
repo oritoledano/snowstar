@@ -137,9 +137,11 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   animation:marq 64s linear infinite;will-change:transform}
 .marq:hover .marq-track{animation-play-state:paused}
 @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.marq img{height:clamp(22px,2.4vw,30px);width:auto;flex:none;opacity:.55;
+.marq img{height:clamp(26px,2.8vw,34px);width:auto;flex:none;opacity:.62;
   transition:opacity .3s;object-fit:contain}
 .marq img:hover{opacity:1}
+/* inverted white art sits lighter against cream than it does against black */
+[data-theme="light"] .marq img{opacity:.78}
 /* the artwork is white-on-transparent, so it needs flipping on a light page —
    except the two logos that carry their own dark ink (Doritos, Lipton) */
 [data-theme="light"] .marq img:not([data-tone="mixed"]){filter:invert(1)}
