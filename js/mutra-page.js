@@ -868,6 +868,13 @@
     track.innerHTML = html + html;   // doubled so the loop is seamless
   })();
 
+  // Two headline options while Ori picks — ?hero=2 keeps the long sentence small
+  if (/[?&]hero=2/.test(location.search)) {
+    document.body.classList.add('hero-fit');
+    const h = $('#heroTitle');
+    if (h) h.innerHTML = 'License music chosen by<br>the biggest brands in the world';
+  }
+
   const heroSignup = $('#heroSignup');
   if (heroSignup) heroSignup.addEventListener('click', () => {
     if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');

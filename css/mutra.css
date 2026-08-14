@@ -128,6 +128,8 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
   font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.9;letter-spacing:-.012em;
   text-transform:uppercase;margin:0}
+/* Option 2 (?hero=2): keep the full sentence, size it down so it sits calmly */
+.hero-fit .mhero-title{font-size:clamp(2.1rem,7vw,5.6rem);line-height:.94;max-width:16ch;margin-inline:auto}
 /* three promises under the headline. Animated inline SVG rather than GIFs:
    crisp at any size, follows the skin's colour, and a fraction of the weight. */
 .mhero-points{display:flex;justify-content:center;align-items:flex-start;
