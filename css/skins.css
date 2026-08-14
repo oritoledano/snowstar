@@ -1,0 +1,147 @@
+/* ═══════════ Mutra skins ═══════════
+   Every colour in mutra.css resolves through these tokens, so a skin is just a
+   variable set — no rules are duplicated. Applied as
+   <html data-skin="ember|vapor|bone" data-theme="dark|light">.
+
+   Each skin defines the same contract:
+     surfaces  --bg --bg-2 --panel --panel-2 --line --line-2
+     type      --text --muted --dim --hero-sub --on-accent
+     accents   --amber --coral --pink --grad --grad-soft
+     chrome    --nav-bg --menu-bg --player-bg --toast-bg --chip-bg
+     tints     --tint --tint-2 --tint-3 --flash --btn-shadow --focus-ring --seek-glow
+     washes    --menu-wash-1 --menu-wash-2 --wash-warm --wash-coral
+     waveform  --wave-base --wave-played --wave-head
+     hero glow --glow1a/b … --glow4a/b (left → right across the hero) */
+
+/* ───────────────────────── EMBER — molten, the original ───────────────────── */
+:root,
+[data-skin="ember"]{
+  --bg:#0b0710; --bg-2:#120b16; --panel:#181020; --panel-2:#20152a;
+  --line:rgba(255,180,140,.11); --line-2:rgba(255,180,140,.20);
+  --text:#f7f0ea; --muted:#b3a6b0; --dim:#8c7f8a; --hero-sub:#cabfc6; --on-accent:#1a0a08;
+  --amber:#ffc24b; --coral:#ff6a4d; --pink:#ff3d8b;
+  --grad:linear-gradient(100deg,#ffc24b 0%,#ff6a4d 52%,#ff3d8b 108%);
+  --grad-soft:linear-gradient(100deg,rgba(255,194,75,.16),rgba(255,61,139,.16));
+  --nav-bg:rgba(11,7,16,.8); --menu-bg:rgba(11,7,16,.98);
+  --player-bg:rgba(16,10,22,.94); --toast-bg:rgba(24,16,32,.96); --chip-bg:rgba(24,16,32,.5);
+  --tint:rgba(255,180,140,.09); --tint-2:rgba(255,106,77,.1); --tint-3:rgba(255,255,255,.03);
+  --flash:rgba(255,106,77,.16); --btn-shadow:rgba(255,106,77,.3);
+  --focus-ring:rgba(255,106,77,.25); --seek-glow:rgba(255,61,139,.28);
+  --menu-wash-1:rgba(255,61,139,.16); --menu-wash-2:rgba(255,194,75,.13);
+  --wash-warm:rgba(255,194,75,.16); --wash-coral:rgba(255,106,77,.10);
+  --wave-base:rgba(255,180,140,.22); --wave-played:#ff6a4d; --wave-head:#ffc24b;
+  --glow1a:#7a3cff; --glow1b:#ff3d8b;
+  --glow2a:#ff3d8b; --glow2b:#ff6a4d;
+  --glow3a:#ff6a4d; --glow3b:#ffc24b;
+  --glow4a:#ffc24b; --glow4b:#ff6a4d;
+}
+
+/* ───────────────────────── VAPOR — electric, sibling to Snowstar ──────────── */
+[data-skin="vapor"]{
+  --bg:#05070f; --bg-2:#080c18; --panel:#0e1424; --panel-2:#141d31;
+  --line:rgba(140,190,255,.12); --line-2:rgba(140,190,255,.22);
+  --text:#eef4ff; --muted:#9fb0cc; --dim:#7788a3; --hero-sub:#c2cfe4; --on-accent:#04070f;
+  --amber:#5eead4; --coral:#22d3ee; --pink:#8b5cf6;
+  --grad:linear-gradient(100deg,#5eead4 0%,#22d3ee 50%,#8b5cf6 110%);
+  --grad-soft:linear-gradient(100deg,rgba(94,234,212,.16),rgba(139,92,246,.16));
+  --nav-bg:rgba(5,7,15,.82); --menu-bg:rgba(5,7,15,.98);
+  --player-bg:rgba(10,14,26,.94); --toast-bg:rgba(14,20,36,.96); --chip-bg:rgba(14,20,36,.55);
+  --tint:rgba(140,190,255,.09); --tint-2:rgba(34,211,238,.12); --tint-3:rgba(255,255,255,.03);
+  --flash:rgba(34,211,238,.16); --btn-shadow:rgba(34,211,238,.3);
+  --focus-ring:rgba(34,211,238,.25); --seek-glow:rgba(139,92,246,.3);
+  --menu-wash-1:rgba(139,92,246,.18); --menu-wash-2:rgba(94,234,212,.13);
+  --wash-warm:rgba(94,234,212,.14); --wash-coral:rgba(34,211,238,.10);
+  --wave-base:rgba(150,200,255,.22); --wave-played:#22d3ee; --wave-head:#5eead4;
+  --glow1a:#8b5cf6; --glow1b:#3b82f6;
+  --glow2a:#3b82f6; --glow2b:#22d3ee;
+  --glow3a:#22d3ee; --glow3b:#5eead4;
+  --glow4a:#5eead4; --glow4b:#22d3ee;
+}
+
+/* ───────────────────────── BONE — editorial, near-monochrome ──────────────── */
+[data-skin="bone"]{
+  --bg:#0c0c0d; --bg-2:#121213; --panel:#161617; --panel-2:#1d1d1f;
+  --line:rgba(235,225,210,.10); --line-2:rgba(235,225,210,.20);
+  --text:#f2ede4; --muted:#a8a29a; --dim:#7d786f; --hero-sub:#c9c3b8; --on-accent:#121110;
+  --amber:#e8dfd0; --coral:#d9744a; --pink:#c85a3c;
+  --grad:linear-gradient(100deg,#efe7d8 0%,#e0b48b 55%,#d9744a 112%);
+  --grad-soft:linear-gradient(100deg,rgba(239,231,216,.12),rgba(217,116,74,.14));
+  --nav-bg:rgba(12,12,13,.84); --menu-bg:rgba(12,12,13,.98);
+  --player-bg:rgba(18,18,19,.95); --toast-bg:rgba(24,24,26,.96); --chip-bg:rgba(22,22,23,.6);
+  --tint:rgba(235,225,210,.08); --tint-2:rgba(217,116,74,.12); --tint-3:rgba(255,255,255,.03);
+  --flash:rgba(217,116,74,.16); --btn-shadow:rgba(0,0,0,.5);
+  --focus-ring:rgba(217,116,74,.28); --seek-glow:rgba(217,116,74,.26);
+  --menu-wash-1:rgba(217,116,74,.12); --menu-wash-2:rgba(235,225,210,.07);
+  --wash-warm:rgba(235,225,210,.08); --wash-coral:rgba(217,116,74,.09);
+  --wave-base:rgba(235,225,210,.20); --wave-played:#d9744a; --wave-head:#efe7d8;
+  --glow1a:#6b5f52; --glow1b:#a8836a;
+  --glow2a:#a8836a; --glow2b:#d9744a;
+  --glow3a:#d9744a; --glow3b:#e0b48b;
+  --glow4a:#e0b48b; --glow4b:#efe7d8;
+}
+
+/* ───────────────────────── light variants ─────────────────────────────────── */
+[data-theme="light"][data-skin="ember"],
+[data-theme="light"]:not([data-skin="vapor"]):not([data-skin="bone"]){
+  --bg:#fdf8f4; --bg-2:#f6ece5; --panel:#fffaf6; --panel-2:#fdf2ea;
+  --line:rgba(120,60,40,.14); --line-2:rgba(120,60,40,.26);
+  --text:#1e1218; --muted:#6b5560; --dim:#8a7580; --hero-sub:#5a4550; --on-accent:#fffaf6;
+  --amber:#c07800; --coral:#e0442a; --pink:#d31a68;
+  --grad:linear-gradient(100deg,#f0a01f 0%,#ec5330 52%,#d31a68 108%);
+  --grad-soft:linear-gradient(100deg,rgba(240,160,31,.14),rgba(211,26,104,.12));
+  --nav-bg:rgba(253,248,244,.86); --menu-bg:rgba(253,248,244,.98);
+  --player-bg:rgba(255,250,246,.96); --toast-bg:rgba(30,18,24,.94); --chip-bg:rgba(255,255,255,.7);
+  --tint:rgba(120,60,40,.07); --tint-2:rgba(224,68,42,.09); --tint-3:rgba(120,60,40,.04);
+  --flash:rgba(224,68,42,.14); --btn-shadow:rgba(224,68,42,.28);
+  --focus-ring:rgba(224,68,42,.22); --seek-glow:rgba(211,26,104,.22);
+  --menu-wash-1:rgba(211,26,104,.10); --menu-wash-2:rgba(240,160,31,.12);
+  --wash-warm:rgba(240,160,31,.12); --wash-coral:rgba(224,68,42,.08);
+  --wave-base:rgba(120,60,40,.20); --wave-played:#e0442a; --wave-head:#c07800;
+}
+[data-theme="light"][data-skin="vapor"]{
+  --bg:#f6f9fd; --bg-2:#eaf1f9; --panel:#ffffff; --panel-2:#f2f7fd;
+  --line:rgba(20,60,110,.13); --line-2:rgba(20,60,110,.25);
+  --text:#0d1626; --muted:#4f6280; --dim:#73859f; --hero-sub:#41546f; --on-accent:#f7fbff;
+  --amber:#0d9488; --coral:#0891b2; --pink:#6d28d9;
+  --grad:linear-gradient(100deg,#0d9488 0%,#0891b2 50%,#6d28d9 110%);
+  --grad-soft:linear-gradient(100deg,rgba(13,148,136,.12),rgba(109,40,217,.12));
+  --nav-bg:rgba(246,249,253,.88); --menu-bg:rgba(246,249,253,.98);
+  --player-bg:rgba(255,255,255,.96); --toast-bg:rgba(13,22,38,.94); --chip-bg:rgba(255,255,255,.75);
+  --tint:rgba(20,60,110,.06); --tint-2:rgba(8,145,178,.10); --tint-3:rgba(20,60,110,.04);
+  --flash:rgba(8,145,178,.14); --btn-shadow:rgba(8,145,178,.26);
+  --focus-ring:rgba(8,145,178,.22); --seek-glow:rgba(109,40,217,.22);
+  --menu-wash-1:rgba(109,40,217,.10); --menu-wash-2:rgba(13,148,136,.10);
+  --wash-warm:rgba(13,148,136,.10); --wash-coral:rgba(8,145,178,.08);
+  --wave-base:rgba(20,60,110,.20); --wave-played:#0891b2; --wave-head:#0d9488;
+}
+[data-theme="light"][data-skin="bone"]{
+  --bg:#f7f4ee; --bg-2:#efeae1; --panel:#fffdf9; --panel-2:#f4f0e8;
+  --line:rgba(60,50,40,.14); --line-2:rgba(60,50,40,.26);
+  --text:#17150f; --muted:#5f584d; --dim:#847c6f; --hero-sub:#4a443b; --on-accent:#fffdf9;
+  --amber:#8a7a5e; --coral:#b4501f; --pink:#9c3d1c;
+  --grad:linear-gradient(100deg,#a89170 0%,#c07340 55%,#b4501f 112%);
+  --grad-soft:linear-gradient(100deg,rgba(168,145,112,.14),rgba(180,80,31,.12));
+  --nav-bg:rgba(247,244,238,.86); --menu-bg:rgba(247,244,238,.98);
+  --player-bg:rgba(255,253,249,.96); --toast-bg:rgba(23,21,15,.94); --chip-bg:rgba(255,255,255,.66);
+  --tint:rgba(60,50,40,.06); --tint-2:rgba(180,80,31,.10); --tint-3:rgba(60,50,40,.04);
+  --flash:rgba(180,80,31,.14); --btn-shadow:rgba(60,50,40,.22);
+  --focus-ring:rgba(180,80,31,.24); --seek-glow:rgba(180,80,31,.22);
+  --menu-wash-1:rgba(180,80,31,.09); --menu-wash-2:rgba(168,145,112,.10);
+  --wash-warm:rgba(168,145,112,.10); --wash-coral:rgba(180,80,31,.07);
+  --wave-base:rgba(60,50,40,.20); --wave-played:#b4501f; --wave-head:#8a7a5e;
+}
+
+/* the wordmark is white art on transparency — it needs inverting on light */
+[data-theme="light"] .ml-img{filter:invert(1)}
+
+/* ── skin picker (temporary, while Ori chooses) + theme toggle ── */
+.skin-bar{position:fixed;left:50%;bottom:calc(var(--player-h) + 16px);transform:translateX(-50%);
+  z-index:150;display:flex;align-items:center;gap:6px;padding:6px;border-radius:99px;
+  background:var(--panel-2);border:1px solid var(--line-2);box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.skin-bar button{font-family:var(--font-body);font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);background:none;border:0;cursor:pointer;
+  padding:7px 13px;border-radius:99px;transition:.2s;white-space:nowrap}
+.skin-bar button:hover{color:var(--text)}
+.skin-bar button.on{background:var(--grad);color:var(--on-accent)}
+.skin-bar .sep{width:1px;height:18px;background:var(--line-2);flex:none}
+@media (max-width:560px){.skin-bar button{font-size:.66rem;padding:6px 9px}}

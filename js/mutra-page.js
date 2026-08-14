@@ -34,6 +34,19 @@
 
   // Artlist-style render: thin mirrored columns around the vertical center.
   // base = warm faint; played = gradient coral→amber up to `frac`.
+  // read once per skin change rather than per bar
+  let WAVE = { base: 'rgba(255,180,140,0.22)', played: '#ff6a4d', head: '#ffc24b' };
+  function readWaveColours() {
+    const cs = getComputedStyle(document.documentElement);
+    const pick = (n, d) => (cs.getPropertyValue(n).trim() || d);
+    WAVE = {
+      base: pick('--wave-base', WAVE.base),
+      played: pick('--wave-played', WAVE.played),
+      head: pick('--wave-head', WAVE.head),
+    };
+  }
+  readWaveColours();
+
   function drawWave(canvas, peaks, frac) {
     const dpr = devicePixelRatio || 1;
     const cw = canvas.clientWidth, ch = canvas.clientHeight;
@@ -50,9 +63,9 @@
     for (let i = 0; i < n; i++) {
       const h = Math.max(1, (peaks[i] / 99) * (ch * 0.96) / 2);
       if (i <= head) {
-        ctx.fillStyle = i === head ? '#ffc24b' : '#ff6a4d';
+        ctx.fillStyle = i === head ? WAVE.head : WAVE.played;
       } else {
-        ctx.fillStyle = 'rgba(255,180,140,0.22)';
+        ctx.fillStyle = WAVE.base;
       }
       ctx.fillRect(i * colW, mid - h, barW, h * 2);
     }
@@ -99,6 +112,15 @@
   function paintWave(row, frac) {
     const canvas = row.querySelector('.trk-wave canvas');
     if (canvas && canvas._peaks) drawWave(canvas, canvas._peaks, frac);
+  }
+  /** Redraw every visible waveform — used when the skin changes under us. */
+  function repaintWaves() {
+    const playing = current && audio.duration ? audio.currentTime / audio.duration : null;
+    document.querySelectorAll('.trk-wave canvas').forEach(c => {
+      if (!c._peaks) return;
+      const row = c.closest('.trk');
+      drawWave(c, c._peaks, current && row === current.row ? playing : null);
+    });
   }
 
   function loadTrack(track, row) {
@@ -469,13 +491,16 @@
   (function heroGlow() {
     const hero = $('#mhero');
     if (!hero) return;
-    // warm on the right, cool on the left — the whole Mutra range, end to end
-    const PALETTE = [
-      ['#7a3cff', '#ff3d8b'],   // violet → pink
-      ['#ff3d8b', '#ff6a4d'],   // pink → coral
-      ['#ff6a4d', '#ffc24b'],   // coral → amber
-      ['#ffc24b', '#ff6a4d'],   // amber → coral
-    ];
+    // the ramp is defined per skin in css/skins.css, left → right
+    let PALETTE = [];
+    function readPalette() {
+      const cs = getComputedStyle(document.documentElement);
+      PALETTE = [1, 2, 3, 4].map(i =>
+        [cs.getPropertyValue('--glow' + i + 'a').trim() || '#ff6a4d',
+         cs.getPropertyValue('--glow' + i + 'b').trim() || '#ff3d8b']);
+    }
+    readPalette();
+    addEventListener('mutraskin', () => { readPalette(); readWaveColours(); repaintWaves(); queue(); });
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let tx = 50, ty = 42, x = 50, y = 42, raf = 0;
 
