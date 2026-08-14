@@ -242,7 +242,7 @@
   const PAGE = 40;   // rows added per scroll-in
   const facet = () => ({ inc: new Set(), exc: new Set() });
   const state = {
-    packages: facet(), genres: facet(), moods: facet(), instruments: facet(),
+    packages: facet(), genres: facet(), moods: facet(), instruments: facet(), scales: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
     sort: 'picks', highlights: true, lyrics: false, keys: false,
   };
@@ -268,6 +268,9 @@
 
   function matches(t) {
     if (state.favoritesOnly && !(window.MutraMembers && MutraMembers.isFavorite(t.slug))) return false;
+    const sc = state.scales;
+    if (sc.inc.size && !sc.inc.has(scaleOf(t))) return false;
+    if (sc.exc.size && sc.exc.has(scaleOf(t))) return false;
     for (const key of ['packages', 'genres', 'moods', 'instruments']) {
       const vals = t[key] || [], f = state[key];
       if (f.inc.size && !vals.some(v => f.inc.has(v))) return false;
@@ -489,9 +492,17 @@
     genres:      { label: 'Genre',      values: () => MUTRA.genres },
     moods:       { label: 'Mood',       values: () => MUTRA.moods },
     instruments: { label: 'Instrument', values: () => INSTRUMENTS },
+    scales:      { label: 'Scale',      values: () => SCALES },
   };
   // built from the catalog so it stays honest as the tagging is refined
   const INSTRUMENTS = [...new Set(MUTRA.tracks.flatMap(t => t.instruments || []))].sort();
+  const scaleOf = t => (t.key ? t.key + ' ' + t.scale : '');
+  // chromatic rather than alphabetical, so the list reads like a keyboard
+  const SCALES = [...new Set(MUTRA.tracks.map(scaleOf).filter(Boolean))]
+    .sort((a, b) => {
+      const [ka, sa] = a.split(' '), [kb, sb] = b.split(' ');
+      return pitchIx(ka) - pitchIx(kb) || (sa === sb ? 0 : sa === 'major' ? -1 : 1);
+    });
   let openCat = null;
 
   const chip = (label, on, cls) =>
@@ -749,6 +760,18 @@
     hlBtn.setAttribute('aria-pressed', String(state.highlights));
   }
   const lyrBtn = $('#lyrToggle'), keyBtn = $('#keyToggle');
+  const scaleCat = () => fbar.querySelector('[data-cat=scales]');
+  function syncScaleCat() {
+    const b = scaleCat();
+    if (!b) return;
+    b.hidden = !state.keys;
+    if (!state.keys && (state.scales.inc.size || state.scales.exc.size)) {
+      state.scales.inc.clear(); state.scales.exc.clear();
+      if (openCat === 'scales') closeDrawer();
+      drawPills(); render();
+    }
+  }
+
   function paintToggle(btn, on, cls) {
     btn.classList.toggle('on', on);
     btn.setAttribute('aria-pressed', String(on));
@@ -771,6 +794,7 @@
     state.keys = !state.keys;
     spin(keyBtn);
     paintToggle(keyBtn, state.keys, 'no-key');
+    syncScaleCat();
     if (!state.keys && state.sort === 'scale') {   // that sort just lost its meaning
       state.sort = 'picks';
       sortLabel.textContent = 'Staff picks';
@@ -781,6 +805,7 @@
   });
   paintToggle(lyrBtn, state.lyrics, 'no-lyr');
   paintToggle(keyBtn, state.keys, 'no-key');
+  syncScaleCat();
 
   hlBtn.addEventListener('click', () => {
     state.highlights = !state.highlights;
@@ -841,7 +866,13 @@
     panel.querySelectorAll('.sim-item').forEach(btn => {
       btn.addEventListener('click', () => {
         const t = MUTRA.tracks.find(x => x.slug === btn.dataset.slug);
-        if (t) focusTrack(t.slug, true);
+        if (!t) return;
+        // play it in the sticky player and stay put — losing your place in the
+        // list is a worse trade than not seeing the row highlighted
+        const liveRow = [...tracksEl.querySelectorAll('.trk')]
+          .find(r => r.querySelector('.trk-wave canvas')?._slug === t.slug);
+        loadTrack(t, liveRow || row);
+        panel.querySelectorAll('.sim-item').forEach(b => b.classList.toggle('playing', b === btn));
       });
     });
     panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });

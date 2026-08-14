@@ -132,6 +132,14 @@
     emit();
   };
 
+  /** Redeem the one-time code a social sign-in handed back. */
+  Account.claim = async function (code) {
+    const d = await post('/auth/claim', { code });
+    Account.user = d.user;
+    await refresh();          // pick up favorites for this product
+    return Account.user;
+  };
+
   Account.requestReset = (email) => post('/reset/request', { email });
   Account.confirmReset = async function (token, password) {
     await enter(await post('/reset/confirm', { token, password, product: PRODUCT }), []);

@@ -17,7 +17,7 @@
 
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
 import { sendMail, resetEmail } from './mail.js';
-import { startOAuth, finishOAuth, facebookDataDeletion } from './oauth.js';
+import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff } from './oauth.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -181,6 +181,7 @@ async function handle(req, env, ctx) {
   }
   // Facebook requires this endpoint to exist before it will approve the app
   if (path === '/facebook/data-deletion' && method === 'POST') return facebookDataDeletion(req, env);
+  if (path === '/auth/claim' && method === 'POST') return claimHandoff(req, env);
 
   // ── analytics beacon (anonymous, no auth) ──
   if (path === '/track' && method === 'POST') return handleTrack(req, env, ctx);

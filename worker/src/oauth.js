@@ -150,12 +150,19 @@ export async function finishOAuth(req, env, provider) {
     const profile = await cfg.profile(tok.access_token);
     if (!profile.id) throw new Error('no_provider_id');
 
-    const session = await linkAndSignIn(env, provider, profile);
+    const userId = await linkAndSignIn(env, provider, profile);
+    const cookie = await issueSession(env, userId);
+
+    // belt and braces: a code the page can exchange if the cookie above is lost
+    const code = rand(32);
+    const codeHash = b64url(await crypto.subtle.digest('SHA-256', enc.encode(code)));
+    await env.DB.prepare(
+      'INSERT INTO handoffs (code_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)'
+    ).bind(codeHash, userId, now(), now() + 120).run();
+
     const to = safeReturn(back);
-    return bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok', {
-      'set-cookie': session,
-      'x-ss-cookie-set': '1',
-    });
+    return bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok&h=' + code,
+      { 'set-cookie': cookie });
   } catch (e) {
     const why = String(e && e.message || e).slice(0, 40).replace(/[^\w .:-]/g, '');
     console.error('oauth ' + provider, e && e.stack ? e.stack : String(e));
@@ -203,6 +210,12 @@ async function linkAndSignIn(env, provider, profile) {
   await env.DB.prepare('UPDATE users SET last_login_at = ?, avatar = COALESCE(?, avatar) WHERE id = ?')
     .bind(t, profile.avatar || null, userId).run();
 
+  return userId;
+}
+
+/** Mint the session cookie for a user. */
+export async function issueSession(env, userId) {
+  const t = now();
   const token = b64url(crypto.getRandomValues(new Uint8Array(32)));
   const maxAge = 60 * 86400;
   const hash = btoa(String.fromCharCode(...new Uint8Array(
@@ -210,8 +223,39 @@ async function linkAndSignIn(env, provider, profile) {
   await env.DB.prepare(
     'INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)'
   ).bind(hash, userId, t, t + maxAge).run();
-
   return `ss_session=${token}; Domain=snowstar.company; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+}
+
+/**
+ * Exchange a one-time handoff code for a session.
+ *
+ * Some browsers drop a Set-Cookie that arrives on a redirect from another
+ * site. This second path sets the cookie on an ordinary same-origin request
+ * instead — the same mechanism password sign-in already uses successfully.
+ */
+export async function claimHandoff(req, env) {
+  const json = (d, s = 200, h = {}) => new Response(JSON.stringify(d), {
+    status: s, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', ...h },
+  });
+  const body = await req.json().catch(() => ({}));
+  const code = String(body.code || '');
+  if (!/^[A-Za-z0-9_-]{20,120}$/.test(code)) return json({ error: 'invalid' }, 400);
+
+  const hash = b64url(await crypto.subtle.digest('SHA-256', enc.encode(code)));
+  const row = await env.DB.prepare(
+    'SELECT code_hash, user_id, expires_at, used_at FROM handoffs WHERE code_hash = ?'
+  ).bind(hash).first();
+  await env.DB.prepare('DELETE FROM handoffs WHERE code_hash = ? OR expires_at < ?')
+    .bind(hash, now()).run();
+  if (!row || row.used_at || row.expires_at < now()) return json({ error: 'expired' }, 400);
+
+  const cookie = await issueSession(env, row.user_id);
+  const u = await env.DB.prepare(
+    'SELECT email, name, newsletter, admin, avatar FROM users WHERE id = ?'
+  ).bind(row.user_id).first();
+  return json({ user: {
+    email: u.email, name: u.name, newsletter: !!u.newsletter, admin: !!u.admin, avatar: u.avatar || null,
+  } }, 200, { 'set-cookie': cookie });
 }
 
 /**

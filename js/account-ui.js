@@ -247,19 +247,25 @@
     const res = p.get('auth');
     if (!res) return;
     p.delete('auth');
+    p.delete('h');
     const clean = location.pathname + (p.toString() ? '?' + p : '') + location.hash;
     history.replaceState(null, '', clean);   // don't leave it in the URL
 
+    const handoff = p.get('h');
     const once = M.ready ? Promise.resolve() : new Promise(done => {
       const off = M.onChange(() => { off(); done(); });
     });
-    once.then(() => {
+    once.then(async () => {
       if (res === 'ok') {
+        // the redirect's cookie may not have survived; redeem the code instead
+        if (!M.user && handoff) {
+          try { await M.claim(handoff); } catch (e) { /* fall through to the message */ }
+        }
         if (M.user) {
           const who = M.user.name || M.user.email.split('@')[0];
           toast('Signed in as ' + who);
         } else {
-          open('login', 'Your browser blocked the sign-in cookie. Try again, or sign in with your password.');
+          open('login', 'That sign-in couldn\u2019t be completed in this browser. Try your password, or another browser.');
         }
       } else if (res === 'unavailable') {
         open('login', 'That sign-in method isn\u2019t switched on yet.');
