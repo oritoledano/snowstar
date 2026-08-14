@@ -301,6 +301,24 @@
     custom: (a, b) => ((a.packages || []).length ? 1 : 0) - ((b.packages || []).length ? 1 : 0) || byTitle(a, b),
   };
 
+  /** Mark the titles that don't fit and tell each one how far to slide. */
+  function measureTitles() {
+    tracksEl.querySelectorAll('.trk-title').forEach(el => {
+      const inner = el.querySelector('.tt-in');
+      if (!inner) return;
+      const over = inner.scrollWidth - el.clientWidth;
+      el.classList.toggle('clipped', over > 2);
+      if (over > 2) {
+        el.style.setProperty('--mq-shift', -(over + 8) + 'px');
+        // a steady ~55px/sec, so long titles don't crawl and short ones don't snap
+        el.style.setProperty('--mq-dur', Math.min(4, Math.max(0.5, (over + 8) / 55)).toFixed(2) + 's');
+      } else {
+        el.style.removeProperty('--mq-shift');
+        el.style.removeProperty('--mq-dur');
+      }
+    });
+  }
+
   function render() {
     const full = MUTRA.tracks.filter(matches).sort(SORTERS[state.sort] || SORTERS.picks);
     const list = expanded ? full : full.slice(0, INITIAL);
@@ -312,6 +330,7 @@
         <a class="mbtn mbtn-solid" href="${HELP_MAILTO}">Get in touch</a>
       </div>`;
     }
+    requestAnimationFrame(measureTitles);
     list.forEach(track => {
       const i = MUTRA.tracks.indexOf(track);
       const row = document.createElement('div');
@@ -325,7 +344,7 @@
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
         <img class="trk-cover" src="${track.cover}" alt="" loading="lazy">
         <div class="trk-id">
-          <div class="trk-title">${track.title}</div>
+          <div class="trk-title"><span class="tt-in">${track.title}</span></div>
           <div class="trk-artist">${track.artist}</div>
         </div>
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
@@ -850,25 +869,7 @@
     if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');
   });
 
-  // ── opt-in pyramid hover (?pyramid=1) — see the note in mutra.css ──
-  if (/[?&]pyramid=1/.test(location.search)) {
-    document.body.classList.add('pyramid');
-    let lit = [];
-    const clear = () => { lit.forEach(([el, c]) => el.classList.remove(c)); lit = []; };
-    tracksEl.addEventListener('pointerover', e => {
-      const row = e.target.closest('.trk');
-      if (!row) return;
-      clear();
-      const rows = [...tracksEl.querySelectorAll('.trk')];
-      const i = rows.indexOf(row);
-      [[0, 'hv0'], [-1, 'hv1'], [1, 'hv1'], [-2, 'hv2'], [2, 'hv2']].forEach(([d, c]) => {
-        const el = rows[i + d];
-        if (el) { el.classList.add(c); lit.push([el, c]); }
-      });
-    });
-    tracksEl.addEventListener('pointerleave', clear);
-    toast('Pyramid hover on — drop ?pyramid=1 to go back');
-  }
+  addEventListener('resize', () => requestAnimationFrame(measureTitles), { passive: true });
 
   // shadow only once the bar is actually pinned
   const cbar = $('#cbar');
