@@ -684,6 +684,8 @@
   const favToggle = document.createElement('button');
   favToggle.id = 'favToggle';
   favToggle.className = 'chip fav-chip fcat-fav';
+  favToggle.setAttribute('aria-label', 'My favorites');
+  favToggle.title = 'My favorites';
   favToggle.innerHTML = ICON_HEART + '<span>My favorites</span>';
   favToggle.addEventListener('click', () => {
     state.favoritesOnly = !state.favoritesOnly;
