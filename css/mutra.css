@@ -187,6 +187,7 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 
 /* state lives in the icon's colour rather than a filled box */
 .fcat-tgl.on{color:var(--coral)}
+.fcat-fav.on{color:var(--pink)}
 .fcat-tgl.on:hover{color:var(--coral)}
 /* the bolt is the one that changes what you hear, so it gets a quiet pulse */
 .fcat-hl.on svg{filter:drop-shadow(0 0 5px color-mix(in oklab,var(--coral) 65%,transparent));
@@ -280,7 +281,6 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .fpill:hover{border-color:var(--coral)}
 .fpill span{color:var(--dim);font-size:1rem;line-height:1}
 .fpill-clear{background:none;color:var(--dim)}
-.fcat-fav{margin-left:4px}
 /* Phones and tablets both read top-down: controls first, then the four facets,
    both rows centred. Favourites sheds its label; the display toggles are
    already icons. */
@@ -289,10 +289,6 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   .fbar > *{order:3}
   .fcat-tgl,.fsort,.fcat-adv,#favToggle{order:1}
   .fbar-gap{order:2;flex-basis:100%;height:0;min-width:0}
-  .fcat-hl span,.fcat-fav span{display:none}
-  .fcat-hl,.fcat-fav{width:40px;height:38px;padding:0;justify-content:center;gap:0}
-  .fbar .fcat-fav{border:0;background:none;color:var(--dim)}
-  .fbar .fcat-fav.active{background:none;color:var(--pink)}
   .fcat{font-size:.84rem;padding:8px 11px}
   /* "Sort:" is redundant next to the value once space is tight */
   .fsort #sortBtn{gap:5px;padding:8px 9px}

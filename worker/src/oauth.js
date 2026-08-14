@@ -68,6 +68,14 @@ const PROVIDERS = {
   },
 };
 
+/** Breadcrumbs, so a failure can be diagnosed without asking the visitor. */
+async function note(env, step, detail) {
+  try {
+    await env.DB.prepare('INSERT INTO auth_log (ts, step, detail) VALUES (?, ?, ?)')
+      .bind(now(), step, (detail || '').slice(0, 300)).run();
+  } catch {}
+}
+
 const redirectUri = (req, provider) =>
   new URL(`/api/auth/${provider}/callback`, new URL(req.url).origin).toString();
 
@@ -108,6 +116,7 @@ export async function startOAuth(req, env, provider) {
     p.set('code_challenge', await sha256url(verifier));
     p.set('code_challenge_method', 'S256');
   }
+  await note(env, 'start', provider + ' → ' + back);
   return bounce(`${cfg.auth}?${p}`);
 }
 
@@ -117,7 +126,10 @@ export async function finishOAuth(req, env, provider) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
-  if (!cfg || !code || !state) return bounce('/mutra.html?auth=failed');
+  if (!cfg || !code || !state) {
+    await note(env, 'callback_missing_params', url.search.slice(0, 200));
+    return bounce('/mutra.html?auth=failed');
+  }
 
   // the state must be one we issued, unused and unexpired
   const row = await env.DB.prepare(
@@ -125,7 +137,10 @@ export async function finishOAuth(req, env, provider) {
   ).bind(state).first();
   await env.DB.prepare('DELETE FROM oauth_states WHERE state = ? OR expires_at < ?')
     .bind(state, now()).run();
-  if (!row || row.expires_at < now()) return bounce('/mutra.html?auth=expired');
+  if (!row || row.expires_at < now()) {
+    await note(env, 'state_rejected', row ? 'expired' : 'unknown state');
+    return bounce('/mutra.html?auth=expired');
+  }
 
   const [stateProvider, back] = String(row.provider).split('|');
   if (stateProvider !== provider) return bounce('/mutra.html?auth=failed');
@@ -161,10 +176,12 @@ export async function finishOAuth(req, env, provider) {
     ).bind(codeHash, userId, now(), now() + 120).run();
 
     const to = safeReturn(back);
+    await note(env, 'callback_ok', profile.email + ' → ' + to);
     return bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok&h=' + code,
       { 'set-cookie': cookie });
   } catch (e) {
     const why = String(e && e.message || e).slice(0, 40).replace(/[^\w .:-]/g, '');
+    await note(env, 'callback_error', String(e && e.message || e));
     console.error('oauth ' + provider, e && e.stack ? e.stack : String(e));
     return bounce('/mutra.html?auth=failed&why=' + encodeURIComponent(why));
   }
@@ -247,7 +264,11 @@ export async function claimHandoff(req, env) {
   ).bind(hash).first();
   await env.DB.prepare('DELETE FROM handoffs WHERE code_hash = ? OR expires_at < ?')
     .bind(hash, now()).run();
-  if (!row || row.used_at || row.expires_at < now()) return json({ error: 'expired' }, 400);
+  if (!row || row.used_at || row.expires_at < now()) {
+    await note(env, 'claim_rejected', row ? (row.used_at ? 'already used' : 'expired') : 'unknown code');
+    return json({ error: 'expired' }, 400);
+  }
+  await note(env, 'claim_ok', row.user_id);
 
   const cookie = await issueSession(env, row.user_id);
   const u = await env.DB.prepare(

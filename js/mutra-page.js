@@ -93,6 +93,15 @@
   const ICON_DL = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 19h16"/></svg>';
   const ICON_SIM = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 17V9M9 17V5M14 17v-6M19 17v-9"/></svg>';
 
+  /** A full turn, so a toggle's icon always lands the right way up. */
+  function spinToggle(btn) {
+    const ico = btn && btn.querySelector('svg');
+    if (!ico) return;
+    ico.classList.remove('spin');
+    void ico.offsetWidth;              // restart the animation
+    ico.classList.add('spin');
+  }
+
   // small transient message (copy confirmations etc.)
   let toastEl;
   function toast(msg) {
@@ -680,7 +689,7 @@
     Object.keys(FACETS).forEach(k => { state[k].inc.clear(); state[k].exc.clear(); });
     state.vocal = state.dur = state.bpm = null;
     state.favoritesOnly = false;
-    const fav = $('#favToggle'); if (fav) fav.classList.remove('active');
+    const fav = $('#favToggle'); if (fav) fav.classList.remove('on');
     drawDrop(); drawPills(); render();
   }
 
@@ -720,16 +729,17 @@
   // "My favorites" toggle, sitting with the filters
   const favToggle = document.createElement('button');
   favToggle.id = 'favToggle';
-  favToggle.className = 'chip fav-chip fcat-fav';
+  favToggle.className = 'fcat fcat-tgl fcat-fav';
   favToggle.setAttribute('aria-label', 'My favorites');
   favToggle.title = 'My favorites';
-  favToggle.innerHTML = ICON_HEART + '<span>My favorites</span>';
+  favToggle.innerHTML = ICON_HEART + '<span>Favorites</span>';
   favToggle.addEventListener('click', () => {
     state.favoritesOnly = !state.favoritesOnly;
-    favToggle.classList.toggle('active', state.favoritesOnly);
+    spinToggle(favToggle);
+    favToggle.classList.toggle('on', state.favoritesOnly);
     render();
   });
-  fbar.appendChild(favToggle);   // far right, after Filters
+  $('#lyrToggle').insertAdjacentElement('beforebegin', favToggle);  // bolt · heart · lyrics · note
 
   // ── sort ──
   const sortBtn = $('#sortBtn'), sortMenu = $('#sortMenu'), sortLabel = $('#sortLabel');
@@ -777,22 +787,16 @@
     btn.setAttribute('aria-pressed', String(on));
     document.body.classList.toggle(cls, !on);
   }
-  /** A full turn, so the icon always lands the right way up. */
-  function spin(btn) {
-    const ico = btn.querySelector('svg');
-    ico.classList.remove('spin');
-    void ico.offsetWidth;              // restart the animation
-    ico.classList.add('spin');
-  }
+
   lyrBtn.addEventListener('click', () => {
     state.lyrics = !state.lyrics;
-    spin(lyrBtn);
+    spinToggle(lyrBtn);
     paintToggle(lyrBtn, state.lyrics, 'no-lyr');
     toast(state.lyrics ? 'Showing which tracks have lyrics' : 'Lyrics flag hidden');
   });
   keyBtn.addEventListener('click', () => {
     state.keys = !state.keys;
-    spin(keyBtn);
+    spinToggle(keyBtn);
     paintToggle(keyBtn, state.keys, 'no-key');
     syncScaleCat();
     if (!state.keys && state.sort === 'scale') {   // that sort just lost its meaning
@@ -809,7 +813,7 @@
 
   hlBtn.addEventListener('click', () => {
     state.highlights = !state.highlights;
-    spin(hlBtn);
+    spinToggle(hlBtn);
     paintHlBtn(); repaintWaves();
     toast(state.highlights ? 'Highlights on — play starts at the best bit' : 'Highlights off — play starts at 0:00');
   });
