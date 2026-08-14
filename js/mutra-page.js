@@ -448,6 +448,7 @@
           expanded = false; drawDrop(); drawPills(); render();
         }));
       });
+      wireBpmRange();
     } else {
       const facet = FACETS[openCat];
       fdrop.innerHTML =
