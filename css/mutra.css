@@ -81,21 +81,32 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
 .mnav.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 .mnav .mnav-auth{margin-right:0}
 
-/* ───────── hero ───────── */
-.mhero{position:relative;padding:150px 0 70px;overflow:hidden}
-.mhero::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:radial-gradient(60% 70% at 78% 8%,rgba(255,61,139,.18),transparent 60%),
-    radial-gradient(55% 60% at 12% 30%,rgba(255,194,75,.13),transparent 60%),
-    radial-gradient(80% 70% at 50% 120%,rgba(255,106,77,.10),transparent 70%)}
-.mhero-eq{position:absolute;right:-4%;top:14%;display:flex;gap:7px;align-items:flex-end;height:340px;opacity:.5;z-index:-1;pointer-events:none}
-.mhero-eq span{width:9px;border-radius:6px;background:var(--grad);animation:eq 1.4s ease-in-out infinite}
-@keyframes eq{0%,100%{height:14%}50%{height:100%}}
-.mhero h1{font-size:clamp(2.7rem,6.4vw,5rem);max-width:14ch}
-.mhero-sub{color:#cabfc6;font-size:clamp(1.05rem,1.7vw,1.28rem);max-width:52ch;margin:26px 0 34px}
-.mhero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-.mhero-stats{display:flex;gap:34px;margin-top:52px;flex-wrap:wrap}
-.mstat b{font-family:var(--font-display);font-size:1.9rem;font-weight:700;display:block;line-height:1}
-.mstat span{color:var(--muted);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;margin-top:6px;display:block}
+/* ───────── hero ─────────
+   Centred, oversized display type over a soft glow that follows the pointer
+   and warms/cools as it moves. Anton stands in for Resend's Lateral, which is
+   a licensed face we can't ship. */
+.mhero{position:relative;min-height:min(88vh,760px);display:grid;place-items:center;
+  padding:140px 0 90px;overflow:hidden;isolation:isolate;
+  --gx:50%;--gy:42%;--g1:#ff6a4d;--g2:#ff3d8b}
+/* the moving light */
+.mhero-glow{position:absolute;inset:-20%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(38% 46% at var(--gx) var(--gy),color-mix(in oklab,var(--g1) 46%,transparent),transparent 68%),
+    radial-gradient(58% 62% at var(--gx) var(--gy),color-mix(in oklab,var(--g2) 26%,transparent),transparent 72%);
+  filter:blur(38px);transition:background .28s linear}
+/* a fixed base wash so the section never looks flat before the pointer arrives */
+.mhero::before{content:"";position:absolute;inset:0;z-index:-2;
+  background:radial-gradient(70% 60% at 50% 120%,rgba(255,106,77,.10),transparent 70%)}
+
+.mhero-in{text-align:center;display:flex;flex-direction:column;align-items:center}
+.mhero-title{
+  font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
+  font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.86;letter-spacing:-.012em;
+  text-transform:uppercase;margin:0}
+.mhero-sub{color:#cabfc6;font-size:clamp(1rem,1.5vw,1.2rem);max-width:46ch;margin:26px 0 34px}
+.mhero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
+
+@media (prefers-reduced-motion:reduce){.mhero-glow{transition:none}}
 
 /* ───────── search + browse bar ───────── */
 .browse{padding:20px 0 8px}
@@ -224,7 +235,6 @@ h1,h2,h3{font-family:var(--font-display);line-height:1.06;letter-spacing:-.02em;
   .trk-lic{padding:7px 12px;font-size:.72rem}
 }
 @media (max-width:760px){
-  .mhero-eq{opacity:.25}
   .pl-actions .pl-lic{display:none}
   .player-in{grid-template-columns:1fr 1.4fr auto;gap:12px}
   .filter-label{display:none}

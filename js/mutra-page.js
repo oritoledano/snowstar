@@ -465,14 +465,57 @@
   }
   window.MutraFocusTrack = focusTrack;
 
-  // ── hero equalizer bars ──
-  const eq = $('#heroEq');
-  if (eq) for (let i = 0; i < 11; i++) {
-    const s = document.createElement('span');
-    s.style.animationDelay = (i * 0.11).toFixed(2) + 's';
-    s.style.animationDuration = (1 + (i % 4) * 0.28).toFixed(2) + 's';
-    eq.appendChild(s);
-  }
+  // ── hero: a glow that follows the pointer and shifts colour with it ──
+  (function heroGlow() {
+    const hero = $('#mhero');
+    if (!hero) return;
+    // warm on the right, cool on the left — the whole Mutra range, end to end
+    const PALETTE = [
+      ['#7a3cff', '#ff3d8b'],   // violet → pink
+      ['#ff3d8b', '#ff6a4d'],   // pink → coral
+      ['#ff6a4d', '#ffc24b'],   // coral → amber
+      ['#ffc24b', '#ff6a4d'],   // amber → coral
+    ];
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let tx = 50, ty = 42, x = 50, y = 42, raf = 0;
+
+    function paint() {
+      raf = 0;
+      x += (tx - x) * (still ? 1 : 0.12);
+      y += (ty - y) * (still ? 1 : 0.12);
+      const band = PALETTE[Math.min(PALETTE.length - 1, Math.floor((x / 100) * PALETTE.length))];
+      hero.style.setProperty('--gx', x.toFixed(2) + '%');
+      hero.style.setProperty('--gy', y.toFixed(2) + '%');
+      hero.style.setProperty('--g1', band[0]);
+      hero.style.setProperty('--g2', band[1]);
+      if (!still && (Math.abs(tx - x) > 0.1 || Math.abs(ty - y) > 0.1)) raf = requestAnimationFrame(paint);
+    }
+    const queue = () => { if (!raf) raf = requestAnimationFrame(paint); };
+
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width) * 100;
+      ty = ((e.clientY - r.top) / r.height) * 100;
+      queue();
+    });
+
+    // touch screens never hover, so let it drift on its own
+    if (!still && !matchMedia('(hover: hover)').matches) {
+      let t = 0;
+      setInterval(() => {
+        t += 0.02;
+        tx = 50 + Math.sin(t) * 34;
+        ty = 42 + Math.cos(t * 0.7) * 16;
+        queue();
+      }, 60);
+    }
+    paint();
+  })();
+
+  const heroSignup = $('#heroSignup');
+  if (heroSignup) heroSignup.addEventListener('click', () => {
+    if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');
+  });
 
   // ── nav + reveal ──
   const mnav = $('#mnav');
@@ -489,6 +532,5 @@
 
   const obs = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); obs.unobserve(x.target); } }), { threshold: 0.12 });
   document.querySelectorAll('.rv').forEach(el => obs.observe(el));
-  document.getElementById('statTracks').textContent = MUTRA.tracks.length;
   document.getElementById('year').textContent = new Date().getFullYear();
 })();
