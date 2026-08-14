@@ -17,6 +17,7 @@
 
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
 import { sendMail, resetEmail } from './mail.js';
+import { startOAuth, finishOAuth, facebookDataDeletion } from './oauth.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -172,6 +173,14 @@ async function handle(req, env, ctx) {
   const ip = req.headers.get('cf-connecting-ip') || 'unknown';
 
   if (method !== 'GET' && !originOk(req)) return json({ error: 'bad_origin' }, 403);
+
+  // ── social sign-in ──
+  const oauth = path.match(/^\/auth\/(google|facebook)(\/callback)?$/);
+  if (oauth && method === 'GET') {
+    return oauth[2] ? finishOAuth(req, env, oauth[1]) : startOAuth(req, env, oauth[1]);
+  }
+  // Facebook requires this endpoint to exist before it will approve the app
+  if (path === '/facebook/data-deletion' && method === 'POST') return facebookDataDeletion(req, env);
 
   // ── analytics beacon (anonymous, no auth) ──
   if (path === '/track' && method === 'POST') return handleTrack(req, env, ctx);

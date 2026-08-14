@@ -44,9 +44,16 @@
 .auth-switch{margin-top:14px;text-align:center;color:var(--muted);font-size:.85rem}
 .auth-switch button{background:none;border:0;color:var(--amber,var(--ice,#8fd8ff));cursor:pointer;
   font-family:var(--font-body);font-size:.85rem;text-decoration:underline;padding:0}
-.auth-alt{margin:2px 0 18px;color:var(--dim,var(--muted));font-size:.78rem;text-align:center;
-  display:flex;align-items:center;gap:12px}
+.auth-alt{margin:18px 0 14px;color:var(--dim,var(--muted));font-size:.76rem;text-align:center;
+  display:flex;align-items:center;gap:12px;text-transform:uppercase;letter-spacing:.14em}
 .auth-alt::before,.auth-alt::after{content:"";flex:1;height:1px;background:var(--line)}
+.auth-social{display:flex;flex-direction:column;gap:9px}
+.auth-soc{display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:11px 16px;border-radius:11px;border:1px solid var(--line-2,var(--line));
+  color:var(--text);font-size:.88rem;font-family:var(--font-body);
+  background:var(--bg);transition:border-color .2s,transform .15s}
+.auth-soc:hover{border-color:var(--coral,var(--ice,#8fd8ff));transform:translateY(-1px)}
+.auth-soc svg{flex:none}
 
 /* A class-level `display` beats the UA's [hidden] rule, so an element the JS
    thinks is hidden stays on screen — that once left this entire modal
