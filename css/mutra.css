@@ -229,6 +229,14 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .tag.inst:hover{color:var(--text)}
 .trk-right{display:flex;align-items:center;gap:16px;flex:none}
 .trk-dur{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.86rem;min-width:38px;text-align:right}
+/* tempo, sitting quietly next to the duration — click it to filter that band */
+.trk-bpm{display:inline-flex;align-items:baseline;gap:3px;min-width:46px;justify-content:flex-end;
+  background:none;border:0;padding:0;cursor:pointer;font-family:var(--font-body);
+  font-variant-numeric:tabular-nums;font-size:.86rem;color:var(--dim);transition:color .18s}
+.trk-bpm i{font-style:normal;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.trk-bpm:hover{color:var(--coral)}
+.trk-bpm.empty{cursor:default}
+@media (max-width:920px){.trk-bpm{display:none}}
 .trk-lic{font-family:var(--font-display);font-size:.76rem;font-weight:600;color:var(--text);
   background:none;cursor:pointer;
   border:1px solid var(--line-2);border-radius:99px;padding:8px 16px;transition:.2s;white-space:nowrap}

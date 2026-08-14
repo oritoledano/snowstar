@@ -144,7 +144,7 @@
     audio.currentTime = 0;
     audio.play().catch(() => {});
     plTitle.textContent = track.title;
-    plArtist.textContent = track.artist;
+    plArtist.textContent = track.artist + (track.bpm ? ' · ' + track.bpm + ' BPM' : '');
     plTot.textContent = fmt(track.duration);
     plCur.textContent = '0:00';
     setProgressUI(0);
@@ -287,11 +287,15 @@
           <button class="trk-dl" aria-label="Download ${track.title}" title="Download">${ICON_DL}</button>
           <button class="trk-share" aria-label="Copy link to ${track.title}" title="Copy link">${ICON_LINK}</button>
           <button class="trk-sim" aria-label="Similar to ${track.title}" title="Find similar">${ICON_SIM}</button>
+          ${track.bpm ? `<button class="trk-bpm" title="${track.bpm} BPM — filter by this tempo">${track.bpm}<i>bpm</i></button>` : '<span class="trk-bpm empty" aria-hidden="true"></span>'}
           <span class="trk-dur">${fmt(track.duration)}</span>
           <button class="trk-lic" type="button">License</button>
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
       row.querySelector('.trk-lic').addEventListener('click', () => startLicense(track));
+
+      const bpmBtn = row.querySelector('button.trk-bpm');
+      if (bpmBtn) bpmBtn.addEventListener('click', e => { e.stopPropagation(); filterByBpm(track.bpm); });
 
       row.querySelectorAll('.tag[data-facet]').forEach(btn => btn.addEventListener('click', e => {
         e.stopPropagation();
@@ -488,6 +492,16 @@
     state.favoritesOnly = false;
     const fav = $('#favToggle'); if (fav) fav.classList.remove('active');
     expanded = false; drawDrop(); drawPills(); render();
+  }
+
+  /** Clicking a track's BPM filters to the band it falls in. */
+  function filterByBpm(bpm) {
+    const band = BPMS.find(b => b.test(bpm));
+    if (!band) return;
+    state.bpm = state.bpm === band.id ? null : band.id;
+    expanded = false;
+    drawDrop(); drawPills(); render();
+    toast(state.bpm ? band.label + ' tempo (' + bpm + ' BPM)' : 'Tempo filter cleared');
   }
 
   /** A tag on a row is a shortcut into the filter it belongs to. */
