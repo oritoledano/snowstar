@@ -520,15 +520,23 @@
   // ── nav + reveal ──
   const mnav = $('#mnav');
   addEventListener('scroll', () => mnav.classList.toggle('scrolled', scrollY > 24), { passive: true });
-  const burger = $('#mnavBurger'), links = $('#mnavLinks');
-  const setMenu = (open) => {
-    links.classList.toggle('open', open);
-    mnav.classList.toggle('menu-open', open);   // turns the burger into an X
-    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-  };
-  burger.addEventListener('click', () => setMenu(!links.classList.contains('open')));
-  links.addEventListener('click', e => { if (e.target.tagName === 'A') setMenu(false); });
-  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  // full-screen menu — same behaviour as the main site
+  const burger = $('#mnavBurger'), menu = $('#mmenu');
+  function setMenu(open) {
+    document.body.classList.toggle('menu-open', open);
+    burger.setAttribute('aria-expanded', open);
+    menu.setAttribute('aria-hidden', !open);
+    if (open) { const first = menu.querySelector('a'); if (first) setTimeout(() => first.focus(), 400); }
+    else burger.focus();
+  }
+  burger.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+  menu.addEventListener('click', e => {
+    if (e.target.closest('a')) return setMenu(false);
+    if (!e.target.closest('.mmenu-nav, .mmenu-foot')) setMenu(false);  // click on empty space
+  });
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.body.classList.contains('menu-open')) setMenu(false);
+  });
 
   const obs = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); obs.unobserve(x.target); } }), { threshold: 0.12 });
   document.querySelectorAll('.rv').forEach(el => obs.observe(el));

@@ -20,8 +20,12 @@ function setMenu(open) {
 const toggleMenu = () => setMenu(!document.body.classList.contains('menu-open'));
 menuBtn.addEventListener('click', toggleMenu);
 menuLabel.addEventListener('click', toggleMenu);
-// close when a menu link is chosen (anchors still scroll; mutra.html still navigates)
-overlay.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+// close when a menu link is chosen (anchors still scroll; mutra.html still navigates),
+// or when the click lands on empty space rather than the menu itself
+overlay.addEventListener('click', e => {
+  if (e.target.closest('a')) return setMenu(false);
+  if (!e.target.closest('.menu-nav, .menu-foot')) setMenu(false);
+});
 addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('menu-open')) setMenu(false); });
 
 // Starfield
