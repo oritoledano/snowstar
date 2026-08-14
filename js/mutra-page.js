@@ -123,6 +123,17 @@
     });
   }
 
+  /** Licensing needs an account; the draft opens in its own tab so the catalog stays put. */
+  function startLicense(track) {
+    if (!(window.SnowstarAccount && SnowstarAccount.user)) {
+      toast('Sign in to start a license');
+      if (window.SnowstarOpenAuth) SnowstarOpenAuth('login', 'Sign in to start a license for this track.');
+      return;
+    }
+    if (window.mutraTrack) mutraTrack('license', track.slug);
+    window.open(mailto(track.title), '_blank', 'noopener');
+  }
+
   function loadTrack(track, row) {
     if (window.mutraTrack) mutraTrack('play', track.slug, { once: true });
     if (current && current.track === track) { toggle(); return; }
@@ -136,7 +147,6 @@
     plArtist.textContent = track.artist;
     plTot.textContent = fmt(track.duration);
     plCur.textContent = '0:00';
-    plLic.href = mailto(track.title);
     setProgressUI(0);
     player.classList.add('up');
     document.body.querySelectorAll('.trk .trk-play').forEach(b => b.innerHTML = ICON_PLAY);
@@ -171,6 +181,7 @@
 
   plPlay.innerHTML = ICON_PLAY;
   plPlay.addEventListener('click', toggle);
+  plLic.addEventListener('click', e => { e.preventDefault(); if (current) startLicense(current.track); });
   plClose.addEventListener('click', closePlayer);
 
   // ── the fix: robust seek (click + drag) on a generous hit area ──
@@ -205,7 +216,24 @@
   // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
   const tracksEl = $('#tracks'), countEl = $('#catCount');
   const INITIAL = 40;
-  const state = { packages: new Set(), genres: new Set(), moods: new Set(), q: '', favoritesOnly: false };
+  const state = {
+    packages: new Set(), genres: new Set(), moods: new Set(), instruments: new Set(),
+    vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
+  };
+  const DURATIONS = [
+    { id: 'd30',  label: '< 30 sec', test: d => d < 30 },
+    { id: 'd60',  label: '< 1 min',  test: d => d < 60 },
+    { id: 'd90',  label: '< 1.5 min', test: d => d < 90 },
+    { id: 'd3',   label: '3+ min',   test: d => d >= 180 },
+    { id: 'd4',   label: '4+ min',   test: d => d >= 240 },
+  ];
+  const BPMS = [
+    { id: 'slow',  label: 'Slow',     test: b => b < 90 },
+    { id: 'slomed', label: 'Slow-Med', test: b => b >= 90 && b < 110 },
+    { id: 'med',   label: 'Medium',   test: b => b >= 110 && b < 130 },
+    { id: 'medfast', label: 'Med-Fast', test: b => b >= 130 && b < 150 },
+    { id: 'fast',  label: 'Fast',     test: b => b >= 150 },
+  ];
   let expanded = false;
 
   function matches(t) {
@@ -213,6 +241,16 @@
     if (state.packages.size && !t.packages.some(p => state.packages.has(p))) return false;
     if (state.genres.size && !t.genres.some(g => state.genres.has(g))) return false;
     if (state.moods.size && !(t.moods || []).some(x => state.moods.has(x))) return false;
+    if (state.instruments.size && !(t.instruments || []).some(x => state.instruments.has(x))) return false;
+    if (state.vocal && t.vocal !== state.vocal) return false;
+    if (state.dur) {
+      const d = DURATIONS.find(x => x.id === state.dur);
+      if (d && !d.test(t.duration || 0)) return false;
+    }
+    if (state.bpm) {
+      const b = BPMS.find(x => x.id === state.bpm);
+      if (b && !(t.bpm && b.test(t.bpm))) return false;
+    }
     if (state.q) {
       const hay = (t.title + ' ' + t.genres.join(' ') + ' ' + (t.moods || []).join(' ') + ' ' +
         (t.instruments || []).join(' ')).toLowerCase();
@@ -232,8 +270,9 @@
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
       const tags = [
-        ...track.genres.slice(0, 2).map(g => `<span class="tag">${g}</span>`),
-        ...(track.moods || []).slice(0, 2).map(x => `<span class="tag mood">${x}</span>`),
+        ...track.genres.slice(0, 2).map(g => `<button class="tag" data-facet="genres" data-val="${g}">${g}</button>`),
+        ...(track.moods || []).slice(0, 2).map(x => `<button class="tag mood" data-facet="moods" data-val="${x}">${x}</button>`),
+        ...(track.instruments || []).slice(0, 2).map(x => `<button class="tag inst" data-facet="instruments" data-val="${x}">${x}</button>`),
       ].join('');
       row.innerHTML = `
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
@@ -250,12 +289,15 @@
           <button class="trk-share" aria-label="Copy link to ${track.title}" title="Copy link">${ICON_LINK}</button>
           <button class="trk-sim" aria-label="Similar to ${track.title}" title="Find similar">${ICON_SIM}</button>
           <span class="trk-dur">${fmt(track.duration)}</span>
-          <a class="trk-lic" href="${mailto(track.title)}">License</a>
+          <button class="trk-lic" type="button">License</button>
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
-      row.querySelector('.trk-lic').addEventListener('click', () => {
-        if (window.mutraTrack) mutraTrack('license', track.slug);
-      });
+      row.querySelector('.trk-lic').addEventListener('click', () => startLicense(track));
+
+      row.querySelectorAll('.tag[data-facet]').forEach(btn => btn.addEventListener('click', e => {
+        e.stopPropagation();
+        mutraFilterBy(btn.dataset.facet, btn.dataset.val);
+      }));
 
       // favorite
       const favBtn = row.querySelector('.trk-fav');
@@ -344,37 +386,121 @@
     }, 150);
   });
 
-  // ── filter chips (multi-select, Set-based, OR within a facet) ──
-  function buildChips(rowEl, values, stateKey, allLabel) {
-    const allChip = document.createElement('button');
-    allChip.className = 'chip active';
-    allChip.textContent = allLabel;
-    allChip.addEventListener('click', () => {
-      state[stateKey].clear();
-      rowEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      allChip.classList.add('active');
-      expanded = false;
-      render();
-    });
-    rowEl.appendChild(allChip);
-    values.forEach(v => {
-      const c = document.createElement('button');
-      c.className = 'chip';
-      c.textContent = v;
-      c.addEventListener('click', () => {
-        if (state[stateKey].has(v)) state[stateKey].delete(v); else state[stateKey].add(v);
-        const none = state[stateKey].size === 0;
-        allChip.classList.toggle('active', none);
-        c.classList.toggle('active', state[stateKey].has(v));
-        expanded = false;
-        render();
+  // ── filter bar: a category opens a drawer of chips that pushes the list down ──
+  const fbar = $('#fbar'), fdrop = $('#fdrop'), fpills = $('#fpills');
+  const FACETS = {
+    packages:    { label: 'Package',    values: () => MUTRA.packages },
+    genres:      { label: 'Genre',      values: () => MUTRA.genres },
+    moods:       { label: 'Mood',       values: () => MUTRA.moods },
+    instruments: { label: 'Instrument', values: () => INSTRUMENTS },
+  };
+  // built from the catalog so it stays honest as the tagging is refined
+  const INSTRUMENTS = [...new Set(MUTRA.tracks.flatMap(t => t.instruments || []))].sort();
+  let openCat = null;
+
+  const chip = (label, on, cls) =>
+    `<button class="chip${on ? ' active' : ''}${cls ? ' ' + cls : ''}">${label}</button>`;
+
+  function drawDrop() {
+    if (!openCat) { fdrop.hidden = true; fdrop.innerHTML = ''; return; }
+    fdrop.hidden = false;
+    if (openCat === 'adv') {
+      fdrop.innerHTML = `
+        <div class="fgrid">
+          <div class="fgroup">
+            <h4>Vocals / Instrumental</h4>
+            <div class="fchips" data-group="vocal">
+              ${['Vocals', 'Instrumental'].map(v => chip(v, state.vocal === v)).join('')}
+            </div>
+          </div>
+          <div class="fgroup">
+            <h4>Duration</h4>
+            <div class="fchips" data-group="dur">
+              ${DURATIONS.map(d => chip(d.label, state.dur === d.id)).join('')}
+            </div>
+          </div>
+          <div class="fgroup">
+            <h4>BPM</h4>
+            <div class="fchips" data-group="bpm">
+              ${BPMS.map(b => chip(b.label, state.bpm === b.id)).join('')}
+            </div>
+          </div>
+        </div>
+        <button class="fdrop-close" type="button">Close</button>`;
+      fdrop.querySelectorAll('.fchips').forEach(box => {
+        const group = box.dataset.group;
+        [...box.children].forEach((btn, i) => btn.addEventListener('click', () => {
+          const val = group === 'vocal' ? ['Vocals', 'Instrumental'][i]
+                    : group === 'dur' ? DURATIONS[i].id : BPMS[i].id;
+          state[group] = state[group] === val ? null : val;   // click again to clear
+          expanded = false; drawDrop(); drawPills(); render();
+        }));
       });
-      rowEl.appendChild(c);
-    });
+    } else {
+      const facet = FACETS[openCat];
+      fdrop.innerHTML =
+        `<div class="fchips wide">${facet.values().map(v => chip(v, state[openCat].has(v))).join('')}</div>` +
+        `<button class="fdrop-close" type="button">Close</button>`;
+      const vals = facet.values();
+      [...fdrop.querySelector('.fchips').children].forEach((btn, i) => {
+        btn.addEventListener('click', () => {
+          const v = vals[i];
+          state[openCat].has(v) ? state[openCat].delete(v) : state[openCat].add(v);
+          btn.classList.toggle('active', state[openCat].has(v));
+          expanded = false; drawPills(); render();
+        });
+      });
+    }
+    fdrop.querySelector('.fdrop-close').addEventListener('click', () => setCat(null));
   }
-  buildChips($('#packageRow'), MUTRA.packages, 'packages', 'All packages');
-  buildChips($('#genreRow'), MUTRA.genres, 'genres', 'All genres');
-  buildChips($('#moodRow'), MUTRA.moods, 'moods', 'All moods');
+
+  function setCat(cat) {
+    openCat = openCat === cat ? null : cat;
+    fbar.querySelectorAll('.fcat').forEach(b =>
+      b.classList.toggle('open', b.dataset.cat === openCat) ||
+      b.setAttribute('aria-expanded', String(b.dataset.cat === openCat)));
+    drawDrop();
+  }
+  fbar.querySelectorAll('.fcat').forEach(b =>
+    b.addEventListener('click', () => setCat(b.dataset.cat)));
+
+  /** The chosen filters, as removable pills — so nothing is ever hidden from you. */
+  function drawPills() {
+    const bits = [];
+    Object.keys(FACETS).forEach(k => state[k].forEach(v => bits.push({ k, v, label: v })));
+    if (state.vocal) bits.push({ k: 'vocal', v: state.vocal, label: state.vocal });
+    if (state.dur) bits.push({ k: 'dur', v: state.dur, label: (DURATIONS.find(d => d.id === state.dur) || {}).label });
+    if (state.bpm) bits.push({ k: 'bpm', v: state.bpm, label: (BPMS.find(b => b.id === state.bpm) || {}).label + ' BPM' });
+    fpills.innerHTML = bits.map((b, i) =>
+      `<button class="fpill" data-i="${i}">${b.label}<span aria-hidden="true">&times;</span></button>`).join('') +
+      (bits.length > 1 ? '<button class="fpill fpill-clear">Clear all</button>' : '');
+    fpills.querySelectorAll('.fpill[data-i]').forEach(el => el.addEventListener('click', () => {
+      const b = bits[+el.dataset.i];
+      if (b.k in FACETS) state[b.k].delete(b.v); else state[b.k] = null;
+      expanded = false; drawDrop(); drawPills(); render();
+    }));
+    const clear = fpills.querySelector('.fpill-clear');
+    if (clear) clear.addEventListener('click', clearFilters);
+  }
+
+  function clearFilters() {
+    Object.keys(FACETS).forEach(k => state[k].clear());
+    state.vocal = state.dur = state.bpm = null;
+    state.favoritesOnly = false;
+    const fav = $('#favToggle'); if (fav) fav.classList.remove('active');
+    expanded = false; drawDrop(); drawPills(); render();
+  }
+
+  /** A tag on a row is a shortcut into the filter it belongs to. */
+  window.mutraFilterBy = function (facet, value) {
+    if (!state[facet]) return;
+    if (!state[facet].has(value)) state[facet].add(value);
+    expanded = false;
+    drawPills(); render();
+    $('#catalog').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast(value + ' added to your filters');
+  };
+
   let searchLog;
   $('#search').addEventListener('input', e => {
     state.q = e.target.value.trim().toLowerCase();
@@ -387,20 +513,13 @@
     }, 1200);
   });
 
-  /** Reset every chip row to its "All" state (used when a deep link needs to reveal a track). */
-  function syncChips() {
-    document.querySelectorAll('.filter-row').forEach(rowEl => {
-      const chips = [...rowEl.querySelectorAll('.chip')];
-      chips.forEach((c, i) => c.classList.toggle('active', i === 0));
-    });
-    const fav = $('#favToggle');
-    if (fav) fav.classList.remove('active');
-  }
+  /** Drop every filter (used when a deep link needs to reveal a hidden track). */
+  function syncChips() { clearFilters(); }
 
   // "My favorites" toggle, sitting with the filters
   const favToggle = document.createElement('button');
   favToggle.id = 'favToggle';
-  favToggle.className = 'chip fav-chip';
+  favToggle.className = 'chip fav-chip fcat-fav';
   favToggle.innerHTML = ICON_HEART + '<span>My favorites</span>';
   favToggle.addEventListener('click', () => {
     state.favoritesOnly = !state.favoritesOnly;
@@ -408,8 +527,7 @@
     expanded = false;
     render();
   });
-  $('#moodRow').insertAdjacentElement('afterend',
-    Object.assign(document.createElement('div'), { className: 'filter-row fav-row' })).appendChild(favToggle);
+  fbar.querySelector('.fbar-gap').insertAdjacentElement('beforebegin', favToggle);
 
   render();
 
@@ -468,8 +586,7 @@
     const t = MUTRA.tracks.find(x => x.slug === slug);
     if (!t) return false;
     if (!matches(t)) { // clear filters that would hide it
-      state.packages.clear(); state.genres.clear(); state.moods.clear();
-      state.favoritesOnly = false; state.q = '';
+      clearFilters(); state.q = '';
       const s = $('#search'); if (s) s.value = '';
       syncChips();
     }

@@ -25,7 +25,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Vocals"
   },
   {
    "title": "25 BOOMS & A BANG",
@@ -44,7 +46,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 92,
+   "vocal": "Instrumental"
   },
   {
    "title": "80'S PARODY PLAYBACK",
@@ -64,7 +68,9 @@ const MUTRA = {
     "Piano",
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 152,
+   "vocal": "Vocals"
   },
   {
    "title": "9 SHUTTLE",
@@ -86,7 +92,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 121,
+   "vocal": "Instrumental"
   },
   {
    "title": "ACID JAZZ (CLOCK)",
@@ -105,7 +113,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 140,
+   "vocal": "Instrumental"
   },
   {
    "title": "ACID JAZZ (CLOCK) RHYTHM ONLY",
@@ -124,7 +134,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 140,
+   "vocal": "Instrumental"
   },
   {
    "title": "ACTION TENSION",
@@ -146,7 +158,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "ACTION TENSION - EPIC ENDING",
@@ -168,7 +182,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "ACTION TENSION DRUMS",
@@ -189,7 +205,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "ALL MY TIME",
@@ -212,7 +230,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Vocals"
   },
   {
    "title": "ALTERNATIVE UPLIFTING (H2)",
@@ -236,7 +256,9 @@ const MUTRA = {
     "Piano",
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 128,
+   "vocal": "Instrumental"
   },
   {
    "title": "AMERICAN BOOTY",
@@ -259,7 +281,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "ANGELS CHOIR",
@@ -280,7 +304,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Vocals"
   },
   {
    "title": "ANIMALS (MA ES)",
@@ -301,7 +327,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Vocals"
   },
   {
    "title": "ARCADIA",
@@ -323,7 +351,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 122,
+   "vocal": "Instrumental"
   },
   {
    "title": "ARCTIC MONKEYS - R U MINE (ORI TOLEDANO REMIX)",
@@ -341,7 +371,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 97,
+   "vocal": "Vocals"
   },
   {
    "title": "BACKFLIPTOYS",
@@ -361,7 +393,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 106,
+   "vocal": "Vocals"
   },
   {
    "title": "BAD ACID IN GOA",
@@ -381,7 +415,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "BALLOON 6",
@@ -399,7 +435,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "BASEGROUND (BASS GUITAR)",
@@ -422,7 +460,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "BASEGROUND (BASS KEYS)",
@@ -444,7 +484,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "BASEGROUND (ORIGINAL MIX)",
@@ -466,7 +508,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "BASEGROUND (PLAYBACK)",
@@ -489,7 +533,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "BASEGROUND (SHORT)",
@@ -513,7 +559,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "BASSLIA",
@@ -532,7 +580,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "BE WITH ME (INSTRUMENTAL)",
@@ -554,7 +604,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Instrumental"
   },
   {
    "title": "BEAUTY & FEMININE 10 SEC",
@@ -577,7 +629,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Vocals"
   },
   {
    "title": "BEAUTY & FEMININE 5 SEC",
@@ -600,7 +654,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Vocals"
   },
   {
    "title": "BETTER DAYS AHEAD",
@@ -622,7 +678,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Instrumental"
   },
   {
    "title": "BEVERLY HILLS MAHARAJA",
@@ -644,7 +702,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "BEVERLY HILLS MAHARAJA - MINIMAL EDIT",
@@ -666,7 +726,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "BICYCLETTE",
@@ -687,7 +749,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Vocals"
   },
   {
    "title": "BICYCLETTE (INSTRUMENTAL)",
@@ -708,7 +772,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "BIG FAT FUNERAL",
@@ -731,7 +797,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 99,
+   "vocal": "Instrumental"
   },
   {
    "title": "BIG FAT FUNERAL (SHORT EDIT)",
@@ -756,7 +824,9 @@ const MUTRA = {
     "Piano",
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 99,
+   "vocal": "Instrumental"
   },
   {
    "title": "BIG FAT FUNERAL - REMASTERED",
@@ -779,7 +849,9 @@ const MUTRA = {
     "Piano",
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 99,
+   "vocal": "Instrumental"
   },
   {
    "title": "BINARY ROMANCE",
@@ -803,7 +875,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Instrumental"
   },
   {
    "title": "BITCHES",
@@ -827,7 +901,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "BITTER SWEET MYSTERY THEME",
@@ -847,7 +923,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "BITTER SWEET MYSTERY THEME - EPIC ENDING",
@@ -865,7 +943,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "BLONDE LIKE DISCO",
@@ -885,7 +965,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "BOLERO HYPED FOLK WHISTLE",
@@ -905,7 +987,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 107,
+   "vocal": "Instrumental"
   },
   {
    "title": "BOSSA FUNK MUSIC",
@@ -926,7 +1010,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 132,
+   "vocal": "Vocals"
   },
   {
    "title": "BRATS",
@@ -948,7 +1034,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 140,
+   "vocal": "Vocals"
   },
   {
    "title": "BRIGHT MEMORIES",
@@ -969,7 +1057,9 @@ const MUTRA = {
     "Piano",
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "BROWNY",
@@ -989,7 +1079,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "BY YOU",
@@ -1010,7 +1102,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 135,
+   "vocal": "Instrumental"
   },
   {
    "title": "C'EST POUR TOI",
@@ -1032,7 +1126,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "CAIRO BLACKOUT",
@@ -1051,7 +1147,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 86,
+   "vocal": "Instrumental"
   },
   {
    "title": "CAN'T DENY IT",
@@ -1073,7 +1171,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "CAN'T STOP THE SUMMER FUN",
@@ -1097,7 +1197,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "CANNIBALS",
@@ -1117,7 +1219,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Instrumental"
   },
   {
    "title": "CAPTAIN GALACTIC",
@@ -1137,7 +1241,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 135,
+   "vocal": "Vocals"
   },
   {
    "title": "CAPTAIN TURBO",
@@ -1156,7 +1262,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 136,
+   "vocal": "Vocals"
   },
   {
    "title": "CAPTURE",
@@ -1178,7 +1286,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 88,
+   "vocal": "Vocals"
   },
   {
    "title": "CASH FLOW",
@@ -1197,7 +1307,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 123,
+   "vocal": "Vocals"
   },
   {
    "title": "CASINO GAZA",
@@ -1218,7 +1330,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 122,
+   "vocal": "Instrumental"
   },
   {
    "title": "CASINO GAZA - MINIMAL",
@@ -1238,7 +1352,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "CELEBRISHIT",
@@ -1259,7 +1375,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "CHASING LIGHTS",
@@ -1280,7 +1398,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Instrumental"
   },
   {
    "title": "CHASING NIGHTS",
@@ -1302,7 +1422,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "CHASING NIGHTS + VOX (SQUARE)",
@@ -1322,7 +1444,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "CHICHO LINDO",
@@ -1342,7 +1466,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "CHOCOLATE MILK FACTORY",
@@ -1364,7 +1490,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 143,
+   "vocal": "Instrumental"
   },
   {
    "title": "CIRCUS",
@@ -1383,7 +1511,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 161,
+   "vocal": "Instrumental"
   },
   {
    "title": "CLIMAX - DRAMATIC TRAILER",
@@ -1405,7 +1535,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 152,
+   "vocal": "Instrumental"
   },
   {
    "title": "COLD SUMMER DAY",
@@ -1425,7 +1557,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 136,
+   "vocal": "Instrumental"
   },
   {
    "title": "COLLINS AVE",
@@ -1447,7 +1581,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Vocals"
   },
   {
    "title": "COMING HOME",
@@ -1470,7 +1606,9 @@ const MUTRA = {
     "Piano",
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 85,
+   "vocal": "Instrumental"
   },
   {
    "title": "COMING HOME - PIANO ONLY",
@@ -1490,7 +1628,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 85,
+   "vocal": "Instrumental"
   },
   {
    "title": "CONFRONTATION",
@@ -1511,7 +1651,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 185,
+   "vocal": "Instrumental"
   },
   {
    "title": "CUT ME LOOSE (INSTRUMENTAL)",
@@ -1535,7 +1677,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 150,
+   "vocal": "Vocals"
   },
   {
    "title": "CUT ME LOOSE (SHORT)",
@@ -1560,7 +1704,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 151,
+   "vocal": "Vocals"
   },
   {
    "title": "CYBER TUNNEL",
@@ -1581,7 +1727,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Instrumental"
   },
   {
    "title": "DAFFODIL WITHOUT A SUNLIGHT",
@@ -1600,7 +1748,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 122,
+   "vocal": "Vocals"
   },
   {
    "title": "DANCE FOR TRIOMPHE",
@@ -1622,7 +1772,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "DARK DOTS",
@@ -1645,7 +1797,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 148,
+   "vocal": "Instrumental"
   },
   {
    "title": "DARK FACTORY",
@@ -1668,7 +1822,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "DAY DREAMER",
@@ -1690,7 +1846,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "DEEP UNDERWATER",
@@ -1712,7 +1870,9 @@ const MUTRA = {
     "Piano",
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 123,
+   "vocal": "Instrumental"
   },
   {
    "title": "DEMOLITION MISSION",
@@ -1736,7 +1896,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "DEPECHE MODE - TAINTED LOVE (ORI TOLEDANO MUSICAL REMIX)",
@@ -1756,7 +1918,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "DIRTY DANCEFLOOR",
@@ -1776,7 +1940,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "DIRTY MONEY",
@@ -1797,7 +1963,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 161,
+   "vocal": "Vocals"
   },
   {
    "title": "DO IT MAJOR",
@@ -1817,7 +1985,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 103,
+   "vocal": "Vocals"
   },
   {
    "title": "DRAMATIC CLIMAX TIZER (GUITAR FEEDBACK)",
@@ -1839,7 +2009,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 123,
+   "vocal": "Vocals"
   },
   {
    "title": "DRAMATIC STING",
@@ -1861,7 +2033,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 145,
+   "vocal": "Instrumental"
   },
   {
    "title": "DVASH (PLAYBACK)",
@@ -1884,7 +2058,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 97,
+   "vocal": "Vocals"
   },
   {
    "title": "EASTCOUNTRY",
@@ -1907,7 +2083,9 @@ const MUTRA = {
     "Piano",
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 146,
+   "vocal": "Instrumental"
   },
   {
    "title": "EITAN CHINITZ - PRAY",
@@ -1926,7 +2104,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Vocals"
   },
   {
    "title": "ELECTRO SWETHEART",
@@ -1947,7 +2127,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Vocals"
   },
   {
    "title": "ELEGANCE STING",
@@ -1988,7 +2170,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 83,
+   "vocal": "Instrumental"
   },
   {
    "title": "ELVES LAND (SOFT)",
@@ -2011,7 +2195,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 109,
+   "vocal": "Instrumental"
   },
   {
    "title": "EMOTIONAL STING",
@@ -2031,7 +2217,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 97,
+   "vocal": "Instrumental"
   },
   {
    "title": "EP",
@@ -2050,7 +2238,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 99,
+   "vocal": "Instrumental"
   },
   {
    "title": "EP. 2 Q26 - DARK DOTS",
@@ -2071,7 +2261,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 148,
+   "vocal": "Instrumental"
   },
   {
    "title": "EPIC FAST DRUMS",
@@ -2093,7 +2285,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Instrumental"
   },
   {
    "title": "EPIC HANYE BEST",
@@ -2116,7 +2310,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "EPIC JOURNEY",
@@ -2138,7 +2334,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 93,
+   "vocal": "Instrumental"
   },
   {
    "title": "EPIC JOURNEY (TAMED)",
@@ -2159,7 +2357,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Instrumental"
   },
   {
    "title": "ETHNIC GLAM",
@@ -2179,7 +2379,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Vocals"
   },
   {
    "title": "ETHNIC POP",
@@ -2198,7 +2400,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 102,
+   "vocal": "Vocals"
   },
   {
    "title": "EVERY RIGHT TO BE WITH YOU",
@@ -2219,7 +2423,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 140,
+   "vocal": "Vocals"
   },
   {
    "title": "EVILOVE",
@@ -2241,7 +2447,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "EVILOVE CHAOS",
@@ -2264,7 +2472,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "FALLING OUT OF LOVE (INSTRUMENTAL)",
@@ -2287,7 +2497,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "FAMILY GIRL (MUSICAL)",
@@ -2310,7 +2522,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 145,
+   "vocal": "Vocals"
   },
   {
    "title": "FAR WE ARE",
@@ -2329,7 +2543,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 122,
+   "vocal": "Vocals"
   },
   {
    "title": "FAR WE ARE - SHORT EDIT",
@@ -2348,7 +2564,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 123,
+   "vocal": "Vocals"
   },
   {
    "title": "FESTIGAL",
@@ -2371,7 +2589,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "FIVE ROCKS",
@@ -2391,7 +2611,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 129,
+   "vocal": "Vocals"
   },
   {
    "title": "FLAWLESS",
@@ -2413,7 +2635,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "FRANKY BUSTY BOOBS",
@@ -2435,7 +2659,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Instrumental"
   },
   {
    "title": "FREEDOM CITY (INSTRUMENTAL)",
@@ -2456,7 +2682,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 128,
+   "vocal": "Vocals"
   },
   {
    "title": "FRENCH BALKAN",
@@ -2476,7 +2704,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "FUN SUMMER BASS",
@@ -2497,7 +2727,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "FUNKY WURLI TRIPLET",
@@ -2519,7 +2751,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "FUTURE SODOM",
@@ -2539,7 +2773,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 178,
+   "vocal": "Instrumental"
   },
   {
    "title": "FUZZY CATS",
@@ -2558,7 +2794,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 137,
+   "vocal": "Instrumental"
   },
   {
    "title": "GANGSTA RIDE",
@@ -2576,7 +2814,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 156,
+   "vocal": "Vocals"
   },
   {
    "title": "GIRL IN RED",
@@ -2597,7 +2837,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Instrumental"
   },
   {
    "title": "GLIDA",
@@ -2616,7 +2858,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "GONE IN A SEC",
@@ -2634,7 +2878,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Vocals"
   },
   {
    "title": "GONE IN A SEC - PLAYBACK",
@@ -2653,7 +2899,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Vocals"
   },
   {
    "title": "GOOD OLD DAYS",
@@ -2672,7 +2920,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 141,
+   "vocal": "Vocals"
   },
   {
    "title": "GOOD THINGS",
@@ -2692,7 +2942,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 113,
+   "vocal": "Vocals"
   },
   {
    "title": "GOOD THINGS (PLAYBACK)",
@@ -2712,7 +2964,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 113,
+   "vocal": "Instrumental"
   },
   {
    "title": "GREAT POWERS",
@@ -2733,7 +2987,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 102,
+   "vocal": "Vocals"
   },
   {
    "title": "GREAT POWERS (AGRESSIVE MIX PLAYBACK)",
@@ -2752,7 +3008,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "HAILO OF THE MOON (INSTRUMENTAL)",
@@ -2773,7 +3031,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "HALUTZIM - LIES PLAYBACK",
@@ -2794,7 +3054,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Vocals"
   },
   {
    "title": "HEAVY ACTION",
@@ -2816,7 +3078,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Instrumental"
   },
   {
    "title": "HEAVY PULSES",
@@ -2835,7 +3099,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "HEILO PAD",
@@ -2854,7 +3120,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Instrumental"
   },
   {
    "title": "HELLO WORLD (EPIC)",
@@ -2876,7 +3144,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 154,
+   "vocal": "Instrumental"
   },
   {
    "title": "HELLO WORLD (SOFT)",
@@ -2898,7 +3168,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 153,
+   "vocal": "Instrumental"
   },
   {
    "title": "HERE COMES THE BEST",
@@ -2922,7 +3194,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 152,
+   "vocal": "Vocals"
   },
   {
    "title": "HERE WE GO AGAIN",
@@ -2942,7 +3216,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 70,
+   "vocal": "Instrumental"
   },
   {
    "title": "HI-TECH INNOVATIVE (SHORT PIANO REFF)",
@@ -2964,7 +3240,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 136,
+   "vocal": "Instrumental"
   },
   {
    "title": "HIPSTA FLITZ",
@@ -2984,7 +3262,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "HIT'EM WITH A BASS DROP",
@@ -3003,7 +3283,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Vocals"
   },
   {
    "title": "HOME (INSTRUMENTAL)",
@@ -3023,7 +3305,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Instrumental"
   },
   {
    "title": "HONEY I'M HOME",
@@ -3045,7 +3329,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "HOODY TRAP",
@@ -3064,7 +3350,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 150,
+   "vocal": "Vocals"
   },
   {
    "title": "HOOLYWOOD CRIBS",
@@ -3084,7 +3372,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Instrumental"
   },
   {
    "title": "HUMANOID LOVE",
@@ -3106,7 +3396,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Vocals"
   },
   {
    "title": "I CAN'T STOP",
@@ -3127,7 +3419,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "I SAY YY",
@@ -3149,7 +3443,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Vocals"
   },
   {
    "title": "ICY ROLLER",
@@ -3172,7 +3468,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 115,
+   "vocal": "Instrumental"
   },
   {
    "title": "INDIE POP WHISTLE",
@@ -3193,7 +3491,9 @@ const MUTRA = {
     "Piano",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "INTRO",
@@ -3214,7 +3514,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 161,
+   "vocal": "Vocals"
   },
   {
    "title": "ISHA",
@@ -3234,7 +3536,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 82,
+   "vocal": "Vocals"
   },
   {
    "title": "JACK BLACK (SHORT)",
@@ -3257,7 +3561,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Vocals"
   },
   {
    "title": "JANE",
@@ -3279,7 +3585,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Vocals"
   },
   {
    "title": "JANE SINATRA",
@@ -3303,7 +3611,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 132,
+   "vocal": "Vocals"
   },
   {
    "title": "JAPAN FIGHT",
@@ -3325,7 +3635,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 140,
+   "vocal": "Instrumental"
   },
   {
    "title": "JAPAN FLUTES",
@@ -3344,7 +3656,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 137,
+   "vocal": "Instrumental"
   },
   {
    "title": "JAQLEEN BIETER",
@@ -3364,7 +3678,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 94,
+   "vocal": "Vocals"
   },
   {
    "title": "JAZZ SWING (SAX - LIGHT)",
@@ -3386,7 +3702,9 @@ const MUTRA = {
     "Piano",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 151,
+   "vocal": "Instrumental"
   },
   {
    "title": "JAZZ SWING (SAX)",
@@ -3408,7 +3726,9 @@ const MUTRA = {
     "Piano",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 163,
+   "vocal": "Instrumental"
   },
   {
    "title": "JAZZY FUNK JAM",
@@ -3430,7 +3750,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "JIMMY CHOO",
@@ -3453,7 +3775,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "JOKER UP MY SLEEVE",
@@ -3473,7 +3797,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Vocals"
   },
   {
    "title": "JUST LIKE ME",
@@ -3496,7 +3822,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 135,
+   "vocal": "Vocals"
   },
   {
    "title": "KAVIAR WOMAN (LONG)",
@@ -3518,7 +3846,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 114,
+   "vocal": "Instrumental"
   },
   {
    "title": "KAVIAR WOMAN (SHORT)",
@@ -3540,7 +3870,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 114,
+   "vocal": "Instrumental"
   },
   {
    "title": "KAVIAR WOMAN - MINIMAL EDIT",
@@ -3562,7 +3894,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 113,
+   "vocal": "Instrumental"
   },
   {
    "title": "KINDER FUN",
@@ -3582,7 +3916,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "KINGSTON'S SHAKE",
@@ -3602,7 +3938,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Vocals"
   },
   {
    "title": "KNESET NEW 2 -- 18.12.17",
@@ -3621,7 +3959,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 104,
+   "vocal": "Instrumental"
   },
   {
    "title": "KNOCK KNOCK",
@@ -3640,7 +3980,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "KNOCK KNOCK - DRUM & PERCS",
@@ -3660,7 +4002,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "KNOWN UNKNOWN",
@@ -3681,7 +4025,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "KUZO'S DREAM",
@@ -3705,7 +4051,9 @@ const MUTRA = {
     "Guitar",
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 138,
+   "vocal": "Instrumental"
   },
   {
    "title": "LABA MAZE",
@@ -3724,7 +4072,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 161,
+   "vocal": "Instrumental"
   },
   {
    "title": "LALADIN YAAKOV (PLAYBACK REDO)",
@@ -3744,7 +4094,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Vocals"
   },
   {
    "title": "LAPAM - RAV SAL - MAIN (SAGIR MUSIC PLAYBACK)",
@@ -3764,7 +4116,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 98,
+   "vocal": "Vocals"
   },
   {
    "title": "LAST EPISODES THEME",
@@ -3787,7 +4141,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Vocals"
   },
   {
    "title": "LATER SWISS",
@@ -3808,7 +4164,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "LATUS",
@@ -3827,7 +4185,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 86,
+   "vocal": "Vocals"
   },
   {
    "title": "LIES & DECEPTION",
@@ -3850,7 +4210,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 156,
+   "vocal": "Instrumental"
   },
   {
    "title": "LILY WEST",
@@ -3871,7 +4233,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 102,
+   "vocal": "Instrumental"
   },
   {
    "title": "LITTLE BIG ADVENTURE",
@@ -3894,7 +4258,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 143,
+   "vocal": "Instrumental"
   },
   {
    "title": "LOLA MARSH - WISHING GIRL (ORI TOLEDANO & GIL LANDAU REMIX)",
@@ -3912,7 +4278,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Vocals"
   },
   {
    "title": "LONELY ROAD",
@@ -3932,7 +4300,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 87,
+   "vocal": "Vocals"
   },
   {
    "title": "LOST IN MARAKESH (FULL)",
@@ -3951,7 +4321,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "LOST IN MARAKESH (LIGHT)",
@@ -3971,7 +4343,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "LOST IN MARAKESH (SHORT)",
@@ -3990,7 +4364,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "LOVE NEVER END (INSTRUMENTAL)",
@@ -4013,7 +4389,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 128,
+   "vocal": "Instrumental"
   },
   {
    "title": "LOVE TO LOVE YOU",
@@ -4035,7 +4413,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Vocals"
   },
   {
    "title": "LOW LOW LOW",
@@ -4055,7 +4435,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 122,
+   "vocal": "Instrumental"
   },
   {
    "title": "MAGICAL MORNING",
@@ -4078,7 +4460,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 114,
+   "vocal": "Instrumental"
   },
   {
    "title": "MAGICIAN",
@@ -4097,7 +4481,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 172,
+   "vocal": "Instrumental"
   },
   {
    "title": "MAIN INTRO THEME - ACTION TENSION LONG V",
@@ -4118,7 +4504,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Vocals"
   },
   {
    "title": "MAIN INTRO THEME - FULL MIX - DARK",
@@ -4138,7 +4526,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Instrumental"
   },
   {
    "title": "MAIN INTRO THEME - SHORT 9 FAVORITE _)",
@@ -4157,7 +4547,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 161,
+   "vocal": "Vocals"
   },
   {
    "title": "MAN IS GONE",
@@ -4179,7 +4571,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 78,
+   "vocal": "Vocals"
   },
   {
    "title": "MARIMBA FOREST",
@@ -4202,7 +4596,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 115,
+   "vocal": "Instrumental"
   },
   {
    "title": "MASSIVE ATTACK - DEAR DROP (ORI TOLEDANO",
@@ -4221,7 +4617,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "MASSIVE ATTACK - TEAR DROP (TECHNO REMIX)",
@@ -4242,7 +4640,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "MATTER 1:4",
@@ -4263,7 +4663,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Instrumental"
   },
   {
    "title": "MEDUZA (REEF)",
@@ -4284,7 +4686,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "MEGASTAR (INSTRUMENTAL)",
@@ -4307,7 +4711,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "MIDROAD PADS",
@@ -4326,7 +4732,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "MONDRIAN DESERT DRIFT",
@@ -4346,7 +4754,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 128,
+   "vocal": "Instrumental"
   },
   {
    "title": "MONDRIANS EMO DRIFT",
@@ -4367,7 +4777,9 @@ const MUTRA = {
     "Piano",
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 128,
+   "vocal": "Instrumental"
   },
   {
    "title": "MR. SANDMAN (COVER)",
@@ -4387,7 +4799,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "MUSICAL FAIRY",
@@ -4405,7 +4819,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 142,
+   "vocal": "Vocals"
   },
   {
    "title": "MUTANTS",
@@ -4428,7 +4844,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 105,
+   "vocal": "Instrumental"
   },
   {
    "title": "MY BELL MAMBO (BG VOX VER.)",
@@ -4447,7 +4865,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "MY LOVE",
@@ -4469,7 +4889,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "MY LOVE SHORT",
@@ -4488,7 +4910,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 117,
+   "vocal": "Instrumental"
   },
   {
    "title": "NAZDA ROVIA",
@@ -4508,7 +4932,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 140,
+   "vocal": "Vocals"
   },
   {
    "title": "NERVS",
@@ -4530,7 +4956,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Vocals"
   },
   {
    "title": "NEWS THEME - THE WORLD TODAY",
@@ -4549,7 +4977,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Instrumental"
   },
   {
    "title": "NI KOREA",
@@ -4569,7 +4999,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "NINJA ASSASSIN",
@@ -4591,7 +5023,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "NO LONGER NEED HELP",
@@ -4610,7 +5044,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 133,
+   "vocal": "Vocals"
   },
   {
    "title": "NO LONGER NEED HELP (PLAYBACK)",
@@ -4631,7 +5067,9 @@ const MUTRA = {
     "Piano",
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 133,
+   "vocal": "Instrumental"
   },
   {
    "title": "NOBODY KNOWS NOTHING ANYWHERE",
@@ -4654,7 +5092,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 106,
+   "vocal": "Instrumental"
   },
   {
    "title": "NORMALITY",
@@ -4677,7 +5117,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "NORTH PULSES",
@@ -4697,7 +5139,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Instrumental"
   },
   {
    "title": "OFF THE GRID",
@@ -4716,7 +5160,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Vocals"
   },
   {
    "title": "OFF THE GRID (PLAYBACK)",
@@ -4737,7 +5183,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "OK AT THE STATION",
@@ -4759,7 +5207,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 134,
+   "vocal": "Vocals"
   },
   {
    "title": "OK AT THE STATION (PLAYBACK)",
@@ -4781,7 +5231,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 134,
+   "vocal": "Vocals"
   },
   {
    "title": "OLD BROADWAY",
@@ -4801,7 +5253,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Instrumental"
   },
   {
    "title": "ONE DAY TALE (BUZA)",
@@ -4822,7 +5276,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 162,
+   "vocal": "Instrumental"
   },
   {
    "title": "OPHELIA'S DOUBT",
@@ -4846,7 +5302,9 @@ const MUTRA = {
     "Piano",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 150,
+   "vocal": "Instrumental"
   },
   {
    "title": "OUZO",
@@ -4869,7 +5327,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 114,
+   "vocal": "Instrumental"
   },
   {
    "title": "OWLS",
@@ -4888,7 +5348,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "PADDY EAST WIND",
@@ -4907,7 +5369,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 79,
+   "vocal": "Instrumental"
   },
   {
    "title": "PAM PAM PAM",
@@ -4929,7 +5393,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 150,
+   "vocal": "Instrumental"
   },
   {
    "title": "PASHUT",
@@ -4948,7 +5414,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Vocals"
   },
   {
    "title": "PATRICIA",
@@ -4970,7 +5438,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Vocals"
   },
   {
    "title": "PEPPER - ALERT",
@@ -4986,7 +5456,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5312963378413568.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-alert.jpg",
    "moods": [],
-   "instruments": []
+   "instruments": [],
+   "bpm": 126,
+   "vocal": "Instrumental"
   },
   {
    "title": "PEPPER - CONFETTI",
@@ -5002,7 +5474,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5875913331834880.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-confetti.jpg",
    "moods": [],
-   "instruments": []
+   "instruments": [],
+   "bpm": 121,
+   "vocal": "Vocals"
   },
   {
    "title": "PEPPER - GIF (2 PARTS)",
@@ -5018,7 +5492,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/4750013424992256.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-gif-2-parts.jpg",
    "moods": [],
-   "instruments": []
+   "instruments": [],
+   "bpm": 115,
+   "vocal": "Instrumental"
   },
   {
    "title": "PEPPER - GIF (PART 1)",
@@ -5066,7 +5542,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/6016650820190208.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-main-money-in.jpg",
    "moods": [],
-   "instruments": []
+   "instruments": [],
+   "bpm": 114,
+   "vocal": "Instrumental"
   },
   {
    "title": "PEPPER - RECEIVED",
@@ -5098,7 +5576,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/6298125796900864.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-regular-push.jpg",
    "moods": [],
-   "instruments": []
+   "instruments": [],
+   "bpm": 115,
+   "vocal": "Instrumental"
   },
   {
    "title": "PEPPER - SENT",
@@ -5130,7 +5610,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5735175843479552.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-stars.jpg",
    "moods": [],
-   "instruments": []
+   "instruments": [],
+   "bpm": 111,
+   "vocal": "Instrumental"
   },
   {
    "title": "PEPPER ANTHEM",
@@ -5146,7 +5628,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5552906877009920.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-anthem.jpg",
    "moods": [],
-   "instruments": []
+   "instruments": [],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "PETITE MARIONETTE",
@@ -5167,7 +5651,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Instrumental"
   },
   {
    "title": "PIECES OF A WHOLE",
@@ -5189,7 +5675,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Vocals"
-   ]
+   ],
+   "bpm": 125,
+   "vocal": "Vocals"
   },
   {
    "title": "PINK TRAP",
@@ -5207,7 +5695,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 150,
+   "vocal": "Vocals"
   },
   {
    "title": "PIZZI DARK COMIC",
@@ -5231,7 +5721,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 113,
+   "vocal": "Instrumental"
   },
   {
    "title": "POP ROCK UNDER",
@@ -5253,7 +5745,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 97,
+   "vocal": "Instrumental"
   },
   {
    "title": "POSITIVE HAPPY FOLK",
@@ -5275,7 +5769,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "POSITIVE INTIMATE DRIFT",
@@ -5296,7 +5792,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 136,
+   "vocal": "Instrumental"
   },
   {
    "title": "POWER TO GO ON",
@@ -5319,7 +5817,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "PRAY",
@@ -5340,7 +5840,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "PRECIOUS LOVE",
@@ -5361,7 +5863,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "PURIFIED",
@@ -5382,7 +5886,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 162,
+   "vocal": "Instrumental"
   },
   {
    "title": "R U MINE (DUBSTEP REMIX)",
@@ -5403,7 +5909,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 97,
+   "vocal": "Instrumental"
   },
   {
    "title": "RABELS",
@@ -5425,7 +5933,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 76,
+   "vocal": "Vocals"
   },
   {
    "title": "RAINBOW DISCO",
@@ -5444,7 +5954,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 114,
+   "vocal": "Instrumental"
   },
   {
    "title": "REAL FEEL (BLEND 08)",
@@ -5466,7 +5978,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "REBORN",
@@ -5488,7 +6002,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "REVENGENCE",
@@ -5509,7 +6025,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "ROCK TENSION",
@@ -5530,7 +6048,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 85,
+   "vocal": "Instrumental"
   },
   {
    "title": "ROCK'N'ROLL",
@@ -5553,7 +6073,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 117,
+   "vocal": "Vocals"
   },
   {
    "title": "ROCK'N'ROLL SURF",
@@ -5575,7 +6097,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 149,
+   "vocal": "Vocals"
   },
   {
    "title": "ROUTE DE L'AMOUR",
@@ -5597,7 +6121,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Vocals"
   },
   {
    "title": "ROUTE DE L'AMOUR (LONG EDIT)",
@@ -5620,7 +6146,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 124,
+   "vocal": "Instrumental"
   },
   {
    "title": "RUBI",
@@ -5639,7 +6167,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Instrumental"
   },
   {
    "title": "SAD GAMEBOY",
@@ -5660,7 +6190,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 145,
+   "vocal": "Instrumental"
   },
   {
    "title": "SAME",
@@ -5679,7 +6211,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 104,
+   "vocal": "Vocals"
   },
   {
    "title": "SECOND HAND (PLAYBACK)",
@@ -5701,7 +6235,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "SECOND HAND - NO MELODY",
@@ -5723,7 +6259,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "SHADING TO GREY",
@@ -5744,7 +6282,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "SHADING TO PHRASE",
@@ -5767,7 +6307,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Instrumental"
   },
   {
    "title": "SHADY TALK PULSE",
@@ -5788,7 +6330,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "SHALOM ALECHEM (RED ARMY STYLE)",
@@ -5808,7 +6352,9 @@ const MUTRA = {
    "instruments": [
     "Choir",
     "Vocals"
-   ]
+   ],
+   "bpm": 129,
+   "vocal": "Vocals"
   },
   {
    "title": "SHIFTING GEARS",
@@ -5826,7 +6372,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 94,
+   "vocal": "Vocals"
   },
   {
    "title": "SHITTY WORMS",
@@ -5846,7 +6394,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 115,
+   "vocal": "Instrumental"
   },
   {
    "title": "SHORDITCH 14",
@@ -5868,7 +6418,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 108,
+   "vocal": "Vocals"
   },
   {
    "title": "SHORDITCH 14 (VER 2)",
@@ -5890,7 +6442,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 108,
+   "vocal": "Vocals"
   },
   {
    "title": "SIMPLE COUNTRY FOLK GUITAR WHISTLE",
@@ -5911,7 +6465,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 97,
+   "vocal": "Instrumental"
   },
   {
    "title": "SIMPLE THINGS",
@@ -5934,7 +6490,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 80,
+   "vocal": "Instrumental"
   },
   {
    "title": "SLOW SMOOTH JAZZ",
@@ -5958,7 +6516,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 74,
+   "vocal": "Instrumental"
   },
   {
    "title": "SOFT ORCHESTRAL STING",
@@ -5982,7 +6542,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "SOMEBODY ELSE (GLITCH MIX)",
@@ -6001,7 +6563,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Vocals"
   },
   {
    "title": "SOMEBODY ELSE (TRIBAL)",
@@ -6024,7 +6588,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "SOMEWHERE IN THE MIDDLE",
@@ -6047,7 +6613,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "SORROW",
@@ -6067,7 +6635,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "SPACE LOTUS",
@@ -6089,7 +6659,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 117,
+   "vocal": "Instrumental"
   },
   {
    "title": "SPANISH TARANTULA",
@@ -6108,7 +6680,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "SPOOKY TALK",
@@ -6130,7 +6704,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 117,
+   "vocal": "Instrumental"
   },
   {
    "title": "STREAM OF LOVE",
@@ -6151,7 +6727,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 142,
+   "vocal": "Vocals"
   },
   {
    "title": "STREAM OF LOVE (PLAYBACK)",
@@ -6173,7 +6751,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 142,
+   "vocal": "Vocals"
   },
   {
    "title": "STRINGFIELD",
@@ -6194,7 +6774,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 105,
+   "vocal": "Instrumental"
   },
   {
    "title": "STRINGFIELD - MINIMAL",
@@ -6217,7 +6799,9 @@ const MUTRA = {
     "Guitar",
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 105,
+   "vocal": "Instrumental"
   },
   {
    "title": "SUGARY SALT MOUNTAIN",
@@ -6240,7 +6824,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 78,
+   "vocal": "Instrumental"
   },
   {
    "title": "SUIT YOURSELF",
@@ -6261,7 +6847,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 119,
+   "vocal": "Vocals"
   },
   {
    "title": "SUIT YOURSELF (PLAYBACK)",
@@ -6281,7 +6869,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Vocals"
   },
   {
    "title": "SUNNY IS A HOPELESS GIRL",
@@ -6303,7 +6893,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "SUPAPLEX",
@@ -6326,7 +6918,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 154,
+   "vocal": "Vocals"
   },
   {
    "title": "SUPERHEROS",
@@ -6347,7 +6941,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 132,
+   "vocal": "Instrumental"
   },
   {
    "title": "SUPERSIZE BASS",
@@ -6368,7 +6964,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 116,
+   "vocal": "Vocals"
   },
   {
    "title": "TANGIBLE",
@@ -6389,7 +6987,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Vocals"
   },
   {
    "title": "TANGO SHMANGO",
@@ -6409,7 +7009,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "TASTE OF PASSION (80'S PARODY)",
@@ -6431,7 +7033,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 152,
+   "vocal": "Vocals"
   },
   {
    "title": "TECH E FASHION",
@@ -6452,7 +7056,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 108,
+   "vocal": "Instrumental"
   },
   {
    "title": "TELENOVELLA (FULL)",
@@ -6473,7 +7079,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 145,
+   "vocal": "Instrumental"
   },
   {
    "title": "TELENOVELLA (PIANO)",
@@ -6493,7 +7101,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 147,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE ARRIVAL",
@@ -6516,7 +7126,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 70,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE DEVIOUS FOX",
@@ -6540,7 +7152,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE FREAK FUNK SHOW - FULL",
@@ -6563,7 +7177,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 104,
+   "vocal": "Vocals"
   },
   {
    "title": "THE FREAK SHOW",
@@ -6585,7 +7201,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 104,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE FREAK SHOW - 1",
@@ -6607,7 +7225,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 104,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE FREAK SHOW 2",
@@ -6629,7 +7249,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 104,
+   "vocal": "Vocals"
   },
   {
    "title": "THE GREAT KINGDOM",
@@ -6652,7 +7274,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 83,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE KISS",
@@ -6673,7 +7297,9 @@ const MUTRA = {
     "Piano",
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE RACE (INSTRUMENTAL)",
@@ -6697,7 +7323,9 @@ const MUTRA = {
     "Piano",
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 85,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE RISE AND FALL (LONG VER.)",
@@ -6719,7 +7347,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 142,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE RISE AND FALL (ORGANIC VER.)",
@@ -6741,7 +7371,9 @@ const MUTRA = {
     "Piano",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 71,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE RISE AND FALL (ORIGINAL VER.)",
@@ -6763,7 +7395,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 142,
+   "vocal": "Vocals"
   },
   {
    "title": "THE SAD PIANIST",
@@ -6784,7 +7418,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE SECRET GARDEN",
@@ -6808,7 +7444,9 @@ const MUTRA = {
     "Piano",
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 117,
+   "vocal": "Instrumental"
   },
   {
    "title": "THE TERRIBLE TWOS",
@@ -6830,7 +7468,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 162,
+   "vocal": "Instrumental"
   },
   {
    "title": "THEM ALL FEARS",
@@ -6852,7 +7492,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 156,
+   "vocal": "Instrumental"
   },
   {
    "title": "THIS IS HOW I TRICKED YA",
@@ -6875,7 +7517,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "TIGERS (INSTRUMENTAL)",
@@ -6896,7 +7540,9 @@ const MUTRA = {
     "Piano",
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 148,
+   "vocal": "Instrumental"
   },
   {
    "title": "TIK TAK TOE (PIANO)",
@@ -6918,7 +7564,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 118,
+   "vocal": "Instrumental"
   },
   {
    "title": "TILL IT'S GONE",
@@ -6940,7 +7588,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 122,
+   "vocal": "Instrumental"
   },
   {
    "title": "TOKYO SHAKE",
@@ -6962,7 +7612,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 128,
+   "vocal": "Instrumental"
   },
   {
    "title": "TOO MUCH OF EVERYTHING",
@@ -6984,7 +7636,9 @@ const MUTRA = {
     "Piano",
     "Guitar",
     "Instrumental"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Instrumental"
   },
   {
    "title": "TRAIN IS ON",
@@ -7003,7 +7657,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Vocals"
-   ]
+   ],
+   "bpm": 100,
+   "vocal": "Vocals"
   },
   {
    "title": "TRAP LESS",
@@ -7024,7 +7680,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Vocals"
   },
   {
    "title": "TRAP MASS",
@@ -7044,7 +7702,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 90,
+   "vocal": "Vocals"
   },
   {
    "title": "TRUMP",
@@ -7066,7 +7726,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Vocals"
   },
   {
    "title": "TV SHOW INTRO (SKA ROCK)",
@@ -7088,7 +7750,9 @@ const MUTRA = {
    "instruments": [
     "Guitar",
     "Vocals"
-   ]
+   ],
+   "bpm": 104,
+   "vocal": "Vocals"
   },
   {
    "title": "UNBAN THAT SHIT",
@@ -7111,7 +7775,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 150,
+   "vocal": "Vocals"
   },
   {
    "title": "VICIOUS HEART",
@@ -7133,7 +7799,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 120,
+   "vocal": "Instrumental"
   },
   {
    "title": "VINTAGE BERLIN TECHNO",
@@ -7154,7 +7822,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 110,
+   "vocal": "Instrumental"
   },
   {
    "title": "VINTAGE UPLIFTING ADVENTURE",
@@ -7177,7 +7847,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 129,
+   "vocal": "Vocals"
   },
   {
    "title": "WAR AND THE TOLL",
@@ -7199,7 +7871,9 @@ const MUTRA = {
    "instruments": [
     "Piano",
     "Instrumental"
-   ]
+   ],
+   "bpm": 123,
+   "vocal": "Instrumental"
   },
   {
    "title": "WESTERN MOBY KICK",
@@ -7219,7 +7893,9 @@ const MUTRA = {
     "Guitar",
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 148,
+   "vocal": "Vocals"
   },
   {
    "title": "WHAT IF IT'S REAL",
@@ -7241,7 +7917,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 130,
+   "vocal": "Instrumental"
   },
   {
    "title": "WHOOPSY DOOPS",
@@ -7263,7 +7941,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 96,
+   "vocal": "Instrumental"
   },
   {
    "title": "WIERD TO RAGE + DIST BEAT",
@@ -7282,7 +7962,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 111,
+   "vocal": "Instrumental"
   },
   {
    "title": "WORLD STING",
@@ -7304,7 +7986,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 88,
+   "vocal": "Instrumental"
   },
   {
    "title": "WOW",
@@ -7323,7 +8007,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Vocals"
-   ]
+   ],
+   "bpm": 81,
+   "vocal": "Vocals"
   },
   {
    "title": "XMAS CLARINET",
@@ -7347,7 +8033,9 @@ const MUTRA = {
     "Strings",
     "Flute",
     "Instrumental"
-   ]
+   ],
+   "bpm": 139,
+   "vocal": "Instrumental"
   },
   {
    "title": "XMAS CLARINET (SLOW)",
@@ -7370,7 +8058,9 @@ const MUTRA = {
    "instruments": [
     "Strings",
     "Instrumental"
-   ]
+   ],
+   "bpm": 121,
+   "vocal": "Instrumental"
   },
   {
    "title": "XMAS DANCE",
@@ -7392,7 +8082,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Vocals"
   },
   {
    "title": "YO KA YAY",
@@ -7412,7 +8104,9 @@ const MUTRA = {
    ],
    "instruments": [
     "Instrumental"
-   ]
+   ],
+   "bpm": 144,
+   "vocal": "Instrumental"
   },
   {
    "title": "YOU ALREADY KNOW",
@@ -7431,7 +8125,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Vocals"
-   ]
+   ],
+   "bpm": 126,
+   "vocal": "Vocals"
   },
   {
    "title": "YOUNGSTERS",
@@ -7452,7 +8148,9 @@ const MUTRA = {
    "instruments": [
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 106,
+   "vocal": "Instrumental"
   },
   {
    "title": "Z GERMAN",
@@ -7473,7 +8171,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 121,
+   "vocal": "Instrumental"
   },
   {
    "title": "Z HOUSE",
@@ -7494,7 +8194,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 121,
+   "vocal": "Instrumental"
   },
   {
    "title": "Z JEW",
@@ -7516,7 +8218,9 @@ const MUTRA = {
    "instruments": [
     "Synth",
     "Instrumental"
-   ]
+   ],
+   "bpm": 121,
+   "vocal": "Instrumental"
   },
   {
    "title": "ZE POPCORN",
@@ -7537,7 +8241,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   },
   {
    "title": "ZE POPCORN (MINIMAL)",
@@ -7558,7 +8264,9 @@ const MUTRA = {
     "Synth",
     "Drums",
     "Instrumental"
-   ]
+   ],
+   "bpm": 112,
+   "vocal": "Instrumental"
   }
  ],
  "packages": [
