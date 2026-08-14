@@ -84,6 +84,13 @@ body.menu-open .mmenu-foot{opacity:1;transform:none}
 .mbtn-solid:hover{transform:translateY(-2px);box-shadow:0 12px 34px var(--btn-shadow)}
 .mbtn-ghost{border:1px solid var(--line-2);color:var(--text);background:transparent}
 .mbtn-ghost:hover{border-color:var(--coral);color:var(--coral)}
+.mnav-right{display:flex;align-items:center;gap:16px;margin-left:auto;z-index:2}
+.theme-btn{display:grid;place-items:center;width:36px;height:36px;flex:none;border-radius:50%;
+  background:none;border:1px solid var(--line);color:var(--muted);cursor:pointer;transition:.2s}
+.theme-btn:hover{color:var(--text);border-color:var(--line-2);background:var(--tint)}
+.theme-btn .ico-moon{display:none}
+[data-theme="dark"] .theme-btn .ico-sun{display:none}
+[data-theme="dark"] .theme-btn .ico-moon{display:block}
 .mnav-burger{display:grid;place-content:center;gap:5px;width:44px;height:44px;flex:none;z-index:2;
   background:none;border:0;cursor:pointer;padding:0}
 .mnav-burger span{display:block;width:24px;height:2px;background:var(--text);
@@ -114,12 +121,30 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .mhero-in{text-align:center;display:flex;flex-direction:column;align-items:center}
 .mhero-title{
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
-  font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.86;letter-spacing:-.012em;
+  font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.9;letter-spacing:-.012em;
   text-transform:uppercase;margin:0}
 .mhero-sub{color:var(--hero-sub);font-size:clamp(1rem,1.5vw,1.2rem);max-width:46ch;margin:26px 0 34px}
 .mhero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
 
 @media (prefers-reduced-motion:reduce){.mhero-glow{transition:none}}
+
+/* ───────── trusted-by marquee ───────── */
+.logos{padding:8px 0 30px}
+.marq{overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marq-track{display:flex;gap:clamp(28px,5vw,64px);width:max-content;align-items:center;
+  animation:marq 64s linear infinite;will-change:transform}
+.marq:hover .marq-track{animation-play-state:paused}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marq img{height:clamp(22px,2.4vw,30px);width:auto;flex:none;opacity:.55;
+  transition:opacity .3s;object-fit:contain}
+.marq img:hover{opacity:1}
+/* the artwork is white-on-transparent, so it needs flipping on a light page —
+   except the two logos that carry their own dark ink (Doritos, Lipton) */
+[data-theme="light"] .marq img:not([data-tone="mixed"]){filter:invert(1)}
+[data-theme="dark"] .marq img[data-tone="mixed"]{filter:invert(1)}
+@media (prefers-reduced-motion:reduce){.marq-track{animation:none;flex-wrap:wrap;justify-content:center}}
 
 /* ───────── search + browse bar ───────── */
 .browse{padding:20px 0 8px}

@@ -134,14 +134,5 @@
 /* the wordmark is white art on transparency — it needs inverting on light */
 [data-theme="light"] .ml-img{filter:invert(1)}
 
-/* ── skin picker (temporary, while Ori chooses) + theme toggle ── */
-.skin-bar{position:fixed;left:50%;bottom:calc(var(--player-h) + 16px);transform:translateX(-50%);
-  z-index:150;display:flex;align-items:center;gap:6px;padding:6px;border-radius:99px;
-  background:var(--panel-2);border:1px solid var(--line-2);box-shadow:0 10px 40px rgba(0,0,0,.4)}
-.skin-bar button{font-family:var(--font-body);font-size:.72rem;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--muted);background:none;border:0;cursor:pointer;
-  padding:7px 13px;border-radius:99px;transition:.2s;white-space:nowrap}
-.skin-bar button:hover{color:var(--text)}
-.skin-bar button.on{background:var(--grad);color:var(--on-accent)}
-.skin-bar .sep{width:1px;height:18px;background:var(--line-2);flex:none}
-@media (max-width:560px){.skin-bar button{font-size:.66rem;padding:6px 9px}}
+/* Bone/light is the house look (js/mutra-skin.js). Ember and Vapor stay defined
+   above so switching the SKIN constant is all it takes to try them again. */

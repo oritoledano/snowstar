@@ -537,6 +537,24 @@
     paint();
   })();
 
+  // ── trusted-by marquee: best-known brands first, then the rest ──
+  (function clientMarquee() {
+    const track = $('#clientTrack');
+    if (!track) return;
+    const LOGOS = [
+      10, 2, 7, 4, 23, 19, 20, 21, 12, 1, 17, 3, 14,   // Pepsi, Doritos, Intel, Subaru, Unilever…
+      6, 8, 11, 18, 16, 5, 0, 9, 24, 29, 22, 30, 27,   // agencies, then the Israeli names
+      13, 26, 25, 28, 15,
+    ];
+    const MIXED = new Set([2, 19]); // carry their own dark ink, so they don't get inverted
+    const html = LOGOS.map(n => {
+      const id = String(n).padStart(2, '0');
+      return `<img src="assets/clients/logo${id}.png" alt="" loading="lazy"` +
+             (MIXED.has(n) ? ' data-tone="mixed"' : '') + '>';
+    }).join('');
+    track.innerHTML = html + html;   // doubled so the loop is seamless
+  })();
+
   const heroSignup = $('#heroSignup');
   if (heroSignup) heroSignup.addEventListener('click', () => {
     if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');
