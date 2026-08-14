@@ -850,6 +850,26 @@
     if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');
   });
 
+  // ── opt-in pyramid hover (?pyramid=1) — see the note in mutra.css ──
+  if (/[?&]pyramid=1/.test(location.search)) {
+    document.body.classList.add('pyramid');
+    let lit = [];
+    const clear = () => { lit.forEach(([el, c]) => el.classList.remove(c)); lit = []; };
+    tracksEl.addEventListener('pointerover', e => {
+      const row = e.target.closest('.trk');
+      if (!row) return;
+      clear();
+      const rows = [...tracksEl.querySelectorAll('.trk')];
+      const i = rows.indexOf(row);
+      [[0, 'hv0'], [-1, 'hv1'], [1, 'hv1'], [-2, 'hv2'], [2, 'hv2']].forEach(([d, c]) => {
+        const el = rows[i + d];
+        if (el) { el.classList.add(c); lit.push([el, c]); }
+      });
+    });
+    tracksEl.addEventListener('pointerleave', clear);
+    toast('Pyramid hover on — drop ?pyramid=1 to go back');
+  }
+
   // shadow only once the bar is actually pinned
   const cbar = $('#cbar');
   if (cbar) {
