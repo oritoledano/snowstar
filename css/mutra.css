@@ -240,8 +240,11 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .mcta{padding:90px 0;text-align:center;position:relative;overflow:hidden}
 .mcta::before{content:"";position:absolute;inset:0;z-index:-1;
   background:radial-gradient(60% 120% at 50% 120%,var(--flash),transparent 66%)}
-.mcta h2{white-space:nowrap;font-size:clamp(2.1rem,4.4vw,3.4rem)}
-.mcta p{color:var(--muted);margin:18px auto 30px;max-width:46ch}
+/* headline and button sit on one line, wrapping only when there's no room */
+.mcta .wrap{display:flex;align-items:center;justify-content:center;
+  gap:clamp(20px,3.5vw,44px);flex-wrap:wrap}
+.mcta h2{white-space:nowrap;font-size:clamp(1.7rem,4vw,3.4rem)}
+.mcta .mbtn{flex:none}
 
 /* ───────── footer ───────── */
 .mfoot{border-top:1px solid var(--line);padding:44px 0;color:var(--dim);font-size:.86rem}
