@@ -29,7 +29,7 @@
   --focus-ring:rgba(255,106,77,.25); --seek-glow:rgba(255,61,139,.28);
   --menu-wash-1:rgba(255,61,139,.16); --menu-wash-2:rgba(255,194,75,.13);
   --wash-warm:rgba(255,194,75,.16); --wash-coral:rgba(255,106,77,.10);
-  --wave-base:rgba(255,180,140,.22); --wave-played:#ff6a4d; --wave-head:#ffc24b;
+  --wave-base:rgba(255,180,140,.22); --wave-played:#ff6a4d; --wave-head:#ffc24b; --wave-hi:rgba(255,194,75,.5); --wave-hi-band:rgba(255,194,75,.09);
   --glow1a:#7a3cff; --glow1b:#ff3d8b;
   --glow2a:#ff3d8b; --glow2b:#ff6a4d;
   --glow3a:#ff6a4d; --glow3b:#ffc24b;
@@ -51,7 +51,7 @@
   --focus-ring:rgba(34,211,238,.25); --seek-glow:rgba(139,92,246,.3);
   --menu-wash-1:rgba(139,92,246,.18); --menu-wash-2:rgba(94,234,212,.13);
   --wash-warm:rgba(94,234,212,.14); --wash-coral:rgba(34,211,238,.10);
-  --wave-base:rgba(150,200,255,.22); --wave-played:#22d3ee; --wave-head:#5eead4;
+  --wave-base:rgba(150,200,255,.22); --wave-played:#22d3ee; --wave-head:#5eead4; --wave-hi:rgba(94,234,212,.5); --wave-hi-band:rgba(94,234,212,.09);
   --glow1a:#8b5cf6; --glow1b:#3b82f6;
   --glow2a:#3b82f6; --glow2b:#22d3ee;
   --glow3a:#22d3ee; --glow3b:#5eead4;
@@ -73,7 +73,7 @@
   --focus-ring:rgba(217,116,74,.28); --seek-glow:rgba(217,116,74,.26);
   --menu-wash-1:rgba(217,116,74,.12); --menu-wash-2:rgba(235,225,210,.07);
   --wash-warm:rgba(235,225,210,.08); --wash-coral:rgba(217,116,74,.09);
-  --wave-base:rgba(235,225,210,.20); --wave-played:#d9744a; --wave-head:#efe7d8;
+  --wave-base:rgba(235,225,210,.20); --wave-played:#d9744a; --wave-head:#efe7d8; --wave-hi:rgba(224,180,139,.55); --wave-hi-band:rgba(224,180,139,.10);
   --glow1a:#6b5f52; --glow1b:#a8836a;
   --glow2a:#a8836a; --glow2b:#d9744a;
   --glow3a:#d9744a; --glow3b:#e0b48b;
@@ -96,7 +96,7 @@
   --focus-ring:rgba(224,68,42,.22); --seek-glow:rgba(211,26,104,.22);
   --menu-wash-1:rgba(211,26,104,.10); --menu-wash-2:rgba(240,160,31,.12);
   --wash-warm:rgba(240,160,31,.12); --wash-coral:rgba(224,68,42,.08);
-  --wave-base:rgba(120,60,40,.20); --wave-played:#e0442a; --wave-head:#c07800;
+  --wave-base:rgba(120,60,40,.20); --wave-played:#e0442a; --wave-head:#c07800; --wave-hi:rgba(192,120,0,.5); --wave-hi-band:rgba(192,120,0,.10);
 }
 [data-theme="light"][data-skin="vapor"]{
   --bg:#f6f9fd; --bg-2:#eaf1f9; --panel:#ffffff; --panel-2:#f2f7fd;
@@ -112,7 +112,7 @@
   --focus-ring:rgba(8,145,178,.22); --seek-glow:rgba(109,40,217,.22);
   --menu-wash-1:rgba(109,40,217,.10); --menu-wash-2:rgba(13,148,136,.10);
   --wash-warm:rgba(13,148,136,.10); --wash-coral:rgba(8,145,178,.08);
-  --wave-base:rgba(20,60,110,.20); --wave-played:#0891b2; --wave-head:#0d9488;
+  --wave-base:rgba(20,60,110,.20); --wave-played:#0891b2; --wave-head:#0d9488; --wave-hi:rgba(13,148,136,.5); --wave-hi-band:rgba(13,148,136,.10);
 }
 [data-theme="light"][data-skin="bone"]{
   --bg:#f7f4ee; --bg-2:#efeae1; --panel:#fffdf9; --panel-2:#f4f0e8;
@@ -128,7 +128,7 @@
   --focus-ring:rgba(180,80,31,.24); --seek-glow:rgba(180,80,31,.22);
   --menu-wash-1:rgba(180,80,31,.09); --menu-wash-2:rgba(168,145,112,.10);
   --wash-warm:rgba(168,145,112,.10); --wash-coral:rgba(180,80,31,.07);
-  --wave-base:rgba(60,50,40,.20); --wave-played:#b4501f; --wave-head:#8a7a5e;
+  --wave-base:rgba(60,50,40,.20); --wave-played:#b4501f; --wave-head:#8a7a5e; --wave-hi:rgba(138,122,94,.55); --wave-hi-band:rgba(138,122,94,.10);
 }
 
 /* the wordmark is white art on transparency — it needs inverting on light */

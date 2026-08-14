@@ -133,6 +133,43 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 
 @media (prefers-reduced-motion:reduce){.mhero-glow{transition:none}}
 
+/* the search + filters ride along once you scroll past them */
+.cbar{position:sticky;top:70px;z-index:45;background:var(--bg);
+  padding-top:10px;margin:0 calc(clamp(20px,5vw,56px) * -1);
+  padding-left:clamp(20px,5vw,56px);padding-right:clamp(20px,5vw,56px)}
+.cbar.stuck{border-bottom:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(0,0,0,.6)}
+.cbar.stuck .browse-search{margin-bottom:12px}
+.cbar.stuck .browse-search input{padding-top:11px;padding-bottom:11px}
+
+/* three-state facet chips */
+.chip.tri.inc{color:var(--on-accent);background:var(--grad);border-color:transparent}
+.chip.tri.exc{color:var(--text);background:none;border-color:var(--line-2);
+  text-decoration:line-through;text-decoration-color:var(--coral);opacity:.75}
+.chip.tri.exc b{font-weight:700;color:var(--coral);margin-right:5px;text-decoration:none;display:inline-block}
+.fhint{color:var(--dim);font-size:.76rem;margin-bottom:12px}
+.fpill-exc{background:none;text-decoration:line-through;text-decoration-color:var(--coral)}
+
+/* sort */
+.fsort{position:relative}
+.fsort b{font-weight:600;color:var(--text)}
+.fsort-menu{position:absolute;right:0;top:calc(100% + 6px);z-index:50;min-width:190px;
+  background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px;padding:6px;
+  box-shadow:0 18px 46px -20px rgba(0,0,0,.7)}
+.fsort-menu button{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
+  color:var(--muted);font-family:var(--font-body);font-size:.86rem;padding:9px 12px;border-radius:8px}
+.fsort-menu button:hover{background:var(--tint);color:var(--text)}
+.fsort-menu button.on{color:var(--text);background:var(--grad-soft)}
+
+/* highlights toggle */
+.fcat-hl{border:1px solid var(--line-2)}
+.fcat-hl.on{color:var(--on-accent);background:var(--grad);border-color:transparent}
+.fcat-hl.on svg{color:var(--on-accent)}
+
+/* nothing matched */
+.cat-empty{text-align:center;color:var(--muted);padding:70px 20px 80px}
+.cat-empty h3{font-size:clamp(1.3rem,2.4vw,1.9rem);color:var(--text);margin-bottom:8px}
+.cat-empty p{margin-bottom:22px}
+
 /* ───────── trusted-by marquee ───────── */
 .logos{padding:8px 0 30px}
 .marq{overflow:hidden;

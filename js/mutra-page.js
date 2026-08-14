@@ -2,6 +2,9 @@
 (function () {
   const $ = s => document.querySelector(s);
   const fmt = t => (isNaN(t) || t == null) ? '0:00' : Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+  const HELP_MAILTO = 'mailto:hello@snowstar.company?subject=' +
+    encodeURIComponent('Mutra — help me find a track') + '&body=' +
+    encodeURIComponent("Hi Snowstar,\n\nI'm after something you might not have in the catalog yet:\n\nBrief / reference:\nUsage:\nTimeline:\n\nThanks!");
   const mailto = title =>
     'mailto:hello@snowstar.company?subject=' + encodeURIComponent('Mutra license: ' + title) +
     '&body=' + encodeURIComponent(`Hi Snowstar,\n\nI'd like to license "${title}".\n\nUsage / media:\nTimeline:\n\nThanks!`);
@@ -35,7 +38,11 @@
   // Artlist-style render: thin mirrored columns around the vertical center.
   // base = warm faint; played = gradient coral→amber up to `frac`.
   // read once per skin change rather than per bar
-  let WAVE = { base: 'rgba(255,180,140,0.22)', played: '#ff6a4d', head: '#ffc24b' };
+  let WAVE = { base: 'rgba(255,180,140,0.22)', played: '#ff6a4d', head: '#ffc24b', hi: 'rgba(255,180,140,.45)' };
+  let HL_BAND = 'rgba(255,180,140,.07)';
+  const HL = typeof MUTRA_HL !== 'undefined' ? MUTRA_HL : {};
+  /** The suggested best bit, or nothing when highlights are switched off. */
+  const hlOf = slug => (state.highlights && HL[slug]) || null;
   function readWaveColours() {
     const cs = getComputedStyle(document.documentElement);
     const pick = (n, d) => (cs.getPropertyValue(n).trim() || d);
@@ -43,11 +50,13 @@
       base: pick('--wave-base', WAVE.base),
       played: pick('--wave-played', WAVE.played),
       head: pick('--wave-head', WAVE.head),
+      hi: pick('--wave-hi', WAVE.hi || 'rgba(255,180,140,.45)'),
     };
+    HL_BAND = pick('--wave-hi-band', 'rgba(255,180,140,.07)');
   }
   readWaveColours();
 
-  function drawWave(canvas, peaks, frac) {
+  function drawWave(canvas, peaks, frac, hl) {
     const dpr = devicePixelRatio || 1;
     const cw = canvas.clientWidth, ch = canvas.clientHeight;
     if (!cw) return;
@@ -60,12 +69,18 @@
     const barW = Math.max(1, colW * 0.62);
     const mid = ch / 2;
     const head = frac == null ? -1 : Math.floor(frac * n);
+    let hs = -1, he = -1;
+    if (hl) {
+      hs = Math.floor(hl[0] * n); he = Math.ceil(hl[1] * n);
+      ctx.fillStyle = HL_BAND;
+      ctx.fillRect(hs * colW, 0, (he - hs) * colW, ch);
+    }
     for (let i = 0; i < n; i++) {
       const h = Math.max(1, (peaks[i] / 99) * (ch * 0.96) / 2);
       if (i <= head) {
         ctx.fillStyle = i === head ? WAVE.head : WAVE.played;
       } else {
-        ctx.fillStyle = WAVE.base;
+        ctx.fillStyle = (i >= hs && i < he) ? WAVE.hi : WAVE.base;
       }
       ctx.fillRect(i * colW, mid - h, barW, h * 2);
     }
@@ -111,7 +126,7 @@
   }
   function paintWave(row, frac) {
     const canvas = row.querySelector('.trk-wave canvas');
-    if (canvas && canvas._peaks) drawWave(canvas, canvas._peaks, frac);
+    if (canvas && canvas._peaks) drawWave(canvas, canvas._peaks, frac, hlOf(canvas._slug));
   }
   /** Redraw every visible waveform — used when the skin changes under us. */
   function repaintWaves() {
@@ -119,7 +134,7 @@
     document.querySelectorAll('.trk-wave canvas').forEach(c => {
       if (!c._peaks) return;
       const row = c.closest('.trk');
-      drawWave(c, c._peaks, current && row === current.row ? playing : null);
+      drawWave(c, c._peaks, current && row === current.row ? playing : null, hlOf(c._slug));
     });
   }
 
@@ -142,6 +157,15 @@
     row.classList.add('playing');
     audio.src = track.audio;
     audio.currentTime = 0;
+    // with highlights on, drop the needle on the best bit rather than the intro
+    const hl = hlOf(track.slug);
+    if (hl) {
+      const seek = () => {
+        if (audio.duration) audio.currentTime = hl[0] * audio.duration;
+        audio.removeEventListener('loadedmetadata', seek);
+      };
+      audio.addEventListener('loadedmetadata', seek);
+    }
     audio.play().catch(() => {});
     plTitle.textContent = track.title;
     plArtist.textContent = track.artist + (track.bpm ? ' · ' + track.bpm + ' BPM' : '');
@@ -216,10 +240,18 @@
   // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
   const tracksEl = $('#tracks');
   const INITIAL = 40;
+  const facet = () => ({ inc: new Set(), exc: new Set() });
   const state = {
-    packages: new Set(), genres: new Set(), moods: new Set(), instruments: new Set(),
+    packages: facet(), genres: facet(), moods: facet(), instruments: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
+    sort: 'picks', highlights: true,
   };
+  const SORTS = [
+    { id: 'picks', label: 'Staff picks' },
+    { id: 'bpm',   label: 'BPM' },
+    { id: 'alpha', label: 'Alphabetic' },
+    { id: 'custom', label: 'Custom license' },
+  ];
   const DURATIONS = [
     { id: 'd30',  label: '< 30 sec', test: d => d < 30 },
     { id: 'd60',  label: '< 1 min',  test: d => d < 60 },
@@ -235,10 +267,11 @@
 
   function matches(t) {
     if (state.favoritesOnly && !(window.MutraMembers && MutraMembers.isFavorite(t.slug))) return false;
-    if (state.packages.size && !t.packages.some(p => state.packages.has(p))) return false;
-    if (state.genres.size && !t.genres.some(g => state.genres.has(g))) return false;
-    if (state.moods.size && !(t.moods || []).some(x => state.moods.has(x))) return false;
-    if (state.instruments.size && !(t.instruments || []).some(x => state.instruments.has(x))) return false;
+    for (const key of ['packages', 'genres', 'moods', 'instruments']) {
+      const vals = t[key] || [], f = state[key];
+      if (f.inc.size && !vals.some(v => f.inc.has(v))) return false;
+      if (f.exc.size && vals.some(v => f.exc.has(v))) return false;
+    }
     if (state.vocal && t.vocal !== state.vocal) return false;
     if (state.dur) {
       const d = DURATIONS.find(x => x.id === state.dur);
@@ -256,11 +289,29 @@
     return true;
   }
 
+  /** "Staff picks" has no curation data yet, so it ranks by how many packages a
+      track was collected into — a track Ori reused across packs is one he rates. */
+  const pickScore = t => (t.packages || []).length * 10 + ((t.genres || []).length ? 1 : 0);
+  const byTitle = (a, b) => a.title.localeCompare(b.title);
+  const SORTERS = {
+    picks: (a, b) => pickScore(b) - pickScore(a) || byTitle(a, b),
+    alpha: byTitle,
+    bpm:   (a, b) => (a.bpm || 1e9) - (b.bpm || 1e9) || byTitle(a, b),
+    // unpackaged one-offs first — those are the ones that tend to need a bespoke quote
+    custom: (a, b) => ((a.packages || []).length ? 1 : 0) - ((b.packages || []).length ? 1 : 0) || byTitle(a, b),
+  };
+
   function render() {
-    const full = MUTRA.tracks.filter(matches);
+    const full = MUTRA.tracks.filter(matches).sort(SORTERS[state.sort] || SORTERS.picks);
     const list = expanded ? full : full.slice(0, INITIAL);
     tracksEl.innerHTML = '';
-    if (!full.length) { tracksEl.innerHTML = '<p class="cat-empty">No tracks match those filters — try clearing one.</p>'; }
+    if (!full.length) {
+      tracksEl.innerHTML = `<div class="cat-empty">
+        <h3>Looking for something specific?</h3>
+        <p>Let us help you find it.</p>
+        <a class="mbtn mbtn-solid" href="${HELP_MAILTO}">Get in touch</a>
+      </div>`;
+    }
     list.forEach(track => {
       const i = MUTRA.tracks.indexOf(track);
       const row = document.createElement('div');
@@ -351,10 +402,12 @@
       });
       const cnv = row.querySelector('.trk-wave canvas');
       cnv._peaks = waveform(track, i + 1);
+      cnv._slug = track.slug;
       tracksEl.appendChild(row);
       const isCur = current && current.track === track;
       requestAnimationFrame(() => drawWave(cnv, cnv._peaks,
-        isCur && audio.duration ? audio.currentTime / audio.duration : null));
+        current && current.track === track && audio.duration ? audio.currentTime / audio.duration : null,
+        hlOf(track.slug)))
     });
     showMoreBtn.style.display = (!expanded && full.length > INITIAL) ? '' : 'none';
     if (showMoreBtn.style.display === '') showMoreBtn.textContent = `Show all ${full.length} tracks`;
@@ -381,7 +434,7 @@
         if (!c._peaks) return;
         const row = c.closest('.trk');
         const isCur = current && current.row === row;
-        drawWave(c, c._peaks, isCur && audio.duration ? audio.currentTime / audio.duration : null);
+        drawWave(c, c._peaks, isCur && audio.duration ? audio.currentTime / audio.duration : null, hlOf(c._slug));
       });
     }, 150);
   });
@@ -400,6 +453,18 @@
 
   const chip = (label, on, cls) =>
     `<button class="chip${on ? ' active' : ''}${cls ? ' ' + cls : ''}">${label}</button>`;
+  /** Facet chips carry three states, so you can say "not this" as well as "this". */
+  const triChip = (label, mode) =>
+    `<button class="chip tri${mode ? ' ' + mode : ''}" title="${
+      mode === 'inc' ? 'Included — click to exclude' :
+      mode === 'exc' ? 'Excluded — click to clear' : 'Click to include, again to exclude'}">${
+      mode === 'exc' ? '<b>−</b>' : ''}${label}</button>`;
+  const modeOf = (f, v) => f.inc.has(v) ? 'inc' : f.exc.has(v) ? 'exc' : '';
+  function cycle(f, v) {
+    if (f.inc.has(v)) { f.inc.delete(v); f.exc.add(v); return 'exc'; }
+    if (f.exc.has(v)) { f.exc.delete(v); return ''; }
+    f.inc.add(v); return 'inc';
+  }
 
   function drawDrop() {
     if (!openCat) { fdrop.hidden = true; fdrop.innerHTML = ''; return; }
@@ -450,16 +515,16 @@
       });
       wireBpmRange();
     } else {
-      const facet = FACETS[openCat];
+      const def = FACETS[openCat], vals = def.values(), f = state[openCat];
       fdrop.innerHTML =
-        `<div class="fchips wide">${facet.values().map(v => chip(v, state[openCat].has(v))).join('')}</div>` +
+        `<p class="fhint">Click to include · click again to exclude</p>` +
+        `<div class="fchips wide">${vals.map(v => triChip(v, modeOf(f, v))).join('')}</div>` +
         `<button class="fdrop-close" type="button">Close</button>`;
-      const vals = facet.values();
       [...fdrop.querySelector('.fchips').children].forEach((btn, i) => {
         btn.addEventListener('click', () => {
-          const v = vals[i];
-          state[openCat].has(v) ? state[openCat].delete(v) : state[openCat].add(v);
-          btn.classList.toggle('active', state[openCat].has(v));
+          const mode = cycle(f, vals[i]);
+          btn.className = 'chip tri' + (mode ? ' ' + mode : '');
+          btn.innerHTML = (mode === 'exc' ? '<b>−</b>' : '') + vals[i];
           expanded = false; drawPills(); render();
         });
       });
@@ -527,16 +592,20 @@
   /** The chosen filters, as removable pills — so nothing is ever hidden from you. */
   function drawPills() {
     const bits = [];
-    Object.keys(FACETS).forEach(k => state[k].forEach(v => bits.push({ k, v, label: v })));
+    Object.keys(FACETS).forEach(k => {
+      state[k].inc.forEach(v => bits.push({ k, v, label: v, mode: 'inc' }));
+      state[k].exc.forEach(v => bits.push({ k, v, label: '− ' + v, mode: 'exc' }));
+    });
     if (state.vocal) bits.push({ k: 'vocal', v: state.vocal, label: state.vocal });
     if (state.dur) bits.push({ k: 'dur', v: state.dur, label: (DURATIONS.find(d => d.id === state.dur) || {}).label });
     if (state.bpm) bits.push({ k: 'bpm', v: state.bpm, label: state.bpm.min + '–' + state.bpm.max + ' BPM' });
     fpills.innerHTML = bits.map((b, i) =>
-      `<button class="fpill" data-i="${i}">${b.label}<span aria-hidden="true">&times;</span></button>`).join('') +
+      `<button class="fpill${b.mode === 'exc' ? ' fpill-exc' : ''}" data-i="${i}">${b.label}<span aria-hidden="true">&times;</span></button>`).join('') +
       (bits.length > 1 ? '<button class="fpill fpill-clear">Clear all</button>' : '');
     fpills.querySelectorAll('.fpill[data-i]').forEach(el => el.addEventListener('click', () => {
       const b = bits[+el.dataset.i];
-      if (b.k in FACETS) state[b.k].delete(b.v); else state[b.k] = null;
+      if (b.k in FACETS) { state[b.k].inc.delete(b.v); state[b.k].exc.delete(b.v); }
+      else state[b.k] = null;
       expanded = false; drawDrop(); drawPills(); render();
     }));
     const clear = fpills.querySelector('.fpill-clear');
@@ -544,7 +613,7 @@
   }
 
   function clearFilters() {
-    Object.keys(FACETS).forEach(k => state[k].clear());
+    Object.keys(FACETS).forEach(k => { state[k].inc.clear(); state[k].exc.clear(); });
     state.vocal = state.dur = state.bpm = null;
     state.favoritesOnly = false;
     const fav = $('#favToggle'); if (fav) fav.classList.remove('active');
@@ -563,8 +632,9 @@
 
   /** A tag on a row is a shortcut into the filter it belongs to. */
   window.mutraFilterBy = function (facet, value) {
-    if (!state[facet]) return;
-    if (!state[facet].has(value)) state[facet].add(value);
+    if (!state[facet] || !state[facet].inc) return;
+    state[facet].exc.delete(value);
+    state[facet].inc.add(value);
     expanded = false;
     drawPills(); render();
     $('#catalog').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -597,7 +667,40 @@
     expanded = false;
     render();
   });
-  fbar.querySelector('.fbar-gap').insertAdjacentElement('beforebegin', favToggle);
+  fbar.appendChild(favToggle);   // far right, after Filters
+
+  // ── sort ──
+  const sortBtn = $('#sortBtn'), sortMenu = $('#sortMenu'), sortLabel = $('#sortLabel');
+  function drawSortMenu() {
+    sortMenu.innerHTML = SORTS.map(o =>
+      `<button type="button" data-sort="${o.id}"${o.id === state.sort ? ' class="on"' : ''}>${o.label}</button>`).join('');
+    sortMenu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      state.sort = b.dataset.sort;
+      sortLabel.textContent = (SORTS.find(o => o.id === state.sort) || {}).label;
+      sortMenu.hidden = true; sortBtn.setAttribute('aria-expanded', 'false');
+      expanded = false; drawSortMenu(); render();
+    }));
+  }
+  drawSortMenu();
+  sortBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    sortMenu.hidden = !sortMenu.hidden;
+    sortBtn.setAttribute('aria-expanded', String(!sortMenu.hidden));
+  });
+  addEventListener('click', () => { if (!sortMenu.hidden) { sortMenu.hidden = true; sortBtn.setAttribute('aria-expanded','false'); } });
+
+  // ── highlights ──
+  const hlBtn = $('#hlToggle');
+  function paintHlBtn() {
+    hlBtn.classList.toggle('on', state.highlights);
+    hlBtn.setAttribute('aria-pressed', String(state.highlights));
+  }
+  hlBtn.addEventListener('click', () => {
+    state.highlights = !state.highlights;
+    paintHlBtn(); repaintWaves();
+    toast(state.highlights ? 'Highlights on — play starts at the best bit' : 'Highlights off — play starts at 0:00');
+  });
+  paintHlBtn();
 
   render();
 
@@ -746,6 +849,16 @@
   if (heroSignup) heroSignup.addEventListener('click', () => {
     if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');
   });
+
+  // the sticky filter bar gets a shadow only once it's actually stuck
+  const cbar = $('#cbar');
+  if (cbar && 'IntersectionObserver' in window) {
+    const sentinel = document.createElement('div');
+    sentinel.style.cssText = 'position:absolute;top:0;height:1px;width:1px';
+    cbar.parentElement.insertBefore(sentinel, cbar);
+    new IntersectionObserver(([e]) => cbar.classList.toggle('stuck', !e.isIntersecting),
+      { rootMargin: '-71px 0px 0px 0px' }).observe(sentinel);
+  }
 
   // ── nav + reveal ──
   const mnav = $('#mnav');
