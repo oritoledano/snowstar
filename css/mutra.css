@@ -180,6 +180,11 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .fcat-tgl span{display:inline-block;max-width:0;opacity:0;white-space:nowrap;
   transition:max-width .26s ease,opacity .2s ease,margin-left .26s ease;margin-left:0}
 .fcat-tgl:hover span,.fcat-tgl:focus-visible span{max-width:100px;opacity:1;margin-left:7px}
+/* a full turn on click, so the icon never rests rotated */
+.fcat-tgl svg.spin{animation:tglspin .45s cubic-bezier(.6,0,.3,1)}
+@keyframes tglspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.fcat-tgl svg.spin{animation:none}}
+
 /* state lives in the icon's colour rather than a filled box */
 .fcat-tgl.on{color:var(--coral)}
 .fcat-tgl.on:hover{color:var(--coral)}

@@ -244,7 +244,7 @@
   const state = {
     packages: facet(), genres: facet(), moods: facet(), instruments: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
-    sort: 'picks', highlights: true, lyrics: true, keys: true,
+    sort: 'picks', highlights: true, lyrics: false, keys: false,
   };
   const SORTS = [
     { id: 'picks', label: 'Staff picks' },
@@ -252,6 +252,8 @@
     { id: 'alpha', label: 'Alphabetic' },
     { id: 'custom', label: 'Custom license' },
   ];
+  const PITCH = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+  const pitchIx = k => { const i = PITCH.indexOf(k); return i < 0 ? 99 : i; };
   const DURATIONS = [
     { id: 'd30',  label: '< 30 sec', test: d => d < 30 },
     { id: 'd60',  label: '< 1 min',  test: d => d < 60 },
@@ -298,6 +300,9 @@
     bpm:   (a, b) => (a.bpm || 1e9) - (b.bpm || 1e9) || byTitle(a, b),
     // unpackaged one-offs first — those are the ones that tend to need a bespoke quote
     custom: (a, b) => ((a.packages || []).length ? 1 : 0) - ((b.packages || []).length ? 1 : 0) || byTitle(a, b),
+    // chromatic, majors before minors within a pitch
+    scale: (a, b) => pitchIx(a.key) - pitchIx(b.key) ||
+      (a.scale === b.scale ? 0 : a.scale === 'major' ? -1 : 1) || byTitle(a, b),
   };
 
   /** "F# minor" reads as "F#m" in a dense row. */
@@ -707,11 +712,13 @@
   // ── sort ──
   const sortBtn = $('#sortBtn'), sortMenu = $('#sortMenu'), sortLabel = $('#sortLabel');
   function drawSortMenu() {
-    sortMenu.innerHTML = SORTS.map(o =>
+    // sorting by key only makes sense while keys are on screen
+    const opts = state.keys ? SORTS.concat([{ id: 'scale', label: 'Scale' }]) : SORTS;
+    sortMenu.innerHTML = opts.map(o =>
       `<button type="button" data-sort="${o.id}"${o.id === state.sort ? ' class="on"' : ''}>${o.label}</button>`).join('');
     sortMenu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
       state.sort = b.dataset.sort;
-      sortLabel.textContent = (SORTS.find(o => o.id === state.sort) || {}).label;
+      sortLabel.textContent = b.textContent;
       sortMenu.hidden = true; sortBtn.setAttribute('aria-expanded', 'false');
       drawSortMenu(); render();
     }));
@@ -736,21 +743,37 @@
     btn.setAttribute('aria-pressed', String(on));
     document.body.classList.toggle(cls, !on);
   }
+  /** A full turn, so the icon always lands the right way up. */
+  function spin(btn) {
+    const ico = btn.querySelector('svg');
+    ico.classList.remove('spin');
+    void ico.offsetWidth;              // restart the animation
+    ico.classList.add('spin');
+  }
   lyrBtn.addEventListener('click', () => {
     state.lyrics = !state.lyrics;
+    spin(lyrBtn);
     paintToggle(lyrBtn, state.lyrics, 'no-lyr');
     toast(state.lyrics ? 'Showing which tracks have lyrics' : 'Lyrics flag hidden');
   });
   keyBtn.addEventListener('click', () => {
     state.keys = !state.keys;
+    spin(keyBtn);
     paintToggle(keyBtn, state.keys, 'no-key');
-    toast(state.keys ? 'Showing each track\u2019s key' : 'Keys hidden');
+    if (!state.keys && state.sort === 'scale') {   // that sort just lost its meaning
+      state.sort = 'picks';
+      sortLabel.textContent = 'Staff picks';
+      render();
+    }
+    drawSortMenu();
+    toast(state.keys ? 'Keys on — you can now sort by scale' : 'Keys hidden');
   });
   paintToggle(lyrBtn, state.lyrics, 'no-lyr');
   paintToggle(keyBtn, state.keys, 'no-key');
 
   hlBtn.addEventListener('click', () => {
     state.highlights = !state.highlights;
+    spin(hlBtn);
     paintHlBtn(); repaintWaves();
     toast(state.highlights ? 'Highlights on — play starts at the best bit' : 'Highlights off — play starts at 0:00');
   });
