@@ -244,7 +244,7 @@
   const state = {
     packages: facet(), genres: facet(), moods: facet(), instruments: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
-    sort: 'picks', highlights: true,
+    sort: 'picks', highlights: true, lyrics: true, keys: true,
   };
   const SORTS = [
     { id: 'picks', label: 'Staff picks' },
@@ -299,6 +299,12 @@
     // unpackaged one-offs first — those are the ones that tend to need a bespoke quote
     custom: (a, b) => ((a.packages || []).length ? 1 : 0) - ((b.packages || []).length ? 1 : 0) || byTitle(a, b),
   };
+
+  /** "F# minor" reads as "F#m" in a dense row. */
+  function keyLabel(t) {
+    if (!t.key) return '';
+    return t.key + (t.scale === 'minor' ? 'm' : '');
+  }
 
   /** Mark the titles that don't fit and tell each one how far to slide. */
   function measureTitles() {
@@ -362,6 +368,10 @@
           <button class="trk-dl" aria-label="Download ${track.title}" title="Download">${ICON_DL}</button>
           <button class="trk-share" aria-label="Copy link to ${track.title}" title="Copy link">${ICON_LINK}</button>
           <button class="trk-sim" aria-label="Similar to ${track.title}" title="Find similar">${ICON_SIM}</button>
+          <span class="trk-lyr${track.vocal === 'Vocals' ? '' : ' none'}" title="Has lyrics">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h11M4 10h13M4 14h8"/><path d="M19 12v6.2"/><circle cx="17.2" cy="18.6" r="1.8" fill="currentColor" stroke="none"/></svg>
+          </span>
+          <span class="trk-key" title="${track.key ? track.key + ' ' + track.scale : ''}">${keyLabel(track)}</span>
           ${track.bpm ? `<button class="trk-bpm" title="${track.bpm} BPM — filter by this tempo">${track.bpm}<i>bpm</i></button>` : '<span class="trk-bpm empty" aria-hidden="true"></span>'}
           <span class="trk-dur">${fmt(track.duration)}</span>
           <button class="trk-lic" type="button">License</button>
@@ -720,6 +730,25 @@
     hlBtn.classList.toggle('on', state.highlights);
     hlBtn.setAttribute('aria-pressed', String(state.highlights));
   }
+  const lyrBtn = $('#lyrToggle'), keyBtn = $('#keyToggle');
+  function paintToggle(btn, on, cls) {
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', String(on));
+    document.body.classList.toggle(cls, !on);
+  }
+  lyrBtn.addEventListener('click', () => {
+    state.lyrics = !state.lyrics;
+    paintToggle(lyrBtn, state.lyrics, 'no-lyr');
+    toast(state.lyrics ? 'Showing which tracks have lyrics' : 'Lyrics flag hidden');
+  });
+  keyBtn.addEventListener('click', () => {
+    state.keys = !state.keys;
+    paintToggle(keyBtn, state.keys, 'no-key');
+    toast(state.keys ? 'Showing each track\u2019s key' : 'Keys hidden');
+  });
+  paintToggle(lyrBtn, state.lyrics, 'no-lyr');
+  paintToggle(keyBtn, state.keys, 'no-key');
+
   hlBtn.addEventListener('click', () => {
     state.highlights = !state.highlights;
     paintHlBtn(); repaintWaves();

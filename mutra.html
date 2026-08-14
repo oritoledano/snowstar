@@ -16,7 +16,7 @@
 <link rel="preload" href="assets/fonts/commit-mono.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/skins.css?v=3">
 <link rel="stylesheet" href="css/account.css?v=3">
-<link rel="stylesheet" href="css/mutra.css?v=39">
+<link rel="stylesheet" href="css/mutra.css?v=40">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"MusicPlaylist","name":"Mutra — royalty-free music by Snowstar",
 "description":"Original, truly-cleared music tracks for advertising, film, gaming and digital.",
@@ -89,9 +89,17 @@
       <button class="fcat" data-cat="moods" aria-expanded="false">Mood<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
       <button class="fcat" data-cat="instruments" aria-expanded="false">Instrument<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
       <span class="fbar-gap"></span>
-      <button class="fcat fcat-hl" id="hlToggle" type="button" aria-pressed="true" title="Play from each track's highlight">
+      <button class="fcat fcat-tgl fcat-hl" id="hlToggle" type="button" aria-pressed="true" title="Play from each track's highlight">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>
         <span>Highlights</span>
+      </button>
+      <button class="fcat fcat-tgl fcat-lyr" id="lyrToggle" type="button" aria-pressed="true" title="Show which tracks have lyrics">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 6h11M4 10h13M4 14h8"/><path d="M19 12v6.2" /><circle cx="17.2" cy="18.6" r="1.8" fill="currentColor" stroke="none"/></svg>
+        <span>Lyrics</span>
+      </button>
+      <button class="fcat fcat-tgl fcat-key" id="keyToggle" type="button" aria-pressed="true" title="Show each track's key">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M9 18V5.5l10-2V16"/><circle cx="6.6" cy="18" r="2.6" fill="currentColor" stroke="none"/><circle cx="16.6" cy="16" r="2.6" fill="currentColor" stroke="none"/></svg>
+        <span>Scale</span>
       </button>
       <div class="fsort">
         <button class="fcat" id="sortBtn" aria-expanded="false" aria-label="Sort order"><span class="sort-pre">Sort:&nbsp;</span><b id="sortLabel">Staff picks</b>
@@ -150,12 +158,12 @@
   </div>
 </div>
 
-<script src="js/mutra-data.js?v=11"></script>
+<script src="js/mutra-data.js?v=12"></script>
 <script src="js/mutra-similar.js?v=1"></script>
 <script src="js/account.js?v=2"></script>
 <script src="js/mutra-waves.js?v=3"></script>
 <script src="js/mutra-highlights.js?v=1"></script>
-<script src="js/mutra-page.js?v=26"></script>
+<script src="js/mutra-page.js?v=27"></script>
 <script src="js/account-ui.js?v=2"></script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "73a85d296d5c4ab9a337d3e1e841f34e"}'></script><!-- End Cloudflare Web Analytics -->
 <script src="js/mutra-track.js?v=2"></script>

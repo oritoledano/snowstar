@@ -126,8 +126,8 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .mhero-in{text-align:center;display:flex;flex-direction:column;align-items:center}
 .mhero-title{
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
-  font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.9;letter-spacing:-.012em;
-  text-transform:uppercase;margin:0}
+  font-size:clamp(2.3rem,9.2vw,8rem);line-height:.9;letter-spacing:-.012em;
+  text-transform:uppercase;margin:0;text-wrap:balance}
 /* Commit Mono by Eigil Nikolajsen, MIT — see assets/fonts/commit-mono-LICENSE.txt.
    Self-hosted, pinned to one weight and subset to Latin: 5.8 KB instead of 85. */
 @font-face{
@@ -139,7 +139,7 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .mhero-sub{color:var(--hero-sub);font-family:"Commit Mono",ui-monospace,SFMono-Regular,
   Menlo,Consolas,monospace;font-weight:400;text-transform:uppercase;
   font-size:clamp(.72rem,1.05vw,.88rem);letter-spacing:.02em;
-  max-width:62ch;margin:28px auto 34px;line-height:1.75}
+  max-width:62ch;margin:28px auto 34px;line-height:1.75;text-wrap:balance}
 .mhero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
 
 @media (prefers-reduced-motion:reduce){.mhero-glow{transition:none}}
@@ -171,10 +171,16 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .fsort-menu button:hover{background:var(--tint);color:var(--text)}
 .fsort-menu button.on{color:var(--text);background:var(--grad-soft)}
 
-/* highlights toggle */
-.fcat-hl{border:1px solid var(--line-2)}
-.fcat-hl.on{color:var(--on-accent);background:var(--grad);border-color:transparent}
-.fcat-hl.on svg{color:var(--on-accent)}
+/* Display toggles — icon-sized until hovered, then they open to show the label.
+   Because only the hovered one grows, the row's total width barely moves. */
+.fcat-tgl{border:1px solid var(--line-2);gap:0;padding:8px 10px;overflow:hidden;
+  transition:background .2s,color .2s,border-color .2s}
+.fcat-tgl svg{flex:none}
+.fcat-tgl span{display:inline-block;max-width:0;opacity:0;white-space:nowrap;
+  transition:max-width .26s ease,opacity .2s ease,margin-left .26s ease;margin-left:0}
+.fcat-tgl:hover span,.fcat-tgl:focus-visible span{max-width:100px;opacity:1;margin-left:7px}
+.fcat-tgl.on{color:var(--on-accent);background:var(--grad);border-color:transparent}
+.fcat-tgl.on svg{color:var(--on-accent)}
 
 /* nothing matched */
 .cat-empty{text-align:center;color:var(--muted);padding:70px 20px 80px}
@@ -261,10 +267,10 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .fpill span{color:var(--dim);font-size:1rem;line-height:1}
 .fpill-clear{background:none;color:var(--dim)}
 .fcat-fav{margin-left:4px}
-/* On phones the bar reads top-down: controls first, then the four facets,
-   both rows centred. Highlights and favourites shed their labels and become
-   icons so the whole control row fits on one line. */
-@media (max-width:760px){
+/* Phones and tablets both read top-down: controls first, then the four facets,
+   both rows centred. Favourites sheds its label; the display toggles are
+   already icons. */
+@media (max-width:1024px){
   .fbar{justify-content:center;row-gap:10px}
   .fbar > *{order:3}
   #hlToggle,.fsort,.fcat-adv,#favToggle{order:1}
@@ -332,6 +338,14 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .tag.inst:hover{color:var(--text)}
 .trk-right{display:flex;align-items:center;gap:16px;flex:none}
 .trk-dur{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.86rem;min-width:38px;text-align:right}
+/* has-lyrics flag and musical key, both switchable from the bar */
+.trk-lyr{display:grid;place-items:center;width:20px;color:var(--dim);flex:none}
+.trk-lyr.none{visibility:hidden}
+.trk-key{min-width:42px;text-align:right;font-family:var(--font-body);
+  font-variant-numeric:tabular-nums;font-size:.78rem;color:var(--dim);flex:none}
+body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
+@media (max-width:920px){.trk-lyr,.trk-key{display:none}}
+
 /* tempo, sitting quietly next to the duration — click it to filter that band */
 .trk-bpm{display:inline-flex;align-items:baseline;gap:3px;min-width:46px;justify-content:flex-end;
   background:none;border:0;padding:0;cursor:pointer;font-family:var(--font-body);
