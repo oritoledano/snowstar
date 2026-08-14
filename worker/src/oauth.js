@@ -151,11 +151,15 @@ export async function finishOAuth(req, env, provider) {
     if (!profile.id) throw new Error('no_provider_id');
 
     const session = await linkAndSignIn(env, provider, profile);
-    return bounce(safeReturn(back) + (safeReturn(back).includes('?') ? '&' : '?') + 'auth=ok',
-      { 'set-cookie': session });
+    const to = safeReturn(back);
+    return bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok', {
+      'set-cookie': session,
+      'x-ss-cookie-set': '1',
+    });
   } catch (e) {
+    const why = String(e && e.message || e).slice(0, 40).replace(/[^\w .:-]/g, '');
     console.error('oauth ' + provider, e && e.stack ? e.stack : String(e));
-    return bounce('/mutra.html?auth=failed');
+    return bounce('/mutra.html?auth=failed&why=' + encodeURIComponent(why));
   }
 }
 

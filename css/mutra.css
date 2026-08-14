@@ -188,6 +188,13 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 /* state lives in the icon's colour rather than a filled box */
 .fcat-tgl.on{color:var(--coral)}
 .fcat-tgl.on:hover{color:var(--coral)}
+/* the bolt is the one that changes what you hear, so it gets a quiet pulse */
+.fcat-hl.on svg{filter:drop-shadow(0 0 5px color-mix(in oklab,var(--coral) 65%,transparent));
+  animation:boltglow 2.6s ease-in-out infinite}
+@keyframes boltglow{
+  0%,100%{filter:drop-shadow(0 0 3px color-mix(in oklab,var(--coral) 45%,transparent))}
+  50%{filter:drop-shadow(0 0 8px color-mix(in oklab,var(--coral) 85%,transparent))}}
+@media (prefers-reduced-motion:reduce){.fcat-hl.on svg{animation:none}}
 
 /* nothing matched */
 .cat-empty{text-align:center;color:var(--muted);padding:70px 20px 80px}
@@ -229,8 +236,8 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   padding:9px 13px;border-radius:10px;transition:.2s}
 .fcat:hover{color:var(--text);background:var(--tint)}
 .fcat svg{transition:transform .25s}
-.fcat.open{color:var(--text);background:var(--tint)}
-.fcat.open svg{transform:rotate(180deg)}
+.fcat[data-cat].open{color:var(--text);background:var(--tint)}
+.fcat[data-cat].open svg{transform:rotate(180deg)}
 .fcat-adv{border:1px solid var(--line-2)}
 .fdrop{margin:6px 0 4px;padding:18px 4px 30px;border-top:1px solid var(--line);
   position:relative;animation:fdrop .22s ease}

@@ -572,7 +572,13 @@
         });
       });
     }
-    fdrop.querySelector('.fdrop-close').addEventListener('click', () => setCat(null));
+    fdrop.querySelector('.fdrop-close').addEventListener('click', () => {
+      openCat = null;
+      fbar.querySelectorAll('.fcat[data-cat]').forEach(b => {
+        b.classList.remove('open'); b.setAttribute('aria-expanded', 'false');
+      });
+      drawDrop();
+    });
   }
 
   /** Dual-handle slider + typed boxes, kept in step with each other. */
@@ -622,13 +628,16 @@
   }
 
   function setCat(cat) {
+    if (!cat) return;                      // never let a non-category open the drawer
     openCat = openCat === cat ? null : cat;
-    fbar.querySelectorAll('.fcat').forEach(b =>
-      b.classList.toggle('open', b.dataset.cat === openCat) ||
-      b.setAttribute('aria-expanded', String(b.dataset.cat === openCat)));
+    fbar.querySelectorAll('.fcat[data-cat]').forEach(b => {
+      const isOpen = b.dataset.cat === openCat;
+      b.classList.toggle('open', isOpen);
+      b.setAttribute('aria-expanded', String(isOpen));
+    });
     drawDrop();
   }
-  fbar.querySelectorAll('.fcat').forEach(b =>
+  fbar.querySelectorAll('.fcat[data-cat]').forEach(b =>
     b.addEventListener('click', () => setCat(b.dataset.cat)));
 
   /** The chosen filters, as removable pills — so nothing is ever hidden from you. */
