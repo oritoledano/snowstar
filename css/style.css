@@ -122,20 +122,25 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 
 /* ————— hero ————— */
 .hero{position:relative;min-height:100svh;display:grid;place-items:center;overflow:hidden}
-.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero-stars{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:screen}
-.hero-scrim{
-  position:absolute;inset:0;
+/* the light follows the pointer, same effect as Mutra's opener */
+.hero{--gx:50%;--gy:42%;--g1:#22d3ee;--g2:#3b82f6}
+.hero-glow{position:absolute;inset:-20%;z-index:0;pointer-events:none;
   background:
-    radial-gradient(120% 90% at 50% 10%, transparent 30%, rgba(5,7,14,.55) 100%),
-    linear-gradient(180deg, rgba(5,7,14,.35) 0%, rgba(5,7,14,.15) 45%, var(--bg) 98%);
-}
-.hero-inner{position:relative;z-index:2;text-align:center;padding:120px 24px 80px;max-width:960px}
+    radial-gradient(38% 46% at var(--gx) var(--gy),color-mix(in oklab,var(--g1) 42%,transparent),transparent 68%),
+    radial-gradient(58% 62% at var(--gx) var(--gy),color-mix(in oklab,var(--g2) 24%,transparent),transparent 72%);
+  filter:blur(38px);transition:background .28s linear}
+.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,transparent 60%,var(--bg) 99%)}
+@media (prefers-reduced-motion:reduce){.hero-glow{transition:none}}
+.hero-inner{position:relative;z-index:3;text-align:center;padding:120px 24px 80px;max-width:960px}
 .hero-kicker{
   font-size:.82rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ice);
   margin-bottom:22px;font-weight:600;
 }
-.hero-title{font-size:clamp(1.9rem,8.5vw,5.4rem);font-weight:700;margin-bottom:24px;text-shadow:0 6px 40px rgba(0,0,0,.5)}
+/* Anton, as on Mutra — single weight, so never ask for bold */
+.hero-title{font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
+  font-size:clamp(2.1rem,9vw,6rem);line-height:.9;letter-spacing:-.01em;text-transform:uppercase;
+  margin-bottom:24px}
 .hero-title .nowrap{white-space:nowrap}
 .hero-sub{color:#c4cfdf;font-size:clamp(1rem,1.6vw,1.2rem);margin-bottom:38px}
 .hero-ctas{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
