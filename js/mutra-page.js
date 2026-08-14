@@ -239,7 +239,7 @@
   // organized into on the Wix side) and "genres" are each multi-select (OR within a
   // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
   const tracksEl = $('#tracks');
-  const INITIAL = 40;
+  const PAGE = 40;   // rows added per scroll-in
   const facet = () => ({ inc: new Set(), exc: new Set() });
   const state = {
     packages: facet(), genres: facet(), moods: facet(), instruments: facet(),
@@ -263,7 +263,6 @@
   const BPM_ALL = MUTRA.tracks.map(t => t.bpm).filter(Boolean);
   const BPM_MIN = Math.floor(Math.min(...BPM_ALL) / 5) * 5;
   const BPM_MAX = Math.ceil(Math.max(...BPM_ALL) / 5) * 5;
-  let expanded = false;
 
   function matches(t) {
     if (state.favoritesOnly && !(window.MutraMembers && MutraMembers.isFavorite(t.slug))) return false;
@@ -319,19 +318,28 @@
     });
   }
 
+  let list = [], shown = 0;
+
   function render() {
-    const full = MUTRA.tracks.filter(matches).sort(SORTERS[state.sort] || SORTERS.picks);
-    const list = expanded ? full : full.slice(0, INITIAL);
+    list = MUTRA.tracks.filter(matches).sort(SORTERS[state.sort] || SORTERS.picks);
+    shown = 0;
     tracksEl.innerHTML = '';
-    if (!full.length) {
+    if (!list.length) {
       tracksEl.innerHTML = `<div class="cat-empty">
         <h3>Looking for something specific?</h3>
         <p>Let us help you find it.</p>
         <a class="mbtn mbtn-solid" href="${HELP_MAILTO}">Get in touch</a>
       </div>`;
     }
+    appendPage();
+  }
+
+  /** Draw the next slice — called on render and again as the sentinel scrolls in. */
+  function appendPage() {
+    const slice = list.slice(shown, shown + PAGE);
+    shown += slice.length;
     requestAnimationFrame(measureTitles);
-    list.forEach(track => {
+    slice.forEach(track => {
       const i = MUTRA.tracks.indexOf(track);
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
@@ -428,21 +436,22 @@
         current && current.track === track && audio.duration ? audio.currentTime / audio.duration : null,
         hlOf(track.slug)))
     });
-    showMoreBtn.style.display = (!expanded && full.length > INITIAL) ? '' : 'none';
-    if (showMoreBtn.style.display === '') showMoreBtn.textContent = `Show all ${full.length} tracks`;
-    // keep the live "playing" row reference valid after re-render
+    sentinel.hidden = shown >= list.length;
+    // keep the live "playing" row reference valid after a re-render
     if (current) {
       const live = [...tracksEl.querySelectorAll('.trk')].find((_, idx) => list[idx] === current.track);
       if (live) current.row = live;
     }
   }
 
-  // "Show all" button, inserted right after the track list (mirrors the homepage's work-more pattern)
-  const showMoreBtn = document.createElement('button');
-  showMoreBtn.className = 'mbtn mbtn-ghost cat-more';
-  showMoreBtn.style.display = 'none';
-  showMoreBtn.addEventListener('click', () => { expanded = true; render(); });
-  tracksEl.insertAdjacentElement('afterend', showMoreBtn);
+  // load the next page as the end of the list comes into view
+  const sentinel = document.createElement('div');
+  sentinel.className = 'cat-sentinel';
+  sentinel.hidden = true;
+  tracksEl.insertAdjacentElement('afterend', sentinel);
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && shown < list.length) appendPage();
+  }, { rootMargin: '600px 0px' }).observe(sentinel);
 
   // keep canvas waveforms crisp on window resize
   let rsz;
@@ -529,7 +538,7 @@
         [...box.children].forEach((btn, i) => btn.addEventListener('click', () => {
           const val = group === 'vocal' ? ['Vocals', 'Instrumental'][i] : DURATIONS[i].id;
           state[group] = state[group] === val ? null : val;   // click again to clear
-          expanded = false; drawDrop(); drawPills(); render();
+          drawDrop(); drawPills(); render();
         }));
       });
       wireBpmRange();
@@ -544,7 +553,7 @@
           const mode = cycle(f, vals[i]);
           btn.className = 'chip tri' + (mode ? ' ' + mode : '');
           btn.innerHTML = (mode === 'exc' ? '<b>−</b>' : '') + vals[i];
-          expanded = false; drawPills(); render();
+          drawPills(); render();
         });
       });
     }
@@ -570,8 +579,7 @@
     const commit = () => {
       const a = +lo.value, b = +hi.value;
       state.bpm = (a === BPM_MIN && b === BPM_MAX) ? null : { min: a, max: b };
-      expanded = false;
-      drawPills();
+            drawPills();
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(render);   // one render per frame, not per pixel
     };
@@ -625,7 +633,7 @@
       const b = bits[+el.dataset.i];
       if (b.k in FACETS) { state[b.k].inc.delete(b.v); state[b.k].exc.delete(b.v); }
       else state[b.k] = null;
-      expanded = false; drawDrop(); drawPills(); render();
+      drawDrop(); drawPills(); render();
     }));
     const clear = fpills.querySelector('.fpill-clear');
     if (clear) clear.addEventListener('click', clearFilters);
@@ -636,7 +644,7 @@
     state.vocal = state.dur = state.bpm = null;
     state.favoritesOnly = false;
     const fav = $('#favToggle'); if (fav) fav.classList.remove('active');
-    expanded = false; drawDrop(); drawPills(); render();
+    drawDrop(); drawPills(); render();
   }
 
   /** Clicking a track's BPM filters to the band it falls in. */
@@ -644,7 +652,6 @@
     const min = Math.max(BPM_MIN, bpm - 5), max = Math.min(BPM_MAX, bpm + 5);
     const same = state.bpm && state.bpm.min === min && state.bpm.max === max;
     state.bpm = same ? null : { min, max };
-    expanded = false;
     drawDrop(); drawPills(); render();
     toast(same ? 'Tempo filter cleared' : 'Tempo ' + min + '–' + max + ' BPM');
   }
@@ -654,7 +661,6 @@
     if (!state[facet] || !state[facet].inc) return;
     state[facet].exc.delete(value);
     state[facet].inc.add(value);
-    expanded = false;
     drawPills(); render();
     $('#catalog').scrollIntoView({ behavior: 'smooth', block: 'start' });
     toast(value + ' added to your filters');
@@ -663,7 +669,6 @@
   let searchLog;
   $('#search').addEventListener('input', e => {
     state.q = e.target.value.trim().toLowerCase();
-    expanded = false;
     render();
     clearTimeout(searchLog);
     const term = state.q;
@@ -683,7 +688,6 @@
   favToggle.addEventListener('click', () => {
     state.favoritesOnly = !state.favoritesOnly;
     favToggle.classList.toggle('active', state.favoritesOnly);
-    expanded = false;
     render();
   });
   fbar.appendChild(favToggle);   // far right, after Filters
@@ -697,7 +701,7 @@
       state.sort = b.dataset.sort;
       sortLabel.textContent = (SORTS.find(o => o.id === state.sort) || {}).label;
       sortMenu.hidden = true; sortBtn.setAttribute('aria-expanded', 'false');
-      expanded = false; drawSortMenu(); render();
+      drawSortMenu(); render();
     }));
   }
   drawSortMenu();
@@ -782,11 +786,11 @@
       const s = $('#search'); if (s) s.value = '';
       syncChips();
     }
-    if (MUTRA.tracks.filter(matches).indexOf(t) >= INITIAL) expanded = true;
     render();
-    const rows = [...tracksEl.querySelectorAll('.trk')];
-    const list = MUTRA.tracks.filter(matches);
-    const row = rows[list.indexOf(t)];
+    // the track may sit past the first page, so keep loading until it exists
+    let guard = 0;
+    while (shown < list.length && list.indexOf(t) >= shown && guard++ < 40) appendPage();
+    const row = [...tracksEl.querySelectorAll('.trk')][list.indexOf(t)];
     if (!row) return false;
     row.scrollIntoView({ block: 'center', behavior: 'smooth' });
     row.classList.add('flash');

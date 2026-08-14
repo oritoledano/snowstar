@@ -128,6 +128,37 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
   font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.9;letter-spacing:-.012em;
   text-transform:uppercase;margin:0}
+/* three promises under the headline. Animated inline SVG rather than GIFs:
+   crisp at any size, follows the skin's colour, and a fraction of the weight. */
+.mhero-points{display:flex;justify-content:center;align-items:flex-start;
+  gap:clamp(22px,6vw,86px);flex-wrap:wrap;margin:30px 0 36px}
+.hp{display:flex;flex-direction:column;align-items:center;gap:11px;max-width:170px}
+.hp-ico{position:relative;display:block;width:36px;height:36px;color:var(--coral)}
+.hp-ico svg{position:absolute;inset:0;width:100%;height:100%}
+.hp-txt{font-family:var(--font-body);font-size:.9rem;color:var(--hero-sub);
+  text-align:center;line-height:1.35}
+/* icon 1 cycles: TV -> clapper -> controller -> browser */
+.hp-cycle .hp-i{opacity:0;animation:hpcycle 10s infinite}
+.hp-cycle .hp-i:nth-child(2){animation-delay:2.5s}
+.hp-cycle .hp-i:nth-child(3){animation-delay:5s}
+.hp-cycle .hp-i:nth-child(4){animation-delay:7.5s}
+@keyframes hpcycle{
+  0%{opacity:0;transform:translateY(4px) scale(.94)}
+  4%,21%{opacity:1;transform:none}
+  25%,100%{opacity:0;transform:translateY(-4px) scale(.94)}}
+/* icon 2: the two chat bubbles pop in turn */
+.hp-b1{animation:hpbub 3.4s infinite}
+.hp-b2{animation:hpbub 3.4s infinite 1.7s}
+@keyframes hpbub{0%,8%{opacity:0}16%,54%{opacity:1}70%,100%{opacity:0}}
+/* icon 3: the "no robots" stroke draws itself */
+.hp-no{stroke:var(--pink);stroke-width:2;stroke-dasharray:26;stroke-dashoffset:26;
+  animation:hpslash 4s ease-in-out infinite}
+@keyframes hpslash{0%,10%{stroke-dashoffset:26}30%,72%{stroke-dashoffset:0}92%,100%{stroke-dashoffset:26}}
+@media (prefers-reduced-motion:reduce){
+  .hp-cycle .hp-i,.hp-b1,.hp-b2,.hp-no{animation:none}
+  .hp-cycle .hp-i{opacity:0}.hp-cycle .hp-i:first-child{opacity:1}
+  .hp-no{stroke-dashoffset:0}}
+
 .mhero-sub{color:var(--hero-sub);font-size:clamp(1rem,1.5vw,1.2rem);max-width:46ch;margin:26px 0 34px}
 .mhero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
 
@@ -135,10 +166,10 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 
 /* the search + filters ride along once you scroll past them */
 .cbar{position:sticky;top:70px;z-index:45;background:var(--bg);
-  padding-top:10px;margin:0 calc(clamp(20px,5vw,56px) * -1);
+  padding-top:14px;margin:0 calc(clamp(20px,5vw,56px) * -1);
   padding-left:clamp(20px,5vw,56px);padding-right:clamp(20px,5vw,56px)}
 .cbar.stuck{border-bottom:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(0,0,0,.6)}
-.cbar.stuck .browse-search{margin-bottom:12px}
+.cbar.stuck .browse-search{margin-bottom:14px}
 .cbar.stuck .browse-search input{padding-top:11px;padding-bottom:11px}
 
 /* three-state facet chips */
@@ -263,10 +294,10 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 /* ───────── track list ───────── */
 .tracks{display:flex;flex-direction:column}
 .trk{display:grid;grid-template-columns:52px 40px 2.1fr 3fr auto auto;align-items:center;gap:18px;
-  padding:14px 16px;border-radius:14px;border:1px solid transparent;transition:background .2s,border-color .2s;cursor:default}
+  padding:18px 16px;border-radius:14px;border:1px solid transparent;transition:background .2s,border-color .2s;cursor:default}
 .trk:hover{background:var(--panel)}
 .trk.playing{background:var(--panel-2);border-color:var(--line-2)}
-.trk+.trk{margin-top:2px}
+.trk+.trk{margin-top:6px}
 .trk-play{width:44px;height:44px;border-radius:50%;border:1px solid var(--line-2);background:var(--tint-2);
   color:var(--coral);cursor:pointer;display:grid;place-items:center;transition:.2s;flex:none}
 .trk-play:hover{background:var(--coral);color:var(--on-accent);border-color:transparent}
@@ -319,7 +350,7 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   border:1px solid var(--line-2);border-radius:99px;padding:8px 16px;transition:.2s;white-space:nowrap}
 .trk-lic:hover{background:var(--amber);color:var(--on-accent);border-color:transparent}
 .cat-empty{text-align:center;color:var(--muted);padding:60px 0}
-.cat-more{display:flex;margin:28px auto 0}
+.cat-sentinel{height:1px}
 
 /* ───────── cta ───────── */
 .mcta{padding:90px 0;text-align:center;position:relative;overflow:hidden}
