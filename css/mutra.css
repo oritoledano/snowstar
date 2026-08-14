@@ -173,14 +173,16 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 
 /* Display toggles — icon-sized until hovered, then they open to show the label.
    Because only the hovered one grows, the row's total width barely moves. */
-.fcat-tgl{border:1px solid var(--line-2);gap:0;padding:8px 10px;overflow:hidden;
-  transition:background .2s,color .2s,border-color .2s}
+.fcat-tgl{border:0;background:none;gap:0;padding:8px 7px;overflow:hidden;color:var(--dim);
+  transition:color .2s}
+.fcat-tgl:hover{color:var(--text);background:none}
 .fcat-tgl svg{flex:none}
 .fcat-tgl span{display:inline-block;max-width:0;opacity:0;white-space:nowrap;
   transition:max-width .26s ease,opacity .2s ease,margin-left .26s ease;margin-left:0}
 .fcat-tgl:hover span,.fcat-tgl:focus-visible span{max-width:100px;opacity:1;margin-left:7px}
-.fcat-tgl.on{color:var(--on-accent);background:var(--grad);border-color:transparent}
-.fcat-tgl.on svg{color:var(--on-accent)}
+/* state lives in the icon's colour rather than a filled box */
+.fcat-tgl.on{color:var(--coral)}
+.fcat-tgl.on:hover{color:var(--coral)}
 
 /* nothing matched */
 .cat-empty{text-align:center;color:var(--muted);padding:70px 20px 80px}
@@ -277,8 +279,8 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   .fbar-gap{order:2;flex-basis:100%;height:0;min-width:0}
   .fcat-hl span,.fcat-fav span{display:none}
   .fcat-hl,.fcat-fav{width:40px;height:38px;padding:0;justify-content:center;gap:0}
-  .fcat-fav{border:1px solid var(--line-2);border-radius:10px}
-  .fcat-fav.active{background:var(--grad);border-color:transparent;color:var(--on-accent)}
+  .fcat-fav{border:0;background:none;color:var(--dim)}
+  .fcat-fav.active{background:none;color:var(--pink)}
   .fcat{font-size:.84rem;padding:8px 11px}
   /* "Sort:" is redundant next to the value once space is tight */
   .fsort #sortBtn{gap:5px;padding:8px 9px}
@@ -344,7 +346,7 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .trk-key{min-width:42px;text-align:right;font-family:var(--font-body);
   font-variant-numeric:tabular-nums;font-size:.78rem;color:var(--dim);flex:none}
 body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
-@media (max-width:920px){.trk-lyr,.trk-key{display:none}}
+@media (max-width:920px){.trk-dur{display:none}}
 
 /* tempo, sitting quietly next to the duration — click it to filter that band */
 .trk-bpm{display:inline-flex;align-items:baseline;gap:3px;min-width:46px;justify-content:flex-end;
