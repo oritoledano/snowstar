@@ -1652,7 +1652,7 @@ const MUTRA = {
     "Strings",
     "Instrumental"
    ],
-   "bpm": 185,
+   "bpm": 62,
    "vocal": "Instrumental"
   },
   {
@@ -2774,7 +2774,7 @@ const MUTRA = {
     "Synth",
     "Instrumental"
    ],
-   "bpm": 178,
+   "bpm": 90,
    "vocal": "Instrumental"
   },
   {
@@ -4482,7 +4482,6 @@ const MUTRA = {
    "instruments": [
     "Instrumental"
    ],
-   "bpm": 172,
    "vocal": "Instrumental"
   },
   {
