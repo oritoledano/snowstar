@@ -169,15 +169,15 @@ export async function finishOAuth(req, env, provider) {
     const cookie = await issueSession(env, userId);
 
     // belt and braces: a code the page can exchange if the cookie above is lost
-    const code = rand(32);
-    const codeHash = b64url(await crypto.subtle.digest('SHA-256', enc.encode(code)));
+    const handoffCode = rand(32);
+    const codeHash = b64url(await crypto.subtle.digest('SHA-256', enc.encode(handoffCode)));
     await env.DB.prepare(
       'INSERT INTO handoffs (code_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)'
     ).bind(codeHash, userId, now(), now() + 120).run();
 
     const to = safeReturn(back);
     await note(env, 'callback_ok', profile.email + ' → ' + to);
-    return bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok&h=' + code,
+    return bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok&h=' + handoffCode,
       { 'set-cookie': cookie });
   } catch (e) {
     const why = String(e && e.message || e).slice(0, 40).replace(/[^\w .:-]/g, '');

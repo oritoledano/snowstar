@@ -246,8 +246,7 @@
     const p = new URLSearchParams(location.search);
     const res = p.get('auth');
     if (!res) return;
-    p.delete('auth');
-    p.delete('h');
+    ['auth', 'h', 'why'].forEach(k => p.delete(k));
     const clean = location.pathname + (p.toString() ? '?' + p : '') + location.hash;
     history.replaceState(null, '', clean);   // don't leave it in the URL
 
