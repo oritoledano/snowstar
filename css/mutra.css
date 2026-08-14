@@ -128,9 +128,15 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
   font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.9;letter-spacing:-.012em;
   text-transform:uppercase;margin:0}
-/* Monospaced and uppercase, matching the reference's standfirst treatment.
-   Commit Mono isn't on Google Fonts, so JetBrains Mono stands in for it. */
-.mhero-sub{color:var(--hero-sub);font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,
+/* Commit Mono by Eigil Nikolajsen, MIT — see assets/fonts/commit-mono-LICENSE.txt.
+   Self-hosted, pinned to one weight and subset to Latin: 5.8 KB instead of 85. */
+@font-face{
+  font-family:"Commit Mono";
+  src:url("../assets/fonts/commit-mono.woff2") format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+}
+/* Monospaced and uppercase, matching the reference's standfirst treatment. */
+.mhero-sub{color:var(--hero-sub);font-family:"Commit Mono",ui-monospace,SFMono-Regular,
   Menlo,Consolas,monospace;font-weight:400;text-transform:uppercase;
   font-size:clamp(.72rem,1.05vw,.88rem);letter-spacing:.02em;
   max-width:62ch;margin:28px auto 34px;line-height:1.75}
