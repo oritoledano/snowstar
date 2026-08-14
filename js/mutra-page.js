@@ -572,13 +572,7 @@
         });
       });
     }
-    fdrop.querySelector('.fdrop-close').addEventListener('click', () => {
-      openCat = null;
-      fbar.querySelectorAll('.fcat[data-cat]').forEach(b => {
-        b.classList.remove('open'); b.setAttribute('aria-expanded', 'false');
-      });
-      drawDrop();
-    });
+    fdrop.querySelector('.fdrop-close').addEventListener('click', closeDrawer);
   }
 
   /** Dual-handle slider + typed boxes, kept in step with each other. */
@@ -625,6 +619,14 @@
       paint(); commit();
     });
     paint();
+  }
+
+  function closeDrawer() {
+    openCat = null;
+    fbar.querySelectorAll('.fcat[data-cat]').forEach(b => {
+      b.classList.remove('open'); b.setAttribute('aria-expanded', 'false');
+    });
+    drawDrop();
   }
 
   function setCat(cat) {
@@ -810,10 +812,15 @@
 
   // ── "sounds like this" — neighbours precomputed from the audio itself ──
   function showSimilar(track, row) {
+    // clicking the same track's button again closes the panel
+    const open = row.nextElementSibling;
+    const wasMine = open && open.classList.contains('sim-panel') && open.dataset.slug === track.slug;
     document.querySelectorAll('.sim-panel').forEach(p => p.remove());
+    if (wasMine) return;
     const slugs = (typeof MUTRA_SIMILAR !== 'undefined' && MUTRA_SIMILAR[track.slug]) || [];
     const panel = document.createElement('div');
     panel.className = 'sim-panel';
+    panel.dataset.slug = track.slug;
     if (!slugs.length) {
       panel.innerHTML = `<div class="sim-head">No close matches for <b>${track.title}</b></div>`;
     } else {
@@ -937,6 +944,25 @@
   });
 
   addEventListener('resize', () => requestAnimationFrame(measureTitles), { passive: true });
+
+  /* An open facet drawer eats a lot of the screen. Once you've scrolled past
+     about two tracks you're clearly reading the list, not picking filters —
+     so it gets out of the way by itself. */
+  (function autoCloseDrawer() {
+    let openedAt = null;
+    const rowHeight = () => {
+      const r = tracksEl.querySelector('.trk');
+      return r ? r.getBoundingClientRect().height + 6 : 80;
+    };
+    addEventListener('scroll', () => {
+      if (!openCat) { openedAt = null; return; }
+      if (openedAt === null) { openedAt = window.pageYOffset; return; }
+      if (Math.abs(window.pageYOffset - openedAt) > rowHeight() * 2) {
+        openedAt = null;
+        closeDrawer();
+      }
+    }, { passive: true });
+  })();
 
   // shadow only once the bar is actually pinned
   const cbar = $('#cbar');
