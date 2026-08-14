@@ -240,6 +240,35 @@
   window.SnowstarOpenAuth = open;
   window.MutraOpenAuth = open;
 
+  /* Coming back from Google or Facebook, the page just reloads — say what
+     happened, and if the cookie somehow didn't stick, say that too. */
+  (function reportOAuth() {
+    const p = new URLSearchParams(location.search);
+    const res = p.get('auth');
+    if (!res) return;
+    p.delete('auth');
+    const clean = location.pathname + (p.toString() ? '?' + p : '') + location.hash;
+    history.replaceState(null, '', clean);   // don't leave it in the URL
+
+    const once = M.ready ? Promise.resolve() : new Promise(done => {
+      const off = M.onChange(() => { off(); done(); });
+    });
+    once.then(() => {
+      if (res === 'ok') {
+        if (M.user) {
+          const who = M.user.name || M.user.email.split('@')[0];
+          toast('Signed in as ' + who);
+        } else {
+          open('login', 'Your browser blocked the sign-in cookie. Try again, or sign in with your password.');
+        }
+      } else if (res === 'unavailable') {
+        open('login', 'That sign-in method isn\u2019t switched on yet.');
+      } else {
+        open('login', 'That sign-in didn\u2019t complete. Please try again.');
+      }
+    });
+  })();
+
   M.onChange(renderNav);
   renderNav();
 })();
