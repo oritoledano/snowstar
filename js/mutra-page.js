@@ -850,14 +850,12 @@
     if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');
   });
 
-  // the sticky filter bar gets a shadow only once it's actually stuck
+  // shadow only once the bar is actually pinned
   const cbar = $('#cbar');
-  if (cbar && 'IntersectionObserver' in window) {
-    const sentinel = document.createElement('div');
-    sentinel.style.cssText = 'position:absolute;top:0;height:1px;width:1px';
-    cbar.parentElement.insertBefore(sentinel, cbar);
-    new IntersectionObserver(([e]) => cbar.classList.toggle('stuck', !e.isIntersecting),
-      { rootMargin: '-71px 0px 0px 0px' }).observe(sentinel);
+  if (cbar) {
+    const syncStuck = () => cbar.classList.toggle('stuck', cbar.getBoundingClientRect().top <= 71);
+    addEventListener('scroll', syncStuck, { passive: true });
+    syncStuck();
   }
 
   // ── nav + reveal ──
