@@ -128,40 +128,10 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
   font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.9;letter-spacing:-.012em;
   text-transform:uppercase;margin:0}
-/* Option 2 (?hero=2): keep the full sentence, size it down so it sits calmly */
-.hero-fit .mhero-title{font-size:clamp(2.1rem,7vw,5.6rem);line-height:.94;max-width:16ch;margin-inline:auto}
-/* three promises under the headline. Animated inline SVG rather than GIFs:
-   crisp at any size, follows the skin's colour, and a fraction of the weight. */
-.mhero-points{display:flex;justify-content:center;align-items:flex-start;
-  gap:clamp(22px,6vw,86px);flex-wrap:wrap;margin:30px 0 36px}
-.hp{display:flex;flex-direction:column;align-items:center;gap:11px;max-width:170px}
-.hp-ico{position:relative;display:block;width:36px;height:36px;color:var(--coral)}
-.hp-ico svg{position:absolute;inset:0;width:100%;height:100%}
-.hp-txt{font-family:var(--font-body);font-size:.9rem;color:var(--hero-sub);
-  text-align:center;line-height:1.35}
-/* icon 1 cycles: TV -> clapper -> controller -> browser */
-.hp-cycle .hp-i{opacity:0;animation:hpcycle 10s infinite}
-.hp-cycle .hp-i:nth-child(2){animation-delay:2.5s}
-.hp-cycle .hp-i:nth-child(3){animation-delay:5s}
-.hp-cycle .hp-i:nth-child(4){animation-delay:7.5s}
-@keyframes hpcycle{
-  0%{opacity:0;transform:translateY(4px) scale(.94)}
-  4%,21%{opacity:1;transform:none}
-  25%,100%{opacity:0;transform:translateY(-4px) scale(.94)}}
-/* icon 2: the two chat bubbles pop in turn */
-.hp-b1{animation:hpbub 3.4s infinite}
-.hp-b2{animation:hpbub 3.4s infinite 1.7s}
-@keyframes hpbub{0%,8%{opacity:0}16%,54%{opacity:1}70%,100%{opacity:0}}
-/* icon 3: the "no robots" stroke draws itself */
-.hp-no{stroke:var(--pink);stroke-width:2;stroke-dasharray:26;stroke-dashoffset:26;
-  animation:hpslash 4s ease-in-out infinite}
-@keyframes hpslash{0%,10%{stroke-dashoffset:26}30%,72%{stroke-dashoffset:0}92%,100%{stroke-dashoffset:26}}
-@media (prefers-reduced-motion:reduce){
-  .hp-cycle .hp-i,.hp-b1,.hp-b2,.hp-no{animation:none}
-  .hp-cycle .hp-i{opacity:0}.hp-cycle .hp-i:first-child{opacity:1}
-  .hp-no{stroke-dashoffset:0}}
-
-.mhero-sub{color:var(--hero-sub);font-size:clamp(1rem,1.5vw,1.2rem);max-width:46ch;margin:26px 0 34px}
+.mhero-sub{color:var(--hero-sub);font-size:clamp(1rem,1.5vw,1.2rem);max-width:52ch;
+  margin:26px auto 34px;line-height:1.5}
+/* the aside that lands the joke — quieter than the line it follows */
+.mhero-fine{display:block;margin-top:6px;font-size:.82em;color:var(--dim);line-height:1.45}
 .mhero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
 
 @media (prefers-reduced-motion:reduce){.mhero-glow{transition:none}}
