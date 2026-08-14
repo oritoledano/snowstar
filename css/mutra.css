@@ -128,10 +128,12 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
   font-size:clamp(3.2rem,11.5vw,9.5rem);line-height:.9;letter-spacing:-.012em;
   text-transform:uppercase;margin:0}
-.mhero-sub{color:var(--hero-sub);font-size:clamp(1rem,1.5vw,1.2rem);max-width:52ch;
-  margin:26px auto 34px;line-height:1.5}
-/* the aside that lands the joke — quieter than the line it follows */
-.mhero-fine{display:block;margin-top:6px;font-size:.82em;color:var(--dim);line-height:1.45}
+/* Monospaced and uppercase, matching the reference's standfirst treatment.
+   Commit Mono isn't on Google Fonts, so JetBrains Mono stands in for it. */
+.mhero-sub{color:var(--hero-sub);font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,
+  Menlo,Consolas,monospace;font-weight:400;text-transform:uppercase;
+  font-size:clamp(.72rem,1.05vw,.88rem);letter-spacing:.02em;
+  max-width:62ch;margin:28px auto 34px;line-height:1.75}
 .mhero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:center}
 
 @media (prefers-reduced-motion:reduce){.mhero-glow{transition:none}}
