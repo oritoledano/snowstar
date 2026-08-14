@@ -227,13 +227,10 @@
     { id: 'd3',   label: '3+ min',   test: d => d >= 180 },
     { id: 'd4',   label: '4+ min',   test: d => d >= 240 },
   ];
-  const BPMS = [
-    { id: 'slow',  label: 'Slow',     test: b => b < 90 },
-    { id: 'slomed', label: 'Slow-Med', test: b => b >= 90 && b < 110 },
-    { id: 'med',   label: 'Medium',   test: b => b >= 110 && b < 130 },
-    { id: 'medfast', label: 'Med-Fast', test: b => b >= 130 && b < 150 },
-    { id: 'fast',  label: 'Fast',     test: b => b >= 150 },
-  ];
+  // bounds come from the catalog itself, so both handles reach real music
+  const BPM_ALL = MUTRA.tracks.map(t => t.bpm).filter(Boolean);
+  const BPM_MIN = Math.floor(Math.min(...BPM_ALL) / 5) * 5;
+  const BPM_MAX = Math.ceil(Math.max(...BPM_ALL) / 5) * 5;
   let expanded = false;
 
   function matches(t) {
@@ -248,8 +245,8 @@
       if (d && !d.test(t.duration || 0)) return false;
     }
     if (state.bpm) {
-      const b = BPMS.find(x => x.id === state.bpm);
-      if (b && !(t.bpm && b.test(t.bpm))) return false;
+      // a tempo filter can't match a track that has no tempo (the SFX stings)
+      if (!t.bpm || t.bpm < state.bpm.min || t.bpm > state.bpm.max) return false;
     }
     if (state.q) {
       const hay = (t.title + ' ' + t.genres.join(' ') + ' ' + (t.moods || []).join(' ') + ' ' +
@@ -424,8 +421,21 @@
           </div>
           <div class="fgroup">
             <h4>BPM</h4>
-            <div class="fchips" data-group="bpm">
-              ${BPMS.map(b => chip(b.label, state.bpm === b.id)).join('')}
+            <div class="brange">
+              <div class="brange-rail"><span class="brange-fill"></span></div>
+              <input type="range" class="brange-in brange-lo" min="${BPM_MIN}" max="${BPM_MAX}" step="1"
+                     value="${state.bpm ? state.bpm.min : BPM_MIN}" aria-label="Minimum BPM">
+              <input type="range" class="brange-in brange-hi" min="${BPM_MIN}" max="${BPM_MAX}" step="1"
+                     value="${state.bpm ? state.bpm.max : BPM_MAX}" aria-label="Maximum BPM">
+            </div>
+            <div class="brange-nums">
+              <input type="number" class="bnum bnum-lo" min="${BPM_MIN}" max="${BPM_MAX}"
+                     value="${state.bpm ? state.bpm.min : BPM_MIN}" aria-label="Minimum BPM">
+              <span>to</span>
+              <input type="number" class="bnum bnum-hi" min="${BPM_MIN}" max="${BPM_MAX}"
+                     value="${state.bpm ? state.bpm.max : BPM_MAX}" aria-label="Maximum BPM">
+              <span class="bnum-unit">BPM</span>
+              <button type="button" class="brange-reset"${state.bpm ? '' : ' hidden'}>Reset</button>
             </div>
           </div>
         </div>
@@ -433,8 +443,7 @@
       fdrop.querySelectorAll('.fchips').forEach(box => {
         const group = box.dataset.group;
         [...box.children].forEach((btn, i) => btn.addEventListener('click', () => {
-          const val = group === 'vocal' ? ['Vocals', 'Instrumental'][i]
-                    : group === 'dur' ? DURATIONS[i].id : BPMS[i].id;
+          const val = group === 'vocal' ? ['Vocals', 'Instrumental'][i] : DURATIONS[i].id;
           state[group] = state[group] === val ? null : val;   // click again to clear
           expanded = false; drawDrop(); drawPills(); render();
         }));
@@ -457,6 +466,53 @@
     fdrop.querySelector('.fdrop-close').addEventListener('click', () => setCat(null));
   }
 
+  /** Dual-handle slider + typed boxes, kept in step with each other. */
+  function wireBpmRange() {
+    const lo = fdrop.querySelector('.brange-lo'), hi = fdrop.querySelector('.brange-hi');
+    const nlo = fdrop.querySelector('.bnum-lo'), nhi = fdrop.querySelector('.bnum-hi');
+    const fill = fdrop.querySelector('.brange-fill'), reset = fdrop.querySelector('.brange-reset');
+    if (!lo) return;
+    let raf = 0;
+
+    const paint = () => {
+      const a = +lo.value, b = +hi.value, span = BPM_MAX - BPM_MIN;
+      fill.style.left = ((a - BPM_MIN) / span * 100) + '%';
+      fill.style.right = ((BPM_MAX - b) / span * 100) + '%';
+      nlo.value = a; nhi.value = b;
+      reset.hidden = (a === BPM_MIN && b === BPM_MAX);
+    };
+
+    const commit = () => {
+      const a = +lo.value, b = +hi.value;
+      state.bpm = (a === BPM_MIN && b === BPM_MAX) ? null : { min: a, max: b };
+      expanded = false;
+      drawPills();
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(render);   // one render per frame, not per pixel
+    };
+
+    // handles can't cross
+    lo.addEventListener('input', () => { if (+lo.value > +hi.value) lo.value = hi.value; paint(); commit(); });
+    hi.addEventListener('input', () => { if (+hi.value < +lo.value) hi.value = lo.value; paint(); commit(); });
+
+    const fromBox = (box, slider, isLo) => box.addEventListener('change', () => {
+      let v = parseInt(box.value, 10);
+      if (isNaN(v)) v = isLo ? BPM_MIN : BPM_MAX;
+      v = Math.max(BPM_MIN, Math.min(BPM_MAX, v));
+      slider.value = v;
+      if (+lo.value > +hi.value) (isLo ? hi : lo).value = v;
+      paint(); commit();
+    });
+    fromBox(nlo, lo, true);
+    fromBox(nhi, hi, false);
+
+    reset.addEventListener('click', () => {
+      lo.value = BPM_MIN; hi.value = BPM_MAX;
+      paint(); commit();
+    });
+    paint();
+  }
+
   function setCat(cat) {
     openCat = openCat === cat ? null : cat;
     fbar.querySelectorAll('.fcat').forEach(b =>
@@ -473,7 +529,7 @@
     Object.keys(FACETS).forEach(k => state[k].forEach(v => bits.push({ k, v, label: v })));
     if (state.vocal) bits.push({ k: 'vocal', v: state.vocal, label: state.vocal });
     if (state.dur) bits.push({ k: 'dur', v: state.dur, label: (DURATIONS.find(d => d.id === state.dur) || {}).label });
-    if (state.bpm) bits.push({ k: 'bpm', v: state.bpm, label: (BPMS.find(b => b.id === state.bpm) || {}).label + ' BPM' });
+    if (state.bpm) bits.push({ k: 'bpm', v: state.bpm, label: state.bpm.min + '–' + state.bpm.max + ' BPM' });
     fpills.innerHTML = bits.map((b, i) =>
       `<button class="fpill" data-i="${i}">${b.label}<span aria-hidden="true">&times;</span></button>`).join('') +
       (bits.length > 1 ? '<button class="fpill fpill-clear">Clear all</button>' : '');
@@ -496,12 +552,12 @@
 
   /** Clicking a track's BPM filters to the band it falls in. */
   function filterByBpm(bpm) {
-    const band = BPMS.find(b => b.test(bpm));
-    if (!band) return;
-    state.bpm = state.bpm === band.id ? null : band.id;
+    const min = Math.max(BPM_MIN, bpm - 5), max = Math.min(BPM_MAX, bpm + 5);
+    const same = state.bpm && state.bpm.min === min && state.bpm.max === max;
+    state.bpm = same ? null : { min, max };
     expanded = false;
     drawDrop(); drawPills(); render();
-    toast(state.bpm ? band.label + ' tempo (' + bpm + ' BPM)' : 'Tempo filter cleared');
+    toast(same ? 'Tempo filter cleared' : 'Tempo ' + min + '–' + max + ' BPM');
   }
 
   /** A tag on a row is a shortcut into the filter it belongs to. */

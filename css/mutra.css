@@ -181,6 +181,30 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:26px}
 .fgroup h4{font-family:var(--font-body);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
   color:var(--dim);font-weight:600;margin-bottom:11px}
+/* BPM range: two sliders stacked on one rail, plus typed boxes */
+.brange{position:relative;height:34px;display:flex;align-items:center}
+.brange-rail{position:absolute;left:0;right:0;height:4px;border-radius:99px;background:var(--line-2)}
+.brange-fill{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--grad)}
+.brange-in{position:absolute;left:0;width:100%;margin:0;background:none;pointer-events:none;
+  -webkit-appearance:none;appearance:none;height:34px}
+.brange-in::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:18px;height:18px;
+  border-radius:50%;background:var(--panel-2);border:2px solid var(--coral);cursor:grab;
+  box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.brange-in::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.08)}
+.brange-in::-moz-range-thumb{pointer-events:auto;width:16px;height:16px;border-radius:50%;
+  background:var(--panel-2);border:2px solid var(--coral);cursor:grab}
+.brange-in:focus-visible::-webkit-slider-thumb{outline:2px solid var(--amber);outline-offset:2px}
+.brange-nums{display:flex;align-items:center;gap:8px;margin-top:6px;
+  color:var(--muted);font-size:.82rem}
+.bnum{width:64px;background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  padding:6px 8px;color:var(--text);font-family:var(--font-body);font-size:.85rem;
+  font-variant-numeric:tabular-nums;outline:none;transition:border-color .2s}
+.bnum:focus{border-color:var(--coral)}
+.bnum-unit{letter-spacing:.1em;text-transform:uppercase;font-size:.68rem;color:var(--dim)}
+.brange-reset{margin-left:auto;background:none;border:0;cursor:pointer;color:var(--dim);
+  font-family:var(--font-body);font-size:.78rem;text-decoration:underline}
+.brange-reset:hover{color:var(--text)}
+
 .fpills{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px}
 .fpill{display:inline-flex;align-items:center;gap:8px;background:var(--grad-soft);
   border:1px solid var(--line-2);color:var(--text);cursor:pointer;font-family:var(--font-body);
