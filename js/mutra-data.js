@@ -7372,7 +7372,7 @@ const MUTRA = {
     "Drums",
     "Instrumental"
    ],
-   "bpm": 71,
+   "bpm": 142,
    "vocal": "Instrumental"
   },
   {
