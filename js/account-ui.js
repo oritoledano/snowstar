@@ -231,9 +231,17 @@
     setTimeout(() => form.password.focus(), 50);
   }
 
-  // send the visitor back to the page they were on
+  // Build the return URL when the link is clicked, not at load — at load the
+  // address bar may still hold the previous attempt's parameters.
   modal.querySelectorAll('.auth-soc').forEach(a => {
-    a.href += '?return=' + encodeURIComponent(location.pathname + location.search);
+    const base = a.getAttribute('href');
+    a.addEventListener('click', () => {
+      const here = new URL(location.href);
+      ['auth', 'h', 'why'].forEach(k => here.searchParams.delete(k));
+      const q = here.searchParams.toString();
+      a.setAttribute('href', base + '?return=' +
+        encodeURIComponent(here.pathname + (q ? '?' + q : '')));
+    });
   });
 
   // let the rest of the page ask for the sign-in modal
@@ -246,7 +254,7 @@
     const p = new URLSearchParams(location.search);
     const res = p.get('auth');
     if (!res) return;
-    const handoff = p.get('h');              // read first — the tidy-up below removes it
+    const handoff = p.getAll('h').pop();      // newest wins if an old one lingered
     ['auth', 'h', 'why'].forEach(k => p.delete(k));
     const clean = location.pathname + (p.toString() ? '?' + p : '') + location.hash;
     history.replaceState(null, '', clean);   // don't leave it in the URL

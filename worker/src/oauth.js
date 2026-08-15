@@ -85,7 +85,11 @@ function safeReturn(raw) {
   try {
     const u = new URL(raw, 'https://snowstar.company');
     if (u.origin !== 'https://snowstar.company') return '/mutra.html';
-    return u.pathname + u.search + u.hash;
+    // a previous round trip may have left its params behind; carrying them
+    // through would produce two ?h= values and the page would read the stale one
+    ['auth', 'h', 'why'].forEach((k) => u.searchParams.delete(k));
+    const q = u.searchParams.toString();
+    return u.pathname + (q ? '?' + q : '') + u.hash;
   } catch { return '/mutra.html'; }
 }
 
