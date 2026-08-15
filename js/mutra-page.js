@@ -134,6 +134,7 @@
     if (current) paintWave(current.row, frac);
   }
   function paintWave(row, frac) {
+    if (!row) return;
     const canvas = row.querySelector('.trk-wave canvas');
     if (canvas && canvas._peaks) drawWave(canvas, canvas._peaks, frac, hlOf(canvas._slug));
   }
@@ -161,9 +162,9 @@
   function loadTrack(track, row) {
     if (window.mutraTrack) mutraTrack('play', track.slug, { once: true });
     if (current && current.track === track) { toggle(); return; }
-    if (current) current.row.classList.remove('playing');
-    current = { track, row };
-    row.classList.add('playing');
+    if (current && current.row) current.row.classList.remove('playing');
+    current = { track, row: row || null };
+    if (row) row.classList.add('playing');
     audio.src = track.audio;
     audio.currentTime = 0;
     // with highlights on, drop the needle on the best bit rather than the intro
@@ -183,7 +184,7 @@
     setProgressUI(0);
     player.classList.add('up');
     document.body.querySelectorAll('.trk .trk-play').forEach(b => b.innerHTML = ICON_PLAY);
-    row.querySelector('.trk-play').innerHTML = ICON_PAUSE;
+    if (row) row.querySelector('.trk-play').innerHTML = ICON_PAUSE;
   }
   function toggle() {
     if (!current) return;
@@ -191,7 +192,7 @@
   }
   function closePlayer() {
     audio.pause(); audio.src = '';
-    if (current) current.row.classList.remove('playing');
+    if (current && current.row) current.row.classList.remove('playing');
     current = null;
     player.classList.remove('up');
   }
@@ -204,11 +205,11 @@
   });
   audio.addEventListener('play', () => {
     plPlay.innerHTML = ICON_PAUSE;
-    if (current) current.row.querySelector('.trk-play').innerHTML = ICON_PAUSE;
+    if (current && current.row) current.row.querySelector('.trk-play').innerHTML = ICON_PAUSE;
   });
   audio.addEventListener('pause', () => {
     plPlay.innerHTML = ICON_PLAY;
-    if (current) current.row.querySelector('.trk-play').innerHTML = ICON_PLAY;
+    if (current && current.row) current.row.querySelector('.trk-play').innerHTML = ICON_PLAY;
   });
   audio.addEventListener('ended', () => { setProgressUI(0); plCur.textContent = '0:00'; });
 
@@ -875,7 +876,7 @@
         // list is a worse trade than not seeing the row highlighted
         const liveRow = [...tracksEl.querySelectorAll('.trk')]
           .find(r => r.querySelector('.trk-wave canvas')?._slug === t.slug);
-        loadTrack(t, liveRow || row);
+        loadTrack(t, liveRow || null);   // never borrow the originating row
         panel.querySelectorAll('.sim-item').forEach(b => b.classList.toggle('playing', b === btn));
       });
     });

@@ -22,8 +22,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 130,
@@ -46,8 +46,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 92,
    "vocal": "Instrumental",
@@ -69,8 +69,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Guitar",
+    "Piano",
     "Vocals"
    ],
    "bpm": 152,
@@ -95,9 +95,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 121,
    "vocal": "Instrumental",
@@ -167,9 +167,9 @@ const MUTRA = {
     "Tense"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -193,9 +193,9 @@ const MUTRA = {
     "Tense"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -271,9 +271,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Synth",
-    "Instrumental"
+    "Synth"
    ],
    "bpm": 128,
    "vocal": "Instrumental",
@@ -374,9 +374,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 122,
    "vocal": "Instrumental",
@@ -444,9 +444,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -493,8 +493,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 125,
@@ -519,8 +519,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 125,
@@ -545,8 +545,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 125,
@@ -572,8 +572,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 125,
@@ -600,8 +600,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 125,
@@ -624,8 +624,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -649,9 +649,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 126,
    "vocal": "Instrumental",
@@ -755,9 +755,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 110,
    "vocal": "Instrumental",
@@ -781,9 +781,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 110,
    "vocal": "Instrumental",
@@ -832,8 +832,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -859,8 +859,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 99,
    "vocal": "Instrumental"
@@ -885,9 +885,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Strings",
-    "Instrumental"
+    "Strings"
    ],
    "bpm": 99,
    "vocal": "Instrumental",
@@ -912,9 +912,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Strings",
-    "Instrumental"
+    "Strings"
    ],
    "bpm": 99,
    "vocal": "Instrumental",
@@ -940,9 +940,9 @@ const MUTRA = {
     "Romantic"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 130,
    "vocal": "Instrumental",
@@ -968,8 +968,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 126,
@@ -1038,9 +1038,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 124,
    "vocal": "Instrumental",
@@ -1113,8 +1113,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 140,
@@ -1138,9 +1138,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Guitar",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -1162,9 +1162,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 124,
    "vocal": "Instrumental",
@@ -1214,8 +1214,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -1262,9 +1262,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 124,
    "vocal": "Instrumental",
@@ -1290,9 +1290,9 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -1387,8 +1387,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 88,
@@ -1435,9 +1435,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 122,
    "vocal": "Instrumental",
@@ -1459,9 +1459,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -1484,9 +1484,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -1610,8 +1610,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 143,
    "vocal": "Instrumental",
@@ -1633,8 +1633,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 161,
    "vocal": "Instrumental",
@@ -1708,8 +1708,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 130,
@@ -1735,9 +1735,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Strings",
-    "Instrumental"
+    "Strings"
    ],
    "bpm": 85,
    "vocal": "Instrumental",
@@ -1760,8 +1760,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 85,
    "vocal": "Instrumental",
@@ -1785,8 +1785,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 62,
    "vocal": "Instrumental",
@@ -1812,8 +1812,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 150,
@@ -1841,8 +1841,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 151,
@@ -1866,9 +1866,9 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 130,
    "vocal": "Instrumental",
@@ -1915,8 +1915,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 126,
@@ -1943,8 +1943,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 148,
    "vocal": "Instrumental",
@@ -1969,9 +1969,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -1996,8 +1996,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -2021,9 +2021,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Guitar",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 123,
    "vocal": "Instrumental",
@@ -2049,9 +2049,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -2097,9 +2097,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -2122,8 +2122,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 161,
@@ -2197,8 +2197,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 145,
    "vocal": "Instrumental",
@@ -2223,8 +2223,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 97,
@@ -2250,9 +2250,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Strings",
-    "Instrumental"
+    "Strings"
    ],
    "bpm": 146,
    "vocal": "Instrumental",
@@ -2298,8 +2298,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 130,
@@ -2322,9 +2322,7 @@ const MUTRA = {
     "Chill",
     "Sad"
    ],
-   "instruments": [
-    "Instrumental"
-   ],
+   "instruments": [],
    "key": "A",
    "scale": "minor"
   },
@@ -2346,8 +2344,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 83,
    "vocal": "Instrumental",
@@ -2373,8 +2371,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 109,
    "vocal": "Instrumental",
@@ -2420,8 +2418,8 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 99,
    "vocal": "Instrumental",
@@ -2445,8 +2443,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 148,
    "vocal": "Instrumental",
@@ -2497,9 +2495,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -2524,8 +2522,8 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 93,
    "vocal": "Instrumental",
@@ -2549,8 +2547,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 130,
    "vocal": "Instrumental",
@@ -2572,8 +2570,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 116,
@@ -2647,8 +2645,8 @@ const MUTRA = {
     "Dark"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -2674,8 +2672,8 @@ const MUTRA = {
     "Dark"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -2700,8 +2698,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 120,
@@ -2726,9 +2724,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Piano",
-    "Guitar",
     "Drums",
+    "Guitar",
+    "Piano",
     "Vocals"
    ],
    "bpm": 145,
@@ -2800,8 +2798,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 120,
@@ -2850,9 +2848,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -2950,8 +2948,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Instrumental"
    ],
    "bpm": 110,
@@ -2976,9 +2974,9 @@ const MUTRA = {
     "Happy"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -3001,8 +2999,8 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -3070,9 +3068,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 116,
    "vocal": "Instrumental",
@@ -3307,8 +3305,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 90,
@@ -3380,8 +3378,8 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 126,
    "vocal": "Instrumental",
@@ -3406,8 +3404,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 154,
    "vocal": "Instrumental",
@@ -3432,8 +3430,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 153,
    "vocal": "Instrumental",
@@ -3459,8 +3457,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 152,
@@ -3484,8 +3482,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 70,
    "vocal": "Instrumental",
@@ -3509,9 +3507,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 136,
    "vocal": "Instrumental",
@@ -3533,8 +3531,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 120,
@@ -3607,8 +3605,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 118,
    "vocal": "Instrumental",
@@ -3704,9 +3702,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -3757,9 +3755,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 115,
    "vocal": "Instrumental",
@@ -3782,9 +3780,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Piano",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 110,
    "vocal": "Instrumental",
@@ -3858,8 +3856,8 @@ const MUTRA = {
     "Happy"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 80,
@@ -3912,8 +3910,8 @@ const MUTRA = {
     "Uplifting"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 132,
@@ -4011,9 +4009,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 151,
    "vocal": "Instrumental",
@@ -4037,9 +4035,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 163,
    "vocal": "Instrumental",
@@ -4062,10 +4060,10 @@ const MUTRA = {
     "Uplifting"
    ],
    "instruments": [
-    "Piano",
-    "Guitar",
     "Drums",
-    "Instrumental"
+    "Guitar",
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -4090,8 +4088,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Instrumental"
    ],
    "bpm": 120,
@@ -4141,8 +4139,8 @@ const MUTRA = {
     "Aggressive"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 135,
@@ -4219,8 +4217,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Instrumental"
    ],
    "bpm": 113,
@@ -4243,9 +4241,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -4267,8 +4265,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 96,
@@ -4337,9 +4335,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -4391,8 +4389,8 @@ const MUTRA = {
    ],
    "instruments": [
     "Guitar",
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 138,
    "vocal": "Instrumental",
@@ -4414,8 +4412,8 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 161,
    "vocal": "Instrumental",
@@ -4488,8 +4486,8 @@ const MUTRA = {
     "Aggressive"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 80,
@@ -4513,9 +4511,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 90,
    "vocal": "Instrumental",
@@ -4564,8 +4562,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 156,
    "vocal": "Instrumental",
@@ -4588,9 +4586,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 102,
    "vocal": "Instrumental",
@@ -4616,8 +4614,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 143,
    "vocal": "Instrumental",
@@ -4685,8 +4683,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 124,
    "vocal": "Instrumental",
@@ -4732,8 +4730,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 124,
    "vocal": "Instrumental",
@@ -4758,9 +4756,9 @@ const MUTRA = {
     "Romantic"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 128,
    "vocal": "Instrumental",
@@ -4808,9 +4806,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 122,
    "vocal": "Instrumental",
@@ -4836,8 +4834,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 114,
    "vocal": "Instrumental",
@@ -4882,8 +4880,8 @@ const MUTRA = {
     "Tense"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 80,
@@ -4955,8 +4953,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 78,
@@ -4982,9 +4980,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 115,
    "vocal": "Instrumental",
@@ -5056,8 +5054,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 126,
    "vocal": "Instrumental",
@@ -5080,8 +5078,8 @@ const MUTRA = {
     "Aggressive"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 125,
@@ -5107,8 +5105,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 125,
@@ -5155,8 +5153,8 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 128,
    "vocal": "Instrumental",
@@ -5179,9 +5177,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Guitar",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 128,
    "vocal": "Instrumental",
@@ -5203,9 +5201,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -5252,9 +5250,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 105,
    "vocal": "Instrumental",
@@ -5301,9 +5299,9 @@ const MUTRA = {
     "Romantic"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 118,
    "vocal": "Instrumental",
@@ -5374,8 +5372,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 124,
@@ -5398,8 +5396,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 116,
    "vocal": "Instrumental",
@@ -5421,8 +5419,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Instrumental"
    ],
    "bpm": 120,
@@ -5495,9 +5493,9 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Synth",
-    "Instrumental"
+    "Synth"
    ],
    "bpm": 133,
    "vocal": "Instrumental",
@@ -5522,9 +5520,9 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 106,
    "vocal": "Instrumental",
@@ -5574,8 +5572,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 126,
    "vocal": "Instrumental",
@@ -5621,9 +5619,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -5750,9 +5748,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 150,
    "vocal": "Instrumental",
@@ -5777,9 +5775,9 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 114,
    "vocal": "Instrumental",
@@ -5850,8 +5848,8 @@ const MUTRA = {
     "Dramatic"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 150,
    "vocal": "Instrumental",
@@ -5921,7 +5919,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5312963378413568.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-alert.jpg",
    "moods": [],
-   "instruments": [],
+   "instruments": [
+    "Instrumental"
+   ],
    "bpm": 126,
    "vocal": "Instrumental"
   },
@@ -5939,7 +5939,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5875913331834880.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-confetti.jpg",
    "moods": [],
-   "instruments": [],
+   "instruments": [
+    "Vocals"
+   ],
    "bpm": 121,
    "vocal": "Vocals",
    "key": "Bb",
@@ -5959,7 +5961,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/4750013424992256.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-gif-2-parts.jpg",
    "moods": [],
-   "instruments": [],
+   "instruments": [
+    "Instrumental"
+   ],
    "bpm": 115,
    "vocal": "Instrumental",
    "key": "Eb",
@@ -6011,7 +6015,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/6016650820190208.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-main-money-in.jpg",
    "moods": [],
-   "instruments": [],
+   "instruments": [
+    "Instrumental"
+   ],
    "bpm": 114,
    "vocal": "Instrumental",
    "key": "Bb",
@@ -6047,7 +6053,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/6298125796900864.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-regular-push.jpg",
    "moods": [],
-   "instruments": [],
+   "instruments": [
+    "Instrumental"
+   ],
    "bpm": 115,
    "vocal": "Instrumental",
    "key": "Bb",
@@ -6083,7 +6091,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5735175843479552.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-stars.jpg",
    "moods": [],
-   "instruments": [],
+   "instruments": [
+    "Instrumental"
+   ],
    "bpm": 111,
    "vocal": "Instrumental",
    "key": "Bb",
@@ -6103,7 +6113,9 @@ const MUTRA = {
    "audio": "https://cdn.snowstar.company/audio/5552906877009920.mp3",
    "cover": "https://cdn.snowstar.company/covers-art-sm/pepper-anthem.jpg",
    "moods": [],
-   "instruments": [],
+   "instruments": [
+    "Vocals"
+   ],
    "bpm": 126,
    "vocal": "Vocals",
    "key": "Bb",
@@ -6202,8 +6214,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 113,
    "vocal": "Instrumental",
@@ -6227,8 +6239,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Instrumental"
    ],
    "bpm": 97,
@@ -6253,8 +6265,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Instrumental"
    ],
    "bpm": 100,
@@ -6330,9 +6342,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -6355,9 +6367,9 @@ const MUTRA = {
     "Romantic"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 118,
    "vocal": "Instrumental",
@@ -6381,8 +6393,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 162,
    "vocal": "Instrumental",
@@ -6406,8 +6418,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 97,
    "vocal": "Instrumental",
@@ -6431,8 +6443,8 @@ const MUTRA = {
     "Aggressive"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 76,
@@ -6480,9 +6492,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 124,
    "vocal": "Instrumental",
@@ -6506,9 +6518,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -6532,8 +6544,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -6556,9 +6568,9 @@ const MUTRA = {
     "Tense"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 85,
    "vocal": "Instrumental",
@@ -6609,8 +6621,8 @@ const MUTRA = {
     "Happy"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 149,
@@ -6662,9 +6674,9 @@ const MUTRA = {
     "Romantic"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 124,
    "vocal": "Instrumental",
@@ -6711,8 +6723,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 145,
    "vocal": "Instrumental",
@@ -6837,9 +6849,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 126,
    "vocal": "Instrumental",
@@ -6863,8 +6875,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -6932,9 +6944,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 115,
    "vocal": "Instrumental",
@@ -6958,8 +6970,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 108,
@@ -7035,10 +7047,10 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Guitar",
     "Drums",
-    "Instrumental"
+    "Guitar",
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 80,
    "vocal": "Instrumental",
@@ -7065,8 +7077,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 74,
    "vocal": "Instrumental",
@@ -7093,8 +7105,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 118,
    "vocal": "Instrumental",
@@ -7142,8 +7154,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 120,
@@ -7193,9 +7205,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -7220,8 +7232,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 117,
    "vocal": "Instrumental",
@@ -7269,8 +7281,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 117,
    "vocal": "Instrumental",
@@ -7319,8 +7331,8 @@ const MUTRA = {
     "Romantic"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 142,
@@ -7345,8 +7357,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 105,
    "vocal": "Instrumental",
@@ -7372,8 +7384,8 @@ const MUTRA = {
    ],
    "instruments": [
     "Guitar",
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 105,
    "vocal": "Instrumental",
@@ -7399,8 +7411,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 78,
    "vocal": "Instrumental",
@@ -7473,9 +7485,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 118,
    "vocal": "Instrumental",
@@ -7550,8 +7562,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 116,
@@ -7599,9 +7611,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -7650,9 +7662,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 108,
    "vocal": "Instrumental",
@@ -7676,8 +7688,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 145,
    "vocal": "Instrumental",
@@ -7700,8 +7712,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 147,
    "vocal": "Instrumental",
@@ -7726,9 +7738,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 70,
    "vocal": "Instrumental",
@@ -7754,8 +7766,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Instrumental"
    ],
    "bpm": 100,
@@ -7887,8 +7899,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 83,
    "vocal": "Instrumental",
@@ -7911,9 +7923,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Guitar",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -7939,9 +7951,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Guitar",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 85,
    "vocal": "Instrumental",
@@ -7966,8 +7978,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 142,
    "vocal": "Instrumental",
@@ -7991,9 +8003,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Piano",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 142,
    "vocal": "Instrumental",
@@ -8043,8 +8055,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -8070,9 +8082,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Strings",
-    "Instrumental"
+    "Strings"
    ],
    "bpm": 117,
    "vocal": "Instrumental",
@@ -8097,8 +8109,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 162,
    "vocal": "Instrumental",
@@ -8123,8 +8135,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 156,
    "vocal": "Instrumental",
@@ -8149,9 +8161,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 110,
    "vocal": "Instrumental",
@@ -8174,9 +8186,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
+    "Instrumental",
     "Piano",
-    "Synth",
-    "Instrumental"
+    "Synth"
    ],
    "bpm": 148,
    "vocal": "Instrumental",
@@ -8201,8 +8213,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 118,
    "vocal": "Instrumental",
@@ -8226,9 +8238,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 122,
    "vocal": "Instrumental",
@@ -8278,9 +8290,9 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
     "Guitar",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 100,
    "vocal": "Instrumental",
@@ -8326,8 +8338,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
+    "Synth",
     "Vocals"
    ],
    "bpm": 90,
@@ -8429,8 +8441,8 @@ const MUTRA = {
     "Happy"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 150,
@@ -8455,9 +8467,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 120,
    "vocal": "Instrumental",
@@ -8481,8 +8493,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 110,
    "vocal": "Instrumental",
@@ -8507,8 +8519,8 @@ const MUTRA = {
     "Playful"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 129,
@@ -8534,8 +8546,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Instrumental"
+    "Instrumental",
+    "Piano"
    ],
    "bpm": 123,
    "vocal": "Instrumental",
@@ -8557,8 +8569,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Guitar",
     "Drums",
+    "Guitar",
     "Vocals"
    ],
    "bpm": 148,
@@ -8583,9 +8595,9 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 130,
    "vocal": "Instrumental",
@@ -8708,10 +8720,10 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Piano",
-    "Strings",
     "Flute",
-    "Instrumental"
+    "Instrumental",
+    "Piano",
+    "Strings"
    ],
    "bpm": 139,
    "vocal": "Instrumental",
@@ -8737,8 +8749,8 @@ const MUTRA = {
     "Sad"
    ],
    "instruments": [
-    "Strings",
-    "Instrumental"
+    "Instrumental",
+    "Strings"
    ],
    "bpm": 121,
    "vocal": "Instrumental",
@@ -8860,8 +8872,8 @@ const MUTRA = {
     "Chill"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 121,
    "vocal": "Instrumental",
@@ -8884,9 +8896,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 121,
    "vocal": "Instrumental",
@@ -8911,8 +8923,8 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 121,
    "vocal": "Instrumental",
@@ -8935,9 +8947,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",
@@ -8960,9 +8972,9 @@ const MUTRA = {
     "Party"
    ],
    "instruments": [
-    "Synth",
     "Drums",
-    "Instrumental"
+    "Instrumental",
+    "Synth"
    ],
    "bpm": 112,
    "vocal": "Instrumental",

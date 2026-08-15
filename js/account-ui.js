@@ -79,7 +79,7 @@
           <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/><path fill="#34A853" d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.1-4 1.1-3 0-5.6-2-6.5-4.8H1.6v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.5 14.4a7.2 7.2 0 0 1 0-4.6V6.7H1.6a12 12 0 0 0 0 10.8l3.9-3.1z"/><path fill="#EA4335" d="M12 4.8c1.7 0 3.3.6 4.5 1.8l3.4-3.4A12 12 0 0 0 1.6 6.7l3.9 3.1C6.4 6.9 9 4.8 12 4.8z"/></svg>
           Continue with Google
         </a>
-        <a class="auth-soc auth-soc-f" id="socFacebook" href="/api/auth/facebook">
+        <a class="auth-soc auth-soc-f" id="socFacebook" href="/api/auth/facebook" hidden>
           <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="#1877F2" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.96h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
           Continue with Facebook
         </a>
@@ -255,6 +255,14 @@
       const off = M.onChange(() => { off(); done(); });
     });
     once.then(async () => {
+      // tell the server what this browser saw; the server half already logs
+      try {
+        navigator.sendBeacon('/api/track', JSON.stringify({
+          type: 'view', sid: 'authdiag' + Math.random().toString(36).slice(2, 10),
+          detail: 'auth=' + res + ' user=' + (M.user ? 'yes' : 'no') + ' code=' + (handoff ? 'yes' : 'no'),
+          page: '/auth-diag',
+        }));
+      } catch {}
       if (res === 'ok') {
         // the redirect's cookie may not have survived; redeem the code instead
         if (!M.user && handoff) {
