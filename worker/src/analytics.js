@@ -133,7 +133,7 @@ export async function handleStats(req, env, user) {
   const days = Math.min(90, Math.max(1, parseInt(url.searchParams.get('days') || '30', 10)));
   const since = now() - days * 86400;
 
-  const [totals, topTracks, daily, recent, countries, referrers, licenses] = await Promise.all([
+  const [totals, topTracks, daily, recent, countries, referrers, licenses, members] = await Promise.all([
     env.DB.prepare(
       `SELECT COUNT(DISTINCT session_id) AS visits,
               SUM(CASE WHEN type='view' THEN 1 ELSE 0 END)    AS views,
@@ -162,6 +162,11 @@ export async function handleStats(req, env, user) {
       `SELECT detail AS slug, COUNT(*) AS clicks FROM events
         WHERE type='license' AND ts >= ? AND detail IS NOT NULL
         GROUP BY detail ORDER BY clicks DESC LIMIT 15`).bind(since).all(),
+    // everyone who has signed up, newest first — this is your mailing list
+    env.DB.prepare(
+      `SELECT u.email, u.name, u.newsletter, u.signup_source, u.created_at, u.last_login_at,
+              (SELECT COUNT(*) FROM favorites f WHERE f.user_id = u.id) AS favs
+         FROM users u ORDER BY u.created_at DESC LIMIT 200`).all(),
   ]);
 
   return json({
@@ -173,6 +178,7 @@ export async function handleStats(req, env, user) {
     countries: countries.results || [],
     referrers: referrers.results || [],
     licenses: licenses.results || [],
+    members: members.results || [],
   });
 }
 

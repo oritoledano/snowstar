@@ -149,6 +149,19 @@
           <div id="jrn"></div>
         </div>
         <div class="st-panel" style="grid-column:1/-1">
+          <h2>Members <span class="pill">${(d.members || []).length} signed up</span>
+            <button class="chip" id="copyEmails" style="float:right">Copy emails</button></h2>
+          ${table(d.members || [], [
+            { label: 'Email', get: r => r.email },
+            { label: 'Name', get: r => r.name || '—' },
+            { label: 'Joined via', get: r => r.signup_source || 'password' },
+            { label: 'Newsletter', get: r => r.newsletter ? 'yes' : '—' },
+            { label: 'Favorites', num: true, get: r => r.favs },
+            { label: 'Joined', get: r => fmtDate(r.created_at) },
+            { label: 'Last seen', get: r => r.last_login_at ? fmtDate(r.last_login_at) : '—' },
+          ])}
+        </div>
+        <div class="st-panel" style="grid-column:1/-1">
           <h2>By day</h2>
           ${table(d.daily, [
             { label: 'Day', get: r => r.day },
@@ -162,6 +175,14 @@
       b.addEventListener('click', () => { days = +b.dataset.days; load(); }));
     app.querySelectorAll('tr.click').forEach(tr =>
       tr.addEventListener('click', () => journey(tr.dataset.sid)));
+    const copy = document.getElementById('copyEmails');
+    if (copy) copy.addEventListener('click', () => {
+      // only those who actually opted in — the rest never agreed to be mailed
+      const list = (d.members || []).filter(m => m.newsletter).map(m => m.email);
+      navigator.clipboard.writeText(list.join(', '));
+      copy.textContent = list.length ? `Copied ${list.length} opted-in` : 'Nobody opted in yet';
+      setTimeout(() => { copy.textContent = 'Copy emails'; }, 2500);
+    });
   }
 
   async function journey(sid) {
