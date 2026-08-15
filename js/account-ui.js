@@ -246,11 +246,10 @@
     const p = new URLSearchParams(location.search);
     const res = p.get('auth');
     if (!res) return;
+    const handoff = p.get('h');              // read first — the tidy-up below removes it
     ['auth', 'h', 'why'].forEach(k => p.delete(k));
     const clean = location.pathname + (p.toString() ? '?' + p : '') + location.hash;
     history.replaceState(null, '', clean);   // don't leave it in the URL
-
-    const handoff = p.get('h');
     const once = M.ready ? Promise.resolve() : new Promise(done => {
       const off = M.onChange(() => { off(); done(); });
     });

@@ -146,9 +146,10 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 
 /* the search + filters ride along once you scroll past them */
 .cbar{position:sticky;top:70px;z-index:45;background:var(--bg);
-  padding-top:14px;margin:0 calc(clamp(20px,5vw,56px) * -1);
-  padding-left:clamp(20px,5vw,56px);padding-right:clamp(20px,5vw,56px)}
+  padding:14px clamp(20px,5vw,56px) 4px;
+  margin:0 calc(clamp(20px,5vw,56px) * -1)}
 .cbar.stuck{border-bottom:1px solid var(--line);box-shadow:0 10px 30px -18px rgba(0,0,0,.6)}
+.cbar.stuck{padding-bottom:14px}
 .cbar.stuck .browse-search{margin-bottom:14px}
 .cbar.stuck .browse-search input{padding-top:11px;padding-bottom:11px}
 
@@ -230,7 +231,7 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .browse-search input:focus{border-color:var(--coral)}
 .browse-search svg{position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--dim)}
 /* Artlist-style: a category opens a drawer that pushes the list down */
-.fbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 0 2px}
+.fbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 4px 2px}
 .fbar-gap{flex:1 1 auto;min-width:8px}
 .fcat{display:inline-flex;align-items:center;gap:7px;background:none;border:0;cursor:pointer;
   font-family:var(--font-body);font-size:.9rem;font-weight:500;color:var(--muted);
@@ -285,7 +286,8 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
    both rows centred. Favourites sheds its label; the display toggles are
    already icons. */
 @media (max-width:1024px){
-  .fbar{justify-content:center;row-gap:10px}
+  .browse-search{margin-left:8px;margin-right:8px}
+  .fbar{justify-content:center;row-gap:10px;padding-left:10px;padding-right:10px}
   .fbar > *{order:3}
   .fcat-tgl,.fsort,.fcat-adv,#favToggle{order:1}
   .fbar-gap{order:2;flex-basis:100%;height:0;min-width:0}
@@ -299,7 +301,9 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 /* at phone width the control row has to earn every pixel, so Filters keeps
    its icon and drops its word */
 @media (max-width:560px){
-  .fbar{gap:4px}
+  .cbar{padding-left:14px;padding-right:14px;margin:0 -14px}
+  .browse-search{margin-left:4px;margin-right:4px}
+  .fbar{gap:4px;padding-left:6px;padding-right:6px}
   .fcat{font-size:.8rem;padding:7px 8px}
   .fcat-tgl{padding:7px 5px}
   .fcat-adv{font-size:0;padding:7px 9px;border-radius:10px}
