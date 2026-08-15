@@ -49,7 +49,7 @@ h1,h2,.mmenu-nav a{font-family:"Anton",var(--font-display),sans-serif;font-weigh
 /* full-screen menu — same wipe, stagger and behaviour as the main site,
    in Mutra's palette. Being full-screen is also what makes "click outside"
    meaningful: any empty space closes it. */
-.mmenu{position:fixed;inset:0;z-index:40;
+.mmenu{position:fixed;inset:0;z-index:55;
   background:
     radial-gradient(58% 60% at 82% 8%,var(--menu-wash-1),transparent 60%),
     radial-gradient(52% 55% at 8% 92%,var(--menu-wash-2),transparent 62%),
