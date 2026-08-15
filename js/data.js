@@ -11,6 +11,16 @@ const SHOWREEL = {
 };
 const PROJECTS = [
  {
+  "title": "Waves Audio - Magma Spring Reverb",
+  "thumb": "assets/thumbs/waves-magma-spring-reverb.jpg",
+  "preview": "assets/thumbs/waves-magma-spring-reverb.mp4",
+  "mp4": "assets/work/waves-magma-spring-reverb.mp4",
+  "credits": {
+   "work": "Sync deal — original song \"ONSITELOVER\" by Ori Toledano a.k.a KAYMA, courtesy of Anova Music"
+  },
+  "tags": ["ORIGINAL_MUSIC", "KAYMA"]
+ },
+ {
   "title": "DAN HOTELS - EILAT",
   "thumb": "assets/thumbs/dan-hotels-eilat.jpg",
   "mp4": "assets/work/dan-hotels-eilat.mp4",
