@@ -962,7 +962,7 @@
     if (!track) return;
     const LOGOS = [
       10, 2, 7, 4, 23, 19, 20, 21, 12, 1, 17, 3, 14,   // Pepsi, Doritos, Intel, Subaru, Unilever…
-      6, 8, 11, 18, 16, 5, 0, 9, 24, 29, 22, 30, 27,   // agencies, then the Israeli names
+      6, 8, 11, 18, 16, 5, 31, 0, 9, 24, 29, 22, 30, 27,   // agencies, then the Israeli names
       13, 26, 25, 28, 15,
     ];
     const MIXED = new Set([2, 19]); // carry their own dark ink, so they don't get inverted
