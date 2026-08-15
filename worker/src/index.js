@@ -17,7 +17,7 @@
 
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
 import { sendMail, resetEmail } from './mail.js';
-import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff } from './oauth.js';
+import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -137,26 +137,39 @@ function sessionCookie(token, maxAgeSec) {
   return parts.join('; ');
 }
 
-function readCookie(req, name) {
+function readCookies(req, name) {
   const raw = req.headers.get('cookie') || '';
+  const values = [];
   for (const part of raw.split(/;\s*/)) {
     const i = part.indexOf('=');
-    if (i > 0 && part.slice(0, i) === name) return part.slice(i + 1);
+    if (i > 0 && part.slice(0, i) === name) values.push(part.slice(i + 1));
+  }
+  return values;
+}
+
+async function currentUser(req, env) {
+  // A browser can hold SEVERAL ss_session cookies — the pre-umbrella host-only
+  // one next to today's Domain= cookie — and it sends the OLDEST first. Never
+  // trust just the first match: a dead old cookie would shadow a live session
+  // forever. Try each one.
+  for (const token of readCookies(req, 'ss_session')) {
+    if (!token) continue;
+    const hash = await sha256b64(token);
+    const row = await env.DB.prepare(
+      `SELECT u.id, u.email, u.name, u.newsletter, u.admin, u.avatar, s.expires_at
+         FROM sessions s JOIN users u ON u.id = s.user_id
+        WHERE s.token_hash = ?`
+    ).bind(hash).first();
+    if (row && row.expires_at > now()) return row;
   }
   return null;
 }
 
-async function currentUser(req, env) {
-  const token = readCookie(req, 'ss_session');
-  if (!token) return null;
-  const hash = await sha256b64(token);
-  const row = await env.DB.prepare(
-    `SELECT u.id, u.email, u.name, u.newsletter, u.admin, u.avatar, s.expires_at
-       FROM sessions s JOIN users u ON u.id = s.user_id
-      WHERE s.token_hash = ?`
-  ).bind(hash).first();
-  if (!row || row.expires_at <= now()) return null;
-  return row;
+/** Auth success response: fresh session cookie + eviction of the legacy one. */
+function authed(data, status, cookie) {
+  const res = json(data, status, { 'set-cookie': cookie });
+  res.headers.append('set-cookie', KILL_LEGACY_COOKIE);
+  return res;
 }
 
 /** CSRF defence-in-depth: state-changing requests must come from our own origin. */
@@ -234,8 +247,8 @@ async function handle(req, env, ctx) {
     await env.DB.prepare('INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)')
       .bind(await sha256b64(token), id, t, t + maxAge).run();
 
-    return json({ user: publicUser({ email, name, newsletter }), favorites: [] }, 201,
-      { 'set-cookie': sessionCookie(token, maxAge) });
+    return authed({ user: publicUser({ email, name, newsletter }), favorites: [] }, 201,
+      sessionCookie(token, maxAge));
   }
 
   // ── login ──
@@ -271,19 +284,20 @@ async function handle(req, env, ctx) {
       env.DB.prepare('DELETE FROM sessions WHERE expires_at <= ?').bind(t),
     ]);
 
-    return json(
+    return authed(
       { user: publicUser(u), favorites: await favoritesFor(env, u.id, product(body.product)) },
-      200, { 'set-cookie': sessionCookie(token, maxAge) }
+      200, sessionCookie(token, maxAge)
     );
   }
 
   // ── logout ──
   if (path === '/logout' && method === 'POST') {
-    const token = readCookie(req, 'ss_session');
-    if (token) {
-      await env.DB.prepare('DELETE FROM sessions WHERE token_hash = ?').bind(await sha256b64(token)).run();
+    for (const token of readCookies(req, 'ss_session')) {
+      if (token) await env.DB.prepare('DELETE FROM sessions WHERE token_hash = ?')
+        .bind(await sha256b64(token)).run();
     }
-    return json({ ok: true }, 200, { 'set-cookie': sessionCookie('', 0) });
+    // clear both cookie variants — the Domain= one and any legacy host-only one
+    return authed({ ok: true }, 200, sessionCookie('', 0));
   }
 
   // ── forgot password: issue a single-use link ──
@@ -361,9 +375,9 @@ async function handle(req, env, ctx) {
     ]);
     await clearThrottle(env, `resetc:${ip}`);
 
-    return json(
+    return authed(
       { user: publicUser(row), favorites: await favoritesFor(env, row.user_id, product(body.product)) },
-      200, { 'set-cookie': sessionCookie(sessionToken, maxAge) }
+      200, sessionCookie(sessionToken, maxAge)
     );
   }
 

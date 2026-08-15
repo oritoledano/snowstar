@@ -14,6 +14,15 @@
  */
 
 const STATE_TTL = 600;          // 10 minutes to complete the round trip
+
+/**
+ * Deletes the pre-umbrella HOST-ONLY cookie (set without `Domain=` before the
+ * account area went site-wide). To a browser that's a DIFFERENT cookie from
+ * today's `Domain=snowstar.company` one, and being older it is sent FIRST —
+ * so a stale copy shadowed every fresh session and sign-in never seemed to
+ * stick. Send this alongside every auth response so old browsers heal.
+ */
+export const KILL_LEGACY_COOKIE = 'ss_session=; Path=/; Max-Age=0';
 const enc = new TextEncoder();
 const now = () => Math.floor(Date.now() / 1000);
 
@@ -181,8 +190,10 @@ export async function finishOAuth(req, env, provider) {
 
     const to = safeReturn(back);
     await note(env, 'callback_ok', profile.email + ' → ' + to);
-    return bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok&h=' + handoffCode,
+    const res = bounce(to + (to.includes('?') ? '&' : '?') + 'auth=ok&h=' + handoffCode,
       { 'set-cookie': cookie });
+    res.headers.append('set-cookie', KILL_LEGACY_COOKIE);
+    return res;
   } catch (e) {
     const why = String(e && e.message || e).slice(0, 40).replace(/[^\w .:-]/g, '');
     await note(env, 'callback_error', String(e && e.message || e));
@@ -278,9 +289,11 @@ export async function claimHandoff(req, env) {
   const u = await env.DB.prepare(
     'SELECT email, name, newsletter, admin, avatar FROM users WHERE id = ?'
   ).bind(row.user_id).first();
-  return json({ user: {
+  const res = json({ user: {
     email: u.email, name: u.name, newsletter: !!u.newsletter, admin: !!u.admin, avatar: u.avatar || null,
   } }, 200, { 'set-cookie': cookie });
+  res.headers.append('set-cookie', KILL_LEGACY_COOKIE);
+  return res;
 }
 
 /**
