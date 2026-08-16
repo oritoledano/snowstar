@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/account.css?v=4">
-<link rel="stylesheet" href="css/style.css?v=17">
+<link rel="stylesheet" href="css/style.css?v=18">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -85,7 +85,13 @@
       <h2>Heard everywhere.<br>Seen here.</h2>
       <p class="section-note">A decade of scores, sonic logos and soundtracks — hover to preview, click to play.</p>
     </div>
-    <div class="work-filters reveal" id="workFilters" role="group" aria-label="Filter by category"></div>
+    <div class="work-controls reveal" id="workControls">
+      <label class="work-search" for="workSearch">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="search" id="workSearch" placeholder="Search project, director, production, agency…" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="work-filters" id="workFilters" role="group" aria-label="Filter work"></div>
+    </div>
     <div class="work-grid" id="workGrid"></div>
     <div class="work-more reveal">
       <button class="btn btn-ghost" id="showAll">Show all <span id="workCount"></span> projects</button>
@@ -200,8 +206,8 @@
   <p class="lightbox-title" id="lightboxTitle"></p>
 </div>
 
-<script src="js/data.js?v=9"></script>
-<script src="js/main.js?v=16"></script>
+<script src="js/data.js?v=10"></script>
+<script src="js/main.js?v=18"></script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "73a85d296d5c4ab9a337d3e1e841f34e"}'></script><!-- End Cloudflare Web Analytics -->
 <script src="js/mutra-track.js?v=1"></script>
 <script src="js/account.js?v=3"></script>

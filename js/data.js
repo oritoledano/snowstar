@@ -11,17 +11,8 @@ const SHOWREEL = {
 };
 const PROJECTS = [
  {
-  "title": "Waves Audio - Magma Spring Reverb",
-  "thumb": "assets/thumbs/waves-magma-spring-reverb.jpg",
-  "preview": "assets/thumbs/waves-magma-spring-reverb.mp4",
-  "mp4": "assets/work/waves-magma-spring-reverb.mp4",
-  "credits": {
-   "work": "Sync deal — original song \"ONSITELOVER\" by Ori Toledano a.k.a KAYMA, courtesy of Anova Music"
-  },
-  "tags": ["ORIGINAL_MUSIC", "KAYMA"]
- },
- {
   "title": "DAN HOTELS - EILAT",
+  "media": ["TV"],
   "thumb": "assets/thumbs/dan-hotels-eilat.jpg",
   "mp4": "assets/work/dan-hotels-eilat.mp4",
   "credits": {
@@ -33,6 +24,7 @@ const PROJECTS = [
  },
  {
   "title": "GOLDSTAR UF",
+  "media": ["TV"],
   "thumb": "assets/thumbs/goldstar-uf.jpg",
   "mp4": "assets/work/goldstar-uf.mp4",
   "credits": {
@@ -44,6 +36,7 @@ const PROJECTS = [
  },
  {
   "title": "PEPSI - VIETNAM",
+  "media": ["TV"],
   "thumb": "assets/thumbs/pepsi-vietnam.jpg",
   "mp4": "assets/work/pepsi-vietnam.mp4",
   "credits": {
@@ -54,6 +47,7 @@ const PROJECTS = [
  },
  {
   "title": "STING - PEPSICO",
+  "media": ["TV"],
   "thumb": "assets/thumbs/sting-pepsico.jpg",
   "mp4": "assets/work/sting-pepsico.mp4",
   "credits": {
@@ -64,6 +58,7 @@ const PROJECTS = [
  },
  {
   "title": "FIVERR - DIRECTOR'S CUT",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/fiverr-director-s-cut.jpg",
   "mp4": "assets/work/fiverr-director-s-cut.mp4",
   "credits": {
@@ -74,6 +69,7 @@ const PROJECTS = [
  },
  {
   "title": "SACARA - NETA",
+  "media": ["TV"],
   "thumb": "assets/thumbs/sacara-neta.jpg",
   "mp4": "assets/work/sacara-neta.mp4",
   "credits": {
@@ -83,6 +79,7 @@ const PROJECTS = [
  },
  {
   "title": "MITSUBISHI - ASX",
+  "media": ["TV"],
   "thumb": "assets/thumbs/mitsubishi-asx.jpg",
   "mp4": "assets/work/mitsubishi-asx.mp4",
   "credits": {
@@ -92,6 +89,7 @@ const PROJECTS = [
  },
  {
   "title": "VIP 2 PROMO",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/vip-2-promo.jpg",
   "mp4": "assets/work/vip-2-promo.mp4",
   "credits": {
@@ -103,6 +101,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL COSMETICS",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-cosmetics.jpg",
   "mp4": "assets/work/shufersal-cosmetics.mp4",
   "credits": {
@@ -114,6 +113,7 @@ const PROJECTS = [
  },
  {
   "title": "FLORENTIN SQUARE",
+  "media": ["TV"],
   "thumb": "assets/thumbs/florentin-square.jpg",
   "mp4": "assets/work/florentin-square.mp4",
   "credits": {
@@ -125,6 +125,7 @@ const PROJECTS = [
  },
  {
   "title": "SHABABNIKIM",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shababnikim.jpg",
   "mp4": "assets/work/shababnikim.mp4",
   "credits": {
@@ -136,6 +137,7 @@ const PROJECTS = [
  },
  {
   "title": "BIG FASHION - BUNNY",
+  "media": ["TV"],
   "thumb": "assets/thumbs/big-fashion-bunny.jpg",
   "mp4": "assets/work/big-fashion-bunny.mp4",
   "credits": {
@@ -147,6 +149,7 @@ const PROJECTS = [
  },
  {
   "title": "DAN HOTELS - TEL AVIV",
+  "media": ["TV"],
   "thumb": "assets/thumbs/dan-hotels-tel-aviv.jpg",
   "mp4": "assets/work/dan-hotels-tel-aviv.mp4",
   "credits": {
@@ -158,6 +161,7 @@ const PROJECTS = [
  },
  {
   "title": "ATLETICO MADRID",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/atletico-madrid.jpg",
   "mp4": "assets/work/atletico-madrid.mp4",
   "credits": {
@@ -169,6 +173,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL GALA",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-gala.jpg",
   "mp4": "assets/work/shufersal-gala.mp4",
   "credits": {
@@ -180,6 +185,7 @@ const PROJECTS = [
  },
  {
   "title": "SODASTREAM",
+  "media": ["TV"],
   "thumb": "assets/thumbs/sodastream.jpg",
   "vimeo": 155393974,
   "mp4": "assets/work/sodastream.mp4",
@@ -192,6 +198,7 @@ const PROJECTS = [
  },
  {
   "title": "BIGI TV",
+  "media": ["TV"],
   "thumb": "assets/thumbs/bigi-tv.jpg",
   "mp4": "assets/work/bigi-tv.mp4",
   "credits": {
@@ -203,6 +210,7 @@ const PROJECTS = [
  },
  {
   "title": "ALL JOBS",
+  "media": ["TV"],
   "thumb": "assets/thumbs/all-jobs.jpg",
   "vimeo": 125021584,
   "mp4": "assets/work/all-jobs.mp4",
@@ -215,6 +223,7 @@ const PROJECTS = [
  },
  {
   "title": "CASTRO",
+  "media": ["TV"],
   "thumb": "assets/thumbs/castro.jpg",
   "preview": "assets/thumbs/castro.mp4",
   "vimeo": 178864373,
@@ -228,6 +237,7 @@ const PROJECTS = [
  },
  {
   "title": "HISHGAD - MEFUNAKCHIK",
+  "media": ["TV"],
   "thumb": "assets/thumbs/hishgad-mefunakchik.jpg",
   "mp4": "assets/work/hishgad-mefunakchik.mp4",
   "credits": {
@@ -239,6 +249,7 @@ const PROJECTS = [
  },
  {
   "title": "FATAL & FRIENDS",
+  "media": ["TV"],
   "thumb": "assets/thumbs/fatal-friends.jpg",
   "mp4": "assets/work/fatal-friends.mp4",
   "credits": {
@@ -249,6 +260,7 @@ const PROJECTS = [
  },
  {
   "title": "ZEMACH HAMMERMAN",
+  "media": ["TV"],
   "thumb": "assets/thumbs/zemach-hammerman.jpg",
   "preview": "assets/thumbs/zemach-hammerman.mp4",
   "vimeo": 146577451,
@@ -262,6 +274,7 @@ const PROJECTS = [
  },
  {
   "title": "WHITE NIGHT TLV",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/white-night-tlv.jpg",
   "vimeo": 130773885,
   "mp4": "assets/work/white-night-tlv.mp4",
@@ -273,6 +286,7 @@ const PROJECTS = [
  },
  {
   "title": "AHAVA",
+  "media": ["TV"],
   "thumb": "assets/thumbs/ahava.jpg",
   "mp4": "assets/work/ahava.mp4",
   "credits": {
@@ -283,6 +297,7 @@ const PROJECTS = [
  },
  {
   "title": "SHILTON HATSLALIM",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shilton-hatslalim.jpg",
   "mp4": "assets/work/shilton-hatslalim.mp4",
   "credits": {
@@ -293,6 +308,7 @@ const PROJECTS = [
  },
  {
   "title": "JOHNNIE WALKER",
+  "media": ["TV"],
   "thumb": "assets/thumbs/johnnie-walker.jpg",
   "preview": "assets/thumbs/johnnie-walker.mp4",
   "vimeo": 150880105,
@@ -306,6 +322,7 @@ const PROJECTS = [
  },
  {
   "title": "FLORENTIN SQUARE - SOFT",
+  "media": ["TV"],
   "thumb": "assets/thumbs/florentin-square-soft.jpg",
   "mp4": "assets/work/florentin-square-soft.mp4",
   "credits": {
@@ -317,6 +334,7 @@ const PROJECTS = [
  },
  {
   "title": "CELLCOM SUPER WIFI",
+  "media": ["TV"],
   "thumb": "assets/thumbs/cellcom-super-wifi.jpg",
   "mp4": "assets/work/cellcom-super-wifi.mp4",
   "credits": {
@@ -328,6 +346,7 @@ const PROJECTS = [
  },
  {
   "title": "SPOTLIGHT ID",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/spotlight-id.jpg",
   "preview": "assets/thumbs/spotlight-id.mp4",
   "vimeo": 183543308,
@@ -342,6 +361,7 @@ const PROJECTS = [
  },
  {
   "title": "LIHI TOLEDANO - STORM",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/lihi-toledano-storm.jpg",
   "mp4": "assets/work/lihi-toledano-storm.mp4",
   "credits": {
@@ -350,6 +370,7 @@ const PROJECTS = [
  },
  {
   "title": "MASKIT",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/maskit.jpg",
   "preview": "assets/thumbs/maskit.mp4",
   "mp4": "assets/work/maskit.mp4",
@@ -360,6 +381,7 @@ const PROJECTS = [
  },
  {
   "title": "PEPSI MAX",
+  "media": ["TV"],
   "thumb": "assets/thumbs/pepsi-max.jpg",
   "preview": "assets/thumbs/pepsi-max.mp4",
   "vimeo": 174502281,
@@ -372,6 +394,7 @@ const PROJECTS = [
  },
  {
   "title": "HOT",
+  "media": ["TV"],
   "thumb": "assets/thumbs/hot.jpg",
   "vimeo": 123962938,
   "mp4": "assets/work/hot.mp4",
@@ -384,6 +407,7 @@ const PROJECTS = [
  },
  {
   "title": "WIX - MARVEL",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/wix-marvel.jpg",
   "mp4": "assets/work/wix-marvel.mp4",
   "credits": {
@@ -393,6 +417,7 @@ const PROJECTS = [
  },
  {
   "title": "IS ABOUT",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/is-about.jpg",
   "mp4": "assets/work/is-about.mp4",
   "credits": {
@@ -404,6 +429,7 @@ const PROJECTS = [
  },
  {
   "title": "WAVES AUDIO",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/waves-audio.jpg",
   "vimeo": 146581664,
   "mp4": "assets/work/waves-audio.mp4",
@@ -415,6 +441,7 @@ const PROJECTS = [
  },
  {
   "title": "LANDWER",
+  "media": ["TV"],
   "thumb": "assets/thumbs/landwer.jpg",
   "vimeo": 123957816,
   "mp4": "assets/work/landwer.mp4",
@@ -426,6 +453,7 @@ const PROJECTS = [
  },
  {
   "title": "TABOR",
+  "media": ["TV"],
   "thumb": "assets/thumbs/tabor.jpg",
   "mp4": "assets/work/tabor.mp4",
   "credits": {
@@ -436,6 +464,7 @@ const PROJECTS = [
  },
  {
   "title": "NOVO",
+  "media": ["TV"],
   "thumb": "assets/thumbs/novo.jpg",
   "mp4": "assets/work/novo.mp4",
   "credits": {
@@ -446,6 +475,7 @@ const PROJECTS = [
  },
  {
   "title": "PARIS",
+  "media": ["TV"],
   "thumb": "assets/thumbs/paris.jpg",
   "mp4": "assets/work/paris.mp4",
   "credits": {
@@ -454,7 +484,19 @@ const PROJECTS = [
   }
  },
  {
+  "title": "Waves Audio - Magma Spring Reverb",
+  "media": ["DIGITAL"],
+  "thumb": "assets/thumbs/waves-magma-spring-reverb.jpg?v=2",
+  "preview": "assets/thumbs/waves-magma-spring-reverb.mp4",
+  "mp4": "assets/work/waves-magma-spring-reverb.mp4",
+  "credits": {
+   "work": "Sync deal — original song \"ONSITELOVER\" by Ori Toledano a.k.a KAYMA, courtesy of Anova Music"
+  },
+  "tags": ["ORIGINAL_MUSIC", "KAYMA"]
+ },
+ {
   "title": "CAROLINA LEMKE",
+  "media": ["TV"],
   "thumb": "assets/thumbs/carolina-lemke.jpg",
   "mp4": "assets/work/carolina-lemke.mp4",
   "credits": {
@@ -464,6 +506,7 @@ const PROJECTS = [
  },
  {
   "title": "AZRIELI SARONA",
+  "media": ["TV"],
   "thumb": "assets/thumbs/azrieli-sarona.jpg",
   "vimeo": 175620874,
   "mp4": "assets/work/azrieli-sarona.mp4",
@@ -475,6 +518,7 @@ const PROJECTS = [
  },
  {
   "title": "TV FROM THE FUTURE",
+  "media": ["TV"],
   "thumb": "assets/thumbs/tv-from-the-future.jpg",
   "mp4": "assets/work/tv-from-the-future.mp4",
   "credits": {
@@ -486,6 +530,7 @@ const PROJECTS = [
  },
  {
   "title": "STARTAPP",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/startapp.jpg",
   "vimeo": 161345520,
   "mp4": "assets/work/startapp.mp4",
@@ -497,6 +542,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL - HOLIDAY NIGHT",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-holiday-night.jpg",
   "mp4": "assets/work/shufersal-holiday-night.mp4",
   "credits": {
@@ -508,6 +554,7 @@ const PROJECTS = [
  },
  {
   "title": "DORITOS USA",
+  "media": ["TV"],
   "thumb": "assets/thumbs/doritos-usa.jpg",
   "preview": "assets/thumbs/doritos-usa.mp4",
   "vimeo": 178539480,
@@ -520,6 +567,7 @@ const PROJECTS = [
  },
  {
   "title": "TIVALL FACTORY",
+  "media": ["TV"],
   "thumb": "assets/thumbs/tivall-factory.jpg",
   "preview": "assets/thumbs/tivall-factory.mp4",
   "credits": {
@@ -528,6 +576,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL - BELLA CHAO",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-bella-chao.jpg",
   "mp4": "assets/work/shufersal-bella-chao.mp4",
   "credits": {
@@ -539,6 +588,7 @@ const PROJECTS = [
  },
  {
   "title": "TEVA - ALERGIX",
+  "media": ["TV"],
   "thumb": "assets/thumbs/teva-alergix.jpg",
   "mp4": "assets/work/teva-alergix.mp4",
   "credits": {
@@ -550,6 +600,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL - MONDIAL",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-mondial.jpg",
   "mp4": "assets/work/shufersal-mondial.mp4",
   "credits": {
@@ -561,6 +612,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL ONLINE",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-online.jpg",
   "mp4": "assets/work/shufersal-online.mp4",
   "credits": {
@@ -572,6 +624,7 @@ const PROJECTS = [
  },
  {
   "title": "24 OPTION - PHOTOSHOT",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/24-option-photoshot.jpg",
   "vimeo": 150879005,
   "mp4": "assets/work/24-option-photoshot.mp4",
@@ -583,6 +636,7 @@ const PROJECTS = [
  },
  {
   "title": "TEL-HAI",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/tel-hai.jpg",
   "mp4": "assets/work/tel-hai.mp4",
   "credits": {
@@ -594,6 +648,7 @@ const PROJECTS = [
  },
  {
   "title": "AMDOCS",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/amdocs.jpg",
   "mp4": "assets/work/amdocs.mp4",
   "credits": {
@@ -602,6 +657,7 @@ const PROJECTS = [
  },
  {
   "title": "LIPTON",
+  "media": ["TV"],
   "thumb": "assets/thumbs/lipton.jpg",
   "mp4": "assets/work/lipton.mp4",
   "credits": {
@@ -613,6 +669,7 @@ const PROJECTS = [
  },
  {
   "title": "SUBARO - XV",
+  "media": ["TV"],
   "thumb": "assets/thumbs/subaro-xv.jpg",
   "vimeo": 116263390,
   "mp4": "assets/work/subaro-xv.mp4",
@@ -625,6 +682,7 @@ const PROJECTS = [
  },
  {
   "title": "PEPPER - SOLDIERS",
+  "media": ["TV"],
   "thumb": "assets/thumbs/pepper-soldiers.jpg",
   "mp4": "assets/work/pepper-soldiers.mp4",
   "credits": {
@@ -636,6 +694,7 @@ const PROJECTS = [
  },
  {
   "title": "888 HOLDINGS",
+  "media": ["TV"],
   "thumb": "assets/thumbs/888-holdings.jpg",
   "mp4": "assets/work/888-holdings.mp4",
   "credits": {
@@ -647,6 +706,7 @@ const PROJECTS = [
  },
  {
   "title": "GAMADIM",
+  "media": ["TV"],
   "thumb": "assets/thumbs/gamadim.jpg",
   "mp4": "assets/work/gamadim.mp4",
   "credits": {
@@ -658,6 +718,7 @@ const PROJECTS = [
  },
  {
   "title": "TIVALL - VEGETABLES",
+  "media": ["TV"],
   "thumb": "assets/thumbs/tivall-vegetables.jpg",
   "mp4": "assets/work/tivall-vegetables.mp4",
   "credits": {
@@ -669,6 +730,7 @@ const PROJECTS = [
  },
  {
   "title": "24 OPTION - DINNER",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/24-option-dinner.jpg",
   "vimeo": 150878977,
   "mp4": "assets/work/24-option-dinner.mp4",
@@ -680,6 +742,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL ONLINE - CHINA",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-online-china.jpg",
   "mp4": "assets/work/shufersal-online-china.mp4",
   "credits": {
@@ -691,6 +754,7 @@ const PROJECTS = [
  },
  {
   "title": "FIVERR",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/fiverr.jpg",
   "mp4": "assets/work/fiverr.mp4",
   "credits": {
@@ -700,6 +764,7 @@ const PROJECTS = [
  },
  {
   "title": "H2",
+  "media": ["TV"],
   "thumb": "assets/thumbs/h2.jpg",
   "mp4": "assets/work/h2.mp4",
   "credits": {
@@ -710,6 +775,7 @@ const PROJECTS = [
  },
  {
   "title": "BAGEL BAGEL",
+  "media": ["TV"],
   "thumb": "assets/thumbs/bagel-bagel.jpg",
   "mp4": "assets/work/bagel-bagel.mp4",
   "credits": {
@@ -721,6 +787,7 @@ const PROJECTS = [
  },
  {
   "title": "MINISTRY OF ENVIRONMENTAL PROTECTION",
+  "media": ["TV"],
   "thumb": "assets/thumbs/ministry-of-environmental-protection.jpg",
   "mp4": "assets/work/ministry-of-environmental-protection.mp4",
   "credits": {
@@ -731,6 +798,7 @@ const PROJECTS = [
  },
  {
   "title": "MERETZ",
+  "media": ["TV"],
   "thumb": "assets/thumbs/meretz.jpg",
   "mp4": "assets/work/meretz.mp4",
   "credits": {
@@ -739,6 +807,7 @@ const PROJECTS = [
  },
  {
   "title": "LILY",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/lily.jpg",
   "vimeo": 121602329,
   "mp4": "assets/work/lily.mp4",
@@ -751,6 +820,7 @@ const PROJECTS = [
  },
  {
   "title": "MIKI BUGANIM",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/miki-buganim.jpg",
   "mp4": "assets/work/miki-buganim.mp4",
   "credits": {
@@ -760,6 +830,7 @@ const PROJECTS = [
  },
  {
   "title": "24 OPTION - HAIRDRESSER",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/24-option-hairdresser.jpg",
   "vimeo": 150879007,
   "mp4": "assets/work/24-option-hairdresser.mp4",
@@ -771,6 +842,7 @@ const PROJECTS = [
  },
  {
   "title": "MINISTRY OF ECONOMY",
+  "media": ["TV"],
   "thumb": "assets/thumbs/ministry-of-economy.jpg",
   "mp4": "assets/work/ministry-of-economy.mp4",
   "credits": {
@@ -782,6 +854,7 @@ const PROJECTS = [
  },
  {
   "title": "SWITCH",
+  "media": ["TV"],
   "thumb": "assets/thumbs/switch.jpg",
   "vimeo": 150882613,
   "mp4": "assets/work/switch.mp4",
@@ -793,6 +866,7 @@ const PROJECTS = [
  },
  {
   "title": "TELMA - CHAMPIONS",
+  "media": ["TV"],
   "thumb": "assets/thumbs/telma-champions.jpg",
   "mp4": "assets/work/telma-champions.mp4",
   "credits": {
@@ -802,6 +876,7 @@ const PROJECTS = [
  },
  {
   "title": "SHUFERSAL ONLINE - DELIVERY",
+  "media": ["TV"],
   "thumb": "assets/thumbs/shufersal-online-delivery.jpg",
   "mp4": "assets/work/shufersal-online-delivery.mp4",
   "credits": {
@@ -813,6 +888,7 @@ const PROJECTS = [
  },
  {
   "title": "FITMATE",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/fitmate.jpg",
   "mp4": "assets/work/fitmate.mp4",
   "credits": {
@@ -822,6 +898,7 @@ const PROJECTS = [
  },
  {
   "title": "VIOLA",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/viola.jpg",
   "mp4": "assets/work/viola.mp4",
   "credits": {
@@ -833,6 +910,7 @@ const PROJECTS = [
  },
  {
   "title": "ZAP NINJA",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/zap-ninja.jpg",
   "mp4": "assets/work/zap-ninja.mp4",
   "credits": {
@@ -842,6 +920,7 @@ const PROJECTS = [
  },
  {
   "title": "ONSITELOVER (OFFICIAL VIDEO)",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/onsitelover-official.jpg?v=2",
   "mp4": "assets/work/onsitelover-official.mp4",
   "credits": {
@@ -851,6 +930,7 @@ const PROJECTS = [
  },
  {
   "title": "ONSITELOVER (LIVE FROM IMMANUEL CHURCH)",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/onsitelover-live-immanuel-church.jpg",
   "mp4": "assets/work/onsitelover-live-immanuel-church.mp4",
   "credits": {
@@ -860,6 +940,7 @@ const PROJECTS = [
  },
  {
   "title": "BUNNY (OFFICIAL VIDEO)",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/bunny-official-video.jpg?v=2",
   "mp4": "assets/work/bunny-official-video.mp4",
   "credits": {
@@ -869,6 +950,7 @@ const PROJECTS = [
  },
  {
   "title": "LEARN TO SAY NO (OFFICIAL VIDEO)",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/learn-to-say-no-official.jpg?v=2",
   "mp4": "assets/work/learn-to-say-no-official.mp4",
   "credits": {
@@ -878,6 +960,7 @@ const PROJECTS = [
  },
  {
   "title": "NEW TRYING OUTS (OFFICIAL VIDEO)",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/new-trying-outs-official.jpg?v=2",
   "mp4": "assets/work/new-trying-outs-official.mp4",
   "credits": {
@@ -887,6 +970,7 @@ const PROJECTS = [
  },
  {
   "title": "DANCING ON DUST",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/dancing-on-dust.jpg?v=2",
   "mp4": "assets/work/dancing-on-dust.mp4",
   "credits": {
@@ -896,6 +980,7 @@ const PROJECTS = [
  },
  {
   "title": "LEARN TO SAY NO (LIVE FROM BARBY TEL AVIV)",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/learn-to-say-no-live-barby.jpg",
   "mp4": "assets/work/learn-to-say-no-live-barby.mp4",
   "credits": {
@@ -905,6 +990,7 @@ const PROJECTS = [
  },
  {
   "title": "BAD BLOOD (LIVE FROM BARBY TEL AVIV)",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/bad-blood-live-barby.jpg?v=2",
   "mp4": "assets/work/bad-blood-live-barby.mp4",
   "credits": {
@@ -914,6 +1000,7 @@ const PROJECTS = [
  },
  {
   "title": "BLUE",
+  "media": ["DIGITAL"],
   "thumb": "assets/thumbs/blue.jpg",
   "mp4": "assets/work/blue.mp4",
   "credits": {

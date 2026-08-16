@@ -80,13 +80,16 @@ const INITIAL = 20; // 5 full rows of 4 on a 14" MacBook Pro at full width
 // an explicit "tags" array in data.js for one-off categories the text can't safely imply
 // (e.g. "Performance" — added only where the credits say so, not inferred from "vocal
 // performance" everywhere, which would over-tag unrelated projects).
-const FILTERS = [
-  { key: 'ALL', label: 'All' },
-  { key: 'ORIGINAL_MUSIC', label: 'Original Music' },
-  { key: 'SOUND_DESIGN', label: 'Sound Design' },
-  { key: 'VOICE_OVER', label: 'Voice Over' },
-  { key: 'PERFORMANCE', label: 'Performance' },
-  { key: 'KAYMA', label: 'KAYMA' },
+// Two facet dropdowns. Within a facet the picks are OR'd; across facets (and
+// with the search box) they AND — same model Artlist and the Mutra catalog use.
+const FACETS = [
+  { id: 'work', label: 'Work Type', options: [
+    ['ORIGINAL_MUSIC', 'Original Music'], ['SOUND_DESIGN', 'Sound Design'],
+    ['VOICE_OVER', 'Voice Over'], ['PERFORMANCE', 'Performance'], ['KAYMA', 'KAYMA'],
+  ] },
+  { id: 'media', label: 'Media Type', options: [
+    ['TV', 'TV'], ['DIGITAL', 'Digital'], ['RADIO', 'Radio'], ['IN_APP', 'In-App'],
+  ] },
 ];
 function categorize(p) {
   const text = ((p.credits && p.credits.work) || '').toLowerCase();
@@ -108,6 +111,7 @@ const workCards = PROJECTS.map((p, i) => {
   const card = document.createElement('article');
   card.className = 'work-card reveal-card' + (i >= INITIAL ? ' hidden-card' : '');
   card.dataset.cats = categorize(p).join(',');
+  card.dataset.media = (p.media || []).join(',');
   card.dataset.d = (i % 6) * 60;
   card.innerHTML = `
     <img src="${p.thumb}" alt="${p.title}" loading="lazy">
@@ -129,46 +133,102 @@ document.querySelectorAll('.work-card:not(.hidden-card)').forEach(el => cardObse
 
 document.getElementById('workCount').textContent = PROJECTS.length;
 
-// Multi-select: activeFilters is a set of specific category keys; empty set = "All"
-// (OR semantics — a card shows if it matches ANY selected filter).
-const activeFilters = new Set();
+// Everything searchable about a project, flattened once: title plus every
+// credit line (director, production, agency, the work description itself).
+const workIndex = PROJECTS.map(p =>
+  [p.title, ...Object.values(p.credits || {})].join(' ').toLowerCase());
+
+const selected = { work: new Set(), media: new Set() };
+let query = '';
 let workExpanded = false;
 const showAllBtn = document.getElementById('showAll');
 const workMore = showAllBtn.closest('.work-more');
 
+const workEmpty = document.createElement('p');
+workEmpty.className = 'work-empty';
+workEmpty.textContent = 'Nothing matches that — try fewer filters or another word.';
+workEmpty.hidden = true;
+grid.after(workEmpty);
+
 function applyWorkFilter() {
-  const noFilter = activeFilters.size === 0;
+  const pristine = !query && !selected.work.size && !selected.media.size;
+  let shown = 0;
   workCards.forEach((card, i) => {
-    const cats = card.dataset.cats ? card.dataset.cats.split(',') : [];
-    const matches = noFilter || cats.some(c => activeFilters.has(c));
-    const visible = matches && (!noFilter || workExpanded || i < INITIAL);
+    const hasAny = (facet, csv) => !selected[facet].size ||
+      (csv && csv.split(',').some(c => selected[facet].has(c)));
+    const matches = hasAny('work', card.dataset.cats) && hasAny('media', card.dataset.media) &&
+      (!query || query.split(/\s+/).every(t => workIndex[i].includes(t)));
+    // pristine keeps the tidy 20-card opening; any search or filter shows every match
+    const visible = matches && (!pristine || workExpanded || i < INITIAL);
+    if (visible) shown++;
     const wasHidden = card.classList.contains('hidden-card');
     card.classList.toggle('hidden-card', !visible);
     if (visible && wasHidden) cardObserver.observe(card);
   });
-  workMore.style.display = (noFilter && !workExpanded && PROJECTS.length > INITIAL) ? '' : 'none';
+  workMore.style.display = (pristine && !workExpanded && PROJECTS.length > INITIAL) ? '' : 'none';
+  workEmpty.hidden = shown > 0;
 }
 
 showAllBtn.addEventListener('click', () => { workExpanded = true; applyWorkFilter(); });
 
-FILTERS.forEach(({ key, label }) => {
-  const chip = document.createElement('button');
-  chip.className = 'work-chip' + (key === 'ALL' ? ' active' : '');
-  chip.textContent = label;
-  chip.dataset.key = key;
-  chip.addEventListener('click', () => {
-    if (key === 'ALL') {
-      activeFilters.clear();
-    } else {
-      activeFilters.has(key) ? activeFilters.delete(key) : activeFilters.add(key);
-    }
-    const noFilter = activeFilters.size === 0;
-    workFilters.querySelectorAll('.work-chip').forEach(c => {
-      c.classList.toggle('active', c.dataset.key === 'ALL' ? noFilter : activeFilters.has(c.dataset.key));
-    });
-    applyWorkFilter();
+const workSearch = document.getElementById('workSearch');
+workSearch.addEventListener('input', () => {
+  query = workSearch.value.trim().toLowerCase();
+  applyWorkFilter();
+});
+
+const CARET = '<svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function closePanels(except) {
+  workFilters.querySelectorAll('.wf-drop').forEach(d => {
+    if (d !== except) { d.classList.remove('open'); d.querySelector('.wf-panel').hidden = true; }
   });
-  workFilters.appendChild(chip);
+}
+document.addEventListener('click', e => { if (!e.target.closest('.wf-drop')) closePanels(); });
+addEventListener('keydown', e => { if (e.key === 'Escape') closePanels(); });
+
+FACETS.forEach(({ id, label, options }) => {
+  const drop = document.createElement('div');
+  drop.className = 'wf-drop';
+  const btn = document.createElement('button');
+  btn.className = 'work-chip wf-btn';
+  btn.setAttribute('aria-haspopup', 'true');
+  const panel = document.createElement('div');
+  panel.className = 'wf-panel';
+  panel.hidden = true;
+
+  const sync = () => {
+    const n = selected[id].size;
+    btn.innerHTML = `${label}${n ? ' · ' + n : ''} ${CARET}`;
+    btn.classList.toggle('active', n > 0);
+    panel.querySelectorAll('.wf-opt').forEach(b =>
+      b.classList.toggle('active', b.dataset.key === 'ALL' ? !n : selected[id].has(b.dataset.key)));
+  };
+
+  [['ALL', 'All'], ...options].forEach(([key, text]) => {
+    const b = document.createElement('button');
+    b.className = 'wf-opt';
+    b.dataset.key = key;
+    b.textContent = text;
+    b.addEventListener('click', () => {
+      if (key === 'ALL') selected[id].clear();
+      else selected[id].has(key) ? selected[id].delete(key) : selected[id].add(key);
+      sync();
+      applyWorkFilter();
+    });
+    panel.appendChild(b);
+  });
+
+  btn.addEventListener('click', () => {
+    const opening = panel.hidden;
+    closePanels(drop);
+    panel.hidden = !opening;
+    drop.classList.toggle('open', opening);
+  });
+
+  drop.append(btn, panel);
+  workFilters.appendChild(drop);
+  sync();
 });
 
 // Clients — two infinite marquee rows scrolling opposite directions
