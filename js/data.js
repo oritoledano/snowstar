@@ -202,7 +202,7 @@ const PROJECTS = [
   "thumb": "assets/thumbs/bigi-tv.jpg",
   "mp4": "assets/work/bigi-tv.mp4",
   "credits": {
-   "work": "Original music & sound design",
+   "work": "Original music, sound design & voice over",
    "production": "WeDo Productions",
    "agency": "K-Logic",
    "director": "Gadi Portnoy"
