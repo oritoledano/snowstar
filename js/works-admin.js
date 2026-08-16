@@ -52,6 +52,7 @@
   bar.innerHTML = `
     <button class="work-chip" id="wedToggle">Edit works</button>
     <button class="work-chip" id="wedAdd" hidden>＋ Add work</button>
+    <button class="work-chip" id="wedLogos">Edit client logos</button>
     <span class="wed-hint" hidden>drag cards to reorder — order saves on drop</span>`;
 
   function mount() {
@@ -60,7 +61,9 @@
     controls.after(bar);
     bar.querySelector('#wedToggle').addEventListener('click', toggle);
     bar.querySelector('#wedAdd').addEventListener('click', () => openForm(null));
+    bar.querySelector('#wedLogos').addEventListener('click', openLogos);
     buildModal();
+    buildLogosModal();
   }
 
   function toggle() {
@@ -273,6 +276,186 @@
       btn.disabled = false;
     }
   }
+
+  /* ═══════════ client logos manager ═══════════
+     One shared list drives both marquees (Snowstar + Mutra). New uploads are
+     normalised right here in the browser — the same recipe every existing
+     logo went through: crop to the mark, centre it in a 860×538 box at 34%
+     height (wide wordmarks clamp to 86% width), and turn the ink white.
+     "Keeps its own colors" skips the whitening but not the sizing. */
+
+  const BOX_W = 860, BOX_H = 538, FILL = 0.34, MAX_W = 0.86;
+
+  function normalizeLogo(file, mixed) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth; c.height = img.naturalHeight;
+          const x = c.getContext('2d');
+          x.drawImage(img, 0, 0);
+          const d = x.getImageData(0, 0, c.width, c.height);
+          const px = d.data;
+
+          // ink map: how much "mark" each pixel carries (0 on white or transparent)
+          const ink = new Uint8Array(c.width * c.height);
+          for (let i = 0; i < ink.length; i++) {
+            const r = px[i*4], g = px[i*4+1], b = px[i*4+2], a = px[i*4+3];
+            if (a < 10) continue;
+            const lum = 0.299*r + 0.587*g + 0.114*b;
+            const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+            ink[i] = Math.min(255, Math.max(255 - lum, chroma) * (a / 255));
+          }
+          // bounding box of the mark
+          let x0 = c.width, x1 = -1, y0 = c.height, y1 = -1;
+          for (let y = 0; y < c.height; y++) for (let xx = 0; xx < c.width; xx++) {
+            if (ink[y*c.width + xx] > 24) {
+              if (xx < x0) x0 = xx; if (xx > x1) x1 = xx;
+              if (y < y0) y0 = y; if (y > y1) y1 = y;
+            }
+          }
+          if (x1 < 0) { reject(new Error('no visible mark found in that image')); return; }
+          const iw = x1 - x0 + 1, ih = y1 - y0 + 1;
+
+          // recolor onto a cropped canvas first
+          const crop = document.createElement('canvas');
+          crop.width = iw; crop.height = ih;
+          const cx = crop.getContext('2d');
+          const cd = cx.createImageData(iw, ih);
+          for (let y = 0; y < ih; y++) for (let xx = 0; xx < iw; xx++) {
+            const si = (y + y0) * c.width + (xx + x0), di = (y * iw + xx) * 4;
+            if (mixed) {
+              cd.data[di] = px[si*4]; cd.data[di+1] = px[si*4+1]; cd.data[di+2] = px[si*4+2];
+              cd.data[di+3] = Math.max(ink[si], px[si*4+3] < 10 ? 0 : ink[si]);
+            } else {
+              cd.data[di] = cd.data[di+1] = cd.data[di+2] = 255;
+              cd.data[di+3] = ink[si];
+            }
+          }
+          cx.putImageData(cd, 0, 0);
+
+          // scale into the standard box
+          let th = Math.round(BOX_H * FILL), tw = Math.round(iw * th / ih);
+          if (tw > BOX_W * MAX_W) { tw = Math.round(BOX_W * MAX_W); th = Math.round(ih * tw / iw); }
+          const out = document.createElement('canvas');
+          out.width = BOX_W; out.height = BOX_H;
+          const ox = out.getContext('2d');
+          ox.imageSmoothingQuality = 'high';
+          ox.drawImage(crop, (BOX_W - tw) / 2, (BOX_H - th) / 2, tw, th);
+          out.toBlob((blob) => blob ? resolve(blob) : reject(new Error('convert_failed')), 'image/png');
+        } catch (err) { reject(err); }
+      };
+      img.onerror = () => reject(new Error('could not read that image'));
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  let logosModal;
+  function buildLogosModal() {
+    logosModal = document.createElement('div');
+    logosModal.className = 'wed-modal';
+    logosModal.hidden = true;
+    logosModal.innerHTML = `
+    <div class="wed-card wedl-card" role="dialog" aria-modal="true">
+      <button class="wed-close" aria-label="Close">&times;</button>
+      <h3>Client logos</h3>
+      <p class="wed-note">Drag to reorder (both sites follow this order — best-known first).
+        “Colors” marks a logo that keeps its own colors instead of white ink.</p>
+      <div class="wedl-grid" id="wedlGrid"><p class="wed-note">Loading…</p></div>
+      <div class="wedl-add">
+        <label class="wed-field wed-file" style="margin:0;flex:1">
+          <span>Add a logo (any image — it gets converted automatically)</span>
+          <input type="file" id="wedlFile" accept="image/*"></label>
+        <label class="wed-chip" style="align-self:end"><input type="checkbox" id="wedlMixed"><span>Keeps its own colors</span></label>
+      </div>
+      <p class="wed-status" hidden></p>
+    </div>`;
+    document.body.appendChild(logosModal);
+    logosModal.querySelector('.wed-close').addEventListener('click', () => { logosModal.hidden = true; document.body.style.overflow = ''; });
+    logosModal.addEventListener('click', (e) => { if (e.target === logosModal) { logosModal.hidden = true; document.body.style.overflow = ''; } });
+    logosModal.querySelector('#wedlFile').addEventListener('change', addLogo);
+  }
+
+  const logoStatus = (msg) => {
+    const el = logosModal.querySelector('.wed-status');
+    el.textContent = msg; el.hidden = !msg;
+  };
+
+  async function openLogos() {
+    logosModal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    await paintLogos();
+  }
+
+  async function paintLogos() {
+    const g = logosModal.querySelector('#wedlGrid');
+    const d = await fetch('/api/logos', { credentials: 'same-origin' }).then((r) => r.json());
+    g.innerHTML = d.logos.map((l) => `
+      <div class="wedl-tile" draggable="true" data-id="${l.id}" data-url="${l.url}" data-tone="${l.tone}">
+        <img src="${l.url}" alt="">
+        <span class="wedl-acts">
+          <button class="wedl-tone ${l.tone === 'mixed' ? 'on' : ''}" title="Keeps its own colors">Colors</button>
+          <button class="wedl-del" title="Remove" aria-label="Remove">✕</button>
+        </span>
+      </div>`).join('');
+
+    let drag = null;
+    g.querySelectorAll('.wedl-tile').forEach((tile) => {
+      tile.addEventListener('dragstart', () => { drag = tile; tile.classList.add('wed-dragging'); });
+      tile.addEventListener('dragend', async () => {
+        tile.classList.remove('wed-dragging'); drag = null;
+        const ids = [...g.querySelectorAll('.wedl-tile')].map((t) => Number(t.dataset.id));
+        try { await api('/logos/reorder', { ids }); marqueeRefresh(); say('Order saved'); }
+        catch { logoStatus('Couldn’t save the order — try again'); }
+      });
+      tile.querySelector('.wedl-del').addEventListener('click', async () => {
+        if (!confirm('Remove this logo from both sites?')) return;
+        try { await api('/logos/delete', { id: Number(tile.dataset.id) }); tile.remove(); marqueeRefresh(); }
+        catch { logoStatus('Couldn’t remove that — try again'); }
+      });
+      tile.querySelector('.wedl-tone').addEventListener('click', async (e) => {
+        const on = !e.target.classList.contains('on');
+        try {
+          await api('/logos', { id: Number(tile.dataset.id), url: tile.dataset.url, tone: on ? 'mixed' : '' });
+          e.target.classList.toggle('on', on);
+          tile.dataset.tone = on ? 'mixed' : '';
+          marqueeRefresh();
+        } catch { logoStatus('Couldn’t save that — try again'); }
+      });
+    });
+    g.addEventListener('dragover', (e) => {
+      if (!drag) return;
+      e.preventDefault();
+      const over = e.target.closest('.wedl-tile');
+      if (!over || over === drag) return;
+      const r = over.getBoundingClientRect();
+      g.insertBefore(drag, (e.clientX - r.left) < r.width / 2 ? over : over.nextSibling);
+    });
+  }
+
+  async function addLogo(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    e.target.value = '';
+    const mixed = logosModal.querySelector('#wedlMixed').checked;
+    try {
+      logoStatus('Converting…');
+      const blob = await normalizeLogo(file, mixed);
+      logoStatus('Uploading…');
+      const key = `clients/${slug(file.name.replace(/\.[^.]+$/, ''))}-${Date.now().toString(36)}.png`;
+      const url = await upload(key, blob, (pct) => logoStatus(`Uploading… ${pct}%`));
+      await api('/logos', { url, tone: mixed ? 'mixed' : '' });
+      logoStatus('');
+      await paintLogos();
+      marqueeRefresh();
+      say('Logo added — it’s live on both sites');
+    } catch (err) {
+      logoStatus('Couldn’t add that: ' + err.message);
+    }
+  }
+
+  function marqueeRefresh() { if (window.SnowstarLogos) window.SnowstarLogos.reload(); }
 
   // appear the moment the owner's session is known
   function sync() { if (M.user && M.user.admin) mount(); }

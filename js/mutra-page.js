@@ -967,18 +967,24 @@
   (function clientMarquee() {
     const track = $('#clientTrack');
     if (!track) return;
-    const LOGOS = [
-      10, 2, 7, 4, 23, 19, 20, 21, 12, 1, 17, 3, 14,   // Pepsi, Doritos, Intel, Subaru, Unilever…
-      6, 8, 11, 18, 16, 5, 31, 0, 9, 24, 29, 22, 30, 32, 27,   // agencies, then the Israeli names
-      13, 26, 25, 28, 15,
-    ];
-    const MIXED = new Set([2, 19]); // carry their own dark ink, so they don't get inverted
-    const html = LOGOS.map(n => {
-      const id = String(n).padStart(2, '0');
-      return `<img src="assets/clients/logo${id}.png" alt="" loading="lazy"` +
-             (MIXED.has(n) ? ' data-tone="mixed"' : '') + '>';
-    }).join('');
-    track.innerHTML = html + html;   // doubled so the loop is seamless
+    // the list lives in the Worker now (owner-editable); this local copy is
+    // only the emergency fallback if the API can't be reached
+    const render = (items) => {
+      const html = items.map(l =>
+        `<img src="${l.url}" alt="" loading="lazy"${l.tone === 'mixed' ? ' data-tone="mixed"' : ''}>`).join('');
+      track.innerHTML = html + html;   // doubled so the loop is seamless
+    };
+    fetch('/api/logos')
+      .then(r => { if (!r.ok) throw new Error('logos_' + r.status); return r.json(); })
+      .then(d => render(d.logos))
+      .catch(() => {
+        const LOGOS = [10, 2, 7, 4, 23, 19, 20, 21, 12, 1, 17, 3, 14,
+                       6, 8, 11, 18, 16, 5, 31, 0, 9, 24, 29, 22, 30, 32, 27,
+                       13, 26, 25, 28, 15];
+        const MIXED = new Set([2, 19]); // carry their own dark ink, so they don't get inverted
+        render(LOGOS.map(n => ({ url: `assets/clients/logo${String(n).padStart(2, '0')}.png`,
+                                 tone: MIXED.has(n) ? 'mixed' : '' })));
+      });
   })();
 
   const heroSignup = $('#heroSignup');

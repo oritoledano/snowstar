@@ -18,7 +18,8 @@
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
 import { sendMail, resetEmail } from './mail.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
-import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile } from './works.js';
+import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
+         listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -213,6 +214,12 @@ async function handle(req, env, ctx) {
   if (path === '/works/reorder' && method === 'POST') return reorderWorks(req, env, await currentUser(req, env));
   if (path === '/works/delete' && method === 'POST') return deleteWork(req, env, await currentUser(req, env), ctx);
   if (path === '/works/upload' && method === 'PUT') return uploadWorkFile(req, env, await currentUser(req, env), url);
+
+  // ── client logos: public read, owner-only writes (shared by both sites) ──
+  if (path === '/logos' && method === 'GET') return listLogos(env);
+  if (path === '/logos' && method === 'POST') return saveLogo(req, env, await currentUser(req, env), ctx);
+  if (path === '/logos/reorder' && method === 'POST') return reorderLogos(req, env, await currentUser(req, env));
+  if (path === '/logos/delete' && method === 'POST') return deleteLogo(req, env, await currentUser(req, env), ctx);
 
   // ── who am I ──
   if (path === '/me' && method === 'GET') {

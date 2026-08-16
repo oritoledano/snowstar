@@ -271,11 +271,24 @@ function buildMarqueeRow(logos, dir) {
 }
 // Enough logos now to fill a 3rd row too — split into 3 distinct sets (interleaved so
 // each row has variety) rather than repeating the full list three times.
-const ROWS = 3;
-const rowSets = Array.from({ length: ROWS }, (_, i) => CLIENT_LOGOS.filter((_, j) => j % ROWS === i));
-cg.appendChild(buildMarqueeRow(rowSets[0], 'left'));
-cg.appendChild(buildMarqueeRow([...rowSets[1]].reverse(), 'right'));
-cg.appendChild(buildMarqueeRow(rowSets[2], 'left')); // 3rd strip — same direction as the first
+// The list itself comes from the Worker so the owner can edit it live;
+// CLIENT_LOGOS in data.js is only the emergency fallback.
+function buildClientRows(urls) {
+  cg.innerHTML = '';
+  const ROWS = 3;
+  const rowSets = Array.from({ length: ROWS }, (_, i) => urls.filter((_, j) => j % ROWS === i));
+  cg.appendChild(buildMarqueeRow(rowSets[0], 'left'));
+  cg.appendChild(buildMarqueeRow([...rowSets[1]].reverse(), 'right'));
+  cg.appendChild(buildMarqueeRow(rowSets[2], 'left')); // 3rd strip — same direction as the first
+}
+function loadClientLogos() {
+  return fetch('/api/logos')
+    .then(r => { if (!r.ok) throw new Error('logos_' + r.status); return r.json(); })
+    .then(d => buildClientRows(d.logos.map(l => l.url)))
+    .catch(() => buildClientRows(typeof CLIENT_LOGOS !== 'undefined' ? CLIENT_LOGOS : []));
+}
+loadClientLogos();
+window.SnowstarLogos = { reload: loadClientLogos };
 
 // Reveal on scroll
 const obs = new IntersectionObserver(es => es.forEach(e => {

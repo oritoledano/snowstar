@@ -523,3 +523,21 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 .wed-chip input:checked+span{color:#04121d;background:var(--grad);border-color:transparent}
 .wed-status{color:#8fd8ff;font-size:.85rem;margin:6px 0 10px}
 .wed-save{width:100%;margin-top:6px}
+
+/* ————— client logos manager ————— */
+.wedl-card{width:min(760px,100%)}
+.wedl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;
+  margin:14px 0 18px;max-height:46vh;overflow:auto;padding:2px}
+.wedl-tile{position:relative;aspect-ratio:860/538;border:1px dashed rgba(143,216,255,.25);
+  border-radius:10px;background:#05070e;cursor:grab;display:grid;place-items:center;padding:8px}
+.wedl-tile:active{cursor:grabbing}
+.wedl-tile img{max-width:100%;max-height:100%;pointer-events:none}
+.wedl-acts{position:absolute;top:4px;right:4px;display:flex;gap:4px;opacity:0;transition:.15s}
+.wedl-tile:hover .wedl-acts{opacity:1}
+.wedl-acts button{border:1px solid var(--line);background:rgba(5,7,14,.88);color:var(--muted);
+  border-radius:7px;font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;
+  padding:3px 7px;cursor:pointer}
+.wedl-acts button:hover{color:var(--text);border-color:rgba(143,216,255,.5)}
+.wedl-tone.on{color:#04121d;background:var(--grad);border-color:transparent}
+.wedl-del{font-size:.72rem!important}
+.wedl-add{display:flex;gap:12px;align-items:center}
