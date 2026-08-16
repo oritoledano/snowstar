@@ -20,6 +20,7 @@ import { sendMail, resetEmail } from './mail.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
+import { listTexts, saveText, listNotes, saveNote, deleteNote } from './site.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -214,6 +215,13 @@ async function handle(req, env, ctx) {
   if (path === '/works/reorder' && method === 'POST') return reorderWorks(req, env, await currentUser(req, env));
   if (path === '/works/delete' && method === 'POST') return deleteWork(req, env, await currentUser(req, env), ctx);
   if (path === '/works/upload' && method === 'PUT') return uploadWorkFile(req, env, await currentUser(req, env), url);
+
+  // ── site editor: text overrides (public read) + owner markup notes ──
+  if (path === '/texts' && method === 'GET') return listTexts(env);
+  if (path === '/texts' && method === 'POST') return saveText(req, env, await currentUser(req, env));
+  if (path === '/notes' && method === 'GET') return listNotes(req, env, await currentUser(req, env), url);
+  if (path === '/notes' && method === 'POST') return saveNote(req, env, await currentUser(req, env));
+  if (path === '/notes/delete' && method === 'POST') return deleteNote(req, env, await currentUser(req, env));
 
   // ── client logos: public read, owner-only writes (shared by both sites) ──
   if (path === '/logos' && method === 'GET') return listLogos(env);
