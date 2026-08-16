@@ -112,6 +112,12 @@ const PROJECTS = [
   }
  },
  {
+  "title": "FATAL - ONE HOME",
+  "media": [],
+  "thumb": "assets/thumbs/fatal-one-home.jpg",
+  "mp4": "assets/work/fatal-one-home.mp4"
+ },
+ {
   "title": "FLORENTIN SQUARE",
   "media": ["TV"],
   "thumb": "assets/thumbs/florentin-square.jpg",
