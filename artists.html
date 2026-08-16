@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-product="mutra">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit your music — Mutra by Snowstar</title>
+<meta name="description" content="Upload your original tracks to Mutra, Snowstar's licensing catalog. Music chosen by the biggest brands in the world.">
+<link rel="icon" href="assets/ssc-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="js/mutra-skin.js?v=2"></script>
+<link rel="stylesheet" href="css/skins.css?v=3">
+<link rel="stylesheet" href="css/account.css?v=4">
+<link rel="stylesheet" href="css/mutra.css?v=50">
+<style>
+  .ar-wrap{max-width:860px;margin:0 auto;padding:110px clamp(18px,4vw,44px) 60px}
+  .ar-hero h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin-bottom:14px}
+  .ar-hero p{color:var(--muted);max-width:56ch;margin-bottom:26px}
+  .ar-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 24px;margin-top:26px}
+  .ar-card h2{font-size:1.1rem;margin-bottom:14px}
+  .ar-field{display:block;margin-bottom:14px}
+  .ar-field span{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .ar-field input,.ar-field textarea{width:100%;background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);
+    border-radius:10px;color:var(--text);font:inherit;font-size:.92rem;padding:10px 12px;outline:0;box-sizing:border-box}
+  .ar-field input:focus,.ar-field textarea:focus{border-color:var(--amber,#8fd8ff)}
+  .ar-drop{border:2px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;color:var(--muted);
+    cursor:pointer;transition:.2s;margin-bottom:14px}
+  .ar-drop:hover,.ar-drop.over{border-color:var(--amber,#8fd8ff);color:var(--text)}
+  .ar-drop input{display:none}
+  .ar-note{color:var(--dim,var(--muted));font-size:.78rem;margin-top:8px}
+  .ar-status{font-size:.88rem;margin:10px 0;color:var(--amber,#8fd8ff)}
+  .ar-list{list-style:none;padding:0;margin:0}
+  .ar-list li{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);font-size:.92rem}
+  .ar-list b{flex:1;font-weight:600}
+  .ar-badge{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:99px;border:1px solid var(--line)}
+  .ar-badge.pending{color:#eab308;border-color:rgba(234,179,8,.4)}
+  .ar-badge.approved{color:#34d399;border-color:rgba(52,211,153,.4)}
+  .ar-badge.rejected{color:#f87171;border-color:rgba(248,113,113,.4)}
+  .ar-rnote{flex-basis:100%;color:var(--muted);font-size:.8rem;padding-left:2px}
+  .ar-gate{text-align:center;padding:30px 10px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="mnav scrolled" id="mnav">
+  <a class="st-back" href="mutra.html" style="font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);z-index:2">← Catalog</a>
+  <a class="mlogo" href="mutra.html" aria-label="Mutra"><img class="ml-img" src="assets/mutra-wordmark.png" alt="MUTRA"><span class="ml-by">artists</span></a>
+  <div class="mnav-right" data-account-mount></div>
+</header>
+
+<div class="ar-wrap">
+  <div class="ar-hero">
+    <h1 data-txt="artists.hero.title">Your music, licensed<br>by real brands.</h1>
+    <p data-txt="artists.hero.sub">Mutra is Snowstar's curated licensing catalog — every track hand-picked,
+    properly cleared, and pitched to the brands we score for. Upload your original music;
+    we listen to everything and tell you what we take.</p>
+  </div>
+
+  <!-- signed out -->
+  <div class="ar-card ar-gate" id="arGate">
+    <h2 data-txt="artists.gate.title">Start with a free account</h2>
+    <p style="color:var(--muted);margin-bottom:18px" data-txt="artists.gate.sub">One Snowstar account for uploading, tracking your submissions, and everything else.</p>
+    <button class="mbtn mbtn-solid" id="arSignin">Sign in / Create account</button>
+  </div>
+
+  <!-- signed in, not yet an artist -->
+  <div class="ar-card" id="arRegister" hidden>
+    <h2 data-txt="artists.reg.title">Set your artist name</h2>
+    <p style="color:var(--muted);margin-bottom:16px" data-txt="artists.reg.sub">How you'll be credited in the catalog. You can use your real name or a stage name.</p>
+    <label class="ar-field"><span>Artist / stage name</span><input id="arName" maxlength="80" placeholder="e.g. KAYMA"></label>
+    <p class="ar-status" id="arRegStatus" hidden></p>
+    <button class="mbtn mbtn-solid" id="arRegBtn">Continue</button>
+  </div>
+
+  <!-- artist dashboard -->
+  <div id="arDash" hidden>
+    <div class="ar-card">
+      <h2 data-txt="artists.up.title">Upload a track</h2>
+      <label class="ar-drop" id="arDrop">
+        <input type="file" id="arFile" accept=".wav,.mp3,.aif,.aiff,.flac,.m4a,.ogg" multiple>
+        <strong data-txt="artists.up.drop">Drop audio files here, or click to choose</strong>
+        <div class="ar-note" data-txt="artists.up.note">WAV, AIFF, FLAC, MP3 or M4A · up to 95MB per file · original music only</div>
+      </label>
+      <label class="ar-field"><span>Anything we should know? (optional, applies to this batch)</span>
+        <textarea id="arNote" rows="2" maxlength="2000" placeholder="Stems available, vocals are mine, etc."></textarea></label>
+      <p class="ar-status" id="arUpStatus" hidden></p>
+    </div>
+
+    <div class="ar-card">
+      <h2 data-txt="artists.list.title">Your submissions</h2>
+      <ul class="ar-list" id="arList"><li style="color:var(--muted)">Nothing yet — your uploads appear here.</li></ul>
+    </div>
+  </div>
+</div>
+
+<script src="js/account.js?v=3"></script>
+<script src="js/account-ui.js?v=8"></script>
+<script src="js/site-edit.js?v=1"></script>
+<script src="js/artists-page.js?v=1"></script>
+</body>
+</html>

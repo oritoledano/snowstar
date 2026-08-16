@@ -21,6 +21,8 @@ import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGAC
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote } from './site.js';
+import { registerArtist, myUploads, uploadTrack, createSubmission,
+         streamSubmission, listSubmissions, reviewSubmission } from './artists.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -159,7 +161,8 @@ async function currentUser(req, env) {
     if (!token) continue;
     const hash = await sha256b64(token);
     const row = await env.DB.prepare(
-      `SELECT u.id, u.email, u.name, u.newsletter, u.admin, u.avatar, s.expires_at
+      `SELECT u.id, u.email, u.name, u.newsletter, u.admin, u.avatar,
+              u.artist, u.artist_name, s.expires_at
          FROM sessions s JOIN users u ON u.id = s.user_id
         WHERE s.token_hash = ?`
     ).bind(hash).first();
@@ -215,6 +218,15 @@ async function handle(req, env, ctx) {
   if (path === '/works/reorder' && method === 'POST') return reorderWorks(req, env, await currentUser(req, env));
   if (path === '/works/delete' && method === 'POST') return deleteWork(req, env, await currentUser(req, env), ctx);
   if (path === '/works/upload' && method === 'PUT') return uploadWorkFile(req, env, await currentUser(req, env), url);
+
+  // ── artist submissions: upload behind login, owner review before the catalog ──
+  if (path === '/artist/register' && method === 'POST') return registerArtist(req, env, await currentUser(req, env));
+  if (path === '/artist/uploads' && method === 'GET') return myUploads(env, await currentUser(req, env));
+  if (path === '/artist/upload' && method === 'PUT') return uploadTrack(req, env, await currentUser(req, env), url);
+  if (path === '/artist/submissions' && method === 'POST') return createSubmission(req, env, await currentUser(req, env), ctx);
+  if (path === '/artist/file' && method === 'GET') return streamSubmission(req, env, await currentUser(req, env), url);
+  if (path === '/submissions' && method === 'GET') return listSubmissions(env, await currentUser(req, env), url);
+  if (path === '/submissions/review' && method === 'POST') return reviewSubmission(req, env, await currentUser(req, env));
 
   // ── site editor: text overrides (public read) + owner markup notes ──
   if (path === '/texts' && method === 'GET') return listTexts(env);
