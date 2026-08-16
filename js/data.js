@@ -89,7 +89,7 @@ const PROJECTS = [
  },
  {
   "title": "VIP 2 PROMO",
-  "media": ["DIGITAL"],
+  "media": ["TV"],
   "thumb": "assets/thumbs/vip-2-promo.jpg",
   "mp4": "assets/work/vip-2-promo.mp4",
   "credits": {
@@ -137,7 +137,7 @@ const PROJECTS = [
  },
  {
   "title": "BIG FASHION - BUNNY",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/big-fashion-bunny.jpg",
   "mp4": "assets/work/big-fashion-bunny.mp4",
   "credits": {
@@ -161,7 +161,7 @@ const PROJECTS = [
  },
  {
   "title": "ATLETICO MADRID",
-  "media": ["DIGITAL"],
+  "media": ["TV"],
   "thumb": "assets/thumbs/atletico-madrid.jpg",
   "mp4": "assets/work/atletico-madrid.mp4",
   "credits": {
@@ -223,7 +223,7 @@ const PROJECTS = [
  },
  {
   "title": "CASTRO",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/castro.jpg",
   "preview": "assets/thumbs/castro.mp4",
   "vimeo": 178864373,
@@ -237,7 +237,7 @@ const PROJECTS = [
  },
  {
   "title": "HISHGAD - MEFUNAKCHIK",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/hishgad-mefunakchik.jpg",
   "mp4": "assets/work/hishgad-mefunakchik.mp4",
   "credits": {
@@ -286,7 +286,7 @@ const PROJECTS = [
  },
  {
   "title": "AHAVA",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/ahava.jpg",
   "mp4": "assets/work/ahava.mp4",
   "credits": {
@@ -334,7 +334,7 @@ const PROJECTS = [
  },
  {
   "title": "CELLCOM SUPER WIFI",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/cellcom-super-wifi.jpg",
   "mp4": "assets/work/cellcom-super-wifi.mp4",
   "credits": {
@@ -381,7 +381,7 @@ const PROJECTS = [
  },
  {
   "title": "PEPSI MAX",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/pepsi-max.jpg",
   "preview": "assets/thumbs/pepsi-max.mp4",
   "vimeo": 174502281,
@@ -464,7 +464,7 @@ const PROJECTS = [
  },
  {
   "title": "NOVO",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/novo.jpg",
   "mp4": "assets/work/novo.mp4",
   "credits": {
@@ -475,7 +475,7 @@ const PROJECTS = [
  },
  {
   "title": "PARIS",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/paris.jpg",
   "mp4": "assets/work/paris.mp4",
   "credits": {
@@ -496,7 +496,7 @@ const PROJECTS = [
  },
  {
   "title": "CAROLINA LEMKE",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/carolina-lemke.jpg",
   "mp4": "assets/work/carolina-lemke.mp4",
   "credits": {
@@ -682,7 +682,7 @@ const PROJECTS = [
  },
  {
   "title": "PEPPER - SOLDIERS",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/pepper-soldiers.jpg",
   "mp4": "assets/work/pepper-soldiers.mp4",
   "credits": {
@@ -694,7 +694,7 @@ const PROJECTS = [
  },
  {
   "title": "888 HOLDINGS",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/888-holdings.jpg",
   "mp4": "assets/work/888-holdings.mp4",
   "credits": {
@@ -706,7 +706,7 @@ const PROJECTS = [
  },
  {
   "title": "GAMADIM",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/gamadim.jpg",
   "mp4": "assets/work/gamadim.mp4",
   "credits": {
@@ -764,7 +764,7 @@ const PROJECTS = [
  },
  {
   "title": "H2",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/h2.jpg",
   "mp4": "assets/work/h2.mp4",
   "credits": {
@@ -787,7 +787,7 @@ const PROJECTS = [
  },
  {
   "title": "MINISTRY OF ENVIRONMENTAL PROTECTION",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/ministry-of-environmental-protection.jpg",
   "mp4": "assets/work/ministry-of-environmental-protection.mp4",
   "credits": {
@@ -798,7 +798,7 @@ const PROJECTS = [
  },
  {
   "title": "MERETZ",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/meretz.jpg",
   "mp4": "assets/work/meretz.mp4",
   "credits": {
@@ -807,7 +807,7 @@ const PROJECTS = [
  },
  {
   "title": "LILY",
-  "media": ["DIGITAL"],
+  "media": ["TV"],
   "thumb": "assets/thumbs/lily.jpg",
   "vimeo": 121602329,
   "mp4": "assets/work/lily.mp4",
@@ -854,7 +854,7 @@ const PROJECTS = [
  },
  {
   "title": "SWITCH",
-  "media": ["TV"],
+  "media": [],
   "thumb": "assets/thumbs/switch.jpg",
   "vimeo": 150882613,
   "mp4": "assets/work/switch.mp4",
@@ -1009,4 +1009,4 @@ const PROJECTS = [
   "tags": ["ORIGINAL_MUSIC"]
  }
 ];
-const CLIENT_LOGOS = ['assets/clients/logo00.png', 'assets/clients/logo01.png', 'assets/clients/logo02.png', 'assets/clients/logo03.png', 'assets/clients/logo04.png', 'assets/clients/logo05.png', 'assets/clients/logo06.png', 'assets/clients/logo07.png', 'assets/clients/logo08.png', 'assets/clients/logo09.png', 'assets/clients/logo10.png', 'assets/clients/logo11.png', 'assets/clients/logo12.png', 'assets/clients/logo13.png', 'assets/clients/logo14.png', 'assets/clients/logo15.png', 'assets/clients/logo16.png', 'assets/clients/logo17.png', 'assets/clients/logo18.png', 'assets/clients/logo19.png', 'assets/clients/logo20.png', 'assets/clients/logo21.png', 'assets/clients/logo22.png', 'assets/clients/logo23.png', 'assets/clients/logo24.png', 'assets/clients/logo25.png', 'assets/clients/logo26.png', 'assets/clients/logo27.png', 'assets/clients/logo28.png', 'assets/clients/logo29.png', 'assets/clients/logo30.png', 'assets/clients/logo31.png'];
+const CLIENT_LOGOS = ['assets/clients/logo00.png', 'assets/clients/logo01.png', 'assets/clients/logo02.png', 'assets/clients/logo03.png', 'assets/clients/logo04.png', 'assets/clients/logo05.png', 'assets/clients/logo06.png', 'assets/clients/logo07.png', 'assets/clients/logo08.png', 'assets/clients/logo09.png', 'assets/clients/logo10.png', 'assets/clients/logo11.png', 'assets/clients/logo12.png', 'assets/clients/logo13.png', 'assets/clients/logo14.png', 'assets/clients/logo15.png', 'assets/clients/logo16.png', 'assets/clients/logo17.png', 'assets/clients/logo18.png', 'assets/clients/logo19.png', 'assets/clients/logo20.png', 'assets/clients/logo21.png', 'assets/clients/logo22.png', 'assets/clients/logo23.png', 'assets/clients/logo24.png', 'assets/clients/logo25.png', 'assets/clients/logo26.png', 'assets/clients/logo27.png', 'assets/clients/logo28.png', 'assets/clients/logo29.png', 'assets/clients/logo30.png', 'assets/clients/logo31.png', 'assets/clients/logo32.png'];
