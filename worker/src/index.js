@@ -18,6 +18,7 @@
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
 import { sendMail, resetEmail } from './mail.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
+import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile } from './works.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -205,6 +206,13 @@ async function handle(req, env, ctx) {
 
   // ── member download (the one thing that needs an account) ──
   if (path === '/download' && method === 'GET') return handleDownload(req, env, await currentUser(req, env));
+
+  // ── portfolio works: public read, owner-only writes ──
+  if (path === '/works' && method === 'GET') return listWorks(env);
+  if (path === '/works' && method === 'POST') return saveWork(req, env, await currentUser(req, env), ctx);
+  if (path === '/works/reorder' && method === 'POST') return reorderWorks(req, env, await currentUser(req, env));
+  if (path === '/works/delete' && method === 'POST') return deleteWork(req, env, await currentUser(req, env), ctx);
+  if (path === '/works/upload' && method === 'PUT') return uploadWorkFile(req, env, await currentUser(req, env), url);
 
   // ── who am I ──
   if (path === '/me' && method === 'GET') {

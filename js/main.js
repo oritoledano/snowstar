@@ -107,36 +107,55 @@ const cardObserver = new IntersectionObserver(es => es.forEach(e => {
   }
 }), { threshold: 0.08 });
 
-const workCards = PROJECTS.map((p, i) => {
-  const card = document.createElement('article');
-  card.className = 'work-card reveal-card' + (i >= INITIAL ? ' hidden-card' : '');
-  card.dataset.cats = categorize(p).join(',');
-  card.dataset.media = (p.media || []).join(',');
-  card.dataset.d = (i % 6) * 60;
-  card.innerHTML = `
+// The list itself lives in the Worker (D1) so the owner can edit it live;
+// PROJECTS in data.js remains only as an emergency fallback if the API is down.
+let WORKS = [];
+let workCards = [];
+let workIndex = [];
+
+function buildWorkGrid(list) {
+  WORKS = list;
+  grid.innerHTML = '';
+  workCards = list.map((p, i) => {
+    const card = document.createElement('article');
+    card.className = 'work-card reveal-card' + (i >= INITIAL ? ' hidden-card' : '');
+    card.dataset.id = p.id || '';
+    card.dataset.cats = categorize(p).join(',');
+    card.dataset.media = (p.media || []).join(',');
+    card.dataset.d = (i % 6) * 60;
+    card.innerHTML = `
     <img src="${p.thumb}" alt="${p.title}" loading="lazy">
     ${p.preview ? `<video muted loop playsinline preload="none"><source src="${p.preview}" type="video/mp4"></video>` : ''}
     <div class="wc-meta">
       <h3>${p.title}</h3>
       ${(p.mp4 || p.vimeo) ? `<span class="wc-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="13" height="13"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>` : ''}
     </div>`;
-  if (p.preview) {
-    const vid = card.querySelector('video');
-    card.addEventListener('mouseenter', () => { vid.play().catch(() => {}); card.classList.add('previewing'); });
-    card.addEventListener('mouseleave', () => { vid.pause(); card.classList.remove('previewing'); });
-  }
-  card.addEventListener('click', () => openLightbox(p));
-  grid.appendChild(card);
-  return card;
-});
-document.querySelectorAll('.work-card:not(.hidden-card)').forEach(el => cardObserver.observe(el));
+    if (p.preview) {
+      const vid = card.querySelector('video');
+      card.addEventListener('mouseenter', () => { vid.play().catch(() => {}); card.classList.add('previewing'); });
+      card.addEventListener('mouseleave', () => { vid.pause(); card.classList.remove('previewing'); });
+    }
+    card.addEventListener('click', () => openLightbox(p));
+    grid.appendChild(card);
+    return card;
+  });
+  workCards.filter(c => !c.classList.contains('hidden-card')).forEach(el => cardObserver.observe(el));
+  document.getElementById('workCount').textContent = list.length;
+  // Everything searchable about a project, flattened once: title plus every
+  // credit line (director, production, agency, the work description itself).
+  workIndex = list.map(p => [p.title, ...Object.values(p.credits || {})].join(' ').toLowerCase());
+  applyWorkFilter();
+}
 
-document.getElementById('workCount').textContent = PROJECTS.length;
-
-// Everything searchable about a project, flattened once: title plus every
-// credit line (director, production, agency, the work description itself).
-const workIndex = PROJECTS.map(p =>
-  [p.title, ...Object.values(p.credits || {})].join(' ').toLowerCase());
+function loadWorks() {
+  return fetch('/api/works')
+    .then(r => { if (!r.ok) throw new Error('works_' + r.status); return r.json(); })
+    .then(d => buildWorkGrid(d.works))
+    .catch(() => buildWorkGrid(typeof PROJECTS !== 'undefined' ? PROJECTS : []));
+}
+loadWorks();
+// the admin editor refreshes the grid after a save without a page reload
+window.SnowstarWorks = { reload: loadWorks, list: () => WORKS };
 
 const selected = { work: new Set(), media: new Set() };
 let query = '';
@@ -165,7 +184,7 @@ function applyWorkFilter() {
     card.classList.toggle('hidden-card', !visible);
     if (visible && wasHidden) cardObserver.observe(card);
   });
-  workMore.style.display = (pristine && !workExpanded && PROJECTS.length > INITIAL) ? '' : 'none';
+  workMore.style.display = (pristine && !workExpanded && WORKS.length > INITIAL) ? '' : 'none';
   workEmpty.hidden = shown > 0;
 }
 
