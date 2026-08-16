@@ -59,7 +59,7 @@ function dropCdnFiles(env, ctx, urls) {
     for (const u of urls) {
       if (u && u.startsWith(CDN)) {
         const key = u.slice(CDN.length);
-        if (/^work(-thumbs)?\//.test(key)) await env.MEDIA.delete(key).catch(() => {});
+        if (/^(work|work-thumbs|clients)\//.test(key)) await env.MEDIA.delete(key).catch(() => {});
       }
     }
   })());
