@@ -173,15 +173,25 @@
     const members = d.members || [];
     paint(`<div class="db-panel"><h2>Members <span class="pill">${members.length} signed up</span>
       <button class="chip" id="copyEmails" style="float:right">Copy emails</button></h2>
-      ${table(members, [
-        { label: 'Email', get: (r) => esc(r.email) },
-        { label: 'Name', get: (r) => esc(r.name || '—') },
-        { label: 'Joined via', get: (r) => esc(r.signup_source || 'password') },
-        { label: 'Newsletter', get: (r) => (r.newsletter ? 'yes' : '—') },
-        { label: 'Favorites', num: true, get: (r) => r.favs },
-        { label: 'Joined', get: (r) => fmt(r.created_at) },
-        { label: 'Last seen', get: (r) => (r.last_login_at ? fmt(r.last_login_at) : '—') },
-      ])}</div>`);
+      <p class="db-empty" id="memberErr" hidden style="color:#f87171;padding:0 4px 12px"></p>
+      <table><thead><tr>
+        <th>Email</th><th>Name</th><th>Joined via</th><th>Newsletter</th>
+        <th style="text-align:right">Favorites</th><th>Joined</th><th>Last seen</th><th></th>
+      </tr></thead><tbody>${members.map((r) => `
+        <tr data-id="${esc(r.id)}">
+          <td>${esc(r.email)}</td>
+          <td class="mem-name">${esc(r.name || '—')}</td>
+          <td>${esc(r.signup_source || 'password')}</td>
+          <td class="mem-news">${r.newsletter ? 'yes' : '—'}</td>
+          <td class="num">${r.favs}</td>
+          <td>${fmt(r.created_at)}</td>
+          <td>${r.last_login_at ? fmt(r.last_login_at) : '—'}</td>
+          <td style="white-space:nowrap">
+            <button class="chip mem-edit" title="Edit">✎</button>
+            <button class="chip mem-del" title="Remove">✕</button>
+          </td>
+        </tr>`).join('')}</tbody></table></div>`);
+
     const copy = document.getElementById('copyEmails');
     if (copy) copy.addEventListener('click', () => {
       const list = members.filter((m) => m.newsletter).map((m) => m.email);
@@ -189,6 +199,59 @@
       copy.textContent = list.length ? `Copied ${list.length} opted-in` : 'Nobody opted in yet';
       setTimeout(() => { copy.textContent = 'Copy emails'; }, 2500);
     });
+
+    const errEl = document.getElementById('memberErr');
+    const showErr = (msg) => { errEl.textContent = msg; errEl.hidden = false; };
+
+    app.querySelectorAll('.mem-edit').forEach((btn) => btn.addEventListener('click', () => {
+      const tr = btn.closest('tr');
+      const id = tr.dataset.id;
+      const member = members.find((m) => String(m.id) === id);
+      if (tr.querySelector('.mem-editrow')) return; // already editing
+      const nameCell = tr.querySelector('.mem-name');
+      const newsCell = tr.querySelector('.mem-news');
+      nameCell.innerHTML = `<input class="mem-editrow" style="width:100%;background:var(--panel-2,rgba(0,0,0,.2));
+        border:1px solid var(--line);border-radius:8px;color:var(--text);font:inherit;padding:5px 8px"
+        value="${esc(member.name || '')}">`;
+      newsCell.innerHTML = `<label style="cursor:pointer"><input type="checkbox" ${member.newsletter ? 'checked' : ''}> yes</label>`;
+
+      // swap in a fresh button (cloning drops the "open the editor" listener
+      // above) so exactly one handler — Save — is ever attached at a time
+      const saveBtn = btn.cloneNode(true);
+      saveBtn.textContent = '✓'; saveBtn.title = 'Save';
+      btn.replaceWith(saveBtn);
+      saveBtn.addEventListener('click', async () => {
+        errEl.hidden = true;
+        const name = nameCell.querySelector('input').value.trim();
+        const newsletter = newsCell.querySelector('input').checked;
+        saveBtn.disabled = true;
+        try {
+          const r = await post('/members/update', { id, name, newsletter });
+          if (r.error) { showErr('Couldn’t save that — try again.'); saveBtn.disabled = false; return; }
+          member.name = name; member.newsletter = newsletter;
+          paintMembers();
+        } catch { showErr('Couldn’t save that — try again.'); saveBtn.disabled = false; }
+      });
+    }));
+
+    app.querySelectorAll('.mem-del').forEach((btn) => btn.addEventListener('click', async () => {
+      const tr = btn.closest('tr');
+      const id = tr.dataset.id;
+      const member = members.find((m) => String(m.id) === id);
+      if (!confirm(`Remove ${member.email}? This can’t be undone.`)) return;
+      errEl.hidden = true;
+      btn.disabled = true;
+      try {
+        const r = await post('/members/delete', { id });
+        if (r.error === 'has_rights_history') {
+          showErr(`${member.email} has submissions or signed rights records and can’t be deleted — edit them instead.`);
+          btn.disabled = false;
+          return;
+        }
+        if (r.error === 'cannot_delete_self') { showErr('You can’t remove your own account.'); btn.disabled = false; return; }
+        paintMembers();
+      } catch { showErr('Couldn’t remove that — try again.'); btn.disabled = false; }
+    }));
   }
 
   /* ── artists ── */

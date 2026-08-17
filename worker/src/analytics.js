@@ -164,7 +164,7 @@ export async function handleStats(req, env, user) {
         GROUP BY detail ORDER BY clicks DESC LIMIT 15`).bind(since).all(),
     // everyone who has signed up, newest first — this is your mailing list
     env.DB.prepare(
-      `SELECT u.email, u.name, u.newsletter, u.signup_source, u.created_at, u.last_login_at,
+      `SELECT u.id, u.email, u.name, u.newsletter, u.signup_source, u.created_at, u.last_login_at,
               (SELECT COUNT(*) FROM favorites f WHERE f.user_id = u.id) AS favs
          FROM users u ORDER BY u.created_at DESC LIMIT 200`).all(),
   ]);
@@ -245,6 +245,11 @@ export async function handleDownload(req, env, user) {
 
   const obj = await env.MEDIA.get(row.audio_key);
   if (!obj) return json({ error: 'missing_file' }, 404);
+
+  // server-confirmed log (not a client beacon) — feeds the member's own
+  // "Downloads" list in the Account panel
+  await env.DB.prepare('INSERT INTO downloads (user_id, slug, ts) VALUES (?, ?, ?)')
+    .bind(user.id, slug, now()).run().catch(() => {});
 
   const ext = row.audio_key.split('.').pop().toLowerCase();
   // keep the filename safe for every OS while staying readable

@@ -26,16 +26,18 @@ import { registerArtist, myUploads, uploadTrack, createSubmission,
          listArtistsAdmin } from './artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus } from './rights.js';
+import { updateProfile, myDownloads, myFavoritesList } from './profile.js';
+import { updateMember, deleteMember } from './members.js';
+import { publicUser } from './user.js';
+import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
 
 const SESSION_DAYS = 60;
-const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
 const MAX_ATTEMPTS = 8;          // per window
 const ATTEMPT_WINDOW = 15 * 60;  // 15 minutes
 const RESET_MINUTES = 45;        // how long a password-reset link stays good
 const VALID_TOKEN = /^[A-Za-z0-9_-]{20,120}$/;
 const ALLOWED_ORIGINS = ['https://snowstar.company', 'https://www.snowstar.company'];
 
-const enc = new TextEncoder();
 const now = () => Math.floor(Date.now() / 1000);
 
 const json = (data, status = 200, headers = {}) =>
@@ -44,42 +46,8 @@ const json = (data, status = 200, headers = {}) =>
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers },
   });
 
-const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
-const randB64 = (n) => b64(crypto.getRandomValues(new Uint8Array(n)));
 /** URL-safe random token, for things that travel in a link. */
 const randToken = (n) => randB64(n).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
-async function sha256b64(str) {
-  return b64(await crypto.subtle.digest('SHA-256', enc.encode(str)));
-}
-
-/**
- * Pepper the password with a server-held secret before stretching it.
- * Without PEPPER (Worker secret) the stored hashes are useless to an attacker
- * who only has the database.
- */
-async function peppered(password, env) {
-  const key = await crypto.subtle.importKey(
-    'raw', enc.encode(env.PEPPER || ''), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
-  );
-  return b64(await crypto.subtle.sign('HMAC', key, enc.encode(password)));
-}
-
-async function pbkdf2(password, saltB64, iters, env) {
-  const pre = await peppered(password, env);
-  const salt = Uint8Array.from(atob(saltB64), (c) => c.charCodeAt(0));
-  const key = await crypto.subtle.importKey('raw', enc.encode(pre), 'PBKDF2', false, ['deriveBits']);
-  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: iters }, key, 256);
-  return b64(bits);
-}
-
-/** Constant-time string compare — avoids leaking match position via timing. */
-function safeEqual(a, b) {
-  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
 
 const validEmail = (e) =>
   typeof e === 'string' && e.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
@@ -87,15 +55,6 @@ const validEmail = (e) =>
 /** Which Snowstar product a set of favorites belongs to. */
 const PRODUCTS = new Set(['mutra', 'snowstar']);
 const product = (v) => (PRODUCTS.has(v) ? v : 'mutra');
-
-/** Public shape of a user — never leak hashes, salts or internal ids. */
-const publicUser = (u) => ({
-  email: u.email,
-  name: u.name,
-  newsletter: !!u.newsletter,
-  admin: !!u.admin,
-  avatar: u.avatar || null,
-});
 
 const favoritesFor = async (env, userId, prod) => {
   const r = await env.DB.prepare(
@@ -165,7 +124,8 @@ async function currentUser(req, env) {
     const hash = await sha256b64(token);
     const row = await env.DB.prepare(
       `SELECT u.id, u.email, u.name, u.newsletter, u.admin, u.avatar,
-              u.artist, u.artist_name, s.expires_at
+              u.artist, u.artist_name, u.first_name, u.last_name, u.country,
+              u.phone, u.role, u.company, u.pw_hash, u.signup_source, s.expires_at
          FROM sessions s JOIN users u ON u.id = s.user_id
         WHERE s.token_hash = ?`
     ).bind(hash).first();
@@ -256,6 +216,15 @@ async function handle(req, env, ctx) {
   if (path === '/logos/reorder' && method === 'POST') return reorderLogos(req, env, await currentUser(req, env));
   if (path === '/logos/delete' && method === 'POST') return deleteLogo(req, env, await currentUser(req, env), ctx);
 
+  // ── self-service profile: edit own details, own downloads/favorites history ──
+  if (path === '/profile' && method === 'POST') return updateProfile(req, env, await currentUser(req, env));
+  if (path === '/downloads' && method === 'GET') return myDownloads(env, await currentUser(req, env));
+  if (path === '/favorites/list' && method === 'GET') return myFavoritesList(env, await currentUser(req, env), url);
+
+  // ── owner-only member management (dashboard) ──
+  if (path === '/members/update' && method === 'POST') return updateMember(req, env, await currentUser(req, env));
+  if (path === '/members/delete' && method === 'POST') return deleteMember(req, env, await currentUser(req, env));
+
   // ── who am I ──
   if (path === '/me' && method === 'GET') {
     const u = await currentUser(req, env);
@@ -301,8 +270,8 @@ async function handle(req, env, ctx) {
     // must never claim a managed-artist profile just by typing its email
     ctx.waitUntil(linkOnSignIn(env, id, email, false));
 
-    return authed({ user: publicUser({ email, name, newsletter }), favorites: [] }, 201,
-      sessionCookie(token, maxAge));
+    return authed({ user: publicUser({ email, name, newsletter, pw_hash: hash, signup_source: source }), favorites: [] },
+      201, sessionCookie(token, maxAge));
   }
 
   // ── login ──
@@ -316,7 +285,9 @@ async function handle(req, env, ctx) {
     if (!(await throttle(env, key))) return json({ error: 'rate_limited' }, 429);
 
     const u = await env.DB.prepare(
-      'SELECT id, email, name, newsletter, admin, avatar, pw_hash, pw_salt, pw_iters FROM users WHERE email = ?'
+      `SELECT id, email, name, newsletter, admin, avatar, pw_hash, pw_salt, pw_iters,
+              first_name, last_name, country, phone, role, company, signup_source
+         FROM users WHERE email = ?`
     ).bind(email).first();
 
     // Always run a derivation so response time doesn't reveal whether the email
@@ -408,7 +379,8 @@ async function handle(req, env, ctx) {
     const t = now();
     const row = await env.DB.prepare(
       `SELECT r.token_hash, r.user_id, r.expires_at, r.used_at,
-              u.email, u.name, u.newsletter, u.admin, u.avatar
+              u.email, u.name, u.newsletter, u.admin, u.avatar,
+              u.first_name, u.last_name, u.country, u.phone, u.role, u.company, u.signup_source
          FROM password_resets r JOIN users u ON u.id = r.user_id
         WHERE r.token_hash = ?`
     ).bind(await sha256b64(token)).first();
@@ -431,6 +403,8 @@ async function handle(req, env, ctx) {
     ]);
     await clearThrottle(env, `resetc:${ip}`);
 
+    // the batch just wrote a new hash — reflect that without a second read
+    row.pw_hash = hash;
     return authed(
       { user: publicUser(row), favorites: await favoritesFor(env, row.user_id, product(body.product)) },
       200, sessionCookie(sessionToken, maxAge)

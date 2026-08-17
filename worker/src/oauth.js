@@ -14,6 +14,7 @@
  */
 
 import { linkOnSignIn } from './rights.js';
+import { publicUser } from './user.js';
 
 const STATE_TTL = 600;          // 10 minutes to complete the round trip
 
@@ -293,11 +294,11 @@ export async function claimHandoff(req, env) {
 
   const cookie = await issueSession(env, row.user_id);
   const u = await env.DB.prepare(
-    'SELECT email, name, newsletter, admin, avatar FROM users WHERE id = ?'
+    `SELECT email, name, newsletter, admin, avatar, pw_hash, signup_source,
+            first_name, last_name, country, phone, role, company
+       FROM users WHERE id = ?`
   ).bind(row.user_id).first();
-  const res = json({ user: {
-    email: u.email, name: u.name, newsletter: !!u.newsletter, admin: !!u.admin, avatar: u.avatar || null,
-  } }, 200, { 'set-cookie': cookie });
+  const res = json({ user: publicUser(u) }, 200, { 'set-cookie': cookie });
   res.headers.append('set-cookie', KILL_LEGACY_COOKIE);
   return res;
 }

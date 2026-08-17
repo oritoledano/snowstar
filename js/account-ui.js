@@ -21,27 +21,17 @@
 
   function renderNav() {
     if (M.user) {
-      const who = M.user.name || M.user.email.split('@')[0];
-      authWrap.innerHTML =
-        (M.user.admin ? `<a class="auth-link auth-dash" href="dashboard.html">Dashboard</a>` : '') +
-        `<button class="auth-link auth-who" id="authAccount">${who}</button>` +
-        `<button class="auth-link auth-out" id="authLogout">Sign out</button>`;
-      authWrap.querySelector('#authLogout').addEventListener('click', () => M.logout());
-      authWrap.querySelector('#authAccount').addEventListener('click', onAccountClick);
+      authWrap.innerHTML = `<button class="auth-link auth-acct" id="authAccount"
+        aria-haspopup="true" aria-expanded="false">Account</button>`;
+      authWrap.querySelector('#authAccount').addEventListener('click', toggleAcctPanel);
     } else {
       authWrap.innerHTML = `<button class="auth-link" id="authOpen">Sign in</button>`;
       authWrap.querySelector('#authOpen').addEventListener('click', () => open('login'));
     }
-  }
-
-  /** On the catalog, "my account" means "show me my saved tracks". */
-  function onAccountClick() {
-    const fav = document.getElementById('favToggle');
-    const catalog = document.getElementById('catalog');
-    if (fav && catalog) {
-      if (!fav.classList.contains('active')) fav.click();
-      catalog.scrollIntoView({ behavior: 'smooth' });
-    }
+    // a stale user's panel content (or "Account" itself, on sign-out) must
+    // never carry over to whoever's looking at the header next
+    closeAcctPanel();
+    resetAcctDrawers();
   }
 
   // ── modal ──
@@ -290,6 +280,230 @@
       }
     });
   })();
+
+  /* ═══════════ Account panel ═══════════
+     One dropdown under the "Account" button: who's signed in, then Downloads
+     / Favorites / User info as accordion drawers (fetched on first open, so
+     signing in never costs three extra round-trips), then Dashboard (owner
+     only) and Sign out. Built once; repainted on every M.onChange so an edit
+     from elsewhere (e.g. the dashboard renaming this member) shows up live. */
+  const COUNTRIES = ['Afghanistan','Albania','Algeria','Andorra','Angola','Argentina','Armenia',
+    'Australia','Austria','Azerbaijan','Bahamas','Bahrain','Bangladesh','Barbados','Belarus',
+    'Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil',
+    'Brunei','Bulgaria','Burkina Faso','Burundi','Cambodia','Cameroon','Canada','Cape Verde',
+    'Central African Republic','Chad','Chile','China','Colombia','Comoros','Costa Rica','Croatia',
+    'Cuba','Cyprus','Czech Republic','Denmark','Djibouti','Dominican Republic','Ecuador','Egypt',
+    'El Salvador','Estonia','Eswatini','Ethiopia','Fiji','Finland','France','Gabon','Gambia',
+    'Georgia','Germany','Ghana','Greece','Guatemala','Guinea','Guyana','Haiti','Honduras',
+    'Hong Kong','Hungary','Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy',
+    'Ivory Coast','Jamaica','Japan','Jordan','Kazakhstan','Kenya','Kosovo','Kuwait','Kyrgyzstan',
+    'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+    'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Mauritania','Mauritius','Mexico',
+    'Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar','Namibia','Nepal',
+    'Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia',
+    'Norway','Oman','Pakistan','Palestine','Panama','Papua New Guinea','Paraguay','Peru',
+    'Philippines','Poland','Portugal','Qatar','Romania','Russia','Rwanda','Saudi Arabia','Senegal',
+    'Serbia','Sierra Leone','Singapore','Slovakia','Slovenia','Somalia','South Africa',
+    'South Korea','South Sudan','Spain','Sri Lanka','Sudan','Sweden','Switzerland','Syria',
+    'Taiwan','Tajikistan','Tanzania','Thailand','Togo','Trinidad and Tobago','Tunisia','Turkey',
+    'Turkmenistan','Uganda','Ukraine','United Arab Emirates','United Kingdom', 'United States',
+    'Uruguay','Uzbekistan','Venezuela','Vietnam','Yemen','Zambia','Zimbabwe','Other'];
+
+  const esc = (s) => String(s == null ? '' : s).replace(/</g, '&lt;');
+  const fmtDate = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  const trackLink = (slug) => 'mutra.html?track=' + encodeURIComponent(slug);
+
+  const panel = document.createElement('div');
+  panel.className = 'acct-panel';
+  panel.hidden = true;
+  panel.innerHTML = `
+    <div class="acct-head">
+      <b class="acct-name"></b>
+      <span class="acct-subline"></span>
+    </div>
+    <div class="acct-section">
+      <p class="acct-label">My account</p>
+      <div class="acct-acc" data-key="downloads">
+        <button class="acct-row" type="button">Downloads <span class="acct-count"></span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
+      <div class="acct-acc" data-key="favorites">
+        <button class="acct-row" type="button">Favorites <span class="acct-count"></span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
+      <div class="acct-acc" data-key="profile">
+        <button class="acct-row" type="button">User info
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
+    </div>
+    <div class="acct-section acct-foot">
+      <a class="acct-row acct-dashlink" href="dashboard.html" hidden>Dashboard</a>
+      <button class="acct-row acct-signout" type="button">Sign out</button>
+    </div>`;
+  document.body.appendChild(panel);
+
+  function closeAcctPanel() {
+    panel.hidden = true;
+    const btn = document.getElementById('authAccount');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+    panel.querySelectorAll('.acct-acc.open').forEach(a => a.classList.remove('open'));
+  }
+
+  /** Forget fetched drawer content — called whenever WHO is signed in changes,
+   * so a second person on the same browser never sees the first person's list. */
+  function resetAcctDrawers() {
+    drawerLoaded.downloads = drawerLoaded.favorites = drawerLoaded.profile = false;
+    panel.querySelectorAll('.acct-drawer').forEach(d => { d.innerHTML = ''; });
+    panel.querySelectorAll('.acct-count').forEach(c => { c.textContent = ''; });
+  }
+
+  function positionPanel() {
+    const btn = document.getElementById('authAccount');
+    if (!btn) return;
+    const r = btn.getBoundingClientRect();
+    const width = Math.min(360, window.innerWidth - 24);
+    let left = r.right - width;
+    left = Math.max(12, Math.min(left, window.innerWidth - width - 12));
+    panel.style.width = width + 'px';
+    panel.style.top = (r.bottom + 10) + 'px';
+    panel.style.left = left + 'px';
+  }
+
+  async function toggleAcctPanel(e) {
+    e.stopPropagation();
+    if (!panel.hidden) { closeAcctPanel(); return; }
+    paintAcctHead();
+    positionPanel();
+    panel.hidden = false;
+    document.getElementById('authAccount').setAttribute('aria-expanded', 'true');
+  }
+
+  function paintAcctHead() {
+    if (!M.user) return;
+    const who = M.user.name || M.user.email.split('@')[0];
+    panel.querySelector('.acct-name').textContent = who;
+    const via = { google: 'Google account', facebook: 'Facebook account' }[M.user.via];
+    panel.querySelector('.acct-subline').textContent = via ? `${via} · ${M.user.email}` : M.user.email;
+    panel.querySelector('.acct-dashlink').hidden = !M.user.admin;
+  }
+
+  // ── accordion: one drawer open at a time, content fetched on first open ──
+  const drawerLoaded = { downloads: false, favorites: false, profile: false };
+  panel.querySelectorAll('.acct-acc > .acct-row').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const acc = btn.closest('.acct-acc');
+      const key = acc.dataset.key;
+      const opening = !acc.classList.contains('open');
+      panel.querySelectorAll('.acct-acc.open').forEach(a => a.classList.remove('open'));
+      if (opening) {
+        acc.classList.add('open');
+        positionPanel();
+        if (!drawerLoaded[key]) { drawerLoaded[key] = true; loadDrawer(key); }
+      }
+    });
+  });
+
+  function drawerFor(key) { return panel.querySelector(`.acct-acc[data-key="${key}"] .acct-drawer`); }
+  function countFor(key, n) { panel.querySelector(`.acct-acc[data-key="${key}"] .acct-count`).textContent = n ? `(${n})` : ''; }
+
+  async function loadDrawer(key) {
+    if (key === 'profile') return paintProfileForm();
+    const el = drawerFor(key);
+    el.innerHTML = '<p class="acct-empty">Loading…</p>';
+    try {
+      const path = key === 'downloads' ? '/downloads' : '/favorites/list?product=' + encodeURIComponent(M.product);
+      const d = await M.api(path);
+      const items = key === 'downloads' ? d.downloads : d.favorites;
+      countFor(key, items.length);
+      if (!items.length) {
+        el.innerHTML = `<p class="acct-empty">${key === 'downloads' ? 'Nothing downloaded yet.' : 'Nothing favorited yet.'}</p>`;
+        return;
+      }
+      el.innerHTML = `<ul class="acct-list">${items.map(it => `
+        <li><a href="${trackLink(it.slug)}">${esc(it.title || it.slug)}</a>
+          <span>${fmtDate(it.ts)}${key === 'downloads' && it.times > 1 ? ` · ${it.times}×` : ''}</span></li>`).join('')}</ul>`;
+    } catch {
+      el.innerHTML = '<p class="acct-empty">Couldn’t load that right now.</p>';
+    }
+  }
+
+  // ── profile form ──
+  function paintProfileForm() {
+    const el = drawerFor('profile');
+    const u = M.user;
+    el.innerHTML = `
+      <form class="acct-form" id="acctForm">
+        <div class="acct-2col">
+          <label class="acct-field"><span>First name</span><input name="first_name" maxlength="60"></label>
+          <label class="acct-field"><span>Last name</span><input name="last_name" maxlength="60"></label>
+        </div>
+        <label class="acct-field"><span>Country</span>
+          <select name="country"><option value="">—</option>${COUNTRIES.map(c => `<option>${c}</option>`).join('')}</select></label>
+        <label class="acct-field"><span>Phone</span><input name="phone" type="tel" maxlength="30"></label>
+        <label class="acct-field"><span>Email</span><input name="email" type="email" maxlength="254" ${u.has_password ? '' : 'disabled'}></label>
+        <label class="acct-field acct-pw" hidden><span>Current password, to confirm the change</span>
+          <input name="current_password" type="password" autocomplete="current-password"></label>
+        <p class="acct-note">${u.has_password ? '' : `Managed by your ${{ google: 'Google', facebook: 'Facebook' }[u.via] || 'social'} sign-in.`}</p>
+        <div class="acct-2col">
+          <label class="acct-field"><span>Role</span><input name="role" maxlength="80" placeholder="e.g. Music Supervisor"></label>
+          <label class="acct-field"><span>Company</span><input name="company" maxlength="80"></label>
+        </div>
+        <p class="acct-status" hidden></p>
+        <button type="submit" class="acct-save">Save</button>
+      </form>`;
+    const form = el.querySelector('#acctForm');
+    form.first_name.value = u.first_name || '';
+    form.last_name.value = u.last_name || '';
+    form.country.value = u.country || '';
+    form.phone.value = u.phone || '';
+    form.email.value = u.email || '';
+    form.role.value = u.role || '';
+    form.company.value = u.company || '';
+    const originalEmail = u.email || '';
+    const pwField = el.querySelector('.acct-pw');
+    form.email.addEventListener('input', () => { pwField.hidden = form.email.value.trim().toLowerCase() === originalEmail; });
+
+    form.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const status = el.querySelector('.acct-status');
+      status.hidden = true;
+      const btn = el.querySelector('.acct-save');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      const body = {
+        first_name: form.first_name.value, last_name: form.last_name.value,
+        country: form.country.value, phone: form.phone.value,
+        role: form.role.value, company: form.company.value,
+      };
+      const newEmail = form.email.value.trim().toLowerCase();
+      if (u.has_password && newEmail !== originalEmail) {
+        body.email = newEmail;
+        body.current_password = form.current_password.value;
+      }
+      try {
+        const d = await M.api('/profile', { method: 'POST', body: JSON.stringify(body) });
+        M.user = d.user;
+        await M.refresh();
+        paintAcctHead();
+        status.textContent = 'Saved.'; status.className = 'acct-status ok'; status.hidden = false;
+        toast('Profile saved');
+      } catch (e2) {
+        const msg = { wrong_password: 'That password isn’t right.', email_taken: 'That email is already in use.',
+          invalid_email: 'That doesn’t look like a valid email.', email_locked_oauth: 'Email is managed by your social sign-in.' }[e2.code]
+          || 'Couldn’t save that — try again.';
+        status.textContent = msg; status.className = 'acct-status err'; status.hidden = false;
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save';
+      }
+    });
+  }
+
+  panel.querySelector('.acct-signout').addEventListener('click', () => { closeAcctPanel(); M.logout(); });
+  document.addEventListener('click', e => { if (!panel.hidden && !panel.contains(e.target) && e.target.id !== 'authAccount') closeAcctPanel(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) closeAcctPanel(); });
+  addEventListener('resize', () => { if (!panel.hidden) positionPanel(); });
 
   M.onChange(renderNav);
   renderNav();
