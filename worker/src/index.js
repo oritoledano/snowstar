@@ -22,7 +22,8 @@ import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote } from './site.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
-         streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads } from './artists.js';
+         streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
+         listArtistsAdmin } from './artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus } from './rights.js';
 
@@ -227,6 +228,7 @@ async function handle(req, env, ctx) {
   if (path === '/artist/upload' && method === 'PUT') return uploadTrack(req, env, await currentUser(req, env), url);
   if (path === '/artist/submissions' && method === 'POST') return createSubmission(req, env, await currentUser(req, env), ctx);
   if (path === '/artist/file' && method === 'GET') return streamSubmission(req, env, await currentUser(req, env), url);
+  if (path === '/artists' && method === 'GET') return listArtistsAdmin(env, await currentUser(req, env));
   if (path === '/submissions' && method === 'GET') return listSubmissions(env, await currentUser(req, env), url);
   if (path === '/submissions/review' && method === 'POST') return reviewSubmission(req, env, await currentUser(req, env));
 

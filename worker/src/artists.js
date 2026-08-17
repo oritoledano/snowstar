@@ -113,7 +113,7 @@ export async function createSubmission(req, env, user, ctx) {
     ctx.waitUntil(sendMail(env, {
       to: env.ALERT_TO,
       subject: `Mutra submission: “${title}” by ${creditedName}`,
-      text: `${creditedName} uploaded “${title}”.\n\nReview it: https://snowstar.company/review.html`,
+      text: `${creditedName} uploaded “${title}”.\n\nReview it: https://snowstar.company/dashboard.html#submissions`,
     }).catch(() => {}));
   }
 
@@ -174,6 +174,26 @@ export async function cleanupOrphanUploads(env) {
   } catch (e) {
     console.error('orphan sweep', e && e.message);
   }
+}
+
+/** Owner: everyone the label works with — real artist accounts and ghosts. */
+export async function listArtistsAdmin(env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const real = await env.DB.prepare(
+    `SELECT u.artist_name AS name, u.email, u.created_at, u.last_login_at,
+            'account' AS kind,
+            (SELECT COUNT(*) FROM submissions s WHERE s.user_id = u.id AND s.managed_artist_id IS NULL) AS uploads,
+            (SELECT COUNT(*) FROM submissions s WHERE s.user_id = u.id AND s.managed_artist_id IS NULL AND s.status='approved') AS approved
+       FROM users u WHERE u.artist = 1 ORDER BY u.artist_name`
+  ).all();
+  const ghosts = await env.DB.prepare(
+    `SELECT m.name, m.email, m.created_at, NULL AS last_login_at,
+            CASE WHEN m.claimed_user_id IS NULL THEN 'ghost' ELSE 'claimed' END AS kind,
+            (SELECT COUNT(*) FROM submissions s WHERE s.managed_artist_id = m.id) AS uploads,
+            (SELECT COUNT(*) FROM submissions s WHERE s.managed_artist_id = m.id AND s.status='approved') AS approved
+       FROM managed_artists m ORDER BY m.name`
+  ).all();
+  return json({ artists: [...(real.results || []), ...(ghosts.results || [])] });
 }
 
 /** Owner: the review queue. */

@@ -1,0 +1,299 @@
+/* ═══════════ Owner dashboard — stats, members, artists, submissions, mail ═══
+   One page for everything the owner checks: the analytics that lived on
+   stats.html, the review queue and outbox from review.html, plus the artist
+   roster. Old URLs redirect here. Owner-only — everyone else gets the gate. */
+(function () {
+  const app = document.getElementById('app');
+  const esc = (s) => String(s == null ? '' : s).replace(/</g, '&lt;');
+  const fmt = (ts) => new Date(ts * 1000).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+  const TABS = ['overview', 'stats', 'members', 'artists', 'submissions', 'notifications'];
+  let tab = (location.hash || '').replace('#', '');
+  if (!TABS.includes(tab)) tab = 'overview';
+  let days = 30, subTab = 'pending';
+
+  const get = (p) => fetch('/api' + p, { credentials: 'same-origin' }).then((r) => {
+    if (r.status === 403) throw new Error('forbidden');
+    return r.json();
+  });
+  const post = (p, body) => fetch('/api' + p, {
+    method: 'POST', credentials: 'same-origin',
+    headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+  }).then((r) => r.json());
+
+  function gate() {
+    app.innerHTML = `<div class="db-gate"><h1 style="font-family:var(--font-display)">Dashboard</h1>
+      <p style="color:var(--muted);margin:14px 0 22px">This page is for the site owner.</p>
+      <a class="mbtn mbtn-solid" href="index.html">Back to the site</a></div>`;
+  }
+
+  function table(rows, cols, opts = {}) {
+    if (!rows.length) return '<p class="db-empty">Nothing yet.</p>';
+    const max = opts.barKey ? Math.max(...rows.map((r) => r[opts.barKey] || 0)) : 0;
+    return `<table><thead><tr>${cols.map((c) => `<th${c.num ? ' style="text-align:right"' : ''}>${c.label}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map((r) => `<tr${opts.rowAttr ? opts.rowAttr(r) : ''}>${cols.map((c) => {
+        let v = c.get(r);
+        if (c.bar && max) v = `${v} <span class="bar" style="width:${Math.round((r[opts.barKey] / max) * 90)}px"></span>`;
+        return `<td class="${c.num ? 'num' : ''}">${v}</td>`;
+      }).join('')}</tr>`).join('')}</tbody></table>`;
+  }
+
+  const shell = (inner) => `
+    <div class="db-head">
+      <h1>Dashboard</h1>
+      <div class="db-tabs">${TABS.map((t) =>
+        `<button class="db-tab ${t === tab ? 'active' : ''}" data-t="${t}">${t}</button>`).join('')}</div>
+    </div>${inner}`;
+
+  function paint(inner) {
+    app.innerHTML = shell(inner);
+    app.querySelectorAll('.db-tab').forEach((b) => b.addEventListener('click', () => {
+      tab = b.dataset.t;
+      history.replaceState(null, '', '#' + tab);
+      load();
+    }));
+  }
+
+  async function load() {
+    try {
+      if (tab === 'overview') return paintOverview();
+      if (tab === 'stats') return paintStats();
+      if (tab === 'members') return paintMembers();
+      if (tab === 'artists') return paintArtists();
+      if (tab === 'submissions') return paintSubmissions();
+      if (tab === 'notifications') return paintMail();
+    } catch (e) {
+      if (e.message === 'forbidden') gate();
+      else paint(`<p class="db-empty">Couldn’t load that right now — try a refresh.</p>`);
+    }
+  }
+
+  /* ── overview ── */
+  async function paintOverview() {
+    const [stats, subs, mail, artists] = await Promise.all([
+      get('/stats?days=30'), get('/submissions?status=pending'),
+      get('/mailbox'), get('/artists'),
+    ]);
+    const t = stats.totals || {};
+    const pendingMail = (mail.outbox || []).filter((m) => !m.sent_at).length;
+    const card = (n, label, to) => `<div class="db-card" data-go="${to}"><b class="grad-text">${n}</b><span>${label}</span></div>`;
+    paint(`
+      <div class="db-cards">
+        ${card(t.visits || 0, 'Visits · 30d', 'stats')}
+        ${card(t.plays || 0, 'Plays · 30d', 'stats')}
+        ${card((stats.members || []).length, 'Members', 'members')}
+        ${card((artists.artists || []).length, 'Artists', 'artists')}
+        ${card((subs.submissions || []).length, 'Pending tracks', 'submissions')}
+        ${card(pendingMail, 'Mail to approve', 'notifications')}
+      </div>
+      <div class="db-grid">
+        <div class="db-panel"><h2>Most played · 30d</h2>
+          ${table((stats.topTracks || []).slice(0, 8), [
+            { label: 'Track', get: (r) => esc(r.slug) },
+            { label: 'Plays', num: true, bar: true, get: (r) => r.plays },
+          ], { barKey: 'plays' })}</div>
+        <div class="db-panel"><h2>Quick actions</h2>
+          <p class="db-empty" style="padding-top:4px">
+            <a href="index.html#work" style="text-decoration:underline">Edit works</a> ·
+            <a href="index.html#clients" style="text-decoration:underline">Edit client logos</a> ·
+            <a href="artists.html" style="text-decoration:underline">Upload as artist</a> ·
+            <a href="mutra.html" style="text-decoration:underline">Open the catalog</a></p>
+          <p class="db-empty">Site texts, sections and note pins are edited on the pages themselves — sign in and use the floating pill.</p></div>
+      </div>`);
+    app.querySelectorAll('[data-go]').forEach((c) => c.addEventListener('click', () => {
+      tab = c.dataset.go; history.replaceState(null, '', '#' + tab); load();
+    }));
+  }
+
+  /* ── stats (ported from stats.html) ── */
+  async function paintStats() {
+    const d = await get('/stats?days=' + days);
+    const t = d.totals || {};
+    paint(`
+      <div style="display:flex;gap:8px;margin-bottom:16px">${[7, 30, 90].map((n) =>
+        `<button class="chip ${n === days ? 'active' : ''}" data-days="${n}">${n} days</button>`).join('')}</div>
+      <div class="db-cards">
+        <div class="db-card"><b class="grad-text">${t.visits || 0}</b><span>Visits</span></div>
+        <div class="db-card"><b class="grad-text">${t.plays || 0}</b><span>Track plays</span></div>
+        <div class="db-card"><b class="grad-text">${t.licenses || 0}</b><span>License clicks</span></div>
+        <div class="db-card"><b class="grad-text">${t.views || 0}</b><span>Page views</span></div>
+      </div>
+      <div class="db-grid">
+        <div class="db-panel"><h2>Most played tracks</h2>${table(d.topTracks || [], [
+          { label: 'Track', get: (r) => esc(r.slug) },
+          { label: 'Plays', num: true, bar: true, get: (r) => r.plays },
+          { label: 'People', num: true, get: (r) => r.listeners },
+        ], { barKey: 'plays' })}</div>
+        <div class="db-panel"><h2>License clicks</h2>${table(d.licenses || [], [
+          { label: 'Track', get: (r) => esc(r.slug) },
+          { label: 'Clicks', num: true, bar: true, get: (r) => r.clicks },
+        ], { barKey: 'clicks' })}</div>
+        <div class="db-panel"><h2>Where they came from</h2>${table(d.referrers || [], [
+          { label: 'Source', get: (r) => esc(r.src) },
+          { label: 'Visits', num: true, bar: true, get: (r) => r.visits },
+        ], { barKey: 'visits' })}</div>
+        <div class="db-panel"><h2>Countries</h2>${table(d.countries || [], [
+          { label: 'Country', get: (r) => esc(r.country) },
+          { label: 'Visits', num: true, bar: true, get: (r) => r.visits },
+        ], { barKey: 'visits' })}</div>
+        <div class="db-panel" style="grid-column:1/-1"><h2>Recent visits <span class="pill">click a row for the journey</span></h2>
+          ${table(d.recent || [], [
+            { label: 'When', get: (r) => fmt(r.last_ts) },
+            { label: 'From', get: (r) => esc((r.country || '—') + (r.referrer ? ' · ' + r.referrer : '')) },
+            { label: 'Views', num: true, get: (r) => r.views },
+            { label: 'Plays', num: true, get: (r) => r.plays },
+            { label: 'License', num: true, get: (r) => r.licenses || '' },
+          ], { rowAttr: (r) => ` class="click" data-sid="${esc(r.session_id)}"` })}
+          <div id="jrn"></div></div>
+        <div class="db-panel" style="grid-column:1/-1"><h2>By day</h2>${table(d.daily || [], [
+          { label: 'Day', get: (r) => esc(r.day) },
+          { label: 'Visits', num: true, bar: true, get: (r) => r.visits },
+          { label: 'Plays', num: true, get: (r) => r.plays },
+        ], { barKey: 'visits' })}</div>
+      </div>`);
+    app.querySelectorAll('[data-days]').forEach((b) =>
+      b.addEventListener('click', () => { days = +b.dataset.days; load(); }));
+    app.querySelectorAll('tr.click').forEach((tr) =>
+      tr.addEventListener('click', async () => {
+        const box = document.getElementById('jrn');
+        box.innerHTML = '<p class="db-empty">Loading journey…</p>';
+        const j = await get('/journey?sid=' + encodeURIComponent(tr.dataset.sid)).catch(() => null);
+        if (!j) { box.innerHTML = '<p class="db-empty">Couldn’t load that journey.</p>'; return; }
+        const verb = { view: 'opened', play: 'played', license: 'clicked License on', search: 'searched for', favorite: 'favorited', download: 'downloaded' };
+        box.innerHTML = `<ul class="jrn">${(j.events || []).map((e) =>
+          `<li>${new Date(e.ts * 1000).toLocaleTimeString()} — ${verb[e.type] || esc(e.type)} <b>${esc(e.detail || e.page || '')}</b></li>`).join('')}</ul>`;
+      }));
+  }
+
+  /* ── members ── */
+  async function paintMembers() {
+    const d = await get('/stats?days=30');
+    const members = d.members || [];
+    paint(`<div class="db-panel"><h2>Members <span class="pill">${members.length} signed up</span>
+      <button class="chip" id="copyEmails" style="float:right">Copy emails</button></h2>
+      ${table(members, [
+        { label: 'Email', get: (r) => esc(r.email) },
+        { label: 'Name', get: (r) => esc(r.name || '—') },
+        { label: 'Joined via', get: (r) => esc(r.signup_source || 'password') },
+        { label: 'Newsletter', get: (r) => (r.newsletter ? 'yes' : '—') },
+        { label: 'Favorites', num: true, get: (r) => r.favs },
+        { label: 'Joined', get: (r) => fmt(r.created_at) },
+        { label: 'Last seen', get: (r) => (r.last_login_at ? fmt(r.last_login_at) : '—') },
+      ])}</div>`);
+    const copy = document.getElementById('copyEmails');
+    if (copy) copy.addEventListener('click', () => {
+      const list = members.filter((m) => m.newsletter).map((m) => m.email);
+      navigator.clipboard.writeText(list.join(', '));
+      copy.textContent = list.length ? `Copied ${list.length} opted-in` : 'Nobody opted in yet';
+      setTimeout(() => { copy.textContent = 'Copy emails'; }, 2500);
+    });
+  }
+
+  /* ── artists ── */
+  async function paintArtists() {
+    const d = await get('/artists');
+    paint(`<div class="db-panel"><h2>Artists <span class="pill">${(d.artists || []).length}</span></h2>
+      ${table(d.artists || [], [
+        { label: 'Artist', get: (r) => `<b>${esc(r.name || '—')}</b>` },
+        { label: 'Email', get: (r) => esc(r.email) },
+        { label: 'Status', get: (r) => `<span class="db-badge ${r.kind}">${
+            r.kind === 'ghost' ? 'awaiting signup' : r.kind === 'claimed' ? 'claimed' : 'has account'}</span>` },
+        { label: 'Uploads', num: true, get: (r) => r.uploads },
+        { label: 'Accepted', num: true, get: (r) => r.approved },
+        { label: 'Since', get: (r) => fmtD(r.created_at) },
+      ])}
+      <p class="db-empty">“Awaiting signup” artists are ones you upload for — they claim their profile
+      (and countersign their declarations) when they create an account with that email.</p></div>`);
+  }
+
+  /* ── submissions (ported from review.html) ── */
+  async function paintSubmissions() {
+    const d = await get('/submissions?status=' + subTab);
+    const items = d.submissions || [];
+    const declBlock = (s) => {
+      if (!s.decl_kind) return '';
+      let splits = [];
+      try { splits = JSON.parse(s.splits_snapshot || '[]'); } catch {}
+      const kindWord = { solo: 'Owns 100%', shared: 'Shared ownership', behalf: 'Uploaded by you on behalf' }[s.decl_kind] || s.decl_kind;
+      return `<div class="rv-decl"><b>${kindWord}</b> — signed “${esc(s.signed_name)}”
+        ${s.acum ? ' · <span class="rv-acum">⚠ ACUM/royalty-society registered</span>' : ''}
+        ${splits.length ? '<br>Splits: ' + splits.map((c) =>
+          `${esc(c.name)} (${esc(c.email)}) ${(c.share_bp / 100).toFixed(c.share_bp % 100 ? 2 : 0)}%`).join(' · ') : ''}
+        ${s.decl_kind === 'behalf' ? '<br>Evidence: ' + (s.evidence_kind
+          ? esc(s.evidence_kind) + (s.evidence_note ? ' — ' + esc(s.evidence_note) : '')
+          : '<i>none on file — get a “reply YES” from the artist</i>') : ''}</div>`;
+    };
+    paint(`
+      <div style="display:flex;gap:8px;margin-bottom:16px">${['pending', 'approved', 'rejected'].map((t) =>
+        `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${t}</button>`).join('')}</div>
+      ${items.length ? items.map((s) => `
+        <div class="rv-item" data-id="${s.id}">
+          <div class="rv-top"><b>${esc(s.title)}</b>
+            <span class="who">${esc(s.artist_name || s.email)}</span>
+            <span class="meta">${(s.size / 1048576).toFixed(1)}MB · ${esc(s.ext)} · ${fmt(s.created_at)}</span></div>
+          ${declBlock(s)}
+          ${s.artist_note ? `<p class="rv-note">Artist: “${esc(s.artist_note)}”</p>` : ''}
+          ${s.review_note ? `<p class="rv-note">You: “${esc(s.review_note)}”</p>` : ''}
+          <audio controls preload="none" src="/api/artist/file?id=${s.id}"></audio>
+          <div class="rv-acts">
+            ${subTab !== 'approved' ? '<button class="rv-btn rv-ok" data-a="approved">Approve</button>' : ''}
+            ${subTab !== 'rejected' ? '<button class="rv-btn rv-no" data-a="rejected">Reject</button>' : ''}
+            ${subTab !== 'pending' ? '<button class="rv-btn" data-a="pending">Back to pending</button>' : ''}
+          </div></div>`).join('')
+      : `<p class="db-empty">${subTab === 'pending' ? 'Nothing waiting — inbox zero.' : 'Nothing here yet.'}</p>`}
+      <p class="db-empty">Approving queues a track for catalog ingestion — ask Claude to “process approved uploads” to take them live.</p>`);
+    app.querySelectorAll('[data-st]').forEach((b) =>
+      b.addEventListener('click', () => { subTab = b.dataset.st; load(); }));
+    app.querySelectorAll('.rv-item .rv-btn').forEach((b) =>
+      b.addEventListener('click', async () => {
+        const id = Number(b.closest('.rv-item').dataset.id);
+        const status = b.dataset.a;
+        const note = status === 'pending' ? '' :
+          (prompt(status === 'approved' ? 'Note to the artist (optional):' : 'Tell them why (they will see this):') || '');
+        await post('/submissions/review', { id, status, note });
+        load();
+      }));
+  }
+
+  /* ── notifications (ported from review.html) ── */
+  async function paintMail() {
+    const mail = await get('/mailbox');
+    const pending = (mail.outbox || []).filter((m) => !m.sent_at);
+    const sent = (mail.outbox || []).filter((m) => m.sent_at).slice(0, 12);
+    paint(`
+      <p class="db-empty" style="padding-top:0">Nothing is emailed without you. ${mail.mail_live
+        ? 'Sending goes straight to the recipient.'
+        : 'Until the send domain is verified, “Approve &amp; send” delivers the email to YOUR inbox with a forward-to banner — you forward it yourself.'}</p>
+      ${pending.length ? pending.map((m) => `
+        <details class="rv-mrow" data-id="${m.id}">
+          <summary><b>${esc(m.to_name || m.to_email)}</b>
+            <span style="color:var(--muted)">${esc(m.to_email)}${m.title ? ' · re “' + esc(m.title) + '”' : ''}</span>
+            ${m.last_error ? `<span class="rv-err">last try failed: ${esc(m.last_error)}</span>` : ''}
+            <button class="rv-btn rv-ok rv-send" style="margin-left:auto">Approve &amp; send</button></summary>
+          <pre>${esc(m.body)}</pre></details>`).join('')
+      : '<p class="db-empty">No notifications waiting.</p>'}
+      ${sent.length ? '<p class="db-empty">Recently sent:</p>' + sent.map((m) => `
+        <div class="rv-mrow"><b>${esc(m.to_email)}</b>
+          ${m.sent_at ? `<span class="rv-sent">${m.sent_how === 'direct' ? 'sent' : 'delivered to you for forwarding'} · ${fmt(m.sent_at)}</span>`
+            : `<span class="rv-err">failed: ${esc(m.last_error)}</span>`}</div>`).join('') : ''}`);
+    app.querySelectorAll('.rv-send').forEach((b) =>
+      b.addEventListener('click', async (e) => {
+        e.preventDefault();
+        b.disabled = true; b.textContent = 'Sending…';
+        await post('/mailbox/send', { ids: [Number(b.closest('.rv-mrow').dataset.id)] });
+        load();
+      }));
+  }
+
+  addEventListener('hashchange', () => {
+    const h = (location.hash || '').replace('#', '');
+    if (TABS.includes(h) && h !== tab) { tab = h; load(); }
+  });
+
+  (function boot(n) {
+    if (window.SnowstarAccount && SnowstarAccount.ready) return load();
+    if (n > 40) return load();
+    setTimeout(() => boot(n + 1), 100);
+  })(0);
+})();
