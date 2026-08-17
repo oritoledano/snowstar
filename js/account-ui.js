@@ -349,7 +349,10 @@
     panel.hidden = true;
     const btn = document.getElementById('authAccount');
     if (btn) btn.setAttribute('aria-expanded', 'false');
-    panel.querySelectorAll('.acct-acc.open').forEach(a => a.classList.remove('open'));
+    panel.querySelectorAll('.acct-acc.open').forEach(a => {
+      a.classList.remove('open');
+      a.querySelector('.acct-drawer').hidden = true;
+    });
   }
 
   /** Forget fetched drawer content — called whenever WHO is signed in changes,
@@ -397,9 +400,16 @@
       const acc = btn.closest('.acct-acc');
       const key = acc.dataset.key;
       const opening = !acc.classList.contains('open');
-      panel.querySelectorAll('.acct-acc.open').forEach(a => a.classList.remove('open'));
+      // [hidden] carries !important site-wide (account.css) specifically so a
+      // stray class can never leave a panel stuck open — so drawer visibility
+      // must be driven by the hidden PROPERTY, not just the .open class
+      panel.querySelectorAll('.acct-acc.open').forEach(a => {
+        a.classList.remove('open');
+        a.querySelector('.acct-drawer').hidden = true;
+      });
       if (opening) {
         acc.classList.add('open');
+        acc.querySelector('.acct-drawer').hidden = false;
         positionPanel();
         if (!drawerLoaded[key]) { drawerLoaded[key] = true; loadDrawer(key); }
       }
