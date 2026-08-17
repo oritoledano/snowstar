@@ -589,3 +589,8 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .theme-btn{width:31px;height:31px}
   .nav-right .auth-link{font-size:.7rem;letter-spacing:.04em}
 }
+/* gradient TEXT needs deeper stops on the light bone background —
+   the button/chip gradient stays as is, only .grad text gets the rich mix */
+[data-theme="light"] .grad{
+  background:linear-gradient(100deg,#8a5a2e 0%,#b4501f 52%,#8f3013 110%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
