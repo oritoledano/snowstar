@@ -28,11 +28,12 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.class
 (function heroGlow() {
   const hero = document.getElementById('hero');
   if (!hero) return;
+  // ember family — warm bands the pointer sweeps through
   const PALETTE = [
-    ['#6d28d9', '#3b82f6'],   // violet → blue
-    ['#3b82f6', '#22d3ee'],   // blue → cyan
-    ['#22d3ee', '#6ee7b7'],   // cyan → mint
-    ['#6ee7b7', '#22d3ee'],   // mint → cyan
+    ['#7c3f21', '#b4501f'],   // deep umber → coral
+    ['#b4501f', '#d9744a'],   // coral → bright coral
+    ['#d9744a', '#e0b48b'],   // coral → amber
+    ['#e0b48b', '#efe7d8'],   // amber → cream
   ];
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let tx = 50, ty = 42, x = 50, y = 42, raf = 0;
