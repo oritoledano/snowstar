@@ -40,7 +40,7 @@ export async function sendMail(env, { to, subject, text, html }) {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.MAIL_FROM || 'Snowstar <hello@send.snowstar.company>',
+      from: env.MAIL_FROM || 'SNOWSTAR.COMPANY <hello@send.snowstar.company>',
       reply_to: 'hello@snowstar.company',
       to: [to],
       subject,

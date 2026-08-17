@@ -3,7 +3,6 @@
 // Nav + full-screen menu
 const nav = document.getElementById('nav');
 const menuBtn = document.getElementById('menuBtn');
-const menuLabel = document.getElementById('menuLabel');
 const overlay = document.getElementById('menuOverlay');
 addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 30), { passive: true });
 nav.classList.toggle('scrolled', scrollY > 30);
@@ -12,14 +11,11 @@ function setMenu(open) {
   document.body.classList.toggle('menu-open', open);
   menuBtn.setAttribute('aria-expanded', open);
   overlay.setAttribute('aria-hidden', !open);
-  const lbl = menuLabel.querySelector('.mll');
-  if (lbl) lbl.textContent = open ? 'Close' : 'Menu';
   if (open) { const first = overlay.querySelector('a'); if (first) setTimeout(() => first.focus(), 400); }
   else menuBtn.focus();
 }
 const toggleMenu = () => setMenu(!document.body.classList.contains('menu-open'));
 menuBtn.addEventListener('click', toggleMenu);
-menuLabel.addEventListener('click', toggleMenu);
 // close when a menu link is chosen (anchors still scroll; mutra.html still navigates),
 // or when the click lands on empty space rather than the menu itself
 overlay.addEventListener('click', e => {
@@ -259,11 +255,12 @@ function buildMarqueeRow(logos, dir) {
   const track = document.createElement('div');
   track.className = 'marq-track';
   track.dataset.dir = dir;
-  // duplicate the set so the loop is seamless
-  logos.concat(logos).forEach(src => {
+  // duplicate the set so the loop is seamless; tone travels with each logo so
+  // colored marks are exempt from the light-theme inversion
+  logos.concat(logos).forEach(l => {
     const d = document.createElement('div');
     d.className = 'client';
-    d.innerHTML = `<img src="${src}" alt="Client logo" loading="lazy">`;
+    d.innerHTML = `<img src="${l.url}" alt="Client logo" loading="lazy"${l.tone === 'mixed' ? ' data-tone="mixed"' : ''}>`;
     track.appendChild(d);
   });
   row.appendChild(track);
@@ -284,8 +281,12 @@ function buildClientRows(urls) {
 function loadClientLogos() {
   return fetch('/api/logos')
     .then(r => { if (!r.ok) throw new Error('logos_' + r.status); return r.json(); })
-    .then(d => buildClientRows(d.logos.map(l => l.url)))
-    .catch(() => buildClientRows(typeof CLIENT_LOGOS !== 'undefined' ? CLIENT_LOGOS : []));
+    .then(d => buildClientRows(d.logos))
+    .catch(() => {
+      const MIXED = new Set([2, 19]);
+      buildClientRows((typeof CLIENT_LOGOS !== 'undefined' ? CLIENT_LOGOS : []).map((url, i) =>
+        ({ url, tone: MIXED.has(i) ? 'mixed' : '' })));
+    });
 }
 loadClientLogos();
 window.SnowstarLogos = { reload: loadClientLogos };

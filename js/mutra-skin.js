@@ -9,7 +9,9 @@
   const read = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
   const write = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
 
-  let theme = read('mutra_theme') || 'light';
+  // one remembered choice for the whole site; before any choice is made,
+  // each page keeps its designed default (Mutra: light, Snowstar: dark)
+  let theme = read('mutra_theme') || root.getAttribute('data-default-theme') || 'light';
 
   function apply() {
     root.setAttribute('data-skin', SKIN);
