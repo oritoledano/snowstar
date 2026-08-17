@@ -24,8 +24,11 @@
   .ar-field input,.ar-field textarea{width:100%;background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);
     border-radius:10px;color:var(--text);font:inherit;font-size:.92rem;padding:10px 12px;outline:0;box-sizing:border-box}
   .ar-field input:focus,.ar-field textarea:focus{border-color:var(--amber,#8fd8ff)}
-  .ar-drop{border:2px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;color:var(--muted);
+  .ar-drop{display:block;border:2px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;color:var(--muted);
     cursor:pointer;transition:.2s;margin-bottom:14px}
+  .ar-who{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.86rem;margin-bottom:16px}
+  .ar-who b{color:var(--text)}
+  .ar-who button{background:none;border:0;color:var(--amber,#8fd8ff);font:inherit;font-size:.8rem;cursor:pointer;padding:0;text-decoration:underline}
   .ar-drop:hover,.ar-drop.over{border-color:var(--amber,#8fd8ff);color:var(--text)}
   .ar-drop input{display:none}
   .ar-note{color:var(--dim,var(--muted));font-size:.78rem;margin-top:8px}
@@ -76,6 +79,7 @@
   <!-- artist dashboard -->
   <div id="arDash" hidden>
     <div class="ar-card">
+      <p class="ar-who">Uploading as <b id="arWho"></b><button id="arRename" type="button">change name</button></p>
       <h2 data-txt="artists.up.title">Upload a track</h2>
       <label class="ar-drop" id="arDrop">
         <input type="file" id="arFile" accept=".wav,.mp3,.aif,.aiff,.flac,.m4a,.ogg" multiple>
@@ -97,6 +101,6 @@
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=8"></script>
 <script src="js/site-edit.js?v=1"></script>
-<script src="js/artists-page.js?v=1"></script>
+<script src="js/artists-page.js?v=2"></script>
 </body>
 </html>

@@ -33,13 +33,17 @@
       const d = await fetch('/api/artist/uploads', { credentials: 'same-origin' }).then((r) => r.json());
       reg.hidden = !!d.artist;
       dash.hidden = !d.artist;
-      if (d.artist) paintList(d.uploads || []);
+      if (d.artist) {
+        $('#arWho').textContent = d.artist_name || '';
+        $('#arName').value = d.artist_name || '';
+        paintList(d.uploads || []);
+      }
     } catch { /* leave as-is */ }
   }
   M.onChange(render);
   render();
 
-  // ── become an artist ──
+  // ── become an artist (also serves renames — the API call is an update) ──
   $('#arRegBtn').addEventListener('click', async () => {
     const name = $('#arName').value.trim();
     const st = $('#arRegStatus');
@@ -48,8 +52,17 @@
       await api('/artist/register', { artist_name: name });
       st.hidden = true;
       reg.hidden = true; dash.hidden = false;
-      paintList([]);
+      $('#arWho').textContent = name;
+      const d = await fetch('/api/artist/uploads', { credentials: 'same-origin' }).then((r) => r.json());
+      paintList(d.uploads || []);
     } catch (e) { st.textContent = 'Couldn’t save that — try again.'; st.hidden = false; }
+  });
+
+  // change the credited name any time
+  $('#arRename').addEventListener('click', () => {
+    dash.hidden = true;
+    reg.hidden = false;
+    $('#arName').focus();
   });
 
   // ── uploads ──
