@@ -19,19 +19,36 @@
   const anchor = before ? host.querySelector(before) : null;
   anchor ? host.insertBefore(authWrap, anchor) : host.appendChild(authWrap);
 
+  // M.onChange fires for reasons that AREN'T a sign-in/out — a profile save's
+  // own M.refresh(), a favorite toggled elsewhere on the page. Only reset the
+  // open panel when the signed-in identity actually changed; otherwise a
+  // successful Save would slam the panel shut before its own confirmation
+  // ever painted.
+  let lastIdentity;
   function renderNav() {
+    const identity = M.user ? M.user.email : null;
+    const identityChanged = identity !== lastIdentity;
+    lastIdentity = identity;
+    const wasOpen = !panel.hidden;
+
     if (M.user) {
       authWrap.innerHTML = `<button class="auth-link auth-acct" id="authAccount"
         aria-haspopup="true" aria-expanded="false">Account</button>`;
       authWrap.querySelector('#authAccount').addEventListener('click', toggleAcctPanel);
+      // the button itself is rebuilt every render (simplest, matches the old
+      // code); keep its expanded state truthful if we're NOT about to close it
+      if (wasOpen && !identityChanged) authWrap.querySelector('#authAccount').setAttribute('aria-expanded', 'true');
     } else {
       authWrap.innerHTML = `<button class="auth-link" id="authOpen">Sign in</button>`;
       authWrap.querySelector('#authOpen').addEventListener('click', () => open('login'));
     }
-    // a stale user's panel content (or "Account" itself, on sign-out) must
-    // never carry over to whoever's looking at the header next
-    closeAcctPanel();
-    resetAcctDrawers();
+
+    if (identityChanged) {
+      // a stale user's panel content must never carry over to whoever's
+      // looking at the header next
+      closeAcctPanel();
+      resetAcctDrawers();
+    }
   }
 
   // ── modal ──
