@@ -11,7 +11,7 @@
 
   // one remembered choice for the whole site; before any choice is made,
   // each page keeps its designed default (Mutra: light, Snowstar: dark)
-  let theme = read('mutra_theme') || root.getAttribute('data-default-theme') || 'light';
+  let theme = read('mutra_theme') || root.getAttribute('data-default-theme') || 'dark';
 
   function apply() {
     root.setAttribute('data-skin', SKIN);

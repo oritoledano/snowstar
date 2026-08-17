@@ -20,7 +20,7 @@ import { sendMail, resetEmail } from './mail.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
-import { listTexts, saveText, listNotes, saveNote, deleteNote } from './site.js';
+import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport } from './site.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
          listArtistsAdmin } from './artists.js';
@@ -229,6 +229,7 @@ async function handle(req, env, ctx) {
   if (path === '/artist/submissions' && method === 'POST') return createSubmission(req, env, await currentUser(req, env), ctx);
   if (path === '/artist/file' && method === 'GET') return streamSubmission(req, env, await currentUser(req, env), url);
   if (path === '/artists' && method === 'GET') return listArtistsAdmin(env, await currentUser(req, env));
+  if (path === '/storage' && method === 'GET') return storageReport(env, await currentUser(req, env));
   if (path === '/submissions' && method === 'GET') return listSubmissions(env, await currentUser(req, env), url);
   if (path === '/submissions/review' && method === 'POST') return reviewSubmission(req, env, await currentUser(req, env));
 

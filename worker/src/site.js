@@ -87,6 +87,42 @@ export async function saveNote(req, env, user) {
   return json({ ok: true, id: r.meta.last_row_id });
 }
 
+/**
+ * Infrastructure usage for the dashboard: every byte in R2 summed by product
+ * prefix, plus the D1 database size. (~1.3k objects — two list calls.)
+ */
+export async function storageReport(env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const prefixes = {};
+  let total = 0, count = 0, cursor;
+  do {
+    const page = await env.MEDIA.list({ cursor, limit: 1000 });
+    for (const o of page.objects) {
+      const p = o.key.includes('/') ? o.key.split('/')[0] : '(root)';
+      prefixes[p] = (prefixes[p] || 0) + (o.size || 0);
+      total += o.size || 0; count++;
+    }
+    cursor = page.truncated ? page.cursor : null;
+  } while (cursor);
+
+  // D1 refuses size pragmas (SQLITE_AUTH), so report row counts per table —
+  // more readable anyway, and `events` is the only one that really grows
+  let tables = {};
+  try {
+    const names = await env.DB.prepare(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf%'").all();
+    for (const { name } of names.results || []) {
+      const c = await env.DB.prepare(`SELECT COUNT(*) n FROM "${name}"`).first();
+      tables[name] = c.n;
+    }
+  } catch { /* leave empty */ }
+
+  return json({
+    r2: { total, count, prefixes, limit: 10 * 1024 * 1024 * 1024 },   // free tier: 10GB
+    d1: { tables, limit_note: '500MB per database on the free tier' },
+  });
+}
+
 export async function deleteNote(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const b = await req.json().catch(() => ({}));

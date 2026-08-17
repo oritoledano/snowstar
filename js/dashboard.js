@@ -8,7 +8,7 @@
   const fmt = (ts) => new Date(ts * 1000).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
-  const TABS = ['overview', 'stats', 'members', 'artists', 'submissions', 'notifications'];
+  const TABS = ['overview', 'stats', 'members', 'artists', 'submissions', 'notifications', 'storage'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -63,6 +63,7 @@
       if (tab === 'artists') return paintArtists();
       if (tab === 'submissions') return paintSubmissions();
       if (tab === 'notifications') return paintMail();
+      if (tab === 'storage') return paintStorage();
     } catch (e) {
       if (e.message === 'forbidden') gate();
       else paint(`<p class="db-empty">Couldn’t load that right now — try a refresh.</p>`);
@@ -284,6 +285,56 @@
         await post('/mailbox/send', { ids: [Number(b.closest('.rv-mrow').dataset.id)] });
         load();
       }));
+  }
+
+  /* ── storage: R2 + D1 (worker) and the Pages repo (GitHub public API) ── */
+  const GB = 1024 ** 3, MB = 1024 ** 2;
+  const human = (b) => b == null ? '—' : b >= GB ? (b / GB).toFixed(2) + ' GB' : b >= MB ? (b / MB).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
+  const PREFIX_NAMES = { audio: 'Mutra — audio', covers: 'Mutra — cover art', waves: 'Mutra — waveforms',
+    work: 'Snowstar — work films', 'work-thumbs': 'Snowstar — work thumbs', clients: 'Client logos',
+    submissions: 'Artist submissions', '(root)': 'Other' };
+
+  function gauge(label, used, limit, note) {
+    const pct = limit ? Math.min(100, (used / limit) * 100) : 0;
+    const warn = pct > 80;
+    return `<div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px">
+        <b>${label}</b><span style="color:${warn ? '#f87171' : 'var(--muted)'}">
+          ${human(used)} of ${human(limit)} · ${pct.toFixed(pct < 10 ? 1 : 0)}%</span></div>
+      <div style="height:8px;border-radius:4px;background:var(--tint,rgba(128,128,128,.12));overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${warn ? '#f87171' : 'var(--grad)'};border-radius:4px"></div></div>
+      ${note ? `<p class="db-empty" style="padding:6px 0 0">${note}</p>` : ''}</div>`;
+  }
+
+  async function paintStorage() {
+    const s = await get('/storage');
+    let gh = null;
+    try {
+      const repo = await fetch('https://api.github.com/repos/oritoledano/snowstar').then((r) => r.ok ? r.json() : null);
+      if (repo && repo.size != null) gh = repo.size * 1024; // API reports KB
+    } catch {}
+    const rows = Object.entries(s.r2.prefixes || {}).sort((a, b) => b[1] - a[1]);
+    paint(`
+      <div class="db-panel"><h2>Cloudflare R2 <span class="pill">${s.r2.count} files</span></h2>
+        ${gauge('Bucket total', s.r2.total, s.r2.limit, 'Free tier: 10 GB storage, zero egress fees.')}
+        ${table(rows, [
+          { label: 'What', get: (r) => PREFIX_NAMES[r[0]] || esc(r[0]) },
+          { label: 'Size', num: true, get: (r) => human(r[1]) },
+          { label: 'Share', num: true, bar: true, get: (r) => (r[1] / s.r2.total * 100).toFixed(1) + '%' },
+        ], { barKey: 1 })}</div>
+      <div class="db-grid">
+        <div class="db-panel"><h2>Cloudflare D1 — accounts &amp; data</h2>
+          ${table(Object.entries(s.d1.tables || {}).sort((a, b) => b[1] - a[1]).slice(0, 12), [
+            { label: 'Table', get: (r) => esc(r[0]) },
+            { label: 'Rows', num: true, bar: true, get: (r) => r[1] },
+          ], { barKey: 1 })}
+          <p class="db-empty">Everything editable lives here — members, works, submissions, rights records, notes.
+          The database is a few MB; the free-tier ceiling is ${esc(s.d1.limit_note || '500MB')}.</p></div>
+        <div class="db-panel"><h2>GitHub — the site itself</h2>
+          ${gh != null
+            ? gauge('Pages repository', gh, GB, 'GitHub Pages soft limit is 1 GB. The big videos moved to R2, so this stays lean.')
+            : '<p class="db-empty">Couldn’t reach the GitHub API just now (rate limit) — try again in a minute.</p>'}</div>
+      </div>`);
   }
 
   addEventListener('hashchange', () => {
