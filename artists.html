@@ -42,6 +42,23 @@
   .ar-badge.rejected{color:#f87171;border-color:rgba(248,113,113,.4)}
   .ar-rnote{flex-basis:100%;color:var(--muted);font-size:.8rem;padding-left:2px}
   .ar-gate{text-align:center;padding:30px 10px}
+  .ar-decl{border-left:3px solid var(--amber,#8fd8ff);background:var(--panel-2,rgba(0,0,0,.15));
+    border-radius:0 10px 10px 0;padding:12px 14px;margin:14px 0;color:var(--muted);
+    font-size:.82rem;line-height:1.55;white-space:pre-line}
+  .ar-radio,.ar-check{display:flex;gap:9px;align-items:flex-start;margin:7px 0;cursor:pointer;
+    color:var(--text);font-size:.9rem}
+  .ar-radio input,.ar-check input{margin-top:3px;accent-color:var(--amber,#8fd8ff)}
+  .ar-crow{display:grid;gap:8px;grid-template-columns:2fr 2fr 84px 30px;margin-bottom:8px;align-items:center}
+  .ar-crow input{background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);border-radius:9px;
+    color:var(--text);font:inherit;font-size:.86rem;padding:8px 10px;outline:0;min-width:0;box-sizing:border-box}
+  .ar-crow button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1rem}
+  .ar-addrow{background:none;border:1px dashed var(--line);border-radius:9px;color:var(--muted);
+    font:inherit;font-size:.8rem;padding:7px 14px;cursor:pointer;margin:2px 0 8px}
+  .ar-addrow:hover{color:var(--text);border-color:var(--amber,#8fd8ff)}
+  #arAs{width:100%;background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);border-radius:10px;
+    color:var(--text);font:inherit;font-size:.9rem;padding:9px 12px;outline:0}
+  #arStaged li{font-size:.86rem}
+  @media (max-width:560px){.ar-crow{grid-template-columns:1fr 1fr 70px 26px}}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -76,18 +93,73 @@
     <button class="mbtn mbtn-solid" id="arRegBtn">Continue</button>
   </div>
 
+  <!-- countersign banner: tracks Ori uploaded for you, awaiting your signature -->
+  <div class="ar-card" id="arClaim" hidden>
+    <h2>Confirm your tracks</h2>
+    <p style="color:var(--muted);margin-bottom:12px">Snowstar added <b id="arClaimCount"></b> of your tracks to Mutra.
+      Read the confirmation below, sign it, and they're fully yours.</p>
+    <blockquote class="ar-decl" id="arClaimText"></blockquote>
+    <label class="ar-field"><span>Type your full legal name to sign</span><input id="arClaimName" maxlength="120"></label>
+    <p class="ar-status" id="arClaimStatus" hidden></p>
+    <button class="mbtn mbtn-solid" id="arClaimBtn">Sign &amp; confirm</button>
+  </div>
+
+  <!-- credits: tracks where someone listed YOU as a co-owner -->
+  <div class="ar-card" id="arCredits" hidden>
+    <h2>Your credits</h2>
+    <p style="color:var(--muted);margin-bottom:10px;font-size:.86rem">Tracks where you're listed as a rights holder. Your share is held for you.</p>
+    <ul class="ar-list" id="arCreditsList"></ul>
+  </div>
+
   <!-- artist dashboard -->
   <div id="arDash" hidden>
     <div class="ar-card">
       <p class="ar-who">Uploading as <b id="arWho"></b><button id="arRename" type="button">change name</button></p>
+      <div class="ar-field" id="arAsRow" hidden>
+        <span>Upload on behalf of</span>
+        <select id="arAs"></select>
+        <div id="arNewArtist" hidden style="margin-top:8px;display:grid;gap:8px;grid-template-columns:1fr 1fr">
+          <input id="arNewName" placeholder="Artist name" maxlength="80">
+          <input id="arNewEmail" type="email" placeholder="their@email.com" maxlength="254">
+        </div>
+      </div>
       <h2 data-txt="artists.up.title">Upload a track</h2>
       <label class="ar-drop" id="arDrop">
         <input type="file" id="arFile" accept=".wav,.mp3,.aif,.aiff,.flac,.m4a,.ogg" multiple>
         <strong data-txt="artists.up.drop">Drop audio files here, or click to choose</strong>
         <div class="ar-note" data-txt="artists.up.note">WAV, AIFF, FLAC, MP3 or M4A · up to 95MB per file · original music only</div>
       </label>
-      <label class="ar-field"><span>Anything we should know? (optional, applies to this batch)</span>
-        <textarea id="arNote" rows="2" maxlength="2000" placeholder="Stems available, vocals are mine, etc."></textarea></label>
+      <ul class="ar-list" id="arStaged" hidden></ul>
+
+      <!-- rights declaration: appears once files are staged -->
+      <div id="arRights" hidden>
+        <div class="ar-field" style="margin-top:14px"><span>Ownership</span>
+          <label class="ar-radio"><input type="radio" name="arKind" value="solo" checked> <span>These tracks are entirely mine</span></label>
+          <label class="ar-radio"><input type="radio" name="arKind" value="shared"> <span>I share ownership with others</span></label>
+        </div>
+        <div id="arCollabs" hidden>
+          <div id="arCollabRows"></div>
+          <button type="button" class="ar-addrow" id="arAddCollab">＋ Add co-owner</button>
+          <p class="ar-note" id="arShareLeft"></p>
+        </div>
+        <label class="ar-check"><input type="checkbox" id="arAcum">
+          <span>This music is registered with ACUM or another royalties society</span></label>
+        <blockquote class="ar-decl" id="arDeclText"></blockquote>
+        <label class="ar-check"><input type="checkbox" id="arAgree"><span id="arAgreeLbl">I confirm the above</span></label>
+        <label class="ar-field"><span>Type your full legal name to sign</span><input id="arSign" maxlength="120" autocomplete="name"></label>
+        <div id="arEvidence" hidden>
+          <div class="ar-field"><span>Artist's written confirmation (optional)</span>
+            <div style="display:grid;gap:8px;grid-template-columns:1fr 2fr">
+              <select id="arEvKind"><option value="">none on file</option><option value="email-reply">email reply</option>
+                <option value="whatsapp">WhatsApp</option><option value="contract">signed contract</option><option value="other">other</option></select>
+              <input id="arEvNote" placeholder="e.g. replied YES on 16 Aug" maxlength="500">
+            </div>
+          </div>
+        </div>
+        <label class="ar-field" style="margin-top:10px"><span>Anything we should know? (optional)</span>
+          <textarea id="arNote" rows="2" maxlength="2000" placeholder="Stems available, vocals are mine, etc."></textarea></label>
+        <button class="mbtn mbtn-solid" id="arSubmit" disabled style="width:100%">Submit</button>
+      </div>
       <p class="ar-status" id="arUpStatus" hidden></p>
     </div>
 
@@ -101,6 +173,6 @@
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=8"></script>
 <script src="js/site-edit.js?v=1"></script>
-<script src="js/artists-page.js?v=2"></script>
+<script src="js/artists-page.js?v=3"></script>
 </body>
 </html>

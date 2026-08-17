@@ -9,6 +9,7 @@
  */
 
 import { sendMail } from './mail.js';
+import { parseDeclaration, recordDeclaration } from './rights.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
@@ -37,10 +38,14 @@ export async function registerArtist(req, env, user) {
 
 export async function myUploads(env, user) {
   if (!user) return json({ error: 'unauthorized' }, 401);
+  // own uploads, plus anything uploaded on their behalf before they claimed
   const r = await env.DB.prepare(
-    `SELECT id, title, status, review_note, size, ext, created_at, reviewed_at
-       FROM submissions WHERE user_id = ? ORDER BY id DESC`
-  ).bind(user.id).all();
+    `SELECT s.id, s.title, s.status, s.review_note, s.size, s.ext, s.created_at, s.reviewed_at
+       FROM submissions s
+       LEFT JOIN managed_artists m ON m.id = s.managed_artist_id
+      WHERE s.user_id = ? OR m.claimed_user_id = ?
+      ORDER BY s.id DESC`
+  ).bind(user.id, user.id).all();
   return json({ artist: !!user.artist, artist_name: user.artist_name || null,
                 uploads: r.results || [] });
 }
@@ -60,7 +65,7 @@ export async function uploadTrack(req, env, user, url) {
   return json({ ok: true, key, size, ext });
 }
 
-/** Step 2 — the submission record (title + note), emails the owner. */
+/** Step 2 — the submission record: title, note, signed rights declaration. */
 export async function createSubmission(req, env, user, ctx) {
   if (!user || !user.artist) return json({ error: 'unauthorized' }, 401);
   const b = await req.json().catch(() => ({}));
@@ -71,17 +76,46 @@ export async function createSubmission(req, env, user, ctx) {
   const head = await env.MEDIA.head(key);
   if (!head) return json({ error: 'file_missing' }, 400);
 
-  const r = await env.DB.prepare(
-    `INSERT INTO submissions (user_id, title, file_key, size, ext, artist_note, status, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, 'pending', ?)`
-  ).bind(user.id, title, key, head.size, key.split('.').pop(),
-         String(b.note || '').trim().slice(0, 2000), now()).run();
+  // owner uploading on behalf of a managed (ghost) artist — admin only
+  let managed = null;
+  if (b.managed_artist_id) {
+    if (!user.admin) return json({ error: 'forbidden' }, 403);
+    managed = await env.DB.prepare('SELECT id, name, email FROM managed_artists WHERE id = ?')
+      .bind(Number(b.managed_artist_id)).first();
+    if (!managed) return json({ error: 'managed_artist_not_found' }, 404);
+  }
 
-  ctx.waitUntil(sendMail(env, {
-    to: env.ALERT_TO,
-    subject: `Mutra submission: “${title}” by ${user.artist_name || user.email}`,
-    text: `${user.artist_name || user.email} uploaded “${title}”.\n\nReview it: https://snowstar.company/review.html`,
-  }).catch(() => {}));
+  let parsed;
+  try {
+    parsed = parseDeclaration(b, user, managed);
+  } catch (e) {
+    return json({ error: e.message }, 400);
+  }
+  // on-behalf uploads must use the behalf declaration, and vice versa
+  if (!!managed !== (parsed.decl.kind === 'behalf')) return json({ error: 'declaration_kind_mismatch' }, 400);
+
+  const r = await env.DB.prepare(
+    `INSERT INTO submissions (user_id, title, file_key, size, ext, artist_note, status, created_at, managed_artist_id)
+     VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)`
+  ).bind(user.id, title, key, head.size, key.split('.').pop(),
+         String(b.note || '').trim().slice(0, 2000), now(), managed ? managed.id : null).run();
+
+  const creditedName = managed ? managed.name : (user.artist_name || user.email);
+  try {
+    await recordDeclaration(env, r.meta.last_row_id, user, parsed, creditedName, title);
+  } catch (e) {
+    // a submission without its signed declaration must not exist — undo and fail
+    await env.DB.prepare('DELETE FROM submissions WHERE id = ?').bind(r.meta.last_row_id).run().catch(() => {});
+    throw e;
+  }
+
+  if (!managed) {
+    ctx.waitUntil(sendMail(env, {
+      to: env.ALERT_TO,
+      subject: `Mutra submission: “${title}” by ${creditedName}`,
+      text: `${creditedName} uploaded “${title}”.\n\nReview it: https://snowstar.company/review.html`,
+    }).catch(() => {}));
+  }
 
   return json({ ok: true, id: r.meta.last_row_id }, 201);
 }
@@ -90,10 +124,14 @@ export async function createSubmission(req, env, user, ctx) {
 export async function streamSubmission(req, env, user, url) {
   if (!user) return json({ error: 'unauthorized' }, 401);
   const id = Number(url.searchParams.get('id'));
-  const row = await env.DB.prepare('SELECT user_id, file_key, ext FROM submissions WHERE id = ?')
-    .bind(id).first();
+  const row = await env.DB.prepare(
+    `SELECT s.user_id, s.file_key, s.ext, m.claimed_user_id
+       FROM submissions s LEFT JOIN managed_artists m ON m.id = s.managed_artist_id
+      WHERE s.id = ?`).bind(id).first();
   if (!row) return json({ error: 'not_found' }, 404);
-  if (row.user_id !== user.id && !user.admin) return json({ error: 'forbidden' }, 403);
+  if (row.user_id !== user.id && row.claimed_user_id !== user.id && !user.admin) {
+    return json({ error: 'forbidden' }, 403);
+  }
 
   const range = req.headers.get('range');
   let obj, status = 200;
@@ -116,14 +154,43 @@ export async function streamSubmission(req, env, user, url) {
   return new Response(obj.body, { status, headers });
 }
 
+/**
+ * Daily sweep: files uploaded to R2 but never turned into a submission
+ * (abandoned staging, closed tabs) are deleted after 48 hours.
+ */
+export async function cleanupOrphanUploads(env) {
+  try {
+    const cutoff = Date.now() - 48 * 3600 * 1000;
+    let cursor;
+    do {
+      const page = await env.MEDIA.list({ prefix: 'submissions/', cursor, limit: 500 });
+      const old = page.objects.filter((o) => o.uploaded && new Date(o.uploaded).getTime() < cutoff);
+      for (const o of old) {
+        const used = await env.DB.prepare('SELECT 1 FROM submissions WHERE file_key = ?').bind(o.key).first();
+        if (!used) await env.MEDIA.delete(o.key).catch(() => {});
+      }
+      cursor = page.truncated ? page.cursor : null;
+    } while (cursor);
+  } catch (e) {
+    console.error('orphan sweep', e && e.message);
+  }
+}
+
 /** Owner: the review queue. */
 export async function listSubmissions(env, user, url) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const status = url.searchParams.get('status') || 'pending';
   const r = await env.DB.prepare(
     `SELECT s.id, s.title, s.status, s.size, s.ext, s.artist_note, s.review_note,
-            s.created_at, s.reviewed_at, u.email, u.artist_name
-       FROM submissions s JOIN users u ON u.id = s.user_id
+            s.created_at, s.reviewed_at, u.email,
+            COALESCE(m.name, u.artist_name) AS artist_name,
+            d.kind AS decl_kind, d.signed_name, d.acum, d.splits_snapshot,
+            d.evidence_kind, d.evidence_note
+       FROM submissions s
+       JOIN users u ON u.id = s.user_id
+       LEFT JOIN managed_artists m ON m.id = s.managed_artist_id
+       LEFT JOIN rights_decls d ON d.id =
+         (SELECT id FROM rights_decls WHERE submission_id = s.id AND kind != 'claim' ORDER BY id LIMIT 1)
       WHERE s.status = ? ORDER BY s.id DESC`
   ).bind(status).all();
   return json({ submissions: r.results || [] });

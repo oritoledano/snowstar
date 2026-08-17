@@ -22,7 +22,9 @@ import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote } from './site.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
-         streamSubmission, listSubmissions, reviewSubmission } from './artists.js';
+         streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads } from './artists.js';
+import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
+         listManagedArtists, createManagedArtist, countersignClaim, claimStatus } from './rights.js';
 
 const SESSION_DAYS = 60;
 const PBKDF2_ITERS = 100000; // Workers' hard ceiling; offset by the pepper below
@@ -228,6 +230,16 @@ async function handle(req, env, ctx) {
   if (path === '/submissions' && method === 'GET') return listSubmissions(env, await currentUser(req, env), url);
   if (path === '/submissions/review' && method === 'POST') return reviewSubmission(req, env, await currentUser(req, env));
 
+  // ── rights layer: credits, claims, managed artists, owner-gated mail ──
+  if (path === '/credits' && method === 'GET') return myCredits(env, await currentUser(req, env));
+  if (path === '/credits/respond' && method === 'POST') return respondCredit(req, env, await currentUser(req, env));
+  if (path === '/claim' && method === 'GET') return claimStatus(env, await currentUser(req, env));
+  if (path === '/claim' && method === 'POST') return countersignClaim(req, env, await currentUser(req, env));
+  if (path === '/managed-artists' && method === 'GET') return listManagedArtists(env, await currentUser(req, env));
+  if (path === '/managed-artists' && method === 'POST') return createManagedArtist(req, env, await currentUser(req, env));
+  if (path === '/mailbox' && method === 'GET') return listOutbox(env, await currentUser(req, env));
+  if (path === '/mailbox/send' && method === 'POST') return sendOutbox(req, env, await currentUser(req, env));
+
   // ── site editor: text overrides (public read) + owner markup notes ──
   if (path === '/texts' && method === 'GET') return listTexts(env);
   if (path === '/texts' && method === 'POST') return saveText(req, env, await currentUser(req, env));
@@ -282,6 +294,10 @@ async function handle(req, env, ctx) {
     await env.DB.prepare('INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)')
       .bind(await sha256b64(token), id, t, t + maxAge).run();
 
+    // link waiting collaborator credits; NOT verified — a password signup
+    // must never claim a managed-artist profile just by typing its email
+    ctx.waitUntil(linkOnSignIn(env, id, email, false));
+
     return authed({ user: publicUser({ email, name, newsletter }), favorites: [] }, 201,
       sessionCookie(token, maxAge));
   }
@@ -318,6 +334,8 @@ async function handle(req, env, ctx) {
       env.DB.prepare('UPDATE users SET last_login_at = ? WHERE id = ?').bind(t, u.id),
       env.DB.prepare('DELETE FROM sessions WHERE expires_at <= ?').bind(t),
     ]);
+    // idempotent: credits listed since the last visit get linked on every login
+    ctx.waitUntil(linkOnSignIn(env, u.id, u.email, false));
 
     return authed(
       { user: publicUser(u), favorites: await favoritesFor(env, u.id, product(body.product)) },
@@ -460,6 +478,7 @@ async function handle(req, env, ctx) {
 export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(sendDigest(env));
+    ctx.waitUntil(cleanupOrphanUploads(env));
   },
 
   async fetch(req, env, ctx) {

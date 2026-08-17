@@ -13,6 +13,8 @@
  *    and Facebook and still be one account.
  */
 
+import { linkOnSignIn } from './rights.js';
+
 const STATE_TTL = 600;          // 10 minutes to complete the round trip
 
 /**
@@ -241,6 +243,10 @@ async function linkAndSignIn(env, provider, profile) {
   // keep the avatar fresh, and note the login
   await env.DB.prepare('UPDATE users SET last_login_at = ?, avatar = COALESCE(?, avatar) WHERE id = ?')
     .bind(t, profile.avatar || null, userId).run();
+
+  // every OAuth sign-in (new or returning): link waiting credits, and — since
+  // the provider vouches for this email — claim any managed-artist profile
+  if (profile.email) await linkOnSignIn(env, userId, profile.email, !!profile.verified);
 
   return userId;
 }

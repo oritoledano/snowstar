@@ -34,6 +34,17 @@
   .rv-ok{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.4)}
   .rv-no{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35)}
   .rv-empty{color:var(--muted);padding:26px 6px}
+  .rv-decl{background:var(--panel-2,rgba(0,0,0,.14));border-radius:10px;padding:10px 12px;margin:8px 0;font-size:.8rem;color:var(--muted)}
+  .rv-decl b{color:var(--text)}
+  .rv-acum{color:#eab308;font-weight:600}
+  .rv-mail{margin-top:34px}
+  .rv-mail h2{font-family:var(--font-display);font-size:1.3rem;margin-bottom:6px}
+  .rv-mail .sub{color:var(--muted);font-size:.84rem;margin-bottom:14px}
+  .rv-mrow{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:.86rem}
+  .rv-mrow summary{cursor:pointer;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;list-style:none}
+  .rv-mrow pre{white-space:pre-wrap;color:var(--muted);font:inherit;font-size:.8rem;margin:10px 0;border-top:1px solid var(--line);padding-top:10px}
+  .rv-sent{color:#34d399;font-size:.74rem}
+  .rv-err{color:#f87171;font-size:.74rem}
   .rv-gate{max-width:420px;margin:130px auto;text-align:center}
   .rv-hint{color:var(--dim,var(--muted));font-size:.8rem;margin:18px 0 0}
   [hidden]{display:none!important}
@@ -64,10 +75,50 @@
       return;
     }
     const d = await res.json();
-    render(d.submissions || []);
+    const mail = await fetch('/api/mailbox', { credentials: 'same-origin' }).then((r) => r.json()).catch(() => ({ outbox: [] }));
+    render(d.submissions || [], mail);
   }
 
-  function render(items) {
+  function declBlock(s) {
+    if (!s.decl_kind) return '';
+    let splits = [];
+    try { splits = JSON.parse(s.splits_snapshot || '[]'); } catch {}
+    const kindWord = { solo: 'Owns 100%', shared: 'Shared ownership', behalf: 'Uploaded by you on behalf' }[s.decl_kind] || s.decl_kind;
+    return `<div class="rv-decl">
+      <b>${kindWord}</b> — signed “${esc(s.signed_name)}”
+      ${s.acum ? ' · <span class="rv-acum">⚠ ACUM/royalty-society registered</span>' : ''}
+      ${splits.length ? '<br>Splits: ' + splits.map((c) =>
+        `${esc(c.name)} (${esc(c.email)}) ${(c.share_bp / 100).toFixed(c.share_bp % 100 ? 2 : 0)}%`).join(' · ') : ''}
+      ${s.decl_kind === 'behalf' ? '<br>Evidence: ' + (s.evidence_kind ? esc(s.evidence_kind) + (s.evidence_note ? ' — ' + esc(s.evidence_note) : '') : '<i>none on file — get a “reply YES” from the artist</i>') : ''}
+    </div>`;
+  }
+
+  function mailSection(mail) {
+    const pending = (mail.outbox || []).filter((m) => !m.sent_at);
+    const sent = (mail.outbox || []).filter((m) => m.sent_at).slice(0, 10);
+    return `<div class="rv-mail">
+      <h2>Collaborator notifications</h2>
+      <p class="sub">Nothing is emailed without you. ${mail.mail_live
+        ? 'Sending goes straight to the collaborator.'
+        : 'Until the send domain is verified, “Send” delivers the email to YOUR inbox with a forward-to banner — you forward it yourself.'}</p>
+      ${pending.length ? pending.map((m) => `
+        <details class="rv-mrow" data-id="${m.id}">
+          <summary><b>${esc(m.to_name || m.to_email)}</b>
+            <span style="color:var(--muted)">${esc(m.to_email)}${m.title ? ' · re “' + esc(m.title) + '”' : ''}</span>
+            ${m.last_error ? `<span class="rv-err">last try failed: ${esc(m.last_error)}</span>` : ''}
+            <button class="rv-btn rv-ok rv-send" style="margin-left:auto">Approve &amp; send</button></summary>
+          <pre>${esc(m.body)}</pre>
+        </details>`).join('')
+      : '<p class="rv-empty">No notifications waiting.</p>'}
+      ${sent.length ? '<p class="sub" style="margin-top:14px">Recently sent:</p>' + sent.map((m) => `
+        <div class="rv-mrow"><b>${esc(m.to_email)}</b>
+          ${m.sent_at ? `<span class="rv-sent">${m.sent_how === 'direct' ? 'sent' : 'delivered to you for forwarding'} · ${fmt(m.sent_at)}</span>`
+            : `<span class="rv-err">failed: ${esc(m.last_error)}</span>`}
+        </div>`).join('') : ''}
+    </div>`;
+  }
+
+  function render(items, mail) {
     app.innerHTML = `
       <div class="rv-head">
         <h1>Submissions</h1>
@@ -83,6 +134,7 @@
             <span class="who">${esc(s.artist_name || s.email)}</span>
             <span class="meta">${(s.size / 1048576).toFixed(1)}MB · ${s.ext} · ${fmt(s.created_at)}</span>
           </div>
+          ${declBlock(s)}
           ${s.artist_note ? `<p class="rv-note">Artist: “${esc(s.artist_note)}”</p>` : ''}
           ${s.review_note ? `<p class="rv-note">You: “${esc(s.review_note)}”</p>` : ''}
           <audio controls preload="none" src="/api/artist/file?id=${s.id}"></audio>
@@ -93,12 +145,25 @@
           </div>
         </div>`).join('')
       : `<p class="rv-empty">${tab === 'pending' ? 'Nothing waiting — inbox zero.' : 'Nothing here yet.'}</p>`}
+      ${mailSection(mail || { outbox: [] })}
       <p class="rv-hint">Approving queues a track for catalog ingestion (analysis, waveform, artwork) —
       ask Claude to “process approved uploads” to take them live. The artist sees your note either way.</p>`;
 
+    app.querySelectorAll('.rv-send').forEach((b) =>
+      b.addEventListener('click', async (e) => {
+        e.preventDefault();
+        b.disabled = true; b.textContent = 'Sending…';
+        await fetch('/api/mailbox/send', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ ids: [Number(b.closest('.rv-mrow').dataset.id)] }),
+        });
+        load();
+      }));
+
     app.querySelectorAll('.rv-tab').forEach((b) =>
       b.addEventListener('click', () => { tab = b.dataset.t; load(); }));
-    app.querySelectorAll('.rv-btn').forEach((b) =>
+    app.querySelectorAll('.rv-item .rv-btn').forEach((b) =>
       b.addEventListener('click', async () => {
         const id = Number(b.closest('.rv-item').dataset.id);
         const status = b.dataset.a;
