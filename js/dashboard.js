@@ -229,7 +229,7 @@
           const r = await post('/members/update', { id, name, newsletter });
           if (r.error) { showErr('Couldn’t save that — try again.'); saveBtn.disabled = false; return; }
           member.name = name; member.newsletter = newsletter;
-          paintMembers();
+          await paintMembers();
         } catch { showErr('Couldn’t save that — try again.'); saveBtn.disabled = false; }
       });
     }));
@@ -243,13 +243,14 @@
       btn.disabled = true;
       try {
         const r = await post('/members/delete', { id });
-        if (r.error === 'has_rights_history') {
-          showErr(`${member.email} has submissions or signed rights records and can’t be deleted — edit them instead.`);
-          btn.disabled = false;
+        if (r.error) {
+          const msg = { has_rights_history: `${member.email} has submissions or signed rights records and can’t be deleted — edit them instead.`,
+            cannot_delete_self: 'You can’t remove your own account.' }[r.error]
+            || 'Couldn’t remove that — try again.';
+          showErr(msg); btn.disabled = false;
           return;
         }
-        if (r.error === 'cannot_delete_self') { showErr('You can’t remove your own account.'); btn.disabled = false; return; }
-        paintMembers();
+        await paintMembers();
       } catch { showErr('Couldn’t remove that — try again.'); btn.disabled = false; }
     }));
   }

@@ -4,10 +4,14 @@
  * mirror table so we never have to ship the full catalog JS to read a title).
  *
  * Email is the one field with a real trust boundary: it's also the login
- * identifier and, for social accounts, the key OAuth uses to link an
- * identity. So it's only editable on a password account, and only with the
- * current password re-typed as confirmation — exactly like changing a
- * password anywhere else worth trusting.
+ * identifier, so it's only editable with the current password re-typed as
+ * confirmation. The gate is "does this account have a password" (pw_hash
+ * set), not "did they sign up with one" — a social-only member who later
+ * uses Forgot Password gains that ability too, deliberately: completing a
+ * reset already proves they control the account's own inbox, which is at
+ * least as strong a claim on the account as knowing an existing password.
+ * (identities.provider_id, not users.email, is what future OAuth sign-ins
+ * match on, so this can never orphan the Google/Facebook link either.)
  */
 
 import { publicUser } from './user.js';
