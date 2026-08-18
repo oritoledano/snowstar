@@ -1,9 +1,11 @@
 // Portfolio data — generated from the old site's Wix "work" collection.
 // mp4: direct video (Wix CDN, migrate before cancelling Wix). vimeo: fallback player id.
 // The official showreel ("SHOWREEL FINAL 2018", from the Wix collection). Same film as the muted hero bg.
+// mp4 is R2/CDN-hosted (cdn.snowstar.company), same as everything under works.js —
+// it used to be a 29.6MB file committed straight into this repo/GitHub Pages.
 const SHOWREEL = {
  "title": "Snowstar Showreel",
- "mp4": "assets/work/showreel.mp4",
+ "mp4": "https://cdn.snowstar.company/work/showreel.mp4",
  "thumb": "assets/showreel-poster.jpg",
  "credits": {
   "work": "Original music, lyrical writing, sound design & vocal performance by Ori Toledano"
