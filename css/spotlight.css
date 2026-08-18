@@ -29,14 +29,22 @@
 .spot-strip-wrap { position: relative; }
 
 .spot-strip {
-  display: flex; gap: 20px; overflow-x: auto; overflow-y: visible;
-  padding: 6px 6px 18px; scroll-snap-type: x proximity;
+  display: flex; gap: 20px; overflow-x: auto;
+  /* generous vertical padding, not overflow:visible: scale(2) on the vinyl
+     grows it vertically too (to stay a true circle), and per spec, a
+     scroll container's cross-axis "visible" silently becomes "auto" when
+     the main axis is "auto" — real padding is what actually keeps the
+     reveal from getting clipped, regardless of that computed-value quirk */
+  padding: 92px 6px 96px; scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
 .spot-strip::-webkit-scrollbar { display: none; }
 
 .spot-nav {
-  position: absolute; top: 44%; transform: translateY(-50%);
+  /* the strip is now padded top/bottom to make room for the scaled-up
+     vinyl reveal (see .spot-strip) — center on the card row itself, not
+     the padded wrapper, or the arrows drift toward the bottom */
+  position: absolute; top: calc(92px + (100% - 92px - 96px) / 2); transform: translateY(-50%);
   width: 38px; height: 38px; border-radius: 50%; padding: 0;
   display: grid; place-items: center;
   background: var(--panel); border: 1px solid var(--line-2);
@@ -59,17 +67,25 @@
   outline: none;
   transition: transform .55s cubic-bezier(.16,1,.3,1); /* gentle, ease-out */
 }
-/* hovering a card nudges IT left a touch, and nudges its NEXT sibling
-   right a touch — opening a gentle gap between them for the vinyl to sit
-   in, rather than either card changing size */
+/* The sleeve never moves or resizes. What moves is the row around it:
+   hovering a card grows its vinyl symmetrically from the sleeve's own
+   center (50% overhang left, 50% overhang right — no one-sided slide),
+   and BOTH neighbors — not just the next one — nudge away to keep that
+   overhang clear of their cover art. Right at the two ends of the row
+   there's only one neighbor to nudge, so the reveal there sits a little
+   closer to whichever edge has no card to make room; that's expected. */
 .spot-card:hover, .spot-card:focus-within, .spot-card.spot-active {
-  transform: translateX(-7%);
   z-index: 6;
 }
 .spot-card:hover + .spot-card,
 .spot-card:focus-within + .spot-card,
 .spot-card.spot-active + .spot-card {
-  transform: translateX(9%);
+  transform: translateX(44%);
+}
+.spot-card:has(+ .spot-card:hover),
+.spot-card:has(+ .spot-card:focus-within),
+.spot-card:has(+ .spot-card.spot-active) {
+  transform: translateX(-44%);
 }
 
 .spot-art {
@@ -88,19 +104,27 @@
 .spot-vinyl {
   position: absolute; inset: 0; z-index: 1;
   opacity: 0; pointer-events: none;
-  transform: translateX(0%);
+  transform: scale(1);
   transition: transform .55s cubic-bezier(.16,1,.3,1), opacity .4s ease;
 }
 .spot-card:hover .spot-vinyl,
 .spot-card:focus-within .spot-vinyl,
 .spot-card.spot-active .spot-vinyl {
-  opacity: 1; transform: translateX(50%); /* revealed exactly half way, sleeve stays put */
+  /* scale(2), centered by default transform-origin, puts exactly half of
+     the added width on each side of the sleeve — 50% left, 50% right */
+  opacity: 1; transform: scale(2);
 }
 .spot-vinyl img {
   width: 100%; height: 100%; border-radius: 50%; display: block;
   filter: drop-shadow(0 8px 20px rgba(0,0,0,.4));
   animation: spot-spin 3s linear infinite;
   animation-play-state: paused;
+  /* dark-skin (default) image; swapped to the white-vinyl variant below
+     for the light skin — same element, no JS involved */
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-dark.webp);
+}
+:root[data-theme="light"] .spot-vinyl img {
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-light.webp);
 }
 .spot-card:hover .spot-vinyl img,
 .spot-card:focus-within .spot-vinyl img,

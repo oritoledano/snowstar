@@ -4,15 +4,17 @@
    nothing about the rendering code below should ever need to know it's
    "Kayma" specifically — it only ever reads this shape.
 
-   The vinyl itself is ONE shared brand asset (Mutra wordmark on a black
-   record, see MUTRA_SPOTLIGHT_VINYL below) — it's a Mutra-branded preview
-   affordance, not a per-song design, so every track in every row uses it.
+   The vinyl itself is a shared brand asset (Mutra wordmark on a record,
+   see MUTRA_SPOTLIGHT_VINYL below) — a Mutra-branded preview affordance,
+   not a per-song design, so every track in every row uses it. Two theme
+   variants (dark skin = black vinyl, light skin = white vinyl) are
+   swapped by CSS via [data-theme] — see spotlight.css.
 
    snippetUrl/snippetStart are PLACEHOLDERS right now (a short generated
    tone, same file reused for all 8 tracks) — these songs haven't been
    uploaded to Kayma's artist account yet. Once they are, swap snippetUrl
    per track to a real ~15-20s highlight and this needs no other change. */
-const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl.webp';
+const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-dark.webp';
 
 const MUTRA_SPOTLIGHTS = [
   {
