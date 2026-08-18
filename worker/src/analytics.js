@@ -193,11 +193,14 @@ export async function handleStats(req, env, user) {
     // tried early but abandoned fast is a weak hook; ordering signal for the catalog
     env.DB.prepare(
       `WITH first_plays AS (
-         SELECT session_id, detail AS slug, MIN(ts) AS ts
+         SELECT session_id, detail AS slug, MIN(id) AS first_id
            FROM events WHERE type='play' AND ts >= ? AND detail IS NOT NULL
           GROUP BY session_id, detail),
        positions AS (
-         SELECT slug, ROW_NUMBER() OVER (PARTITION BY session_id ORDER BY ts) AS position
+         -- order by id (AUTOINCREMENT, so monotonic at insert order), not ts:
+         -- two tracks first-played in the same wall-clock second would tie
+         -- under ts with no deterministic winner, corrupting "tried first"
+         SELECT slug, ROW_NUMBER() OVER (PARTITION BY session_id ORDER BY first_id) AS position
            FROM first_plays),
        pos_agg AS (
          SELECT slug, COUNT(*) AS sessions, AVG(position) AS avg_position
@@ -234,8 +237,12 @@ export async function handleJourney(req, env, user) {
     'SELECT type, detail, page, ts, duration, user_id FROM events WHERE session_id = ? ORDER BY id ASC LIMIT 200'
   ).bind(sid).all();
   const events = rows.results || [];
-  // resolve who they were signed in as, once, rather than repeat it per row
-  const uid = events.map((e) => e.user_id).find(Boolean);
+  // resolve who they were signed in as, once, rather than repeat it per row —
+  // most-recent identified user, to agree with the Recent-visits "Who" column
+  // (which resolves the same way, via ORDER BY ts DESC); a session can in
+  // principle carry two different real logins (shared/kiosk browser tab), so
+  // the two admin views need one consistent rule or they'll contradict each other
+  const uid = events.map((e) => e.user_id).reverse().find(Boolean);
   const member = uid
     ? await env.DB.prepare('SELECT name, email FROM users WHERE id = ?').bind(uid).first()
     : null;

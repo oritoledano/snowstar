@@ -41,3 +41,10 @@ CREATE TABLE IF NOT EXISTS meta (
 
 -- Only accounts flagged here can read the stats API.
 ALTER TABLE users ADD COLUMN admin INTEGER NOT NULL DEFAULT 0;
+
+-- Listen duration (seconds actually heard, from a 'play_end' event) and the
+-- signed-in visitor's user_id (resolved server-side from their session
+-- cookie, never from the client beacon) — both nullable, since most events
+-- are anonymous views/plays with no duration to report.
+ALTER TABLE events ADD COLUMN duration INTEGER;
+ALTER TABLE events ADD COLUMN user_id TEXT;

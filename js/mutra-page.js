@@ -160,37 +160,46 @@
   }
 
   /** How long did they actually listen to the outgoing track? audio.played
-   * sums real playing time across any pause/resume within this one load —
-   * it resets itself the moment .src changes, so this must run BEFORE that. */
+   * sums real playing time across any pause/resume within this one load — it
+   * resets itself the moment .src changes, so any read here happens BEFORE
+   * that. Playback can resume on the same `current` object after this fires
+   * (tab regains focus while backgrounded audio kept going, a same-track
+   * replay via toggle(), a wave-seek) so this reports only the seconds
+   * accumulated since the LAST report, rather than latching once per load
+   * and going silent for the rest of it. */
   function finalizeListen() {
-    if (!current || current.finalized) return;
-    current.finalized = true;
+    if (!current) return;
     let played = 0;
     try {
       const ranges = audio.played;
       for (let i = 0; i < ranges.length; i++) played += ranges.end(i) - ranges.start(i);
     } catch {}
-    const duration = Math.round(played);
-    if (duration > 0 && window.mutraTrack) mutraTrack('play_end', current.track.slug, { duration });
+    const total = Math.round(played);
+    const delta = total - (current.reported || 0);
+    if (delta > 0 && window.mutraTrack) mutraTrack('play_end', current.track.slug, { duration: delta });
+    current.reported = total;
   }
 
+  let pendingSeek = null; // in-flight highlight-seek listener, so a fast track switch can't leave it to fire against the wrong (next) track
   function loadTrack(track, row) {
     if (current && current.track === track) { toggle(); return; }
     finalizeListen();
+    if (pendingSeek) { audio.removeEventListener('loadedmetadata', pendingSeek); pendingSeek = null; }
     if (window.mutraTrack) mutraTrack('play', track.slug, { once: true });
     if (current && current.row) current.row.classList.remove('playing');
-    current = { track, row: row || null, finalized: false };
+    current = { track, row: row || null, reported: 0 };
     if (row) row.classList.add('playing');
     audio.src = track.audio;
     audio.currentTime = 0;
     // with highlights on, drop the needle on the best bit rather than the intro
     const hl = hlOf(track.slug);
     if (hl) {
-      const seek = () => {
+      pendingSeek = () => {
         if (audio.duration) audio.currentTime = hl[0] * audio.duration;
-        audio.removeEventListener('loadedmetadata', seek);
+        audio.removeEventListener('loadedmetadata', pendingSeek);
+        pendingSeek = null;
       };
-      audio.addEventListener('loadedmetadata', seek);
+      audio.addEventListener('loadedmetadata', pendingSeek);
     }
     audio.play().catch(() => {});
     plTitle.textContent = track.title;
@@ -208,6 +217,7 @@
   }
   function closePlayer() {
     finalizeListen(); // before audio.src changes — that's what resets .played
+    if (pendingSeek) { audio.removeEventListener('loadedmetadata', pendingSeek); pendingSeek = null; }
     audio.pause(); audio.src = '';
     if (current && current.row) current.row.classList.remove('playing');
     current = null;
