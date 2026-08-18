@@ -6,15 +6,19 @@
 
    The vinyl itself is a shared brand asset (Mutra wordmark on a record,
    see MUTRA_SPOTLIGHT_VINYL below) — a Mutra-branded preview affordance,
-   not a per-song design, so every track in every row uses it. Two theme
-   variants (dark skin = black vinyl, light skin = white vinyl) are
-   swapped by CSS via [data-theme] — see spotlight.css.
+   not a per-song design, so every track in every row uses it. Two color
+   variants (mutra-vinyl-white.webp, mutra-vinyl-black.webp) are swapped
+   by CSS content:url() via [data-theme] — see spotlight.css — for
+   contrast: white vinyl on the dark skin, black vinyl on the light skin.
+   The URL below is just the initial <img src>, which CSS always
+   overrides visually; kept in sync with the CSS default (white) so the
+   browser isn't fetching an asset it'll never actually show.
 
    snippetUrl/snippetStart are PLACEHOLDERS right now (a short generated
    tone, same file reused for all 8 tracks) — these songs haven't been
    uploaded to Kayma's artist account yet. Once they are, swap snippetUrl
    per track to a real ~15-20s highlight and this needs no other change. */
-const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-dark.webp';
+const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp';
 
 const MUTRA_SPOTLIGHTS = [
   {
