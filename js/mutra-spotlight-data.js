@@ -18,7 +18,7 @@
    tone, same file reused for all 8 tracks) — these songs haven't been
    uploaded to Kayma's artist account yet. Once they are, swap snippetUrl
    per track to a real ~15-20s highlight and this needs no other change. */
-const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp';
+const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=2';
 
 const MUTRA_SPOTLIGHTS = [
   {

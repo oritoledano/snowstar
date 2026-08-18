@@ -164,10 +164,10 @@
   /* dark skin (default) shows the WHITE vinyl — it's the one that reads
      against a dark card; light skin shows the BLACK one, for the same
      contrast reason in reverse */
-  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp);
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=2);
 }
 :root[data-theme="light"] .spot-vinyl img {
-  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-black.webp);
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-black.webp?v=2);
 }
 .spot-card:hover .spot-vinyl img,
 .spot-card:focus-within .spot-vinyl img,
