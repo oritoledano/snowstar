@@ -4,10 +4,16 @@
    nothing about the rendering code below should ever need to know it's
    "Kayma" specifically — it only ever reads this shape.
 
+   The vinyl itself is ONE shared brand asset (Mutra wordmark on a black
+   record, see MUTRA_SPOTLIGHT_VINYL below) — it's a Mutra-branded preview
+   affordance, not a per-song design, so every track in every row uses it.
+
    snippetUrl/snippetStart are PLACEHOLDERS right now (a short generated
    tone, same file reused for all 8 tracks) — these songs haven't been
    uploaded to Kayma's artist account yet. Once they are, swap snippetUrl
    per track to a real ~15-20s highlight and this needs no other change. */
+const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl.webp';
+
 const MUTRA_SPOTLIGHTS = [
   {
     id: 'kayma-nto',
@@ -27,7 +33,7 @@ const MUTRA_SPOTLIGHTS = [
     ].map(t => ({
       ...t,
       cover: `https://cdn.snowstar.company/mutra/spotlight/kayma-nto/${t.slug}-cover.webp`,
-      vinyl: `https://cdn.snowstar.company/mutra/spotlight/kayma-nto/${t.slug}-vinyl.webp`,
+      vinyl: MUTRA_SPOTLIGHT_VINYL,
       snippetUrl: 'https://cdn.snowstar.company/mutra/spotlight/placeholder-snippet.m4a',
       placeholder: true,
     })),
