@@ -121,6 +121,9 @@
   const audio = new Audio();
   audio.preload = 'none';
   let current = null; // { track, row }
+  // lets other on-page audio (e.g. the Spotlight row's hover previews) stop
+  // us before it starts, so two things never play over each other
+  window.mutraPauseMainPlayer = () => { if (!audio.paused) audio.pause(); };
 
   const player = $('#player'), plPlay = $('#plPlay'), plTitle = $('#plTitle'),
     plArtist = $('#plArtist'), plCur = $('#plCur'), plTot = $('#plTot'),
@@ -503,6 +506,21 @@
       const live = [...tracksEl.querySelectorAll('.trk')].find((_, idx) => list[idx] === current.track);
       if (live) current.row = live;
     }
+    maybeInsertSpotlight();
+  }
+
+  /** Drops the Artist Spotlight row in right after the Nth track, once
+   * there are enough rows for it to land after — re-checked on every
+   * appendPage() so it reappears after a render() wipes the list (new
+   * filter, search, etc.) without ever being rebuilt from scratch. */
+  function maybeInsertSpotlight() {
+    if (!window.mutraSpotlightRow) return;
+    if (tracksEl.querySelector('.spotlight-row')) return;
+    const n = window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10;
+    const rows = tracksEl.querySelectorAll('.trk');
+    if (rows.length < n) return;
+    const block = window.mutraSpotlightRow();
+    if (block) rows[n - 1].insertAdjacentElement('afterend', block);
   }
 
   // load the next page as the end of the list comes into view
