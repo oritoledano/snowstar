@@ -60,25 +60,40 @@
   transition: transform .55s cubic-bezier(.16,1,.3,1); /* gentle, ease-out */
 }
 /* Neither the sleeve nor the vinyl ever changes size. On hover, both
-   start from the same centered spot and split apart — the sleeve
-   translates 50% of its OWN width left, the vinyl 50% of its own width
-   right — which lands them edge-to-edge with zero overlap and exactly
-   preserves the row's original gaps, IF every other card also shifts
-   by that same 50% away from the hover point: everything to its left
-   shifts left, everything to its right shifts right, uniformly (not
-   just the immediate neighbors) — a clean gap opens exactly where the
-   cursor is, nowhere else. */
+   start from the same centered spot and split apart — the sleeve left,
+   the vinyl right, both by the same amount of their OWN width, which
+   lands them a clean gap apart with zero overlap as long as every other
+   card in the row shifts by that same amount away from the hover point
+   (not just the immediate neighbors) — a gap opens exactly where the
+   cursor is, nowhere else. Middle cards use a smaller 25% split; the
+   two ends of the row (which only ever move the vinyl, never the
+   sleeve — see below) keep the fuller 50%, so the sibling nudge amount
+   has to match whichever of those is actually happening. */
 .spot-card:hover, .spot-card:focus-within, .spot-card.spot-active {
   z-index: 6;
 }
-.spot-card:hover ~ .spot-card,
-.spot-card:focus-within ~ .spot-card,
-.spot-card.spot-active ~ .spot-card {
+.spot-card:not(:first-child):not(:last-child):hover ~ .spot-card,
+.spot-card:not(:first-child):not(:last-child):focus-within ~ .spot-card,
+.spot-card:not(:first-child):not(:last-child).spot-active ~ .spot-card {
+  transform: translateX(25%);
+}
+.spot-card:has(~ .spot-card:not(:first-child):not(:last-child):hover),
+.spot-card:has(~ .spot-card:not(:first-child):not(:last-child):focus-within),
+.spot-card:has(~ .spot-card:not(:first-child):not(:last-child).spot-active) {
+  transform: translateX(-25%);
+}
+/* first card hovered: only cards AFTER it exist to nudge, by the full
+   50% its vinyl still moves */
+.spot-card:first-child:hover ~ .spot-card,
+.spot-card:first-child:focus-within ~ .spot-card,
+.spot-card:first-child.spot-active ~ .spot-card {
   transform: translateX(50%);
 }
-.spot-card:has(~ .spot-card:hover),
-.spot-card:has(~ .spot-card:focus-within),
-.spot-card:has(~ .spot-card.spot-active) {
+/* last card hovered: only cards BEFORE it exist to nudge, by the full
+   50% its (reversed, leftward) vinyl still moves */
+.spot-card:has(~ .spot-card:last-child:hover),
+.spot-card:has(~ .spot-card:last-child:focus-within),
+.spot-card:has(~ .spot-card:last-child.spot-active) {
   transform: translateX(-50%);
 }
 
@@ -99,12 +114,13 @@
 .spot-card:hover .spot-sleeve,
 .spot-card:focus-within .spot-sleeve,
 .spot-card.spot-active .spot-sleeve {
-  transform: translateX(-50%);
+  transform: translateX(-25%);
 }
 /* the two ends of the row have nothing on one side to open a gap with —
    don't shift the sleeve toward a side that has no neighbor to match it,
    that's what caused the last card to visibly "bounce" against the row's
-   own edge */
+   own edge. They keep the fuller 50% split (only the vinyl moves, the
+   sleeve stays put) since the reveal only has to clear room on one side. */
 .spot-card:first-child:hover .spot-sleeve,
 .spot-card:first-child:focus-within .spot-sleeve,
 .spot-card:first-child.spot-active .spot-sleeve,
@@ -123,11 +139,18 @@
 .spot-card:hover .spot-vinyl,
 .spot-card:focus-within .spot-vinyl,
 .spot-card.spot-active .spot-vinyl {
-  opacity: 1; transform: translateX(50%);
+  opacity: 1; transform: translateX(25%);
+}
+/* first card keeps the fuller 50% too (unchanged — "far left and far
+   right are great"), same reasoning as the last card, just not reversed */
+.spot-card:first-child:hover .spot-vinyl,
+.spot-card:first-child:focus-within .spot-vinyl,
+.spot-card:first-child.spot-active .spot-vinyl {
+  transform: translateX(50%);
 }
 /* the last card has no room to its right, so it reveals to the LEFT
-   instead — same 50%, reversed direction, matching the first card's
-   sleeve/vinyl split mirrored */
+   instead, keeping the fuller 50% (unchanged — "far left and far right
+   are great") since it doesn't need to also move a sleeve out of the way */
 .spot-card:last-child:hover .spot-vinyl,
 .spot-card:last-child:focus-within .spot-vinyl,
 .spot-card:last-child.spot-active .spot-vinyl {
