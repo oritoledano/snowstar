@@ -1,7 +1,10 @@
 /* ═══════════ Mutra — lightweight visit tracking ═══════════
-   Sends anonymous events so the owner can see which tracks people actually play.
-   No cookies, no fingerprinting, no cross-visit identity: the id below is random
-   and lives in sessionStorage, so it disappears when the tab closes.
+   Sends events so the owner can see which tracks people actually play. The
+   session id below is random and lives in sessionStorage (disappears when
+   the tab closes) — that's the only identity THIS file ever sends. If the
+   visitor happens to be signed in, the server attaches their real identity
+   itself, off the same-origin session cookie this fetch already carries
+   (credentials: 'same-origin') — never anything asserted here client-side.
    Respects Do Not Track / Global Privacy Control. */
 (function () {
   const dnt = navigator.doNotTrack === '1' || window.doNotTrack === '1' ||
@@ -32,6 +35,7 @@
       type, detail, sid,
       page: location.pathname,
       referrer: document.referrer || null,
+      duration: opts.duration,
     });
     try {
       // keepalive so the request survives the page being closed

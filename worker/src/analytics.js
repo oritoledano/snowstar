@@ -1,15 +1,20 @@
 /**
  * Visitor journey tracking, the stats API, and email alerts.
  *
- * Privacy stance: no raw IPs, no cookies, no cross-session identity. A visit is
- * a random id the browser holds for one tab session; we keep only a country code
- * and the referring host. That's enough to answer "who's looking and at what"
- * without building a profile of anyone.
+ * Privacy stance: no raw IPs, no fingerprinting. A visit is a random id the
+ * browser holds for one tab session; we keep a country code and the
+ * referring host. WHEN a visitor is signed in, their event rows also carry
+ * their real user_id — resolved here, server-side, from their session
+ * cookie. Never from anything the client's beacon itself claims (a POST body
+ * is trivially spoofable) — the same currentUser() every gated route trusts.
  */
+
+import { currentUser } from './session.js';
 
 const ALERT_DAILY_CAP = 25;      // hard stop so a traffic spike can't spam the inbox
 const ENGAGED_PLAYS = 2;         // a visit gets interesting at 2 plays…
 const SESSION_IDLE_MS = 30 * 60 * 1000;
+const MAX_LISTEN_SECONDS = 7200; // 2h ceiling on a single reported duration
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200, headers = {}) =>
@@ -18,7 +23,10 @@ const json = (data, status = 200, headers = {}) =>
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers },
   });
 
-const VALID_TYPES = new Set(['view', 'play', 'license', 'search', 'favorite', 'download']);
+// 'play' fires the moment a track is clicked (unchanged — every existing
+// "most played" count still means exactly what it always meant); 'play_end'
+// is new, fired once the listen actually stops, carrying how long it ran.
+const VALID_TYPES = new Set(['view', 'play', 'play_end', 'license', 'search', 'favorite', 'download']);
 
 /** Reduce a referrer to its host so we never store query strings. */
 function refHost(ref) {
@@ -41,16 +49,22 @@ export async function handleTrack(req, env, ctx) {
   const page = String(body.page || '').split('?')[0].slice(0, 120) || null;
   const country = (req.cf && req.cf.country) || null;
   const referrer = refHost(body.referrer);
+  const duration = type === 'play_end' && Number.isFinite(body.duration)
+    ? Math.max(0, Math.min(MAX_LISTEN_SECONDS, Math.round(body.duration))) : null;
   const t = now();
 
   // Write the event and roll up the session; do it after responding so the
-  // beacon never delays the page.
+  // beacon never delays the page. The identity lookup lives in here too, off
+  // the response's critical path — req.headers stays readable under
+  // ctx.waitUntil the same way every other background write in this file
+  // already relies on (the body stream is what's consumed, not headers).
   ctx.waitUntil((async () => {
     try {
+      const user = await currentUser(req, env).catch(() => null);
       await env.DB.batch([
         env.DB.prepare(
-          'INSERT INTO events (session_id, type, detail, page, country, referrer, ts) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        ).bind(sid, type, detail, page, country, referrer, t),
+          'INSERT INTO events (session_id, type, detail, page, country, referrer, ts, duration, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        ).bind(sid, type, detail, page, country, referrer, t, duration, user ? user.id : null),
         env.DB.prepare(
           `INSERT INTO sessions_seen (session_id, first_ts, last_ts, country, referrer, views, plays, licenses)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -133,7 +147,7 @@ export async function handleStats(req, env, user) {
   const days = Math.min(90, Math.max(1, parseInt(url.searchParams.get('days') || '30', 10)));
   const since = now() - days * 86400;
 
-  const [totals, topTracks, daily, recent, countries, referrers, licenses, members] = await Promise.all([
+  const [totals, topTracks, daily, recent, countries, referrers, licenses, members, engagement] = await Promise.all([
     env.DB.prepare(
       `SELECT COUNT(DISTINCT session_id) AS visits,
               SUM(CASE WHEN type='view' THEN 1 ELSE 0 END)    AS views,
@@ -150,8 +164,15 @@ export async function handleStats(req, env, user) {
               SUM(CASE WHEN type='play' THEN 1 ELSE 0 END) AS plays
          FROM events WHERE ts >= ? GROUP BY day ORDER BY day DESC LIMIT 30`).bind(since).all(),
     env.DB.prepare(
-      `SELECT session_id, first_ts, last_ts, country, referrer, views, plays, licenses
-         FROM sessions_seen WHERE last_ts >= ? ORDER BY last_ts DESC LIMIT 40`).bind(since).all(),
+      `SELECT s.session_id, s.first_ts, s.last_ts, s.country, s.referrer, s.views, s.plays, s.licenses,
+              m.name AS member_name, m.email AS member_email
+         FROM sessions_seen s
+         LEFT JOIN (
+           SELECT e.session_id, u.name, u.email,
+                  ROW_NUMBER() OVER (PARTITION BY e.session_id ORDER BY e.ts DESC) AS rn
+           FROM events e JOIN users u ON u.id = e.user_id WHERE e.user_id IS NOT NULL
+         ) m ON m.session_id = s.session_id AND m.rn = 1
+        WHERE s.last_ts >= ? ORDER BY s.last_ts DESC LIMIT 40`).bind(since).all(),
     env.DB.prepare(
       `SELECT country, COUNT(DISTINCT session_id) AS visits FROM events
         WHERE ts >= ? AND country IS NOT NULL GROUP BY country ORDER BY visits DESC LIMIT 12`).bind(since).all(),
@@ -167,6 +188,27 @@ export async function handleStats(req, env, user) {
       `SELECT u.id, u.email, u.name, u.newsletter, u.signup_source, u.created_at, u.last_login_at,
               (SELECT COUNT(*) FROM favorites f WHERE f.user_id = u.id) AS favs
          FROM users u ORDER BY u.created_at DESC LIMIT 200`).all(),
+    // which position in a session a track usually gets tried in (1st, 2nd…)
+    // against how long people actually stayed once they did — a track that's
+    // tried early but abandoned fast is a weak hook; ordering signal for the catalog
+    env.DB.prepare(
+      `WITH first_plays AS (
+         SELECT session_id, detail AS slug, MIN(ts) AS ts
+           FROM events WHERE type='play' AND ts >= ? AND detail IS NOT NULL
+          GROUP BY session_id, detail),
+       positions AS (
+         SELECT slug, ROW_NUMBER() OVER (PARTITION BY session_id ORDER BY ts) AS position
+           FROM first_plays),
+       pos_agg AS (
+         SELECT slug, COUNT(*) AS sessions, AVG(position) AS avg_position
+           FROM positions GROUP BY slug),
+       dur_agg AS (
+         SELECT detail AS slug, COUNT(*) AS listens, AVG(duration) AS avg_duration
+           FROM events WHERE type='play_end' AND ts >= ? AND duration IS NOT NULL
+          GROUP BY detail)
+       SELECT p.slug, p.sessions, p.avg_position, d.listens, d.avg_duration
+         FROM pos_agg p LEFT JOIN dur_agg d ON d.slug = p.slug
+        ORDER BY p.sessions DESC LIMIT 25`).bind(since, since).all(),
   ]);
 
   return json({
@@ -179,6 +221,7 @@ export async function handleStats(req, env, user) {
     referrers: referrers.results || [],
     licenses: licenses.results || [],
     members: members.results || [],
+    engagement: engagement.results || [],
   });
 }
 
@@ -188,9 +231,16 @@ export async function handleJourney(req, env, user) {
   const sid = new URL(req.url).searchParams.get('sid') || '';
   if (!/^[a-zA-Z0-9_-]{8,64}$/.test(sid)) return json({ error: 'bad_session' }, 400);
   const rows = await env.DB.prepare(
-    'SELECT type, detail, page, ts FROM events WHERE session_id = ? ORDER BY id ASC LIMIT 200'
+    'SELECT type, detail, page, ts, duration, user_id FROM events WHERE session_id = ? ORDER BY id ASC LIMIT 200'
   ).bind(sid).all();
-  return json({ sid, events: rows.results || [] });
+  const events = rows.results || [];
+  // resolve who they were signed in as, once, rather than repeat it per row
+  const uid = events.map((e) => e.user_id).find(Boolean);
+  const member = uid
+    ? await env.DB.prepare('SELECT name, email FROM users WHERE id = ?').bind(uid).first()
+    : null;
+  return json({ sid, member: member ? { name: member.name, email: member.email } : null,
+                events: events.map(({ user_id, ...e }) => e) });
 }
 
 /** Daily digest, fired by the cron trigger. */

@@ -159,11 +159,27 @@
     window.open(mailto(track.title), '_blank', 'noopener');
   }
 
+  /** How long did they actually listen to the outgoing track? audio.played
+   * sums real playing time across any pause/resume within this one load —
+   * it resets itself the moment .src changes, so this must run BEFORE that. */
+  function finalizeListen() {
+    if (!current || current.finalized) return;
+    current.finalized = true;
+    let played = 0;
+    try {
+      const ranges = audio.played;
+      for (let i = 0; i < ranges.length; i++) played += ranges.end(i) - ranges.start(i);
+    } catch {}
+    const duration = Math.round(played);
+    if (duration > 0 && window.mutraTrack) mutraTrack('play_end', current.track.slug, { duration });
+  }
+
   function loadTrack(track, row) {
-    if (window.mutraTrack) mutraTrack('play', track.slug, { once: true });
     if (current && current.track === track) { toggle(); return; }
+    finalizeListen();
+    if (window.mutraTrack) mutraTrack('play', track.slug, { once: true });
     if (current && current.row) current.row.classList.remove('playing');
-    current = { track, row: row || null };
+    current = { track, row: row || null, finalized: false };
     if (row) row.classList.add('playing');
     audio.src = track.audio;
     audio.currentTime = 0;
@@ -191,6 +207,7 @@
     if (audio.paused) audio.play().catch(() => {}); else audio.pause();
   }
   function closePlayer() {
+    finalizeListen(); // before audio.src changes — that's what resets .played
     audio.pause(); audio.src = '';
     if (current && current.row) current.row.classList.remove('playing');
     current = null;
@@ -211,7 +228,13 @@
     plPlay.innerHTML = ICON_PLAY;
     if (current && current.row) current.row.querySelector('.trk-play').innerHTML = ICON_PLAY;
   });
-  audio.addEventListener('ended', () => { setProgressUI(0); plCur.textContent = '0:00'; });
+  audio.addEventListener('ended', () => { setProgressUI(0); plCur.textContent = '0:00'; finalizeListen(); });
+
+  // a closed tab, backgrounded app, or plain navigation must still report
+  // whatever was actually heard — both events are covered since mobile
+  // browsers often fire only one of the two
+  addEventListener('pagehide', finalizeListen);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) finalizeListen(); });
 
   plPlay.innerHTML = ICON_PLAY;
   plPlay.addEventListener('click', toggle);

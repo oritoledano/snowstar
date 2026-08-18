@@ -7,6 +7,7 @@
   const esc = (s) => String(s == null ? '' : s).replace(/</g, '&lt;');
   const fmt = (ts) => new Date(ts * 1000).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
   const TABS = ['overview', 'stats', 'members', 'artists', 'submissions', 'notifications', 'storage'];
   let tab = (location.hash || '').replace('#', '');
@@ -138,9 +139,20 @@
           { label: 'Country', get: (r) => esc(r.country) },
           { label: 'Visits', num: true, bar: true, get: (r) => r.visits },
         ], { barKey: 'visits' })}</div>
+        <div class="db-panel" style="grid-column:1/-1"><h2>Track engagement <span class="pill">order tried vs. time spent</span></h2>
+          <p class="db-empty" style="padding-top:0">Avg. position is which try in a session a track usually is (1st, 2nd…) —
+            low position + short avg. listen means people reach it early and bail; that's your optimization signal.</p>
+          ${table(d.engagement || [], [
+            { label: 'Track', get: (r) => esc(r.slug) },
+            { label: 'Tried by', num: true, get: (r) => r.sessions },
+            { label: 'Avg. position', num: true, get: (r) => r.avg_position ? Number(r.avg_position).toFixed(1) : '—' },
+            { label: 'Listens (timed)', num: true, get: (r) => r.listens || '—' },
+            { label: 'Avg. listened', num: true, get: (r) => r.avg_duration ? fmtDur(r.avg_duration) : '—' },
+          ])}</div>
         <div class="db-panel" style="grid-column:1/-1"><h2>Recent visits <span class="pill">click a row for the journey</span></h2>
           ${table(d.recent || [], [
             { label: 'When', get: (r) => fmt(r.last_ts) },
+            { label: 'Who', get: (r) => r.member_email ? `<b>${esc(r.member_name || r.member_email)}</b>` : '<span style="color:var(--dim,var(--muted))">anonymous</span>' },
             { label: 'From', get: (r) => esc((r.country || '—') + (r.referrer ? ' · ' + r.referrer : '')) },
             { label: 'Views', num: true, get: (r) => r.views },
             { label: 'Plays', num: true, get: (r) => r.plays },
@@ -161,9 +173,10 @@
         box.innerHTML = '<p class="db-empty">Loading journey…</p>';
         const j = await get('/journey?sid=' + encodeURIComponent(tr.dataset.sid)).catch(() => null);
         if (!j) { box.innerHTML = '<p class="db-empty">Couldn’t load that journey.</p>'; return; }
-        const verb = { view: 'opened', play: 'played', license: 'clicked License on', search: 'searched for', favorite: 'favorited', download: 'downloaded' };
-        box.innerHTML = `<ul class="jrn">${(j.events || []).map((e) =>
-          `<li>${new Date(e.ts * 1000).toLocaleTimeString()} — ${verb[e.type] || esc(e.type)} <b>${esc(e.detail || e.page || '')}</b></li>`).join('')}</ul>`;
+        const verb = { view: 'opened', play: 'played', play_end: 'stopped listening to', license: 'clicked License on', search: 'searched for', favorite: 'favorited', download: 'downloaded' };
+        const who = j.member ? `<p class="db-empty" style="padding:0 0 8px"><b style="color:var(--text)">${esc(j.member.name || j.member.email)}</b> was signed in during this visit</p>` : '';
+        box.innerHTML = who + `<ul class="jrn">${(j.events || []).map((e) =>
+          `<li>${new Date(e.ts * 1000).toLocaleTimeString()} — ${verb[e.type] || esc(e.type)} <b>${esc(e.detail || e.page || '')}</b>${e.duration ? ` <span style="color:var(--dim,var(--muted))">(${fmtDur(e.duration)})</span>` : ''}</li>`).join('')}</ul>`;
       }));
   }
 

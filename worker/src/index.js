@@ -30,6 +30,7 @@ import { updateProfile, myDownloads, myFavoritesList } from './profile.js';
 import { updateMember, deleteMember } from './members.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
+import { currentUser, readCookies } from './session.js';
 
 const SESSION_DAYS = 60;
 const MAX_ATTEMPTS = 8;          // per window
@@ -104,35 +105,6 @@ function sessionCookie(token, maxAgeSec) {
   return parts.join('; ');
 }
 
-function readCookies(req, name) {
-  const raw = req.headers.get('cookie') || '';
-  const values = [];
-  for (const part of raw.split(/;\s*/)) {
-    const i = part.indexOf('=');
-    if (i > 0 && part.slice(0, i) === name) values.push(part.slice(i + 1));
-  }
-  return values;
-}
-
-async function currentUser(req, env) {
-  // A browser can hold SEVERAL ss_session cookies — the pre-umbrella host-only
-  // one next to today's Domain= cookie — and it sends the OLDEST first. Never
-  // trust just the first match: a dead old cookie would shadow a live session
-  // forever. Try each one.
-  for (const token of readCookies(req, 'ss_session')) {
-    if (!token) continue;
-    const hash = await sha256b64(token);
-    const row = await env.DB.prepare(
-      `SELECT u.id, u.email, u.name, u.newsletter, u.admin, u.avatar,
-              u.artist, u.artist_name, u.first_name, u.last_name, u.country,
-              u.phone, u.role, u.company, u.pw_hash, u.signup_source, s.expires_at
-         FROM sessions s JOIN users u ON u.id = s.user_id
-        WHERE s.token_hash = ?`
-    ).bind(hash).first();
-    if (row && row.expires_at > now()) return row;
-  }
-  return null;
-}
 
 /** Auth success response: fresh session cookie + eviction of the legacy one. */
 function authed(data, status, cookie) {
