@@ -61,7 +61,7 @@
 
   function buildCard(track, artist) {
     const card = document.createElement('div');
-    card.className = 'spot-card';
+    card.className = 'spot-card' + (track.isAlbum ? ' spot-is-album' : '');
     card.tabIndex = 0;
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', track.title + ' — preview');
@@ -92,12 +92,10 @@
   function buildRow(spot) {
     const row = document.createElement('div');
     row.className = 'spotlight-row';
+    // no visible header (kicker/title) any more — the row still needs a
+    // name for screen readers, it just isn't printed on screen
     row.setAttribute('aria-label', spot.kicker + ': ' + spot.artist + ' — ' + spot.album);
     row.innerHTML = `
-      <div class="spot-head">
-        <span class="spot-kicker">${spot.kicker}</span>
-        <h3>${spot.artist} <span class="spot-album">— ${spot.album}</span></h3>
-      </div>
       <div class="spot-strip-wrap">
         <button class="spot-nav spot-nav-prev" type="button" aria-label="Scroll left">${ICON_PREV}</button>
         <div class="spot-strip"></div>

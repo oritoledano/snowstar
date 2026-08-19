@@ -4,15 +4,17 @@
    nothing about the rendering code below should ever need to know it's
    "Kayma" specifically — it only ever reads this shape.
 
-   The vinyl itself is a shared brand asset (Mutra wordmark on a record,
-   see MUTRA_SPOTLIGHT_VINYL below) — a Mutra-branded preview affordance,
-   not a per-song design, so every track in every row uses it. Two color
-   variants (mutra-vinyl-white.webp, mutra-vinyl-black.webp) are swapped
-   by CSS content:url() via [data-theme] — see spotlight.css — for
-   contrast: white vinyl on the dark skin, black vinyl on the light skin.
-   The URL below is just the initial <img src>, which CSS always
-   overrides visually; kept in sync with the CSS default (white) so the
-   browser isn't fetching an asset it'll never actually show.
+   The vinyl sticker is a shared brand asset — a Mutra-branded preview
+   affordance, not a per-song design — but the ALBUM card gets a
+   distinct one from every song card: the album uses the real,
+   press-ready label art (see MUTRA_SPOTLIGHT_VINYL_ALBUM), songs use a
+   generated taupe + SSC-snowflake sticker (MUTRA_SPOTLIGHT_VINYL). Each
+   comes in two color variants swapped by CSS content:url() via
+   [data-theme] and a .spot-is-album class — see spotlight.css — for
+   contrast: white vinyl on the dark skin, black vinyl on the light
+   skin. The URLs below are just the initial <img src>, which CSS
+   always overrides visually; kept in sync with the CSS defaults
+   (white) so the browser isn't fetching an asset it'll never show.
 
    snippetUrl/snippetStart are PLACEHOLDERS right now (a short generated
    tone, same file reused for all 8 tracks) — these songs haven't been
@@ -24,10 +26,11 @@
    live here once rather than repeated per track.
 
    The first entry, slug 'album', is the record itself rather than a
-   song — same card shape as every track (cover + shared vinyl + a
-   snippetUrl, here just a short album-level teaser reusing the
-   placeholder tone), so it needs no special-casing in the renderer. */
-const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=3';
+   song — same card shape as every track (cover + vinyl + a snippetUrl,
+   here just a short album-level teaser reusing the placeholder tone),
+   just with its own vinyl + isAlbum flag so CSS can target it. */
+const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white-ssc.webp';
+const MUTRA_SPOTLIGHT_VINYL_ALBUM = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-album-white.webp';
 
 const MUTRA_SPOTLIGHTS = [
   {
@@ -37,7 +40,7 @@ const MUTRA_SPOTLIGHTS = [
     album: 'New Trying Outs',
     cdn: 'https://cdn.snowstar.company/mutra/spotlight/kayma-nto/',
     tracks: [
-      { slug: 'album',            title: 'New Trying Outs' },
+      { slug: 'album', title: 'New Trying Outs - Album', isAlbum: true, vinyl: MUTRA_SPOTLIGHT_VINYL_ALBUM },
       { slug: 'bad-blood',        title: 'Bad Blood' },
       { slug: 'bunny',            title: 'Bunny' },
       { slug: 'onsitelover',      title: 'Onsitelover' },
@@ -49,7 +52,7 @@ const MUTRA_SPOTLIGHTS = [
     ].map(t => ({
       ...t,
       cover: `https://cdn.snowstar.company/mutra/spotlight/kayma-nto/${t.slug}-cover.webp`,
-      vinyl: MUTRA_SPOTLIGHT_VINYL,
+      vinyl: t.vinyl || MUTRA_SPOTLIGHT_VINYL,
       snippetUrl: 'https://cdn.snowstar.company/mutra/spotlight/placeholder-snippet.m4a',
       placeholder: true,
     })),

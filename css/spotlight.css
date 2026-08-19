@@ -5,7 +5,7 @@
 
 .spotlight-row {
   margin: 6px 0 22px;
-  padding: 20px 0 4px;
+  padding: 10px 0 4px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -14,16 +14,8 @@
    after us, so restore it explicitly */
 .spotlight-row + .trk { margin-top: 6px; }
 
-.spot-head { padding: 0 4px 14px; }
-.spot-kicker {
-  font-family: var(--font-display); font-size: .74rem; font-weight: 600;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--coral, var(--text));
-}
-.spot-head h3 {
-  font-family: var(--font-display); font-weight: 700; font-size: 1.3rem;
-  margin: 4px 0 0; color: var(--text);
-}
-.spot-album { color: var(--muted); font-weight: 500; }
+/* no visible kicker/title above the strip — row.aria-label carries that
+   context for screen readers instead, see mutra-spotlight.js */
 
 /* ── strip + nav arrows ── */
 .spot-strip-wrap { position: relative; }
@@ -163,11 +155,19 @@
   animation-play-state: paused;
   /* dark skin (default) shows the WHITE vinyl — it's the one that reads
      against a dark card; light skin shows the BLACK one, for the same
-     contrast reason in reverse */
-  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=3);
+     contrast reason in reverse. This is the generated taupe +
+     SSC-snowflake sticker, used by every song card. */
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white-ssc.webp);
 }
 :root[data-theme="light"] .spot-vinyl img {
-  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-black.webp?v=3);
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-black-ssc.webp);
+}
+/* the album card alone gets the real, press-ready "Labels A" sticker */
+.spot-card.spot-is-album .spot-vinyl img {
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-album-white.webp);
+}
+:root[data-theme="light"] .spot-card.spot-is-album .spot-vinyl img {
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-album-black.webp);
 }
 .spot-card:hover .spot-vinyl img,
 .spot-card:focus-within .spot-vinyl img,
