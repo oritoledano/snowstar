@@ -59,7 +59,7 @@
     fadeTo(0, 320);
   }
 
-  function buildCard(track, artist) {
+  function buildCard(track, spot) {
     const card = document.createElement('div');
     card.className = 'spot-card' + (track.isAlbum ? ' spot-is-album' : '');
     card.tabIndex = 0;
@@ -72,7 +72,7 @@
       </div>
       <div class="spot-meta">
         <div class="spot-title-row"><b>${track.title}</b>${track.placeholder ? '<span class="spot-ph" title="Placeholder preview — real snippet coming soon">●</span>' : ''}</div>
-        ${artist ? `<div class="spot-artist">${artist}</div>` : ''}
+        ${spot.artist ? `<button type="button" class="spot-artist" aria-label="${spot.artist} — artist page">${spot.artist}</button>` : ''}
       </div>`;
 
     card.addEventListener('mouseenter', () => activate(card, track));
@@ -86,6 +86,17 @@
         if (activeCard === card) deactivate(card); else activate(card, track);
       }
     });
+    // the artist name is its own click target — opens the full artist
+    // page (lightbox transition if available, else a plain nav)
+    const artistBtn = card.querySelector('.spot-artist');
+    if (artistBtn) {
+      artistBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (window.mutraOpenArtist) window.mutraOpenArtist(spot.id);
+        else location.href = 'artist.html?a=' + encodeURIComponent(spot.id);
+      });
+    }
     return card;
   }
 
@@ -110,7 +121,7 @@
         <button class="spot-nav spot-nav-next" type="button" aria-label="Scroll right">${ICON_NEXT}</button>
       </div>`;
     const strip = row.querySelector('.spot-strip');
-    spot.tracks.forEach(t => strip.appendChild(buildCard(t, spot.artist)));
+    spot.tracks.forEach(t => strip.appendChild(buildCard(t, spot)));
 
     const scrollByCard = (dir) => {
       const card = strip.querySelector('.spot-card');

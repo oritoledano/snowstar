@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-product="mutra">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artist — Mutra by Snowstar</title>
+<meta name="description" content="Artist profile on Mutra, Snowstar's royalty-free licensing catalog.">
+<link rel="icon" href="assets/ssc-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Unbounded:wght@500;700;800&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="js/mutra-skin.js?v=4"></script>
+<link rel="stylesheet" href="css/skins.css?v=3">
+<link rel="stylesheet" href="css/account.css?v=5">
+<link rel="stylesheet" href="css/mutra.css?v=50">
+<link rel="stylesheet" href="css/artist.css?v=1">
+</head>
+<body>
+
+<header class="mnav scrolled" id="mnav">
+  <a class="st-back" href="mutra.html" style="font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);z-index:2">← Catalog</a>
+  <a class="mlogo" href="mutra.html" aria-label="Mutra"><img class="ml-img" src="assets/mutra-wordmark.png" alt="MUTRA"></a>
+  <div class="mnav-right" data-account-mount>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch to dark mode" title="Switch to dark mode">
+      <svg class="ico-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4.2"/><path d="M12 2.4v2.4M12 19.2v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.4 12h2.4M19.2 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
+      </svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a6.8 6.8 0 0 0 10.8 10.8z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main style="max-width:920px;margin:0 auto;padding:100px clamp(16px,3vw,30px) 60px">
+  <div id="apMount">
+    <p style="color:var(--muted);padding:40px 4px">Loading artist…</p>
+  </div>
+</main>
+
+<footer class="mfoot">
+  <div class="wrap mfoot-in">
+    <span>© <span id="year"></span> Mutra — by <a href="index.html">Snowstar.Company</a>, Tel Aviv.</span>
+    <span><a href="mailto:hello@snowstar.company">hello@snowstar.company</a></span>
+  </div>
+</footer>
+
+<script src="js/account.js?v=3"></script>
+<script src="js/account-ui.js?v=12"></script>
+<script src="js/mutra-spotlight-data.js?v=8"></script>
+<script src="js/mutra-artist-data.js?v=1"></script>
+<script src="js/mutra-artist.js?v=1"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  (function () {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('a') || (MUTRA_SPOTLIGHTS[0] && MUTRA_SPOTLIGHTS[0].id);
+    const spot = MUTRA_SPOTLIGHTS.find(s => s.id === id);
+    const mount = document.getElementById('apMount');
+    if (!spot) {
+      mount.innerHTML = '<p style="color:var(--muted);padding:40px 4px">Artist not found.</p>';
+      return;
+    }
+    document.title = spot.artist + ' — ' + spot.album + ' | Mutra by Snowstar';
+    MutraArtist.render(mount, spot);
+  })();
+</script>
+</body>
+</html>

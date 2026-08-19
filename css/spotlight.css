@@ -197,9 +197,13 @@
   font-size: .5rem; color: var(--dim, var(--muted));
   cursor: help;
 }
-/* same treatment as the catalog rows' own by-line (.trk-artist) */
+/* same treatment as the catalog rows' own by-line (.trk-artist), but a
+   real button — this is the entry point into the full artist page */
 .spot-artist {
+  display: block; width: 100%; text-align: left;
   color: var(--dim); font-size: .62rem; letter-spacing: .06em;
   text-transform: uppercase; margin-top: 2px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: none; border: 0; padding: 0; font-family: inherit; cursor: pointer;
 }
+.spot-artist:hover, .spot-artist:focus-visible { color: var(--coral); }
