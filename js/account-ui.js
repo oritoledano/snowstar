@@ -436,6 +436,10 @@
   function drawerFor(key) { return panel.querySelector(`.acct-acc[data-key="${key}"] .acct-drawer`); }
   function countFor(key, n) { panel.querySelector(`.acct-acc[data-key="${key}"] .acct-count`).textContent = n ? `(${n})` : ''; }
 
+  const ICON_DL = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 19h16"/></svg>';
+  const ICON_HEART = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 20.4l-1.4-1.3C5.6 14.6 2.7 12 2.7 8.7 2.7 6.1 4.7 4 7.3 4c1.5 0 2.9.7 3.8 1.8l.9 1.1.9-1.1C13.8 4.7 15.2 4 16.7 4c2.6 0 4.6 2.1 4.6 4.7 0 3.3-2.9 5.9-7.9 10.4L12 20.4z" fill="currentColor"/></svg>';
+  const ICON_X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
   async function loadDrawer(key) {
     if (key === 'profile') return paintProfileForm();
     const el = drawerFor(key);
@@ -449,9 +453,26 @@
         el.innerHTML = `<p class="acct-empty">${key === 'downloads' ? 'Nothing downloaded yet.' : 'Nothing favorited yet.'}</p>`;
         return;
       }
+      const icon = key === 'downloads' ? ICON_DL : ICON_HEART;
       el.innerHTML = `<ul class="acct-list">${items.map(it => `
-        <li><a href="${trackLink(it.slug)}">${esc(it.title || it.slug)}</a>
-          <span>${fmtDate(it.ts)}${key === 'downloads' && it.times > 1 ? ` · ${it.times}×` : ''}</span></li>`).join('')}</ul>`;
+        <li data-slug="${esc(it.slug)}">
+          <span class="acct-item-icon">${icon}</span>
+          <a href="${trackLink(it.slug)}">${esc(it.title || it.slug)}</a>
+          <span class="acct-item-date">${fmtDate(it.ts)}${key === 'downloads' && it.times > 1 ? ` · ${it.times}×` : ''}</span>
+          ${key === 'favorites' ? `<button type="button" class="acct-item-remove" aria-label="Remove ${esc(it.title || it.slug)} from favorites" title="Remove from favorites">${ICON_X}</button>` : ''}
+        </li>`).join('')}</ul>`;
+      if (key === 'favorites') {
+        el.querySelectorAll('.acct-item-remove').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const li = btn.closest('li');
+            const slug = li.dataset.slug;
+            btn.disabled = true;
+            await M.toggleFavorite(slug); // optimistic — reconciles with the server itself
+            loadDrawer('favorites'); // re-fetch so the list + count stay truthful
+          });
+        });
+      }
     } catch {
       el.innerHTML = '<p class="acct-empty">Couldn’t load that right now.</p>';
     }

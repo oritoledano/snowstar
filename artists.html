@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=3">
-<link rel="stylesheet" href="css/account.css?v=5">
+<link rel="stylesheet" href="css/account.css?v=6">
 <link rel="stylesheet" href="css/mutra.css?v=50">
 <style>
   .ar-wrap{max-width:860px;margin:0 auto;padding:110px clamp(18px,4vw,44px) 60px}
@@ -59,6 +59,11 @@
     color:var(--text);font:inherit;font-size:.9rem;padding:9px 12px;outline:0}
   #arStaged li{font-size:.86rem}
   @media (max-width:560px){.ar-crow{grid-template-columns:1fr 1fr 70px 26px}}
+  .ar-tshare{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+  .ar-tshare-head{display:flex;gap:9px;align-items:center;cursor:pointer;color:var(--text);font-size:.88rem}
+  .ar-tshare-head input{accent-color:var(--amber,#8fd8ff)}
+  .ar-tshare-body{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+  .ar-tshare-body[hidden]{display:none}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -135,13 +140,20 @@
       <div id="arRights" hidden>
         <div class="ar-field" style="margin-top:14px"><span>Ownership</span>
           <label class="ar-radio"><input type="radio" name="arKind" value="solo" checked> <span>These tracks are entirely mine</span></label>
-          <label class="ar-radio"><input type="radio" name="arKind" value="shared"> <span>I share ownership with others</span></label>
+          <label class="ar-radio"><input type="radio" name="arKind" value="shared"> <span>Some of these tracks are shared with others</span></label>
+        </div>
+        <!-- shared with others: apply the same co-owners to the whole batch, or pick per track -->
+        <div id="arSharedScope" hidden style="margin:-4px 0 12px">
+          <label class="ar-radio"><input type="radio" name="arScope" value="all" checked> <span>All tracks in this batch</span></label>
+          <label class="ar-radio"><input type="radio" name="arScope" value="pick"> <span>Choose which tracks</span></label>
         </div>
         <div id="arCollabs" hidden>
           <div id="arCollabRows"></div>
           <button type="button" class="ar-addrow" id="arAddCollab">＋ Add co-owner</button>
           <p class="ar-note" id="arShareLeft"></p>
         </div>
+        <!-- scope=pick: one checklist row per staged track, each revealing its own co-owner editor -->
+        <div id="arTrackShares" hidden></div>
         <label class="ar-check"><input type="checkbox" id="arAcum">
           <span>This music is registered with ACUM or another royalties society</span></label>
         <blockquote class="ar-decl" id="arDeclText"></blockquote>
@@ -171,8 +183,8 @@
 </div>
 
 <script src="js/account.js?v=3"></script>
-<script src="js/account-ui.js?v=12"></script>
+<script src="js/account-ui.js?v=13"></script>
 <script src="js/site-edit.js?v=2"></script>
-<script src="js/artists-page.js?v=3"></script>
+<script src="js/artists-page.js?v=4"></script>
 </body>
 </html>

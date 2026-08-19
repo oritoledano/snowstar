@@ -109,13 +109,17 @@
 .acct-empty{color:var(--dim,var(--muted));font-size:.84rem;padding:6px 2px}
 
 .acct-list{list-style:none}
-.acct-list li{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+.acct-list li{display:flex;gap:8px;align-items:center;
   padding:7px 2px;border-bottom:1px solid var(--line);font-size:.85rem}
 .acct-list li:last-child{border-bottom:0}
-.acct-list a{color:var(--text);text-decoration:none;min-width:0;overflow:hidden;
+.acct-item-icon{flex:none;display:flex;color:var(--dim,var(--muted))}
+.acct-list a{flex:1;min-width:0;color:var(--text);text-decoration:none;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap}
 .acct-list a:hover{color:var(--coral,var(--ice,#8fd8ff));text-decoration:underline}
-.acct-list span{color:var(--dim,var(--muted));font-size:.76rem;flex:none}
+.acct-item-date{color:var(--dim,var(--muted));font-size:.76rem;flex:none}
+.acct-item-remove{flex:none;display:flex;background:none;border:0;border-radius:6px;
+  padding:5px;margin:-5px 0;color:var(--dim,var(--muted));cursor:pointer;transition:color .15s,background .15s}
+.acct-item-remove:hover{color:#ff8080;background:rgba(255,128,128,.12)}
 
 .acct-form{padding:4px 2px 2px}
 .acct-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}

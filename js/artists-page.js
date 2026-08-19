@@ -1,7 +1,12 @@
 /* ═══════════ Artist dashboard — upload, rights declaration, credits, claims ═══
    Files start uploading the moment they're dropped (never gated on paperwork);
-   the signed declaration attaches when Submit fires. One declaration covers the
-   batch — tracks with different splits go in separate batches. */
+   the signed declaration attaches when Submit fires. Ownership is chosen once
+   per batch (solo, or shared) but "shared" then splits two ways: the same
+   co-owner list for every track ("all"), or a per-track checklist where each
+   marked track gets its own co-owner list ("pick") — every track still posts
+   its own /artist/submissions call, so a "pick" batch is really a mix of solo
+   and shared declarations sent individually; the backend never assumed one
+   declaration per batch, that constraint only ever lived in this UI. */
 (function () {
   const M = window.SnowstarAccount;
   if (!M) return;
@@ -106,7 +111,8 @@
 
   // ── staging: files upload on drop, submission waits for the signature ──
   const drop = $('#arDrop'), fileInput = $('#arFile'), upStatus = $('#arUpStatus');
-  let staged = []; // {file, title, key, pct, error}
+  let staged = []; // {_id, file, title, key, pct, error, shared, collabs}
+  let nextStagedId = 1;
 
   ['dragover', 'dragenter'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
   ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
@@ -135,7 +141,7 @@
     if (!audio.length) { say('Those aren’t audio files we accept.'); return; }
     for (const f of audio) {
       if (f.size > 95 * 1024 * 1024) { say(`“${f.name}” is over 95MB — export a smaller master.`); continue; }
-      const item = { file: f, title: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim(), key: null, pct: 0, error: null };
+      const item = { _id: nextStagedId++, file: f, title: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim(), key: null, pct: 0, error: null, shared: false, collabs: [] };
       staged.push(item);
       put('/artist/upload?filename=' + encodeURIComponent(f.name), f, (pct) => { item.pct = pct; paintStaged(); })
         .then((d) => { item.key = d.key; paintStaged(); })
@@ -156,33 +162,97 @@
     ul.querySelectorAll('.ar-unstage').forEach((b) => b.addEventListener('click', () => {
       staged.splice(Number(b.dataset.i), 1); paintStaged();
     }));
+    renderTrackShares(); // diff-only — never rebuilds a block for a track that's still staged, so it never steals focus mid-type
     syncDecl();
   }
 
   // ── the declaration form ──
   document.querySelectorAll('[name="arKind"]').forEach((r) => r.addEventListener('change', syncDecl));
+  document.querySelectorAll('[name="arScope"]').forEach((r) => r.addEventListener('change', syncDecl));
   $('#arAgree').addEventListener('change', syncDecl);
   $('#arSign').addEventListener('input', syncDecl);
-  $('#arAddCollab').addEventListener('click', () => addCollabRow());
+  $('#arAddCollab').addEventListener('click', () => addCollabRow($('#arCollabRows'), syncDecl));
 
-  function addCollabRow(pre) {
+  /** container-scoped so the same row UI serves the one global co-owner list
+   * ("all tracks") and each track's own list ("choose which tracks"). */
+  function addCollabRow(container, onChange, pre) {
     const row = document.createElement('div');
     row.className = 'ar-crow';
     row.innerHTML = `<input placeholder="Full name" maxlength="120" data-f="name">
       <input placeholder="their@email.com" type="email" maxlength="254" data-f="email">
       <input placeholder="%" inputmode="decimal" data-f="pct">
       <button type="button" title="Remove">✕</button>`;
-    row.querySelector('button').addEventListener('click', () => { row.remove(); syncDecl(); });
-    row.querySelectorAll('input').forEach((i) => i.addEventListener('input', syncDecl));
-    $('#arCollabRows').appendChild(row);
+    if (pre) {
+      row.querySelector('[data-f="name"]').value = pre.name || '';
+      row.querySelector('[data-f="email"]').value = pre.email || '';
+      row.querySelector('[data-f="pct"]').value = pre.share_pct || '';
+    }
+    row.querySelector('button').addEventListener('click', () => { row.remove(); onChange(); });
+    row.querySelectorAll('input').forEach((i) => i.addEventListener('input', onChange));
+    container.appendChild(row);
+    return row;
   }
 
-  function collabData() {
-    return [...document.querySelectorAll('#arCollabRows .ar-crow')].map((row) => ({
+  function collabData(container) {
+    return [...container.querySelectorAll('.ar-crow')].map((row) => ({
       name: row.querySelector('[data-f="name"]').value.trim(),
       email: row.querySelector('[data-f="email"]').value.trim(),
       share_pct: parseFloat(row.querySelector('[data-f="pct"]').value) || 0,
     })).filter((c) => c.name || c.email || c.share_pct);
+  }
+
+  /** Mirrors the server exactly — whole-basis-point math, no float drift.
+   * requireAtLeastOne: false lets an empty list pass (behalf's list is
+   * optional; a "shared" list, whether global or per-track, is not). */
+  function validateCollabs(collabs, requireAtLeastOne) {
+    const bps = collabs.map((c) => Math.round(c.share_pct * 100));
+    const leftBp = 10000 - bps.reduce((a, b) => a + b, 0);
+    let ok = leftBp >= 1 && collabs.every((c, i) =>
+      c.name.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c.email) && bps[i] >= 1);
+    if (requireAtLeastOne && !collabs.length) ok = false;
+    return { leftBp, ok };
+  }
+
+  /** One checklist row per staged track, each revealing its own co-owner
+   * editor when checked. Diff-only: an already-rendered block for a track
+   * that's still staged is NEVER rebuilt, so a progress-tick repaint mid-
+   * upload can't blow away focus or half-typed co-owner rows. */
+  function renderTrackShares() {
+    const el = $('#arTrackShares');
+    const stagedIds = new Set(staged.map((s) => s._id));
+    [...el.children].forEach((c) => { if (!stagedIds.has(Number(c.dataset.id))) c.remove(); });
+    const existingIds = new Set([...el.children].map((c) => Number(c.dataset.id)));
+    staged.forEach((item) => {
+      if (existingIds.has(item._id)) return;
+      const block = document.createElement('div');
+      block.className = 'ar-tshare';
+      block.dataset.id = item._id;
+      block.innerHTML = `
+        <label class="ar-tshare-head">
+          <input type="checkbox" class="ar-tshare-chk">
+          <span></span>
+        </label>
+        <div class="ar-tshare-body" hidden>
+          <div class="ar-crow-rows"></div>
+          <button type="button" class="ar-addrow">＋ Add co-owner</button>
+          <p class="ar-note ar-tshare-left"></p>
+        </div>`;
+      block.querySelector('.ar-tshare-head span').textContent = item.title;
+      const chk = block.querySelector('.ar-tshare-chk');
+      const body = block.querySelector('.ar-tshare-body');
+      const rows = block.querySelector('.ar-crow-rows');
+      chk.checked = item.shared;
+      body.hidden = !item.shared;
+      const onRowChange = () => syncDecl();
+      chk.addEventListener('change', () => {
+        item.shared = chk.checked;
+        body.hidden = !chk.checked;
+        if (chk.checked && !rows.children.length) addCollabRow(rows, onRowChange);
+        syncDecl();
+      });
+      block.querySelector('.ar-addrow').addEventListener('click', () => addCollabRow(rows, onRowChange));
+      el.appendChild(block);
+    });
   }
 
   function syncDecl() {
@@ -191,24 +261,51 @@
     $('#arDeclText').textContent = DECL[behalf ? 'behalf' : kind];
     $('#arEvidence').hidden = !behalf;
     const shared = kind === 'shared';
-    $('#arCollabs').hidden = !(shared || behalf);
-    if ((shared || behalf) && !document.querySelector('#arCollabRows .ar-crow') && shared) addCollabRow();
+    $('#arSharedScope').hidden = !(shared && !behalf);
+    const scope = (document.querySelector('[name="arScope"]:checked') || {}).value || 'all';
+    const scopeAllShared = shared && !behalf && scope === 'all'; // "all tracks" sub-choice
+    const scopePick = shared && !behalf && scope === 'pick';    // "choose which tracks"
+    const useGlobalCollabs = scopeAllShared || behalf;           // both read #arCollabRows
+
+    $('#arCollabs').hidden = !useGlobalCollabs;
+    $('#arTrackShares').hidden = !scopePick;
+    if (scopePick) renderTrackShares();
+    if (scopeAllShared && !document.querySelector('#arCollabRows .ar-crow')) addCollabRow($('#arCollabRows'), syncDecl);
 
     let sharesOk = true;
-    const collabs = collabData();
-    if (shared || (behalf && collabs.length)) {
-      // mirror the server exactly: whole-basis-point math, no float drift
-      const bps = collabs.map((c) => Math.round(c.share_pct * 100));
-      const leftBp = 10000 - bps.reduce((a, b) => a + b, 0);
-      const who = behalf ? 'the artist' : 'you';
-      $('#arShareLeft').textContent = leftBp >= 1
-        ? `That leaves ${who} with ${Number((leftBp / 100).toFixed(2))}%.`
-        : `Shares total ${Number(((10000 - leftBp) / 100).toFixed(2))}% — ${who} must keep a share.`;
-      sharesOk = leftBp >= 1 && collabs.every((c, i) =>
-        c.name.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c.email) && bps[i] >= 1);
-      if (shared && !collabs.length) sharesOk = false;
+    if (useGlobalCollabs) {
+      const collabs = collabData($('#arCollabRows'));
+      const requireOne = scopeAllShared; // behalf's list is optional
+      if (requireOne || collabs.length) {
+        const { leftBp, ok } = validateCollabs(collabs, requireOne);
+        const who = behalf ? 'the artist' : 'you';
+        $('#arShareLeft').textContent = leftBp >= 1
+          ? `That leaves ${who} with ${Number((leftBp / 100).toFixed(2))}%.`
+          : `Shares total ${Number(((10000 - leftBp) / 100).toFixed(2))}% — ${who} must keep a share.`;
+        sharesOk = ok;
+      } else {
+        $('#arShareLeft').textContent = '';
+      }
     } else {
       $('#arShareLeft').textContent = '';
+    }
+
+    if (scopePick) {
+      let anyShared = false;
+      $('#arTrackShares').querySelectorAll('.ar-tshare').forEach((block) => {
+        const item = staged.find((s) => s._id === Number(block.dataset.id));
+        const leftEl = block.querySelector('.ar-tshare-left');
+        if (!item || !item.shared) { if (leftEl) leftEl.textContent = ''; return; }
+        anyShared = true;
+        const collabs = collabData(block.querySelector('.ar-crow-rows'));
+        item.collabs = collabs; // persisted so a later repaint doesn't lose it
+        const { leftBp, ok } = validateCollabs(collabs, true);
+        leftEl.textContent = leftBp >= 1
+          ? `That leaves you with ${Number((leftBp / 100).toFixed(2))}%.`
+          : `Shares total ${Number(((10000 - leftBp) / 100).toFixed(2))}% — you must keep a share.`;
+        if (!ok) sharesOk = false;
+      });
+      if (!anyShared) sharesOk = false; // "choose which tracks" with none picked isn't a real choice yet
     }
 
     const filesReady = staged.length > 0 && staged.every((s) => s.key || s.error) && staged.some((s) => s.key);
@@ -226,20 +323,26 @@
       const behalf = behalfMode();
       const managedId = behalf ? await resolveManagedArtist() : null;
       const kind = behalf ? 'behalf' : (document.querySelector('[name="arKind"]:checked') || {}).value || 'solo';
-      const collabs = (kind === 'shared' || behalf) ? collabData() : [];
-      const declaration = {
-        kind,
-        signed_name: $('#arSign').value.trim(),
-        acum: $('#arAcum').checked,
-        collaborators: collabs,
-        evidence_kind: behalf ? $('#arEvKind').value : undefined,
-        evidence_note: behalf ? $('#arEvNote').value.trim() : undefined,
-      };
+      const scope = (document.querySelector('[name="arScope"]:checked') || {}).value || 'all';
+      const perTrack = kind === 'shared' && !behalf && scope === 'pick';
+      const globalCollabs = (kind === 'shared' || behalf) && !perTrack ? collabData($('#arCollabRows')) : [];
+      const signedName = $('#arSign').value.trim();
+      const acum = $('#arAcum').checked;
+      const evidenceKind = behalf ? $('#arEvKind').value : undefined;
+      const evidenceNote = behalf ? $('#arEvNote').value.trim() : undefined;
+      // "choose which tracks": every track posts its own declaration — shared
+      // (with its own co-owners) for the ones checked, solo for the rest.
+      // Everything else keeps the one declaration every track has always sent.
+      const declFor = (item) => perTrack
+        ? (item.shared
+            ? { kind: 'shared', signed_name: signedName, acum, collaborators: item.collabs }
+            : { kind: 'solo', signed_name: signedName, acum, collaborators: [] })
+        : { kind, signed_name: signedName, acum, collaborators: globalCollabs, evidence_kind: evidenceKind, evidence_note: evidenceNote };
       const note = $('#arNote').value.trim();
       let done = 0;
       for (const s of staged.filter((x) => x.key && !x.submitted)) {
         await api('/artist/submissions', {
-          title: s.title, key: s.key, note, declaration,
+          title: s.title, key: s.key, note, declaration: declFor(s),
           managed_artist_id: managedId || undefined,
         });
         // mark immediately: a mid-batch failure + retry must never resubmit
