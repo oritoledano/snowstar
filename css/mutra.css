@@ -516,8 +516,18 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   .auth-who{max-width:9ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 
-/* ───────── staff-picks curation (owner only, toggled by #curateToggle) ───────── */
-.fcat-cur.on{color:var(--amber)}
+/* ───────── owner catalog editing (toggled by #curateToggle) ─────────
+   This is the only owner-only control in a row of four visitor toggles, and
+   those deliberately hide their label until hover. Camouflaging an admin
+   control among them makes it unfindable, so this one always shows its
+   label and carries the accent colour even at rest. */
+#curateToggle{border:1px solid var(--line-2,var(--line));border-radius:99px;
+  padding:7px 13px;color:var(--amber,var(--coral));margin-left:2px}
+#curateToggle svg{flex:none}
+#curateToggle span{max-width:140px;opacity:1;margin-left:7px;
+  font-size:.74rem;letter-spacing:.04em}
+#curateToggle:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+#curateToggle.on{background:var(--grad);border-color:transparent;color:var(--on-accent)}
 .trk-cur{display:flex;align-items:center;gap:4px;flex:none;
   padding:3px 7px;border-radius:99px;border:1px solid var(--line);background:var(--chip-bg)}
 .trk-cur.on{border-color:var(--amber);background:var(--wash-warm)}
