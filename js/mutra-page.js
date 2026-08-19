@@ -313,6 +313,9 @@
   const BPM_MAX = Math.ceil(Math.max(...BPM_ALL) / 5) * 5;
 
   function matches(t) {
+    // a hidden track stays in the file and in the owner's editor, but is gone
+    // for every visitor — hiding is the soft alternative to deleting a row
+    if (t.hidden && !curateMode) return false;
     if (state.favoritesOnly && !(window.MutraMembers && MutraMembers.isFavorite(t.slug))) return false;
     const sc = state.scales;
     if (sc.inc.size && !sc.inc.has(scaleOf(t))) return false;
@@ -814,15 +817,64 @@
      "mutra.picks" — public to read (so every visitor gets the same order),
      admin-only to write, same gate the inline site editor already uses. */
   const PICKS_KEY = 'mutra.picks';
-  let curateMode = false;
+  let curateMode = false;   // owner editing mode
   let curateSaveTimer = 0;
+  let overrides = {};
 
-  fetch('/api/texts').then(r => r.ok ? r.json() : { texts: {} }).then(({ texts }) => {
-    try { curated = JSON.parse(texts[PICKS_KEY] || '[]'); } catch { curated = []; }
+  /** The catalog ships as a static file, so the owner's corrections live
+      server-side as a per-slug patch and are merged over the shipped record
+      here. Regenerating mutra-data.js therefore never wipes an edit. */
+  function applyOverrides() {
+    const bySlug = Object.fromEntries(MUTRA.tracks.map(t => [t.slug, t]));
+    for (const [slug, patch] of Object.entries(overrides)) {
+      const t = bySlug[slug];
+      if (!t) continue;
+      Object.assign(t, patch);
+      if (patch.hl) HL[slug] = patch.hl;   // highlights live in their own map
+    }
+    refreshVocab();
+  }
+
+  /** Facet lists are derived from the catalog, so a newly typed tag has to be
+      folded back in or it would be filterable-by nothing. Mutated in place —
+      FACETS closes over these arrays. */
+  function refreshVocab() {
+    const uniq = (k) => [...new Set(MUTRA.tracks.flatMap(t => t[k] || []))].sort();
+    MUTRA.genres.splice(0, MUTRA.genres.length, ...uniq('genres'));
+    MUTRA.moods.splice(0, MUTRA.moods.length, ...uniq('moods'));
+    MUTRA.packages.splice(0, MUTRA.packages.length, ...uniq('packages'));
+    INSTRUMENTS.splice(0, INSTRUMENTS.length, ...uniq('instruments'));
+  }
+
+  Promise.all([
+    fetch('/api/tracks').then(r => r.ok ? r.json() : { overrides: {} }).catch(() => ({ overrides: {} })),
+    fetch('/api/texts').then(r => r.ok ? r.json() : { texts: {} }).catch(() => ({ texts: {} })),
+  ]).then(([tr, tx]) => {
+    overrides = tr.overrides || {};
+    applyOverrides();
+    try { curated = JSON.parse((tx.texts || {})[PICKS_KEY] || '[]'); } catch { curated = []; }
     if (!Array.isArray(curated)) curated = [];
-    // only re-sort if the visitor is actually looking at picks right now
-    if (state.sort === 'picks') render();
+    render();
   }).catch(() => {});
+
+  async function saveTrack(slug, patch) {
+    overrides[slug] = patch;
+    try {
+      const r = await fetch('/api/tracks', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ slug, patch }),
+      });
+      if (!r.ok) throw new Error('save_failed');
+      const d = await r.json();
+      if (d.reset) delete overrides[slug];
+      toast(d.reset ? 'Reset to the original' : 'Saved');
+      return true;
+    } catch {
+      toast('Couldn\u2019t save that \u2014 try again');
+      return false;
+    }
+  }
 
   function saveCurated() {
     clearTimeout(curateSaveTimer);
@@ -855,23 +907,211 @@
     render();
   }
 
-  /** Star + reorder arrows, appended to a row only while curate mode is on —
-      the normal (and every visitor's) render path is left exactly as it was. */
+  /** Owner row controls: a diamond for staff picks (with order arrows once
+      pinned), an eye for hide, and a pencil that opens the full editor. Only
+      ever appended while edit mode is on, so every visitor's render path is
+      exactly what it always was. */
   function addCurateControls(row, track) {
     const picked = curated.indexOf(track.slug) >= 0;
     const wrap = document.createElement('div');
     wrap.className = 'trk-cur' + (picked ? ' on' : '');
     wrap.innerHTML = `
       <button type="button" class="trk-cur-star" title="${picked ? 'Remove from staff picks' : 'Add to staff picks'}"
-        aria-label="${picked ? 'Remove' : 'Add'} ${track.title} ${picked ? 'from' : 'to'} staff picks">${picked ? '★' : '☆'}</button>
+        aria-label="${picked ? 'Remove' : 'Add'} ${track.title} ${picked ? 'from' : 'to'} staff picks">${picked ? '\u25c6' : '\u25c7'}</button>
       ${picked ? `<span class="trk-cur-n">${curated.indexOf(track.slug) + 1}</span>
-        <button type="button" class="trk-cur-up" title="Move up" aria-label="Move ${track.title} up">▲</button>
-        <button type="button" class="trk-cur-dn" title="Move down" aria-label="Move ${track.title} down">▼</button>` : ''}`;
+        <button type="button" class="trk-cur-up" title="Move up" aria-label="Move ${track.title} up">\u25b2</button>
+        <button type="button" class="trk-cur-dn" title="Move down" aria-label="Move ${track.title} down">\u25bc</button>` : ''}
+      <button type="button" class="trk-cur-hide" title="${track.hidden ? 'Hidden \u2014 click to show' : 'Hide from the catalog'}"
+        aria-label="${track.hidden ? 'Show' : 'Hide'} ${track.title}">${track.hidden ? '\u25cf' : '\u25cb'}</button>
+      <button type="button" class="trk-cur-edit" title="Edit this track" aria-label="Edit ${track.title}">\u270e</button>`;
     wrap.querySelector('.trk-cur-star').addEventListener('click', e => { e.stopPropagation(); toggleCurated(track.slug); });
     const up = wrap.querySelector('.trk-cur-up'), dn = wrap.querySelector('.trk-cur-dn');
     if (up) up.addEventListener('click', e => { e.stopPropagation(); moveCurated(track.slug, -1); });
     if (dn) dn.addEventListener('click', e => { e.stopPropagation(); moveCurated(track.slug, +1); });
+    wrap.querySelector('.trk-cur-hide').addEventListener('click', async e => {
+      e.stopPropagation();
+      const patch = { ...(overrides[track.slug] || {}), hidden: !track.hidden };
+      if (!patch.hidden) delete patch.hidden;
+      track.hidden = !track.hidden;
+      await saveTrack(track.slug, patch);
+      render();
+    });
+    wrap.querySelector('.trk-cur-edit').addEventListener('click', e => { e.stopPropagation(); openEditor(track, row); });
     row.querySelector('.trk-right').insertAdjacentElement('afterbegin', wrap);
+  }
+
+  const EDIT_FACETS = [
+    ['genres', 'Genres', () => MUTRA.genres],
+    ['moods', 'Moods', () => MUTRA.moods],
+    ['instruments', 'Instruments', () => INSTRUMENTS],
+    ['packages', 'Packages', () => MUTRA.packages],
+  ];
+  const PITCHES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+
+  /** The full editor, opened under its row. Everything the catalog shows about
+      a track is editable here; Save writes a patch, Reset deletes it. */
+  function openEditor(track, row) {
+    const existing = row.nextElementSibling;
+    const mine = existing && existing.classList.contains('trk-edit') && existing.dataset.slug === track.slug;
+    document.querySelectorAll('.trk-edit').forEach(p => p.remove());
+    if (mine) return;
+
+    const hl = HL[track.slug] || [0.25, 0.5];
+    const draft = {
+      title: track.title, artist: track.artist, bpm: track.bpm || '',
+      key: track.key || '', scale: track.scale || '', vocal: track.vocal || 'Instrumental',
+      cover: track.cover,
+      genres: [...(track.genres || [])], moods: [...(track.moods || [])],
+      instruments: [...(track.instruments || [])], packages: [...(track.packages || [])],
+      hl: [hl[0], hl[1]],
+    };
+
+    const panel = document.createElement('div');
+    panel.className = 'trk-edit';
+    panel.dataset.slug = track.slug;
+    panel.innerHTML = `
+      <div class="te-grid">
+        <label class="te-f te-wide"><span>Title</span><input data-f="title" maxlength="120"></label>
+        <label class="te-f te-wide"><span>Artist</span><input data-f="artist" maxlength="120"></label>
+        <label class="te-f"><span>BPM</span><input data-f="bpm" type="number" min="1" max="399"></label>
+        <label class="te-f"><span>Key</span><select data-f="key"><option value="">\u2014</option>${
+          PITCHES.map(k => `<option>${k}</option>`).join('')}</select></label>
+        <label class="te-f"><span>Scale</span><select data-f="scale"><option value="">\u2014</option>
+          <option>major</option><option>minor</option></select></label>
+        <label class="te-f"><span>Lyrics</span><select data-f="vocal">
+          <option>Instrumental</option><option>Vocals</option></select></label>
+      </div>
+      ${EDIT_FACETS.map(([k, label]) => `
+        <div class="te-facet" data-facet="${k}">
+          <div class="te-flabel">${label}</div>
+          <div class="te-chips"></div>
+          <input class="te-add" placeholder="add \u2026" maxlength="60">
+        </div>`).join('')}
+      <div class="te-hl">
+        <div class="te-flabel">Highlight \u2014 where preview starts</div>
+        <div class="te-hlrow">
+          <input type="range" data-f="hl0" min="0" max="0.98" step="0.005">
+          <input type="range" data-f="hl1" min="0.02" max="1" step="0.005">
+          <span class="te-hlval"></span>
+          <button type="button" class="te-hlplay">Preview</button>
+        </div>
+      </div>
+      <div class="te-cover">
+        <div class="te-flabel">Cover art</div>
+        <img class="te-cimg" alt="">
+        <label class="te-cbtn">Replace\u2026<input type="file" accept="image/jpeg,image/png,image/webp" hidden></label>
+        <span class="te-cstat"></span>
+      </div>
+      <div class="te-foot">
+        <button type="button" class="te-save">Save</button>
+        <button type="button" class="te-reset">Reset to original</button>
+        <button type="button" class="te-cancel">Close</button>
+        <span class="te-note"></span>
+      </div>`;
+    row.insertAdjacentElement('afterend', panel);
+
+    const q = sel => panel.querySelector(sel);
+    ['title', 'artist', 'bpm', 'key', 'scale', 'vocal'].forEach(f => {
+      const el = panel.querySelector(`[data-f="${f}"]`);
+      el.value = draft[f];
+      el.addEventListener('input', () => { draft[f] = el.value; });
+    });
+    q('.te-cimg').src = draft.cover;
+
+    // ── facet chips: click to toggle, type to add a new one ──
+    function paintChips() {
+      EDIT_FACETS.forEach(([k, , vals]) => {
+        const box = panel.querySelector(`[data-facet="${k}"] .te-chips`);
+        const all = [...new Set([...vals(), ...draft[k]])].sort();
+        box.innerHTML = all.map(v =>
+          `<button type="button" class="te-chip${draft[k].includes(v) ? ' on' : ''}">${v}</button>`).join('');
+        box.querySelectorAll('.te-chip').forEach((b, i) => b.addEventListener('click', () => {
+          const v = all[i];
+          const at = draft[k].indexOf(v);
+          at < 0 ? draft[k].push(v) : draft[k].splice(at, 1);
+          paintChips();
+        }));
+      });
+    }
+    paintChips();
+    panel.querySelectorAll('.te-add').forEach(inp => inp.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      const k = inp.closest('.te-facet').dataset.facet;
+      const v = inp.value.trim();
+      if (v && !draft[k].includes(v)) draft[k].push(v);
+      inp.value = '';
+      paintChips();
+    }));
+
+    // ── highlight window, previewable against the real audio ──
+    const h0 = q('[data-f="hl0"]'), h1 = q('[data-f="hl1"]'), hv = q('.te-hlval');
+    const fmtPct = v => (v * 100).toFixed(0) + '%';
+    function syncHl() {
+      if (Number(h1.value) <= Number(h0.value) + 0.01) h1.value = String(Math.min(1, Number(h0.value) + 0.02));
+      draft.hl = [Number(h0.value), Number(h1.value)];
+      hv.textContent = `${fmtPct(draft.hl[0])} \u2013 ${fmtPct(draft.hl[1])}`;
+      HL[track.slug] = draft.hl;                 // live, so the waveform redraws
+      const c = row.querySelector('.trk-wave canvas');
+      if (c && c._peaks) drawWave(c, c._peaks, null, draft.hl);
+    }
+    h0.value = String(draft.hl[0]); h1.value = String(draft.hl[1]);
+    h0.addEventListener('input', syncHl); h1.addEventListener('input', syncHl);
+    syncHl();
+    q('.te-hlplay').addEventListener('click', () => {
+      loadTrack(track, row);
+      const seek = () => {
+        if (audio.duration) audio.currentTime = draft.hl[0] * audio.duration;
+        audio.removeEventListener('loadedmetadata', seek);
+      };
+      audio.duration ? (audio.currentTime = draft.hl[0] * audio.duration) : audio.addEventListener('loadedmetadata', seek);
+    });
+
+    // ── cover art ──
+    const fileInp = q('.te-cbtn input'), cstat = q('.te-cstat');
+    fileInp.addEventListener('change', async () => {
+      const f = fileInp.files[0];
+      if (!f) return;
+      cstat.textContent = 'Uploading\u2026';
+      try {
+        const r = await fetch('/api/tracks/cover?slug=' + encodeURIComponent(track.slug), {
+          method: 'PUT', credentials: 'same-origin',
+          headers: { 'content-type': f.type }, body: f,
+        });
+        if (!r.ok) throw new Error('upload_failed');
+        const d = await r.json();
+        draft.cover = d.url;
+        q('.te-cimg').src = d.url;
+        cstat.textContent = 'Uploaded \u2014 Save to apply';
+      } catch { cstat.textContent = 'Upload failed'; }
+      fileInp.value = '';
+    });
+
+    // ── save / reset ──
+    q('.te-save').addEventListener('click', async () => {
+      const patch = { ...(overrides[track.slug] || {}) };
+      const base = { title: track.title, artist: track.artist, cover: track.cover };
+      ['title', 'artist', 'cover'].forEach(f => { if (draft[f] && draft[f] !== base[f]) patch[f] = draft[f]; });
+      ['key', 'scale', 'vocal'].forEach(f => { if (draft[f]) patch[f] = draft[f]; });
+      if (draft.bpm) patch.bpm = Number(draft.bpm);
+      EDIT_FACETS.forEach(([k]) => { patch[k] = draft[k]; });
+      patch.hl = draft.hl;
+      if (track.hidden) patch.hidden = true;
+      if (await saveTrack(track.slug, patch)) {
+        Object.assign(track, patch);
+        HL[track.slug] = draft.hl;
+        refreshVocab(); syncChips();
+        panel.remove(); render();
+      }
+    });
+    q('.te-reset').addEventListener('click', async () => {
+      if (!confirm('Reset ' + track.title + ' to the original catalog entry?')) return;
+      if (await saveTrack(track.slug, {})) { panel.remove(); location.reload(); }
+    });
+    q('.te-cancel').addEventListener('click', () => {
+      if (overrides[track.slug] && overrides[track.slug].hl) HL[track.slug] = overrides[track.slug].hl;
+      panel.remove(); render();
+    });
   }
 
   /** The toggle only ever exists for the owner — built on the account state
@@ -888,20 +1128,15 @@
     btn = document.createElement('button');
     btn.id = 'curateToggle';
     btn.className = 'fcat fcat-tgl fcat-cur';
-    btn.title = 'Curate staff picks';
-    btn.innerHTML = '<span aria-hidden="true">★</span><span>Curate</span>';
+    btn.title = 'Edit the catalog';
+    btn.innerHTML = '<span aria-hidden="true">◆</span><span>Edit</span>';
     btn.addEventListener('click', () => {
       curateMode = !curateMode;
       btn.classList.toggle('on', curateMode);
-      if (curateMode && state.sort !== 'picks') {
-        // curating any other order would be meaningless — the arrows move a
-        // track within the picks list, which is only what 'picks' shows
-        state.sort = 'picks';
-        sortLabel.textContent = 'Staff picks';
-        drawSortMenu();
-      }
+      // the pick ORDER arrows only mean anything in the picks sort, but the
+      // rest of the editor works in any order, so don't hijack the sort
       render();
-      toast(curateMode ? 'Curating — star a track to pin it to the top' : 'Curation off');
+      toast(curateMode ? 'Editing — ◇ pins a staff pick, ✎ edits a track' : 'Editing off');
     });
     favToggle.insertAdjacentElement('afterend', btn);
   }

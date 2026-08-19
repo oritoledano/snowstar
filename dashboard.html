@@ -12,7 +12,7 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=3">
 <link rel="stylesheet" href="css/account.css?v=6">
-<link rel="stylesheet" href="css/mutra.css?v=51">
+<link rel="stylesheet" href="css/mutra.css?v=52">
 <style>
   body{padding-bottom:60px}
   .db-wrap{max-width:1180px;margin:0 auto;padding:96px clamp(16px,4vw,44px) 40px}
@@ -78,6 +78,35 @@
   .db-badge.claimed,.db-badge.account{color:#34d399;border-color:rgba(52,211,153,.4)}
   [hidden]{display:none!important}
   @media (max-width:900px){.ml-by{display:none}.mnav-right .auth-who{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+
+  .pl-intro{margin-bottom:20px}
+  .pl-intro h2{font-family:var(--font-display);font-size:1.35rem;margin-bottom:8px}
+  .pl-intro p{color:var(--muted);max-width:70ch;font-size:.92rem;line-height:1.6}
+  .pl-cols{display:grid;gap:18px;grid-template-columns:1fr 1fr;margin-bottom:18px}
+  .pl-col h3,.db-card>h3{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dim,var(--muted));margin-bottom:14px}
+  .pl-list{list-style:none;padding:0;margin:0;counter-reset:none}
+  .pl-step{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .pl-step:last-child{border-bottom:0}
+  .pl-n{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+    background:var(--panel-2,rgba(255,255,255,.05));color:var(--muted);
+    font-size:.7rem;font-variant-numeric:tabular-nums}
+  .pl-step b{display:block;font-size:.9rem;margin-bottom:3px}
+  .pl-step p{color:var(--muted);font-size:.84rem;line-height:1.55;margin:0}
+  .pl-who{display:inline-block;margin-top:6px;font-size:.64rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--dim,var(--muted));border:1px solid var(--line);
+    border-radius:99px;padding:2px 9px}
+  .pl-note{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:.82rem;line-height:1.55}
+  .pl-tbl{width:100%;border-collapse:collapse;font-size:.86rem}
+  .pl-tbl th{text-align:left;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--dim,var(--muted));font-weight:600;padding:0 12px 8px 0}
+  .pl-tbl td{padding:9px 12px 9px 0;border-top:1px solid var(--line);color:var(--muted);vertical-align:top}
+  .pl-tbl td:first-child{color:var(--text);white-space:nowrap}
+  .pl-tbl code{font-size:.86em}
+  .pl-flat{margin:0;padding-left:1.1em;color:var(--muted);font-size:.86rem;line-height:1.7}
+  .pl-flat b{color:var(--text);font-weight:600}
+  @media (max-width:900px){.pl-cols{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -100,6 +129,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=13"></script>
-<script src="js/dashboard.js?v=5"></script>
+<script src="js/dashboard.js?v=6"></script>
 </body>
 </html>

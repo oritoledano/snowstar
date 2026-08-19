@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'members', 'artists', 'submissions', 'notifications', 'storage'];
+  const TABS = ['overview', 'stats', 'members', 'artists', 'submissions', 'notifications', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -65,10 +65,89 @@
       if (tab === 'submissions') return paintSubmissions();
       if (tab === 'notifications') return paintMail();
       if (tab === 'storage') return paintStorage();
+      if (tab === 'pipeline') return paintPipeline();
     } catch (e) {
       if (e.message === 'forbidden') gate();
       else paint(`<p class="db-empty">Couldn’t load that right now — try a refresh.</p>`);
     }
+  }
+
+
+  /* ── pipeline: how a track and a licence actually move through the system,
+        which addresses exist and what each is for. Reference, not live data —
+        it changes when the architecture changes, not minute to minute. ── */
+  function paintPipeline() {
+    const stage = (n, title, body, who) => `
+      <li class="pl-step">
+        <span class="pl-n">${n}</span>
+        <div><b>${title}</b><p>${body}</p>${who ? `<span class="pl-who">${who}</span>` : ''}</div>
+      </li>`;
+
+    paint(`
+      <div class="pl-intro">
+        <h2>How a track gets from an artist to a licensed client</h2>
+        <p>Two pipelines run side by side: the legal one decides <em>whether</em> a track
+        can be licensed and on what terms, the technical one moves the bytes. They meet
+        at review, and again at the point of licence.</p>
+      </div>
+
+      <div class="pl-cols">
+        <section class="db-card pl-col">
+          <h3>Legal pipeline</h3>
+          <ol class="pl-list">
+            ${stage(1, 'Artist declares', 'Ownership and control are asked separately. Owning a track outright and controlling its commercial use are different things — a label, distributor, sub-publisher or sync agent can hold the second without the first.', 'artist')}
+            ${stage(2, 'Lane is set by the server', 'Wholly owned and wholly controlled → instant. Anything else → custom quote. The browser proposes; the worker decides and stores it on the submission.', 'automatic')}
+            ${stage(3, 'Co-owners recorded, not contacted', 'Splits are stored in whole basis points and must leave the uploader a share. Invitations are queued unsent.', 'automatic')}
+            ${stage(4, 'You review', 'Approve or reject in Submissions. Nothing reaches a co-owner or a controlling party until you release it from Notifications.', 'you')}
+            ${stage(5, 'Licence issued', 'Instant-lane tracks self-serve. Quote-lane tracks route to you, and only then do you approach whoever else has a say.', 'you / client')}
+          </ol>
+          <p class="pl-note"><b>Not promised anywhere:</b> collecting or accounting for PRO
+          royalties, and no cue-sheet commitment. Public performance stays between the
+          licensee and their society.</p>
+        </section>
+
+        <section class="db-card pl-col">
+          <h3>Technical pipeline</h3>
+          <ol class="pl-list">
+            ${stage(1, 'Upload', 'Audio streams straight to R2 the moment it is dropped — never gated on paperwork. The signed declaration attaches on submit.', 'artists.html')}
+            ${stage(2, 'Stored', 'Originals in the snowstar-mutra R2 bucket; rows in the snowstar-members D1 database. Served over cdn.snowstar.company.', 'Cloudflare')}
+            ${stage(3, 'Catalog', 'js/mutra-data.js ships as a static file. Your edits live server-side as per-slug patches and merge over it at load, so regenerating the file never wipes an edit.', 'D1 track_overrides')}
+            ${stage(4, 'Site', 'GitHub Pages serves the static site. /api/* is a Cloudflare Worker on the same origin, so the session cookie stays first-party and HttpOnly.', 'Pages + Worker')}
+            ${stage(5, 'Mail out', 'Resend sends. Cloudflare Email Routing receives and forwards. They live on different hostnames and do not conflict.', 'Resend')}
+          </ol>
+          <p class="pl-note"><b>Pending:</b> snowstar.company is not yet verified in Resend, so
+          outbound still uses the sandbox sender and only reaches you. The branded addresses
+          below switch on by themselves once it is.</p>
+        </section>
+      </div>
+
+      <section class="db-card">
+        <h3>Addresses</h3>
+        <table class="pl-tbl">
+          <thead><tr><th>Address</th><th>Direction</th><th>What it is for</th></tr></thead>
+          <tbody>
+            <tr><td><code>submissions@</code></td><td>in</td><td>Artist signups and new uploads land here. Internal.</td></tr>
+            <tr><td><code>artists@</code></td><td>out</td><td>Us contacting signed-up artists.</td></tr>
+            <tr><td><code>legal@</code></td><td>out</td><td>Co-owner and rights-holder contact on a new submission. Reply-to matches.</td></tr>
+            <tr><td><code>hello@</code></td><td>in / out</td><td>General enquiries. Reply-to on everything transactional.</td></tr>
+            <tr><td><code>licensing@</code>, <code>info@</code>, <code>ori@</code></td><td>in</td><td>Existing aliases, all forwarding to you.</td></tr>
+            <tr><td>catch-all</td><td>in</td><td>Anything else at the domain, so a misspelling never bounces.</td></tr>
+          </tbody>
+        </table>
+        <p class="pl-note">Cloudflare Email Routing, 8 of 200 rules used, free with no forwarding
+        cap. It receives and forwards only — sending as these addresses is Resend's job.</p>
+      </section>
+
+      <section class="db-card">
+        <h3>Where mail can actually originate</h3>
+        <ul class="pl-flat">
+          <li><b>Password resets</b> — sent immediately to whoever asked. Not gated, by design.</li>
+          <li><b>New-submission alerts</b> — to you only.</li>
+          <li><b>Daily digest</b> — to you only, 07:00 UTC via cron.</li>
+          <li><b>Co-owner invitations</b> — <b>queued unsent</b>. They wait in Notifications until you approve each one.</li>
+          <li><b>Managed artists you upload for</b> — receive nothing at all, ever.</li>
+        </ul>
+      </section>`);
   }
 
   /* ── overview ── */

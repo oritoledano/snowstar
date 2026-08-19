@@ -21,6 +21,7 @@ import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGAC
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport } from './site.js';
+import { listOverrides, saveOverride, uploadCover } from './catalog.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
          listArtistsAdmin } from './artists.js';
@@ -176,6 +177,9 @@ async function handle(req, env, ctx) {
   if (path === '/mailbox/send' && method === 'POST') return sendOutbox(req, env, await currentUser(req, env));
 
   // ── site editor: text overrides (public read) + owner markup notes ──
+  if (path === '/tracks' && method === 'GET') return listOverrides(env);
+  if (path === '/tracks' && method === 'POST') return saveOverride(req, env, await currentUser(req, env));
+  if (path === '/tracks/cover' && method === 'PUT') return uploadCover(req, env, await currentUser(req, env), url);
   if (path === '/texts' && method === 'GET') return listTexts(env);
   if (path === '/texts' && method === 'POST') return saveText(req, env, await currentUser(req, env));
   if (path === '/notes' && method === 'GET') return listNotes(req, env, await currentUser(req, env), url);
