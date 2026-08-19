@@ -6,16 +6,21 @@
 .spotlight-row {
   margin: 6px 0 22px;
   padding: 10px 0 4px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
 }
 /* mutra.css's .trk+.trk margin-top only fires between two adjacent .trk
    rows — inserting this row between them breaks that for the row right
    after us, so restore it explicitly */
 .spotlight-row + .trk { margin-top: 6px; }
 
-/* no visible kicker/title above the strip — row.aria-label carries that
-   context for screen readers instead, see mutra-spotlight.js */
+.spot-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 0 4px 12px;
+}
+.spot-kicker {
+  font-family: var(--font-display); font-size: .74rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--coral, var(--text));
+}
+.spot-quote { padding: 8px 18px; font-size: .78rem; flex: none; }
 
 /* ── strip + nav arrows ── */
 .spot-strip-wrap { position: relative; }

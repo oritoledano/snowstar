@@ -16,19 +16,23 @@
    always overrides visually; kept in sync with the CSS defaults
    (white) so the browser isn't fetching an asset it'll never show.
 
-   snippetUrl/snippetStart are PLACEHOLDERS right now (a short generated
-   tone, same file reused for all 8 tracks) — these songs haven't been
-   uploaded to Kayma's artist account yet. Once they are, swap snippetUrl
-   per track to a real ~15-20s highlight and this needs no other change.
+   snippetUrl/snippetStart are PLACEHOLDERS for the 8 songs (a short
+   generated tone, same file reused for all of them) — those tracks
+   haven't been uploaded to Kayma's artist account yet. Once they are,
+   swap snippetUrl per track to a real ~15-20s highlight and this needs
+   no other change. The ALBUM card is the exception: it already has a
+   real snippet (a 72s medley across the whole record, extracted from
+   the official "vinyl spin" social cut), so it skips the placeholder
+   dot entirely.
 
    Every card in a row shares one artist — mutra-spotlight.js renders
    spot.artist as a subtitle under every track title, so it only needs to
    live here once rather than repeated per track.
 
    The first entry, slug 'album', is the record itself rather than a
-   song — same card shape as every track (cover + vinyl + a snippetUrl,
-   here just a short album-level teaser reusing the placeholder tone),
-   just with its own vinyl + isAlbum flag so CSS can target it. */
+   song — same card shape as every track (cover + vinyl + a snippetUrl),
+   just with its own vinyl/snippet/isAlbum overrides so CSS and the
+   placeholder dot both know to treat it differently. */
 const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white-ssc.webp';
 const MUTRA_SPOTLIGHT_VINYL_ALBUM = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-album-white.webp';
 
@@ -40,7 +44,12 @@ const MUTRA_SPOTLIGHTS = [
     album: 'New Trying Outs',
     cdn: 'https://cdn.snowstar.company/mutra/spotlight/kayma-nto/',
     tracks: [
-      { slug: 'album', title: 'New Trying Outs - Album', isAlbum: true, vinyl: MUTRA_SPOTLIGHT_VINYL_ALBUM },
+      {
+        slug: 'album', title: 'New Trying Outs - Album', isAlbum: true,
+        vinyl: MUTRA_SPOTLIGHT_VINYL_ALBUM,
+        snippetUrl: 'https://cdn.snowstar.company/mutra/spotlight/kayma-nto/album-medley.m4a',
+        placeholder: false,
+      },
       { slug: 'bad-blood',        title: 'Bad Blood' },
       { slug: 'bunny',            title: 'Bunny' },
       { slug: 'onsitelover',      title: 'Onsitelover' },
@@ -53,8 +62,8 @@ const MUTRA_SPOTLIGHTS = [
       ...t,
       cover: `https://cdn.snowstar.company/mutra/spotlight/kayma-nto/${t.slug}-cover.webp`,
       vinyl: t.vinyl || MUTRA_SPOTLIGHT_VINYL,
-      snippetUrl: 'https://cdn.snowstar.company/mutra/spotlight/placeholder-snippet.m4a',
-      placeholder: true,
+      snippetUrl: t.snippetUrl || 'https://cdn.snowstar.company/mutra/spotlight/placeholder-snippet.m4a',
+      placeholder: t.placeholder !== undefined ? t.placeholder : true,
     })),
   },
 ];

@@ -89,13 +89,21 @@
     return card;
   }
 
+  function quoteMailto(spot) {
+    const subject = 'Mutra — Custom license quote (' + spot.artist + ' — ' + spot.album + ')';
+    const body = `Hi Snowstar,\n\nI'd like a quote to custom-license ${spot.artist} — ${spot.album}.\n\nUsage / media:\nTimeline:\n\nThanks!`;
+    return 'mailto:hello@snowstar.company?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+
   function buildRow(spot) {
     const row = document.createElement('div');
     row.className = 'spotlight-row';
-    // no visible header (kicker/title) any more — the row still needs a
-    // name for screen readers, it just isn't printed on screen
     row.setAttribute('aria-label', spot.kicker + ': ' + spot.artist + ' — ' + spot.album);
     row.innerHTML = `
+      <div class="spot-head">
+        <span class="spot-kicker">${spot.kicker}</span>
+        <a class="mbtn mbtn-solid spot-quote" href="${quoteMailto(spot)}" target="_blank" rel="noopener">Get a quote</a>
+      </div>
       <div class="spot-strip-wrap">
         <button class="spot-nav spot-nav-prev" type="button" aria-label="Scroll left">${ICON_PREV}</button>
         <div class="spot-strip"></div>
