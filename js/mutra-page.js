@@ -339,12 +339,20 @@
     return true;
   }
 
-  /** "Staff picks" has no curation data yet, so it ranks by how many packages a
-      track was collected into — a track Ori reused across packs is one he rates. */
+  /** "Staff picks" = an explicitly curated list first, in the exact order the
+      owner arranged it (see curatePicks below), then everything else on the
+      old heuristic: how many packages a track was collected into, since a
+      track reused across packs is one he rates. Curation is stored server-side
+      so it's the same order for every visitor, not a local preference. */
+  let curated = [];                                   // slugs, best first
+  const pickRank = t => {
+    const i = curated.indexOf(t.slug);
+    return i < 0 ? Infinity : i;
+  };
   const pickScore = t => (t.packages || []).length * 10 + ((t.genres || []).length ? 1 : 0);
   const byTitle = (a, b) => a.title.localeCompare(b.title);
   const SORTERS = {
-    picks: (a, b) => pickScore(b) - pickScore(a) || byTitle(a, b),
+    picks: (a, b) => pickRank(a) - pickRank(b) || pickScore(b) - pickScore(a) || byTitle(a, b),
     alpha: byTitle,
     bpm:   (a, b) => (a.bpm || 1e9) - (b.bpm || 1e9) || byTitle(a, b),
     // unpackaged one-offs first — those are the ones that tend to need a bespoke quote
@@ -494,6 +502,7 @@
       const cnv = row.querySelector('.trk-wave canvas');
       cnv._peaks = waveform(track, i + 1);
       cnv._slug = track.slug;
+      if (curateMode) addCurateControls(row, track);
       tracksEl.appendChild(row);
       const isCur = current && current.track === track;
       requestAnimationFrame(() => drawWave(cnv, cnv._peaks,
@@ -800,6 +809,103 @@
   });
   $('#lyrToggle').insertAdjacentElement('beforebegin', favToggle);  // bolt · heart · lyrics · note
 
+  /* ═══════════ Staff picks curation (owner only) ═══════════
+     The curated order lives in the shared site_texts store under
+     "mutra.picks" — public to read (so every visitor gets the same order),
+     admin-only to write, same gate the inline site editor already uses. */
+  const PICKS_KEY = 'mutra.picks';
+  let curateMode = false;
+  let curateSaveTimer = 0;
+
+  fetch('/api/texts').then(r => r.ok ? r.json() : { texts: {} }).then(({ texts }) => {
+    try { curated = JSON.parse(texts[PICKS_KEY] || '[]'); } catch { curated = []; }
+    if (!Array.isArray(curated)) curated = [];
+    // only re-sort if the visitor is actually looking at picks right now
+    if (state.sort === 'picks') render();
+  }).catch(() => {});
+
+  function saveCurated() {
+    clearTimeout(curateSaveTimer);
+    curateSaveTimer = setTimeout(() => {
+      fetch('/api/texts', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ key: PICKS_KEY, html: JSON.stringify(curated) }),
+      }).then(r => {
+        if (!r.ok) throw new Error('save_failed');
+        toast(curated.length ? `${curated.length} staff pick${curated.length === 1 ? '' : 's'} saved` : 'Staff picks cleared');
+      }).catch(() => toast('Couldn’t save that order — try again'));
+    }, 700); // debounce: reordering is a burst of clicks, not one decision
+  }
+
+  /** Move a slug within the curated list. dir -1 = earlier, +1 = later. */
+  function moveCurated(slug, dir) {
+    const i = curated.indexOf(slug);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= curated.length) return;
+    [curated[i], curated[j]] = [curated[j], curated[i]];
+    saveCurated();
+    render();
+  }
+
+  function toggleCurated(slug) {
+    const i = curated.indexOf(slug);
+    if (i < 0) curated.push(slug); else curated.splice(i, 1);
+    saveCurated();
+    render();
+  }
+
+  /** Star + reorder arrows, appended to a row only while curate mode is on —
+      the normal (and every visitor's) render path is left exactly as it was. */
+  function addCurateControls(row, track) {
+    const picked = curated.indexOf(track.slug) >= 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'trk-cur' + (picked ? ' on' : '');
+    wrap.innerHTML = `
+      <button type="button" class="trk-cur-star" title="${picked ? 'Remove from staff picks' : 'Add to staff picks'}"
+        aria-label="${picked ? 'Remove' : 'Add'} ${track.title} ${picked ? 'from' : 'to'} staff picks">${picked ? '★' : '☆'}</button>
+      ${picked ? `<span class="trk-cur-n">${curated.indexOf(track.slug) + 1}</span>
+        <button type="button" class="trk-cur-up" title="Move up" aria-label="Move ${track.title} up">▲</button>
+        <button type="button" class="trk-cur-dn" title="Move down" aria-label="Move ${track.title} down">▼</button>` : ''}`;
+    wrap.querySelector('.trk-cur-star').addEventListener('click', e => { e.stopPropagation(); toggleCurated(track.slug); });
+    const up = wrap.querySelector('.trk-cur-up'), dn = wrap.querySelector('.trk-cur-dn');
+    if (up) up.addEventListener('click', e => { e.stopPropagation(); moveCurated(track.slug, -1); });
+    if (dn) dn.addEventListener('click', e => { e.stopPropagation(); moveCurated(track.slug, +1); });
+    row.querySelector('.trk-right').insertAdjacentElement('afterbegin', wrap);
+  }
+
+  /** The toggle only ever exists for the owner — built on the account state
+      landing, and torn down again if they sign out mid-session. */
+  function syncCurateToggle() {
+    const isAdmin = !!(window.MutraMembers && MutraMembers.user && MutraMembers.user.admin);
+    let btn = $('#curateToggle');
+    if (!isAdmin) {
+      if (btn) btn.remove();
+      if (curateMode) { curateMode = false; render(); }
+      return;
+    }
+    if (btn) return;
+    btn = document.createElement('button');
+    btn.id = 'curateToggle';
+    btn.className = 'fcat fcat-tgl fcat-cur';
+    btn.title = 'Curate staff picks';
+    btn.innerHTML = '<span aria-hidden="true">★</span><span>Curate</span>';
+    btn.addEventListener('click', () => {
+      curateMode = !curateMode;
+      btn.classList.toggle('on', curateMode);
+      if (curateMode && state.sort !== 'picks') {
+        // curating any other order would be meaningless — the arrows move a
+        // track within the picks list, which is only what 'picks' shows
+        state.sort = 'picks';
+        sortLabel.textContent = 'Staff picks';
+        drawSortMenu();
+      }
+      render();
+      toast(curateMode ? 'Curating — star a track to pin it to the top' : 'Curation off');
+    });
+    favToggle.insertAdjacentElement('afterend', btn);
+  }
+
   // ── sort ──
   const sortBtn = $('#sortBtn'), sortMenu = $('#sortMenu'), sortLabel = $('#sortLabel');
   function drawSortMenu() {
@@ -887,8 +993,10 @@
       if (state.favoritesOnly) render();
       const c = $('#favCount');
       if (c) c.textContent = MutraMembers.favorites.size || '';
+      syncCurateToggle();
     });
   }
+  syncCurateToggle(); // in case the session was already resolved before this ran
 
   // ── deep link: ?track=slug opens (and plays) that track ──
   (function deepLink() {

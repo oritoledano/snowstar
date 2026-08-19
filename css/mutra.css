@@ -515,3 +515,16 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   /* a long name would otherwise push the burger over the wordmark */
   .auth-who{max-width:9ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
+
+/* ───────── staff-picks curation (owner only, toggled by #curateToggle) ───────── */
+.fcat-cur.on{color:var(--amber)}
+.trk-cur{display:flex;align-items:center;gap:4px;flex:none;
+  padding:3px 7px;border-radius:99px;border:1px solid var(--line);background:var(--chip-bg)}
+.trk-cur.on{border-color:var(--amber);background:var(--wash-warm)}
+.trk-cur button{background:none;border:0;cursor:pointer;color:var(--dim);
+  font-size:.86rem;line-height:1;padding:2px 3px;transition:color .15s}
+.trk-cur button:hover{color:var(--amber)}
+.trk-cur.on .trk-cur-star{color:var(--amber)}
+.trk-cur-n{font-size:.66rem;color:var(--amber);font-variant-numeric:tabular-nums;min-width:1.1em;text-align:center}
+.trk-cur-up,.trk-cur-dn{font-size:.6rem}
+@media (max-width:900px){.trk-cur{display:none}}
