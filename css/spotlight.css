@@ -164,10 +164,10 @@
   /* dark skin (default) shows the WHITE vinyl — it's the one that reads
      against a dark card; light skin shows the BLACK one, for the same
      contrast reason in reverse */
-  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=2);
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=3);
 }
 :root[data-theme="light"] .spot-vinyl img {
-  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-black.webp?v=2);
+  content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-black.webp?v=3);
 }
 .spot-card:hover .spot-vinyl img,
 .spot-card:focus-within .spot-vinyl img,
@@ -182,11 +182,19 @@
 
 .spot-meta {
   position: relative; z-index: 2;
-  display: flex; align-items: center; gap: 6px;
   padding: 9px 2px 0; font-size: .86rem; color: var(--text);
+}
+.spot-title-row {
+  display: flex; align-items: center; gap: 6px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .spot-ph {
   font-size: .5rem; color: var(--dim, var(--muted));
   cursor: help;
+}
+/* same treatment as the catalog rows' own by-line (.trk-artist) */
+.spot-artist {
+  color: var(--dim); font-size: .62rem; letter-spacing: .06em;
+  text-transform: uppercase; margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }

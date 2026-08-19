@@ -17,17 +17,27 @@
    snippetUrl/snippetStart are PLACEHOLDERS right now (a short generated
    tone, same file reused for all 8 tracks) — these songs haven't been
    uploaded to Kayma's artist account yet. Once they are, swap snippetUrl
-   per track to a real ~15-20s highlight and this needs no other change. */
-const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=2';
+   per track to a real ~15-20s highlight and this needs no other change.
+
+   Every card in a row shares one artist — mutra-spotlight.js renders
+   spot.artist as a subtitle under every track title, so it only needs to
+   live here once rather than repeated per track.
+
+   The first entry, slug 'album', is the record itself rather than a
+   song — same card shape as every track (cover + shared vinyl + a
+   snippetUrl, here just a short album-level teaser reusing the
+   placeholder tone), so it needs no special-casing in the renderer. */
+const MUTRA_SPOTLIGHT_VINYL = 'https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-white.webp?v=3';
 
 const MUTRA_SPOTLIGHTS = [
   {
     id: 'kayma-nto',
-    kicker: 'Artist Spotlight',
+    kicker: 'Custom License',
     artist: 'KAYMA',
     album: 'New Trying Outs',
     cdn: 'https://cdn.snowstar.company/mutra/spotlight/kayma-nto/',
     tracks: [
+      { slug: 'album',            title: 'New Trying Outs' },
       { slug: 'bad-blood',        title: 'Bad Blood' },
       { slug: 'bunny',            title: 'Bunny' },
       { slug: 'onsitelover',      title: 'Onsitelover' },

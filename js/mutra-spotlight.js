@@ -59,7 +59,7 @@
     fadeTo(0, 320);
   }
 
-  function buildCard(track) {
+  function buildCard(track, artist) {
     const card = document.createElement('div');
     card.className = 'spot-card';
     card.tabIndex = 0;
@@ -70,7 +70,10 @@
         <div class="spot-sleeve"><img src="${track.cover}" alt="${track.title} cover art" loading="lazy"></div>
         <div class="spot-vinyl"><img src="${track.vinyl}" alt="" loading="lazy"></div>
       </div>
-      <div class="spot-meta"><b>${track.title}</b>${track.placeholder ? '<span class="spot-ph" title="Placeholder preview — real snippet coming soon">●</span>' : ''}</div>`;
+      <div class="spot-meta">
+        <div class="spot-title-row"><b>${track.title}</b>${track.placeholder ? '<span class="spot-ph" title="Placeholder preview — real snippet coming soon">●</span>' : ''}</div>
+        ${artist ? `<div class="spot-artist">${artist}</div>` : ''}
+      </div>`;
 
     card.addEventListener('mouseenter', () => activate(card, track));
     card.addEventListener('mouseleave', () => deactivate(card));
@@ -101,7 +104,7 @@
         <button class="spot-nav spot-nav-next" type="button" aria-label="Scroll right">${ICON_NEXT}</button>
       </div>`;
     const strip = row.querySelector('.spot-strip');
-    spot.tracks.forEach(t => strip.appendChild(buildCard(t)));
+    spot.tracks.forEach(t => strip.appendChild(buildCard(t, spot.artist)));
 
     const scrollByCard = (dir) => {
       const card = strip.querySelector('.spot-card');
