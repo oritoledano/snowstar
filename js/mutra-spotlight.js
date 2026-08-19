@@ -9,6 +9,14 @@
    apart a little (no size change, just a gentle shift), and a shared
    Mutra-branded vinyl disc slides out from behind the sleeve, revealed
    exactly half way, spinning, while a short audio snippet fades in.
+   That reveal is tied to hover and lets go the moment the cursor does.
+
+   The play button on the cover art (low opacity until you notice it)
+   is the independent, persistent version of the same thing: click it
+   and the card "pins" — vinyl keeps spinning and the snippet keeps
+   playing after the cursor leaves, exactly like the always-on touch
+   tap already worked. Only one card is ever active at a time either
+   way; hovering a different card always takes over.
 
    window.mutraPauseMainPlayer (exposed by mutra-page.js) is called on
    hover-start so a spotlight preview never plays under whatever the
@@ -19,9 +27,13 @@
   const INSERT_AFTER = 10; // Nth catalog row this appears after
   const ICON_PREV = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>';
   const ICON_NEXT = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+  const ICON_PLAY = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+  const ICON_PAUSE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>';
 
   let builtRow = null;
+  let allCards = [];
   let activeCard = null;
+  let pinned = false; // true once the play button (or a touch tap) locked the active card on
   const snippetAudio = new Audio();
   snippetAudio.loop = true;
   snippetAudio.preload = 'none';
@@ -40,34 +52,59 @@
     })(t0);
   }
 
-  function activate(card, track) {
-    if (activeCard === card) return;
+  function syncPlayButtons() {
+    allCards.forEach(card => {
+      const btn = card.querySelector('.spot-play');
+      if (!btn) return;
+      const on = card === activeCard && pinned;
+      btn.innerHTML = on ? ICON_PAUSE : ICON_PLAY;
+      btn.classList.toggle('is-playing', on); // pause glyph is symmetric — no optical-centering offset needed
+      btn.setAttribute('aria-label', (on ? 'Pause ' : 'Play ') + card.dataset.title);
+    });
+  }
+
+  function activate(card, track, pin) {
+    if (activeCard === card) {
+      if (pin) { pinned = true; syncPlayButtons(); }
+      return;
+    }
     if (activeCard) deactivateEl(activeCard);
     activeCard = card;
+    pinned = !!pin;
     card.classList.add('spot-active');
     if (window.mutraPauseMainPlayer) window.mutraPauseMainPlayer();
     if (snippetAudio.src !== track.snippetUrl) snippetAudio.src = track.snippetUrl;
     snippetAudio.currentTime = 0;
     fadeTo(0.55, 260);
     if (window.mutraTrack) mutraTrack('play', 'spotlight:' + track.slug, { once: true });
+    syncPlayButtons();
   }
   function deactivateEl(card) { card.classList.remove('spot-active'); }
-  function deactivate(card) {
+  /** force=true stops a pinned card too (scrolled away, page hidden, tapped
+   * again to explicitly stop) — a plain mouseleave/blur never does. */
+  function deactivate(card, force) {
     if (activeCard !== card) return;
+    if (pinned && !force) return;
     activeCard = null;
+    pinned = false;
     deactivateEl(card);
     fadeTo(0, 320);
+    syncPlayButtons();
   }
 
   function buildCard(track, spot) {
     const card = document.createElement('div');
     card.className = 'spot-card' + (track.isAlbum ? ' spot-is-album' : '');
     card.tabIndex = 0;
+    card.dataset.title = track.title;
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', track.title + ' — preview');
     card.innerHTML = `
       <div class="spot-art">
-        <div class="spot-sleeve"><img src="${track.cover}" alt="${track.title} cover art" loading="lazy"></div>
+        <div class="spot-sleeve">
+          <img src="${track.cover}" alt="${track.title} cover art" loading="lazy">
+          <button type="button" class="spot-play" aria-label="Play ${track.title}">${ICON_PLAY}</button>
+        </div>
         <div class="spot-vinyl"><img src="${track.vinyl}" alt="" loading="lazy"></div>
       </div>
       <div class="spot-meta">
@@ -79,12 +116,21 @@
     card.addEventListener('mouseleave', () => deactivate(card));
     card.addEventListener('focus', () => activate(card, track));
     card.addEventListener('blur', () => deactivate(card));
-    // touch: tap toggles (no real hover on mobile)
+    // touch: tap toggles (no real hover to keep it going, so a tap pins it
+    // exactly like clicking the play button would)
     card.addEventListener('click', (e) => {
       if (!matchMedia('(hover: hover)').matches) {
         e.preventDefault();
-        if (activeCard === card) deactivate(card); else activate(card, track);
+        if (activeCard === card) deactivate(card, true); else activate(card, track, true);
       }
+    });
+    // the play button pins the card on: keeps spinning/playing after the
+    // cursor leaves, independent of hover — click again to stop it
+    card.querySelector('.spot-play').addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (activeCard === card && pinned) deactivate(card, true);
+      else activate(card, track, true);
     });
     // the artist name is its own click target — opens the full artist
     // page (lightbox transition if available, else a plain nav)
@@ -122,6 +168,7 @@
       </div>`;
     const strip = row.querySelector('.spot-strip');
     spot.tracks.forEach(t => strip.appendChild(buildCard(t, spot)));
+    allCards = [...strip.querySelectorAll('.spot-card')];
 
     const scrollByCard = (dir) => {
       const card = strip.querySelector('.spot-card');
@@ -131,9 +178,10 @@
     row.querySelector('.spot-nav-prev').addEventListener('click', () => scrollByCard(-1));
     row.querySelector('.spot-nav-next').addEventListener('click', () => scrollByCard(1));
 
-    // stop preview + spin whenever the row leaves view (scrolled past, tab switch, etc.)
+    // stop preview + spin whenever the row leaves view (scrolled past, tab
+    // switch, etc.) — force:true so a pinned card stops too, not just a hover
     new IntersectionObserver((entries) => {
-      if (!entries[0].isIntersecting && activeCard) deactivate(activeCard);
+      if (!entries[0].isIntersecting && activeCard) deactivate(activeCard, true);
     }, { threshold: 0 }).observe(row);
 
     if (window.mutraTrack) {
@@ -157,5 +205,5 @@
   };
   window.MUTRA_SPOTLIGHT_INSERT_AFTER = INSERT_AFTER;
 
-  addEventListener('pagehide', () => activeCard && deactivate(activeCard));
+  addEventListener('pagehide', () => activeCard && deactivate(activeCard, true));
 })();
