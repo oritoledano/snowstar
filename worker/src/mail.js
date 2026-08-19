@@ -8,6 +8,31 @@
 
 const RESEND = 'https://api.resend.com/emails';
 
+/**
+ * Per-purpose sender identities. These only come into play once our OWN
+ * domain is verified with Resend — until then MAIL_FROM is still the
+ * provider's sandbox address, which may only deliver to the account owner,
+ * so sending "from legal@snowstar.company" would simply be rejected.
+ * mailLive() is the switch, and everything below falls back to today's
+ * behaviour while it's false.
+ */
+export const mailLive = (env) => !(env.MAIL_FROM || '').includes('resend.dev');
+
+const SENDERS = {
+  submissions: 'Mutra Submissions <submissions@snowstar.company>',
+  artists:     'Mutra Artists <artists@snowstar.company>',
+  legal:       'Snowstar Legal <legal@snowstar.company>',
+};
+
+/** From: header for a given kind of message. */
+export const mailFrom = (env, kind) =>
+  (mailLive(env) && SENDERS[kind]) || env.MAIL_FROM || SENDERS.artists;
+
+/** Internal destination for a given kind — the branded inbox once it can
+ *  actually be delivered to, otherwise the owner's alert address. */
+export const mailTo = (env, kind) =>
+  mailLive(env) ? `${kind}@snowstar.company` : env.ALERT_TO;
+
 /** Wrap body copy in the Snowstar shell — dark, plain, no images to block. */
 function shell(title, bodyHtml) {
   return `<!doctype html><html><body style="margin:0;padding:0;background:#05070e;">
@@ -31,7 +56,7 @@ function shell(title, bodyHtml) {
   </table></body></html>`;
 }
 
-export async function sendMail(env, { to, subject, text, html }) {
+export async function sendMail(env, { to, subject, text, html, from, replyTo }) {
   if (!env.RESEND_KEY) throw new Error('no_mail_key');
   const res = await fetch(RESEND, {
     method: 'POST',
@@ -40,8 +65,8 @@ export async function sendMail(env, { to, subject, text, html }) {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.MAIL_FROM || 'SNOWSTAR.COMPANY <hello@send.snowstar.company>',
-      reply_to: 'hello@snowstar.company',
+      from: from || env.MAIL_FROM || 'SNOWSTAR.COMPANY <hello@send.snowstar.company>',
+      reply_to: replyTo || 'hello@snowstar.company',
       to: [to],
       subject,
       text,

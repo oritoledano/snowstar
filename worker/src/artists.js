@@ -8,7 +8,7 @@
  * studio pipeline, not here); rejection keeps the file but tells the artist.
  */
 
-import { sendMail } from './mail.js';
+import { sendMail, mailFrom, mailTo } from './mail.js';
 import { parseDeclaration, recordDeclaration } from './rights.js';
 
 const now = () => Math.floor(Date.now() / 1000);
@@ -111,7 +111,8 @@ export async function createSubmission(req, env, user, ctx) {
 
   if (!managed) {
     ctx.waitUntil(sendMail(env, {
-      to: env.ALERT_TO,
+      to: mailTo(env, 'submissions'),
+      from: mailFrom(env, 'submissions'),
       subject: `Mutra submission: “${title}” by ${creditedName}`,
       text: `${creditedName} uploaded “${title}”.\n\nReview it: https://snowstar.company/dashboard.html#submissions`,
     }).catch(() => {}));

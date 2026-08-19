@@ -15,7 +15,7 @@
  *    delivered to Ori's own inbox with a FORWARD-TO banner instead.
  */
 
-import { sendMail } from './mail.js';
+import { sendMail, mailLive, mailFrom } from './mail.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
@@ -158,8 +158,6 @@ You're receiving this one-time note because ${artistName} listed you as a rights
 
 /* ─────────── the owner's mailbox (approval gate) ─────────── */
 
-const mailLive = (env) => !(env.MAIL_FROM || '').includes('resend.dev');
-
 export async function listOutbox(env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const r = await env.DB.prepare(
@@ -190,7 +188,9 @@ export async function sendOutbox(req, env, user) {
     if (!claim.meta.changes) { results.push({ id, ok: false, error: 'already_claimed' }); continue; }
     try {
       if (live) {
-        await sendMail(env, { to: row.to_email, subject: row.subject, text: row.body });
+        // co-owner contact is a rights matter — it goes out as legal@
+        await sendMail(env, { to: row.to_email, subject: row.subject, text: row.body,
+          from: mailFrom(env, 'legal'), replyTo: 'legal@snowstar.company' });
       } else {
         // domain not verified yet: deliver to Ori with a forward banner
         await sendMail(env, {
