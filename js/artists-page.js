@@ -167,11 +167,50 @@
   }
 
   // ── the declaration form ──
-  document.querySelectorAll('[name="arKind"]').forEach((r) => r.addEventListener('change', syncDecl));
+  // Ownership and control are SEPARATE axes and both can apply at once — an
+  // artist can own a track outright and still have signed its commercial use
+  // to a label, distributor or agent. Conflating them is exactly how a track
+  // ends up looking clear when it isn't, so they're two independent ticks.
+  $('#arShared').addEventListener('change', syncDecl);
+  $('#arControlled').addEventListener('change', syncDecl);
   document.querySelectorAll('[name="arScope"]').forEach((r) => r.addEventListener('change', syncDecl));
+  document.querySelectorAll('[name="arApprove"]').forEach((r) => r.addEventListener('change', syncDecl));
   $('#arAgree').addEventListener('change', syncDecl);
   $('#arSign').addEventListener('input', syncDecl);
   $('#arAddCollab').addEventListener('click', () => addCollabRow($('#arCollabRows'), syncDecl));
+  $('#arAddController').addEventListener('click', () => addControllerRow());
+
+  /** Whoever has a say in commercial use but isn't a co-owner: label,
+   * publisher, distributor, sync agent. Name + what they control + where. */
+  function addControllerRow(pre) {
+    const row = document.createElement('div');
+    row.className = 'ar-ctrl';
+    row.innerHTML = `<input placeholder="Label, publisher or agent" maxlength="120" data-f="name">
+      <select data-f="scope">
+        <option value="recording">the recording</option>
+        <option value="song">the song</option>
+        <option value="both">both</option>
+      </select>
+      <input placeholder="Territory (or worldwide)" maxlength="120" data-f="territory">
+      <button type="button" title="Remove">✕</button>`;
+    if (pre) {
+      row.querySelector('[data-f="name"]').value = pre.name || '';
+      row.querySelector('[data-f="scope"]').value = pre.scope || 'recording';
+      row.querySelector('[data-f="territory"]').value = pre.territory || '';
+    }
+    row.querySelector('button').addEventListener('click', () => { row.remove(); syncDecl(); });
+    row.querySelectorAll('input,select').forEach((i) => i.addEventListener('input', syncDecl));
+    $('#arControllerRows').appendChild(row);
+    return row;
+  }
+
+  function controllerData() {
+    return [...document.querySelectorAll('#arControllerRows .ar-ctrl')].map((row) => ({
+      name: row.querySelector('[data-f="name"]').value.trim(),
+      scope: row.querySelector('[data-f="scope"]').value,
+      territory: row.querySelector('[data-f="territory"]').value.trim(),
+    })).filter((c) => c.name);
+  }
 
   /** container-scoped so the same row UI serves the one global co-owner list
    * ("all tracks") and each track's own list ("choose which tracks"). */
@@ -257,15 +296,19 @@
 
   function syncDecl() {
     const behalf = behalfMode();
-    const kind = behalf ? 'behalf' : (document.querySelector('[name="arKind"]:checked') || {}).value || 'solo';
-    $('#arDeclText').textContent = DECL[behalf ? 'behalf' : kind];
+    const shared = !behalf && $('#arShared').checked;
+    const controlled = !behalf && $('#arControlled').checked;
+    const kind = behalf ? 'behalf' : (shared ? 'shared' : 'solo');
+    $('#arDeclText').textContent = DECL[kind];
     $('#arEvidence').hidden = !behalf;
-    const shared = kind === 'shared';
-    $('#arSharedScope').hidden = !(shared && !behalf);
+    $('#arSharedScope').hidden = !shared;
+    $('#arApproval').hidden = !shared;
+    $('#arControllers').hidden = !controlled;
+    if (controlled && !document.querySelector('#arControllerRows .ar-ctrl')) addControllerRow();
     const scope = (document.querySelector('[name="arScope"]:checked') || {}).value || 'all';
-    const scopeAllShared = shared && !behalf && scope === 'all'; // "all tracks" sub-choice
-    const scopePick = shared && !behalf && scope === 'pick';    // "choose which tracks"
-    const useGlobalCollabs = scopeAllShared || behalf;           // both read #arCollabRows
+    const scopeAllShared = shared && scope === 'all'; // "all tracks" sub-choice
+    const scopePick = shared && scope === 'pick';     // "choose which tracks"
+    const useGlobalCollabs = scopeAllShared || behalf; // both read #arCollabRows
 
     $('#arCollabs').hidden = !useGlobalCollabs;
     $('#arTrackShares').hidden = !scopePick;
@@ -308,10 +351,22 @@
       if (!anyShared) sharesOk = false; // "choose which tracks" with none picked isn't a real choice yet
     }
 
+    // Anything not wholly the artist's — shared ownership, or someone else with
+    // a say in commercial use — is bookable but never self-serve. The counterparty
+    // only gets contacted once a deal is real, which is the whole point of the lane.
+    const controllers = controllerData();
+    const controllersOk = !controlled || controllers.length > 0;
+    const lane = (shared || controlled || (behalf && collabData($('#arCollabRows')).length)) ? 'quote' : 'instant';
+    const laneEl = $('#arLane');
+    laneEl.className = 'ar-lane ' + lane;
+    laneEl.textContent = lane === 'instant'
+      ? 'Clear to license — these go into the catalogue with an instant licence.'
+      : 'Custom quote — these stay in the catalogue, but every licence comes through us first. Nobody else gets contacted until there is a real deal on the table.';
+
     const filesReady = staged.length > 0 && staged.every((s) => s.key || s.error) && staged.some((s) => s.key);
     const signed = $('#arAgree').checked && $('#arSign').value.trim().length >= 2;
     const btn = $('#arSubmit');
-    btn.disabled = !(filesReady && signed && sharesOk);
+    btn.disabled = !(filesReady && signed && sharesOk && controllersOk);
     const n = staged.filter((s) => s.key).length;
     btn.textContent = n ? `Submit ${n} track${n === 1 ? '' : 's'}` : 'Submit';
   }
@@ -322,7 +377,11 @@
     try {
       const behalf = behalfMode();
       const managedId = behalf ? await resolveManagedArtist() : null;
-      const kind = behalf ? 'behalf' : (document.querySelector('[name="arKind"]:checked') || {}).value || 'solo';
+      const sharedTick = !behalf && $('#arShared').checked;
+      const controlledTick = !behalf && $('#arControlled').checked;
+      const kind = behalf ? 'behalf' : (sharedTick ? 'shared' : 'solo');
+      const controllers = controlledTick ? controllerData() : [];
+      const approval = (document.querySelector('[name="arApprove"]:checked') || {}).value || 'any';
       const scope = (document.querySelector('[name="arScope"]:checked') || {}).value || 'all';
       const perTrack = kind === 'shared' && !behalf && scope === 'pick';
       const globalCollabs = (kind === 'shared' || behalf) && !perTrack ? collabData($('#arCollabRows')) : [];
@@ -333,16 +392,25 @@
       // "choose which tracks": every track posts its own declaration — shared
       // (with its own co-owners) for the ones checked, solo for the rest.
       // Everything else keeps the one declaration every track has always sent.
-      const declFor = (item) => perTrack
-        ? (item.shared
-            ? { kind: 'shared', signed_name: signedName, acum, collaborators: item.collabs }
-            : { kind: 'solo', signed_name: signedName, acum, collaborators: [] })
-        : { kind, signed_name: signedName, acum, collaborators: globalCollabs, evidence_kind: evidenceKind, evidence_note: evidenceNote };
+      const declFor = (item) => {
+        const base = perTrack
+          ? (item.shared
+              ? { kind: 'shared', signed_name: signedName, acum, collaborators: item.collabs }
+              : { kind: 'solo', signed_name: signedName, acum, collaborators: [] })
+          : { kind, signed_name: signedName, acum, collaborators: globalCollabs,
+              evidence_kind: evidenceKind, evidence_note: evidenceNote };
+        // controllers apply to the whole batch — a label or distributor deal is
+        // rarely per-track — and approval mode only means anything once shared
+        if (controllers.length) base.controllers = controllers;
+        if (base.kind === 'shared') base.approval = approval;
+        return base;
+      };
+      const laneFor = (item) => (controllers.length || (perTrack ? item.shared : sharedTick)) ? 'quote' : 'instant';
       const note = $('#arNote').value.trim();
       let done = 0;
       for (const s of staged.filter((x) => x.key && !x.submitted)) {
         await api('/artist/submissions', {
-          title: s.title, key: s.key, note, declaration: declFor(s),
+          title: s.title, key: s.key, note, declaration: declFor(s), lane: laneFor(s),
           managed_artist_id: managedId || undefined,
         });
         // mark immediately: a mid-batch failure + retry must never resubmit
@@ -353,7 +421,9 @@
       staged = staged.filter((s) => !s.submitted);
       paintStaged();
       $('#arAgree').checked = false; $('#arSign').value = ''; $('#arNote').value = '';
+      $('#arShared').checked = false; $('#arControlled').checked = false;
       document.querySelectorAll('#arCollabRows .ar-crow').forEach((r) => r.remove());
+      document.querySelectorAll('#arControllerRows .ar-ctrl').forEach((r) => r.remove());
       say(`${done} track${done === 1 ? '' : 's'} submitted — ${behalf ? 'they’re in the review queue.' : 'we listen to everything and you’ll see the verdict here.'}`);
       const d = await get('/artist/uploads');
       paintList(d.uploads || []);

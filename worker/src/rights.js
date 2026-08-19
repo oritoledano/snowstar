@@ -65,6 +65,20 @@ export function parseDeclaration(b, user, managedArtist) {
   if (signedName.length < 2) throw new Error('signature_required');
   const acum = d.acum ? 1 : 0;
 
+  // Whoever has a say in commercial use without necessarily owning a share —
+  // a label, publisher, distributor or sync agent. Disclosure only: it never
+  // blocks a submission, it routes the track to the quote lane so nobody is
+  // contacted until a deal is real.
+  const controllers = (Array.isArray(d.controllers) ? d.controllers : [])
+    .slice(0, 10)
+    .map((c) => ({
+      name: String(c.name || '').trim().slice(0, 120),
+      scope: ['recording', 'song', 'both'].includes(c.scope) ? c.scope : 'recording',
+      territory: String(c.territory || '').trim().slice(0, 120),
+    }))
+    .filter((c) => c.name);
+  const approval = ['any', 'all'].includes(d.approval) ? d.approval : null;
+
   let collabs = [];
   if (kind === 'shared' || (kind === 'behalf' && Array.isArray(d.collaborators) && d.collaborators.length)) {
     const raw = Array.isArray(d.collaborators) ? d.collaborators : [];
@@ -103,6 +117,8 @@ export function parseDeclaration(b, user, managedArtist) {
     decl: { kind, text_id: textId, signed_name: signedName, acum,
             splits_snapshot: JSON.stringify(collabs), ...evidence },
     collabs,
+    controllers,
+    approval,
   };
 }
 
@@ -113,11 +129,14 @@ export async function recordDeclaration(env, submissionId, user, parsed, credite
   const stmts = [
     env.DB.prepare(
       `INSERT INTO rights_decls (submission_id, kind, text_id, signed_name, signer_user_id,
-         acum, splits_snapshot, evidence_kind, evidence_note, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+         acum, splits_snapshot, evidence_kind, evidence_note, created_at, controllers)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).bind(submissionId, parsed.decl.kind, parsed.decl.text_id, parsed.decl.signed_name,
            user.id, parsed.decl.acum, parsed.decl.splits_snapshot,
-           parsed.decl.evidence_kind, parsed.decl.evidence_note, t),
+           parsed.decl.evidence_kind, parsed.decl.evidence_note, t,
+           (parsed.controllers && parsed.controllers.length) || parsed.approval
+             ? JSON.stringify({ controllers: parsed.controllers, approval: parsed.approval })
+             : null),
   ];
   for (const c of parsed.collabs) {
     // link the account if this email already has one — but 'joined' is reserved

@@ -95,10 +95,13 @@ export async function createSubmission(req, env, user, ctx) {
   if (!!managed !== (parsed.decl.kind === 'behalf')) return json({ error: 'declaration_kind_mismatch' }, 400);
 
   const r = await env.DB.prepare(
-    `INSERT INTO submissions (user_id, title, file_key, size, ext, artist_note, status, created_at, managed_artist_id)
-     VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)`
+    `INSERT INTO submissions (user_id, title, file_key, size, ext, artist_note, status, created_at, managed_artist_id, lane)
+     VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)`
   ).bind(user.id, title, key, head.size, key.split('.').pop(),
-         String(b.note || '').trim().slice(0, 2000), now(), managed ? managed.id : null).run();
+         String(b.note || '').trim().slice(0, 2000), now(), managed ? managed.id : null,
+         // anything the uploader doesn't wholly own or control is bookable but
+         // never self-serve; the server decides rather than trusting the client
+         (parsed.decl.kind === 'solo' && !(parsed.controllers || []).length) ? 'instant' : 'quote').run();
 
   const creditedName = managed ? managed.name : (user.artist_name || user.email);
   try {

@@ -64,6 +64,14 @@
   .ar-tshare-head input{accent-color:var(--amber,#8fd8ff)}
   .ar-tshare-body{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
   .ar-tshare-body[hidden]{display:none}
+  .ar-ctrl{display:grid;gap:8px;grid-template-columns:2fr 1.3fr 1.3fr 30px;margin-bottom:8px;align-items:center}
+  .ar-ctrl input,.ar-ctrl select{background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);border-radius:9px;
+    color:var(--text);font:inherit;font-size:.86rem;padding:8px 10px;outline:0;min-width:0;box-sizing:border-box}
+  .ar-ctrl button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1rem}
+  @media (max-width:560px){.ar-ctrl{grid-template-columns:1fr 1fr 26px}.ar-ctrl select:nth-of-type(1){grid-column:1/-1}}
+  .ar-lane{margin:14px 0 4px;padding:11px 14px;border-radius:10px;font-size:.86rem;line-height:1.5}
+  .ar-lane.instant{background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.35);color:#8ee9c0}
+  .ar-lane.quote{background:var(--panel-2,rgba(0,0,0,.15));border:1px solid var(--line-2,var(--line));color:var(--muted)}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -138,9 +146,12 @@
 
       <!-- rights declaration: appears once files are staged -->
       <div id="arRights" hidden>
-        <div class="ar-field" style="margin-top:14px"><span>Ownership</span>
-          <label class="ar-radio"><input type="radio" name="arKind" value="solo" checked> <span>These tracks are entirely mine</span></label>
-          <label class="ar-radio"><input type="radio" name="arKind" value="shared"> <span>Some of these tracks are shared with others</span></label>
+        <div class="ar-field" style="margin-top:14px"><span>Ownership &amp; control</span>
+          <p class="ar-note" style="margin:0 0 10px">Tick anything that applies to any track here. Nothing ticked means they're yours outright.</p>
+          <label class="ar-check"><input type="checkbox" id="arShared">
+            <span>I share ownership with someone else</span></label>
+          <label class="ar-check"><input type="checkbox" id="arControlled">
+            <span>Someone else has a say in commercial use — a label, publisher, distributor or agent</span></label>
         </div>
         <!-- shared with others: apply the same co-owners to the whole batch, or pick per track -->
         <div id="arSharedScope" hidden style="margin:-4px 0 12px">
@@ -154,8 +165,20 @@
         </div>
         <!-- scope=pick: one checklist row per staged track, each revealing its own co-owner editor -->
         <div id="arTrackShares" hidden></div>
+        <!-- who among the co-owners can actually grant a licence -->
+        <div class="ar-field" id="arApproval" hidden><span>Who can approve a licence?</span>
+          <label class="ar-radio"><input type="radio" name="arApprove" value="any" checked> <span>Any of us can approve one independently</span></label>
+          <label class="ar-radio"><input type="radio" name="arApprove" value="all"> <span>We all have to agree</span></label>
+        </div>
+        <!-- someone outside the co-owners controls commercial use -->
+        <div id="arControllers" hidden>
+          <div id="arControllerRows"></div>
+          <button type="button" class="ar-addrow" id="arAddController">＋ Add whoever has a say</button>
+          <p class="ar-note">Name them so we know who to talk to. We won't contact anyone until there's a real deal on the table.</p>
+        </div>
         <label class="ar-check"><input type="checkbox" id="arAcum">
           <span>This music is registered with ACUM or another royalties society</span></label>
+        <p class="ar-lane" id="arLane"></p>
         <blockquote class="ar-decl" id="arDeclText"></blockquote>
         <label class="ar-check"><input type="checkbox" id="arAgree"><span id="arAgreeLbl">I confirm the above</span></label>
         <label class="ar-field"><span>Type your full legal name to sign</span><input id="arSign" maxlength="120" autocomplete="name"></label>
@@ -185,6 +208,6 @@
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=13"></script>
 <script src="js/site-edit.js?v=2"></script>
-<script src="js/artists-page.js?v=4"></script>
+<script src="js/artists-page.js?v=5"></script>
 </body>
 </html>
