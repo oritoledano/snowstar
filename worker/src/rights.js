@@ -371,3 +371,91 @@ export async function claimStatus(env, user) {
   ).bind(m.id, user.id).first();
   return json({ pending: c.n, managed_name: m.name, text: RIGHTS_TEXTS['claim.v1'] });
 }
+
+/* ─────────── owner corrections to a filed declaration ─────────── */
+
+/**
+ * Amend a submission's declaration after the fact.
+ *
+ * Deliberately NOT a rewrite of the signed record: the frozen text and the
+ * original signature stay exactly as filed, because that is the legal
+ * artefact. What this edits is the routing copy on top of it — the splits,
+ * the controllers, the ACUM flag, the lane — which is what actually drives
+ * who gets paid and whether a track can self-serve. A share CHANGE still
+ * needs a fresh signature from the artist; this exists for typos, for
+ * details the artist gave you by phone, and for tracks you uploaded on
+ * their behalf.
+ */
+export async function amendDeclaration(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const id = Number(b.id);
+  if (!Number.isInteger(id)) return json({ error: 'bad_id' }, 400);
+
+  const sub = await env.DB.prepare('SELECT id, user_id, managed_artist_id FROM submissions WHERE id = ?').bind(id).first();
+  if (!sub) return json({ error: 'not_found' }, 404);
+  const decl = await env.DB.prepare('SELECT * FROM rights_decls WHERE submission_id = ?').bind(id).first();
+  if (!decl) return json({ error: 'no_declaration' }, 404);
+
+  const t = now();
+  const stmts = [];
+
+  if (b.acum !== undefined) {
+    stmts.push(env.DB.prepare('UPDATE rights_decls SET acum = ? WHERE submission_id = ?')
+      .bind(b.acum ? 1 : 0, id));
+  }
+
+  if (Array.isArray(b.controllers)) {
+    const controllers = b.controllers.slice(0, 10).map((c) => ({
+      name: String(c.name || '').trim().slice(0, 120),
+      scope: ['recording', 'song', 'both'].includes(c.scope) ? c.scope : 'recording',
+      territory: String(c.territory || '').trim().slice(0, 120),
+    })).filter((c) => c.name);
+    let existing = {};
+    try { existing = JSON.parse(decl.controllers || '{}'); } catch {}
+    stmts.push(env.DB.prepare('UPDATE rights_decls SET controllers = ? WHERE submission_id = ?')
+      .bind(controllers.length || existing.approval
+        ? JSON.stringify({ controllers, approval: existing.approval || null })
+        : null, id));
+  }
+
+  // Splits: replace the live collaborator rows. The snapshot inside the signed
+  // declaration is untouched, so the difference between what was signed and
+  // what is now routed stays visible and auditable.
+  if (Array.isArray(b.collaborators)) {
+    const creditedEmail = cleanEmail(user.email);
+    const seen = new Set();
+    let sumBp = 0;
+    const rows = [];
+    for (const c of b.collaborators.slice(0, 10)) {
+      const name = String(c.name || '').trim().slice(0, 120);
+      const email = cleanEmail(c.email);
+      const bp = Math.round(Number(c.share_pct) * 100);
+      if (name.length < 2 || !validEmail(email) || !Number.isFinite(bp) || bp < 1) continue;
+      if (email === creditedEmail || seen.has(email)) continue;
+      seen.add(email);
+      sumBp += bp;
+      rows.push({ name, email, bp });
+    }
+    if (sumBp > 9999) return json({ error: 'shares_exceed_100' }, 400);
+    stmts.push(env.DB.prepare('DELETE FROM collaborators WHERE submission_id = ?').bind(id));
+    for (const r of rows) {
+      stmts.push(env.DB.prepare(
+        `INSERT INTO collaborators (submission_id, name, email, share_bp, user_id, status, created_at, updated_at)
+         VALUES (?, ?, ?, ?, (SELECT id FROM users WHERE email = ?), 'listed', ?, ?)`
+      ).bind(id, r.name, r.email, r.bp, r.email, t, t));
+    }
+  }
+
+  if (b.lane === 'instant' || b.lane === 'quote') {
+    stmts.push(env.DB.prepare('UPDATE submissions SET lane = ? WHERE id = ?').bind(b.lane, id));
+  }
+  if (typeof b.title === 'string' && b.title.trim()) {
+    stmts.push(env.DB.prepare('UPDATE submissions SET title = ? WHERE id = ?')
+      .bind(b.title.trim().slice(0, 200), id));
+  }
+
+  if (!stmts.length) return json({ error: 'nothing_to_update' }, 400);
+  await env.DB.batch(stmts);
+  return json({ ok: true });
+}

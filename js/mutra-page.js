@@ -1129,7 +1129,9 @@
     btn.id = 'curateToggle';
     btn.className = 'fcat fcat-tgl fcat-cur';
     btn.title = 'Edit the catalog';
-    btn.innerHTML = '<span aria-hidden="true">◆</span><span>Edit</span>';
+    // the icon MUST be an <svg>: .fcat-tgl span is the collapsing label rule
+    // (max-width:0 until hover), so a <span> icon renders as an invisible sliver
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2.5l9.5 9.5-9.5 9.5L2.5 12z"/></svg><span>Edit</span>';
     btn.addEventListener('click', () => {
       curateMode = !curateMode;
       btn.classList.toggle('on', curateMode);

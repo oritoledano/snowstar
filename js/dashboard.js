@@ -73,6 +73,99 @@
   }
 
 
+
+  /** Amend a filed declaration. The signed text and signature are never
+      touched — that is the legal artefact. This edits the routing copy on
+      top of it: title, splits, controllers, the ACUM flag and the lane,
+      which is what decides who gets paid and whether a track can self-serve.
+      A genuine SHARE change still needs a fresh signature from the artist. */
+  function openDeclEditor(item, items) {
+    const box = item.querySelector('.rv-editor');
+    if (!box.hidden) { box.hidden = true; box.innerHTML = ''; return; }
+    const id = Number(item.dataset.id);
+    const s = items.find((x) => x.id === id) || {};
+    let collabs = [];
+    try { collabs = JSON.parse(s.collabs || '[]'); } catch {}
+    let ctrl = {};
+    try { ctrl = JSON.parse(s.controllers || '{}'); } catch {}
+    const controllers = ctrl.controllers || [];
+
+    const cRow = (c = {}) => `
+      <div class="rv-crow">
+        <input placeholder="Name" value="${esc(c.name || '')}" data-f="name">
+        <input placeholder="their@email.com" value="${esc(c.email || '')}" data-f="email">
+        <input placeholder="%" value="${c.share_bp ? c.share_bp / 100 : ''}" data-f="pct">
+        <button type="button" class="rv-x">✕</button>
+      </div>`;
+    const kRow = (c = {}) => `
+      <div class="rv-krow">
+        <input placeholder="Label, publisher or agent" value="${esc(c.name || '')}" data-f="name">
+        <select data-f="scope">${['recording', 'song', 'both'].map((o) =>
+          `<option${c.scope === o ? ' selected' : ''}>${o}</option>`).join('')}</select>
+        <input placeholder="Territory" value="${esc(c.territory || '')}" data-f="territory">
+        <button type="button" class="rv-x">✕</button>
+      </div>`;
+
+    box.hidden = false;
+    box.innerHTML = `
+      <label class="rv-fld"><span>Title</span><input class="rv-title" value="${esc(s.title || '')}" maxlength="200"></label>
+      <div class="rv-fld"><span>Splits — co-owners</span><div class="rv-collabs">${collabs.map(cRow).join('')}</div>
+        <button type="button" class="rv-add" data-add="collab">＋ Add co-owner</button>
+        <p class="rv-hint">Editing a share here changes who gets paid but does <b>not</b> re-sign anything — the snapshot inside the signed declaration stays as filed. A real change of share needs a fresh signature from the artist.</p></div>
+      <div class="rv-fld"><span>Controlled by</span><div class="rv-ctrls">${controllers.map(kRow).join('')}</div>
+        <button type="button" class="rv-add" data-add="ctrl">＋ Add</button></div>
+      <label class="rv-chk"><input type="checkbox" class="rv-acumbox"${s.acum ? ' checked' : ''}>
+        <span>Registered with ACUM or another society</span></label>
+      <label class="rv-fld"><span>Lane</span><select class="rv-lanesel">
+        <option value="quote"${s.lane !== 'instant' ? ' selected' : ''}>Custom quote</option>
+        <option value="instant"${s.lane === 'instant' ? ' selected' : ''}>Instant licence</option>
+      </select></label>
+      <div class="rv-acts"><button type="button" class="rv-btn rv-ok rv-savedecl">Save changes</button>
+        <span class="rv-stat"></span></div>`;
+
+    const bind = () => box.querySelectorAll('.rv-x').forEach((x) =>
+      x.addEventListener('click', () => { x.parentElement.remove(); }));
+    bind();
+    box.querySelectorAll('.rv-add').forEach((b) => b.addEventListener('click', () => {
+      const which = b.dataset.add;
+      const host = box.querySelector(which === 'collab' ? '.rv-collabs' : '.rv-ctrls');
+      host.insertAdjacentHTML('beforeend', which === 'collab' ? cRow() : kRow());
+      bind();
+    }));
+
+    box.querySelector('.rv-savedecl').addEventListener('click', async () => {
+      const stat = box.querySelector('.rv-stat');
+      stat.textContent = 'Saving…';
+      const read = (sel, fields) => [...box.querySelectorAll(sel)].map((r) => {
+        const o = {};
+        fields.forEach((f) => { o[f] = r.querySelector(`[data-f="${f}"]`).value.trim(); });
+        return o;
+      });
+      const body = {
+        id,
+        title: box.querySelector('.rv-title').value,
+        acum: box.querySelector('.rv-acumbox').checked,
+        lane: box.querySelector('.rv-lanesel').value,
+        collaborators: read('.rv-crow', ['name', 'email', 'pct'])
+          .filter((c) => c.name || c.email).map((c) => ({ name: c.name, email: c.email, share_pct: parseFloat(c.pct) || 0 })),
+        controllers: read('.rv-krow', ['name', 'scope', 'territory']).filter((c) => c.name),
+      };
+      try {
+        const r = await fetch('/api/submissions/amend', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || 'failed');
+        stat.textContent = 'Saved.';
+        setTimeout(load, 500);
+      } catch (e) {
+        stat.textContent = e.message === 'shares_exceed_100'
+          ? 'Those shares add up to more than 100%.' : 'Couldn’t save that.';
+      }
+    });
+  }
+
   /* ── pipeline: how a track and a licence actually move through the system,
         which addresses exist and what each is for. Reference, not live data —
         it changes when the architecture changes, not minute to minute. ── */
@@ -379,8 +472,22 @@
           `${esc(c.name)} (${esc(c.email)}) ${(c.share_bp / 100).toFixed(c.share_bp % 100 ? 2 : 0)}%`).join(' · ') : ''}
         ${s.decl_kind === 'behalf' ? '<br>Evidence: ' + (s.evidence_kind
           ? esc(s.evidence_kind) + (s.evidence_note ? ' — ' + esc(s.evidence_note) : '')
-          : '<i>none on file — get a “reply YES” from the artist</i>') : ''}</div>`;
+          : '<i>none on file — get a “reply YES” from the artist</i>') : ''}
+        ${ctrlLine(s)}</div>`;
     };
+    /** Whoever has a say in commercial use without owning a share. */
+    const ctrlLine = (s) => {
+      let c = {};
+      try { c = JSON.parse(s.controllers || '{}'); } catch {}
+      const list = c.controllers || [];
+      const bits = [];
+      if (list.length) bits.push('Controlled by: ' + list.map((x) =>
+        `${esc(x.name)} (${esc(x.scope)}${x.territory ? ', ' + esc(x.territory) : ''})`).join(' · '));
+      if (c.approval) bits.push(c.approval === 'all' ? 'all co-owners must agree' : 'any co-owner can approve');
+      return bits.length ? '<br>' + bits.join(' — ') : '';
+    };
+    const laneChip = (s) => s.lane
+      ? `<span class="rv-lane ${s.lane}">${s.lane === 'instant' ? 'instant licence' : 'custom quote'}</span>` : '';
     paint(`
       <div style="display:flex;gap:8px;margin-bottom:16px">${['pending', 'approved', 'rejected'].map((t) =>
         `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${t}</button>`).join('')}</div>
@@ -388,7 +495,8 @@
         <div class="rv-item" data-id="${s.id}">
           <div class="rv-top"><b>${esc(s.title)}</b>
             <span class="who">${esc(s.artist_name || s.email)}</span>
-            <span class="meta">${(s.size / 1048576).toFixed(1)}MB · ${esc(s.ext)} · ${fmt(s.created_at)}</span></div>
+            <span class="meta">${(s.size / 1048576).toFixed(1)}MB · ${esc(s.ext)} · ${fmt(s.created_at)}</span>
+            ${laneChip(s)}</div>
           ${declBlock(s)}
           ${s.artist_note ? `<p class="rv-note">Artist: “${esc(s.artist_note)}”</p>` : ''}
           ${s.review_note ? `<p class="rv-note">You: “${esc(s.review_note)}”</p>` : ''}
@@ -397,11 +505,15 @@
             ${subTab !== 'approved' ? '<button class="rv-btn rv-ok" data-a="approved">Approve</button>' : ''}
             ${subTab !== 'rejected' ? '<button class="rv-btn rv-no" data-a="rejected">Reject</button>' : ''}
             ${subTab !== 'pending' ? '<button class="rv-btn" data-a="pending">Back to pending</button>' : ''}
-          </div></div>`).join('')
+            <button class="rv-btn rv-edit" type="button">Edit details</button>
+          </div>
+          <div class="rv-editor" hidden></div></div>`).join('')
       : `<p class="db-empty">${subTab === 'pending' ? 'Nothing waiting — inbox zero.' : 'Nothing here yet.'}</p>`}
       <p class="db-empty">Approving queues a track for catalog ingestion — ask Claude to “process approved uploads” to take them live.</p>`);
     app.querySelectorAll('[data-st]').forEach((b) =>
       b.addEventListener('click', () => { subTab = b.dataset.st; load(); }));
+    app.querySelectorAll('.rv-edit').forEach((b) =>
+      b.addEventListener('click', () => openDeclEditor(b.closest('.rv-item'), items)));
     app.querySelectorAll('.rv-item .rv-btn').forEach((b) =>
       b.addEventListener('click', async () => {
         const id = Number(b.closest('.rv-item').dataset.id);

@@ -209,7 +209,10 @@ export async function listSubmissions(env, user, url) {
             s.created_at, s.reviewed_at, u.email,
             COALESCE(m.name, u.artist_name) AS artist_name,
             d.kind AS decl_kind, d.signed_name, d.acum, d.splits_snapshot,
-            d.evidence_kind, d.evidence_note
+            d.evidence_kind, d.evidence_note, d.controllers, s.lane,
+            (SELECT json_group_array(json_object('name', c.name, 'email', c.email,
+               'share_bp', c.share_bp, 'status', c.status))
+               FROM collaborators c WHERE c.submission_id = s.id) AS collabs
        FROM submissions s
        JOIN users u ON u.id = s.user_id
        LEFT JOIN managed_artists m ON m.id = s.managed_artist_id

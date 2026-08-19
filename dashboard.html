@@ -79,6 +79,28 @@
   [hidden]{display:none!important}
   @media (max-width:900px){.ml-by{display:none}.mnav-right .auth-who{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 
+  .rv-lane{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;
+    border-radius:99px;border:1px solid var(--line)}
+  .rv-lane.instant{color:#34d399;border-color:rgba(52,211,153,.4)}
+  .rv-lane.quote{color:var(--muted)}
+  .rv-editor{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .rv-fld{display:block;margin-bottom:14px}
+  .rv-fld>span{display:block;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--dim,var(--muted));margin-bottom:6px}
+  .rv-fld input,.rv-fld select,.rv-crow input,.rv-krow input,.rv-krow select{
+    background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 10px;
+    color:var(--text);font:inherit;font-size:.86rem;outline:0;box-sizing:border-box;min-width:0}
+  .rv-fld>input,.rv-fld>select{width:100%;max-width:420px}
+  .rv-crow{display:grid;gap:8px;grid-template-columns:1.6fr 1.8fr 80px 30px;margin-bottom:8px;align-items:center}
+  .rv-krow{display:grid;gap:8px;grid-template-columns:1.8fr 1fr 1.2fr 30px;margin-bottom:8px;align-items:center}
+  .rv-x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:.95rem}
+  .rv-add{background:none;border:1px dashed var(--line);border-radius:9px;color:var(--muted);
+    font:inherit;font-size:.78rem;padding:6px 13px;cursor:pointer}
+  .rv-add:hover{color:var(--text)}
+  .rv-hint{color:var(--dim,var(--muted));font-size:.76rem;line-height:1.5;margin-top:8px;max-width:66ch}
+  .rv-chk{display:flex;gap:9px;align-items:center;margin-bottom:14px;font-size:.86rem;cursor:pointer}
+  .rv-stat{font-size:.8rem;color:var(--muted);margin-left:10px}
+  @media (max-width:700px){.rv-crow,.rv-krow{grid-template-columns:1fr 1fr 26px}}
   .pl-intro{margin-bottom:20px}
   .pl-intro h2{font-family:var(--font-display);font-size:1.35rem;margin-bottom:8px}
   .pl-intro p{color:var(--muted);max-width:70ch;font-size:.92rem;line-height:1.6}
@@ -129,6 +151,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=13"></script>
-<script src="js/dashboard.js?v=6"></script>
+<script src="js/dashboard.js?v=7"></script>
 </body>
 </html>
