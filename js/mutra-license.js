@@ -143,9 +143,14 @@
     per.textContent = quoteOnly ? '' :
       `one-time, per track \u00b7 \u2248$${Math.round(price / USD_RATE).toLocaleString()} \u00b7 ${VAT_NOTE}`;
     el.querySelector('.lic-go').textContent = quoteOnly ? 'Request a quote' : 'Request this licence';
+    // Three different promises, and getting them mixed up matters: a
+    // quote-lane track is a rights question, a quote-only tier is a pricing
+    // question, and everything else is a purchase.
     el.querySelector('.lic-note').textContent = track.lane === 'quote'
       ? 'Someone else has a say in how this track is used commercially, so every licence goes through us first. We’ll come back to you with terms.'
-      : 'We’ll confirm by email and send the licence and the files.';
+      : tier.quote
+        ? 'Tell us where it runs, for how long and on what weight, and we’ll come back with a figure.'
+        : 'We’ll confirm by email and send the licence and the files.';
   }
 
   function open(track) {
