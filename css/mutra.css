@@ -351,7 +351,17 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 /* waveform — Artlist-style mirrored canvas render */
 .trk-wave{height:38px;cursor:pointer;position:relative;min-width:0}
 .trk-wave canvas{width:100%;height:100%;display:block}
-.trk-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:230px}
+/* One tag of each kind on the row; the rest are present but clipped, and
+   slide into view on hover — the same reveal the long titles use, so the row
+   stays a fixed height and nothing reflows. */
+.trk-tags{display:flex;gap:6px;flex-wrap:nowrap;justify-content:flex-end;max-width:230px;
+  overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 14px);
+  mask-image:linear-gradient(to right,transparent 0,#000 14px)}
+.trk-tags .tag-more{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0;
+  transition:max-width .3s ease,opacity .22s ease,padding .3s ease}
+.trk:hover .trk-tags{overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
+.trk:hover .trk-tags::-webkit-scrollbar{display:none}
+.trk:hover .trk-tags .tag-more{max-width:160px;opacity:1;padding-left:9px;padding-right:9px;border-width:1px}
 .tag{font-family:var(--font-body);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;
   padding:3px 9px;border-radius:99px;border:1px solid var(--line-2);color:var(--amber);
   white-space:nowrap;background:none;cursor:pointer;transition:.18s}
@@ -585,3 +595,39 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .trk-drag.dragging{opacity:.4;cursor:grabbing}
 .trk-drag.drop-before{box-shadow:inset 0 2px 0 0 var(--amber,var(--coral))}
 .trk-drag.drop-after{box-shadow:inset 0 -2px 0 0 var(--amber,var(--coral))}
+
+/* ───────── credits + lyrics panels (share the .sim-panel slot) ───────── */
+.trk-title[role=button]{cursor:pointer}
+.trk-title[role=button]:hover .tt-in{color:var(--amber)}
+.trk-lyr.has{color:var(--amber);cursor:pointer}
+.trk-lyr.has:hover{opacity:.8}
+.cr-body{padding:12px 16px 16px}
+.cr-artists{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.cr-artist{font-family:var(--font-display);font-size:.82rem;color:var(--text);
+  border:1px solid var(--line-2);border-radius:99px;padding:4px 12px}
+.cr-list{display:grid;gap:0;margin:0}
+.cr-list > div{display:grid;grid-template-columns:150px 1fr;gap:12px;
+  padding:7px 0;border-bottom:1px solid var(--line)}
+.cr-list > div:last-child{border-bottom:0}
+.cr-list dt{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.cr-list dd{margin:0;font-size:.88rem;color:var(--text)}
+.cr-empty{color:var(--dim);font-size:.85rem;margin:0}
+.ly-text{margin:0;font-family:var(--font-body);font-size:.88rem;line-height:1.7;
+  color:var(--muted);white-space:pre-wrap;max-height:340px;overflow-y:auto}
+@media (max-width:640px){.cr-list > div{grid-template-columns:1fr;gap:2px}}
+
+/* editor: credits rows */
+.te-credits .te-crlist{display:grid;gap:7px;margin-bottom:8px}
+.te-crow{display:grid;grid-template-columns:170px 1fr 30px;gap:8px;align-items:center}
+.te-crow select,.te-crow input{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  padding:8px 10px;color:var(--text);font:inherit;font-size:.84rem;outline:0;min-width:0;box-sizing:border-box}
+.te-crm{background:none;border:0;color:var(--muted);cursor:pointer;font-size:.95rem}
+.te-crm:hover{color:#ff8080}
+.te-addcr{background:none;border:1px dashed var(--line);border-radius:9px;color:var(--muted);
+  font:inherit;font-size:.78rem;padding:6px 13px;cursor:pointer}
+.te-addcr:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.te-lyrics{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  padding:9px 11px;color:var(--text);font:inherit;font-size:.84rem;line-height:1.6;
+  outline:0;box-sizing:border-box;resize:vertical}
+.te-lyrics:focus{border-color:var(--amber,var(--coral))}
+@media (max-width:640px){.te-crow{grid-template-columns:1fr 1fr 26px}}

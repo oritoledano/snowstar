@@ -44,6 +44,17 @@ function sanitize(raw) {
     if (Number.isFinite(n) && n > 0 && n < 400) p.bpm = n;
   }
   if (raw.hidden !== undefined) p.hidden = !!raw.hidden;
+  if (raw.lyrics !== undefined) {
+    const v = String(raw.lyrics).trim().slice(0, 8000);
+    if (v) p.lyrics = v;
+  }
+  // who did what — role plus name, in the order the owner arranged them
+  if (Array.isArray(raw.credits)) {
+    p.credits = raw.credits.slice(0, 30).map((c) => ({
+      role: clean(c.role, 40),
+      name: clean(c.name, 120),
+    })).filter((c) => c.role && c.name);
+  }
   if (raw.lane === 'instant' || raw.lane === 'quote') p.lane = raw.lane;
   // highlight window, as [start, end] fractions of the track
   if (Array.isArray(raw.hl) && raw.hl.length === 2) {

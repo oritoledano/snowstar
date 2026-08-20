@@ -40,6 +40,12 @@
   // read once per skin change rather than per bar
   let WAVE = { base: 'rgba(255,180,140,0.22)', played: '#ff6a4d', head: '#ffc24b', hi: 'rgba(255,180,140,.45)' };
   let HL_BAND = 'rgba(255,180,140,.07)';
+  /** Credits and lyrics are typed by the owner and can contain anything, so
+      they are escaped before going anywhere near innerHTML. */
+  const esc = (v) => String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
   const HL = typeof MUTRA_HL !== 'undefined' ? MUTRA_HL : {};
   /** The suggested best bit, or nothing when highlights are switched off. */
   const hlOf = slug => (state.highlights && HL[slug]) || null;
@@ -414,16 +420,20 @@
       const i = MUTRA.tracks.indexOf(track);
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
+      // one of each kind up front, the rest still in the DOM and revealed by
+      // the hover marquee — same trick the long titles use
+      const tagSet = (arr, cls, facet) => (arr || []).map((v, i) =>
+        `<button class="tag${cls ? ' ' + cls : ''}${i ? ' tag-more' : ''}" data-facet="${facet}" data-val="${v}">${v}</button>`);
       const tags = [
-        ...track.genres.slice(0, 2).map(g => `<button class="tag" data-facet="genres" data-val="${g}">${g}</button>`),
-        ...(track.moods || []).slice(0, 2).map(x => `<button class="tag mood" data-facet="moods" data-val="${x}">${x}</button>`),
-        ...(track.instruments || []).slice(0, 2).map(x => `<button class="tag inst" data-facet="instruments" data-val="${x}">${x}</button>`),
+        ...tagSet(track.genres, '', 'genres'),
+        ...tagSet(track.moods, 'mood', 'moods'),
+        ...tagSet(track.instruments, 'inst', 'instruments'),
       ].join('');
       row.innerHTML = `
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
         <img class="trk-cover" src="${track.cover}" alt="" loading="lazy">
         <div class="trk-id">
-          <div class="trk-title"><span class="tt-in">${track.title}</span></div>
+          <div class="trk-title" role="button" tabindex="0" title="Credits"><span class="tt-in">${track.title}</span></div>
           <div class="trk-artist">${track.artist}</div>
         </div>
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
@@ -494,6 +504,19 @@
           prompt('Copy this link:', url);
         }
       });
+
+      // credits open under the row, same pattern as "sounds like this"
+      const titleEl = row.querySelector('.trk-title');
+      const openCr = e => { e.stopPropagation(); showCredits(track, row); };
+      titleEl.addEventListener('click', openCr);
+      titleEl.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openCr(e); });
+
+      // lyrics, when there are any
+      const lyrEl = row.querySelector('.trk-lyr');
+      if (lyrEl) {
+        lyrEl.classList.toggle('has', !!track.lyrics);
+        lyrEl.addEventListener('click', e => { e.stopPropagation(); showLyrics(track, row); });
+      }
 
       // similar tracks
       row.querySelector('.trk-sim').addEventListener('click', e => {
@@ -1011,6 +1034,32 @@
     render();
   }
 
+  const CREDIT_ROLES = ['Writer', 'Composer', 'Producer', 'Singer', 'Featured Artist',
+    'Drums', 'Bass', 'Guitar', 'Piano', 'Keys', 'Strings', 'Horns', 'Percussion',
+    'Mixing Engineer', 'Mastering Engineer', 'Arranger'];
+  let artistRoster = [];
+
+  /** Splitting the artist field mints a real record per name, so a collaborator
+      typed into a text box becomes someone the owner can actually build a
+      profile for and assign more tracks to. */
+  async function ensureArtists(names) {
+    try {
+      const r = await fetch('/api/artistreg/ensure', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ names }),
+      });
+      if (!r.ok) return;
+      const d = await r.json();
+      artistRoster = d.artists || [];
+      if (d.created && d.created.length) {
+        toast(d.created.length === 1
+          ? `Added ${d.created[0]} to your artists`
+          : `Added ${d.created.length} artists`);
+      }
+    } catch {}
+  }
+
   const EDIT_FACETS = [
     ['genres', 'Genres', () => MUTRA.genres],
     ['moods', 'Moods', () => MUTRA.moods],
@@ -1035,6 +1084,8 @@
       genres: [...(track.genres || [])], moods: [...(track.moods || [])],
       instruments: [...(track.instruments || [])], packages: [...(track.packages || [])],
       hl: [hl[0], hl[1]],
+      credits: (track.credits || []).map(c => ({ ...c })),
+      lyrics: track.lyrics || '',
     };
 
     const panel = document.createElement('div');
@@ -1066,6 +1117,15 @@
           <span class="te-hlval"></span>
           <button type="button" class="te-hlplay">Preview</button>
         </div>
+      </div>
+      <div class="te-facet te-credits">
+        <div class="te-flabel">Credits \u2014 who did what</div>
+        <div class="te-crlist"></div>
+        <button type="button" class="te-addcr">\uff0b Add collaborator</button>
+      </div>
+      <div class="te-facet">
+        <div class="te-flabel">Lyrics</div>
+        <textarea class="te-lyrics" rows="5" placeholder="Paste the lyrics \u2014 shown under the track when someone clicks the lyrics icon"></textarea>
       </div>
       <div class="te-cover">
         <div class="te-flabel">Cover art</div>
@@ -1167,6 +1227,13 @@
       if (draft.bpm) patch.bpm = Number(draft.bpm);
       EDIT_FACETS.forEach(([k]) => { patch[k] = draft[k]; });
       patch.hl = draft.hl;
+      patch.credits = draft.credits.filter(c => c.role && c.name.trim());
+      patch.lyrics = draft.lyrics.trim();
+      // a comma-separated artist field means several people — give each one a
+      // real record rather than leaving them as a substring
+      const names = draft.artist.split(',').map(x => x.trim()).filter(x => x.length >= 2);
+      const credited = [...new Set([...names, ...patch.credits.map(c => c.name.trim())])];
+      if (credited.length) await ensureArtists(credited);
       if (track.hidden) patch.hidden = true;
       if (await saveTrack(track.slug, patch)) {
         Object.assign(track, patch);
@@ -1315,6 +1382,54 @@
   })();
 
   // ── "sounds like this" — neighbours precomputed from the audio itself ──
+
+  /** One open panel at a time under a row — credits, lyrics and "sounds like
+   *  this" all share the slot, so opening one closes whatever was there. */
+  function rowPanel(row, slug, kind, html) {
+    const open = row.nextElementSibling;
+    const mine = open && open.classList.contains('sim-panel')
+      && open.dataset.slug === slug && open.dataset.kind === kind;
+    document.querySelectorAll('.sim-panel').forEach(p => p.remove());
+    if (mine) return null;
+    const panel = document.createElement('div');
+    panel.className = 'sim-panel';
+    panel.dataset.slug = slug;
+    panel.dataset.kind = kind;
+    panel.innerHTML = html;
+    row.insertAdjacentElement('afterend', panel);
+    const close = panel.querySelector('.sim-close');
+    if (close) close.addEventListener('click', () => panel.remove());
+    return panel;
+  }
+
+  function showCredits(track, row) {
+    const credits = track.credits || [];
+    const artists = String(track.artist || '').split(',').map(s => s.trim()).filter(Boolean);
+    const body = credits.length
+      ? `<dl class="cr-list">${credits.map(c =>
+          `<div><dt>${esc(c.role)}</dt><dd>${esc(c.name)}</dd></div>`).join('')}</dl>`
+      : '<p class="cr-empty">No credits recorded for this track yet.</p>';
+    rowPanel(row, track.slug, 'credits', `
+      <div class="sim-head">Credits — <b>${esc(track.title)}</b>
+        <button class="sim-close" aria-label="Close">&times;</button></div>
+      <div class="cr-body">
+        <div class="cr-artists">${artists.map(a => `<span class="cr-artist">${esc(a)}</span>`).join('')}</div>
+        ${body}
+      </div>`);
+  }
+
+  function showLyrics(track, row) {
+    const body = track.lyrics
+      ? `<pre class="ly-text">${esc(track.lyrics)}</pre>`
+      : `<p class="cr-empty">${track.vocal === 'Vocals'
+          ? 'This track has vocals, but the lyrics aren’t written up yet.'
+          : 'This is an instrumental — no lyrics.'}</p>`;
+    rowPanel(row, track.slug, 'lyrics', `
+      <div class="sim-head">Lyrics — <b>${esc(track.title)}</b>
+        <button class="sim-close" aria-label="Close">&times;</button></div>
+      <div class="cr-body">${body}</div>`);
+  }
+
   /** Quote-lane licensing: an enquiry rather than a checkout. */
   function startQuote(track) {
     const subject = `Mutra — licence enquiry: ${track.title}`;

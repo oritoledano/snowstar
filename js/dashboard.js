@@ -177,16 +177,22 @@
 
   async function paintUpload() {
     let managed = [];
-    try { managed = (await get('/managed-artists')).artists || []; } catch {}
+    try { managed = (await get('/artistreg')).artists || []; } catch {}
     paint(`
       <section class="db-card">
         <h3>Upload tracks</h3>
-        <label class="up-field"><span>Credit to</span>
+        <label class="up-field"><span>Official artist name</span>
           <select id="upAs">
             <option value="">Myself</option>
-            ${managed.map((a) => `<option value="${a.id}">${esc(a.name)}${a.claimed_user_id ? ' ✓ claimed' : ''}</option>`).join('')}
-            <option value="new">＋ New managed artist…</option>
+            ${managed.map((a) => `<option value="${a.id}">${esc(a.name)}${a.claimed_user_id ? ' ✓ claimed' : ''}${a.email ? '' : ' · no profile yet'}</option>`).join('')}
+            <option value="new">＋ New artist…</option>
           </select></label>
+        <div class="up-field"><span>Also credit</span>
+          <div id="upAlsoRows"></div>
+          <button type="button" class="rv-add" id="upAlsoAdd">＋ Add another artist</button>
+          <p class="rv-hint">Anyone added here gets a record in your roster, so you can build their
+            profile and assign more tracks to them later.</p>
+        </div>
         <div id="upNew" hidden class="up-2col">
           <label class="up-field"><span>Their name</span><input id="upNewName" maxlength="80"></label>
           <label class="up-field"><span>Their email</span><input id="upNewEmail" type="email" maxlength="254"></label>
@@ -228,6 +234,14 @@
     $$('upSign').addEventListener('input', upSync);
     $$('upAddCollab').addEventListener('click', () => { upRow('upCollabRows', 'collab'); upSync(); });
     $$('upAddCtrl').addEventListener('click', () => { upRow('upCtrlRows', 'ctrl'); upSync(); });
+    $$('upAlsoAdd').addEventListener('click', () => {
+      const host = $$('upAlsoRows');
+      host.insertAdjacentHTML('beforeend',
+        `<div class="up-also"><input data-f="name" list="up-roster" placeholder="Artist or stage name" maxlength="120">
+         <button type="button" class="rv-x">✕</button></div>
+         <datalist id="up-roster">${managed.map((a) => `<option value="${esc(a.name)}">`).join('')}</datalist>`);
+      host.querySelectorAll('.rv-x').forEach((x) => { x.onclick = () => { x.parentElement.remove(); }; });
+    });
     $$('upSubmit').addEventListener('click', upSubmit);
     upStaged = [];
     upPaint();
@@ -341,6 +355,11 @@
         if (r.error) throw new Error(r.error);
         managedId = r.id;
       } else if (as) managedId = Number(as);
+
+      // every extra credited name becomes a real roster record
+      const also = [...document.querySelectorAll('#upAlsoRows [data-f="name"]')]
+        .map((i) => i.value.trim()).filter((v) => v.length >= 2);
+      if (also.length) { try { await post('/artistreg/ensure', { names: also }); } catch {} }
 
       const behalf = !!managedId;
       const shared = !behalf && $$('upShared').checked;
