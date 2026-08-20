@@ -11,29 +11,50 @@
    The dialog is deep-linkable: ?license=<slug> opens it on that track, so a
    link can be sent to whoever actually signs off on the budget. */
 (function () {
-  const CUR = '₪';
+  const CUR = '\u20aa';
+  const USD_RATE = 3.0;      // Bank of Israel representative rate, Aug 2026
+
+  /* Prices are ex-VAT. Every Israeli tariff in this sector states that
+     explicitly — ACUM's, the Federation's 2026 price list, Eshkolot's — and
+     the Consumer Protection Law's VAT-inclusive rule is B2C only, so B2B
+     quoting ex-VAT is both the norm and legally fine here. VAT is 18%
+     (since 1 Jan 2025). */
+  const VAT_NOTE = 'Prices exclude VAT (18%)';
 
   /** The tiers, cheapest first. `quote` means the tier is negotiated rather
    *  than self-serve — broadcast money is too project-specific to post a
    *  number against, and it is where a rights conflict would actually bite. */
+  /* Benchmarked against what this market actually charges:
+       Foximusic (Tel Aviv, pay-once, the closest structural competitor)
+         — Commercial $29/track incl. digital ads but NOT broadcast,
+           Extended $150/track adding global TV & radio
+       PremiumBeat $49 standard / $199 premium per track
+       Artlist (also Israeli) ~$199/yr Pro, broadcast included — the real
+         anchor, and the reason the digital tiers cannot be priced per-track
+         anywhere near a yearly unlimited subscription
+       ACUM's own film sync tariff T08 (composition only): cinema Israel
+         \u20aa4,000, television Israel \u20aa6,667 for up to a minute — a library
+         alternative has to sit well under that to be worth choosing
+     Broadcast tiers are sold as a 6-month season with a renewal at ~60%,
+     which is the documented Israeli norm for broadcast usage. */
   const TIERS = [
-    { id: 'digital', label: 'Digital — web & social',
+    { id: 'digital', label: 'Digital \u2014 web & social',
       blurb: 'Your own channels and organic social. Website, YouTube, Instagram, TikTok, podcasts, showreels, internal use. Unlimited views, worldwide, no end date.',
-      price: 290 },
-    { id: 'paid', label: 'Digital — paid campaign',
+      price: 149 },
+    { id: 'paid', label: 'Digital \u2014 paid campaign',
       blurb: 'Everything above, plus paid media online: promoted social, pre-roll, display, paid influencer. Worldwide, one year from first run.',
-      price: 900 },
+      price: 450 },
     { id: 'radio', label: 'Radio',
-      blurb: 'Radio advertising in Israel, one year. The station pays its own ACUM and Federation dues separately — this covers the sync, not the airplay.',
-      price: 1800 },
+      blurb: 'Radio advertising in Israel, one six-month season, renewable at 60%. The station pays its own ACUM and Federation dues on its own account \u2014 this covers the sync, not the airplay.',
+      price: 1200 },
     { id: 'tvshow', label: 'TV show / series',
       blurb: 'Background or featured use inside a programme, per production. Israeli broadcast plus catch-up streaming.',
-      price: 2400 },
+      price: 1800 },
     { id: 'film', label: 'Film',
       blurb: 'Feature, short or documentary, in perpetuity, including festivals and streaming release.',
-      price: 3200 },
+      price: 2400 },
     { id: 'tvc', label: 'TV commercial',
-      blurb: 'Commercial airtime. Priced per campaign against territory, length of run and media weight — so this one is always quoted.',
+      blurb: 'Commercial airtime. There is no fixed rate for advertising in this market \u2014 ACUM states so itself \u2014 so it is priced per campaign against territory, length of run and media weight.',
       quote: true },
   ];
 
@@ -74,8 +95,9 @@
         </div>
         <ul class="lic-incl">
           <li>Cleared for commercial use — no recurring fee for that use</li>
-          <li>Covers the sync. Public-performance royalties, where a track is
-              registered with a society, stay with the broadcaster as normal</li>
+          <li>Covers the sync. Where a track is society-registered, the
+              broadcaster settles ACUM and Federation dues on its own account
+              \u2014 never billed to you</li>
           <li>We whitelist your channels so an automated claim never lands</li>
         </ul>
         <div class="lic-acts">
@@ -104,7 +126,10 @@
 
     el.querySelector('.lic-blurb').textContent = tier.blurb;
     el.querySelector('.lic-price').textContent = quoteOnly ? 'On request' : CUR + price.toLocaleString();
-    el.querySelector('.lic-per').hidden = quoteOnly;
+    const per = el.querySelector('.lic-per');
+    per.hidden = quoteOnly;
+    per.textContent = quoteOnly ? '' :
+      `one-time, per track \u00b7 \u2248$${Math.round(price / USD_RATE).toLocaleString()} \u00b7 ${VAT_NOTE}`;
     el.querySelector('.lic-go').textContent = quoteOnly ? 'Request a quote' : 'Request this licence';
     el.querySelector('.lic-note').textContent = track.lane === 'quote'
       ? 'Someone else has a say in how this track is used commercially, so every licence goes through us first. We’ll come back to you with terms.'
