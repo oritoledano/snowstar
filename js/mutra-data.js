@@ -8980,6 +8980,56 @@ const MUTRA = {
    "vocal": "Instrumental",
    "key": "A",
    "scale": "minor"
+  },
+  {
+   "title": "ONSITELOVER",
+   "slug": "onsitelover",
+   "artist": "KAYMA",
+   "genres": [
+    "Indie",
+    "Pop"
+   ],
+   "packages": [],
+   "duration": 182,
+   "audio": "https://cdn.snowstar.company/audio-extra/onsitelover.m4a",
+   "cover": "https://cdn.snowstar.company/covers-art-sm/onsitelover.jpg",
+   "moods": [
+    "Dramatic"
+   ],
+   "instruments": [
+    "Drums",
+    "Guitar",
+    "Vocals"
+   ],
+   "bpm": 117,
+   "vocal": "Vocals",
+   "key": "F#",
+   "scale": "minor",
+   "lane": "quote"
+  },
+  {
+   "title": "NNPHR",
+   "slug": "nnphr",
+   "artist": "MatoMer",
+   "genres": [
+    "House & Techno"
+   ],
+   "packages": [],
+   "duration": 342,
+   "audio": "https://cdn.snowstar.company/audio-extra/nnphr.m4a",
+   "cover": "https://cdn.snowstar.company/covers-art-sm/nnphr.jpg",
+   "moods": [
+    "Party",
+    "Dark"
+   ],
+   "instruments": [
+    "Drums",
+    "Synth"
+   ],
+   "bpm": 123,
+   "vocal": "Instrumental",
+   "key": "A",
+   "scale": "minor"
   }
  ],
  "packages": [

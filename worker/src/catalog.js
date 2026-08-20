@@ -44,6 +44,7 @@ function sanitize(raw) {
     if (Number.isFinite(n) && n > 0 && n < 400) p.bpm = n;
   }
   if (raw.hidden !== undefined) p.hidden = !!raw.hidden;
+  if (raw.lane === 'instant' || raw.lane === 'quote') p.lane = raw.lane;
   // highlight window, as [start, end] fractions of the track
   if (Array.isArray(raw.hl) && raw.hl.length === 2) {
     let [a, b] = raw.hl.map(Number);

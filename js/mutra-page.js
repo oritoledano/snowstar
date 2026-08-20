@@ -439,10 +439,16 @@
           <span class="trk-key" title="${track.key ? track.key + ' ' + track.scale : ''}">${keyLabel(track)}</span>
           ${track.bpm ? `<button class="trk-bpm" title="${track.bpm} BPM — filter by this tempo">${track.bpm}<i>bpm</i></button>` : '<span class="trk-bpm empty" aria-hidden="true"></span>'}
           <span class="trk-dur">${fmt(track.duration)}</span>
-          <button class="trk-lic" type="button">License</button>
+          <button class="trk-lic${track.lane === 'quote' ? ' trk-lic-q' : ''}" type="button">${
+            track.lane === 'quote' ? 'Get a quote' : 'License'}</button>
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
-      row.querySelector('.trk-lic').addEventListener('click', () => startLicense(track));
+      row.querySelector('.trk-lic').addEventListener('click', () => {
+        // a quote-lane track has someone else with a say in its commercial use,
+        // so it never takes an instant licence — it starts a conversation
+        if (track.lane === 'quote') return startQuote(track);
+        startLicense(track);
+      });
 
       const bpmBtn = row.querySelector('button.trk-bpm');
       if (bpmBtn) bpmBtn.addEventListener('click', e => { e.stopPropagation(); filterByBpm(track.bpm); });
@@ -1244,6 +1250,16 @@
   })();
 
   // ── "sounds like this" — neighbours precomputed from the audio itself ──
+  /** Quote-lane licensing: an enquiry rather than a checkout. */
+  function startQuote(track) {
+    const subject = `Mutra — licence enquiry: ${track.title}`;
+    const body = `Hi Snowstar,\n\nI'd like to license "${track.title}" by ${track.artist}.\n\n`
+      + `Where it will run:\nTerritory:\nHow long for:\n\nThanks!`;
+    location.href = 'mailto:licensing@snowstar.company?subject='
+      + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    if (window.mutraTrack) mutraTrack('quote', track.slug);
+  }
+
   function showSimilar(track, row) {
     // clicking the same track's button again closes the panel
     const open = row.nextElementSibling;
