@@ -454,9 +454,9 @@
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
       row.querySelector('.trk-lic').addEventListener('click', () => {
-        // a quote-lane track has someone else with a say in its commercial use,
-        // so it never takes an instant licence — it starts a conversation
-        if (track.lane === 'quote') return startQuote(track);
+        // the chooser handles both cases: a quote-lane track shows "on request"
+        // and asks for terms, a normal one shows the price for the chosen use
+        if (window.mutraLicense) return mutraLicense.open(track);
         startLicense(track);
       });
 
@@ -1085,6 +1085,8 @@
       instruments: [...(track.instruments || [])], packages: [...(track.packages || [])],
       hl: [hl[0], hl[1]],
       credits: (track.credits || []).map(c => ({ ...c })),
+      prices: { ...(track.prices || {}) },
+      fee: Number.isFinite(track.fee) ? track.fee : '',
       lyrics: track.lyrics || '',
     };
 
@@ -1126,6 +1128,12 @@
       <div class="te-facet">
         <div class="te-flabel">Lyrics</div>
         <textarea class="te-lyrics" rows="5" placeholder="Paste the lyrics \u2014 shown under the track when someone clicks the lyrics icon"></textarea>
+      </div>
+      <div class="te-facet te-prices">
+        <div class="te-flabel">Licence prices \u2014 \u20aa per use, blank = catalogue default</div>
+        <div class="te-pgrid"></div>
+        <label class="te-flat"><span>Or one flat fee for every use</span>
+          <input class="te-fee" type="number" min="0" placeholder="\u2014"></label>
       </div>
       <div class="te-cover">
         <div class="te-flabel">Cover art</div>
@@ -1228,6 +1236,9 @@
       EDIT_FACETS.forEach(([k]) => { patch[k] = draft[k]; });
       patch.hl = draft.hl;
       patch.credits = draft.credits.filter(c => c.role && c.name.trim());
+      patch.prices = draft.prices;
+      if (String(draft.fee).trim() !== '') patch.fee = Number(draft.fee);
+      else delete patch.fee;
       patch.lyrics = draft.lyrics.trim();
       // a comma-separated artist field means several people — give each one a
       // real record rather than leaving them as a substring
@@ -1372,6 +1383,17 @@
     });
   }
   syncCurateToggle(); // in case the session was already resolved before this ran
+
+  // ── deep link: ?license=slug opens the licence chooser, so a link can go
+  //    to whoever actually signs off the budget ──
+  (function licenseLink() {
+    const slug = new URLSearchParams(location.search).get('license');
+    if (!slug) return;
+    setTimeout(() => {
+      const t = MUTRA.tracks.find(x => x.slug === slug);
+      if (t && window.mutraLicense) mutraLicense.open(t);
+    }, 500);
+  })();
 
   // ── deep link: ?track=slug opens (and plays) that track ──
   (function deepLink() {

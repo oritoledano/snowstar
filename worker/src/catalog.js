@@ -44,6 +44,21 @@ function sanitize(raw) {
     if (Number.isFinite(n) && n > 0 && n < 400) p.bpm = n;
   }
   if (raw.hidden !== undefined) p.hidden = !!raw.hidden;
+  // per-use-type prices, in ILS. A missing key falls back to the catalogue
+  // default, so a track only stores what actually differs from the norm.
+  if (raw.prices && typeof raw.prices === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(raw.prices)) {
+      const key = clean(k, 30);
+      const n = Math.round(Number(v));
+      if (key && Number.isFinite(n) && n >= 0 && n < 1e7) out[key] = n;
+    }
+    p.prices = out;
+  }
+  if (raw.fee !== undefined) {
+    const n = Math.round(Number(raw.fee));
+    if (Number.isFinite(n) && n >= 0 && n < 1e7) p.fee = n;
+  }
   if (raw.lyrics !== undefined) {
     const v = String(raw.lyrics).trim().slice(0, 8000);
     if (v) p.lyrics = v;
