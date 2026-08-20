@@ -24,37 +24,49 @@
   /** The tiers, cheapest first. `quote` means the tier is negotiated rather
    *  than self-serve — broadcast money is too project-specific to post a
    *  number against, and it is where a rights conflict would actually bite. */
-  /* Benchmarked against what this market actually charges:
-       Foximusic (Tel Aviv, pay-once, the closest structural competitor)
-         — Commercial $29/track incl. digital ads but NOT broadcast,
-           Extended $150/track adding global TV & radio
-       PremiumBeat $49 standard / $199 premium per track
-       Artlist (also Israeli) ~$199/yr Pro, broadcast included — the real
-         anchor, and the reason the digital tiers cannot be priced per-track
-         anywhere near a yearly unlimited subscription
-       ACUM's own film sync tariff T08 (composition only): cinema Israel
-         \u20aa4,000, television Israel \u20aa6,667 for up to a minute — a library
-         alternative has to sit well under that to be worth choosing
-     Broadcast tiers are sold as a 6-month season with a renewal at ~60%,
-     which is the documented Israeli norm for broadcast usage. */
+  /* Benchmarked against three things, in descending order of authority:
+
+     1. The MCPS/PRS Production Music Rate Card, Q1 2026 — the only published,
+        authoritative needledrop card in this industry, covering 100+ libraries
+        (Universal Production Music, Warner Chappell PM, Extreme, West One, BMG).
+        GBP ex-VAT; roughly ₪4.6 to the pound. Its SHAPE is the important part:
+        advertising is expensive, programme use is cheap, corporate is cheapest.
+        A single-country linear TV ad is £1,750 per 30s — but a cue inside a
+        TV programme is £35, and a corporate production £250. Anyone pricing
+        in-programme use like advertising has the curve upside down, which is
+        exactly what the previous draft of this file did.
+     2. Published per-track competitors: PremiumBeat $39/$59/$199/$999 (with
+        broadcast tiered by territory count — 1 / 5 / worldwide), Soundstripe
+        single-use $49/$199/$399/$1,249, Musicbed single song from $349,
+        Foximusic (Tel Aviv) $29 commercial / $150 extended incl. broadcast.
+     3. The subscription ceiling: Artlist — an Israeli company — sells Music
+        Pro at ~₪112/mo with paid ads AND broadcast included. No per-track
+        price can sit near a year of that, which is what caps the entry tier.
+
+     Where the rate cards and the subscriptions disagree, the cards win on
+     broadcast (they price it as the scarce thing it is) and the subscriptions
+     win on digital (they have already commoditised it). */
   const TIERS = [
-    { id: 'digital', label: 'Digital \u2014 web & social',
-      blurb: 'Your own channels and organic social. Website, YouTube, Instagram, TikTok, podcasts, showreels, internal use. Unlimited views, worldwide, no end date.',
+    { id: 'digital', label: 'Digital — web & social',
+      blurb: 'Your own channels and organic social. Website, YouTube, Instagram, TikTok, podcasts, showreels. Unlimited views, worldwide, no end date.',
       price: 149 },
-    { id: 'paid', label: 'Digital \u2014 paid campaign',
+    { id: 'corporate', label: 'Business & corporate',
+      blurb: 'Company promos, explainers, internal training, trade-show and conference screens, in-store and on-hold. Worldwide, no end date. Put paid media behind it and it moves up a tier.',
+      price: 350 },
+    { id: 'paid', label: 'Digital — paid campaign',
       blurb: 'Everything above, plus paid media online: promoted social, pre-roll, display, paid influencer. Worldwide, one year from first run.',
       price: 450 },
-    { id: 'radio', label: 'Radio',
-      blurb: 'Radio advertising in Israel, one six-month season, renewable at 60%. The station pays its own ACUM and Federation dues on its own account \u2014 this covers the sync, not the airplay.',
-      price: 1200 },
     { id: 'tvshow', label: 'TV show / series',
-      blurb: 'Background or featured use inside a programme, per production. Israeli broadcast plus catch-up streaming.',
-      price: 1800 },
+      blurb: 'Background or featured use inside a programme — per episode, Israeli broadcast plus catch-up streaming. A whole series or a worldwide release is quoted.',
+      price: 900 },
     { id: 'film', label: 'Film',
-      blurb: 'Feature, short or documentary, in perpetuity, including festivals and streaming release.',
-      price: 2400 },
+      blurb: 'Feature, short or documentary — for the lifetime of the production, including festivals and streaming release. Covers budgets up to about ₪10m; above that it is quoted.',
+      price: 1200 },
+    { id: 'radio', label: 'Radio',
+      blurb: 'Radio advertising in Israel, one six-month season, renewable at 60%. The station pays its own ACUM and Federation dues on its own account — this covers the sync, not the airplay.',
+      price: 1200 },
     { id: 'tvc', label: 'TV commercial',
-      blurb: 'Commercial airtime. There is no fixed rate for advertising in this market \u2014 ACUM states so itself \u2014 so it is priced per campaign against territory, length of run and media weight.',
+      blurb: 'Commercial airtime. There is no fixed rate for advertising in this market — ACUM states so itself — so it is priced per campaign against territory, length of run and media weight.',
       quote: true },
   ];
 

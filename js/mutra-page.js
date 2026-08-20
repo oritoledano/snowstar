@@ -1085,6 +1085,7 @@
       instruments: [...(track.instruments || [])], packages: [...(track.packages || [])],
       hl: [hl[0], hl[1]],
       credits: (track.credits || []).map(c => ({ ...c })),
+      lane: track.lane === 'quote' ? 'quote' : 'instant',
       prices: { ...(track.prices || {}) },
       fee: Number.isFinite(track.fee) ? track.fee : '',
       lyrics: track.lyrics || '',
@@ -1130,6 +1131,12 @@
         <textarea class="te-lyrics" rows="5" placeholder="Paste the lyrics \u2014 shown under the track when someone clicks the lyrics icon"></textarea>
       </div>
       <div class="te-facet te-prices">
+        <div class="te-flabel">How this track sells</div>
+        <div class="te-lane">
+          <button type="button" class="te-lanebtn" data-lane="instant">License \u2014 shows a price</button>
+          <button type="button" class="te-lanebtn" data-lane="quote">Get a quote \u2014 no price shown</button>
+        </div>
+        <p class="te-lanenote"></p>
         <div class="te-flabel">Licence prices \u2014 \u20aa per use, blank = catalogue default</div>
         <div class="te-pgrid"></div>
         <label class="te-flat"><span>Or one flat fee for every use</span>
@@ -1206,6 +1213,51 @@
       audio.duration ? (audio.currentTime = draft.hl[0] * audio.duration) : audio.addEventListener('loadedmetadata', seek);
     });
 
+    // ── lane + prices ──
+    // The lane decides whether a visitor sees a number at all. Quote is the
+    // safe setting for anything not owned and controlled outright, so the note
+    // spells out the consequence rather than leaving it to be discovered.
+    const laneNote = q('.te-lanenote');
+    function paintLane() {
+      panel.querySelectorAll('.te-lanebtn').forEach(b =>
+        b.classList.toggle('on', b.dataset.lane === draft.lane));
+      laneNote.textContent = draft.lane === 'quote'
+        ? 'Every enquiry reaches you first. Prices below are kept but never shown — ready for when the rights are resolved.'
+        : 'Priced and self-serve. Only for tracks owned and controlled outright.';
+      panel.querySelector('.te-pgrid').classList.toggle('muted', draft.lane === 'quote');
+    }
+    panel.querySelectorAll('.te-lanebtn').forEach(b => b.addEventListener('click', () => {
+      draft.lane = b.dataset.lane;
+      paintLane();
+    }));
+
+    // One row per licence tier, taken straight off the chooser's own list so
+    // the two can never drift apart. Blank means "use the catalogue default",
+    // which is why the placeholder shows that default rather than a dash.
+    const LIC_TIERS = (window.mutraLicense && mutraLicense.TIERS) || [];
+    const pgrid = panel.querySelector('.te-pgrid');
+    pgrid.innerHTML = LIC_TIERS.map(t => `
+      <label class="te-prow">
+        <span>${esc(t.label)}</span>
+        <input type="number" min="0" data-tier="${esc(t.id)}"
+               placeholder="${t.quote ? 'quote only' : '₪' + t.price}"
+               ${t.quote ? 'disabled' : ''}>
+      </label>`).join('');
+    pgrid.querySelectorAll('input[data-tier]').forEach(inp => {
+      const id = inp.dataset.tier;
+      if (Number.isFinite(draft.prices[id])) inp.value = draft.prices[id];
+      inp.addEventListener('input', () => {
+        const v = inp.value.trim();
+        if (v === '') delete draft.prices[id];
+        else draft.prices[id] = Number(v);
+      });
+    });
+
+    const feeInp = q('.te-fee');
+    feeInp.value = draft.fee;
+    feeInp.addEventListener('input', () => { draft.fee = feeInp.value.trim(); });
+    paintLane();
+
     // ── cover art ──
     const fileInp = q('.te-cbtn input'), cstat = q('.te-cstat');
     fileInp.addEventListener('change', async () => {
@@ -1237,6 +1289,7 @@
       patch.hl = draft.hl;
       patch.credits = draft.credits.filter(c => c.role && c.name.trim());
       patch.prices = draft.prices;
+      patch.lane = draft.lane;
       if (String(draft.fee).trim() !== '') patch.fee = Number(draft.fee);
       else delete patch.fee;
       patch.lyrics = draft.lyrics.trim();
