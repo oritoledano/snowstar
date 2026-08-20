@@ -11,8 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=3">
-<link rel="stylesheet" href="css/account.css?v=7">
-<link rel="stylesheet" href="css/mutra.css?v=54">
+<link rel="stylesheet" href="css/account.css?v=8">
+<link rel="stylesheet" href="css/mutra.css?v=55">
 <style>
   .ar-wrap{max-width:860px;margin:0 auto;padding:110px clamp(18px,4vw,44px) 60px}
   .ar-hero h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin-bottom:14px}
@@ -20,10 +20,20 @@
   .ar-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 24px;margin-top:26px}
   .ar-card h2{font-size:1.1rem;margin-bottom:14px}
   .ar-field{display:block;margin-bottom:14px}
-  .ar-field span{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-  .ar-field input,.ar-field textarea{width:100%;background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);
+  /* direct child only — this is the FIELD's label. As a descendant selector it
+     also hit the <span> inside every nested .ar-check / .ar-radio, turning those
+     into uppercase block-level flex items and knocking them out of alignment. */
+  .ar-field > span{display:block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .ar-check > span,.ar-radio > span{font-size:.9rem;letter-spacing:normal;text-transform:none;
+    color:var(--text);margin:0;line-height:1.45}
+  /* direct children only. As descendant selectors these also matched the
+     checkbox inside every nested .ar-check, stretching a 13px checkbox to the
+     full 100% field width and shoving its label off to the right. */
+  .ar-field > input,.ar-field > textarea{width:100%;background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);
     border-radius:10px;color:var(--text);font:inherit;font-size:.92rem;padding:10px 12px;outline:0;box-sizing:border-box}
-  .ar-field input:focus,.ar-field textarea:focus{border-color:var(--amber,#8fd8ff)}
+  .ar-field > input:focus,.ar-field > textarea:focus{border-color:var(--amber,#8fd8ff)}
+  /* belt and braces: a tick box is never a full-width field */
+  .ar-check input[type=checkbox],.ar-radio input[type=radio]{width:auto;flex:none;padding:0}
   .ar-drop{display:block;border:2px dashed var(--line);border-radius:14px;padding:34px 20px;text-align:center;color:var(--muted);
     cursor:pointer;transition:.2s;margin-bottom:14px}
   .ar-who{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.86rem;margin-bottom:16px}
@@ -206,7 +216,7 @@
 </div>
 
 <script src="js/account.js?v=3"></script>
-<script src="js/account-ui.js?v=14"></script>
+<script src="js/account-ui.js?v=15"></script>
 <script src="js/site-edit.js?v=2"></script>
 <script src="js/artists-page.js?v=5"></script>
 </body>

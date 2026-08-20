@@ -580,3 +580,8 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
    conversation — the button says so rather than looking like checkout */
 .trk-lic-q{background:none;border:1px solid var(--line-2,var(--line));color:var(--muted)}
 .trk-lic-q:hover{border-color:var(--amber,var(--coral));color:var(--text)}
+/* drag to reorder — only ever active in owner edit mode */
+.trk-drag{cursor:grab}
+.trk-drag.dragging{opacity:.4;cursor:grabbing}
+.trk-drag.drop-before{box-shadow:inset 0 2px 0 0 var(--amber,var(--coral))}
+.trk-drag.drop-after{box-shadow:inset 0 -2px 0 0 var(--amber,var(--coral))}

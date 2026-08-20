@@ -163,3 +163,28 @@
 .acct-av-btn:hover,.acct-av-rm:hover{border-color:var(--coral,var(--ice,#8fd8ff))}
 .acct-av-rm{color:var(--dim,var(--muted))}
 .acct-av-stat{font-size:.74rem;color:var(--muted);flex-basis:100%}
+
+/* Clearlist */
+.cl-intro{color:var(--muted);font-size:.83rem;line-height:1.5;margin:2px 0 12px}
+.cl-list{list-style:none;margin:0 0 12px}
+.cl-list li{display:flex;align-items:center;gap:8px;padding:7px 2px;
+  border-bottom:1px solid var(--line);font-size:.84rem}
+.cl-list li:last-child{border-bottom:0}
+.cl-plat{flex:none;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim,var(--muted))}
+.cl-val{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.cl-status{flex:none;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 8px;border-radius:99px;border:1px solid var(--line)}
+.cl-status.pending{color:#eab308;border-color:rgba(234,179,8,.4)}
+.cl-status.cleared{color:#34d399;border-color:rgba(52,211,153,.4)}
+.cl-status.rejected{color:#f87171;border-color:rgba(248,113,113,.4)}
+.cl-rm{flex:none;background:none;border:0;color:var(--dim,var(--muted));cursor:pointer;
+  font-size:1.05rem;line-height:1;padding:2px 4px}
+.cl-rm:hover{color:#ff8080}
+.cl-add{display:grid;grid-template-columns:auto 1fr auto;gap:7px;align-items:center}
+.cl-add select,.cl-add input{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  padding:8px 10px;color:var(--text);font-family:var(--font-body);font-size:.84rem;outline:0;min-width:0}
+.cl-add select:focus,.cl-add input:focus{border-color:var(--coral,var(--ice,#8fd8ff))}
+.cl-go{background:var(--grad);border:0;border-radius:99px;color:#0d0a12;cursor:pointer;
+  font-family:var(--font-display);font-weight:600;font-size:.78rem;padding:8px 16px}
+.cl-note{color:var(--dim,var(--muted));font-size:.76rem;line-height:1.5;margin-top:10px}

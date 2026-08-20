@@ -511,7 +511,7 @@
       const cnv = row.querySelector('.trk-wave canvas');
       cnv._peaks = waveform(track, i + 1);
       cnv._slug = track.slug;
-      if (curateMode) addCurateControls(row, track);
+      if (curateMode) { addCurateControls(row, track); makeDraggable(row, track); }
       tracksEl.appendChild(row);
       const isCur = current && current.track === track;
       requestAnimationFrame(() => drawWave(cnv, cnv._peaks,
@@ -944,6 +944,71 @@
     });
     wrap.querySelector('.trk-cur-edit').addEventListener('click', e => { e.stopPropagation(); openEditor(track, row); });
     row.querySelector('.trk-right').insertAdjacentElement('afterbegin', wrap);
+  }
+
+
+  /* ═══ drag to reorder, any track ═══
+     The curated list started life as "staff picks" but it is really just a
+     manual order: anything in it sorts by its position, anything not falls
+     through to the heuristic below. Dragging a track that was never picked
+     therefore just inserts it into that list at the drop point — which is
+     what makes drag-to-reorder work across the whole catalog rather than
+     only among the starred few. */
+  let dragSlug = null;
+
+  function makeDraggable(row, track) {
+    row.draggable = true;
+    row.classList.add('trk-drag');
+    row.addEventListener('dragstart', (e) => {
+      dragSlug = track.slug;
+      row.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', track.slug); } catch {}
+    });
+    row.addEventListener('dragend', () => {
+      dragSlug = null;
+      row.classList.remove('dragging');
+      tracksEl.querySelectorAll('.drop-before,.drop-after')
+        .forEach(el => el.classList.remove('drop-before', 'drop-after'));
+    });
+    row.addEventListener('dragover', (e) => {
+      if (!dragSlug || dragSlug === track.slug) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const r = row.getBoundingClientRect();
+      const above = e.clientY < r.top + r.height / 2;
+      row.classList.toggle('drop-before', above);
+      row.classList.toggle('drop-after', !above);
+    });
+    row.addEventListener('dragleave', () => row.classList.remove('drop-before', 'drop-after'));
+    row.addEventListener('drop', (e) => {
+      if (!dragSlug || dragSlug === track.slug) return;
+      e.preventDefault();
+      const above = row.classList.contains('drop-before');
+      row.classList.remove('drop-before', 'drop-after');
+      dropOnto(dragSlug, track.slug, above);
+    });
+  }
+
+  /** Move `moved` to sit immediately before/after `target` in the manual order.
+   *  A target that was never in the list is appended first, so dropping onto an
+   *  unordered track still produces a sensible, stable position. */
+  function dropOnto(moved, target, above) {
+    const list = curated.slice();
+    const mi = list.indexOf(moved);
+    if (mi >= 0) list.splice(mi, 1);
+    let ti = list.indexOf(target);
+    if (ti < 0) { list.push(target); ti = list.length - 1; }
+    list.splice(above ? ti : ti + 1, 0, moved);
+    curated = list;
+    saveCurated();
+    if (state.sort !== 'picks') {
+      // the manual order is only visible in that sort, so show the result
+      state.sort = 'picks';
+      sortLabel.textContent = 'Staff picks';
+      drawSortMenu();
+    }
+    render();
   }
 
   const EDIT_FACETS = [

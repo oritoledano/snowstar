@@ -350,6 +350,11 @@
           <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="acct-drawer" hidden></div>
       </div>
+      <div class="acct-acc" data-key="clearlist">
+        <button class="acct-row" type="button">Clear my channels <span class="acct-count"></span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
       <div class="acct-acc" data-key="profile">
         <button class="acct-row" type="button">User info
           <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -375,7 +380,7 @@
   /** Forget fetched drawer content — called whenever WHO is signed in changes,
    * so a second person on the same browser never sees the first person's list. */
   function resetAcctDrawers() {
-    drawerLoaded.downloads = drawerLoaded.favorites = drawerLoaded.profile = false;
+    drawerLoaded.downloads = drawerLoaded.favorites = drawerLoaded.clearlist = drawerLoaded.profile = false;
     panel.querySelectorAll('.acct-drawer').forEach(d => { d.innerHTML = ''; });
     panel.querySelectorAll('.acct-count').forEach(c => { c.textContent = ''; });
   }
@@ -411,7 +416,7 @@
   }
 
   // ── accordion: one drawer open at a time, content fetched on first open ──
-  const drawerLoaded = { downloads: false, favorites: false, profile: false };
+  const drawerLoaded = { downloads: false, favorites: false, clearlist: false, profile: false };
   panel.querySelectorAll('.acct-acc > .acct-row').forEach(btn => {
     btn.addEventListener('click', () => {
       const acc = btn.closest('.acct-acc');
@@ -442,6 +447,7 @@
 
   async function loadDrawer(key) {
     if (key === 'profile') return paintProfileForm();
+    if (key === 'clearlist') return paintClearlist();
     const el = drawerFor(key);
     el.innerHTML = '<p class="acct-empty">Loading…</p>';
     try {
@@ -476,6 +482,69 @@
     } catch {
       el.innerHTML = '<p class="acct-empty">Couldn’t load that right now.</p>';
     }
+  }
+
+
+  /* ═══════════ Clearlist ═══════════
+     A licence does not stop Content ID: it matches audio, not paperwork. So a
+     properly licensed track can still collect an automated claim. The fix is a
+     whitelist — telling the platform in advance which channels are allowed.
+     Channels stay "pending" until they have actually been cleared, because a
+     premature "you're covered" is worse than promising nothing. */
+  async function paintClearlist() {
+    const el = drawerFor('clearlist');
+    el.innerHTML = '<p class="acct-empty">Loading…</p>';
+    let d;
+    try { d = await M.api('/channels'); }
+    catch { el.innerHTML = '<p class="acct-empty">Couldn’t load that right now.</p>'; return; }
+
+    const P = d.platforms || {};
+    const items = d.channels || [];
+    countFor('clearlist', items.length);
+
+    el.innerHTML = `
+      <p class="cl-intro">Using our music on a channel? Add it here and we'll whitelist it,
+        so an automated copyright claim never lands on your video.</p>
+      ${items.length ? `<ul class="cl-list">${items.map(c => `
+        <li data-id="${c.id}">
+          <span class="cl-plat">${esc((P[c.platform] || {}).label || c.platform)}</span>
+          <span class="cl-val">${esc(c.value)}</span>
+          <span class="cl-status ${esc(c.status)}">${c.status === 'cleared' ? 'cleared'
+            : c.status === 'rejected' ? 'not cleared' : 'pending'}</span>
+          <button type="button" class="cl-rm" aria-label="Remove ${esc(c.value)}">&times;</button>
+        </li>`).join('')}</ul>` : '<p class="acct-empty">No channels added yet.</p>'}
+      <form class="cl-add">
+        <select class="cl-p">${Object.entries(P).map(([k, v]) =>
+          `<option value="${k}">${esc(v.label)}</option>`).join('')}</select>
+        <input class="cl-v" maxlength="300" placeholder="${esc((P.youtube || {}).hint || '')}" required>
+        <button type="submit" class="cl-go">Add</button>
+      </form>
+      <p class="cl-note">Pending means we've got it and haven't cleared it yet — we'll
+        confirm once it's done.</p>`;
+
+    const sel = el.querySelector('.cl-p'), val = el.querySelector('.cl-v');
+    sel.addEventListener('change', () => {
+      val.placeholder = (P[sel.value] || {}).hint || '';
+    });
+
+    el.querySelector('.cl-add').addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const btn = el.querySelector('.cl-go');
+      btn.disabled = true;
+      try {
+        await M.api('/channels', { method: 'POST',
+          body: JSON.stringify({ platform: sel.value, value: val.value }) });
+        toast('Channel added');
+        paintClearlist();
+      } catch { btn.disabled = false; toast('Couldn’t add that'); }
+    });
+
+    el.querySelectorAll('.cl-rm').forEach(b => b.addEventListener('click', async () => {
+      const id = Number(b.closest('li').dataset.id);
+      b.disabled = true;
+      try { await M.api('/channels/remove', { method: 'POST', body: JSON.stringify({ id }) }); paintClearlist(); }
+      catch { b.disabled = false; }
+    }));
   }
 
   // ── profile form ──

@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'members', 'artists', 'upload', 'submissions', 'notifications', 'storage', 'pipeline'];
+  const TABS = ['overview', 'stats', 'members', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -66,6 +66,7 @@
       if (tab === 'notifications') return paintMail();
       if (tab === 'storage') return paintStorage();
       if (tab === 'upload') return paintUpload();
+      if (tab === 'clearlist') return paintClearlistAdmin();
       if (tab === 'pipeline') return paintPipeline();
     } catch (e) {
       if (e.message === 'forbidden') gate();
@@ -366,6 +367,47 @@
       stat.textContent = 'Couldn’t submit: ' + e.message;
       upSync();
     }
+  }
+
+
+  /* ── clearlist: channels licensees have asked us to whitelist ── */
+  async function paintClearlistAdmin() {
+    const d = await get('/channels/all');
+    const P = d.platforms || {};
+    const rows = d.channels || [];
+    const pending = rows.filter((c) => c.status === 'pending');
+    paint(`
+      <div class="pl-intro">
+        <h2>Clearlist</h2>
+        <p>Channels licensees have asked us to whitelist. A licence doesn't stop Content ID —
+        it matches audio, not paperwork — so a properly licensed track can still collect an
+        automated claim unless the channel is whitelisted in advance.
+        <b>${pending.length} waiting.</b></p>
+      </div>
+      ${rows.length ? `<table class="pl-tbl cl-admin">
+        <thead><tr><th>Who</th><th>Platform</th><th>Channel</th><th>Added</th><th>Status</th><th></th></tr></thead>
+        <tbody>${rows.map((c) => `
+          <tr data-id="${c.id}">
+            <td>${esc(c.name || c.email)}</td>
+            <td>${esc((P[c.platform] || {}).label || c.platform)}</td>
+            <td class="cl-a-val">${esc(c.value)}</td>
+            <td>${fmt(c.created_at)}</td>
+            <td><span class="cl-status ${esc(c.status)}">${c.status === 'cleared' ? 'cleared'
+              : c.status === 'rejected' ? 'not cleared' : 'pending'}</span></td>
+            <td class="cl-a-acts">
+              ${c.status !== 'cleared' ? '<button class="rv-btn rv-ok" data-s="cleared">Mark cleared</button>' : ''}
+              ${c.status !== 'rejected' ? '<button class="rv-btn" data-s="rejected">Can’t clear</button>' : ''}
+              ${c.status !== 'pending' ? '<button class="rv-btn" data-s="pending">Back to pending</button>' : ''}
+            </td>
+          </tr>`).join('')}</tbody></table>`
+        : '<p class="db-empty">No channels submitted yet.</p>'}`);
+
+    app.querySelectorAll('.cl-a-acts .rv-btn').forEach((b) => b.addEventListener('click', async () => {
+      const id = Number(b.closest('tr').dataset.id);
+      b.disabled = true;
+      try { await post('/channels/status', { id, status: b.dataset.s }); await paintClearlistAdmin(); }
+      catch { b.disabled = false; }
+    }));
   }
 
   /* ── pipeline: how a track and a licence actually move through the system,

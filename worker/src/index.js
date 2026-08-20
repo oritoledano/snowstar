@@ -22,6 +22,7 @@ import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport } from './site.js';
 import { listOverrides, saveOverride, uploadCover } from './catalog.js';
+import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
          listArtistsAdmin } from './artists.js';
@@ -178,6 +179,11 @@ async function handle(req, env, ctx) {
 
   // ── site editor: text overrides (public read) + owner markup notes ──
   if (path === '/submissions/amend' && method === 'POST') return amendDeclaration(req, env, await currentUser(req, env));
+  if (path === '/channels' && method === 'GET') return listChannels(env, await currentUser(req, env));
+  if (path === '/channels' && method === 'POST') return addChannel(req, env, await currentUser(req, env));
+  if (path === '/channels/remove' && method === 'POST') return removeChannel(req, env, await currentUser(req, env));
+  if (path === '/channels/all' && method === 'GET') return allChannels(env, await currentUser(req, env));
+  if (path === '/channels/status' && method === 'POST') return setChannelStatus(req, env, await currentUser(req, env));
   if (path === '/avatar' && method === 'PUT') return uploadAvatar(req, env, await currentUser(req, env), url);
   if (path === '/avatar/clear' && method === 'POST') return clearAvatar(req, env, await currentUser(req, env));
   if (path === '/tracks' && method === 'GET') return listOverrides(env);
