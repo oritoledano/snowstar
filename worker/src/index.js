@@ -27,7 +27,7 @@ import { registerArtist, myUploads, uploadTrack, createSubmission,
          listArtistsAdmin } from './artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration } from './rights.js';
-import { updateProfile, myDownloads, myFavoritesList } from './profile.js';
+import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
 import { updateMember, deleteMember } from './members.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
@@ -178,6 +178,8 @@ async function handle(req, env, ctx) {
 
   // ── site editor: text overrides (public read) + owner markup notes ──
   if (path === '/submissions/amend' && method === 'POST') return amendDeclaration(req, env, await currentUser(req, env));
+  if (path === '/avatar' && method === 'PUT') return uploadAvatar(req, env, await currentUser(req, env), url);
+  if (path === '/avatar/clear' && method === 'POST') return clearAvatar(req, env, await currentUser(req, env));
   if (path === '/tracks' && method === 'GET') return listOverrides(env);
   if (path === '/tracks' && method === 'POST') return saveOverride(req, env, await currentUser(req, env));
   if (path === '/tracks/cover' && method === 'PUT') return uploadCover(req, env, await currentUser(req, env), url);

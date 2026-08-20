@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'members', 'artists', 'submissions', 'notifications', 'storage', 'pipeline'];
+  const TABS = ['overview', 'stats', 'members', 'artists', 'upload', 'submissions', 'notifications', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -65,6 +65,7 @@
       if (tab === 'submissions') return paintSubmissions();
       if (tab === 'notifications') return paintMail();
       if (tab === 'storage') return paintStorage();
+      if (tab === 'upload') return paintUpload();
       if (tab === 'pipeline') return paintPipeline();
     } catch (e) {
       if (e.message === 'forbidden') gate();
@@ -164,6 +165,207 @@
           ? 'Those shares add up to more than 100%.' : 'Couldn’t save that.';
       }
     });
+  }
+
+
+  /* ── upload: the same two-step flow artists.html uses (file to R2 first,
+        declaration on submit), for uploading as yourself or on behalf of a
+        managed artist who will countersign later. ── */
+  let upStaged = [];
+  let upNextId = 1;
+
+  async function paintUpload() {
+    let managed = [];
+    try { managed = (await get('/managed-artists')).artists || []; } catch {}
+    paint(`
+      <section class="db-card">
+        <h3>Upload tracks</h3>
+        <label class="up-field"><span>Credit to</span>
+          <select id="upAs">
+            <option value="">Myself</option>
+            ${managed.map((a) => `<option value="${a.id}">${esc(a.name)}${a.claimed_user_id ? ' ✓ claimed' : ''}</option>`).join('')}
+            <option value="new">＋ New managed artist…</option>
+          </select></label>
+        <div id="upNew" hidden class="up-2col">
+          <label class="up-field"><span>Their name</span><input id="upNewName" maxlength="80"></label>
+          <label class="up-field"><span>Their email</span><input id="upNewEmail" type="email" maxlength="254"></label>
+        </div>
+        <label class="up-drop" id="upDrop">
+          <b>Drop audio here</b> or click to choose — wav, mp3, aiff, flac, m4a, ogg
+          <input type="file" id="upFile" multiple accept=".wav,.mp3,.aif,.aiff,.flac,.m4a,.ogg" hidden>
+        </label>
+        <ul class="up-list" id="upList" hidden></ul>
+
+        <div id="upRights" hidden>
+          <div class="up-field"><span>Ownership &amp; control</span>
+            <label class="up-chk"><input type="checkbox" id="upShared"> <span>Shared ownership with someone else</span></label>
+            <label class="up-chk"><input type="checkbox" id="upControlled"> <span>Someone else has a say in commercial use</span></label>
+          </div>
+          <div id="upCollabs" hidden><div id="upCollabRows"></div>
+            <button type="button" class="rv-add" id="upAddCollab">＋ Add co-owner</button>
+            <p class="rv-hint" id="upShareLeft"></p></div>
+          <div id="upCtrls" hidden><div id="upCtrlRows"></div>
+            <button type="button" class="rv-add" id="upAddCtrl">＋ Add whoever has a say</button></div>
+          <label class="up-chk"><input type="checkbox" id="upAcum"> <span>Registered with ACUM or another society</span></label>
+          <blockquote class="up-decl" id="upDecl"></blockquote>
+          <label class="up-chk"><input type="checkbox" id="upAgree"> <span>I confirm the above</span></label>
+          <label class="up-field"><span>Type your full legal name to sign</span><input id="upSign" maxlength="120"></label>
+          <p class="up-lane" id="upLane"></p>
+          <button class="rv-btn rv-ok" id="upSubmit" disabled>Submit</button>
+          <span class="rv-stat" id="upStat"></span>
+        </div>
+      </section>`);
+
+    const $$ = (x) => document.getElementById(x);
+    $$('upAs').addEventListener('change', () => { $$('upNew').hidden = $$('upAs').value !== 'new'; upSync(); });
+    $$('upDrop').addEventListener('click', () => $$('upFile').click());
+    ['dragover', 'dragenter'].forEach((e) => $$('upDrop').addEventListener(e, (ev) => { ev.preventDefault(); $$('upDrop').classList.add('over'); }));
+    ['dragleave', 'drop'].forEach((e) => $$('upDrop').addEventListener(e, (ev) => { ev.preventDefault(); $$('upDrop').classList.remove('over'); }));
+    $$('upDrop').addEventListener('drop', (ev) => upStage([...ev.dataTransfer.files]));
+    $$('upFile').addEventListener('change', () => { upStage([...$$('upFile').files]); $$('upFile').value = ''; });
+    ['upShared', 'upControlled', 'upAcum', 'upAgree'].forEach((id) => $$(id).addEventListener('change', upSync));
+    $$('upSign').addEventListener('input', upSync);
+    $$('upAddCollab').addEventListener('click', () => { upRow('upCollabRows', 'collab'); upSync(); });
+    $$('upAddCtrl').addEventListener('click', () => { upRow('upCtrlRows', 'ctrl'); upSync(); });
+    $$('upSubmit').addEventListener('click', upSubmit);
+    upStaged = [];
+    upPaint();
+  }
+
+  function upRow(host, kind) {
+    const el = document.getElementById(host);
+    el.insertAdjacentHTML('beforeend', kind === 'collab'
+      ? `<div class="rv-crow"><input placeholder="Name" data-f="name"><input placeholder="their@email.com" data-f="email"><input placeholder="%" data-f="pct"><button type="button" class="rv-x">✕</button></div>`
+      : `<div class="rv-krow"><input placeholder="Label, publisher or agent" data-f="name"><select data-f="scope"><option>recording</option><option>song</option><option>both</option></select><input placeholder="Territory" data-f="territory"><button type="button" class="rv-x">✕</button></div>`);
+    el.querySelectorAll('.rv-x').forEach((x) => { x.onclick = () => { x.parentElement.remove(); upSync(); }; });
+    el.querySelectorAll('input,select').forEach((i) => { i.oninput = upSync; });
+  }
+
+  function upStage(files) {
+    const ok = files.filter((f) => /\.(wav|mp3|aiff?|flac|m4a|ogg)$/i.test(f.name));
+    for (const f of ok) {
+      if (f.size > 95 * 1024 * 1024) continue;
+      const item = { _id: upNextId++, file: f, title: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim(), key: null, pct: 0, error: null };
+      upStaged.push(item);
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', '/api/artist/upload?filename=' + encodeURIComponent(f.name));
+      xhr.withCredentials = true;
+      xhr.upload.onprogress = (e) => { if (e.lengthComputable) { item.pct = Math.round(e.loaded / e.total * 100); upPaint(); } };
+      xhr.onload = () => {
+        try { const d = JSON.parse(xhr.responseText); xhr.status === 200 ? (item.key = d.key) : (item.error = d.error || 'failed'); }
+        catch { item.error = 'failed'; }
+        upPaint();
+      };
+      xhr.onerror = () => { item.error = 'network'; upPaint(); };
+      xhr.send(f);
+    }
+    upPaint();
+  }
+
+  function upPaint() {
+    const list = document.getElementById('upList');
+    if (!list) return;
+    list.hidden = !upStaged.length;
+    document.getElementById('upRights').hidden = !upStaged.length;
+    list.innerHTML = upStaged.map((s, i) => `<li><b>${esc(s.title)}</b>
+      <span>${s.error ? '⚠ ' + esc(s.error) : s.key ? 'uploaded ✓' : 'uploading… ' + s.pct + '%'}</span>
+      <button type="button" data-i="${i}" class="rv-x">✕</button></li>`).join('');
+    list.querySelectorAll('.rv-x').forEach((b) => { b.onclick = () => { upStaged.splice(Number(b.dataset.i), 1); upPaint(); }; });
+    upSync();
+  }
+
+  const UP_DECL = {
+    solo: 'This track is entirely mine. I made it and own all rights to it — the composition and the recording. Any samples, loops or presets are licensed for commercial use. Mutra may license it to clients worldwide.',
+    shared: 'I share ownership of this track. The list of co-owners and their shares is complete and correct. Every co-owner has given me permission to submit it and let Mutra license it to clients worldwide.',
+    behalf: 'Submitted by Snowstar on behalf of the credited artist, who has confirmed the ownership details above are correct and authorises Mutra to license this track to clients worldwide.',
+  };
+
+  function upSync() {
+    const $$ = (x) => document.getElementById(x);
+    if (!$$('upRights')) return;
+    const behalf = $$('upAs').value !== '';
+    const shared = !behalf && $$('upShared').checked;
+    const controlled = !behalf && $$('upControlled').checked;
+    const kind = behalf ? 'behalf' : (shared ? 'shared' : 'solo');
+    $$('upDecl').textContent = UP_DECL[kind];
+    $$('upCollabs').hidden = !(shared || behalf);
+    $$('upCtrls').hidden = !controlled;
+    if ((shared || behalf) && !$$('upCollabRows').children.length && shared) upRow('upCollabRows', 'collab');
+    if (controlled && !$$('upCtrlRows').children.length) upRow('upCtrlRows', 'ctrl');
+
+    const collabs = upRead('upCollabRows', ['name', 'email', 'pct']);
+    let sharesOk = true;
+    if (shared) {
+      const bps = collabs.map((c) => Math.round(parseFloat(c.pct || 0) * 100));
+      const left = 10000 - bps.reduce((a, b) => a + b, 0);
+      $$('upShareLeft').textContent = left >= 1
+        ? `That leaves you with ${Number((left / 100).toFixed(2))}%.`
+        : 'Shares total more than 100% — you must keep a share.';
+      sharesOk = left >= 1 && collabs.length > 0 && collabs.every((c, i) =>
+        c.name.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(c.email) && bps[i] >= 1);
+    } else { $$('upShareLeft').textContent = ''; }
+    const ctrls = upRead('upCtrlRows', ['name', 'scope', 'territory']).filter((c) => c.name);
+    const ctrlOk = !controlled || ctrls.length > 0;
+
+    const lane = (shared || controlled || (behalf && collabs.length)) ? 'quote' : 'instant';
+    const laneEl = $$('upLane');
+    laneEl.className = 'up-lane ' + lane;
+    laneEl.textContent = lane === 'instant'
+      ? 'Clear to license — instant lane.'
+      : 'Custom quote — every licence comes through you first.';
+
+    const ready = upStaged.length && upStaged.every((s) => s.key || s.error) && upStaged.some((s) => s.key);
+    const signed = $$('upAgree').checked && $$('upSign').value.trim().length >= 2;
+    $$('upSubmit').disabled = !(ready && signed && sharesOk && ctrlOk);
+    const n = upStaged.filter((s) => s.key).length;
+    $$('upSubmit').textContent = n ? `Submit ${n} track${n === 1 ? '' : 's'}` : 'Submit';
+  }
+
+  function upRead(host, fields) {
+    return [...document.getElementById(host).children].map((r) => {
+      const o = {}; fields.forEach((f) => { o[f] = r.querySelector(`[data-f="${f}"]`).value.trim(); }); return o;
+    }).filter((o) => o.name || o.email);
+  }
+
+  async function upSubmit() {
+    const $$ = (x) => document.getElementById(x);
+    const stat = $$('upStat');
+    $$('upSubmit').disabled = true;
+    stat.textContent = 'Submitting…';
+    try {
+      let managedId = null;
+      const as = $$('upAs').value;
+      if (as === 'new') {
+        const r = await post('/managed-artists', { name: $$('upNewName').value.trim(), email: $$('upNewEmail').value.trim() });
+        if (r.error) throw new Error(r.error);
+        managedId = r.id;
+      } else if (as) managedId = Number(as);
+
+      const behalf = !!managedId;
+      const shared = !behalf && $$('upShared').checked;
+      const controlled = !behalf && $$('upControlled').checked;
+      const declaration = {
+        kind: behalf ? 'behalf' : (shared ? 'shared' : 'solo'),
+        signed_name: $$('upSign').value.trim(),
+        acum: $$('upAcum').checked,
+        collaborators: (shared || behalf)
+          ? upRead('upCollabRows', ['name', 'email', 'pct']).map((c) => ({ name: c.name, email: c.email, share_pct: parseFloat(c.pct) || 0 }))
+          : [],
+        controllers: controlled ? upRead('upCtrlRows', ['name', 'scope', 'territory']).filter((c) => c.name) : [],
+      };
+      let done = 0;
+      for (const s of upStaged.filter((x) => x.key && !x.done)) {
+        const r = await post('/artist/submissions', { title: s.title, key: s.key, declaration, managed_artist_id: managedId || undefined });
+        if (r.error) throw new Error(r.error);
+        s.done = true; done++;
+      }
+      upStaged = upStaged.filter((s) => !s.done);
+      stat.textContent = `${done} submitted — they're in the review queue.`;
+      upPaint();
+    } catch (e) {
+      stat.textContent = 'Couldn’t submit: ' + e.message;
+      upSync();
+    }
   }
 
   /* ── pipeline: how a track and a licence actually move through the system,
@@ -496,7 +698,9 @@
           <div class="rv-top"><b>${esc(s.title)}</b>
             <span class="who">${esc(s.artist_name || s.email)}</span>
             <span class="meta">${(s.size / 1048576).toFixed(1)}MB · ${esc(s.ext)} · ${fmt(s.created_at)}</span>
-            ${laneChip(s)}</div>
+            ${laneChip(s)}${s.status === 'approved' ? (s.published_slug
+              ? `<span class="rv-pub live">in catalog</span>`
+              : `<span class="rv-pub">not in catalog yet</span>`) : ''}</div>
           ${declBlock(s)}
           ${s.artist_note ? `<p class="rv-note">Artist: “${esc(s.artist_note)}”</p>` : ''}
           ${s.review_note ? `<p class="rv-note">You: “${esc(s.review_note)}”</p>` : ''}
@@ -509,7 +713,10 @@
           </div>
           <div class="rv-editor" hidden></div></div>`).join('')
       : `<p class="db-empty">${subTab === 'pending' ? 'Nothing waiting — inbox zero.' : 'Nothing here yet.'}</p>`}
-      <p class="db-empty">Approving queues a track for catalog ingestion — ask Claude to “process approved uploads” to take them live.</p>`);
+      <p class="db-empty">Approving marks a track for the catalog — it does <b>not</b> publish it.
+        The audio stays in the private submissions area until it is analysed, given a waveform and
+        artwork, and added to the catalog file. Ask Claude to “process approved uploads” to take
+        them live.</p>`);
     app.querySelectorAll('[data-st]').forEach((b) =>
       b.addEventListener('click', () => { subTab = b.dataset.st; load(); }));
     app.querySelectorAll('.rv-edit').forEach((b) =>

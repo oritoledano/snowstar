@@ -483,6 +483,16 @@
     const el = drawerFor('profile');
     const u = M.user;
     el.innerHTML = `
+      <div class="acct-avatar">
+        <div class="acct-av-img">${u.avatar
+          ? `<img src="${esc(u.avatar)}" alt="">`
+          : `<span>${esc((u.name || u.email || '?').trim().charAt(0).toUpperCase())}</span>`}</div>
+        <div class="acct-av-acts">
+          <label class="acct-av-btn">Upload<input type="file" accept="image/jpeg,image/png,image/webp" hidden></label>
+          ${u.avatar ? '<button type="button" class="acct-av-rm">Remove</button>' : ''}
+          <span class="acct-av-stat"></span>
+        </div>
+      </div>
       <form class="acct-form" id="acctForm">
         <div class="acct-2col">
           <label class="acct-field"><span>First name</span><input name="first_name" maxlength="60"></label>
@@ -502,6 +512,37 @@
         <p class="acct-status" hidden></p>
         <button type="submit" class="acct-save">Save</button>
       </form>`;
+    // ── profile picture ──
+    const avStat = el.querySelector('.acct-av-stat');
+    el.querySelector('.acct-av-btn input').addEventListener('change', async (ev) => {
+      const f = ev.target.files[0];
+      if (!f) return;
+      avStat.textContent = 'Uploading…';
+      try {
+        const r = await fetch('/api/avatar', {
+          method: 'PUT', credentials: 'same-origin',
+          headers: { 'content-type': f.type }, body: f,
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || 'failed');
+        M.user.avatar = d.avatar;
+        await M.refresh();
+        paintProfileForm();
+        toast('Picture updated');
+      } catch { avStat.textContent = 'Couldn’t upload that.'; }
+    });
+    const rm = el.querySelector('.acct-av-rm');
+    if (rm) rm.addEventListener('click', async () => {
+      avStat.textContent = 'Removing…';
+      try {
+        await M.api('/avatar/clear', { method: 'POST', body: JSON.stringify({}) });
+        M.user.avatar = null;
+        await M.refresh();
+        paintProfileForm();
+        toast('Picture removed');
+      } catch { avStat.textContent = 'Couldn’t remove that.'; }
+    });
+
     const form = el.querySelector('#acctForm');
     form.first_name.value = u.first_name || '';
     form.last_name.value = u.last_name || '';

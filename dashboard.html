@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=3">
-<link rel="stylesheet" href="css/account.css?v=6">
+<link rel="stylesheet" href="css/account.css?v=7">
 <link rel="stylesheet" href="css/mutra.css?v=53">
 <style>
   body{padding-bottom:60px}
@@ -79,6 +79,33 @@
   [hidden]{display:none!important}
   @media (max-width:900px){.ml-by{display:none}.mnav-right .auth-who{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 
+  .up-field{display:block;margin-bottom:14px}
+  .up-field>span{display:block;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--dim,var(--muted));margin-bottom:6px}
+  .up-field input,.up-field select{width:100%;max-width:420px;background:var(--bg);
+    border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--text);
+    font:inherit;font-size:.88rem;outline:0;box-sizing:border-box}
+  .up-2col{display:grid;gap:0 12px;grid-template-columns:1fr 1fr;max-width:640px}
+  .up-drop{display:block;border:2px dashed var(--line);border-radius:14px;padding:30px 20px;
+    text-align:center;color:var(--muted);cursor:pointer;transition:.2s;margin:6px 0 14px;font-size:.9rem}
+  .up-drop:hover,.up-drop.over{border-color:var(--amber,var(--coral));color:var(--text)}
+  .up-list{list-style:none;padding:0;margin:0 0 16px}
+  .up-list li{display:flex;align-items:center;gap:12px;padding:9px 2px;
+    border-bottom:1px solid var(--line);font-size:.86rem}
+  .up-list b{flex:1}
+  .up-list span{color:var(--muted);font-size:.8rem}
+  .up-chk{display:flex;gap:9px;align-items:flex-start;margin:8px 0;cursor:pointer;font-size:.88rem}
+  .up-chk input{margin-top:3px;accent-color:var(--amber,var(--coral))}
+  .up-decl{border-left:3px solid var(--amber,var(--coral));background:var(--panel-2,rgba(0,0,0,.15));
+    border-radius:0 10px 10px 0;padding:12px 14px;margin:14px 0;color:var(--muted);
+    font-size:.82rem;line-height:1.55}
+  .up-lane{margin:14px 0;padding:10px 14px;border-radius:10px;font-size:.84rem}
+  .up-lane.instant{background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.35);color:#8ee9c0}
+  .up-lane.quote{background:var(--panel-2,rgba(0,0,0,.15));border:1px solid var(--line-2,var(--line));color:var(--muted)}
+  .rv-pub{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;
+    border-radius:99px;border:1px solid rgba(234,179,8,.4);color:#eab308}
+  .rv-pub.live{border-color:rgba(52,211,153,.4);color:#34d399}
+  @media (max-width:700px){.up-2col{grid-template-columns:1fr}}
   .rv-lane{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;
     border-radius:99px;border:1px solid var(--line)}
   .rv-lane.instant{color:#34d399;border-color:rgba(52,211,153,.4)}
@@ -150,7 +177,7 @@
 <div class="db-wrap" id="app"><p class="db-empty">Loading…</p></div>
 
 <script src="js/account.js?v=3"></script>
-<script src="js/account-ui.js?v=13"></script>
-<script src="js/dashboard.js?v=7"></script>
+<script src="js/account-ui.js?v=14"></script>
+<script src="js/dashboard.js?v=8"></script>
 </body>
 </html>

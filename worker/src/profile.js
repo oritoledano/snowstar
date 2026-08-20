@@ -106,3 +106,45 @@ export async function myFavoritesList(env, user, url) {
   ).bind(user.id, prod).all();
   return json({ favorites: r.results || [] });
 }
+
+/* ─────────── profile pictures ─────────── */
+
+const IMG_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+
+/**
+ * Upload a profile picture. Any member may set their own; the owner may set
+ * anyone's (for managed artists who never sign in themselves).
+ *
+ * Keys are timestamped so replacing a picture is never served from a stale
+ * cache — the old object is simply orphaned rather than overwritten, which
+ * also means a mis-click can be undone by re-uploading rather than lost.
+ */
+export async function uploadAvatar(req, env, user, url) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const target = url.searchParams.get('user_id');
+  if (target && target !== user.id && !user.admin) return json({ error: 'forbidden' }, 403);
+  const userId = target || user.id;
+
+  const type = req.headers.get('content-type') || '';
+  const ext = IMG_EXT[type];
+  if (!ext) return json({ error: 'unsupported_type' }, 415);
+  const body = await req.arrayBuffer();
+  if (!body.byteLength || body.byteLength > 4 * 1024 * 1024) return json({ error: 'bad_size' }, 400);
+
+  const key = `avatars/${userId.slice(0, 12)}-${now()}.${ext}`;
+  await env.MEDIA.put(key, body, { httpMetadata: { contentType: type } });
+  const src = `https://cdn.snowstar.company/${key}`;
+  const r = await env.DB.prepare('UPDATE users SET avatar = ? WHERE id = ?').bind(src, userId).run();
+  if (!r.meta.changes) return json({ error: 'user_not_found' }, 404);
+  return json({ ok: true, avatar: src });
+}
+
+/** Remove a profile picture. Same permission rule as setting one. */
+export async function clearAvatar(req, env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const b = await req.json().catch(() => ({}));
+  const target = b.user_id;
+  if (target && target !== user.id && !user.admin) return json({ error: 'forbidden' }, 403);
+  await env.DB.prepare('UPDATE users SET avatar = NULL WHERE id = ?').bind(target || user.id).run();
+  return json({ ok: true, avatar: null });
+}
