@@ -105,13 +105,7 @@
           <span class="lic-price"></span>
           <span class="lic-per">one-time, per track</span>
         </div>
-        <ul class="lic-incl">
-          <li>Cleared for commercial use — no recurring fee for that use</li>
-          <li>Covers the sync. Where a track is society-registered, the
-              broadcaster settles ACUM and Federation dues on its own account
-              \u2014 never billed to you</li>
-          <li>We whitelist your channels so an automated claim never lands</li>
-        </ul>
+        <ul class="lic-incl"></ul>
         <div class="lic-acts">
           <button class="lic-go"></button>
           <button class="lic-share" title="Copy a link to this licence">Copy link</button>
@@ -137,6 +131,18 @@
     const price = priceFor(track, tier);
 
     el.querySelector('.lic-blurb').textContent = tier.blurb;
+    // The first bullet is a promise, so it has to match the lane. On a
+    // quote-lane track we do not yet know we can clear it — saying "cleared"
+    // next to "someone else has a say" is the kind of contradiction a licensee
+    // is entitled to hold us to.
+    el.querySelector('.lic-incl').innerHTML = [
+      track.lane === 'quote'
+        ? 'Cleared for commercial use once we have the other rights holder\u2019s yes \u2014 that is what the quote confirms'
+        : 'Cleared for commercial use \u2014 no recurring fee for that use',
+      'Covers the sync. Where a track is society-registered, the broadcaster '
+        + 'settles ACUM and Federation dues on its own account \u2014 never billed to you',
+      'We whitelist your channels so an automated claim never lands',
+    ].map((t) => `<li>${esc(t)}</li>`).join('');
     el.querySelector('.lic-price').textContent = quoteOnly ? 'On request' : CUR + price.toLocaleString();
     const per = el.querySelector('.lic-per');
     per.hidden = quoteOnly;
