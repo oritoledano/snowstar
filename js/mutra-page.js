@@ -1,6 +1,20 @@
 /* ═══════════ Mutra page — catalog, filters, sticky player w/ working seek ═══════════ */
 (function () {
   const $ = s => document.querySelector(s);
+  /** Open a mailto in a new tab, without stranding a blank one.
+   *  window.open('mailto:…') can leave an empty tab behind once the mail
+   *  client takes the handoff; a detached anchor does not. */
+  function openMail(url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
   const fmt = t => (isNaN(t) || t == null) ? '0:00' : Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
   const HELP_MAILTO = 'mailto:hello@snowstar.company?subject=' +
     encodeURIComponent('Mutra — help me find a track') + '&body=' +
@@ -191,7 +205,7 @@
       return;
     }
     if (window.mutraTrack) mutraTrack('license', track.slug);
-    window.open(mailto(track.title), '_blank', 'noopener');
+    openMail(mailto(track.title));
   }
 
   /** How long did they actually listen to the outgoing track? audio.played
@@ -1595,8 +1609,8 @@
     const subject = `Mutra — licence enquiry: ${track.title}`;
     const body = `Hi Snowstar,\n\nI'd like to license "${track.title}" by ${track.artist}.\n\n`
       + `Where it will run:\nTerritory:\nHow long for:\n\nThanks!`;
-    location.href = 'mailto:licensing@snowstar.company?subject='
-      + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    openMail('mailto:licensing@snowstar.company?subject='
+      + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
     if (window.mutraTrack) mutraTrack('quote', track.slug);
   }
 

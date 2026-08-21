@@ -70,6 +70,20 @@
       quote: true },
   ];
 
+  /** Open a mailto in a new tab, without stranding a blank one.
+   *  window.open('mailto:…') can leave an empty tab behind once the mail
+   *  client takes the handoff; a detached anchor does not. */
+  function openMail(url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
   const esc = (v) => String(v == null ? '' : v)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -177,8 +191,8 @@
         + (quoteOnly ? '' : `\nPrice: ${CUR}${priceFor(track, tier)}`)
         + `\n\nWhere it will run:\nTerritory:\nHow long for:\n\n`
         + `Link: ${location.origin + location.pathname}?license=${encodeURIComponent(track.slug)}\n`;
-      location.href = 'mailto:licensing@snowstar.company?subject='
-        + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      openMail('mailto:licensing@snowstar.company?subject='
+        + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
       if (window.mutraTrack) mutraTrack(quoteOnly ? 'quote' : 'license', track.slug);
     };
 
