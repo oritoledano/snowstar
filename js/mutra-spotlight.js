@@ -1,26 +1,28 @@
 /* ═══════════ Mutra — Artist Spotlight row ═══════════
-   A horizontal, hover-to-preview row inserted after the Nth catalog row
-   (see mutra-page.js's maybeInsertSpotlight). Data-driven off
-   MUTRA_SPOTLIGHTS (mutra-spotlight-data.js) so the same code serves any
-   future artist/album/playlist — nothing here is Kayma-specific.
+   A horizontal row inserted after the Nth catalog row (see mutra-page.js's
+   maybeInsertSpotlight). Data-driven off MUTRA_SPOTLIGHTS
+   (mutra-spotlight-data.js) so the same code serves any future
+   artist/album/playlist — nothing here is Kayma-specific.
 
-   Rest state: the track's cover art, at rest, full size.
-   Hover (or tap, on touch): the card and its right-hand neighbor nudge
-   apart a little (no size change, just a gentle shift), and a shared
-   Mutra-branded vinyl disc slides out from behind the sleeve, revealed
-   exactly half way, spinning, while a short audio snippet fades in.
-   That reveal is tied to hover and lets go the moment the cursor does.
+   Two states, deliberately separate, because conflating them is what made
+   this row misbehave:
 
-   The play button on the cover art (low opacity until you notice it)
-   is the independent, persistent version of the same thing: click it
-   and the card "pins" — vinyl keeps spinning and the snippet keeps
-   playing after the cursor leaves, exactly like the always-on touch
-   tap already worked. Only one card is ever active at a time either
-   way; hovering a different card always takes over.
+     HOVER  — look, don't touch. The sleeve and the vinyl slide apart so you
+              can see the disc. Nothing spins, nothing plays, and nothing
+              that is already playing is disturbed. Pure CSS: :hover and
+              :focus-within do the whole job, so there is no JS listener that
+              could reach for the audio by accident.
 
-   window.mutraPauseMainPlayer (exposed by mutra-page.js) is called on
-   hover-start so a spotlight preview never plays under whatever the
-   sticky catalog player is already doing. */
+     PLAYING — the play button, and only the play button. The track loads
+              into the sticky player at the bottom of the page (the same one
+              the catalog rows use), the vinyl spins, and both survive the
+              cursor leaving. Clicking again pauses.
+
+   The row previously ran its own second <audio> element for hover previews,
+   which is why hovering had to pause the main player first — two transports
+   fighting over one pair of speakers. It now has none: everything goes
+   through window.mutraPlayer, so there is exactly one thing playing and the
+   bottom bar always shows what the visitor actually started. */
 (function () {
   if (typeof MUTRA_SPOTLIGHTS === 'undefined' || !MUTRA_SPOTLIGHTS.length) return;
 
@@ -32,78 +34,74 @@
 
   let builtRow = null;
   let allCards = [];
-  let activeCard = null;
-  let pinned = false; // true once the play button (or a touch tap) locked the active card on
-  const snippetAudio = new Audio();
-  snippetAudio.loop = true;
-  snippetAudio.preload = 'none';
-  snippetAudio.volume = 0; // fades up from true silence on the first activation
-  let fadeRaf = 0;
 
-  function fadeTo(target, ms) {
-    cancelAnimationFrame(fadeRaf);
-    const start = snippetAudio.volume, t0 = performance.now();
-    if (target > 0 && snippetAudio.paused) snippetAudio.play().catch(() => {});
-    (function step(t) {
-      const p = Math.min(1, (t - t0) / ms);
-      snippetAudio.volume = start + (target - start) * p;
-      if (p < 1) { fadeRaf = requestAnimationFrame(step); }
-      else if (target === 0) { snippetAudio.pause(); }
-    })(t0);
+  /**
+   * The track object handed to the shared player, cached per card.
+   *
+   * Cached for a reason that is not just tidiness: loadTrack() decides
+   * "same track, so toggle" by object IDENTITY. Build a fresh object on
+   * every click and the second click reloads from zero instead of pausing.
+   *
+   * Where a spotlight slug is also a real catalog entry we play THAT — real
+   * audio, real duration, real licence lane — rather than the row's short
+   * preview. Only the ones not yet in the catalog fall back to the snippet.
+   */
+  const trackCache = new Map();
+  function playable(t, spot) {
+    if (trackCache.has(t.slug)) return trackCache.get(t.slug);
+    const real = window.mutraPlayer && mutraPlayer.find(t.slug);
+    const obj = real || {
+      slug: 'spotlight:' + t.slug,
+      title: t.title,
+      artist: spot.artist || '',
+      audio: t.snippetUrl,
+      cover: t.cover,
+      duration: 0,        // the player overwrites this from real metadata
+      lane: 'quote',      // an unreleased spotlight cut is never self-serve
+    };
+    trackCache.set(t.slug, obj);
+    return obj;
   }
 
-  function syncPlayButtons() {
-    allCards.forEach(card => {
+  /** Follow the player rather than keeping our own idea of what is playing —
+   *  so starting a catalog track correctly stops the vinyl spinning here. */
+  function syncFromPlayer() {
+    allCards.forEach((card) => {
       const btn = card.querySelector('.spot-play');
       if (!btn) return;
-      const on = card === activeCard && pinned;
+      const slug = card.dataset.playSlug;
+      const on = !!(window.mutraPlayer && mutraPlayer.isPlaying(slug));
+      card.classList.toggle('spot-playing', on);
       btn.innerHTML = on ? ICON_PAUSE : ICON_PLAY;
-      btn.classList.toggle('is-playing', on); // pause glyph is symmetric — no optical-centering offset needed
+      btn.classList.toggle('is-playing', on);
       btn.setAttribute('aria-label', (on ? 'Pause ' : 'Play ') + card.dataset.title);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
 
-  function activate(card, track, pin) {
-    if (activeCard === card) {
-      if (pin) { pinned = true; syncPlayButtons(); }
-      return;
+  /** The one place playback starts or stops in this row. */
+  function togglePlay(card, track, spot) {
+    if (!window.mutraPlayer) return;
+    const obj = playable(track, spot);
+    card.dataset.playSlug = obj.slug;
+    if (mutraPlayer.isCurrent(obj.slug)) mutraPlayer.toggle();
+    else {
+      mutraPlayer.play(obj);
+      if (window.mutraTrack) mutraTrack('play', 'spotlight:' + track.slug, { once: true });
     }
-    if (activeCard) deactivateEl(activeCard);
-    activeCard = card;
-    pinned = !!pin;
-    card.classList.add('spot-active');
-    if (window.mutraPauseMainPlayer) window.mutraPauseMainPlayer();
-    if (snippetAudio.src !== track.snippetUrl) snippetAudio.src = track.snippetUrl;
-    snippetAudio.currentTime = 0;
-    fadeTo(0.55, 260);
-    if (window.mutraTrack) mutraTrack('play', 'spotlight:' + track.slug, { once: true });
-    syncPlayButtons();
-  }
-  function deactivateEl(card) { card.classList.remove('spot-active'); }
-  /** force=true stops a pinned card too (scrolled away, page hidden, tapped
-   * again to explicitly stop) — a plain mouseleave/blur never does. */
-  function deactivate(card, force) {
-    if (activeCard !== card) return;
-    if (pinned && !force) return;
-    activeCard = null;
-    pinned = false;
-    deactivateEl(card);
-    fadeTo(0, 320);
-    syncPlayButtons();
+    syncFromPlayer();
   }
 
   function buildCard(track, spot) {
     const card = document.createElement('div');
     card.className = 'spot-card' + (track.isAlbum ? ' spot-is-album' : '');
-    card.tabIndex = 0;
     card.dataset.title = track.title;
-    card.setAttribute('role', 'button');
-    card.setAttribute('aria-label', track.title + ' — preview');
+    card.dataset.playSlug = playable(track, spot).slug;
     card.innerHTML = `
       <div class="spot-art">
         <div class="spot-sleeve">
           <img src="${track.cover}" alt="${track.title} cover art" loading="lazy">
-          <button type="button" class="spot-play" aria-label="Play ${track.title}">${ICON_PLAY}</button>
+          <button type="button" class="spot-play" aria-pressed="false" aria-label="Play ${track.title}">${ICON_PLAY}</button>
         </div>
         <div class="spot-vinyl"><img src="${track.vinyl}" alt="" loading="lazy"></div>
       </div>
@@ -112,28 +110,16 @@
         ${spot.artist ? `<button type="button" class="spot-artist" aria-label="${spot.artist} — artist page">${spot.artist}</button>` : ''}
       </div>`;
 
-    card.addEventListener('mouseenter', () => activate(card, track));
-    card.addEventListener('mouseleave', () => deactivate(card));
-    card.addEventListener('focus', () => activate(card, track));
-    card.addEventListener('blur', () => deactivate(card));
-    // touch: tap toggles (no real hover to keep it going, so a tap pins it
-    // exactly like clicking the play button would)
-    card.addEventListener('click', (e) => {
-      if (!matchMedia('(hover: hover)').matches) {
-        e.preventDefault();
-        if (activeCard === card) deactivate(card, true); else activate(card, track, true);
-      }
-    });
-    // the play button pins the card on: keeps spinning/playing after the
-    // cursor leaves, independent of hover — click again to stop it
+    // NOTE: no mouseenter/mouseleave/focus/blur handlers, on purpose. The
+    // reveal is CSS-only (:hover, :focus-within), which is what guarantees
+    // that pointing at a card can never touch the audio.
     card.querySelector('.spot-play').addEventListener('click', (e) => {
       e.stopPropagation();
       e.preventDefault();
-      if (activeCard === card && pinned) deactivate(card, true);
-      else activate(card, track, true);
+      togglePlay(card, track, spot);
     });
-    // the artist name is its own click target — opens the full artist
-    // page (lightbox transition if available, else a plain nav)
+
+    // the artist name is its own click target — opens the full artist page
     const artistBtn = card.querySelector('.spot-artist');
     if (artistBtn) {
       artistBtn.addEventListener('click', (e) => {
@@ -146,12 +132,6 @@
     return card;
   }
 
-  function quoteMailto(spot) {
-    const subject = 'Mutra — Custom license quote (' + spot.artist + ' — ' + spot.album + ')';
-    const body = `Hi Snowstar,\n\nI'd like a quote to custom-license ${spot.artist} — ${spot.album}.\n\nUsage / media:\nTimeline:\n\nThanks!`;
-    return 'mailto:hello@snowstar.company?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  }
-
   function buildRow(spot) {
     const row = document.createElement('div');
     row.className = 'spotlight-row';
@@ -159,7 +139,7 @@
     row.innerHTML = `
       <div class="spot-head">
         <span class="spot-kicker">${spot.kicker}</span>
-        <a class="mbtn mbtn-solid spot-quote" href="${quoteMailto(spot)}" target="_blank" rel="noopener">Get a quote</a>
+        <button class="mbtn mbtn-solid spot-quote" type="button">Get a quote</button>
       </div>
       <div class="spot-strip-wrap">
         <button class="spot-nav spot-nav-prev" type="button" aria-label="Scroll left">${ICON_PREV}</button>
@@ -167,8 +147,17 @@
         <button class="spot-nav spot-nav-next" type="button" aria-label="Scroll right">${ICON_NEXT}</button>
       </div>`;
     const strip = row.querySelector('.spot-strip');
-    spot.tracks.forEach(t => strip.appendChild(buildCard(t, spot)));
+    spot.tracks.forEach((t) => strip.appendChild(buildCard(t, spot)));
     allCards = [...strip.querySelectorAll('.spot-card')];
+
+    // the row's own CTA goes through the licence chooser, same as everywhere
+    // else — the album card if we have it, so the dialog names something real
+    row.querySelector('.spot-quote').addEventListener('click', () => {
+      const album = spot.tracks.find((t) => t.isAlbum) || spot.tracks[0];
+      if (window.mutraLicense && album) return mutraLicense.open(playable(album, spot));
+      location.href = 'mailto:hello@snowstar.company?subject='
+        + encodeURIComponent('Mutra — Custom license quote (' + spot.artist + ' — ' + spot.album + ')');
+    });
 
     const scrollByCard = (dir) => {
       const card = strip.querySelector('.spot-card');
@@ -178,11 +167,9 @@
     row.querySelector('.spot-nav-prev').addEventListener('click', () => scrollByCard(-1));
     row.querySelector('.spot-nav-next').addEventListener('click', () => scrollByCard(1));
 
-    // stop preview + spin whenever the row leaves view (scrolled past, tab
-    // switch, etc.) — force:true so a pinned card stops too, not just a hover
-    new IntersectionObserver((entries) => {
-      if (!entries[0].isIntersecting && activeCard) deactivate(activeCard, true);
-    }, { threshold: 0 }).observe(row);
+    // NOTE: scrolling the row out of view no longer stops anything. It used to,
+    // back when this was a hover preview — but the track is in the sticky
+    // player now, and music stopping because you scrolled would be a bug.
 
     if (window.mutraTrack) {
       new IntersectionObserver((entries, obs) => {
@@ -205,5 +192,9 @@
   };
   window.MUTRA_SPOTLIGHT_INSERT_AFTER = INSERT_AFTER;
 
-  addEventListener('pagehide', () => activeCard && deactivate(activeCard, true));
+  // subscribe once the player exists — script order isn't guaranteed
+  (function subscribe(tries) {
+    if (window.mutraPlayer) { mutraPlayer.onChange(syncFromPlayer); return; }
+    if (tries > 0) setTimeout(() => subscribe(tries - 1), 120);
+  })(25);
 })();

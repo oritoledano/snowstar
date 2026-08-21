@@ -66,31 +66,31 @@
    two ends of the row (which only ever move the vinyl, never the
    sleeve — see below) keep the fuller 50%, so the sibling nudge amount
    has to match whichever of those is actually happening. */
-.spot-card:hover, .spot-card:focus-within, .spot-card.spot-active {
+.spot-card:hover, .spot-card:focus-within, .spot-card.spot-playing {
   z-index: 6;
 }
 .spot-card:not(:first-child):not(:last-child):hover ~ .spot-card,
 .spot-card:not(:first-child):not(:last-child):focus-within ~ .spot-card,
-.spot-card:not(:first-child):not(:last-child).spot-active ~ .spot-card {
+.spot-card:not(:first-child):not(:last-child).spot-playing ~ .spot-card {
   transform: translateX(25%);
 }
 .spot-card:has(~ .spot-card:not(:first-child):not(:last-child):hover),
 .spot-card:has(~ .spot-card:not(:first-child):not(:last-child):focus-within),
-.spot-card:has(~ .spot-card:not(:first-child):not(:last-child).spot-active) {
+.spot-card:has(~ .spot-card:not(:first-child):not(:last-child).spot-playing) {
   transform: translateX(-25%);
 }
 /* first card hovered: only cards AFTER it exist to nudge, by the full
    50% its vinyl still moves */
 .spot-card:first-child:hover ~ .spot-card,
 .spot-card:first-child:focus-within ~ .spot-card,
-.spot-card:first-child.spot-active ~ .spot-card {
+.spot-card:first-child.spot-playing ~ .spot-card {
   transform: translateX(50%);
 }
 /* last card hovered: only cards BEFORE it exist to nudge, by the full
    50% its (reversed, leftward) vinyl still moves */
 .spot-card:has(~ .spot-card:last-child:hover),
 .spot-card:has(~ .spot-card:last-child:focus-within),
-.spot-card:has(~ .spot-card:last-child.spot-active) {
+.spot-card:has(~ .spot-card:last-child.spot-playing) {
   transform: translateX(-50%);
 }
 
@@ -108,10 +108,11 @@
   transition: transform .55s cubic-bezier(.16,1,.3,1);
 }
 .spot-sleeve img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* persistent play/pause — independent of hover, click pins the card on so
-   the vinyl keeps spinning and the snippet keeps playing after the cursor
-   leaves. Low opacity at rest so it doesn't fight the cover art; louder on
-   hover/focus, and fully opaque whenever this card is the one pinned. */
+/* The only control in this row that starts audio. Clicking it loads the track
+   into the sticky player at the bottom of the page and spins the vinyl, both
+   of which outlive the cursor leaving. Low opacity at rest so it doesn't
+   fight the cover art; louder on hover/focus, and fully opaque while this is
+   the card that's playing. */
 .spot-play {
   position: absolute; z-index: 3; inset: 0; margin: auto;
   width: 44px; height: 44px; border-radius: 50%; padding: 0;
@@ -123,7 +124,7 @@
 .spot-play svg { margin-left: 1px; } /* optical centering for the play triangle */
 .spot-card:hover .spot-play,
 .spot-card:focus-within .spot-play,
-.spot-card.spot-active .spot-play {
+.spot-card.spot-playing .spot-play {
   opacity: .85;
 }
 .spot-play:hover, .spot-play:focus-visible { opacity: 1; background: rgba(10,8,12,.7); transform: scale(1.06); }
@@ -131,7 +132,7 @@
 .spot-play.is-playing svg { margin-left: 0; }
 .spot-card:hover .spot-sleeve,
 .spot-card:focus-within .spot-sleeve,
-.spot-card.spot-active .spot-sleeve {
+.spot-card.spot-playing .spot-sleeve {
   transform: translateX(-25%);
 }
 /* the two ends of the row have nothing on one side to open a gap with —
@@ -141,10 +142,10 @@
    sleeve stays put) since the reveal only has to clear room on one side. */
 .spot-card:first-child:hover .spot-sleeve,
 .spot-card:first-child:focus-within .spot-sleeve,
-.spot-card:first-child.spot-active .spot-sleeve,
+.spot-card:first-child.spot-playing .spot-sleeve,
 .spot-card:last-child:hover .spot-sleeve,
 .spot-card:last-child:focus-within .spot-sleeve,
-.spot-card:last-child.spot-active .spot-sleeve {
+.spot-card:last-child.spot-playing .spot-sleeve {
   transform: translateX(0%);
 }
 
@@ -156,14 +157,14 @@
 }
 .spot-card:hover .spot-vinyl,
 .spot-card:focus-within .spot-vinyl,
-.spot-card.spot-active .spot-vinyl {
+.spot-card.spot-playing .spot-vinyl {
   opacity: 1; transform: translateX(25%);
 }
 /* first card keeps the fuller 50% too (unchanged — "far left and far
    right are great"), same reasoning as the last card, just not reversed */
 .spot-card:first-child:hover .spot-vinyl,
 .spot-card:first-child:focus-within .spot-vinyl,
-.spot-card:first-child.spot-active .spot-vinyl {
+.spot-card:first-child.spot-playing .spot-vinyl {
   transform: translateX(50%);
 }
 /* the last card has no room to its right, so it reveals to the LEFT
@@ -171,7 +172,7 @@
    are great") since it doesn't need to also move a sleeve out of the way */
 .spot-card:last-child:hover .spot-vinyl,
 .spot-card:last-child:focus-within .spot-vinyl,
-.spot-card:last-child.spot-active .spot-vinyl {
+.spot-card:last-child.spot-playing .spot-vinyl {
   transform: translateX(-50%);
 }
 .spot-vinyl img {
@@ -195,9 +196,10 @@
 :root[data-theme="light"] .spot-card.spot-is-album .spot-vinyl img {
   content: url(https://cdn.snowstar.company/mutra/spotlight/mutra-vinyl-album-black.webp);
 }
-.spot-card:hover .spot-vinyl img,
-.spot-card:focus-within .spot-vinyl img,
-.spot-card.spot-active .spot-vinyl img {
+/* Spinning is the PLAYING signal, never the hover signal. Hover reveals the
+   disc and leaves it perfectly still; the moment it turns, something is
+   audible. That separation is the whole point of the two classes. */
+.spot-card.spot-playing .spot-vinyl img {
   animation-play-state: running;
 }
 @keyframes spot-spin { to { transform: rotate(360deg); } }

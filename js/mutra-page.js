@@ -131,6 +131,32 @@
   // us before it starts, so two things never play over each other
   window.mutraPauseMainPlayer = () => { if (!audio.paused) audio.pause(); };
 
+  /* The Spotlight row used to run a SECOND <audio> of its own, which is why
+     hovering a card had to pause this one — two elements, two transports,
+     and whichever spoke last won. It now hands its cards to this player
+     instead: one thing plays at a time by construction, and the sticky bar
+     always shows what the visitor actually started.
+
+     Subscribers are told about every state change, including a takeover from
+     the catalog list, so an outside play/pause button can FOLLOW the player
+     rather than track its own idea of what is playing. */
+  const playerSubs = new Set();
+  function notifySubs() {
+    const slug = current ? current.track.slug : null;
+    const playing = !!(current && !audio.paused);
+    playerSubs.forEach((fn) => { try { fn(slug, playing); } catch { /* a bad subscriber must not break playback */ } });
+  }
+  window.mutraPlayer = {
+    play: (track) => loadTrack(track, null),
+    toggle: () => toggle(),
+    isPlaying: (slug) => !!(current && current.track.slug === slug && !audio.paused),
+    isCurrent: (slug) => !!(current && current.track.slug === slug),
+    /** The catalog entry for a slug, overrides already merged — so an outside
+     *  caller plays the real track rather than a stale copy of it. */
+    find: (slug) => MUTRA.tracks.find((t) => t.slug === slug) || null,
+    onChange: (fn) => { playerSubs.add(fn); return () => playerSubs.delete(fn); },
+  };
+
   const player = $('#player'), plPlay = $('#plPlay'), plTitle = $('#plTitle'),
     plArtist = $('#plArtist'), plCur = $('#plCur'), plTot = $('#plTot'),
     plFill = $('#plFill'), plThumb = $('#plThumb'), plSeek = $('#plSeek'), plLic = $('#plLic'), plClose = $('#plClose');
@@ -219,6 +245,7 @@
     player.classList.add('up');
     document.body.querySelectorAll('.trk .trk-play').forEach(b => b.innerHTML = ICON_PLAY);
     if (row) row.querySelector('.trk-play').innerHTML = ICON_PAUSE;
+    notifySubs();   // announce the switch now: 'play' may never fire if autoplay is refused
   }
   function toggle() {
     if (!current) return;
@@ -231,6 +258,7 @@
     if (current && current.row) current.row.classList.remove('playing');
     current = null;
     player.classList.remove('up');
+    notifySubs();
   }
 
   audio.addEventListener('timeupdate', () => {
@@ -242,12 +270,16 @@
   audio.addEventListener('play', () => {
     plPlay.innerHTML = ICON_PAUSE;
     if (current && current.row) current.row.querySelector('.trk-play').innerHTML = ICON_PAUSE;
+    notifySubs();
   });
   audio.addEventListener('pause', () => {
     plPlay.innerHTML = ICON_PLAY;
     if (current && current.row) current.row.querySelector('.trk-play').innerHTML = ICON_PLAY;
+    notifySubs();
   });
-  audio.addEventListener('ended', () => { setProgressUI(0); plCur.textContent = '0:00'; finalizeListen(); });
+  audio.addEventListener('ended', () => {
+    setProgressUI(0); plCur.textContent = '0:00'; finalizeListen(); notifySubs();
+  });
 
   // a closed tab, backgrounded app, or plain navigation must still report
   // whatever was actually heard — both events are covered since mobile
@@ -257,7 +289,13 @@
 
   plPlay.innerHTML = ICON_PLAY;
   plPlay.addEventListener('click', toggle);
-  plLic.addEventListener('click', e => { e.preventDefault(); if (current) startLicense(current.track); });
+  plLic.addEventListener('click', e => {
+    e.preventDefault();
+    if (!current) return;
+    // was still firing the old mailto while the row button opened the chooser
+    if (window.mutraLicense && current.track.slug) return mutraLicense.open(current.track);
+    startLicense(current.track);
+  });
   plClose.addEventListener('click', closePlayer);
 
   // ── the fix: robust seek (click + drag) on a generous hit area ──
