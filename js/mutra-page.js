@@ -334,7 +334,7 @@
   const state = {
     packages: facet(), genres: facet(), moods: facet(), instruments: facet(), scales: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
-    sort: 'picks', highlights: true, lyrics: false, keys: false,
+    sort: 'picks', highlights: true, lyrics: false, keys: false, hiddenOnly: false,
   };
   const SORTS = [
     { id: 'picks', label: 'Staff picks' },
@@ -360,6 +360,10 @@
     // a hidden track stays in the file and in the owner's editor, but is gone
     // for every visitor — hiding is the soft alternative to deleting a row
     if (t.hidden && !curateMode) return false;
+    // ...and the Hidden view is the inverse, so a tucked-away track has
+    // somewhere to actually live. Without it the only way to find one was to
+    // scroll the whole catalog in edit mode looking for a filled circle.
+    if (state.hiddenOnly && !t.hidden) return false;
     if (state.favoritesOnly && !(window.MutraMembers && MutraMembers.isFavorite(t.slug))) return false;
     const sc = state.scales;
     if (sc.inc.size && !sc.inc.has(scaleOf(t))) return false;
@@ -1354,6 +1358,42 @@
     });
   }
 
+  /** The Hidden shelf: a real place to see what has been tucked away.
+   *  Only exists in edit mode, because outside it the answer is always "none
+   *  of them" — and it carries the count, so you can tell at a glance whether
+   *  anything is hidden without opening it. */
+  function syncHiddenToggle() {
+    let hb = $('#hiddenToggle');
+    const cur = $('#curateToggle');
+    if (!curateMode || !cur) {
+      if (hb) hb.remove();
+      return;
+    }
+    const n = MUTRA.tracks.filter(t => t.hidden).length;
+    if (!hb) {
+      hb = document.createElement('button');
+      hb.id = 'hiddenToggle';
+      hb.className = 'fcat fcat-tgl fcat-hid';
+      hb.addEventListener('click', () => {
+        state.hiddenOnly = !state.hiddenOnly;
+        hb.classList.toggle('on', state.hiddenOnly);
+        render();
+        toast(state.hiddenOnly
+          ? `Showing ${MUTRA.tracks.filter(t => t.hidden).length} hidden \u2014 \u25cf unhides a track`
+          : 'Back to the full catalog');
+      });
+      cur.insertAdjacentElement('afterend', hb);
+    }
+    hb.classList.toggle('on', state.hiddenOnly);
+    hb.title = n ? `${n} hidden track${n === 1 ? '' : 's'}` : 'Nothing is hidden';
+    hb.setAttribute('aria-pressed', state.hiddenOnly ? 'true' : 'false');
+    // an eye with a slash — the same idea as the per-row \u25cb/\u25cf, at shelf scale
+    hb.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" '
+      + 'stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/>'
+      + '<circle cx="12" cy="12" r="3"/><path d="M3 21L21 3"/></svg>'
+      + `<span>Hidden${n ? ' \u00b7 ' + n : ''}</span>`;
+  }
+
   /** The toggle only ever exists for the owner — built on the account state
       landing, and torn down again if they sign out mid-session. */
   function syncCurateToggle() {
@@ -1361,7 +1401,11 @@
     let btn = $('#curateToggle');
     if (!isAdmin) {
       if (btn) btn.remove();
-      if (curateMode) { curateMode = false; render(); }
+      const hb = $('#hiddenToggle');
+      if (hb) hb.remove();
+      // leaving edit mode must also drop the Hidden view, or a signed-out
+      // visitor would be looking at an empty catalog with no way back
+      if (curateMode || state.hiddenOnly) { curateMode = false; state.hiddenOnly = false; render(); }
       return;
     }
     if (btn) return;
@@ -1375,12 +1419,15 @@
     btn.addEventListener('click', () => {
       curateMode = !curateMode;
       btn.classList.toggle('on', curateMode);
+      if (!curateMode) state.hiddenOnly = false;   // don't strand them in an empty view
+      syncHiddenToggle();
       // the pick ORDER arrows only mean anything in the picks sort, but the
       // rest of the editor works in any order, so don't hijack the sort
       render();
       toast(curateMode ? 'Editing — ◇ pins a staff pick, ✎ edits a track' : 'Editing off');
     });
     favToggle.insertAdjacentElement('afterend', btn);
+    syncHiddenToggle();
   }
 
   // ── sort ──

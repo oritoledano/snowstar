@@ -538,6 +538,17 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   font-size:.74rem;letter-spacing:.04em}
 #curateToggle:hover{color:var(--text);border-color:var(--amber,var(--coral))}
 #curateToggle.on{background:var(--grad);border-color:transparent;color:var(--on-accent)}
+/* The Hidden shelf sits beside it and needs the same treatment for the same
+   reason — plus its label carries the COUNT, which is the useful part, and
+   .fcat-tgl span collapses labels to max-width:0 until hover. Muted rather
+   than accent at rest: it reports a state, it doesn't invite a click. */
+#hiddenToggle{border:1px solid var(--line-2,var(--line));border-radius:99px;
+  padding:7px 13px;color:var(--muted);margin-left:2px}
+#hiddenToggle svg{flex:none}
+#hiddenToggle span{max-width:140px;opacity:1;margin-left:7px;
+  font-size:.74rem;letter-spacing:.04em}
+#hiddenToggle:hover{color:var(--text);border-color:var(--muted)}
+#hiddenToggle.on{background:var(--muted);border-color:transparent;color:var(--bg)}
 .trk-cur{display:flex;align-items:center;gap:4px;flex:none;
   padding:3px 7px;border-radius:99px;border:1px solid var(--line);background:var(--chip-bg)}
 .trk-cur.on{border-color:var(--amber);background:var(--wash-warm)}

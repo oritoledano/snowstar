@@ -63,7 +63,11 @@ const MUTRA_SPOTLIGHTS = [
       cover: `https://cdn.snowstar.company/mutra/spotlight/kayma-nto/${t.slug}-cover.webp`,
       vinyl: t.vinyl || MUTRA_SPOTLIGHT_VINYL,
       snippetUrl: t.snippetUrl || 'https://cdn.snowstar.company/mutra/spotlight/placeholder-snippet.m4a',
-      placeholder: t.placeholder !== undefined ? t.placeholder : true,
+      // Every song here is now a real catalogue entry, so the row plays the
+      // master rather than this snippet — mutra-spotlight.js prefers
+      // mutraPlayer.find(slug) and only falls back to snippetUrl. The
+      // placeholder dot goes with it: there is nothing provisional left.
+      placeholder: t.placeholder !== undefined ? t.placeholder : false,
     })),
   },
 ];

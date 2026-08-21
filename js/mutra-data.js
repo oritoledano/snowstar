@@ -9030,7 +9030,399 @@ const MUTRA = {
    "vocal": "Instrumental",
    "key": "A",
    "scale": "minor"
-  }
+  },
+ {
+  "title": "WOAW",
+  "slug": "woaw",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 272,
+  "audio": "https://cdn.snowstar.company/audio-extra/woaw.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/woaw.jpg",
+  "moods": [
+   "Uplifting",
+   "Dreamy"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 92,
+  "vocal": "Vocals",
+  "key": "F",
+  "scale": "major"
+ },
+ {
+  "title": "LEARN TO SAY NO",
+  "slug": "learn-to-say-no",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 173,
+  "audio": "https://cdn.snowstar.company/audio-extra/learn-to-say-no.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/learn-to-say-no.jpg",
+  "moods": [
+   "Emotional",
+   "Dramatic"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 115,
+  "vocal": "Vocals",
+  "key": "A",
+  "scale": "minor"
+ },
+ {
+  "title": "LEARN TO SAY NO (RADIO EDIT)",
+  "slug": "learn-to-say-no-radio",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 194,
+  "audio": "https://cdn.snowstar.company/audio-extra/learn-to-say-no-radio.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/learn-to-say-no-radio.jpg",
+  "moods": [
+   "Emotional",
+   "Dramatic"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 115,
+  "vocal": "Vocals",
+  "key": "A",
+  "scale": "minor"
+ },
+ {
+  "title": "BUNNY",
+  "slug": "bunny",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 173,
+  "audio": "https://cdn.snowstar.company/audio-extra/bunny.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/bunny.jpg",
+  "moods": [
+   "Playful",
+   "Uplifting"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 120,
+  "vocal": "Vocals",
+  "key": "A",
+  "scale": "minor"
+ },
+ {
+  "title": "DISCO",
+  "slug": "disco",
+  "artist": "KAYMA",
+  "genres": [
+   "Dance",
+   "Indie"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 201,
+  "audio": "https://cdn.snowstar.company/audio-extra/disco.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/disco.jpg",
+  "moods": [
+   "Party",
+   "Playful"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 92,
+  "vocal": "Vocals",
+  "key": "C#",
+  "scale": "minor"
+ },
+ {
+  "title": "MAMA",
+  "slug": "mama",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 236,
+  "audio": "https://cdn.snowstar.company/audio-extra/mama.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/mama.jpg",
+  "moods": [
+   "Emotional",
+   "Sad"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 92,
+  "vocal": "Vocals",
+  "key": "F",
+  "scale": "minor"
+ },
+ {
+  "title": "LATELY",
+  "slug": "lately",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 207,
+  "audio": "https://cdn.snowstar.company/audio-extra/lately.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/lately.jpg",
+  "moods": [
+   "Dreamy",
+   "Sad"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 83,
+  "vocal": "Vocals",
+  "key": "G",
+  "scale": "major"
+ },
+ {
+  "title": "BAD BLOOD",
+  "slug": "bad-blood",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 215,
+  "audio": "https://cdn.snowstar.company/audio-extra/bad-blood.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/bad-blood.jpg",
+  "moods": [
+   "Dark",
+   "Dramatic"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 115,
+  "vocal": "Vocals",
+  "key": "A",
+  "scale": "minor"
+ },
+ {
+  "title": "SYMPATHY",
+  "slug": "sympathy",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 202,
+  "audio": "https://cdn.snowstar.company/audio-extra/sympathy.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/sympathy.jpg",
+  "moods": [
+   "Emotional",
+   "Dreamy"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 92,
+  "vocal": "Vocals",
+  "key": "G",
+  "scale": "minor"
+ },
+ {
+  "title": "NEW TRYING OUTS",
+  "slug": "new-trying-outs",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 179,
+  "audio": "https://cdn.snowstar.company/audio-extra/new-trying-outs.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/new-trying-outs.jpg",
+  "moods": [
+   "Uplifting",
+   "Playful"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 123,
+  "vocal": "Vocals",
+  "key": "A",
+  "scale": "minor"
+ },
+ {
+  "title": "BLUE",
+  "slug": "blue",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 222,
+  "audio": "https://cdn.snowstar.company/audio-extra/blue.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/blue.jpg",
+  "moods": [
+   "Sad",
+   "Dreamy"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 99,
+  "vocal": "Vocals",
+  "key": "G",
+  "scale": "minor"
+ },
+ {
+  "title": "HISTORY",
+  "slug": "history",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 188,
+  "audio": "https://cdn.snowstar.company/audio-extra/history.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/history.jpg",
+  "moods": [
+   "Dramatic",
+   "Emotional"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 112,
+  "vocal": "Vocals",
+  "key": "F",
+  "scale": "minor"
+ },
+ {
+  "title": "TIL IT'S OVER",
+  "slug": "til-its-over",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 183,
+  "audio": "https://cdn.snowstar.company/audio-extra/til-its-over.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/til-its-over.jpg",
+  "moods": [
+   "Emotional",
+   "Uplifting"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 99,
+  "vocal": "Vocals",
+  "key": "C",
+  "scale": "major"
+ },
+ {
+  "title": "TRAIN SESSION",
+  "slug": "train-session",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Rock"
+  ],
+  "packages": [
+   "KAYMA — New Trying Outs"
+  ],
+  "duration": 221,
+  "audio": "https://cdn.snowstar.company/audio-extra/train-session.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/train-session.jpg",
+  "moods": [
+   "Aggressive",
+   "Dramatic"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 161,
+  "vocal": "Vocals",
+  "key": "Bb",
+  "scale": "major"
+ }
  ],
  "packages": [
   "Advertising Essentials",
