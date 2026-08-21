@@ -339,14 +339,17 @@
   });
 
   // ── render catalog ──
-  // Artlist-style faceted browse: "packages" (the licensing bundles the catalog is
-  // organized into on the Wix side) and "genres" are each multi-select (OR within a
-  // facet), facets combine with AND, same Set-based pattern as the homepage Work grid.
+  // Artlist-style faceted browse: each facet is multi-select (OR within a facet),
+  // facets combine with AND, same Set-based pattern as the homepage Work grid.
+  // NOTE: "packages" (the licensing bundles inherited from the Wix site) is no
+  // longer a facet — it was removed from browse and from the editor. The FIELD
+  // survives on each track because pickScore and the "custom" sort still read
+  // it to order staff picks; deleting the data would flatten that ordering.
   const tracksEl = $('#tracks');
   const PAGE = 40;   // rows added per scroll-in
   const facet = () => ({ inc: new Set(), exc: new Set() });
   const state = {
-    packages: facet(), genres: facet(), moods: facet(), instruments: facet(), scales: facet(),
+    genres: facet(), moods: facet(), instruments: facet(), scales: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
     sort: 'picks', highlights: true, lyrics: false, keys: false, hiddenOnly: false,
   };
@@ -361,7 +364,6 @@
   const DURATIONS = [
     { id: 'd30',  label: '< 30 sec', test: d => d < 30 },
     { id: 'd60',  label: '< 1 min',  test: d => d < 60 },
-    { id: 'd90',  label: '< 1.5 min', test: d => d < 90 },
     { id: 'd3',   label: '3+ min',   test: d => d >= 180 },
     { id: 'd4',   label: '4+ min',   test: d => d >= 240 },
   ];
@@ -382,7 +384,7 @@
     const sc = state.scales;
     if (sc.inc.size && !sc.inc.has(scaleOf(t))) return false;
     if (sc.exc.size && sc.exc.has(scaleOf(t))) return false;
-    for (const key of ['packages', 'genres', 'moods', 'instruments']) {
+    for (const key of ['genres', 'moods', 'instruments']) {
       const vals = t[key] || [], f = state[key];
       if (f.inc.size && !vals.some(v => f.inc.has(v))) return false;
       if (f.exc.size && vals.some(v => f.exc.has(v))) return false;
@@ -397,8 +399,8 @@
       if (!t.bpm || t.bpm < state.bpm.min || t.bpm > state.bpm.max) return false;
     }
     if (state.q) {
-      const hay = (t.title + ' ' + t.genres.join(' ') + ' ' + (t.moods || []).join(' ') + ' ' +
-        (t.instruments || []).join(' ')).toLowerCase();
+      const hay = (t.title + ' ' + (t.artist || '') + ' ' + t.genres.join(' ') + ' ' +
+        (t.moods || []).join(' ') + ' ' + (t.instruments || []).join(' ')).toLowerCase();
       if (!hay.includes(state.q)) return false;
     }
     return true;
@@ -646,7 +648,6 @@
   // ── filter bar: a category opens a drawer of chips that pushes the list down ──
   const fbar = $('#fbar'), fdrop = $('#fdrop'), fpills = $('#fpills');
   const FACETS = {
-    packages:    { label: 'Package',    values: () => MUTRA.packages },
     genres:      { label: 'Genre',      values: () => MUTRA.genres },
     moods:       { label: 'Mood',       values: () => MUTRA.moods },
     instruments: { label: 'Instrument', values: () => INSTRUMENTS },
@@ -1120,7 +1121,6 @@
     ['genres', 'Genres', () => MUTRA.genres],
     ['moods', 'Moods', () => MUTRA.moods],
     ['instruments', 'Instruments', () => INSTRUMENTS],
-    ['packages', 'Packages', () => MUTRA.packages],
   ];
   const PITCHES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
 
@@ -1138,7 +1138,7 @@
       key: track.key || '', scale: track.scale || '', vocal: track.vocal || 'Instrumental',
       cover: track.cover,
       genres: [...(track.genres || [])], moods: [...(track.moods || [])],
-      instruments: [...(track.instruments || [])], packages: [...(track.packages || [])],
+      instruments: [...(track.instruments || [])],
       hl: [hl[0], hl[1]],
       credits: (track.credits || []).map(c => ({ ...c })),
       lane: track.lane === 'quote' ? 'quote' : 'instant',

@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'members', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'storage', 'pipeline'];
+  const TABS = ['overview', 'stats', 'members', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -64,6 +64,7 @@
       if (tab === 'artists') return paintArtists();
       if (tab === 'submissions') return paintSubmissions();
       if (tab === 'notifications') return paintMail();
+      if (tab === 'alerts') return paintAlerts();
       if (tab === 'storage') return paintStorage();
       if (tab === 'upload') return paintUpload();
       if (tab === 'clearlist') return paintClearlistAdmin();
@@ -821,6 +822,47 @@
         await post('/mailbox/send', { ids: [Number(b.closest('.rv-mrow').dataset.id)] });
         load();
       }));
+  }
+
+  /* ── alerts: what the site emailed YOU, and the switch that stops it ── */
+  /* These used to exist only in an inbox — sent and forgotten, with no way to
+     see from here what had gone out or to stop it without a redeploy. The log
+     records suppressed alerts too, so muting is reversible and you can read
+     what you would have received while it was off. */
+  async function paintAlerts() {
+    const d = await get('/alerts');
+    const rows = d.alerts || [];
+    const badge = { sent: 'rv-sent', failed: 'rv-err', suppressed: 'rv-mut' };
+    const counts = rows.reduce((a, r) => (a[r.status] = (a[r.status] || 0) + 1, a), {});
+    paint(`
+      <div class="al-switch ${d.muted ? 'off' : 'on'}">
+        <div>
+          <b>Automated email is ${d.muted ? 'OFF' : 'ON'}</b>
+          <p>${d.muted
+            ? 'Nothing is being emailed to you. Alerts are still recorded below, so you can turn this back on and lose nothing in between.'
+            : 'You get an alert when a visitor plays several tracks or clicks License, capped daily, plus one digest each morning.'}</p>
+        </div>
+        <button class="rv-btn ${d.muted ? 'rv-ok' : ''}" id="alMute">${d.muted ? 'Turn alerts on' : 'Stop these emails'}</button>
+      </div>
+      <p class="db-empty" style="padding-top:0">
+        ${rows.length ? `${rows.length} logged · ${counts.sent || 0} sent, ${counts.suppressed || 0} suppressed, ${counts.failed || 0} failed`
+                      : 'Nothing logged yet. Alerts sent before this log existed are only in your inbox.'}</p>
+      ${rows.map((r) => `
+        <details class="rv-mrow">
+          <summary>
+            <b>${esc(r.subject)}</b>
+            <span style="color:var(--muted)">${r.kind === 'digest' ? 'daily digest' : 'visitor'}</span>
+            <span class="${badge[r.status] || ''}">${r.status}${r.note ? ' · ' + esc(r.note) : ''}</span>
+            <span style="margin-left:auto;color:var(--muted)">${fmt(r.ts)}</span>
+          </summary>
+          <pre>${esc(r.body)}</pre></details>`).join('')}`);
+
+    const btn = document.getElementById('alMute');
+    if (btn) btn.addEventListener('click', async () => {
+      btn.disabled = true; btn.textContent = 'Saving\u2026';
+      await post('/alerts/mute', { muted: !d.muted });
+      load();
+    });
   }
 
   /* ── storage: R2 + D1 (worker) and the Pages repo (GitHub public API) ── */

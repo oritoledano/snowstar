@@ -125,6 +125,13 @@ async function maybeAlert(env, sid) {
     `Journey:\n${lines.join('\n')}\n\n` +
     `Full stats: https://snowstar.company/stats.html\n`;
 
+  // Muted still records the alert — you can read what you would have been sent,
+  // which is the point of a switch you can turn back on.
+  if (await alertsMuted(env)) {
+    await logAlert(env, 'visitor', subject, text, 'suppressed', 'alerts muted');
+    return;
+  }
+
   try {
     await env.EMAIL.send({
       to: env.ALERT_TO,
@@ -135,9 +142,55 @@ async function maybeAlert(env, sid) {
     await env.DB.prepare(
       'INSERT INTO meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = ?'
     ).bind('alerts:' + day, String(sent + 1), String(sent + 1)).run();
+    await logAlert(env, 'visitor', subject, text, 'sent');
   } catch (e) {
     console.error('alert email failed', e && e.stack ? e.stack : String(e));
+    await logAlert(env, 'visitor', subject, text, 'failed', String(e && e.message || e));
   }
+}
+
+/**
+ * The alert log, and the switch that silences it.
+ *
+ * Alerts used to be fire-and-forget: sent, never recorded, so the only copy
+ * was in an inbox and there was no way to see from the dashboard what had gone
+ * out — or to stop it without a redeploy. Every alert is now written here
+ * whatever happens to it, including the ones the kill switch suppressed, so
+ * "why did I stop getting these" has an answer on the page.
+ */
+async function alertsMuted(env) {
+  const r = await env.DB.prepare('SELECT v FROM meta WHERE k = ?').bind('alerts:off').first();
+  return !!(r && r.v === '1');
+}
+
+async function logAlert(env, kind, subject, body, status, note = '') {
+  try {
+    await env.DB.prepare(
+      'INSERT INTO alerts (kind, subject, body, ts, status, note) VALUES (?, ?, ?, ?, ?, ?)'
+    ).bind(kind, String(subject).slice(0, 300), String(body).slice(0, 20000), now(), status, String(note).slice(0, 300)).run();
+  } catch (e) {
+    console.error('alert log failed', e && e.stack ? e.stack : String(e));
+  }
+}
+
+/** Owner: the alert history, newest first, plus the current switch position. */
+export async function listAlerts(env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const r = await env.DB.prepare(
+    'SELECT id, kind, subject, body, ts, status, note FROM alerts ORDER BY id DESC LIMIT 200'
+  ).all();
+  return json({ alerts: r.results || [], muted: await alertsMuted(env) });
+}
+
+/** Owner: flip the kill switch. Suppressed alerts are still logged. */
+export async function setAlertsMuted(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const v = b.muted ? '1' : '0';
+  await env.DB.prepare(
+    'INSERT INTO meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = ?'
+  ).bind('alerts:off', v, v).run();
+  return json({ ok: true, muted: v === '1' });
 }
 
 /** Admin-only stats read. */
@@ -272,15 +325,23 @@ export async function sendDigest(env) {
     (top.results || []).map((r, i) => `  ${i + 1}. ${r.slug} — ${r.plays}`).join('\n') +
     `\n\nFull stats: https://snowstar.company/stats.html\n`;
 
+  const subject = `Mutra daily: ${t.visits} visits, ${t.plays || 0} plays`;
+  if (await alertsMuted(env)) {
+    await logAlert(env, 'digest', subject, text, 'suppressed', 'alerts muted');
+    return;
+  }
+
   try {
     await env.EMAIL.send({
       to: env.ALERT_TO,
       from: 'alerts@snowstar.company',
-      subject: `Mutra daily: ${t.visits} visits, ${t.plays || 0} plays`,
+      subject,
       text,
     });
+    await logAlert(env, 'digest', subject, text, 'sent');
   } catch (e) {
     console.error('digest failed', e && e.stack ? e.stack : String(e));
+    await logAlert(env, 'digest', subject, text, 'failed', String(e && e.message || e));
   }
 }
 

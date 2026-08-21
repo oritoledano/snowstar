@@ -12,7 +12,7 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=3">
 <link rel="stylesheet" href="css/account.css?v=8">
-<link rel="stylesheet" href="css/mutra.css?v=57">
+<link rel="stylesheet" href="css/mutra.css?v=60">
 <style>
   body{padding-bottom:60px}
   .db-wrap{max-width:1180px;margin:0 auto;padding:96px clamp(16px,4vw,44px) 40px}
@@ -73,6 +73,17 @@
   .rv-mrow pre{white-space:pre-wrap;color:var(--muted);font:inherit;font-size:.8rem;margin:10px 0;border-top:1px solid var(--line);padding-top:10px}
   .rv-sent{color:#34d399;font-size:.74rem}
   .rv-err{color:#f87171;font-size:.74rem}
+  .rv-mut{color:#94a3b8;font-size:.74rem}
+  /* The kill switch reads as a state, not a button in a list — green rail when
+     alerts are flowing, amber when they are muted, so the tab answers "am I
+     still being emailed" before you read a word. */
+  .al-switch{display:flex;gap:16px;align-items:center;justify-content:space-between;
+    background:var(--panel);border:1px solid var(--line);border-left:3px solid #34d399;
+    border-radius:12px;padding:14px 16px;margin-bottom:14px}
+  .al-switch.off{border-left-color:#f59e0b}
+  .al-switch b{font-size:.9rem}
+  .al-switch p{color:var(--muted);font-size:.8rem;margin:4px 0 0;max-width:62ch;line-height:1.5}
+  .al-switch button{flex:none}
   .db-badge{font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--line)}
   .db-badge.ghost{color:#eab308;border-color:rgba(234,179,8,.4)}
   .db-badge.claimed,.db-badge.account{color:#34d399;border-color:rgba(52,211,153,.4)}
@@ -191,6 +202,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=15"></script>
-<script src="js/dashboard.js?v=10"></script>
+<script src="js/dashboard.js?v=11"></script>
 </body>
 </html>

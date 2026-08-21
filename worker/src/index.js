@@ -15,7 +15,8 @@
  *    on writes as CSRF defence-in-depth alongside SameSite
  */
 
-import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload } from './analytics.js';
+import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload,
+         listAlerts, setAlertsMuted } from './analytics.js';
 import { sendMail, resetEmail } from './mail.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
@@ -146,6 +147,8 @@ async function handle(req, env, ctx) {
   // ── owner-only stats ──
   if (path === '/stats' && method === 'GET') return handleStats(req, env, await currentUser(req, env));
   if (path === '/journey' && method === 'GET') return handleJourney(req, env, await currentUser(req, env));
+  if (path === '/alerts' && method === 'GET') return listAlerts(env, await currentUser(req, env));
+  if (path === '/alerts/mute' && method === 'POST') return setAlertsMuted(req, env, await currentUser(req, env));
 
   // ── member download (the one thing that needs an account) ──
   if (path === '/download' && method === 'GET') return handleDownload(req, env, await currentUser(req, env));

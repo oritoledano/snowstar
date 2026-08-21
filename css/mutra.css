@@ -310,8 +310,10 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   .fcat-adv svg{width:17px;height:17px}
   .fsort #sortBtn{font-size:.8rem}
 }
-.chip{font-family:var(--font-display);font-size:.76rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);cursor:pointer;padding:8px 15px;border-radius:99px;border:1px solid var(--line);background:var(--chip-bg);transition:.2s;white-space:nowrap}
+/* Matched to .trk-title (.74rem) so a filter value and a track title sit at the
+   same weight in the eye, and Title Case for the same reason as .tag above. */
+.chip{font-family:var(--font-display);font-size:.74rem;font-weight:500;letter-spacing:.02em;
+  color:var(--muted);cursor:pointer;padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--chip-bg);transition:.2s;white-space:nowrap}
 .chip:hover{color:var(--text);border-color:var(--line-2)}
 .chip.active{color:var(--on-accent);background:var(--grad);border-color:transparent}
 .chip.mood.active{background:linear-gradient(100deg,#ff3d8b,#ff6a4d);color:#fff}
@@ -359,17 +361,24 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   mask-image:linear-gradient(to right,transparent 0,#000 14px)}
 .trk-tags .tag-more{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0;
   transition:max-width .3s ease,opacity .22s ease,padding .3s ease}
-.trk:hover .trk-tags{overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
-.trk:hover .trk-tags::-webkit-scrollbar{display:none}
-.trk:hover .trk-tags .tag-more{max-width:160px;opacity:1;padding-left:9px;padding-right:9px;border-width:1px}
-.tag{font-family:var(--font-body);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;
-  padding:3px 9px;border-radius:99px;border:1px solid var(--line-2);color:var(--amber);
+/* The reveal now hangs off the TAGS, not the whole row: crossing a row on the
+   way somewhere else no longer sets it off. The 1s delay is the point — it
+   waits to see whether you actually stopped on the tags. Un-hover has no
+   delay, so pulling away snaps back immediately rather than finishing a slide
+   you already left. */
+.trk-tags:hover{overflow-x:auto;scrollbar-width:none;justify-content:flex-start}
+.trk-tags:hover::-webkit-scrollbar{display:none}
+.trk-tags:hover .tag-more{max-width:160px;opacity:1;padding-left:9px;padding-right:9px;border-width:1px;
+  transition-delay:1s}
+/* One colour for all three kinds. Genre/mood/instrument were amber/pink/muted,
+   which read as three different KINDS of thing competing with the accent the
+   player and the License button already use. They are all just tags. Source
+   values are already Title Case ("House & Techno"), so dropping the uppercase
+   transform is all the casing needs — capitalize would mangle acronyms. */
+.tag{font-family:var(--font-body);font-size:.58rem;letter-spacing:.04em;
+  padding:3px 9px;border-radius:99px;border:1px solid var(--line-2);color:var(--muted);
   white-space:nowrap;background:none;cursor:pointer;transition:.18s}
-.tag:hover{background:var(--tint);border-color:var(--coral);color:var(--coral)}
-.tag.mood{color:var(--pink);border-color:var(--seek-glow)}
-.tag.mood:hover{color:var(--pink);border-color:var(--pink)}
-.tag.inst{color:var(--muted)}
-.tag.inst:hover{color:var(--text)}
+.tag:hover{background:var(--tint);border-color:var(--line-2);color:var(--text)}
 .trk-right{display:flex;align-items:center;gap:16px;flex:none}
 .trk-dur{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.86rem;min-width:38px;text-align:right}
 /* has-lyrics flag and musical key, both switchable from the bar */
