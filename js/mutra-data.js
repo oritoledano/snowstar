@@ -9422,6 +9422,32 @@ const MUTRA = {
   "vocal": "Vocals",
   "key": "Bb",
   "scale": "major"
+ },
+ {
+  "title": "DANCING ON DUST",
+  "slug": "dancing-on-dust",
+  "artist": "KAYMA",
+  "genres": [
+   "Indie",
+   "Pop"
+  ],
+  "packages": [],
+  "duration": 255,
+  "audio": "https://cdn.snowstar.company/audio-extra/dancing-on-dust.m4a",
+  "cover": "https://cdn.snowstar.company/covers-art-sm/dancing-on-dust.jpg",
+  "moods": [
+   "Dreamy",
+   "Emotional"
+  ],
+  "instruments": [
+   "Vocals",
+   "Drums",
+   "Synth"
+  ],
+  "bpm": 78,
+  "vocal": "Vocals",
+  "key": "A",
+  "scale": "major"
  }
  ],
  "packages": [
