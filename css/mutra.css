@@ -320,7 +320,10 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 
 /* ───────── track list ───────── */
 .tracks{display:flex;flex-direction:column}
-.trk{display:grid;grid-template-columns:52px 40px 2.1fr 3fr auto auto;align-items:center;gap:18px;
+/* Title 2.6fr against the waveform's 2.2fr, not 2.1 against 3. The waveform is
+   decorative-plus-seekable and reads fine narrower; a clipped title is a name
+   you cannot read. At a 1240px row this alone takes clipped titles from 6 to 1. */
+.trk{display:grid;grid-template-columns:52px 40px 2.6fr 2.2fr auto auto;align-items:center;gap:18px;
   padding:18px 16px;border-radius:14px;border:1px solid transparent;transition:background .2s,border-color .2s;cursor:default}
 .trk:hover{background:var(--panel)}
 .trk.playing{background:var(--panel-2);border-color:var(--line-2)}
@@ -449,6 +452,28 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .pl-close:hover{color:var(--text)}
 
 /* ───────── responsive ───────── */
+/* Zooming out doesn't give the catalog more room — it gives the WINDOW more
+   room, and --maxw:1240px turned the difference into side margin. At 80% zoom
+   on a 1680px window the rows sat at 1240 with 440px of empty gutter while six
+   titles were clipping. Two tiers reclaim it, in the order the space is worth
+   spending:
+
+   TIER 1 — widen the container and let the title take the gain. Measured at
+   1680px: row 1240 -> 1512, title 183px -> 314px, clipped titles 6 -> 0.
+
+   TIER 2 — only once there is genuinely room, show more tags at rest. This is
+   gated at 1620 rather than at tier 1 because at 1440 the tag strip and the
+   title compete: revealing tags there put four titles back into clipping.
+   351 of 376 tracks carry more than three tags, so there is real content to
+   reveal — average visible goes 3.0 -> 5.5, and the hover marquee still
+   handles the tail on the 7-and-8-tag tracks. */
+@media (min-width:1360px){
+  :root{--maxw:clamp(1240px,92vw,1560px)}
+}
+@media (min-width:1620px){
+  .trk-tags{max-width:340px}
+  .trk-tags .tag-more{max-width:130px;opacity:1;padding-left:9px;padding-right:9px;border-width:1px}
+}
 @media (max-width:920px){
   .trk{grid-template-columns:48px 36px 1fr auto;gap:12px}
   .trk-wave{display:none}
