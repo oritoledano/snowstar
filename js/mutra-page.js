@@ -617,9 +617,12 @@
     if (tracksEl.querySelector('.spotlight-row')) return;
     const n = window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10;
     const rows = tracksEl.querySelectorAll('.trk');
-    if (rows.length < n) return;
+    // Filter down to fewer than N results and the row used to vanish entirely —
+    // it wanted a 10th row to sit after and gave up when there wasn't one. Land
+    // it after the last row instead: a search with 3 hits still shows it.
+    if (!rows.length) return;
     const block = window.mutraSpotlightRow();
-    if (block) rows[n - 1].insertAdjacentElement('afterend', block);
+    if (block) rows[Math.min(n, rows.length) - 1].insertAdjacentElement('afterend', block);
   }
 
   // load the next page as the end of the list comes into view

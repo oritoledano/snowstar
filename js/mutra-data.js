@@ -9035,6 +9035,7 @@ const MUTRA = {
   "title": "WOAW",
   "slug": "woaw",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9063,6 +9064,7 @@ const MUTRA = {
   "title": "LEARN TO SAY NO",
   "slug": "learn-to-say-no",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9091,6 +9093,7 @@ const MUTRA = {
   "title": "LEARN TO SAY NO (RADIO EDIT)",
   "slug": "learn-to-say-no-radio",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9119,6 +9122,7 @@ const MUTRA = {
   "title": "BUNNY",
   "slug": "bunny",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9147,6 +9151,7 @@ const MUTRA = {
   "title": "DISCO",
   "slug": "disco",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Dance",
    "Indie"
@@ -9175,6 +9180,7 @@ const MUTRA = {
   "title": "MAMA",
   "slug": "mama",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9203,6 +9209,7 @@ const MUTRA = {
   "title": "LATELY",
   "slug": "lately",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9231,6 +9238,7 @@ const MUTRA = {
   "title": "BAD BLOOD",
   "slug": "bad-blood",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9259,6 +9267,7 @@ const MUTRA = {
   "title": "SYMPATHY",
   "slug": "sympathy",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9287,6 +9296,7 @@ const MUTRA = {
   "title": "NEW TRYING OUTS",
   "slug": "new-trying-outs",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9315,6 +9325,7 @@ const MUTRA = {
   "title": "BLUE",
   "slug": "blue",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9343,6 +9354,7 @@ const MUTRA = {
   "title": "HISTORY",
   "slug": "history",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9371,6 +9383,7 @@ const MUTRA = {
   "title": "TIL IT'S OVER",
   "slug": "til-its-over",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
@@ -9399,6 +9412,7 @@ const MUTRA = {
   "title": "TRAIN SESSION",
   "slug": "train-session",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Rock"
@@ -9427,6 +9441,7 @@ const MUTRA = {
   "title": "DANCING ON DUST",
   "slug": "dancing-on-dust",
   "artist": "KAYMA",
+   "lane": "quote",
   "genres": [
    "Indie",
    "Pop"
