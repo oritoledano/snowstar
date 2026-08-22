@@ -18,6 +18,14 @@ database_id = "88b958b0-2f50-4f45-a72f-2c46f45734a6"
 binding = "MEDIA"
 bucket_name = "snowstar-mutra"
 
+# The clean masters, deliberately in a bucket with NO custom domain and the
+# r2.dev URL disabled — R2 public access is per-bucket, not per-prefix, and
+# snowstar-mutra has to stay public because it also serves cover art and
+# avatars. So the masters move out rather than the bucket going private.
+[[r2_buckets]]
+binding = "MASTERS"
+bucket_name = "snowstar-masters"
+
 # lets the Worker email the owner; only verified destinations are allowed
 [[send_email]]
 name = "EMAIL"

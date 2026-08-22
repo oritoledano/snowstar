@@ -361,7 +361,11 @@ export async function handleDownload(req, env, user) {
   const row = await env.DB.prepare('SELECT title, audio_key FROM tracks WHERE slug = ?').bind(slug).first();
   if (!row) return json({ error: 'not_found' }, 404);
 
-  const obj = await env.MEDIA.get(row.audio_key);
+  // Read from the PRIVATE bucket, not the public one. Same keys, same bytes —
+  // but the download path no longer depends on the object being reachable at
+  // cdn.snowstar.company, which is what lets the public copy become a preview.
+  // Falls back to MEDIA so a key that has not been mirrored yet still serves.
+  const obj = (await env.MASTERS.get(row.audio_key)) || (await env.MEDIA.get(row.audio_key));
   if (!obj) return json({ error: 'missing_file' }, 404);
 
   // server-confirmed log (not a client beacon) — feeds the member's own
