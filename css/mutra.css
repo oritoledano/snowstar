@@ -516,7 +516,10 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 
 .mutra-toast{
   position:fixed;left:50%;bottom:calc(var(--player-h) + 18px);transform:translate(-50%,12px);
-  background:var(--toast-bg);border:1px solid var(--line-2);color:var(--text);
+  /* The bubble is dark in every skin, light theme included, so its text has to
+     travel with the bubble rather than with the page. color:var(--text) made it
+     dark-on-dark in light mode — the two tokens were literally the same colour. */
+  background:var(--toast-bg);border:1px solid var(--line-2);color:var(--toast-fg);
   padding:10px 18px;border-radius:99px;font-size:.86rem;z-index:240;
   opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;backdrop-filter:blur(10px)}
 .mutra-toast.show{opacity:1;transform:translate(-50%,0)}
