@@ -31,7 +31,7 @@ import { registerArtist, myUploads, uploadTrack, createSubmission,
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration } from './rights.js';
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
-import { updateMember, deleteMember } from './members.js';
+import { updateMember, deleteMember, memberDetail } from './members.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
 import { currentUser, readCookies } from './session.js';
@@ -214,6 +214,7 @@ async function handle(req, env, ctx) {
   if (path === '/favorites/list' && method === 'GET') return myFavoritesList(env, await currentUser(req, env), url);
 
   // ── owner-only member management (dashboard) ──
+  if (path === '/members/detail' && method === 'GET') return memberDetail(env, await currentUser(req, env), url);
   if (path === '/members/update' && method === 'POST') return updateMember(req, env, await currentUser(req, env));
   if (path === '/members/delete' && method === 'POST') return deleteMember(req, env, await currentUser(req, env));
 

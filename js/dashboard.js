@@ -628,7 +628,7 @@
         <th style="text-align:right">Favorites</th><th>Joined</th><th>Last seen</th><th></th>
       </tr></thead><tbody>${members.map((r) => `
         <tr data-id="${esc(r.id)}">
-          <td>${esc(r.email)}</td>
+          <td><button class="mem-open" type="button">${esc(r.email)}</button></td>
           <td class="mem-name">${esc(r.name || '—')}</td>
           <td>${esc(r.signup_source || 'password')}</td>
           <td class="mem-news">${r.newsletter ? 'yes' : '—'}</td>
@@ -640,6 +640,9 @@
             <button class="chip mem-del" title="Remove">✕</button>
           </td>
         </tr>`).join('')}</tbody></table></div>`);
+
+    app.querySelectorAll('.mem-open').forEach((b) =>
+      b.addEventListener('click', () => openMember(b.closest('tr').dataset.id)));
 
     const copy = document.getElementById('copyEmails');
     if (copy) copy.addEventListener('click', () => {
@@ -822,6 +825,80 @@
         await post('/mailbox/send', { ids: [Number(b.closest('.rv-mrow').dataset.id)] });
         load();
       }));
+  }
+
+  /* ── one member, everything about them ── */
+  /* Opened from the members table. Sections that have no data are OMITTED
+     rather than rendered empty — a drawer of eight "none yet" headings tells
+     you nothing and buries the two facts that matter. */
+  async function openMember(id) {
+    const host = document.createElement('div');
+    host.className = 'mem-drawer';
+    host.innerHTML = '<div class="mem-sheet"><p class="db-empty">Loading…</p></div>';
+    document.body.appendChild(host);
+    const close = () => host.remove();
+    host.addEventListener('click', (e) => { if (e.target === host) close(); });
+    addEventListener('keydown', function esc(e) {
+      if (e.key === 'Escape') { close(); removeEventListener('keydown', esc); }
+    });
+
+    let d;
+    try { d = await get('/members/detail?id=' + encodeURIComponent(id)); }
+    catch (e) { host.querySelector('.mem-sheet').innerHTML =
+      `<p class="db-empty" style="color:#f87171">Could not load: ${esc(e.message)}</p>`; return; }
+
+    const m = d.member, t = d.totals;
+    const money = (a, c) => (c === 'ILS' || !c ? '\u20aa' : c + ' ') + Number(a || 0).toLocaleString();
+    const section = (title, rows, render) => rows && rows.length
+      ? `<h4>${title} <span class="pill">${rows.length}</span></h4><div class="mem-list">${rows.map(render).join('')}</div>` : '';
+    const field = (k, v) => v ? `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>` : '';
+
+    host.querySelector('.mem-sheet').innerHTML = `
+      <button class="mem-x" aria-label="Close">&times;</button>
+      <h3>${esc(m.name || m.email)}</h3>
+      <p class="mem-sub">${esc(m.email)}${m.admin ? ' · owner' : ''}${m.artist ? ' · artist' : ''}
+        ${m.email_verified ? '' : ' · <span style="color:#f59e0b">email unverified</span>'}</p>
+
+      <dl class="mem-fields">
+        ${field('Name', [m.first_name, m.last_name].filter(Boolean).join(' ') || m.name)}
+        ${field('Company', m.company)}
+        ${field('Role', m.role)}
+        ${field('Country', m.country)}
+        ${field('Phone', m.phone)}
+        ${field('Artist name', m.artist_name)}
+        ${field('Signed up via', m.signup_source || 'password')}
+        ${field('Sign-in providers', (d.providers || []).join(', '))}
+        ${field('Newsletter', m.newsletter ? 'opted in' : 'no')}
+        ${field('Joined', fmt(m.created_at))}
+        ${field('Last seen', m.last_login_at ? fmt(m.last_login_at) : 'never')}
+      </dl>
+
+      <div class="mem-tallies">
+        <span>${t.downloads} downloads</span><span>${t.favorites} favorites</span>
+        <span>${t.payments} payments</span><span>${t.invoices} invoices</span>
+        ${t.submissions ? `<span>${t.submissions} uploads</span>` : ''}
+      </div>
+
+      ${!d.payments.length && !d.invoices.length
+        ? '<p class="db-empty" style="padding:10px 0 0">No payments or invoices recorded. Those arrive with the checkout work \u2014 nothing is missing here yet.</p>' : ''}
+
+      ${section('Payments', d.payments, (p) => `<div class="mem-row"><b>${money(p.amount, p.currency)}</b>
+        <span>${esc(p.method || '')}</span><span>${esc(p.status || '')}</span>
+        <span class="mem-when">${p.ts ? fmt(p.ts) : ''}</span></div>`)}
+      ${section('Invoices', d.invoices, (i) => `<div class="mem-row"><b>${esc(i.number || i.id)}</b>
+        <span>${money(i.amount, i.currency)}</span><span class="mem-when">${i.ts ? fmt(i.ts) : ''}</span></div>`)}
+      ${section('Downloads', d.downloads, (x) => `<div class="mem-row"><b>${esc(x.slug)}</b>
+        <span class="mem-when">${fmt(x.ts)}</span></div>`)}
+      ${section('Most played', d.plays, (x) => `<div class="mem-row"><b>${esc(x.slug || '\u2014')}</b>
+        <span class="mem-when">${x.n} plays</span></div>`)}
+      ${section('Favorites', d.favorites, (x) => `<div class="mem-row"><b>${esc(x.slug)}</b>
+        <span class="mem-when">${esc(x.product || '')}</span></div>`)}
+      ${section('Uploads', d.submissions, (x) => `<div class="mem-row"><b>${esc(x.title)}</b>
+        <span>${esc(x.status)}</span><span class="mem-when">${x.published_slug ? 'in catalog' : ''}</span></div>`)}
+      ${section('Channels to clear', d.channels, (c) => `<div class="mem-row"><b>${esc(c.value)}</b>
+        <span>${esc(c.platform)}</span><span class="mem-when">${esc(c.status)}</span></div>`)}`;
+
+    host.querySelector('.mem-x').addEventListener('click', close);
   }
 
   /* ── alerts: what the site emailed YOU, and the switch that stops it ── */
