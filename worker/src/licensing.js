@@ -42,11 +42,30 @@ const GRANT_REASONS = ['paid', 'comp', 'contra', 'internal'];
 /** The licence wording, frozen per grant. Same contract as rights_texts:
  *  INSERT OR IGNORE and never edit — changing the words means a new id. */
 export const LICENCE_TEXTS = {
+  // v1 is kept, never edited: licences already granted resolve to these words.
   'lic.v1':
 `This licence permits the licensee named above to synchronise the track named above with their own
 content, for the use tier named above and no wider. It is granted to that person or business only,
 is not transferable, and may not be resold, sub-licensed or included in another library.
 The recording and the composition remain the property of their rights holders.
+The full terms in force are published at snowstar.company/terms.html under the version recorded
+against this licence.`,
+
+  // v2 adds the term, now that the buyer chooses one. The clause that matters
+  // is the second paragraph: without it, "the licence expired" reads as "take
+  // your video down", which is not what is being sold and would make a lapsed
+  // term far more frightening than it is.
+  'lic.v2':
+`This licence permits the licensee named above to synchronise the track named above with their own
+content, for the use tier named above and no wider. It is granted to that person or business only,
+is not transferable, and may not be resold, sub-licensed or included in another library.
+The recording and the composition remain the property of their rights holders.
+
+The licence runs for the term shown above, from the grant date. Material published while the
+licence was live may remain published after the term ends. What ends is the right to place the
+track into new material, and to run paid media behind it. Renewing before the end date leaves no
+gap. Where no end date is shown, the licence does not expire.
+
 The full terms in force are published at snowstar.company/terms.html under the version recorded
 against this licence.`,
 };
@@ -251,7 +270,7 @@ export async function grantLicence(env, opts) {
     return { ok: false, error: 'controller_not_cleared' };
   }
 
-  await freezeText(env, 'lic.v1');
+  await freezeText(env, 'lic.v2');
   const t = now();
   const starts = Number.isFinite(starts_at) ? starts_at : t;
   // The buyer chooses the term now, so it wins over the tier's old default.
@@ -268,7 +287,7 @@ export async function grantLicence(env, opts) {
          (ref, request_id, user_id, email, slug, tier, terms_id, scope_text,
           licensee_name, licensee_tax_id, amount, currency, grant_reason,
           controller_cleared, granted_by, granted_at, starts_at, expires_at)
-       VALUES ('', ?, ?, ?, ?, ?, 'lic.v1', ?, ?, ?, ?, 'ILS', ?, ?, ?, ?, ?, ?)`
+       VALUES ('', ?, ?, ?, ?, ?, 'lic.v2', ?, ?, ?, ?, 'ILS', ?, ?, ?, ?, ?, ?)`
     ).bind(request_id || null, user_id || null, String(email || '').toLowerCase(),
            slug, tier, clean(scope_text, 1000), clean(licensee_name, 200),
            clean(licensee_tax_id, 40), Math.round(amount || 0), reason,

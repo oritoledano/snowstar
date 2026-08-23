@@ -48,25 +48,25 @@
      win on digital (they have already commoditised it). */
   const TIERS = [
     { id: 'digital', label: 'Digital — web & social',
-      blurb: 'Your own channels and organic social. Website, YouTube, Instagram, TikTok, podcasts, showreels. Unlimited views, worldwide, no end date.',
+      blurb: 'Your own channels and organic social — site, YouTube, Instagram, TikTok, podcasts, showreels.',
       price: 149 },
     { id: 'corporate', label: 'Business & corporate',
-      blurb: 'Company promos, explainers, internal training, trade-show and conference screens, in-store and on-hold. Worldwide, no end date. Put paid media behind it and it moves up a tier.',
+      blurb: 'Company promos, explainers, training, event and in-store screens, on-hold. Paid media moves it up a tier.',
       price: 350 },
     { id: 'paid', label: 'Digital — paid campaign',
-      blurb: 'Everything above, plus paid media online: promoted social, pre-roll, display, paid influencer. Worldwide, one year from first run.',
+      blurb: 'The above plus paid media online — promoted social, pre-roll, display, paid influencer.',
       price: 450 },
     { id: 'tvshow', label: 'TV show / series',
-      blurb: 'Background or featured use inside a programme — per episode, Israeli broadcast plus catch-up streaming. A whole series or a worldwide release is quoted.',
+      blurb: 'Per episode — Israeli broadcast plus catch-up. A whole series or worldwide release is quoted.',
       price: 900 },
     { id: 'film', label: 'Film',
-      blurb: 'Feature, short or documentary — for the lifetime of the production, including festivals and streaming release. Covers budgets up to about ₪10m; above that it is quoted.',
+      blurb: 'Feature, short or documentary, festivals and streaming included. Budgets over ₪10m are quoted.',
       price: 1200 },
     { id: 'radio', label: 'Radio',
-      blurb: 'Radio advertising in Israel, one six-month season, renewable at 60%. The station pays its own ACUM and Federation dues on its own account — this covers the sync, not the airplay.',
+      blurb: 'Radio advertising in Israel. Covers the sync; the station settles its own ACUM dues.',
       price: 1200 },
     { id: 'tvc', label: 'TV commercial',
-      blurb: 'Commercial airtime. There is no fixed rate for advertising in this market — ACUM states so itself — so it is priced per campaign against territory, length of run and media weight.',
+      blurb: 'Commercial airtime. Priced per campaign against territory, run length and media weight.',
       quote: true },
   ];
 
@@ -304,16 +304,20 @@
 
     el.querySelector('.lic-blurb').textContent = dur.mult == null
       ? 'Exclusive use of this track \u2014 nobody else licences it while you hold it. Priced per case.'
-      : `${tier.blurb} Runs ${dur.label} from first use, then renewable.`;
+      : tier.blurb;
     // The first bullet is a promise, so it has to match the lane. On a
     // quote-lane track we do not yet know we can clear it — saying "cleared"
     // next to "someone else has a say" is the kind of contradiction a licensee
     // is entitled to hold us to.
+    const broadcast = ['tvshow', 'film', 'radio', 'tvc'].includes(tier.id);
     el.querySelector('.lic-incl').innerHTML = [
       track.lane === 'quote' ? 'Cleared once the other rights holder agrees'
-                             : 'Cleared for commercial use',
-      'Broadcast royalties stay with the broadcaster, never billed to you',
-      'Your channels whitelisted, so no automated claim',
+                             : 'Cleared for commercial use, worldwide',
+      // The one thing a term makes people anxious about. Say it before they ask.
+      dur.mult == null ? 'Nobody else licences the track while you hold it'
+                       : 'Work published in the term stays up afterwards',
+      broadcast ? 'Broadcast royalties stay with the broadcaster'
+                : 'Your channels whitelisted \u2014 no Content ID claims',
       'Clean, un-watermarked files',
     ].map((t) => `<li>${esc(t)}</li>`).join('');
     el.querySelector('.lic-price').textContent = quoteOnly ? 'On request' : CUR + price.toLocaleString();
@@ -337,11 +341,14 @@
     // Three different promises, and getting them mixed up matters: a
     // quote-lane track is a rights question, a quote-only tier is a pricing
     // question, and everything else is a purchase.
-    el.querySelector('.lic-note').textContent = track.lane === 'quote'
-      ? 'Someone else has a say in how this track is used commercially, so every licence goes through us first. We’ll come back to you with terms.'
-      : tier.quote
-        ? 'Tell us where it runs, for how long and on what weight, and we’ll come back with a figure.'
-        : 'We’ll confirm by email and send the licence and the files.';
+    // Only says something where there is a wait to explain. On a card purchase
+    // the buyer finds out in ten seconds, so the line was pure filler.
+    const note = el.querySelector('.lic-note');
+    note.textContent = track.lane === 'quote'
+      ? 'Another rights holder has a say here, so this one goes through us. We’ll come back with terms.'
+      : tier.quote ? 'Tell us where it runs and on what weight, and we’ll come back with a figure.'
+      : '';
+    note.hidden = !note.textContent;
   }
 
   function open(track) {
