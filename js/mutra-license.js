@@ -149,12 +149,42 @@
              <li><span>VAT 18%</span><b>${CUR}${vat.toLocaleString()}</b></li>
              <li class="lic-tot"><span>To pay</span><b>${CUR}${(ex + vat).toLocaleString()}</b></li>
            </ul>
-           <p class="lic-note">Pay by bank transfer, Bit or Paybox and
-             <b>quote ${esc(d.ref)}</b> so we can match it. The moment it lands we release the
-             clean, un-watermarked file to your account.</p>`}
-      <div class="lic-acts"><button class="lic-go lic-done">Done</button></div>`;
+           <p class="lic-note">Pay by card and the clean, un-watermarked file unlocks the moment the
+             payment clears \u2014 usually seconds. Prefer bank transfer, Bit or Paybox? Quote
+             <b>${esc(d.ref)}</b> so we can match it, and we\u2019ll release it by hand.</p>`}
+      <div class="lic-acts">
+        ${quoteOnly || ex == null ? '' : '<button class="lic-go lic-card-pay">Pay by card</button>'}
+        <button class="lic-share lic-done">${quoteOnly || ex == null ? 'Done' : 'I\u2019ll transfer instead'}</button>
+      </div>
+      <p class="lic-payerr" hidden></p>`;
     card.querySelector('.lic-close').addEventListener('click', close);
     card.querySelector('.lic-done').addEventListener('click', close);
+    // Card payment: the server re-derives the price from its own snapshot of the
+    // request, so nothing about the amount travels from here — this button only
+    // says WHICH request to charge.
+    const payBtn = card.querySelector('.lic-card-pay');
+    if (payBtn) payBtn.addEventListener('click', async () => {
+      const err = card.querySelector('.lic-payerr');
+      payBtn.disabled = true; payBtn.textContent = 'Opening secure page\u2026';
+      try {
+        const r = await fetch('/api/hyp/checkout', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ ref: d.ref }),
+        });
+        const j = await r.json();
+        if (!r.ok || !j.url) throw new Error(j.error || 'checkout_failed');
+        if (window.mutraTrack) mutraTrack('checkout', track.slug);
+        location.href = j.url;                 // hosted card page, PCI stays theirs
+      } catch (e) {
+        payBtn.disabled = false; payBtn.textContent = 'Pay by card';
+        err.hidden = false;
+        err.textContent = String(e.message) === 'quote_lane_not_self_serve'
+          ? 'This track needs a quote rather than a card payment \u2014 we\u2019ll be in touch.'
+          : 'Could not open the payment page. Your reference is saved \u2014 transfer with it, or try again.';
+      }
+    });
+
     const cp = card.querySelector('.lic-copyref');
     cp.addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(d.ref); cp.textContent = 'Copied'; }
@@ -288,6 +318,47 @@
     document.body.style.overflow = '';
     current = null;
   }
+
+  /* Coming back from HYP. The Worker has already verified the payment against
+     HYP's own servers and granted the licence by the time this runs — this is
+     purely telling the human what happened, and cleaning the query string so a
+     refresh doesn't re-announce it. */
+  function showPaymentOutcome() {
+    const q = new URLSearchParams(location.search);
+    const state = q.get('pay');
+    if (!state) return;
+    const ref = q.get('ref') || '';
+    const reason = q.get('reason') || '';
+    build();
+    const card = el.querySelector('.lic-card');
+    const ok = state === 'ok';
+    const why = {
+      declined: 'The card was declined. Nothing has been charged.',
+      unverified: 'We could not confirm that payment with HYP, so nothing was released. If your card was charged, send us the reference and we will sort it out today.',
+      amount_mismatch: 'The amount did not match the licence. Nothing was released.',
+      quote_lane: 'This track needs a quote rather than a card payment.',
+      bad_ref: 'That payment reference was not recognised.',
+      unknown_ref: 'That payment reference was not recognised.',
+    }[reason] || 'The payment did not complete. Nothing has been charged.';
+    card.innerHTML = `
+      <button class="lic-close" aria-label="Close">&times;</button>
+      <div class="lic-kicker">${ok ? 'Payment received' : 'Payment not completed'}</div>
+      <h3>${ok ? 'Your licence is live' : 'Nothing was charged'}</h3>
+      ${ref ? `<div class="lic-ref"><span>Reference</span><b>${esc(ref)}</b></div>` : ''}
+      <p class="lic-note">${ok
+        ? 'The clean, un-watermarked file is now yours to download \u2014 look for the download arrow on the track, or in Account \u203a Downloads. A confirmation is on its way by email.'
+        : esc(why)}</p>
+      <div class="lic-acts"><button class="lic-go lic-done">${ok ? 'Download it' : 'Close'}</button></div>`;
+    card.querySelector('.lic-close').addEventListener('click', close);
+    card.querySelector('.lic-done').addEventListener('click', close);
+    el.hidden = false;
+    document.body.style.overflow = 'hidden';
+    // strip the params so a reload does not repeat the message
+    q.delete('pay'); q.delete('ref'); q.delete('reason');
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : ''));
+  }
+  addEventListener('DOMContentLoaded', showPaymentOutcome);
+  if (document.readyState !== 'loading') showPaymentOutcome();
 
   window.mutraLicense = { open, close, TIERS, priceFor };
 })();
