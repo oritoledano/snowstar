@@ -1,7 +1,7 @@
 /**
  * Hyp Pay (formerly YaadPay) — card payments for Mutra licences.
  *
- * Base URL is a single endpoint for everything: https://pay.hyp.co.il/p/
+ * One endpoint for everything — see BASE below.
  * Docs: https://developers.hyp.co.il/pay/
  *
  * ─── THE THING TO UNDERSTAND BEFORE EDITING THIS FILE ───────────────────────
@@ -29,7 +29,18 @@
  * charges real cards.
  */
 
-const BASE = 'https://pay.hyp.co.il/p/';
+/* The endpoint HYP gave the owner directly. Verified in a browser today:
+   https://pay.hyp.co.il/p/ and this URL return byte-identical responses, so
+   they are the same handler and either works — but this is the one HYP's own
+   support will reference, so it is the one we use.
+
+   Also verified against the live terminal, and it settles the architecture:
+     no Masof            -> "שגיאה - תקלה במסוף - Masof Error"
+     Masof, no signature -> "שגיאה - שגיאת אימות"   (authentication error)
+   The terminal is recognised, and SIGNATURE VERIFICATION IS ENABLED on it.
+   So the two-step flow below is mandatory, not optional: a payment page URL
+   without a signature obtained from the SIGN call is rejected outright. */
+const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
