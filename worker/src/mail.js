@@ -18,10 +18,18 @@ const RESEND = 'https://api.resend.com/emails';
  */
 export const mailLive = (env) => !(env.MAIL_FROM || '').includes('resend.dev');
 
+/* SENDING domain vs RECEIVING domain — these are deliberately different.
+   Resend will verify send.snowstar.company (a subdomain, so the apex MX and
+   SPF that Cloudflare Email Routing owns stay untouched). Everything we SEND
+   must therefore come from @send.snowstar.company: Resend rejects a From on a
+   domain it has not verified with a 403, so pointing these at the apex would
+   have broken every kinded message the moment MAIL_FROM was flipped.
+   Replies still go to the apex, which Email Routing already delivers. */
+const SEND_DOMAIN = 'send.snowstar.company';
 const SENDERS = {
-  submissions: 'Mutra Submissions <submissions@snowstar.company>',
-  artists:     'Mutra Artists <artists@snowstar.company>',
-  legal:       'Snowstar Legal <legal@snowstar.company>',
+  submissions: `Mutra Submissions <submissions@${SEND_DOMAIN}>`,
+  artists:     `Mutra Artists <artists@${SEND_DOMAIN}>`,
+  legal:       `Snowstar Legal <legal@${SEND_DOMAIN}>`,
 };
 
 /** From: header for a given kind of message. */
@@ -31,6 +39,8 @@ export const mailFrom = (env, kind) =>
 /** Internal destination for a given kind — the branded inbox once it can
  *  actually be delivered to, otherwise the owner's alert address. */
 export const mailTo = (env, kind) =>
+  // apex on purpose: this is where mail is RECEIVED, and Cloudflare Email
+  // Routing already delivers @snowstar.company. Nothing to verify with Resend.
   mailLive(env) ? `${kind}@snowstar.company` : env.ALERT_TO;
 
 /** Wrap body copy in the Snowstar shell — dark, plain, no images to block. */

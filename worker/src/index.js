@@ -32,6 +32,7 @@ import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration } from './rights.js';
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
 import { updateMember, deleteMember, memberDetail } from './members.js';
+import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { publicUser } from './user.js';
@@ -216,6 +217,16 @@ async function handle(req, env, ctx) {
   if (path === '/favorites/list' && method === 'GET') return myFavoritesList(env, await currentUser(req, env), url);
 
   // ── owner-only member management (dashboard) ──
+  // ── HYP card payments. The return is an UNAUTHENTICATED browser GET, so it
+  //    is verified against HYP's own servers before anything is granted.
+  if (path === '/hyp/checkout' && method === 'POST') return startCheckout(req, env, await currentUser(req, env));
+  if (path === '/hyp/return' && method === 'GET') return handleReturn(req, env, ctx);
+  if (path === '/hyp/stale' && method === 'GET') return listStale(env, await currentUser(req, env));
+  if (path === '/hyp/status' && method === 'GET') {
+    const u = await currentUser(req, env);
+    return (u && u.admin) ? hypStatus(env) : json({ error: 'forbidden' }, 403);
+  }
+
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
   if (path === '/licence/mine' && method === 'GET') return myLicences(env, await currentUser(req, env));
