@@ -2,3 +2,10 @@ data/
 .DS_Store
 *.log
 node_modules/
+
+# never commit credentials — worker secrets live in Cloudflare, not here
+.dev.vars
+.dev.vars.*
+*.pem
+*.key
+secrets/
