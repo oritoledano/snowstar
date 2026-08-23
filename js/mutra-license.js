@@ -95,7 +95,7 @@
   };
 
   /** Send the request, then show the reference and how to pay it. */
-  async function submitRequest(track, tier, quoteOnly, subject, body) {
+  async function submitRequest(track, tier, quoteOnly, subject, body, straightToCard) {
     const go = el.querySelector('.lic-go');
     const was = go.textContent;
     go.disabled = true; go.textContent = 'Sending…';
@@ -118,12 +118,34 @@
         }
         throw new Error(d.error || 'failed');
       }
+      if (straightToCard) return goToCard(d.ref, () => showReceipt(track, tier, quoteOnly, d));
       showReceipt(track, tier, quoteOnly, d);
     } catch {
       // API unreachable — fall back to the email draft rather than lose it
       go.disabled = false; go.textContent = was;
       openMail('mailto:licensing@snowstar.company?subject='
         + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+    }
+  }
+
+  /** Straight to HYP's hosted card page. On any failure, fall back to the
+   *  receipt so the reference is never lost — a buyer who has decided to pay
+   *  must not hit a dead end. */
+  async function goToCard(ref, onFail) {
+    const go = el.querySelector('.lic-go');
+    go.disabled = true; go.textContent = 'Opening secure page\u2026';
+    try {
+      const r = await fetch('/api/hyp/checkout', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ref }),
+      });
+      const j = await r.json();
+      if (!r.ok || !j.url) throw new Error(j.error || 'checkout_failed');
+      location.href = j.url;
+    } catch {
+      go.disabled = false;
+      onFail();
     }
   }
 
@@ -223,6 +245,7 @@
           <button class="lic-go"></button>
           <button class="lic-share" title="Copy a link to this licence">Copy link</button>
         </div>
+        <button class="lic-alt" type="button" hidden></button>
         <p class="lic-note"></p>
       </div>`;
     document.body.appendChild(el);
@@ -261,7 +284,18 @@
     per.hidden = quoteOnly;
     per.textContent = quoteOnly ? '' :
       `one-time, per track \u00b7 \u2248$${Math.round(price / USD_RATE).toLocaleString()} \u00b7 ${VAT_NOTE}`;
-    el.querySelector('.lic-go').textContent = quoteOnly ? 'Request a quote' : 'Request this licence';
+    // Priced tracks lead with PAY. Making the buyer file a request first and
+    // find the card button on a second screen was a step too many — the money
+    // is the thing they came to do.
+    const goBtn = el.querySelector('.lic-go');
+    goBtn.textContent = quoteOnly
+      ? 'Request a quote'
+      : `Pay ${CUR}${Math.round(price * 1.18).toLocaleString()} by card`;
+    const alt = el.querySelector('.lic-alt');
+    if (alt) {
+      alt.hidden = quoteOnly;
+      alt.textContent = 'Pay by transfer or Bit instead';
+    }
     // Three different promises, and getting them mixed up matters: a
     // quote-lane track is a rights question, a quote-only tier is a pricing
     // question, and everything else is a purchase.
@@ -293,8 +327,14 @@
       // A real request, recorded with a reference the money can travel with.
       // The mailto is kept only as the fallback when the API is unreachable —
       // losing a licence enquiry because a fetch failed is not acceptable.
-      submitRequest(track, tier, quoteOnly, subject, body);
+      submitRequest(track, tier, quoteOnly, subject, body, !quoteOnly);
       if (window.mutraTrack) mutraTrack(quoteOnly ? 'quote' : 'license', track.slug);
+    };
+
+    const altBtn = el.querySelector('.lic-alt');
+    if (altBtn) altBtn.onclick = () => {
+      const tier = TIERS.find((t) => t.id === sel.value) || TIERS[0];
+      submitRequest(track, tier, false, '', '', false);
     };
 
     el.querySelector('.lic-share').onclick = async () => {

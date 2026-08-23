@@ -719,6 +719,11 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   color:var(--muted);font:inherit;font-size:.82rem;padding:11px 18px;cursor:pointer}
 .lic-share:hover{color:var(--text);border-color:var(--amber,var(--coral))}
 .lic-note{color:var(--dim);font-size:.78rem;line-height:1.55;margin:14px 0 0}
+/* the quieter second option — a real choice, not a competing CTA */
+.lic-alt{display:block;width:100%;margin-top:10px;background:none;border:0;
+  color:var(--muted);font:inherit;font-size:.82rem;padding:8px;cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px}
+.lic-alt:hover{color:var(--text)}
 /* the receipt: the reference is the single most important thing on it, because
    it is what lets an incoming bank transfer be matched to a request */
 .lic-ref{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line-2);
