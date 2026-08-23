@@ -229,6 +229,22 @@
     current.reported = total;
   }
 
+  /** Where the player gets its audio.
+   *
+   *  Not track.audio — that is the watermarked preview on the public CDN, and
+   *  a watermark on the player is a tax on the person deciding whether to buy.
+   *  /api/stream serves the clean master from the private bucket, same-origin
+   *  only, with no URL anyone can copy out. Spotlight snippets and anything
+   *  that already carries an absolute URL are left alone.
+   *
+   *  Falls back to track.audio if the stream 403s or the track has no master,
+   *  because silence is worse than a watermark. */
+  function streamUrl(track) {
+    if (!track.slug || /^(https?:)?\/\//.test(track.slug)) return track.audio;
+    if (track.slug.startsWith('spotlight:')) return track.audio;
+    return '/api/stream?slug=' + encodeURIComponent(track.slug);
+  }
+
   let pendingSeek = null; // in-flight highlight-seek listener, so a fast track switch can't leave it to fire against the wrong (next) track
   function loadTrack(track, row) {
     if (current && current.track === track) { toggle(); return; }
@@ -238,7 +254,7 @@
     if (current && current.row) current.row.classList.remove('playing');
     current = { track, row: row || null, reported: 0 };
     if (row) row.classList.add('playing');
-    audio.src = track.audio;
+    audio.src = streamUrl(track);
     audio.currentTime = 0;
     // with highlights on, drop the needle on the best bit rather than the intro
     const hl = hlOf(track.slug);
@@ -250,6 +266,13 @@
       };
       audio.addEventListener('loadedmetadata', pendingSeek);
     }
+    audio.onerror = () => {
+      // the stream is gated; the CDN preview never is. One retry, once.
+      if (audio.src.indexOf('/api/stream') === -1 || !track.audio) return;
+      audio.onerror = null;
+      audio.src = track.audio;
+      audio.play().catch(() => {});
+    };
     audio.play().catch(() => {});
     plTitle.textContent = track.title;
     plArtist.textContent = track.artist + (track.bpm ? ' · ' + track.bpm + ' BPM' : '');

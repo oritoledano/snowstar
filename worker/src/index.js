@@ -35,6 +35,7 @@ import { updateMember, deleteMember, memberDetail } from './members.js';
 import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
+import { handleStream } from './stream.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
 import { currentUser, readCookies } from './session.js';
@@ -154,6 +155,8 @@ async function handle(req, env, ctx) {
   if (path === '/alerts/mute' && method === 'POST') return setAlertsMuted(req, env, await currentUser(req, env));
 
   // ── member download (the one thing that needs an account) ──
+  // Playback is public and clean; downloading is gated and watermarked.
+  if (path === '/stream' && (method === 'GET' || method === 'HEAD')) return handleStream(req, env);
   if (path === '/download' && method === 'GET') return handleDownload(req, env, await currentUser(req, env));
 
   // ── portfolio works: public read, owner-only writes ──
