@@ -33,11 +33,11 @@ destination_address = "oritoledano@gmail.com"
 
 [vars]
 ALERT_TO = "oritoledano@gmail.com"
-# Resend sender. Until send.snowstar.company is verified in Resend, their shared
-# onboarding address is the only one available — and it can ONLY deliver to the
-# account owner. Swap this for "Snowstar <hello@send.snowstar.company>" the
-# moment the domain verifies, or resets to real members will silently fail.
-MAIL_FROM = "SNOWSTAR.COMPANY <onboarding@resend.dev>"
+# send.snowstar.company verified in Resend on 23 Aug 2026 (DKIM + SPF + MX all
+# confirmed resolving). mailLive() keys off the absence of "resend.dev" in this
+# string, so changing it here is what switches on real delivery to members —
+# and what makes the @send.snowstar.company senders in mail.js take effect.
+MAIL_FROM = "SNOWSTAR.COMPANY <hello@send.snowstar.company>"
 
 # daily digest at 07:00 UTC
 [triggers]
