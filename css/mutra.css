@@ -715,6 +715,24 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   color:var(--on-accent,#0d0a12);font-family:var(--font-display);font-weight:600;
   font-size:.92rem;padding:12px 22px;cursor:pointer;transition:transform .2s}
 .lic-go:hover{transform:translateY(-2px)}
+.lic-go[disabled]{opacity:.6;cursor:default;transform:none}
+/* Card marks on the CTA. Drawn in CSS rather than fetched as logos: these are
+   the schemes' trademarks, and a wordmark set in our own type is a statement of
+   what is accepted, not a reproduction of their brand assets. */
+.lic-cards{display:inline-flex;align-items:center;gap:5px;margin-left:9px;vertical-align:middle}
+.lic-cards i{font-style:normal;display:inline-block;border-radius:3px;
+  background:color-mix(in srgb,var(--on-accent,#0d0a12) 12%,transparent);
+  color:var(--on-accent,#0d0a12);opacity:.72;
+  font-size:.5rem;font-weight:800;letter-spacing:.04em;line-height:1;padding:3px 4px}
+/* Mastercard reads as its two discs — no text, because the wordmark at this
+   size is illegible and the circles are recognisable at 14px. */
+.lic-cards .cb-mc{position:relative;width:20px;height:13px;background:none;padding:0}
+.lic-cards .cb-mc::before,.lic-cards .cb-mc::after{content:"";position:absolute;top:1.5px;
+  width:10px;height:10px;border-radius:50%;
+  background:color-mix(in srgb,var(--on-accent,#0d0a12) 34%,transparent)}
+.lic-cards .cb-mc::before{left:0}
+.lic-cards .cb-mc::after{right:0}
+@media (max-width:420px){.lic-cards{display:none}}
 .lic-share{background:none;border:1px solid var(--line-2,var(--line));border-radius:99px;
   color:var(--muted);font:inherit;font-size:.82rem;padding:11px 18px;cursor:pointer}
 .lic-share:hover{color:var(--text);border-color:var(--amber,var(--coral))}

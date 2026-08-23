@@ -68,10 +68,13 @@ async function logAdmin(env, actor, action, subject, detail) {
 /** MU-YYMM-NNNN. The whole reconciliation strategy: it goes in the bank
  *  transfer reference and the Bit note, so money can be matched to a request
  *  without guessing from the amount. */
-function makeRef(id) {
-  const d = new Date();
-  const ym = String(d.getUTCFullYear()).slice(2) + String(d.getUTCMonth() + 1).padStart(2, '0');
-  return `MU-${ym}-${String(id).padStart(4, '0')}`;
+function makeRef(id, slug) {
+  // The track name goes in the reference because a human reads it: on a bank
+  // statement, in a Bit note, and when the owner reconciles by eye. The number
+  // stays because two people can licence the same track on the same day.
+  const name = String(slug || 'track').toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 18) || 'TRACK';
+  return `MUTRA-${name}-${String(id).padStart(4, '0')}`;
 }
 
 /* ═══════════ member side ═══════════ */
@@ -110,15 +113,19 @@ export async function createRequest(req, env, user) {
   const r = await env.DB.prepare(
     `INSERT INTO licence_requests
        (ref, user_id, email, slug, tier, lane, list_amount, currency, status,
-        licensee_name, licensee_tax_id, use_where, use_territory, use_duration, note, created_at)
-     VALUES ('', ?, ?, ?, ?, ?, ?, 'ILS', 'new', ?, ?, ?, ?, ?, ?, ?)`
+        licensee_name, licensee_tax_id, use_where, use_territory, use_duration, note,
+        months, duration_id, created_at)
+     VALUES ('', ?, ?, ?, ?, ?, ?, 'ILS', 'new', ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(user ? user.id : null, email, slug, tier, lane, listAgorot,
          clean(b.licensee_name, 200), clean(b.licensee_tax_id, 40),
          clean(b.use_where, 500), clean(b.use_territory, 120),
-         clean(b.use_duration, 120), clean(b.note, 1000), t).run();
+         clean(b.use_duration, 120), clean(b.note, 1000),
+         // the chosen term, bounded — it decides expires_at at grant time
+         [6, 12, 24, 36].includes(Number(b.months)) ? Number(b.months) : 6,
+         clean(b.duration, 8) || '6m', t).run();
 
   const id = r.meta.last_row_id;
-  const ref = makeRef(id);
+  const ref = makeRef(id, slug);
   await env.DB.prepare('UPDATE licence_requests SET ref = ? WHERE id = ?').bind(ref, id).run();
 
   return json({
@@ -247,8 +254,12 @@ export async function grantLicence(env, opts) {
   await freezeText(env, 'lic.v1');
   const t = now();
   const starts = Number.isFinite(starts_at) ? starts_at : t;
-  const months = TIER_TERMS[tier].months;
-  const expires = months ? starts + months * 30 * 86400 : null;
+  // The buyer chooses the term now, so it wins over the tier's old default.
+  // Falling back to the tier only covers rows created before durations existed.
+  const months = Number.isFinite(opts.months) ? opts.months
+               : (reqRow && reqRow.months) ? reqRow.months
+               : TIER_TERMS[tier].months;
+  const expires = months ? starts + Math.round(months * 30.44 * 86400) : null;
 
   let id, ref;
   try {
@@ -263,7 +274,7 @@ export async function grantLicence(env, opts) {
            clean(licensee_tax_id, 40), Math.round(amount || 0), reason,
            controller_cleared ? 1 : 0, String(actor), t, starts, expires).run();
     id = r.meta.last_row_id;
-    ref = reqRow ? reqRow.ref : makeRef(id);
+    ref = reqRow ? reqRow.ref : makeRef(id, slug);
     await env.DB.prepare('UPDATE licences SET ref = ? WHERE id = ?').bind(ref, id).run();
   } catch (e) {
     // idx_lic_live: one live licence per (member, track, tier). A double-click,

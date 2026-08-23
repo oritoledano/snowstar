@@ -110,7 +110,7 @@ export async function startCheckout(req, env, user) {
   }
   const b = await req.json().catch(() => ({}));
   const ref = String(b.ref || '').trim();
-  if (!/^MU-\d{4}-\d{4}$/.test(ref)) return json({ error: 'bad_ref' }, 400);
+  if (!/^[A-Z0-9][A-Z0-9-]{4,60}$/.test(ref)) return json({ error: 'bad_ref' }, 400);
 
   const r = await env.DB.prepare(
     `SELECT * FROM licence_requests WHERE ref = ? AND status = 'new'`
@@ -233,7 +233,7 @@ export async function handleReturn(req, env, ctx) {
            now()).run().catch(() => {});
     return fail('declined');
   }
-  if (!/^MU-\d{4}-\d{4}$/.test(ref)) return fail('bad_ref');
+  if (!/^[A-Z0-9][A-Z0-9-]{4,60}$/.test(ref)) return fail('bad_ref');
 
   // 2. HYP itself must confirm the parameter set.
   //     A failure here is the dangerous case — the card may well have been

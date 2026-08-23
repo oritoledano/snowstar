@@ -894,6 +894,17 @@
   favToggle.title = 'My favorites';
   favToggle.innerHTML = ICON_HEART + '<span>Favorites</span>';
   favToggle.addEventListener('click', () => {
+    // Favourites are stored against an account, so switching this on while
+    // signed out shows an empty list and looks broken. Ask for the account
+    // instead, and say what they get for it.
+    if (!(window.SnowstarAccount && SnowstarAccount.user)) {
+      if (window.SnowstarOpenAuth) {
+        SnowstarOpenAuth('signup',
+          'Create a free account to keep your selections \u2014 plus 10% off your first licence '
+          + 'and first listen to unreleased tracks.');
+      }
+      return;
+    }
     state.favoritesOnly = !state.favoritesOnly;
     spinToggle(favToggle);
     favToggle.classList.toggle('on', state.favoritesOnly);
