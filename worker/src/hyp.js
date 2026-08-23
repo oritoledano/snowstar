@@ -140,7 +140,9 @@ export async function startCheckout(req, env, user) {
     UTF8: 'True',
     UTF8out: 'True',
     MoreData: 'True',                                // makes HYP return Coin etc.
-    PageLang: 'HEB',
+    // Buyers are agencies and producers; the catalogue and terms are in English,
+    // so the card page should not switch language mid-purchase.
+    PageLang: 'ENG',
     tmp: '1',
     ClientName: r.licensee_name || '',
     email: r.email || '',

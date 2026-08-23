@@ -176,7 +176,7 @@
              <b>${esc(d.ref)}</b> so we can match it, and we\u2019ll release it by hand.</p>`}
       <div class="lic-acts">
         ${quoteOnly || ex == null ? '' : '<button class="lic-go lic-card-pay">Pay by card</button>'}
-        <button class="lic-share lic-done">${quoteOnly || ex == null ? 'Done' : 'I\u2019ll transfer instead'}</button>
+        <button class="lic-share lic-done">Done</button>
       </div>
       <p class="lic-payerr" hidden></p>`;
     card.querySelector('.lic-close').addEventListener('click', close);
@@ -215,14 +215,11 @@
     });
   }
 
-  let el = null;
-
-  function build() {
-    if (el) return el;
-    el = document.createElement('div');
-    el.className = 'lic-modal';
-    el.hidden = true;
-    el.innerHTML = `
+  /* The card markup, kept as a constant because showReceipt() and the payment
+     outcome screen both REPLACE it. Without restoring it on every open the
+     next click found a card with no .lic-sel, threw, and the modal could not
+     be opened again until a reload. */
+  const CARD_HTML = `
       <div class="lic-card" role="dialog" aria-modal="true" aria-labelledby="licTitle">
         <button class="lic-close" aria-label="Close">&times;</button>
         <div class="lic-head">
@@ -248,6 +245,15 @@
         <button class="lic-alt" type="button" hidden></button>
         <p class="lic-note"></p>
       </div>`;
+
+  let el = null;
+
+  function build() {
+    if (el) return el;
+    el = document.createElement('div');
+    el.className = 'lic-modal';
+    el.hidden = true;
+    el.innerHTML = CARD_HTML;
     document.body.appendChild(el);
 
     el.querySelector('.lic-close').addEventListener('click', close);
@@ -308,6 +314,8 @@
 
   function open(track) {
     build();
+    el.innerHTML = CARD_HTML;          // undo any receipt/outcome screen
+    el.querySelector('.lic-close').addEventListener('click', close);
     current = track;
     el.querySelector('.lic-cover').src = track.cover || '';
     el.querySelector('#licTitle').textContent = track.title;
