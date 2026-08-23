@@ -94,6 +94,75 @@
     return tier.price;
   };
 
+  /** Send the request, then show the reference and how to pay it. */
+  async function submitRequest(track, tier, quoteOnly, subject, body) {
+    const go = el.querySelector('.lic-go');
+    const was = go.textContent;
+    go.disabled = true; go.textContent = 'Sending…';
+    try {
+      const r = await fetch('/api/licence/request', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          slug: track.slug, tier: tier.id,
+          list_price: tier.quote ? null : priceFor(track, tier),
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok || !d.ok) {
+        if (r.status === 400 && d.error === 'email_required') {
+          go.disabled = false; go.textContent = was;
+          if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup',
+            'Create a free account so we can send you the licence and the files.');
+          return;
+        }
+        throw new Error(d.error || 'failed');
+      }
+      showReceipt(track, tier, quoteOnly, d);
+    } catch {
+      // API unreachable — fall back to the email draft rather than lose it
+      go.disabled = false; go.textContent = was;
+      openMail('mailto:licensing@snowstar.company?subject='
+        + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+    }
+  }
+
+  function showReceipt(track, tier, quoteOnly, d) {
+    const ex = d.amount_ex_vat != null ? d.amount_ex_vat / 100 : null;
+    const vat = ex != null ? Math.round(ex * 0.18) : null;
+    const card = el.querySelector('.lic-card');
+    card.innerHTML = `
+      <button class="lic-close" aria-label="Close">&times;</button>
+      <div class="lic-kicker">Request received</div>
+      <h3>${esc(track.title)}</h3>
+      <div class="lic-artist">${esc(tier.label)}</div>
+      <div class="lic-ref">
+        <span>Your reference</span>
+        <b>${esc(d.ref)}</b>
+        <button class="lic-copyref" type="button">Copy</button>
+      </div>
+      ${quoteOnly || ex == null
+        ? `<p class="lic-note">We\u2019ll come back to you with terms and a price. Nothing is charged
+             until you\u2019ve seen them in writing and said yes.</p>`
+        : `<ul class="lic-sum">
+             <li><span>Licence</span><b>${CUR}${ex.toLocaleString()}</b></li>
+             <li><span>VAT 18%</span><b>${CUR}${vat.toLocaleString()}</b></li>
+             <li class="lic-tot"><span>To pay</span><b>${CUR}${(ex + vat).toLocaleString()}</b></li>
+           </ul>
+           <p class="lic-note">Pay by bank transfer, Bit or Paybox and
+             <b>quote ${esc(d.ref)}</b> so we can match it. The moment it lands we release the
+             clean, un-watermarked file to your account.</p>`}
+      <div class="lic-acts"><button class="lic-go lic-done">Done</button></div>`;
+    card.querySelector('.lic-close').addEventListener('click', close);
+    card.querySelector('.lic-done').addEventListener('click', close);
+    const cp = card.querySelector('.lic-copyref');
+    cp.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(d.ref); cp.textContent = 'Copied'; }
+      catch { prompt('Your reference:', d.ref); }
+      setTimeout(() => { cp.textContent = 'Copy'; }, 1600);
+    });
+  }
+
   let el = null;
 
   function build() {
@@ -191,8 +260,10 @@
         + (quoteOnly ? '' : `\nPrice: ${CUR}${priceFor(track, tier)}`)
         + `\n\nWhere it will run:\nTerritory:\nHow long for:\n\n`
         + `Link: ${location.origin + location.pathname}?license=${encodeURIComponent(track.slug)}\n`;
-      openMail('mailto:licensing@snowstar.company?subject='
-        + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+      // A real request, recorded with a reference the money can travel with.
+      // The mailto is kept only as the fallback when the API is unreachable —
+      // losing a licence enquiry because a fetch failed is not acceptable.
+      submitRequest(track, tier, quoteOnly, subject, body);
       if (window.mutraTrack) mutraTrack(quoteOnly ? 'quote' : 'license', track.slug);
     };
 

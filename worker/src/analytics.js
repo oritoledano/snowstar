@@ -16,6 +16,8 @@ const ENGAGED_PLAYS = 2;         // a visit gets interesting at 2 plays…
 const SESSION_IDLE_MS = 30 * 60 * 1000;
 const MAX_LISTEN_SECONDS = 7200; // 2h ceiling on a single reported duration
 
+import { hasLiveLicence } from './licensing.js';
+
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200, headers = {}) =>
   new Response(JSON.stringify(data), {
@@ -361,24 +363,35 @@ export async function handleDownload(req, env, user) {
   const row = await env.DB.prepare('SELECT title, audio_key FROM tracks WHERE slug = ?').bind(slug).first();
   if (!row) return json({ error: 'not_found' }, 404);
 
-  // Read from the PRIVATE bucket, not the public one. Same keys, same bytes —
-  // but the download path no longer depends on the object being reachable at
-  // cdn.snowstar.company, which is what lets the public copy become a preview.
-  // Falls back to MEDIA so a key that has not been mirrored yet still serves.
-  const obj = (await env.MASTERS.get(row.audio_key)) || (await env.MEDIA.get(row.audio_key));
+  // THE ENTITLEMENT CHECK. A live licence gets the clean master out of the
+  // private bucket; everyone else gets the watermarked preview from the public
+  // one. Both are real downloads — the preview is a usable rough-cut file, not
+  // a punishment — but only one of them is the product.
+  const lic = await hasLiveLicence(env, user, slug);
+  const obj = lic
+    ? (await env.MASTERS.get(row.audio_key)) || (await env.MEDIA.get(row.audio_key))
+    : (await env.MEDIA.get(row.audio_key));
   if (!obj) return json({ error: 'missing_file' }, 404);
 
   // server-confirmed log (not a client beacon) — feeds the member's own
   // "Downloads" list in the Account panel
-  await env.DB.prepare('INSERT INTO downloads (user_id, slug, ts) VALUES (?, ?, ?)')
-    .bind(user.id, slug, now()).run().catch(() => {});
+  await env.DB.prepare(
+    'INSERT INTO downloads (user_id, slug, ts, licence_id, file_etag, bytes) VALUES (?, ?, ?, ?, ?, ?)'
+  ).bind(user.id, slug, now(), lic ? lic.id : null, obj.etag || null, obj.size || null)
+   .run().catch(async () => {
+      // pre-migration schema — keep the download working rather than 500
+      await env.DB.prepare('INSERT INTO downloads (user_id, slug, ts) VALUES (?, ?, ?)')
+        .bind(user.id, slug, now()).run().catch(() => {});
+   });
 
   const ext = row.audio_key.split('.').pop().toLowerCase();
   // keep the filename safe for every OS while staying readable
   const safe = row.title.replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 90);
   const headers = new Headers();
   obj.writeHttpMetadata(headers);
-  headers.set('content-disposition', `attachment; filename="${safe}.${ext}"`);
+  const suffix = lic ? '' : ' (preview)';
+  headers.set('content-disposition', `attachment; filename="${safe}${suffix}.${ext}"`);
+  headers.set('x-mutra-licensed', lic ? lic.ref : 'preview');
   headers.set('cache-control', 'private, no-store');
   return new Response(obj.body, { headers });
 }

@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'members', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
+  const TABS = ['overview', 'stats', 'members', 'licensing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -64,6 +64,7 @@
       if (tab === 'artists') return paintArtists();
       if (tab === 'submissions') return paintSubmissions();
       if (tab === 'notifications') return paintMail();
+      if (tab === 'licensing') return paintLicensing();
       if (tab === 'alerts') return paintAlerts();
       if (tab === 'storage') return paintStorage();
       if (tab === 'upload') return paintUpload();
@@ -825,6 +826,163 @@
         await post('/mailbox/send', { ids: [Number(b.closest('.rv-mrow').dataset.id)] });
         load();
       }));
+  }
+
+  /* ── licensing: the approval queue ── */
+  /* Granting is the one operation here that gives away the product, so the
+     sheet is deliberately obstructive: you pick the payment, you TYPE the
+     amount that arrived, and you read back what you are about to permit. None
+     of those can be satisfied by a mis-click. */
+  const ILS = (agorot) => '₪' + (Number(agorot || 0) / 100).toLocaleString(undefined, { minimumFractionDigits: 0 });
+
+  async function paintLicensing() {
+    const d = await get('/licence/queue?status=new');
+    const reqs = d.requests || [];
+    const pays = (d.payments || []).filter((p) => p.unapplied > 0);
+    const c = d.counts || {};
+
+    paint(`
+      <div class="db-panel">
+        <h2>Licensing
+          <span class="pill">${c.new || 0} waiting</span>
+          <span class="pill">${c.granted || 0} granted</span>
+          ${c.declined ? `<span class="pill">${c.declined} declined</span>` : ''}
+        </h2>
+        <p class="db-empty" style="padding-top:0">Oldest first. Money and permission are recorded
+          separately — record a payment when it lands, then release the track against it.</p>
+
+        <h4 style="margin-top:6px">Money received, not yet applied
+          <span class="pill">${pays.length}</span>
+          <button class="chip" id="lcAddPay" style="float:right">Record a payment</button></h4>
+        ${pays.length ? `<div class="mem-list">${pays.map((p) => `
+          <div class="mem-row"><b>${ILS(p.unapplied)}</b>
+            <span>${esc(p.method)}</span>${p.reference ? `<span>ref ${esc(p.reference)}</span>` : ''}
+            ${p.email ? `<span>${esc(p.email)}</span>` : ''}
+            <span class="mem-when">${fmt(p.ts)}</span></div>`).join('')}</div>`
+          : '<p class="db-empty" style="padding:4px 0 10px">Nothing unassigned.</p>'}
+
+        <h4>Requests</h4>
+        ${reqs.length ? reqs.map((r) => `
+          <div class="rv-item lc-req" data-id="${r.id}">
+            <div class="rv-top">
+              <b>${esc(r.slug)}</b>
+              <span class="who">${esc(d.tiers[r.tier] ? d.tiers[r.tier].label : r.tier)}</span>
+              <span class="meta">${esc(r.ref)} · ${esc(r.user_name || r.email)} · ${fmt(r.created_at)}</span>
+              ${r.lane === 'quote'
+                ? '<span class="lc-quote">quote lane — someone else has a say</span>'
+                : `<span class="rv-sent">list ${ILS(r.list_amount)}</span>`}
+            </div>
+            ${r.licensee_name ? `<p class="rv-note">For: ${esc(r.licensee_name)}${r.licensee_tax_id ? ' · ' + esc(r.licensee_tax_id) : ''}</p>` : ''}
+            ${(r.use_where || r.use_territory || r.use_duration) ? `<p class="rv-note">
+              ${r.use_where ? 'Where: ' + esc(r.use_where) + '. ' : ''}
+              ${r.use_territory ? 'Territory: ' + esc(r.use_territory) + '. ' : ''}
+              ${r.use_duration ? 'For: ' + esc(r.use_duration) + '.' : ''}</p>` : ''}
+            ${r.note ? `<p class="rv-note">“${esc(r.note)}”</p>` : ''}
+            <div class="rv-acts">
+              <button class="rv-btn rv-ok lc-open">Grant licence…</button>
+              <button class="rv-btn lc-decline">Decline</button>
+            </div>
+            <div class="lc-sheet" hidden></div>
+          </div>`).join('')
+        : '<p class="db-empty">Nothing waiting.</p>'}
+      </div>`);
+
+    const payOpts = pays.map((p) =>
+      `<option value="${p.id}" data-amt="${p.unapplied}">${ILS(p.unapplied)} · ${esc(p.method)}${p.reference ? ' · ' + esc(p.reference) : ''}</option>`).join('');
+
+    app.querySelectorAll('.lc-req .lc-open').forEach((btn) => btn.addEventListener('click', () => {
+      const item = btn.closest('.lc-req');
+      const r = reqs.find((x) => x.id === Number(item.dataset.id));
+      const sheet = item.querySelector('.lc-sheet');
+      if (!sheet.hidden) { sheet.hidden = true; return; }
+      sheet.hidden = false;
+      const listShek = (r.list_amount || 0) / 100;
+      sheet.innerHTML = `
+        <div class="lc-grid">
+          <label class="te-f"><span>Payment received</span>
+            <select class="lc-pay">
+              <option value="">— none (this is a comp) —</option>${payOpts}
+            </select></label>
+          <label class="te-f"><span>Amount received (₪, ex-VAT)</span>
+            <input class="lc-amt" type="number" min="0" step="1" placeholder="${listShek || ''}"></label>
+          <label class="te-f"><span>Licensee (business name)</span>
+            <input class="lc-name" maxlength="200" value="${esc(r.licensee_name || '')}"></label>
+          <label class="te-f"><span>ח.פ / ע.מ</span>
+            <input class="lc-tax" maxlength="40" value="${esc(r.licensee_tax_id || '')}"></label>
+        </div>
+        ${r.lane === 'quote' ? `
+          <label class="ar-check lc-ctl"><input type="checkbox" class="lc-cleared">
+            <span>I have confirmed with the other rights holder that this use is cleared</span></label>` : ''}
+        <p class="lc-readback"></p>
+        <div class="rv-acts">
+          <button class="rv-btn rv-ok lc-go" disabled>Grant</button>
+          <span class="lc-msg"></span>
+        </div>`;
+
+      const sel = sheet.querySelector('.lc-pay'), amt = sheet.querySelector('.lc-amt');
+      const go = sheet.querySelector('.lc-go'), read = sheet.querySelector('.lc-readback');
+      const cleared = sheet.querySelector('.lc-cleared');
+
+      const sync = () => {
+        const pid = sel.value;
+        const expect = pid ? Number(sel.selectedOptions[0].dataset.amt) : null;
+        const typed = Math.round(Number(amt.value) * 100);
+        const isComp = !pid;
+        // the amount has to be TYPED and has to match the payment. A mis-click
+        // cannot produce a number, which is the whole point.
+        let ok = Number.isFinite(typed) && amt.value !== '';
+        if (!isComp) ok = ok && typed === expect;
+        if (r.lane === 'quote') ok = ok && cleared && cleared.checked;
+        go.disabled = !ok;
+        read.textContent = ok
+          ? `${isComp ? 'No payment (comp).' : ILS(typed) + ' received by ' + sel.selectedOptions[0].textContent.split(' · ')[1] + '.'} `
+            + `Grant ${sheet.querySelector('.lc-name').value || r.email} a ${d.tiers[r.tier] ? d.tiers[r.tier].label : r.tier} licence for ${r.slug}.`
+          : (!isComp && amt.value !== '' && typed !== expect)
+            ? `Doesn't match the payment (${ILS(expect)}).`
+            : 'Pick a payment and type the amount received.';
+      };
+      [sel, amt, sheet.querySelector('.lc-name')].forEach((el) => el.addEventListener('input', sync));
+      if (cleared) cleared.addEventListener('change', sync);
+      sync();
+
+      go.addEventListener('click', async () => {
+        go.disabled = true;
+        const msg = sheet.querySelector('.lc-msg');
+        msg.textContent = 'Granting…';
+        const res = await post('/licence/grant', {
+          request_id: r.id,
+          payment_id: sel.value ? Number(sel.value) : null,
+          amount: Number(amt.value),
+          reason: sel.value ? 'paid' : 'comp',
+          licensee_name: sheet.querySelector('.lc-name').value,
+          licensee_tax_id: sheet.querySelector('.lc-tax').value,
+          scope_text: read.textContent,
+          controller_cleared: cleared ? cleared.checked : false,
+        }).catch((e) => ({ error: e.message }));
+        if (res && res.ok) load();
+        else { msg.textContent = 'Failed: ' + ((res && res.error) || 'unknown'); go.disabled = false; }
+      });
+    }));
+
+    app.querySelectorAll('.lc-decline').forEach((b) => b.addEventListener('click', async () => {
+      const id = Number(b.closest('.lc-req').dataset.id);
+      const note = prompt('Why? (the requester sees this)') || '';
+      await post('/licence/decline', { id, note });
+      load();
+    }));
+
+    const addPay = document.getElementById('lcAddPay');
+    if (addPay) addPay.addEventListener('click', async () => {
+      const amount = prompt('Amount received in ₪ (including VAT):');
+      if (!amount) return;
+      const method = prompt('How? bank / bit / paybox / cash / card', 'bit');
+      if (!method) return;
+      const reference = prompt('Reference they quoted (the MU-… code), if any:') || '';
+      const res = await post('/licence/payment', { amount: Number(amount), method, reference })
+        .catch((e) => ({ error: e.message }));
+      if (res && res.error) alert('Could not record: ' + res.error);
+      load();
+    });
   }
 
   /* ── one member, everything about them ── */

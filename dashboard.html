@@ -12,7 +12,7 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=8">
-<link rel="stylesheet" href="css/mutra.css?v=62">
+<link rel="stylesheet" href="css/mutra.css?v=64">
 <style>
   body{padding-bottom:60px}
   .db-wrap{max-width:1180px;margin:0 auto;padding:96px clamp(16px,4vw,44px) 40px}
@@ -74,6 +74,24 @@
   .rv-sent{color:#34d399;font-size:.74rem}
   .rv-err{color:#f87171;font-size:.74rem}
   .rv-mut{color:#94a3b8;font-size:.74rem}
+  /* licensing queue */
+  .lc-quote{color:#f59e0b;font-size:.74rem;border:1px solid rgba(245,158,11,.35);
+    border-radius:99px;padding:2px 9px}
+  .lc-sheet{border-top:1px solid var(--line);margin-top:10px;padding-top:12px}
+  .lc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 14px;margin-bottom:10px}
+  .lc-grid .te-f{display:grid;gap:4px}
+  .lc-grid .te-f > span{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+  .lc-grid input,.lc-grid select{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+    padding:8px 10px;color:var(--text);font:inherit;font-size:.85rem;outline:0;box-sizing:border-box;width:100%}
+  /* the read-back is the last thing before the button, in the owner's own
+     words — a sentence is harder to skim past than a row of fields */
+  .lc-readback{background:var(--panel);border-left:3px solid var(--muted);border-radius:0 9px 9px 0;
+    padding:9px 12px;margin:8px 0 12px;font-size:.85rem;line-height:1.5;color:#c8d2e4}
+  .lc-ctl{display:flex;gap:8px;align-items:flex-start;margin:4px 0 10px;font-size:.84rem}
+  .lc-ctl input{margin-top:3px;flex:0 0 auto;width:13px;height:13px}
+  .lc-msg{color:var(--muted);font-size:.8rem;align-self:center}
+  .lc-go:disabled{opacity:.4;cursor:not-allowed}
+  @media (max-width:560px){.lc-grid{grid-template-columns:1fr}}
   /* member drawer — a sheet rather than a modal, so the table stays visible
      behind it and you can tell which row you opened */
   .mem-open{background:none;border:0;color:var(--ice,#8fd8ff);font:inherit;cursor:pointer;padding:0;text-align:left}
@@ -228,6 +246,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=15"></script>
-<script src="js/dashboard.js?v=12"></script>
+<script src="js/dashboard.js?v=13"></script>
 </body>
 </html>

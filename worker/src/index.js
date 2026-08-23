@@ -32,6 +32,8 @@ import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration } from './rights.js';
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
 import { updateMember, deleteMember, memberDetail } from './members.js';
+import { createRequest, myLicences, listQueue, recordPayment,
+         grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
 import { currentUser, readCookies } from './session.js';
@@ -214,6 +216,15 @@ async function handle(req, env, ctx) {
   if (path === '/favorites/list' && method === 'GET') return myFavoritesList(env, await currentUser(req, env), url);
 
   // ── owner-only member management (dashboard) ──
+  // ── licensing: request in, owner grants, member downloads the master ──
+  if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
+  if (path === '/licence/mine' && method === 'GET') return myLicences(env, await currentUser(req, env));
+  if (path === '/licence/queue' && method === 'GET') return listQueue(env, await currentUser(req, env), url);
+  if (path === '/licence/payment' && method === 'POST') return recordPayment(req, env, await currentUser(req, env));
+  if (path === '/licence/grant' && method === 'POST') return grantFromDashboard(req, env, await currentUser(req, env));
+  if (path === '/licence/revoke' && method === 'POST') return revokeLicence(req, env, await currentUser(req, env));
+  if (path === '/licence/decline' && method === 'POST') return declineRequest(req, env, await currentUser(req, env));
+
   if (path === '/members/detail' && method === 'GET') return memberDetail(env, await currentUser(req, env), url);
   if (path === '/members/update' && method === 'POST') return updateMember(req, env, await currentUser(req, env));
   if (path === '/members/delete' && method === 'POST') return deleteMember(req, env, await currentUser(req, env));
