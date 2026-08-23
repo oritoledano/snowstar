@@ -57,7 +57,7 @@ function looksLikePlayback(req) {
   if (dest && dest !== 'audio' && dest !== 'empty' && dest !== 'video') return false;
 
   const ref = req.headers.get('referer') || '';
-  if (!ref) return !!site;                      // Safari: allow, having passed above
+  if (!ref) return !!site;                      // no Referer and no hints: preview
   try {
     const h = new URL(ref).hostname;
     return h === 'snowstar.company' || h === 'www.snowstar.company' || h.endsWith('.pages.dev');
@@ -96,19 +96,19 @@ export async function handleStream(req, env) {
   const slug = url.searchParams.get('slug') || '';
   if (!/^[a-z0-9-]{1,120}$/.test(slug)) return json({ error: 'invalid_slug' }, 400);
 
-  if (!looksLikePlayback(req)) return json({ error: 'forbidden' }, 403);
-
   const row = await env.DB.prepare('SELECT audio_key FROM tracks WHERE slug = ?').bind(slug).first();
   if (!row || !row.audio_key) return json({ error: 'not_found' }, 404);
 
+  // Failing either gate serves the WATERMARKED preview rather than an error.
+  // A 403 would be a dead end for the one browser whose headers we guessed
+  // wrong about, and silence on a music site is worse than any watermark. The
+  // wrong actor still gets a marked file, which is the outcome that matters.
   const ip = req.headers.get('cf-connecting-ip') || '';
-  if (await breadthExceeded(env, ip, slug)) {
-    // Fall back to the watermarked preview rather than a wall of 429s. Someone
-    // enumerating gets a catalogue of watermarked files, which is the correct
-    // outcome, and a false positive still hears music.
-    const pre = await env.MEDIA.get(row.audio_key);
-    if (!pre) return json({ error: 'rate_limited' }, 429);
-    return serve(req, pre, 'preview');
+  if (!looksLikePlayback(req) || (await breadthExceeded(env, ip, slug))) {
+    const range = parseRange(req.headers.get('range'));
+    const pre = await env.MEDIA.get(row.audio_key, range ? { range } : undefined);
+    if (!pre) return json({ error: 'missing_file' }, 404);
+    return serve(req, pre, 'preview', range);
   }
 
   const rangeHeader = req.headers.get('range');
