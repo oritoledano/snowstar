@@ -182,16 +182,27 @@ export async function startCheckout(req, env, user) {
  * URLSearchParams round-trip, which would reorder and re-encode it.
  */
 async function verifyReturn(env, rawQuery) {
+  // HYP's own params are appended AFTER ours. If the redirect carries its own
+  // action= (it carries action=pay), a naive append gives the URL two action
+  // values and most servers honour the LAST one — turning our VERIFY into a
+  // pay request. Strip the keys we set ourselves from the forwarded string,
+  // preserving the order of everything else, which is what HYP compares.
+  const OURS = new Set(['action', 'what', 'masof', 'key', 'passp']);
+  const kept = rawQuery.split('&').filter((kv) => {
+    const k = kv.split('=')[0].toLowerCase();
+    return kv && !OURS.has(k);
+  }).join('&');
+
   const url = `${BASE}?action=APISign&What=VERIFY`
     + `&Masof=${encodeURIComponent(env.HYP_TERMINAL)}`
     + `&KEY=${encodeURIComponent(env.HYP_API_KEY)}`
     + `&PassP=${encodeURIComponent(env.HYP_PASSP)}`
-    + `&${rawQuery}`;
+    + `&${kept}`;
   const res = await fetch(url);
   const text = await res.text();
-  if (/^\s*</.test(text)) return { ok: false, error: 'hyp_system_error' };
+  if (/^\s*</.test(text)) return { ok: false, error: 'hyp_system_error', raw: text.slice(0, 200) };
   const d = parseHyp(text);
-  return { ok: d.CCode === '0', ccode: d.CCode, data: d };
+  return { ok: d.CCode === '0', ccode: d.CCode, data: d, raw: text.slice(0, 400), sent: kept };
 }
 
 /**
@@ -212,12 +223,34 @@ export async function handleReturn(req, env, ctx) {
     `https://snowstar.company/mutra.html?pay=failed&reason=${encodeURIComponent(why)}`, 302);
 
   // 1. the redirect's own status must be a CAPTURE, not an authorisation
-  if (q.CCode !== '0') return fail('declined');
+  if (q.CCode !== '0') {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind('system:hyp', 'hyp.declined', ref,
+           JSON.stringify({ ccode: q.CCode, errMsg: q.errMsg || '', id: q.Id || '' }).slice(0, 900),
+           now()).run().catch(() => {});
+    return fail('declined');
+  }
   if (!/^MU-\d{4}-\d{4}$/.test(ref)) return fail('bad_ref');
 
-  // 2. HYP itself must confirm the parameter set
+  // 2. HYP itself must confirm the parameter set.
+  //     A failure here is the dangerous case — the card may well have been
+  //     charged — so record everything needed to reconcile by hand rather than
+  //     discarding it and leaving the owner to guess.
   const v = await verifyReturn(env, raw);
-  if (!v.ok) return fail('unverified');
+  if (!v.ok) {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind('system:hyp', 'hyp.verify_failed', ref,
+           JSON.stringify({ ccode: v.ccode || null, err: v.error || null,
+                            hypReply: (v.raw || '').slice(0, 300),
+                            returned: raw.slice(0, 600) }).slice(0, 1800),
+           now()).run().catch(() => {});
+    await env.DB.prepare(
+      `UPDATE hyp_checkouts SET status = 'verify_failed', hyp_id = ? WHERE ref = ?`
+    ).bind(String(q.Id || ''), ref).run().catch(() => {});
+    return fail('unverified');
+  }
 
   // 3-4. the reference must resolve to a request still awaiting a decision
   const r = await env.DB.prepare(
