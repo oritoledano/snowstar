@@ -18,14 +18,18 @@ const RESEND = 'https://api.resend.com/emails';
  */
 export const mailLive = (env) => !(env.MAIL_FROM || '').includes('resend.dev');
 
-/* SENDING domain vs RECEIVING domain — these are deliberately different.
+/* The apex is verified in Resend for SENDING, and Cloudflare Email Routing
+   handles the same domain for RECEIVING — the two coexist because Resend signs
+   with DKIM and bounces via a send.* subdomain, leaving the apex MX and SPF to
+   Cloudflare. So we can now send from the same addresses people write to.
+   ORIGINAL NOTE, kept because the trap is still live:
    Resend will verify send.snowstar.company (a subdomain, so the apex MX and
    SPF that Cloudflare Email Routing owns stay untouched). Everything we SEND
    must therefore come from @send.snowstar.company: Resend rejects a From on a
    domain it has not verified with a 403, so pointing these at the apex would
    have broken every kinded message the moment MAIL_FROM was flipped.
    Replies still go to the apex, which Email Routing already delivers. */
-const SEND_DOMAIN = 'send.snowstar.company';
+const SEND_DOMAIN = 'snowstar.company';
 const SENDERS = {
   submissions: `Mutra Submissions <submissions@${SEND_DOMAIN}>`,
   artists:     `Mutra Artists <artists@${SEND_DOMAIN}>`,

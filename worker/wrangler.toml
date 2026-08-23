@@ -33,11 +33,12 @@ destination_address = "oritoledano@gmail.com"
 
 [vars]
 ALERT_TO = "oritoledano@gmail.com"
-# send.snowstar.company verified in Resend on 23 Aug 2026 (DKIM + SPF + MX all
-# confirmed resolving). mailLive() keys off the absence of "resend.dev" in this
-# string, so changing it here is what switches on real delivery to members —
-# and what makes the @send.snowstar.company senders in mail.js take effect.
-MAIL_FROM = "SNOWSTAR.COMPANY <hello@send.snowstar.company>"
+# The APEX snowstar.company is verified in Resend, so mail now comes FROM the
+# bare domain — same address people already write to. Its bounce path lives at
+# send.snowstar.company (Resend's Return-Path subdomain), which is why an MX
+# and SPF sit there; the apex MX and SPF still belong to Cloudflare Email
+# Routing and must not be touched, or inbound mail to hello@ stops.
+MAIL_FROM = "SNOWSTAR.COMPANY <hello@snowstar.company>"
 
 # daily digest at 07:00 UTC
 [triggers]
