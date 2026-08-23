@@ -160,12 +160,16 @@ export async function startCheckout(req, env, user) {
     `INSERT INTO hyp_checkouts (ref, request_id, amount, status, created_at) VALUES (?, ?, ?, 'started', ?)`
   ).bind(ref, r.id, gross, now()).run().catch(() => {});
 
-  const pay = new URLSearchParams({
-    action: 'pay', Masof: env.HYP_TERMINAL, Amount: shekels, Coin: '1',
-    Info: `Mutra licence ${ref}`, Order: ref, UTF8: 'True', UTF8out: 'True',
-    MoreData: 'True', PageLang: 'HEB', signature: d.signature,
-  });
-  return json({ ok: true, url: `${BASE}?${pay.toString()}`, ref, amount_gross: gross });
+  // Use HYP's RESPONSE VERBATIM as the payment query string. It already is the
+  // full pay URL — action=pay, every parameter we signed, in HYP's own order,
+  // plus the signature — and KEY/PassP are not echoed back.
+  //
+  // Rebuilding it from our own subset is what broke the first live attempt:
+  // the signature covers the parameters that were SIGNED, so dropping tmp,
+  // ClientName, email, SendHesh, Postpone and J5 from the redirect made HYP
+  // reject it with "שגיאה - שגיאת אימות". Same failure mode as the VERIFY
+  // ordering rule below — do not reconstruct what HYP handed you.
+  return json({ ok: true, url: `${BASE}?${text.trim()}`, ref, amount_gross: gross });
 }
 
 /* ═══════════ 2. the return, and why it is not trusted ═══════════ */
