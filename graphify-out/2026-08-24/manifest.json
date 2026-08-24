@@ -1246,5 +1246,11 @@
     "seen": 1787581014.704831,
     "ast_hash": "8682cfcb0a5e3c15f23ab87e9422ac4c",
     "semantic_hash": ""
+  },
+  "js/mutra-artist-panel.js": {
+    "mtime": 1787581480.7252555,
+    "seen": 1787581486.418855,
+    "ast_hash": "9f14ce62768f38b7e67dd8abd62d802a",
+    "semantic_hash": ""
   }
 }

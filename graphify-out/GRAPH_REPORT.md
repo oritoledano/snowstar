@@ -1,24 +1,23 @@
 # Graph Report - snowstar  (2026-08-24)
 
 ## Corpus Check
-- 55 files · ~340,744 words
+- 55 files · ~340,808 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 688 nodes · 1620 edges · 38 communities (36 shown, 2 thin omitted)
+- 689 nodes · 1623 edges · 31 communities (29 shown, 2 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 81 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0d95ff71`
+- Built from commit: `093cf3e9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - rights.js
-- Mutra Catalogue Page
+- mutra-page.js
 - Licence terms
-- analytics.js
 - licensing.js
 - main.js
 - dashboard.js
@@ -46,33 +45,27 @@
 - schema-tracks.sql
 - mutra-license.js
 - stream.js
-- artistreg.js
-- works.js
-- crypto.js
-- profile.js
-- clearlist.js
 - mutra-artist-panel.js
-- members.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `handle()` - 100 edges
 2. `Mutra royalty-free music catalogue page` - 33 edges
-3. `appendPage()` - 19 edges
+3. `appendPage()` - 20 edges
 4. `Snowstar agency homepage` - 19 edges
 5. `render()` - 18 edges
 6. `load()` - 16 edges
 7. `Owner dashboard` - 16 edges
 8. `paint()` - 14 edges
 9. `toggle()` - 14 edges
-10. `Licence terms` - 14 edges
+10. `Artist submission portal` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `Countersign banner for tracks uploaded on the artist's behalf` --semantically_similar_to--> `Clearance status states (pending / cleared / rejected)`  [INFERRED] [semantically similar]
+  artists.html → dashboard.html
 - `Owner-side track upload and metadata editor` --semantically_similar_to--> `Multi-file track upload flow`  [INFERRED] [semantically similar]
   dashboard.html → artists.html
 - `Upward tier change credits the earlier payment` --semantically_similar_to--> `Use tiers (digital, corporate, paid, TV, film, radio, commercial)`  [INFERRED] [semantically similar]
   refund.html → terms.html
-- `Countersign banner for tracks uploaded on the artist's behalf` --semantically_similar_to--> `Clearance status states (pending / cleared / rejected)`  [INFERRED] [semantically similar]
-  artists.html → dashboard.html
 - `Newsletter signup form` --semantically_similar_to--> `Signed-out account gate`  [INFERRED] [semantically similar]
   index.html → artists.html
 - `Instant vs quote licensing lane` --semantically_similar_to--> `Get-a-quote tracks (someone else has a say)`  [INFERRED] [semantically similar]
@@ -86,27 +79,23 @@
 - **Rights clearance pipeline (artist declaration → owner review → licensable lane)** — artists_rights_declaration, artists_co_owner_shares, artists_controller_declaration, artists_countersign_claim, artists_instant_vs_quote_lane, dashboard_submissions_queue, dashboard_clearance_status, terms_quote_only_tracks [INFERRED 0.85]
 - **One Snowstar account across catalogue, portal, dashboard and reset** — js_account, js_account_ui, css_account, artists_account_gate, reset_page, dashboard_page, privacy_account_data [INFERRED 0.85]
 
-## Communities (38 total, 2 thin omitted)
+## Communities (31 total, 2 thin omitted)
 
 ### Community 0 - "rights.js"
 Cohesion: 0.12
 Nodes (38): AUDIO_EXT, createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), registerArtist() (+30 more)
 
-### Community 1 - "Mutra Catalogue Page"
+### Community 1 - "mutra-page.js"
 Cohesion: 0.07
-Nodes (63): addCurateControls(), appendPage(), applyOverrides(), clearFilters(), closeDrawer(), closePlayer(), cycle(), drawDrop() (+55 more)
+Nodes (64): addCurateControls(), appendPage(), applyOverrides(), artistLinks(), clearFilters(), closeDrawer(), closePlayer(), cycle() (+56 more)
 
 ### Community 2 - "Licence terms"
-Cohesion: 0.06
-Nodes (44): ACUM / royalties-society registration flag, Who can approve a licence (any vs all), Co-owner share splits (batch or per-track), External controller declaration (label / publisher / distributor), Countersign banner for tracks uploaded on the artist's behalf, Direct-child CSS selectors for nested checkbox labels, Instant vs quote licensing lane, Signed rights declaration on upload (+36 more)
-
-### Community 3 - "analytics.js"
-Cohesion: 0.30
-Nodes (14): alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json(), listAlerts(), logAlert() (+6 more)
+Cohesion: 0.08
+Nodes (35): ACUM / royalties-society registration flag, Who can approve a licence (any vs all), Co-owner share splits (batch or per-track), External controller declaration (label / publisher / distributor), Direct-child CSS selectors for nested checkbox labels, Instant vs quote licensing lane, Signed rights declaration on upload, CLAIM subject-line escalation path (+27 more)
 
 ### Community 4 - "licensing.js"
-Cohesion: 0.15
-Nodes (29): clean(), createRequest(), declineRequest(), freezeText(), GRANT_REASONS, grantFromDashboard(), grantLicence(), hasLiveLicence() (+21 more)
+Cohesion: 0.16
+Nodes (28): clean(), createRequest(), declineRequest(), freezeText(), GRANT_REASONS, grantFromDashboard(), grantLicence(), json() (+20 more)
 
 ### Community 5 - "main.js"
 Cohesion: 0.07
@@ -149,12 +138,12 @@ Cohesion: 0.21
 Nodes (17): build(), clearAll(), openPanel(), applyAvatar(), artistNames(), describe(), fmt(), paintSuggestions() (+9 more)
 
 ### Community 15 - "oauth.js"
-Cohesion: 0.29
-Nodes (17): b64url(), bounce(), claimHandoff(), enc, facebookDataDeletion(), finishOAuth(), issueSession(), KILL_LEGACY_COOKIE (+9 more)
+Cohesion: 0.14
+Nodes (29): b64url(), bounce(), claimHandoff(), enc, facebookDataDeletion(), finishOAuth(), issueSession(), KILL_LEGACY_COOKIE (+21 more)
 
 ### Community 16 - "Owner dashboard"
-Cohesion: 0.24
-Nodes (9): Credits: tracks where you are listed as a rights holder, Artist submission portal, css/account.css — auth UI styles, css/skins.css — per-product skin variables, Alert kill switch with state-coloured rail, Member drawer (side sheet, not a modal), Owner dashboard, Playbook: numbered pipeline steps and responsibilities (+1 more)
+Cohesion: 0.14
+Nodes (18): Countersign banner for tracks uploaded on the artist's behalf, Credits: tracks where you are listed as a rights holder, Artist submission portal, Multi-file track upload flow, Upload on behalf of another artist, css/account.css — auth UI styles, css/skins.css — per-product skin variables, Alert kill switch with state-coloured rail (+10 more)
 
 ### Community 17 - "Snowstar agency homepage"
 Cohesion: 0.15
@@ -189,8 +178,8 @@ Cohesion: 0.57
 Nodes (6): duration(), loudness(), offsets(), Tag placement. Returns [] only when the track is too short to carry one. The…, run(), watermark()
 
 ### Community 25 - "index.js"
-Cohesion: 0.18
-Nodes (24): cleanupOrphanUploads(), ALLOWED_ORIGINS, authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json() (+16 more)
+Cohesion: 0.06
+Nodes (89): alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json(), listAlerts(), logAlert() (+81 more)
 
 ### Community 26 - "schema-analytics.sql"
 Cohesion: 0.50
@@ -204,33 +193,9 @@ Nodes (26): build(), buyerId(), cards(), close(), crumbs(), go(), goToCard(), on
 Cohesion: 0.46
 Nodes (7): breadthExceeded(), handleStream(), json(), looksLikePlayback(), now(), parseRange(), serve()
 
-### Community 31 - "artistreg.js"
-Cohesion: 0.62
-Nodes (6): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNames()
-
-### Community 32 - "works.js"
-Cohesion: 0.21
-Nodes (18): cleanUrl(), CREDIT_KEYS, deleteLogo(), deleteWork(), dropCdnFiles(), json(), listLogos(), listWorks() (+10 more)
-
-### Community 33 - "crypto.js"
-Cohesion: 0.24
-Nodes (13): b64(), enc, pbkdf2(), PBKDF2_ITERS, peppered(), randB64(), safeEqual(), sha256b64() (+5 more)
-
-### Community 34 - "profile.js"
-Cohesion: 0.25
-Nodes (12): clean(), clearAvatar(), FIELD_COLS, IMG_EXT, json(), myDownloads(), myFavoritesList(), now() (+4 more)
-
-### Community 35 - "clearlist.js"
-Cohesion: 0.42
-Nodes (9): addChannel(), allChannels(), clean(), json(), listChannels(), now(), PLATFORMS, removeChannel() (+1 more)
-
 ### Community 36 - "mutra-artist-panel.js"
 Cohesion: 0.44
 Nodes (8): albumsOf(), build(), close(), loadRoster(), open(), paint(), socialHtml(), tracksBy()
-
-### Community 37 - "members.js"
-Cohesion: 0.53
-Nodes (4): deleteMember(), json(), memberDetail(), updateMember()
 
 ## Knowledge Gaps
 - **82 isolated node(s):** `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS`, `nav`, `menuBtn` (+77 more)
@@ -240,8 +205,8 @@ Nodes (4): deleteMember(), json(), memberDetail(), updateMember()
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Mutra royalty-free music catalogue page` connect `Mutra royalty-free music catalogue page` to `Mutra Catalogue Page`, `Licence terms`, `works-admin.js`, `site-edit.js`, `account-ui.js`, `openPanel`, `Owner dashboard`, `Snowstar agency homepage`, `account.js`, `mutra-artist.js`, `mutra-spotlight.js`, `Privacy policy`, `Track catalogue browse + search`, `mutra-license.js`?**
-  _High betweenness centrality (0.197) - this node is a cross-community bridge._
+- **Why does `Mutra royalty-free music catalogue page` connect `Mutra royalty-free music catalogue page` to `mutra-page.js`, `Licence terms`, `works-admin.js`, `site-edit.js`, `account-ui.js`, `openPanel`, `Owner dashboard`, `Snowstar agency homepage`, `account.js`, `mutra-artist.js`, `mutra-spotlight.js`, `Privacy policy`, `Track catalogue browse + search`, `mutra-license.js`?**
+  _High betweenness centrality (0.198) - this node is a cross-community bridge._
 - **Why does `Snowstar agency homepage` connect `Snowstar agency homepage` to `main.js`, `works-admin.js`, `Mutra royalty-free music catalogue page`, `site-edit.js`, `account-ui.js`, `Owner dashboard`, `account.js`, `Privacy policy`?**
   _High betweenness centrality (0.086) - this node is a cross-community bridge._
 - **Why does `Owner dashboard` connect `Owner dashboard` to `Licence terms`, `dashboard.js`, `Mutra royalty-free music catalogue page`, `account-ui.js`, `Snowstar agency homepage`, `account.js`, `Privacy policy`?**
@@ -252,5 +217,5 @@ _Questions this graph is uniquely positioned to answer:_
   _82 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `rights.js` be split into smaller, more focused modules?**
   _Cohesion score 0.12317073170731707 - nodes in this community are weakly interconnected._
-- **Should `Mutra Catalogue Page` be split into smaller, more focused modules?**
-  _Cohesion score 0.0741687979539642 - nodes in this community are weakly interconnected._
+- **Should `mutra-page.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.07329192546583851 - nodes in this community are weakly interconnected._

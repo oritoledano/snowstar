@@ -1,0 +1,25 @@
+# Cloudflare Pages cache rules.
+#
+# The HTML is the index of which asset versions to load, so it must never be
+# staler than the assets it points at. It was max-age=600 while the JS was
+# max-age=14400 — a browser could hold a four-hour-old mutra-page.js against a
+# ten-minute-old HTML, which is exactly how someone ends up running a player
+# that predates a fix and hearing a watermark that was removed hours ago.
+#
+# So: HTML always revalidates, and the versioned assets it names can then be
+# cached hard, because a change to any of them changes the ?v= in the HTML.
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=604800
