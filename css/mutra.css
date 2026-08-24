@@ -919,3 +919,21 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 /* the volume is the first thing to go when the bar gets tight — the seek bar
    and the License button both matter more on a phone */
 @media (max-width:860px){.pl-vol{display:none}}
+
+/* proportional price suggestions — the point is that the OTHER tiers are
+   visible and editable, not that they move silently */
+.bulk-sugg{margin-top:10px;padding:12px 13px;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px}
+.bulk-suggtoggle{margin-bottom:10px}
+.bulk-suggtoggle input{width:14px;height:14px;accent-color:var(--amber,var(--coral))}
+.bulk-sugggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:8px}
+.bulk-sugcell{display:flex;flex-direction:column;gap:4px}
+.bulk-sugcell span{font-size:.68rem;color:var(--dim);letter-spacing:.04em}
+.bulk-sugcell input{width:100% !important}
+.bulk-sugghint{margin:9px 0 0;font-size:.72rem;color:var(--dim)}
+.bulk-crhint{margin:7px 0 0;font-size:.72rem;color:var(--dim);line-height:1.5}
+.bulk-crhint b{color:var(--muted);font-weight:500}
+.bulk-avup{background:none;border:1px solid var(--line-2,var(--line));border-radius:9px;
+  color:var(--muted);font:inherit;font-size:.8rem;padding:9px 15px;cursor:pointer;flex:none}
+.bulk-avup:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.bulk-pvmiss{color:var(--dim);font-size:.78rem}

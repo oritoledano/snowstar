@@ -45,9 +45,11 @@ const MAX_SLUGS = 1000;
 
 /** Tag fields that support add/remove/replace. */
 const TAG_FIELDS = ['genres', 'moods', 'instruments', 'packages'];
-/** Scalar fields a bulk set may write. Deliberately NOT title or artist: those
- *  are per-track facts, and setting them in bulk is always a mistake. */
-const SET_FIELDS = ['lane', 'hidden', 'vocal', 'key', 'scale', 'bpm'];
+/** Scalar fields a bulk set may write. `artist` is here because a whole album
+ *  by one person, or a name misspelt across forty tracks, is exactly the case
+ *  this tool exists for. `title` is NOT, and never should be: every track has
+ *  its own, so setting it across a selection can only ever destroy them. */
+const SET_FIELDS = ['lane', 'hidden', 'vocal', 'key', 'scale', 'bpm', 'artist'];
 
 const clean = (v, max = 120) => String(v == null ? '' : v).trim().slice(0, max);
 const tagList = (v) =>
@@ -114,6 +116,39 @@ function applyOps(current, track, ops) {
       }
       next[field] = list.slice(0, 24);
     }
+  }
+
+  // ── credits ──────────────────────────────────────────────────────────────
+  // Same three verbs as tags, but the unit is a {role, name} pair rather than a
+  // string, so identity is the pair: adding "Producer / Dana" to a track that
+  // already has "Vocals / Dana" must add, not dedupe.
+  if (ops.credits && typeof ops.credits === 'object') {
+    const norm = (c) => ({ role: clean(c && c.role, 40), name: clean(c && c.name, 120) });
+    const idOf = (c) => `${c.role.toLowerCase()}\u0000${c.name.toLowerCase()}`;
+    const listIn = (v) => (Array.isArray(v) ? v.map(norm).filter((c) => c.role && c.name) : []);
+
+    let list = next.credits !== undefined ? listIn(next.credits) : listIn(track.credits);
+    const op = ops.credits;
+    if (Array.isArray(op.replace)) {
+      list = listIn(op.replace);
+    } else {
+      if (Array.isArray(op.remove)) {
+        // A remove with an empty role means "this person, whatever they did" —
+        // which is what you want when someone leaves a project.
+        const drop = listIn(op.remove.map((c) => ({ role: c.role || 'x', name: c.name })));
+        const byName = new Set(op.remove.filter((c) => !c.role)
+          .map((c) => clean(c.name, 120).toLowerCase()).filter(Boolean));
+        const byPair = new Set(drop.map(idOf));
+        list = list.filter((c) => !byName.has(c.name.toLowerCase()) && !byPair.has(idOf(c)));
+      }
+      if (Array.isArray(op.add)) {
+        const have = new Set(list.map(idOf));
+        for (const c of listIn(op.add)) {
+          if (!have.has(idOf(c))) { list.push(c); have.add(idOf(c)); }
+        }
+      }
+    }
+    next.credits = list.slice(0, 30);
   }
 
   // ── prices ───────────────────────────────────────────────────────────────
@@ -314,4 +349,64 @@ function hash(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) | 0; }
   return h;
+}
+
+/**
+ * POST /tracks/bulk/artist — set fields on the ARTIST records behind a
+ * selection of tracks.
+ *
+ * Separate from bulkEdit on purpose. An avatar does not live on a track; it
+ * lives on managed_artists, and one artist stands behind many of the selected
+ * tracks. Folding it into the track patch would write the same URL forty times
+ * and leave the artist page still showing the old one.
+ *
+ * The client sends the artist NAMES it wants changed — it is the side that
+ * knows which names the selection actually credits.
+ */
+export async function bulkArtist(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const names = [...new Set((Array.isArray(b.names) ? b.names : [])
+    .map((n) => clean(n, 120)).filter((n) => n.length >= 2))].slice(0, 60);
+  if (!names.length) return json({ error: 'no_names' }, 400);
+
+  const fields = {};
+  if (typeof b.avatar === 'string') fields.avatar = clean(b.avatar, 400);
+  if (typeof b.bio === 'string') fields.bio = String(b.bio).trim().slice(0, 4000);
+  if (!Object.keys(fields).length) return json({ error: 'nothing_to_update' }, 400);
+
+  // Matched case-insensitively, the same rule the registry mints names under —
+  // otherwise "kayma" and "KAYMA" are two artists and only one gets the photo.
+  const ph = names.map(() => '?').join(',');
+  const rows = await env.DB.prepare(
+    `SELECT id, name FROM managed_artists WHERE name COLLATE NOCASE IN (${ph})`
+  ).bind(...names).all();
+  const found = rows.results || [];
+
+  if (b.dryRun !== false) {
+    const have = new Set(found.map((r) => r.name.toLowerCase()));
+    return json({
+      ok: true, dryRun: true,
+      willChange: found.map((r) => r.name),
+      notFound: names.filter((n) => !have.has(n.toLowerCase())),
+      fields,
+    });
+  }
+
+  const sets = Object.keys(fields).map((k) => `${k} = ?`).join(', ');
+  const vals = Object.values(fields);
+  let updated = 0;
+  for (const r of found) {
+    try {
+      await env.DB.prepare(`UPDATE managed_artists SET ${sets} WHERE id = ?`)
+        .bind(...vals, r.id).run();
+      updated++;
+    } catch { /* one bad row must not stop the rest */ }
+  }
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(String(user.id), 'artist.bulk', names.slice(0, 6).join(', '),
+         `${updated} updated; ${Object.keys(fields).join(', ')}`, now())
+   .run().catch(() => {});
+  return json({ ok: true, updated, names: found.map((r) => r.name) });
 }
