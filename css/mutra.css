@@ -988,7 +988,7 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .lic-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   color:var(--muted);font-size:.8rem;padding:9px 13px;background:var(--panel);
   border:1px solid var(--line);border-radius:10px;margin-bottom:18px}
-.lic-summary i{color:var(--dim);font-style:normal}
+.lic-summary i{color:var(--dim);font-style:normal;margin:0 2px}
 
 .lic-checks{display:grid;gap:7px;margin-bottom:16px}
 .lic-checks label{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:.83rem;
