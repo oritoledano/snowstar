@@ -205,6 +205,17 @@
     return builtRow;
   };
   window.MUTRA_SPOTLIGHT_INSERT_AFTER = INSERT_AFTER;
+  /* The catalog page needs to know whose row this is, so that searching for
+     the artist by name can put it first instead of burying it mid-list. The
+     data file declares MUTRA_SPOTLIGHTS with `const`, which is a global
+     BINDING but not a property of window — so a `window.MUTRA_SPOTLIGHTS`
+     lookup from another file reads undefined and fails silently. Publish what
+     the other side actually needs, from the module that already has it. */
+  window.mutraSpotlightMeta = {
+    id: MUTRA_SPOTLIGHTS[0].id,
+    artist: MUTRA_SPOTLIGHTS[0].artist || '',
+    album: MUTRA_SPOTLIGHTS[0].album || '',
+  };
 
   // subscribe once the player exists — script order isn't guaranteed
   (function subscribe(tries) {

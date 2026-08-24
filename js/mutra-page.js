@@ -723,21 +723,69 @@
     maybeInsertSpotlight();
   }
 
-  /** Drops the Artist Spotlight row in right after the Nth track, once
-   * there are enough rows for it to land after — re-checked on every
-   * appendPage() so it reappears after a render() wipes the list (new
-   * filter, search, etc.) without ever being rebuilt from scratch. */
+  /**
+   * Where the Artist Spotlight row lands.
+   *
+   * It used to be a constant: always after the 10th row. That reads fine while
+   * you are browsing 374 tracks — a break partway down a long list — and badly
+   * everywhere else. Filter to fifteen results and it lands with five rows
+   * under it, which is not a break, it is a footer. Search for something
+   * specific and get four hits, and a promo shoved into the middle of them is
+   * simply in the way.
+   *
+   * So the depth follows the result count, and the rule is that the row must
+   * never be the thing standing between someone and the answer they searched
+   * for:
+   *
+   *   searched for the spotlight artist  -> FIRST. They asked for this.
+   *   fewer than 8 results               -> after the last row. A short,
+   *                                         specific answer stays intact.
+   *   8 to 23                            -> about a third down, never above 3.
+   *   24 or more                         -> after the 10th, as before.
+   *
+   * Measured against `list` (everything the filter matches) rather than the
+   * rendered rows, or the answer would change as infinite scroll appends more.
+   */
+  function spotlightIndex(spotArtist) {
+    const total = list.length;
+    if (!total) return -1;
+
+    // Did they ask for this artist by name? Then it is the result, not an
+    // interruption. Checked against the search box only — picking a genre that
+    // happens to contain them is not the same as naming them.
+    const q = String(state.q || '').trim().toLowerCase();
+    if (q.length >= 3 && spotArtist && spotArtist.toLowerCase().includes(q)) return 0;
+
+    if (total < 8) return total;                       // after the last row
+    if (total < 24) return Math.max(3, Math.round(total / 3));
+    return window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10;
+  }
+
+  /** Re-checked on every appendPage() so the row reappears after a render()
+   *  wipes the list, without ever being rebuilt from scratch. */
   function maybeInsertSpotlight() {
     if (!window.mutraSpotlightRow) return;
     if (tracksEl.querySelector('.spotlight-row')) return;
-    const n = window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10;
     const rows = tracksEl.querySelectorAll('.trk');
-    // Filter down to fewer than N results and the row used to vanish entirely —
-    // it wanted a 10th row to sit after and gave up when there wasn't one. Land
-    // it after the last row instead: a search with 3 hits still shows it.
     if (!rows.length) return;
+
+    const spot = window.mutraSpotlightMeta;
+    const at = spotlightIndex(spot && spot.artist);
+    if (at < 0) return;
     const block = window.mutraSpotlightRow();
-    if (block) rows[Math.min(n, rows.length) - 1].insertAdjacentElement('afterend', block);
+    if (!block) return;
+
+    if (at === 0) { tracksEl.insertBefore(block, rows[0]); return; }
+    // Wait for the row it belongs after to actually exist. With infinite
+    // scroll an index of 10 is not drawn on the first paint of a long list,
+    // and inserting it after whatever happens to be last would put it in a
+    // different place every time the page grows.
+    if (at > rows.length) {
+      if (shown < list.length) return;                 // more coming; try again
+      rows[rows.length - 1].insertAdjacentElement('afterend', block);
+      return;
+    }
+    rows[at - 1].insertAdjacentElement('afterend', block);
   }
 
   // load the next page as the end of the list comes into view
