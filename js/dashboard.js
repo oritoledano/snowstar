@@ -78,6 +78,60 @@
 
 
 
+  /* ── approve / reject, with somewhere to say why ──────────────────────────
+     A native prompt() cannot be styled, cannot be reopened, blocks the page
+     while it is up, and — the reason it had to go — is indistinguishable from
+     a browser warning, so it read as an error rather than a question. This is
+     a field under the row, which also means the note can be written while the
+     declaration is open next to it. */
+  function openReviewNote(item, status) {
+    const box = item.querySelector('.rv-review');
+    if (!box) return;
+    const approving = status === 'approved';
+    box.hidden = false;
+    box.innerHTML = `
+      <label class="rv-fld"><span>${approving
+        ? 'Note to the artist (optional)'
+        : 'Tell them why — they will see this'}</span>
+        <textarea class="rv-rnote" rows="2" placeholder="${approving
+          ? 'Anything you want them to know'
+          : 'The reason, in your words'}"></textarea></label>
+      <div class="rv-racts">
+        <button type="button" class="rv-btn ${approving ? 'rv-ok' : 'rv-no'} rv-rgo">${
+          approving ? 'Approve and notify' : 'Reject and notify'}</button>
+        <button type="button" class="rv-btn rv-rcancel">Cancel</button>
+      </div>
+      <p class="rv-hint">The artist is emailed either way — the notification is
+        queued in Notifications, and nothing leaves without you approving it there.</p>`;
+    const ta = box.querySelector('.rv-rnote');
+    ta.focus();
+    box.querySelector('.rv-rcancel').addEventListener('click', () => {
+      box.hidden = true; box.innerHTML = '';
+    });
+    box.querySelector('.rv-rgo').addEventListener('click', () => {
+      if (!approving && !ta.value.trim()) {
+        // A rejection with no reason is the one case worth blocking: the artist
+        // gets an email that tells them nothing and they will just ask.
+        ta.focus();
+        box.querySelector('.rv-hint').textContent = 'A reason, please — they only get this once.';
+        return;
+      }
+      commitReview(item, status, ta.value.trim());
+    });
+  }
+
+  async function commitReview(item, status, note) {
+    const id = Number(item.dataset.id);
+    const go = item.querySelector('.rv-rgo');
+    if (go) { go.disabled = true; go.textContent = 'Saving…'; }
+    const r = await post('/submissions/review', { id, status, note });
+    if (r && r.error) {
+      if (go) { go.disabled = false; go.textContent = 'Try again'; }
+      return;
+    }
+    load();
+  }
+
   /** Amend a filed declaration. The signed text and signature are never
       touched — that is the legal artefact. This edits the routing copy on
       top of it: title, splits, controllers, the ACUM flag and the lane,
@@ -777,6 +831,7 @@
             ${subTab !== 'pending' ? '<button class="rv-btn" data-a="pending">Back to pending</button>' : ''}
             <button class="rv-btn rv-edit" type="button">Edit details</button>
           </div>
+          <div class="rv-review" hidden></div>
           <div class="rv-editor" hidden></div></div>`).join('')
       : `<p class="db-empty">${subTab === 'pending' ? 'Nothing waiting — inbox zero.' : 'Nothing here yet.'}</p>`}
       <p class="db-empty">Approving marks a track for the catalog — it does <b>not</b> publish it.
@@ -787,14 +842,18 @@
       b.addEventListener('click', () => { subTab = b.dataset.st; load(); }));
     app.querySelectorAll('.rv-edit').forEach((b) =>
       b.addEventListener('click', () => openDeclEditor(b.closest('.rv-item'), items)));
-    app.querySelectorAll('.rv-item .rv-btn').forEach((b) =>
-      b.addEventListener('click', async () => {
-        const id = Number(b.closest('.rv-item').dataset.id);
+    /* [data-a], not .rv-btn. "Edit details" also carries .rv-btn, so the old
+       selector bound the status handler to it as well: one click opened the
+       editor AND fired a native prompt, and whichever way you answered, the
+       review POST re-rendered the list and threw the editor away. That is the
+       "snowstar.company says" box that made editing impossible. */
+    app.querySelectorAll('.rv-item .rv-btn[data-a]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const item = b.closest('.rv-item');
         const status = b.dataset.a;
-        const note = status === 'pending' ? '' :
-          (prompt(status === 'approved' ? 'Note to the artist (optional):' : 'Tell them why (they will see this):') || '');
-        await post('/submissions/review', { id, status, note });
-        load();
+        // Back-to-pending is a filing action with nothing to say about it.
+        if (status === 'pending') return commitReview(item, status, '');
+        openReviewNote(item, status);
       }));
   }
 
@@ -835,8 +894,9 @@
      of those can be satisfied by a mis-click. */
   const ILS = (agorot) => '₪' + (Number(agorot || 0) / 100).toLocaleString(undefined, { minimumFractionDigits: 0 });
 
+  let licTab = 'new';
   async function paintLicensing() {
-    const d = await get('/licence/queue?status=new');
+    const d = await get('/licence/queue?status=' + encodeURIComponent(licTab));
     const reqs = d.requests || [];
     const pays = (d.payments || []).filter((p) => p.unapplied > 0);
     const c = d.counts || {};
@@ -861,8 +921,29 @@
             <span class="mem-when">${fmt(p.ts)}</span></div>`).join('')}</div>`
           : '<p class="db-empty" style="padding:4px 0 10px">Nothing unassigned.</p>'}
 
-        <h4>Requests</h4>
-        ${reqs.length ? reqs.map((r) => `
+        <div style="display:flex;gap:8px;margin:14px 0 12px">
+          ${[['new', 'Waiting'], ['granted', 'Granted'], ['declined', 'Declined']].map(([v, t]) =>
+            `<button class="chip ${v === licTab ? 'active' : ''}" data-lt="${v}">${t}${
+              c[v] ? ` (${c[v]})` : v === 'granted' && c.granted ? ` (${c.granted})` : ''}</button>`).join('')}
+        </div>
+
+        <h4>${licTab === 'granted' ? 'Granted licences' : licTab === 'declined' ? 'Declined' : 'Requests'}</h4>
+        ${licTab === 'granted' ? (reqs.length ? `<div class="mem-list">${reqs.map((l) => {
+            const now = Math.floor(Date.now() / 1000);
+            const gone = l.revoked_at ? 'revoked' : (l.expires_at && l.expires_at < now ? 'expired' : null);
+            return `<div class="mem-row${gone ? ' is-off' : ''}">
+              <b>${esc(l.slug)}</b>
+              <span>${esc(l.licensee_name || l.email || '')}</span>
+              ${l.project_name ? `<span>${esc(l.project_name)}</span>` : ''}
+              <span>${ILS(l.amount)}</span>
+              <span class="pill">${gone || (l.expires_at ? fmt(l.expires_at) : 'no end date')}</span>
+              <span class="mem-when">${esc(l.ref)}</span>
+              <a class="chip" href="/api/licence/certificate?ref=${encodeURIComponent(l.ref)}"
+                 target="_blank" rel="noopener">Certificate</a>
+              ${gone ? '' : `<button class="chip lc-revoke" data-ref="${esc(l.ref)}">Revoke</button>`}
+            </div>`; }).join('')}</div>`
+          : '<p class="db-empty">Nothing granted yet.</p>')
+        : reqs.length ? reqs.map((r) => `
           <div class="rv-item lc-req" data-id="${r.id}">
             <div class="rv-top">
               <b>${esc(r.slug)}</b>
@@ -884,8 +965,30 @@
             </div>
             <div class="lc-sheet" hidden></div>
           </div>`).join('')
-        : '<p class="db-empty">Nothing waiting.</p>'}
+        : `<p class="db-empty">${licTab === 'declined' ? 'Nothing declined.' : 'Nothing waiting.'}</p>`}
       </div>`);
+
+    app.querySelectorAll('[data-lt]').forEach((b) =>
+      b.addEventListener('click', () => { licTab = b.dataset.lt; load(); }));
+
+    // Revoking is the one destructive act on this screen, so it asks for a
+    // reason in the row rather than firing on the click.
+    app.querySelectorAll('.lc-revoke').forEach((b) => b.addEventListener('click', async () => {
+      const row = b.closest('.mem-row');
+      if (row.querySelector('.lc-rv')) return;
+      const wrap = document.createElement('span');
+      wrap.className = 'lc-rv';
+      wrap.innerHTML = `<input placeholder="Why is this being revoked?" maxlength="200">
+        <button class="chip lc-rvgo">Revoke</button>`;
+      row.appendChild(wrap);
+      const inp = wrap.querySelector('input');
+      inp.focus();
+      wrap.querySelector('.lc-rvgo').addEventListener('click', async () => {
+        if (!inp.value.trim()) { inp.focus(); return; }
+        await post('/licence/revoke', { ref: b.dataset.ref, reason: inp.value.trim() });
+        load();
+      });
+    }));
 
     const payOpts = pays.map((p) =>
       `<option value="${p.id}" data-amt="${p.unapplied}">${ILS(p.unapplied)} · ${esc(p.method)}${p.reference ? ' · ' + esc(p.reference) : ''}</option>`).join('');

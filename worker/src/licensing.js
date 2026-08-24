@@ -142,10 +142,39 @@ async function sendGrantMail(env, o) {
     <p style="color:#6a6055;font-size:13px">Everything is also in your account under
       <a href="${SITE}/mutra.html">My licences</a>.</p>`;
 
+  /* The file goes WITH the email. A download link behind a login is one more
+     step between someone who has paid and the thing they paid for, and the
+     commonest support message any library gets is "where is my file". Resend
+     takes attachments up to 40MB; a three-minute master is about four, so the
+     only real risk is an unusually long track — and that falls back to the
+     link rather than failing the mail. */
+  let attachments;
+  try {
+    const row = await env.DB.prepare('SELECT audio_key, title FROM tracks WHERE slug = ?')
+      .bind(o.slug).first();
+    if (row && row.audio_key) {
+      const obj = await env.MASTERS.get(row.audio_key);
+      if (obj && obj.size && obj.size < 18 * 1024 * 1024) {
+        const buf = await obj.arrayBuffer();
+        let bin = '';
+        const bytes = new Uint8Array(buf);
+        // chunked, because String.fromCharCode(...wholeFile) blows the stack
+        for (let i = 0; i < bytes.length; i += 0x8000) {
+          bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        }
+        const ext = row.audio_key.split('.').pop().toLowerCase();
+        const safe = String(row.title || o.slug)
+          .replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80);
+        attachments = [{ filename: `${safe}.${ext}`, content: btoa(bin) }];
+      }
+    }
+  } catch { /* the licence is granted either way — the link is still in the body */ }
+
   await sendMail(env, {
     to: o.email,
     subject: `Your Mutra licence — ${clean(o.slug, 60)} (${clean(o.ref, 60)})`,
     html: body,
+    attachments,
   });
 }
 
@@ -296,11 +325,19 @@ export async function hasLiveLicence(env, user, slug) {
 export async function listQueue(env, user, url) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const status = clean(url.searchParams.get('status') || 'new', 20);
-  const rows = await env.DB.prepare(
-    `SELECT r.*, u.name AS user_name
-       FROM licence_requests r LEFT JOIN users u ON u.id = r.user_id
-      WHERE r.status = ? ORDER BY r.id ASC LIMIT 200`
-  ).bind(status).all();
+  // A granted request stops being a request — it becomes a licence, with an
+  // expiry, a certificate and a revoke button. Listing licence_requests under
+  // "granted" would show the paperwork rather than the thing itself, so that
+  // tab reads the licences table instead.
+  const rows = status === 'granted'
+    ? await env.DB.prepare(
+        `SELECT l.*, u.name AS user_name
+           FROM licences l LEFT JOIN users u ON u.id = l.user_id
+          ORDER BY l.id DESC LIMIT 200`).all()
+    : await env.DB.prepare(
+        `SELECT r.*, u.name AS user_name
+           FROM licence_requests r LEFT JOIN users u ON u.id = r.user_id
+          WHERE r.status = ? ORDER BY r.id ASC LIMIT 200`).bind(status).all();
 
   // payments with money not yet applied to any licence — the "arrived,
   // unassigned" queue, which is where reconciliation actually happens
@@ -314,6 +351,7 @@ export async function listQueue(env, user, url) {
   ).all();
 
   return json({
+    kind: status === 'granted' ? 'licences' : 'requests',
     requests: rows.results || [],
     payments: (unapplied.results || []).map((p) => ({ ...p, unapplied: p.amount - p.used })),
     counts: Object.fromEntries((counts.results || []).map((r) => [r.status, r.n])),

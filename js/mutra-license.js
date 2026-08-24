@@ -219,10 +219,12 @@
     crumbs();
     const t = current;
 
-    // A co-owned track can never be configured into a price, so it does not
-    // get a funnel at all — sending someone through five screens to reach
-    // "we'll get back to you" is worse than saying so first.
-    if (t.lane === 'quote' && screen < 6) return screenQuote('co_owned');
+    /* A co-owned track used to skip the funnel entirely and go straight to the
+       quote form. That saved the buyer five screens and cost us the only thing
+       that makes a quote answerable: WHO is asking. "Someone wants Bunny" is
+       not a brief; "a 400-person brand wants Bunny for a paid campaign" is a
+       price. So quote-lane tracks now walk the same funnel — the answers are
+       what the quote is written from — and only the last screen differs. */
 
     if (screen === 1) return screen1();
     if (screen === 2) return pick.who === 'business' ? screen2b() : screen2a();
@@ -449,8 +451,10 @@
     }[reason] || 'Tell us about the project and we’ll come back with a price.';
 
     const ext = reason === 'extended_coverage';
+    const known = buyerId() ? `${bandLabel()} · ${termById(pick.term).label}` : '';
     body().innerHTML = `
       <h4 class="lic-q">${ext ? 'Where will it run?' : 'Tell us about the project'}</h4>
+      ${known ? `<div class="lic-summary"><span>${esc(known)}</span></div>` : ''}
       <p class="lic-hint">${esc(why)}</p>
       ${ext ? `<div class="lic-checks">${
         ['TV show / VOD / OTT', 'Cinema', 'Film festival', 'Radio or streaming audio',
@@ -500,6 +504,8 @@
         body: JSON.stringify({
           slug: t.slug,
           buyer: bid,
+          buyer_label: bandLabel(),
+          term_label: term.label,
           coverage: pick.coverage,
           paid_media: !!pick.paid,
           duration: pick.term,

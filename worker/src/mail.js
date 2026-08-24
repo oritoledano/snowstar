@@ -70,7 +70,7 @@ function shell(title, bodyHtml) {
   </table></body></html>`;
 }
 
-export async function sendMail(env, { to, subject, text, html, from, replyTo }) {
+export async function sendMail(env, { to, subject, text, html, from, replyTo, attachments }) {
   if (!env.RESEND_KEY) throw new Error('no_mail_key');
   const res = await fetch(RESEND, {
     method: 'POST',
@@ -85,6 +85,10 @@ export async function sendMail(env, { to, subject, text, html, from, replyTo }) 
       subject,
       text,
       html,
+      // [{filename, content}] where content is base64. Resend caps the whole
+      // message at 40MB; callers are expected to have checked their own size
+      // before getting here.
+      ...(attachments && attachments.length ? { attachments } : {}),
     }),
   });
   if (!res.ok) {

@@ -1,16 +1,16 @@
-# Graph Report - snowstar  (2026-08-24)
+# Graph Report - snowstar  (2026-08-25)
 
 ## Corpus Check
-- 56 files · ~343,158 words
+- 56 files · ~344,252 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 703 nodes · 1656 edges · 34 communities (32 shown, 2 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 82 edges (avg confidence: 0.88)
+- 705 nodes · 1664 edges · 39 communities (37 shown, 2 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 83 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d8bbce7f`
+- Built from commit: `b9657e66`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -47,15 +47,20 @@
 - mutra-license.js
 - stream.js
 - artistreg.js
-- Four services section
+- rights.js
+- artists.js
+- crypto.js
+- hyp.js
 - mutra-artist-panel.js
+- clearlist.js
+- Four services section
 
 ## God Nodes (most connected - your core abstractions)
 1. `handle()` - 101 edges
 2. `Mutra royalty-free music catalogue page` - 33 edges
 3. `Snowstar agency homepage` - 19 edges
 4. `render()` - 18 edges
-5. `load()` - 16 edges
+5. `load()` - 17 edges
 6. `buildRow()` - 16 edges
 7. `Owner dashboard` - 16 edges
 8. `paint()` - 14 edges
@@ -82,7 +87,7 @@
 - **Rights clearance pipeline (artist declaration → owner review → licensable lane)** — artists_rights_declaration, artists_co_owner_shares, artists_controller_declaration, artists_countersign_claim, artists_instant_vs_quote_lane, dashboard_submissions_queue, dashboard_clearance_status, terms_quote_only_tracks [INFERRED 0.85]
 - **One Snowstar account across catalogue, portal, dashboard and reset** — js_account, js_account_ui, css_account, artists_account_gate, reset_page, dashboard_page, privacy_account_data [INFERRED 0.85]
 
-## Communities (34 total, 2 thin omitted)
+## Communities (39 total, 2 thin omitted)
 
 ### Community 0 - "certificate.js"
 Cohesion: 0.52
@@ -97,20 +102,20 @@ Cohesion: 0.08
 Nodes (32): ACUM / royalties-society registration flag, Who can approve a licence (any vs all), Co-owner share splits (batch or per-track), External controller declaration (label / publisher / distributor), Direct-child CSS selectors for nested checkbox labels, Instant vs quote licensing lane, Signed rights declaration on upload, CLAIM subject-line escalation path (+24 more)
 
 ### Community 3 - "analytics.js"
-Cohesion: 0.28
-Nodes (15): alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json(), listAlerts(), logAlert() (+7 more)
+Cohesion: 0.24
+Nodes (17): alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json(), listAlerts(), logAlert() (+9 more)
 
 ### Community 4 - "licensing.js"
-Cohesion: 0.10
-Nodes (43): configured(), CP1255, decodeValue(), handleReturn(), hypStatus(), json(), listStale(), now() (+35 more)
+Cohesion: 0.15
+Nodes (30): calendarLink(), clean(), createRequest(), declineRequest(), freezeText(), GRANT_REASONS, grantFromDashboard(), grantLicence() (+22 more)
 
 ### Community 5 - "main.js"
 Cohesion: 0.07
 Nodes (30): applyWorkFilter(), buildClientRows(), buildMarqueeRow(), buildWorkGrid(), cardObserver, categorize(), cg, FACETS (+22 more)
 
 ### Community 6 - "dashboard.js"
-Cohesion: 0.22
-Nodes (25): gate(), gauge(), load(), openDeclEditor(), openMember(), paint(), paintAlerts(), paintArtists() (+17 more)
+Cohesion: 0.20
+Nodes (27): commitReview(), gate(), gauge(), load(), openDeclEditor(), openMember(), openReviewNote(), paint() (+19 more)
 
 ### Community 7 - "works-admin.js"
 Cohesion: 0.18
@@ -185,15 +190,15 @@ Cohesion: 0.57
 Nodes (6): duration(), loudness(), offsets(), Tag placement. Returns [] only when the track is too short to carry one. The…, run(), watermark()
 
 ### Community 25 - "index.js"
-Cohesion: 0.06
-Nodes (88): AUDIO_EXT, cleanupOrphanUploads(), createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now() (+80 more)
+Cohesion: 0.17
+Nodes (26): ALLOWED_ORIGINS, authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), now() (+18 more)
 
 ### Community 26 - "schema-analytics.sql"
 Cohesion: 0.50
 Nodes (3): events, meta, sessions_seen
 
 ### Community 29 - "mutra-license.js"
-Cohesion: 0.21
+Cohesion: 0.22
 Nodes (26): build(), buyerId(), cards(), close(), crumbs(), go(), goToCard(), onCards() (+18 more)
 
 ### Community 30 - "stream.js"
@@ -204,13 +209,33 @@ Nodes (7): breadthExceeded(), handleStream(), json(), looksLikePlayback(), now()
 Cohesion: 0.62
 Nodes (6): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNames()
 
-### Community 32 - "Four services section"
-Cohesion: 0.40
-Nodes (5): Audio Branding service, Original Music service, Post Sound / SFX service, Four services section, SoundScapes service
+### Community 32 - "rights.js"
+Cohesion: 0.23
+Nodes (21): mailFrom(), mailLive(), amendDeclaration(), claimStatus(), cleanEmail(), countersignClaim(), createManagedArtist(), freezeText() (+13 more)
+
+### Community 33 - "artists.js"
+Cohesion: 0.20
+Nodes (17): AUDIO_EXT, createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), registerArtist() (+9 more)
+
+### Community 34 - "crypto.js"
+Cohesion: 0.24
+Nodes (13): b64(), enc, pbkdf2(), PBKDF2_ITERS, peppered(), randB64(), safeEqual(), sha256b64() (+5 more)
+
+### Community 35 - "hyp.js"
+Cohesion: 0.33
+Nodes (13): configured(), CP1255, decodeValue(), handleReturn(), hypStatus(), json(), listStale(), now() (+5 more)
 
 ### Community 36 - "mutra-artist-panel.js"
 Cohesion: 0.44
 Nodes (8): albumsOf(), build(), close(), loadRoster(), open(), paint(), socialHtml(), tracksBy()
+
+### Community 37 - "clearlist.js"
+Cohesion: 0.42
+Nodes (9): addChannel(), allChannels(), clean(), json(), listChannels(), now(), PLATFORMS, removeChannel() (+1 more)
+
+### Community 38 - "Four services section"
+Cohesion: 0.40
+Nodes (5): Audio Branding service, Original Music service, Post Sound / SFX service, Four services section, SoundScapes service
 
 ## Knowledge Gaps
 - **82 isolated node(s):** `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS`, `nav`, `menuBtn` (+77 more)

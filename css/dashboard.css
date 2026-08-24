@@ -1,0 +1,21 @@
+
+/* ═══════════ Review note, in the row ═══════════
+   Replaces a native prompt(). That dialog could not be styled, blocked the
+   page, and — the reason it had to go — was indistinguishable from a browser
+   warning, so it read as an error rather than a question. */
+.rv-review{margin:10px 0 0;padding:12px 14px;background:var(--panel,#141824);
+  border:1px solid var(--line,rgba(255,255,255,.1));border-radius:12px}
+.rv-review textarea{width:100%;background:var(--bg,#0b0e17);
+  border:1px solid var(--line,rgba(255,255,255,.1));border-radius:9px;padding:9px 11px;
+  color:var(--text,#eef3fb);font:inherit;font-size:.86rem;resize:vertical;outline:0}
+.rv-review textarea:focus{border-color:var(--coral,#e8b98a)}
+.rv-racts{display:flex;gap:8px;margin-top:9px}
+.rv-review .rv-hint{margin:9px 0 0;font-size:.75rem;color:var(--muted,#93a0b8);line-height:1.5}
+
+/* granted licences */
+.mem-row.is-off{opacity:.55}
+.mem-row .chip{margin-left:4px}
+.lc-rv{display:flex;gap:6px;align-items:center;margin-left:8px;flex:1 1 240px}
+.lc-rv input{flex:1;background:var(--bg,#0b0e17);border:1px solid var(--line,rgba(255,255,255,.1));
+  border-radius:8px;padding:6px 10px;color:var(--text,#eef3fb);font:inherit;font-size:.8rem;outline:0}
+.lc-rv input:focus{border-color:var(--coral,#e8b98a)}
