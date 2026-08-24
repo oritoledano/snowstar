@@ -269,7 +269,7 @@
         v1.placeholder = op.value === 'rename' ? 'existing tag' : 'comma, separated';
         row.classList.toggle('is-replace', op.value === 'replace');
         panel.querySelector('.bulk-warn').hidden =
-          !panel.querySelector('.bulk-tagop[value], .bulk-tagrow.is-replace');
+          !panel.querySelector('.bulk-tagrow.is-replace');
         resetPreview();
       });
     });

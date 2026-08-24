@@ -33,13 +33,24 @@ echo "stream renditions for $total tracks"
 while IFS= read -r key; do
   [ -z "$key" ] && continue
   n=$((n+1))
+  rm -f "$WORK/probe"
   if npx wrangler r2 object get "snowstar-masters/stream/$key" --remote \
-       --file "$WORK/probe" >/dev/null 2>&1; then
+       --file "$WORK/probe" >/dev/null 2>&1 && [ -s "$WORK/probe" ]; then
     skipped=$((skipped+1)); continue
   fi
 
   src="$WORK/src"; out="$WORK/out.m4a"
-  if ! npx wrangler r2 object get "snowstar-masters/$key" --remote --file "$src" >/dev/null 2>&1; then
+  # Retry, because a sustained run against the R2 API fails transiently often
+  # enough that a single attempt lost 170 of 374 tracks on the first pass — and
+  # every one of those "missing masters" was in fact present.
+  rm -f "$src"
+  got=0
+  for try in 1 2 3; do
+    if npx wrangler r2 object get "snowstar-masters/$key" --remote --file "$src" >/dev/null 2>&1 \
+       && [ -s "$src" ]; then got=1; break; fi
+    sleep $((try * 2))
+  done
+  if [ "$got" -eq 0 ]; then
     echo "  [$n/$total] NO MASTER  $key"; failed=$((failed+1)); continue
   fi
   # -vn drops the embedded cover: it is ~100 KB of every request, and the page
@@ -48,8 +59,13 @@ while IFS= read -r key; do
         -movflags +faststart "$out" 2>/dev/null; then
     echo "  [$n/$total] ENCODE FAILED  $key"; failed=$((failed+1)); continue
   fi
-  if npx wrangler r2 object put "snowstar-masters/stream/$key" --remote --file "$out" \
-       --content-type audio/mp4 >/dev/null 2>&1; then
+  putok=0
+  for try in 1 2 3; do
+    if npx wrangler r2 object put "snowstar-masters/stream/$key" --remote --file "$out" \
+         --content-type audio/mp4 >/dev/null 2>&1; then putok=1; break; fi
+    sleep $((try * 2))
+  done
+  if [ "$putok" -eq 1 ]; then
     made=$((made+1))
     [ $((made % 25)) -eq 0 ] && echo "  [$n/$total] $made made, $skipped skipped, $failed failed"
   else
