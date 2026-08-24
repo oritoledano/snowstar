@@ -582,12 +582,10 @@
   }
 
   /** Draw the next slice — called on render and again as the sentinel scrolls in. */
-  function appendPage() {
-    const slice = list.slice(shown, shown + PAGE);
-    shown += slice.length;
-    requestAnimationFrame(measureTitles);
-    slice.forEach(track => {
-      const i = MUTRA.tracks.indexOf(track);
+  /* Extracted from appendPage so the spotlight strip can drop a REAL catalogue
+     row in under its covers. Building a second row type there would drift from
+     this one the first time either changed; calling the same builder cannot. */
+  function buildRow(track, i) {
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
       // one of each kind up front, the rest still in the DOM and revealed by
@@ -708,11 +706,28 @@
       cnv._peaks = waveform(track, i + 1);
       cnv._slug = track.slug;
       if (curateMode) { addCurateControls(row, track); makeDraggable(row, track); }
+      return row;
+  }
+
+  /** Draw the row's waveform once it is in the document. Named for the row,
+   *  not the wave: paintWave already exists on the player's own progress bar. */
+  function paintRowWave(row, track) {
+    const cnv = row.querySelector('.trk-wave canvas');
+    if (!cnv) return;
+    requestAnimationFrame(() => drawWave(cnv, cnv._peaks,
+      current && current.track === track && audio.duration ? audio.currentTime / audio.duration : null,
+      hlOf(track.slug)));
+  }
+
+  function appendPage() {
+    const slice = list.slice(shown, shown + PAGE);
+    shown += slice.length;
+    requestAnimationFrame(measureTitles);
+    slice.forEach(track => {
+      const i = MUTRA.tracks.indexOf(track);
+      const row = buildRow(track, i);
       tracksEl.appendChild(row);
-      const isCur = current && current.track === track;
-      requestAnimationFrame(() => drawWave(cnv, cnv._peaks,
-        current && current.track === track && audio.duration ? audio.currentTime / audio.duration : null,
-        hlOf(track.slug)))
+      paintRowWave(row, track);
     });
     sentinel.hidden = shown >= list.length;
     if (curateMode && window.mutraBulkSync) window.mutraBulkSync();
@@ -1141,6 +1156,19 @@
   /* What the bulk editor needs, and nothing more. Kept to four things on
      purpose: a wider surface here turns into two modules that each half-own
      the catalogue state. */
+  /* The spotlight strip drops a real catalogue row in under the covers when a
+     card is played. It calls THIS, rather than building its own markup, so the
+     row it shows can never drift from every other row on the page. */
+  window.mutraRenderRow = function (track) {
+    const i = MUTRA.tracks.indexOf(track);
+    if (i < 0) return null;
+    const row = buildRow(track, i);
+    // the waveform needs the row in the document before it can measure, so
+    // paint on the next frame rather than now
+    requestAnimationFrame(() => paintRowWave(row, track));
+    return row;
+  };
+
   window.mutraCatalog = {
     filtered: () => list,
     all: () => MUTRA.tracks,

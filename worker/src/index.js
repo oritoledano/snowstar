@@ -37,6 +37,7 @@ import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { handleStream } from './stream.js';
+import { certificate } from './certificate.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
 import { currentUser, readCookies } from './session.js';
@@ -239,6 +240,7 @@ async function handle(req, env, ctx) {
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
   if (path === '/licence/mine' && method === 'GET') return myLicences(env, await currentUser(req, env));
+  if (path === '/licence/certificate' && method === 'GET') return certificate(req, env, await currentUser(req, env));
   if (path === '/licence/queue' && method === 'GET') return listQueue(env, await currentUser(req, env), url);
   if (path === '/licence/payment' && method === 'POST') return recordPayment(req, env, await currentUser(req, env));
   if (path === '/licence/grant' && method === 'POST') return grantFromDashboard(req, env, await currentUser(req, env));

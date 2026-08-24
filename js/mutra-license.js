@@ -423,6 +423,7 @@
         pending = { slug: current.slug, pick: { ...pick },
                     proj: proj.value.trim(), client: client.value.trim() };
         try { sessionStorage.setItem('mutraPendingLicence', JSON.stringify(pending)); } catch {}
+        if (window.SnowstarAuthResume) SnowstarAuthResume(resumePending);
         close();
         if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup',
           'Create a free account and we’ll send the Bit details and the files.');

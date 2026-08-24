@@ -86,11 +86,39 @@
       const slug = card.dataset.playSlug;
       const on = !!(window.mutraPlayer && mutraPlayer.isPlaying(slug));
       card.classList.toggle('spot-playing', on);
+      // the tint follows what is PLAYING, so the cover and the row below stay
+      // visually joined even after the strip is scrolled
+      card.classList.toggle('spot-lit', on);
       btn.innerHTML = on ? ICON_PAUSE : ICON_PLAY;
       btn.classList.toggle('is-playing', on);
       btn.setAttribute('aria-label', (on ? 'Pause ' : 'Play ') + card.dataset.title);
       btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+  }
+
+  /**
+   * The row of cards is a nice way to browse an album and a bad way to buy
+   * one: a cover tells you nothing about tempo, tags, lyrics or price, and the
+   * card has no room for any of it. So playing a card now ALSO drops the real
+   * catalogue row in underneath the strip — the same row as everywhere else,
+   * with its waveform, its tags, its lyrics toggle and its License button —
+   * tinted and joined to the strip so it reads as belonging to the cover you
+   * just pressed rather than as a stray row that appeared.
+   *
+   * Nothing is duplicated: the row is built by the catalogue's own renderer,
+   * so it stays in step with every other row on the page by construction.
+   */
+  function showTrackRow(row, track, spot) {
+    const host = row.querySelector('.spot-expand');
+    if (!host) return;
+    const real = window.mutraPlayer && mutraPlayer.find(track.slug);
+    if (!real || !window.mutraRenderRow) { host.hidden = true; host.innerHTML = ''; return; }
+    host.innerHTML = '';
+    const built = window.mutraRenderRow(real);
+    if (!built) { host.hidden = true; return; }
+    host.appendChild(built);
+    host.hidden = false;
+    row.classList.add('spot-has-row');
   }
 
   /** The one place playback starts or stops in this row. */
@@ -103,6 +131,8 @@
       mutraPlayer.play(obj);
       if (window.mutraTrack) mutraTrack('play', 'spotlight:' + track.slug, { once: true });
     }
+    const row = card.closest('.spotlight-row');
+    if (row) showTrackRow(row, track, spot);
     syncFromPlayer();
   }
 
@@ -153,25 +183,22 @@
     row.innerHTML = `
       <div class="spot-head">
         <span class="spot-kicker">${spot.kicker}</span>
-        <button class="mbtn mbtn-solid spot-quote" type="button">Get a quote</button>
       </div>
       <div class="spot-strip-wrap">
         <button class="spot-nav spot-nav-prev" type="button" aria-label="Scroll left">${ICON_PREV}</button>
         <div class="spot-strip"></div>
         <button class="spot-nav spot-nav-next" type="button" aria-label="Scroll right">${ICON_NEXT}</button>
-      </div>`;
+      </div>
+      <div class="spot-expand" hidden></div>`;
     const strip = row.querySelector('.spot-strip');
     spot.tracks.forEach((t) => strip.appendChild(buildCard(t, spot)));
     allCards = [...strip.querySelectorAll('.spot-card')];
 
-    // the row's own CTA goes through the licence chooser, same as everywhere
-    // else — the album card if we have it, so the dialog names something real
-    row.querySelector('.spot-quote').addEventListener('click', () => {
-      const album = spot.tracks.find((t) => t.isAlbum) || spot.tracks[0];
-      if (window.mutraLicense && album) return mutraLicense.open(playable(album, spot));
-      openMail('mailto:hello@snowstar.company?subject='
-        + encodeURIComponent('Mutra — Custom license quote (' + spot.artist + ' — ' + spot.album + ')'));
-    });
+    /* The row's "Get a quote" button is gone on purpose. It opened the licence
+       chooser against the ALBUM, which is not a thing anyone can buy — every
+       licence here is per track, per project. A CTA that offers something that
+       does not exist is worse than no CTA, and licensing now happens on the
+       track row that opens below, where the price, tags and lyrics are. */
 
     const scrollByCard = (dir) => {
       const card = strip.querySelector('.spot-card');

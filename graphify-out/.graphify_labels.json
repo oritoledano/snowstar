@@ -1,7 +1,8 @@
 {
-  "0": "rights.js",
+  "0": "certificate.js",
   "1": "mutra-page.js",
   "2": "Licence terms",
+  "3": "analytics.js",
   "4": "licensing.js",
   "5": "main.js",
   "6": "dashboard.js",
@@ -16,7 +17,7 @@
   "15": "oauth.js",
   "16": "Owner dashboard",
   "17": "Snowstar agency homepage",
-  "18": "hyp.js",
+  "18": "works.js",
   "19": "account.js",
   "20": "mutra-artist.js",
   "21": "mutra-spotlight.js",
@@ -29,5 +30,7 @@
   "28": "schema-tracks.sql",
   "29": "mutra-license.js",
   "30": "stream.js",
+  "31": "artistreg.js",
+  "32": "Four services section",
   "36": "mutra-artist-panel.js"
 }

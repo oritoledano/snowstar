@@ -14,6 +14,7 @@
  */
 
 import { priceFor, isBuyer, isCoverage, isTerm, BUYERS } from './pricing.js';
+import { sendMail } from './mail.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
@@ -87,6 +88,65 @@ async function freezeText(env, id) {
   if (!LICENCE_TEXTS[id]) throw new Error('unknown_licence_text');
   await env.DB.prepare('INSERT OR IGNORE INTO licence_texts (id, body, created_at) VALUES (?, ?, ?)')
     .bind(id, LICENCE_TEXTS[id], now()).run();
+}
+
+const SITE = 'https://snowstar.company';
+
+/** An all-day Google Calendar event on the expiry date. A link, not an API:
+ *  no OAuth, no scopes, works from any mail client, and the licensee stays in
+ *  control of their own calendar. */
+function calendarLink(slug, ref, expires) {
+  if (!expires) return null;
+  const ymd = (ts) => new Date(ts * 1000).toISOString().slice(0, 10).replace(/-/g, '');
+  const q = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: `Mutra licence expires — ${slug}`,
+    dates: `${ymd(expires)}/${ymd(expires + 86400)}`,
+    details: `Licence ${ref} for "${slug}" expires today.\n\n`
+      + 'Renew before this date to keep using the track, including in work already published.\n'
+      + `${SITE}/mutra.html?license=${encodeURIComponent(slug)}`,
+  });
+  return `https://calendar.google.com/calendar/render?${q}`;
+}
+
+async function sendGrantMail(env, o) {
+  if (!o.email) return;
+  const cal = calendarLink(o.slug, o.ref, o.expires);
+  const ends = o.expires
+    ? new Date(o.expires * 1000).toLocaleDateString('en-GB',
+        { day: 'numeric', month: 'long', year: 'numeric' })
+    : null;
+
+  const body = `
+    <p>Your licence is live.</p>
+    <table style="border-collapse:collapse;margin:18px 0">
+      <tr><td style="padding:4px 18px 4px 0;color:#8a8072">Track</td><td><b>${clean(o.slug, 120)}</b></td></tr>
+      ${o.project ? `<tr><td style="padding:4px 18px 4px 0;color:#8a8072">Project</td><td>${clean(o.project, 200)}</td></tr>` : ''}
+      <tr><td style="padding:4px 18px 4px 0;color:#8a8072">Reference</td><td>${clean(o.ref, 80)}</td></tr>
+      <tr><td style="padding:4px 18px 4px 0;color:#8a8072">Term</td><td>${ends ? 'until ' + ends : 'no end date'}</td></tr>
+    </table>
+    <p>
+      <a href="${SITE}/api/download?slug=${encodeURIComponent(o.slug)}"
+         style="display:inline-block;background:#1a1712;color:#fff;padding:11px 20px;border-radius:99px;text-decoration:none">Download the clean file</a>
+    </p>
+    <p style="margin-top:14px">
+      <a href="${SITE}/api/licence/certificate?ref=${encodeURIComponent(o.ref)}">Licence certificate</a>
+      ${cal ? ` &nbsp;·&nbsp; <a href="${cal}">Add the renewal date to your calendar</a>` : ''}
+    </p>
+    ${ends ? `<p style="color:#6a6055;font-size:13px;line-height:1.6">This licence covers the one
+      project named above. When it ends on ${ends}, so does the right to use the track — including
+      in material you have already published. We'll email you 30 days before.</p>`
+    : `<p style="color:#6a6055;font-size:13px;line-height:1.6">This licence covers the one project
+      named above and does not expire. It covers organic use; paid promotion of the project needs a
+      dated term.</p>`}
+    <p style="color:#6a6055;font-size:13px">Everything is also in your account under
+      <a href="${SITE}/mutra.html">My licences</a>.</p>`;
+
+  await sendMail(env, {
+    to: o.email,
+    subject: `Your Mutra licence — ${clean(o.slug, 60)} (${clean(o.ref, 60)})`,
+    html: body,
+  });
 }
 
 async function logAdmin(env, actor, action, subject, detail) {
@@ -166,8 +226,8 @@ export async function createRequest(req, env, user) {
     `INSERT INTO licence_requests
        (ref, user_id, email, slug, tier, lane, list_amount, currency, status,
         licensee_name, licensee_tax_id, use_where, use_territory, use_duration, note,
-        months, duration_id, created_at)
-     VALUES ('', ?, ?, ?, ?, ?, ?, 'ILS', 'new', ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        months, duration_id, project_name, created_at)
+     VALUES ('', ?, ?, ?, ?, ?, ?, 'ILS', 'new', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(user ? user.id : null, email, slug, tier, lane, listAgorot,
          clean(b.licensee_name, 200), clean(b.licensee_tax_id, 40),
          clean(b.use_where, 500), clean(b.use_territory, 120),
@@ -178,7 +238,11 @@ export async function createRequest(req, env, user) {
          // defaulted to six months and quietly expire on a perpetual sale.
          clean(b.duration, 8) === 'perp' ? null
            : [6, 12, 24, 36].includes(Number(b.months)) ? Number(b.months) : 6,
-         clean(b.duration, 8) || '6m', t).run();
+         clean(b.duration, 8) || '6m',
+         // The project is what makes "one track, one project" enforceable, and
+         // what a renewal email needs in order to name the video rather than
+         // just the track.
+         clean(b.project_name, 200), t).run();
 
   const id = r.meta.last_row_id;
   const ref = makeRef(id, slug);
@@ -326,15 +390,31 @@ export async function grantLicence(env, opts) {
       `INSERT INTO licences
          (ref, request_id, user_id, email, slug, tier, terms_id, scope_text,
           licensee_name, licensee_tax_id, amount, currency, grant_reason,
-          controller_cleared, granted_by, granted_at, starts_at, expires_at)
-       VALUES ('', ?, ?, ?, ?, ?, 'lic.v3', ?, ?, ?, ?, 'ILS', ?, ?, ?, ?, ?, ?)`
+          controller_cleared, granted_by, granted_at, starts_at, expires_at, project_name)
+       VALUES ('', ?, ?, ?, ?, ?, 'lic.v3', ?, ?, ?, ?, 'ILS', ?, ?, ?, ?, ?, ?, ?)`
     ).bind(request_id || null, user_id || null, String(email || '').toLowerCase(),
            slug, tier, clean(scope_text, 1000), clean(licensee_name, 200),
            clean(licensee_tax_id, 40), Math.round(amount || 0), reason,
-           controller_cleared ? 1 : 0, String(actor), t, starts, expires).run();
+           controller_cleared ? 1 : 0, String(actor), t, starts, expires,
+           // carried from the request so the certificate and the renewal email
+           // can both name the project this licence was actually bought for
+           clean(opts.project_name || (reqRow && reqRow.project_name), 200)).run();
     id = r.meta.last_row_id;
     ref = reqRow ? reqRow.ref : makeRef(id, slug);
     await env.DB.prepare('UPDATE licences SET ref = ? WHERE id = ?').bind(ref, id).run();
+
+    // Tell them. Until now a grant was silent: the licence existed, the file
+    // unlocked, and the buyer had no way of knowing unless they went looking.
+    // Three things go in the mail because they are the three things somebody
+    // needs after paying — the file, something to show a client, and a warning
+    // before it lapses.
+    try {
+      await sendGrantMail(env, {
+        email, ref, slug, expires,
+        licensee: clean(licensee_name, 200),
+        project: clean(opts.project_name || (reqRow && reqRow.project_name), 200),
+      });
+    } catch { /* a licence that was granted must not fail because mail did */ }
   } catch (e) {
     // idx_lic_live: one live licence per (member, track, tier). A double-click,
     // or a webhook delivered twice, lands here rather than granting twice.

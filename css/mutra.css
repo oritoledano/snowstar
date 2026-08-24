@@ -1077,3 +1077,33 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   .apx-trk{grid-template-columns:28px 1fr auto;gap:9px}
   .apx-cover,.apx-meta{display:none}
 }
+
+/* ═══════════ Spotlight: the real row, under the cover you pressed ═══════════
+   A cover tells you nothing about tempo, tags, lyrics or price. Playing one
+   now drops the actual catalogue row in beneath the strip, tinted and joined
+   to it so it reads as belonging to that cover rather than as a stray row. */
+.spot-expand{margin:0 0 6px;padding:2px 0 8px;
+  background:color-mix(in srgb,var(--amber,var(--coral)) 8%,transparent);
+  border:1px solid color-mix(in srgb,var(--amber,var(--coral)) 26%,transparent);
+  border-radius:14px;animation:spotIn .22s ease-out}
+@keyframes spotIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.spot-expand .trk{background:transparent}
+.spot-expand .trk:hover{background:color-mix(in srgb,var(--amber,var(--coral)) 6%,transparent)}
+/* the lit cover keeps the pair visually joined even after the strip scrolls */
+.spot-card.spot-lit .spot-sleeve{box-shadow:0 0 0 2px var(--amber,var(--coral))}
+.spot-card.spot-lit .spot-meta b{color:var(--amber,var(--coral))}
+
+/* ═══════════ My licences ═══════════ */
+.acct-lics{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.acct-lic{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+.acct-lic.is-expired,.acct-lic.is-revoked{opacity:.6}
+.acct-lic-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.acct-lic-name{color:var(--text);font-size:.88rem;text-decoration:none}
+.acct-lic-name:hover{text-decoration:underline}
+.acct-lic-state{color:var(--dim);font-size:.72rem;white-space:nowrap}
+.acct-lic.is-expired .acct-lic-state,.acct-lic.is-revoked .acct-lic-state{color:#ff8f8f}
+.acct-lic-ref{color:var(--dim);font-size:.7rem;font-variant-numeric:tabular-nums;margin:3px 0 8px}
+.acct-lic-acts{display:flex;gap:12px;flex-wrap:wrap}
+.acct-lic-acts a{color:var(--amber,var(--coral));font-size:.76rem;text-decoration:none}
+.acct-lic-acts a:hover{text-decoration:underline}
+.acct-lic-pending{margin-top:14px}

@@ -43,6 +43,12 @@
       authWrap.querySelector('#authOpen').addEventListener('click', () => open('login'));
     }
 
+    if (identity && identityChanged && resumeFn) {
+      const fn = resumeFn; resumeFn = null;
+      // after the panel has settled, so the resumed UI is not opened behind a
+      // modal that is still closing
+      setTimeout(() => { try { fn(); } catch { /* resuming must never break sign-in */ } }, 120);
+    }
     if (identityChanged) {
       // a stale user's panel content must never carry over to whoever's
       // looking at the header next
@@ -192,6 +198,13 @@
     modal.querySelector('.auth-card').classList.toggle('has-sell', signup);
     errEl.hidden = true;
   }
+
+  /* Whatever was on screen when we interrupted them. Auth is always a response
+     to something else — a licence half-configured, a download, a favourites
+     shelf — and dumping someone back on a blank catalogue after they sign up
+     makes them redo the work that triggered the prompt. */
+  let resumeFn = null;
+  window.SnowstarAuthResume = (fn) => { resumeFn = fn; };
 
   function open(next, reason) {
     setMode(next || 'login');
@@ -366,6 +379,11 @@
     </div>
     <div class="acct-section">
       <p class="acct-label">My account</p>
+      <div class="acct-acc" data-key="licences">
+        <button class="acct-row" type="button">My licences <span class="acct-count"></span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
       <div class="acct-acc" data-key="downloads">
         <button class="acct-row" type="button">Downloads <span class="acct-count"></span>
           <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -406,7 +424,7 @@
   /** Forget fetched drawer content — called whenever WHO is signed in changes,
    * so a second person on the same browser never sees the first person's list. */
   function resetAcctDrawers() {
-    drawerLoaded.downloads = drawerLoaded.favorites = drawerLoaded.clearlist = drawerLoaded.profile = false;
+
     panel.querySelectorAll('.acct-drawer').forEach(d => { d.innerHTML = ''; });
     panel.querySelectorAll('.acct-count').forEach(c => { c.textContent = ''; });
   }
@@ -442,7 +460,7 @@
   }
 
   // ── accordion: one drawer open at a time, content fetched on first open ──
-  const drawerLoaded = { downloads: false, favorites: false, clearlist: false, profile: false };
+
   panel.querySelectorAll('.acct-acc > .acct-row').forEach(btn => {
     btn.addEventListener('click', () => {
       const acc = btn.closest('.acct-acc');
@@ -459,7 +477,11 @@
         acc.classList.add('open');
         acc.querySelector('.acct-drawer').hidden = false;
         positionPanel();
-        if (!drawerLoaded[key]) { drawerLoaded[key] = true; loadDrawer(key); }
+        // Always re-fetch. Loading once and caching meant a download or a
+        // favourite made in the same session left the drawer showing what was
+        // true when you first opened it, and only a page reload fixed it.
+        // These lists are tens of rows; the fetch is cheaper than the confusion.
+        loadDrawer(key);
       }
     });
   });
@@ -472,6 +494,7 @@
   const ICON_X = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
 
   async function loadDrawer(key) {
+    if (key === 'licences') return paintLicences();
     if (key === 'profile') return paintProfileForm();
     if (key === 'clearlist') return paintClearlist();
     const el = drawerFor(key);
@@ -510,6 +533,74 @@
     }
   }
 
+
+  /* ═══════════ Licences ═══════════
+     What somebody actually bought, and the three things they need after buying:
+     the clean file, something to show a client, and a reminder before it runs
+     out. A licence they cannot find is a licence they will email us about. */
+  const CAL = 'https://calendar.google.com/calendar/render?action=TEMPLATE';
+
+  function calLink(lic) {
+    if (!lic.expires_at) return null;
+    // All-day event on the expiry date, plus a reminder the week before is
+    // Google's own default for all-day events — no need to fight it.
+    const d = new Date(lic.expires_at * 1000);
+    const ymd = (x) => x.toISOString().slice(0, 10).replace(/-/g, '');
+    const end = new Date(lic.expires_at * 1000 + 864e5);
+    const q = new URLSearchParams({
+      text: `Mutra licence expires — ${lic.slug}`,
+      dates: `${ymd(d)}/${ymd(end)}`,
+      details: `Licence ${lic.ref} for "${lic.slug}" expires today.\n\n`
+        + `Renew before this date to keep using the track — including in work already published.\n`
+        + `https://snowstar.company/mutra.html?license=${encodeURIComponent(lic.slug)}`,
+    });
+    return `${CAL}&${q}`;
+  }
+
+  async function paintLicences() {
+    const el = drawerFor('licences');
+    el.innerHTML = '<p class="acct-empty">Loading…</p>';
+    let d;
+    try { d = await M.api('/licence/mine'); }
+    catch { el.innerHTML = '<p class="acct-empty">Couldn’t load that right now.</p>'; return; }
+
+    const lics = d.licences || [];
+    const reqs = (d.requests || []).filter((r) => r.status !== 'granted');
+    countFor('licences', lics.length);
+
+    if (!lics.length && !reqs.length) {
+      el.innerHTML = '<p class="acct-empty">No licences yet.</p>';
+      return;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    el.innerHTML = `
+      ${lics.length ? `<ul class="acct-lics">${lics.map((l) => {
+        const expired = l.expires_at && l.expires_at < now;
+        const revoked = !!l.revoked_at;
+        const days = l.expires_at ? Math.ceil((l.expires_at - now) / 86400) : null;
+        const cal = calLink(l);
+        return `<li class="acct-lic${revoked ? ' is-revoked' : expired ? ' is-expired' : ''}">
+          <div class="acct-lic-top">
+            <a class="acct-lic-name" href="${trackLink(l.slug)}">${esc(l.slug)}</a>
+            <span class="acct-lic-state">${revoked ? 'Revoked'
+              : expired ? 'Expired'
+              : l.expires_at ? `${days} day${days === 1 ? '' : 's'} left` : 'No end date'}</span>
+          </div>
+          <div class="acct-lic-ref">${esc(l.ref)}</div>
+          <div class="acct-lic-acts">
+            ${revoked || expired ? '' :
+              `<a href="/api/download?slug=${encodeURIComponent(l.slug)}">Download</a>`}
+            <a href="/api/licence/certificate?ref=${encodeURIComponent(l.ref)}" target="_blank" rel="noopener">Certificate</a>
+            ${cal && !revoked ? `<a href="${cal}" target="_blank" rel="noopener noreferrer">Add reminder</a>` : ''}
+          </div>
+        </li>`;
+      }).join('')}</ul>` : ''}
+      ${reqs.length ? `<p class="acct-label acct-lic-pending">Waiting on us</p>
+        <ul class="acct-list">${reqs.map((r) => `
+          <li><a href="${trackLink(r.slug)}">${esc(r.slug)}</a>
+            <span class="acct-item-date">${esc(r.status)}</span></li>`).join('')}</ul>` : ''}`;
+  }
 
   /* ═══════════ Clearlist ═══════════
      A licence does not stop Content ID: it matches audio, not paperwork. So a
