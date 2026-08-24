@@ -16,6 +16,10 @@
 # Idempotent — skips any track whose stream rendition already exists, so it can
 # be re-run after an interruption without redoing the work.
 set -uo pipefail
+# NOTE: every command in the loop reads from </dev/null and the loop itself
+# reads from fd 3. `npx wrangler` is node and node drains stdin — inside a
+# `while read` loop that silently eats the next iteration's input, which here
+# meant exactly half the catalogue was skipped and reported as missing.
 cd "$(dirname "$0")/../worker"
 
 WORK="${TMPDIR:-/tmp}/mutra-stream-$$"
@@ -30,12 +34,12 @@ total=$(printf '%s\n' "$KEYS" | grep -c .)
 n=0; made=0; skipped=0; failed=0
 echo "stream renditions for $total tracks"
 
-while IFS= read -r key; do
+while IFS= read -r key <&3; do
   [ -z "$key" ] && continue
   n=$((n+1))
   rm -f "$WORK/probe"
   if npx wrangler r2 object get "snowstar-masters/stream/$key" --remote \
-       --file "$WORK/probe" >/dev/null 2>&1 && [ -s "$WORK/probe" ]; then
+       --file "$WORK/probe" </dev/null >/dev/null 2>&1 && [ -s "$WORK/probe" ]; then
     skipped=$((skipped+1)); continue
   fi
 
@@ -46,7 +50,7 @@ while IFS= read -r key; do
   rm -f "$src"
   got=0
   for try in 1 2 3; do
-    if npx wrangler r2 object get "snowstar-masters/$key" --remote --file "$src" >/dev/null 2>&1 \
+    if npx wrangler r2 object get "snowstar-masters/$key" --remote --file "$src" </dev/null >/dev/null 2>&1 \
        && [ -s "$src" ]; then got=1; break; fi
     sleep $((try * 2))
   done
@@ -55,14 +59,14 @@ while IFS= read -r key; do
   fi
   # -vn drops the embedded cover: it is ~100 KB of every request, and the page
   # already has the artwork. 128k/44.1k stereo matches Artlist's older tier.
-  if ! ffmpeg -v error -y -i "$src" -vn -c:a aac -b:a 128k -ar 44100 -ac 2 \
+  if ! ffmpeg -nostdin -v error -y -i "$src" -vn -c:a aac -b:a 128k -ar 44100 -ac 2 \
         -movflags +faststart "$out" 2>/dev/null; then
     echo "  [$n/$total] ENCODE FAILED  $key"; failed=$((failed+1)); continue
   fi
   putok=0
   for try in 1 2 3; do
     if npx wrangler r2 object put "snowstar-masters/stream/$key" --remote --file "$out" \
-         --content-type audio/mp4 >/dev/null 2>&1; then putok=1; break; fi
+         --content-type audio/mp4 </dev/null >/dev/null 2>&1; then putok=1; break; fi
     sleep $((try * 2))
   done
   if [ "$putok" -eq 1 ]; then
@@ -72,6 +76,6 @@ while IFS= read -r key; do
     echo "  [$n/$total] UPLOAD FAILED  $key"; failed=$((failed+1))
   fi
   rm -f "$src" "$out"
-done <<< "$KEYS"
+done 3<<< "$KEYS"
 
 echo "done: $made made, $skipped already there, $failed failed, of $total"
