@@ -422,7 +422,11 @@
   }
   const plVol = $('#plVol');
   try {
-    const saved = Number(localStorage.getItem(VOL_KEY));
+    // getItem returns null when nothing was ever stored, and Number(null) is 0
+    // — which passes a 0..1 range check and silently mutes every first-time
+    // visitor. Test the raw string, not the number.
+    const raw = localStorage.getItem(VOL_KEY);
+    const saved = raw === null || raw === '' ? NaN : Number(raw);
     setVol(Number.isFinite(saved) && saved >= 0 && saved <= 1 ? saved : 1, false);
   } catch { setVol(1, false); }
 
