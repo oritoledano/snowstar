@@ -742,6 +742,24 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   color:var(--muted);font:inherit;font-size:.82rem;padding:8px;cursor:pointer;
   text-decoration:underline;text-underline-offset:3px}
 .lic-alt:hover{color:var(--text)}
+/* Bit, folded away. It is the minority path and unfolding it is one click, but
+   it carries a phone number and a QR that must be legible when it IS open. */
+.lic-bit{margin-top:14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--panel);overflow:hidden}
+.lic-bit>summary{cursor:pointer;list-style:none;padding:11px 14px;color:var(--muted);
+  font-size:.82rem;user-select:none}
+.lic-bit>summary::-webkit-details-marker{display:none}
+.lic-bit>summary::after{content:"›";float:right;transition:transform .2s;display:inline-block}
+.lic-bit[open]>summary::after{transform:rotate(90deg)}
+.lic-bit>summary:hover{color:var(--text)}
+.lic-bit p{margin:0 14px 12px;color:var(--muted);font-size:.82rem;line-height:1.6}
+.lic-bit b{color:var(--text)}
+.lic-bitnum{font-variant-numeric:tabular-nums;letter-spacing:.02em;white-space:nowrap}
+/* the QR is scanned off the screen by a phone, so it needs a white quiet zone
+   regardless of theme — a code on a dark panel does not read reliably */
+.lic-bitqr{display:block;width:160px;height:auto;margin:0 auto 12px;border-radius:10px;
+  background:#fff;padding:8px}
+.lic-bitwait{font-size:.76rem !important;color:var(--dim) !important}
 /* the receipt: the reference is the single most important thing on it, because
    it is what lets an incoming bank transfer be matched to a request */
 .lic-ref{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line-2);

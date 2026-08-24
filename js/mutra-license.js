@@ -46,6 +46,12 @@
      Where the rate cards and the subscriptions disagree, the cards win on
      broadcast (they price it as the scarce thing it is) and the subscriptions
      win on digital (they have already commoditised it). */
+  /* Bit is the only alternative to the card, because it is the only one we can
+     actually take: there is no bank account published for transfers and no
+     Paybox. Offering a payment method you cannot receive is worse than
+     offering none — it strands the buyer after they have decided to pay. */
+  const BIT_NUMBER = '054-449-8389';
+
   const TIERS = [
     { id: 'digital', label: 'Digital — web & social',
       blurb: 'Your own channels and organic social — site, YouTube, Instagram, TikTok, podcasts, showreels.',
@@ -196,9 +202,17 @@
              <li><span>VAT 18%</span><b>${CUR}${vat.toLocaleString()}</b></li>
              <li class="lic-tot"><span>To pay</span><b>${CUR}${(ex + vat).toLocaleString()}</b></li>
            </ul>
-           <p class="lic-note">Pay by card and the clean, un-watermarked file unlocks the moment the
-             payment clears \u2014 usually seconds. Prefer bank transfer, Bit or Paybox? Quote
-             <b>${esc(d.ref)}</b> so we can match it, and we\u2019ll release it by hand.</p>`}
+           <p class="lic-note">Pay by card and the clean file unlocks the moment the payment
+             clears \u2014 usually seconds.</p>
+           <details class="lic-bit">
+             <summary>Pay with Bit instead</summary>
+             <p>Send <b>${CUR}${(ex + vat).toLocaleString()}</b> by Bit to
+               <b class="lic-bitnum">${BIT_NUMBER}</b>, and put <b>${esc(d.ref)}</b> in the note
+               so it can be matched.</p>
+             <img class="lic-bitqr" src="assets/bit-qr.png" alt="Bit payment QR code"
+                  loading="lazy" onerror="this.remove()">
+             <p class="lic-bitwait">Released by hand once it lands \u2014 same day, not seconds.</p>
+           </details>`}
       <div class="lic-acts">
         ${quoteOnly || ex == null ? '' : '<button class="lic-go lic-card-pay">Pay by card</button>'}
         <button class="lic-share lic-done">Done</button>
@@ -313,9 +327,11 @@
     el.querySelector('.lic-incl').innerHTML = [
       track.lane === 'quote' ? 'Cleared once the other rights holder agrees'
                              : 'Cleared for commercial use, worldwide',
-      // The one thing a term makes people anxious about. Say it before they ask.
+      // The term is HARD — when it ends, so does the right to use the track,
+      // including in work already published. Say it here rather than let
+      // someone find it in the terms after they have paid.
       dur.mult == null ? 'Nobody else licences the track while you hold it'
-                       : 'Work published in the term stays up afterwards',
+                       : 'Renew before it ends to keep using it \u2014 renewals are cheaper',
       broadcast ? 'Broadcast royalties stay with the broadcaster'
                 : 'Your channels whitelisted \u2014 no Content ID claims',
       'Clean, un-watermarked files',
@@ -336,7 +352,7 @@
     const alt = el.querySelector('.lic-alt');
     if (alt) {
       alt.hidden = quoteOnly;
-      alt.textContent = 'Pay by transfer or Bit instead';
+      alt.textContent = 'Pay with Bit instead';
     }
     // Three different promises, and getting them mixed up matters: a
     // quote-lane track is a rights question, a quote-only tier is a pricing
@@ -397,7 +413,7 @@
         try { sessionStorage.setItem('mutraPendingLicence', JSON.stringify(pending)); } catch {}
         close();
         if (window.SnowstarOpenAuth) {
-          SnowstarOpenAuth('signup', 'Create a free account and we\u2019ll send the transfer details and the files.');
+          SnowstarOpenAuth('signup', 'Create a free account and we\u2019ll send the Bit details and the files.');
         }
         return;
       }

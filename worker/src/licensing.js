@@ -51,20 +51,22 @@ The recording and the composition remain the property of their rights holders.
 The full terms in force are published at snowstar.company/terms.html under the version recorded
 against this licence.`,
 
-  // v2 adds the term, now that the buyer chooses one. The clause that matters
-  // is the second paragraph: without it, "the licence expired" reads as "take
-  // your video down", which is not what is being sold and would make a lapsed
-  // term far more frightening than it is.
+  // v2 adds the term, now that the buyer chooses one, and says plainly that the
+  // term is HARD: expiry ends use of published material too. That is the point
+  // of a non-exclusive time-limited licence — it is a rental, and the renewal
+  // is the business. Saying so here, in the licence itself, is what stops it
+  // being a surprise later.
   'lic.v2':
 `This licence permits the licensee named above to synchronise the track named above with their own
 content, for the use tier named above and no wider. It is granted to that person or business only,
 is not transferable, and may not be resold, sub-licensed or included in another library.
 The recording and the composition remain the property of their rights holders.
 
-The licence runs for the term shown above, from the grant date. Material published while the
-licence was live may remain published after the term ends. What ends is the right to place the
-track into new material, and to run paid media behind it. Renewing before the end date leaves no
-gap. Where no end date is shown, the licence does not expire.
+The licence runs for the term shown above, from the grant date. When the term ends the permission
+granted here ends with it, including for material already published: any use of the track must be
+covered by a licence in force for as long as that use continues. Renewing before the end date
+leaves no gap, and renewal is offered at a lower rate than the original term. Where no end date is
+shown, the licence does not expire.
 
 The full terms in force are published at snowstar.company/terms.html under the version recorded
 against this licence.`,

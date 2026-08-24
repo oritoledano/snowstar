@@ -12,10 +12,16 @@
  * script pointed at the catalogue. Three things do that, and none of them
  * pretends to be unbreakable:
  *
- *   1. The master never has a public URL. It lives in the private bucket and is
- *      only ever streamed through here, so there is no link to copy.
- *   2. The request must look like a page playing audio — a same-origin fetch
- *      from our own document. curl and yt-dlp do not send that by default.
+ *   1. What streams is NOT the master. It is a clean 128 kbps rendition, made
+ *      for this and nothing else, so the worst case for a spoofed request is a
+ *      copy nobody would licence. The master stays download-only. (This is the
+ *      part of Artlist's design that is easy to miss: their filenames say
+ *      "Master", but what they serve is a lossy transcode. The master itself
+ *      has never been online.)
+ *   2. There is no public URL at all — everything goes through here, and the
+ *      request must look like a page playing audio. curl and yt-dlp do not
+ *      send that by default. (Artlist stops here, with a Referer rule so loose
+ *      that the string "garbage" passes it.)
  *   3. Breadth is capped per IP. One person auditioning tracks is nowhere near
  *      the limit; something walking 359 slugs hits it in under a minute.
  *
@@ -111,12 +117,19 @@ export async function handleStream(req, env) {
     return serve(req, pre, 'preview', range);
   }
 
+  // The STREAM rendition, not the master. This is the correction that matters:
+  // the master is the file a licensee pays for, so it must never be the file
+  // the world can hear. stream/ holds a clean 128 kbps copy — good enough to
+  // choose a track by, not what anyone would licence.
   const rangeHeader = req.headers.get('range');
   const range = parseRange(rangeHeader);
-  let obj = await env.MASTERS.get(row.audio_key, range ? { range } : undefined);
-  let which = 'master';
-  if (!obj) {                                  // not every track has a master yet
-    obj = await env.MEDIA.get(row.audio_key, range ? { range } : undefined);
+  const opts = range ? { range } : undefined;
+  let obj = await env.MASTERS.get('stream/' + row.audio_key, opts);
+  let which = 'stream';
+  if (!obj) {
+    // No rendition yet: the watermarked preview, never the master. Erring
+    // towards the marked file is the safe direction to be wrong in.
+    obj = await env.MEDIA.get(row.audio_key, opts);
     which = 'preview';
   }
   if (!obj) return json({ error: 'missing_file' }, 404);
