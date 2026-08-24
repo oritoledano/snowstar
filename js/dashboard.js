@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'members', 'licensing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
+  const TABS = ['overview', 'stats', 'inbox', 'members', 'licensing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -65,6 +65,7 @@
       if (tab === 'submissions') return paintSubmissions();
       if (tab === 'notifications') return paintMail();
       if (tab === 'licensing') return paintLicensing();
+      if (tab === 'inbox') return paintInbox();
       if (tab === 'alerts') return paintAlerts();
       if (tab === 'storage') return paintStorage();
       if (tab === 'upload') return paintUpload();
@@ -857,6 +858,66 @@
       }));
   }
 
+  /* ── inbox: what came in through Get in touch ──────────────────────────
+     Sorted by urgency, not by time. A Content ID claim is blocking somebody's
+     launch and a rights dispute has a clock on it; a pre-sales question does
+     not. Newest-first would bury both under whatever arrived since. */
+  let inboxTab = 'new';
+  const BRANCH_LABEL = {
+    'a2-quote': 'Quote', 'a3-question': 'Pre-sales', 'b1-claim': 'CLAIM',
+    'b2-account': 'Licence/invoice', 'b3-renew': 'Renewal',
+    'c2-artist': 'Artist', 'd1-rights': 'RIGHTS', 'd3-other': 'General',
+  };
+
+  async function paintInbox() {
+    const d = await get('/messages?status=' + encodeURIComponent(inboxTab));
+    const msgs = d.messages || [];
+    const c = d.counts || {};
+    paint(`
+      <div class="db-panel">
+        <h2>Inbox <span class="pill">${c.new || 0} new</span></h2>
+        <p class="db-empty" style="padding-top:0">Claims and rights disputes first — those
+          have a clock on them. Everything else by arrival.</p>
+        <div style="display:flex;gap:8px;margin:12px 0 14px">
+          ${[['new', 'New'], ['open', 'Open'], ['done', 'Done']].map(([v, t]) =>
+            `<button class="chip ${v === inboxTab ? 'active' : ''}" data-ib="${v}">${t}${
+              c[v] ? ` (${c[v]})` : ''}</button>`).join('')}
+        </div>
+        ${msgs.length ? msgs.map((m) => `
+          <div class="rv-item ib-msg" data-id="${m.id}">
+            <div class="rv-top">
+              <b class="${m.priority === 'claim' || m.priority === 'rights' ? 'ib-urgent' : ''}">${
+                esc(BRANCH_LABEL[m.branch] || m.branch)}</b>
+              <span class="who">${esc(m.name || m.email)}</span>
+              <span class="meta">${esc(m.ref)} · ${fmt(m.created_at)}</span>
+            </div>
+            ${m.track ? `<p class="rv-note">Track: <b>${esc(m.track)}</b></p>` : ''}
+            ${m.video_url ? `<p class="rv-note">Video:
+              <a href="${esc(m.video_url)}" target="_blank" rel="noopener noreferrer">${esc(m.video_url)}</a>
+              ${m.platform ? ' · ' + esc(m.platform) : ''}</p>` : ''}
+            ${m.order_ref ? `<p class="rv-note">Ref: ${esc(m.order_ref)}</p>` : ''}
+            <p class="rv-note ib-body">${esc(m.message)}</p>
+            <div class="rv-acts">
+              <a class="rv-btn" href="mailto:${esc(m.email)}?subject=${
+                encodeURIComponent('Re: ' + m.ref)}">Reply</a>
+              ${inboxTab !== 'open' ? `<button class="rv-btn ib-set" data-s="open">Working on it</button>` : ''}
+              ${inboxTab !== 'done' ? `<button class="rv-btn rv-ok ib-set" data-s="done">Done</button>` : ''}
+              ${inboxTab !== 'new' ? `<button class="rv-btn ib-set" data-s="new">Back to new</button>` : ''}
+            </div>
+          </div>`).join('')
+        : '<p class="db-empty">Nothing here.</p>'}
+      </div>`);
+
+    app.querySelectorAll('[data-ib]').forEach((b) =>
+      b.addEventListener('click', () => { inboxTab = b.dataset.ib; load(); }));
+    app.querySelectorAll('.ib-set').forEach((b) =>
+      b.addEventListener('click', async () => {
+        await post('/messages/status',
+          { id: Number(b.closest('.ib-msg').dataset.id), status: b.dataset.s });
+        load();
+      }));
+  }
+
   /* ── notifications (ported from review.html) ── */
   async function paintMail() {
     const mail = await get('/mailbox');
@@ -1172,15 +1233,27 @@
     const rows = d.alerts || [];
     const badge = { sent: 'rv-sent', failed: 'rv-err', suppressed: 'rv-mut' };
     const counts = rows.reduce((a, r) => (a[r.status] = (a[r.status] || 0) + 1, a), {});
+    const kinds = d.kinds || {};
+    const labels = d.labels || {};
     paint(`
       <div class="al-switch ${d.muted ? 'off' : 'on'}">
         <div>
           <b>Automated email is ${d.muted ? 'OFF' : 'ON'}</b>
           <p>${d.muted
             ? 'Nothing is being emailed to you. Alerts are still recorded below, so you can turn this back on and lose nothing in between.'
-            : 'You get an alert when a visitor plays several tracks or clicks License, capped daily, plus one digest each morning.'}</p>
+            : 'Each kind can be silenced on its own below. Suppressed alerts are still logged, so turning one back on loses nothing in between.'}</p>
         </div>
-        <button class="rv-btn ${d.muted ? 'rv-ok' : ''}" id="alMute">${d.muted ? 'Turn alerts on' : 'Stop these emails'}</button>
+        <button class="rv-btn ${d.muted ? 'rv-ok' : ''}" id="alMute">${d.muted ? 'Turn all on' : 'Stop everything'}</button>
+      </div>
+
+      <div class="al-kinds">
+        ${Object.entries(labels).map(([k, meta]) => `
+          <label class="al-kind${kinds[k] ? ' off' : ''}">
+            <input type="checkbox" data-kind="${k}"${kinds[k] ? '' : ' checked'}>
+            <span><b>${esc(meta.label)}</b><i>${esc(meta.note)}</i></span>
+          </label>`).join('')}
+        <p class="rv-hint">Claims and rights disputes always send, even with messages
+          switched off — muting “a message came in” should not silence a legal notice.</p>
       </div>
       <p class="db-empty" style="padding-top:0">
         ${rows.length ? `${rows.length} logged · ${counts.sent || 0} sent, ${counts.suppressed || 0} suppressed, ${counts.failed || 0} failed`
@@ -1194,6 +1267,13 @@
             <span style="margin-left:auto;color:var(--muted)">${fmt(r.ts)}</span>
           </summary>
           <pre>${esc(r.body)}</pre></details>`).join('')}`);
+
+    app.querySelectorAll('.al-kind input[data-kind]').forEach((cb) =>
+      cb.addEventListener('change', async () => {
+        cb.disabled = true;
+        await post('/alerts/mute', { kind: cb.dataset.kind, muted: !cb.checked });
+        load();
+      }));
 
     const btn = document.getElementById('alMute');
     if (btn) btn.addEventListener('click', async () => {

@@ -15,6 +15,7 @@
 
 import { priceFor, isBuyer, isCoverage, isTerm, BUYERS } from './pricing.js';
 import { sendMail } from './mail.js';
+import { alert } from './analytics.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
@@ -277,6 +278,25 @@ export async function createRequest(req, env, user) {
   const ref = makeRef(id, slug);
   await env.DB.prepare('UPDATE licence_requests SET ref = ? WHERE id = ?').bind(ref, id).run();
 
+  // A request is what the site exists to produce. It used to land in D1 and
+  // wait to be noticed, which for a one-person catalogue means the reply time
+  // is however long until someone opens the dashboard.
+  try {
+    const shek = listAgorot != null ? (listAgorot / 100).toFixed(2) : null;
+    await alert(env, 'request',
+      `Mutra: ${lane === 'quote' ? 'quote request' : 'licence request'} — ${slug}`,
+      `${ref}\n\n`
+      + `Track:    ${slug}\n`
+      + `Buyer:    ${buyer ? (BUYERS[buyer] ? BUYERS[buyer].label : buyer) : tier}\n`
+      + `Coverage: ${coverage}\n`
+      + `Term:     ${clean(b.duration, 8) || '12m'}\n`
+      + (shek ? `Price:    ILS ${shek} ex VAT\n` : `Price:    quoted\n`)
+      + `From:     ${email}\n`
+      + (clean(b.project_name, 200) ? `Project:  ${clean(b.project_name, 200)}\n` : '')
+      + (clean(b.licensee_name, 200) ? `Client:   ${clean(b.licensee_name, 200)}\n` : '')
+      + `\nQueue: https://snowstar.company/dashboard.html\n`);
+  } catch { /* the request is saved either way */ }
+
   return json({
     ok: true, ref, id, lane,
     amount_ex_vat: listAgorot,
@@ -446,6 +466,15 @@ export async function grantLicence(env, opts) {
     // Three things go in the mail because they are the three things somebody
     // needs after paying — the file, something to show a client, and a warning
     // before it lapses.
+    try {
+      await alert(env, 'payment',
+        `Mutra: licence granted — ${slug} (${ref})`,
+        `${ref}\n\nTrack:   ${slug}\nTo:      ${email}\n`
+        + `Amount:  ILS ${((amount || 0) / 100).toFixed(2)} ex VAT\n`
+        + `Reason:  ${reason}\nBy:      ${actor}\n`
+        + `Term:    ${expires ? new Date(expires * 1000).toISOString().slice(0, 10) : 'no end date'}\n`);
+    } catch { /* never let an alert fail a grant */ }
+
     try {
       await sendGrantMail(env, {
         email, ref, slug, expires,

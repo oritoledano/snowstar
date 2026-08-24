@@ -2016,6 +2016,114 @@
       "source_location": "L112"
     },
     {
+      "id": "worker_src_profile_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "worker_src_profile_clearavatar",
+      "label": "clearAvatar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "clearavatar()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L143"
+    },
+    {
+      "id": "worker_src_profile_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_profile_mydownloads",
+      "label": "myDownloads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "mydownloads()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L88"
+    },
+    {
+      "id": "worker_src_profile_myfavoriteslist",
+      "label": "myFavoritesList()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "myfavoriteslist()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L99"
+    },
+    {
+      "id": "worker_src_profile_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L20"
+    },
+    {
+      "id": "worker_src_profile_updateprofile",
+      "label": "updateProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "updateprofile()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L39"
+    },
+    {
+      "id": "worker_src_profile_uploadavatar",
+      "label": "uploadAvatar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "uploadavatar()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L122"
+    },
+    {
+      "id": "worker_src_profile_validemail",
+      "label": "validEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "validemail()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L27"
+    },
+    {
       "id": "worker_src_user_publicuser",
       "label": "publicUser()",
       "_callable": true,
@@ -2472,162 +2580,6 @@
       "source_location": "L65"
     },
     {
-      "id": "worker_src_analytics_alertsmuted",
-      "label": "alertsMuted()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "alertsmuted()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L163"
-    },
-    {
-      "id": "worker_src_analytics_handledownload",
-      "label": "handleDownload()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "handledownload()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L358"
-    },
-    {
-      "id": "worker_src_analytics_handlejourney",
-      "label": "handleJourney()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "handlejourney()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L287"
-    },
-    {
-      "id": "worker_src_analytics_handlestats",
-      "label": "handleStats()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "handlestats()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L199"
-    },
-    {
-      "id": "worker_src_analytics_handletrack",
-      "label": "handleTrack()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "handletrack()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L42"
-    },
-    {
-      "id": "worker_src_analytics_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L22"
-    },
-    {
-      "id": "worker_src_analytics_listalerts",
-      "label": "listAlerts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listalerts()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L179"
-    },
-    {
-      "id": "worker_src_analytics_logalert",
-      "label": "logAlert()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "logalert()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L168"
-    },
-    {
-      "id": "worker_src_analytics_maybealert",
-      "label": "maybeAlert()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "maybealert()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L91"
-    },
-    {
-      "id": "worker_src_analytics_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "worker_src_analytics_refhost",
-      "label": "refHost()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "refhost()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L34"
-    },
-    {
-      "id": "worker_src_analytics_senddigest",
-      "label": "sendDigest()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "senddigest()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L309"
-    },
-    {
-      "id": "worker_src_analytics_setalertsmuted",
-      "label": "setAlertsMuted()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "setalertsmuted()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L188"
-    },
-    {
       "id": "worker_src_artistreg_ensureartists",
       "label": "ensureArtists()",
       "_callable": true,
@@ -2698,6 +2650,162 @@
       "norm_label": "splitnames()",
       "source_file": "worker/src/artistreg.js",
       "source_location": "L26"
+    },
+    {
+      "id": "worker_src_artists_cleanuporphanuploads",
+      "label": "cleanupOrphanUploads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "cleanuporphanuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L165"
+    },
+    {
+      "id": "worker_src_artists_createsubmission",
+      "label": "createSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "createsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L69"
+    },
+    {
+      "id": "worker_src_artists_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_artists_listartistsadmin",
+      "label": "listArtistsAdmin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "listartistsadmin()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L184"
+    },
+    {
+      "id": "worker_src_artists_listsubmissions",
+      "label": "listSubmissions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "listsubmissions()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L204"
+    },
+    {
+      "id": "worker_src_artists_myuploads",
+      "label": "myUploads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "myuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L39"
+    },
+    {
+      "id": "worker_src_artists_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "worker_src_artists_queuereviewmail",
+      "label": "queueReviewMail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "queuereviewmail()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L251"
+    },
+    {
+      "id": "worker_src_artists_registerartist",
+      "label": "registerArtist()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "registerartist()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "worker_src_artists_reviewsubmission",
+      "label": "reviewSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "reviewsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L227"
+    },
+    {
+      "id": "worker_src_artists_slug",
+      "label": "slug()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "slug()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L25"
+    },
+    {
+      "id": "worker_src_artists_streamsubmission",
+      "label": "streamSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "streamsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_artists_uploadtrack",
+      "label": "uploadTrack()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "uploadtrack()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L54"
     },
     {
       "id": "worker_src_clearlist_addchannel",
@@ -3000,6 +3108,18 @@
       "source_location": "L62"
     },
     {
+      "id": "worker_src_index_scheduled",
+      "label": "scheduled()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "scheduled()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L489"
+    },
+    {
       "id": "worker_src_index_sessioncookie",
       "label": "sessionCookie()",
       "_callable": true,
@@ -3036,16 +3156,76 @@
       "source_location": "L64"
     },
     {
-      "id": "worker_src_licensing_haslivelicence",
-      "label": "hasLiveLicence()",
+      "id": "worker_src_mail_mailfrom",
+      "label": "mailFrom()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "haslivelicence()",
-      "source_file": "worker/src/licensing.js",
-      "source_location": "L312"
+      "norm_label": "mailfrom()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L40"
+    },
+    {
+      "id": "worker_src_mail_maillive",
+      "label": "mailLive()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "maillive()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "worker_src_mail_mailto",
+      "label": "mailTo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "mailto()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "worker_src_mail_resetemail",
+      "label": "resetEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "resetemail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L101"
+    },
+    {
+      "id": "worker_src_mail_sendmail",
+      "label": "sendMail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "sendmail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L73"
+    },
+    {
+      "id": "worker_src_mail_shell",
+      "label": "shell()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "shell()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L51"
     },
     {
       "id": "worker_src_members_deletemember",
@@ -3108,31 +3288,91 @@
       "source_location": "L21"
     },
     {
-      "id": "worker_src_profile_clean",
-      "label": "clean()",
+      "id": "worker_src_rights_amenddeclaration",
+      "label": "amendDeclaration()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L29"
+      "norm_label": "amenddeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L389"
     },
     {
-      "id": "worker_src_profile_clearavatar",
-      "label": "clearAvatar()",
+      "id": "worker_src_rights_claimstatus",
+      "label": "claimStatus()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "clearavatar()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L143"
+      "norm_label": "claimstatus()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L362"
     },
     {
-      "id": "worker_src_profile_json",
+      "id": "worker_src_rights_cleanemail",
+      "label": "cleanEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "cleanemail()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L27"
+    },
+    {
+      "id": "worker_src_rights_countersignclaim",
+      "label": "countersignClaim()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "countersignclaim()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L337"
+    },
+    {
+      "id": "worker_src_rights_createmanagedartist",
+      "label": "createManagedArtist()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "createmanagedartist()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L316"
+    },
+    {
+      "id": "worker_src_rights_freezetext",
+      "label": "freezeText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "freezetext()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L48"
+    },
+    {
+      "id": "worker_src_rights_invitebody",
+      "label": "inviteBody()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "invitebody()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L161"
+    },
+    {
+      "id": "worker_src_rights_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
@@ -3140,35 +3380,59 @@
       "community_name": "index.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/profile.js",
+      "source_file": "worker/src/rights.js",
       "source_location": "L21"
     },
     {
-      "id": "worker_src_profile_mydownloads",
-      "label": "myDownloads()",
+      "id": "worker_src_rights_linkonsignin",
+      "label": "linkOnSignIn()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "mydownloads()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L88"
+      "norm_label": "linkonsignin()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L281"
     },
     {
-      "id": "worker_src_profile_myfavoriteslist",
-      "label": "myFavoritesList()",
+      "id": "worker_src_rights_listmanagedartists",
+      "label": "listManagedArtists()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "myfavoriteslist()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L99"
+      "norm_label": "listmanagedartists()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L308"
     },
     {
-      "id": "worker_src_profile_now",
+      "id": "worker_src_rights_listoutbox",
+      "label": "listOutbox()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "listoutbox()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L180"
+    },
+    {
+      "id": "worker_src_rights_mycredits",
+      "label": "myCredits()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "mycredits()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L240"
+    },
+    {
+      "id": "worker_src_rights_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
@@ -3176,35 +3440,59 @@
       "community_name": "index.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/profile.js",
+      "source_file": "worker/src/rights.js",
       "source_location": "L20"
     },
     {
-      "id": "worker_src_profile_updateprofile",
-      "label": "updateProfile()",
+      "id": "worker_src_rights_parsedeclaration",
+      "label": "parseDeclaration()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "updateprofile()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L39"
+      "norm_label": "parsedeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L59"
     },
     {
-      "id": "worker_src_profile_uploadavatar",
-      "label": "uploadAvatar()",
+      "id": "worker_src_rights_recorddeclaration",
+      "label": "recordDeclaration()",
       "_callable": true,
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "uploadavatar()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L122"
+      "norm_label": "recorddeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L126"
     },
     {
-      "id": "worker_src_profile_validemail",
+      "id": "worker_src_rights_respondcredit",
+      "label": "respondCredit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "respondcredit()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L256"
+    },
+    {
+      "id": "worker_src_rights_sendoutbox",
+      "label": "sendOutbox()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "sendoutbox()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L192"
+    },
+    {
+      "id": "worker_src_rights_validemail",
       "label": "validEmail()",
       "_callable": true,
       "_origin": "ast",
@@ -3212,8 +3500,8 @@
       "community_name": "index.js",
       "file_type": "code",
       "norm_label": "validemail()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L27"
+      "source_file": "worker/src/rights.js",
+      "source_location": "L28"
     },
     {
       "id": "worker_src_session_currentuser",
@@ -3346,174 +3634,6 @@
       "norm_label": "storagereport()",
       "source_file": "worker/src/site.js",
       "source_location": "L94"
-    },
-    {
-      "id": "worker_src_works_cleanurl",
-      "label": "cleanUrl()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "cleanurl()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L49"
-    },
-    {
-      "id": "worker_src_works_deletelogo",
-      "label": "deleteLogo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "deletelogo()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L192"
-    },
-    {
-      "id": "worker_src_works_deletework",
-      "label": "deleteWork()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "deletework()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L129"
-    },
-    {
-      "id": "worker_src_works_dropcdnfiles",
-      "label": "dropCdnFiles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "dropcdnfiles()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L57"
-    },
-    {
-      "id": "worker_src_works_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "worker_src_works_listlogos",
-      "label": "listLogos()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listlogos()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L145"
-    },
-    {
-      "id": "worker_src_works_listworks",
-      "label": "listWorks()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listworks()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L41"
-    },
-    {
-      "id": "worker_src_works_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L17"
-    },
-    {
-      "id": "worker_src_works_reorderlogos",
-      "label": "reorderLogos()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "reorderlogos()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L179"
-    },
-    {
-      "id": "worker_src_works_reorderworks",
-      "label": "reorderWorks()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "reorderworks()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L115"
-    },
-    {
-      "id": "worker_src_works_rowout",
-      "label": "rowOut()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "rowout()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_works_savelogo",
-      "label": "saveLogo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "savelogo()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L152"
-    },
-    {
-      "id": "worker_src_works_savework",
-      "label": "saveWork()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "savework()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L68"
-    },
-    {
-      "id": "worker_src_works_uploadworkfile",
-      "label": "uploadWorkFile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "uploadworkfile()",
-      "source_file": "worker/src/works.js",
-      "source_location": "L207"
     },
     {
       "id": "js_mutra_license_build",
@@ -3828,460 +3948,280 @@
       "source_location": "L77"
     },
     {
-      "id": "worker_src_artists_cleanuporphanuploads",
-      "label": "cleanupOrphanUploads()",
+      "id": "worker_src_analytics_alert",
+      "label": "alert()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "cleanuporphanuploads()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L165"
+      "norm_label": "alert()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L207"
     },
     {
-      "id": "worker_src_artists_createsubmission",
-      "label": "createSubmission()",
+      "id": "worker_src_analytics_alertsmuted",
+      "label": "alertsMuted()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "createsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L69"
+      "norm_label": "alertsmuted()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L182"
     },
     {
-      "id": "worker_src_artists_json",
+      "id": "worker_src_analytics_handledownload",
+      "label": "handleDownload()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "handledownload()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L447"
+    },
+    {
+      "id": "worker_src_analytics_handlejourney",
+      "label": "handleJourney()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "handlejourney()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L376"
+    },
+    {
+      "id": "worker_src_analytics_handlestats",
+      "label": "handleStats()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "handlestats()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L288"
+    },
+    {
+      "id": "worker_src_analytics_handletrack",
+      "label": "handleTrack()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "handletrack()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L42"
+    },
+    {
+      "id": "worker_src_analytics_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L15"
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L22"
     },
     {
-      "id": "worker_src_artists_listartistsadmin",
-      "label": "listArtistsAdmin()",
+      "id": "worker_src_analytics_listalerts",
+      "label": "listAlerts()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "listartistsadmin()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L184"
+      "norm_label": "listalerts()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L237"
     },
     {
-      "id": "worker_src_artists_listsubmissions",
-      "label": "listSubmissions()",
+      "id": "worker_src_analytics_logalert",
+      "label": "logAlert()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "listsubmissions()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L204"
+      "norm_label": "logalert()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L226"
     },
     {
-      "id": "worker_src_artists_myuploads",
-      "label": "myUploads()",
+      "id": "worker_src_analytics_maybealert",
+      "label": "maybeAlert()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "myuploads()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L39"
+      "norm_label": "maybealert()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L91"
     },
     {
-      "id": "worker_src_artists_now",
-      "label": "now()",
+      "id": "worker_src_analytics_mutedmap",
+      "label": "mutedMap()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L14"
-    },
-    {
-      "id": "worker_src_artists_queuereviewmail",
-      "label": "queueReviewMail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "queuereviewmail()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L251"
-    },
-    {
-      "id": "worker_src_artists_registerartist",
-      "label": "registerArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "registerartist()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_artists_reviewsubmission",
-      "label": "reviewSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "reviewsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L227"
-    },
-    {
-      "id": "worker_src_artists_slug",
-      "label": "slug()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "slug()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L25"
-    },
-    {
-      "id": "worker_src_artists_streamsubmission",
-      "label": "streamSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "streamsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L128"
-    },
-    {
-      "id": "worker_src_artists_uploadtrack",
-      "label": "uploadTrack()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "uploadtrack()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L54"
-    },
-    {
-      "id": "worker_src_index_scheduled",
-      "label": "scheduled()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "scheduled()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L489"
-    },
-    {
-      "id": "worker_src_mail_mailfrom",
-      "label": "mailFrom()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "mailfrom()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L40"
-    },
-    {
-      "id": "worker_src_mail_maillive",
-      "label": "mailLive()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "maillive()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "worker_src_mail_mailto",
-      "label": "mailTo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "mailto()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L45"
-    },
-    {
-      "id": "worker_src_mail_resetemail",
-      "label": "resetEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "resetemail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L101"
-    },
-    {
-      "id": "worker_src_mail_sendmail",
-      "label": "sendMail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "sendmail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L73"
-    },
-    {
-      "id": "worker_src_mail_shell",
-      "label": "shell()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "shell()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L51"
-    },
-    {
-      "id": "worker_src_rights_amenddeclaration",
-      "label": "amendDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "amenddeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L389"
-    },
-    {
-      "id": "worker_src_rights_claimstatus",
-      "label": "claimStatus()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "claimstatus()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L362"
-    },
-    {
-      "id": "worker_src_rights_cleanemail",
-      "label": "cleanEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "cleanemail()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L27"
-    },
-    {
-      "id": "worker_src_rights_countersignclaim",
-      "label": "countersignClaim()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "countersignclaim()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L337"
-    },
-    {
-      "id": "worker_src_rights_createmanagedartist",
-      "label": "createManagedArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "createmanagedartist()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L316"
-    },
-    {
-      "id": "worker_src_rights_freezetext",
-      "label": "freezeText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "freezetext()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L48"
-    },
-    {
-      "id": "worker_src_rights_invitebody",
-      "label": "inviteBody()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "invitebody()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L161"
-    },
-    {
-      "id": "worker_src_rights_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "worker_src_rights_linkonsignin",
-      "label": "linkOnSignIn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "linkonsignin()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L281"
-    },
-    {
-      "id": "worker_src_rights_listmanagedartists",
-      "label": "listManagedArtists()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "listmanagedartists()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L308"
-    },
-    {
-      "id": "worker_src_rights_listoutbox",
-      "label": "listOutbox()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "listoutbox()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L180"
-    },
-    {
-      "id": "worker_src_rights_mycredits",
-      "label": "myCredits()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "mycredits()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L240"
-    },
-    {
-      "id": "worker_src_rights_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L20"
-    },
-    {
-      "id": "worker_src_rights_parsedeclaration",
-      "label": "parseDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "parsedeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L59"
-    },
-    {
-      "id": "worker_src_rights_recorddeclaration",
-      "label": "recordDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "recorddeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L126"
-    },
-    {
-      "id": "worker_src_rights_respondcredit",
-      "label": "respondCredit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "respondcredit()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L256"
-    },
-    {
-      "id": "worker_src_rights_sendoutbox",
-      "label": "sendOutbox()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "sendoutbox()",
-      "source_file": "worker/src/rights.js",
+      "norm_label": "mutedmap()",
+      "source_file": "worker/src/analytics.js",
       "source_location": "L192"
     },
     {
-      "id": "worker_src_rights_validemail",
-      "label": "validEmail()",
+      "id": "worker_src_analytics_now",
+      "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "validemail()",
-      "source_file": "worker/src/rights.js",
+      "norm_label": "now()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_analytics_refhost",
+      "label": "refHost()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "refhost()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L34"
+    },
+    {
+      "id": "worker_src_analytics_senddigest",
+      "label": "sendDigest()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "senddigest()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L398"
+    },
+    {
+      "id": "worker_src_analytics_setalertsmuted",
+      "label": "setAlertsMuted()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "setalertsmuted()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L247"
+    },
+    {
+      "id": "worker_src_contact_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/contact.js",
       "source_location": "L28"
+    },
+    {
+      "id": "worker_src_contact_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "worker_src_contact_listmessages",
+      "label": "listMessages()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "listmessages()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_contact_makeref",
+      "label": "makeRef()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "makeref()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_contact_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_contact_setmessagestatus",
+      "label": "setMessageStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "setmessagestatus()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L146"
+    },
+    {
+      "id": "worker_src_contact_submitcontact",
+      "label": "submitContact()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "submitcontact()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L62"
+    },
+    {
+      "id": "worker_src_licensing_haslivelicence",
+      "label": "hasLiveLicence()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "haslivelicence()",
+      "source_file": "worker/src/licensing.js",
+      "source_location": "L332"
     },
     {
       "id": "worker_src_stream_breadthexceeded",
@@ -4368,220 +4308,172 @@
       "source_location": "L158"
     },
     {
-      "id": "worker_src_contact_clean",
-      "label": "clean()",
+      "id": "worker_src_works_cleanurl",
+      "label": "cleanUrl()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L28"
+      "norm_label": "cleanurl()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L49"
     },
     {
-      "id": "worker_src_contact_json",
+      "id": "worker_src_works_deletelogo",
+      "label": "deleteLogo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "works.js",
+      "file_type": "code",
+      "norm_label": "deletelogo()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L192"
+    },
+    {
+      "id": "worker_src_works_deletework",
+      "label": "deleteWork()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "works.js",
+      "file_type": "code",
+      "norm_label": "deletework()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L129"
+    },
+    {
+      "id": "worker_src_works_dropcdnfiles",
+      "label": "dropCdnFiles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "works.js",
+      "file_type": "code",
+      "norm_label": "dropcdnfiles()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L57"
+    },
+    {
+      "id": "worker_src_works_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L22"
+      "source_file": "worker/src/works.js",
+      "source_location": "L19"
     },
     {
-      "id": "worker_src_contact_listmessages",
-      "label": "listMessages()",
+      "id": "worker_src_works_listlogos",
+      "label": "listLogos()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "listmessages()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L130"
+      "norm_label": "listlogos()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L145"
     },
     {
-      "id": "worker_src_contact_makeref",
-      "label": "makeRef()",
+      "id": "worker_src_works_listworks",
+      "label": "listWorks()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "makeref()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L46"
+      "norm_label": "listworks()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L41"
     },
     {
-      "id": "worker_src_contact_now",
+      "id": "worker_src_works_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L21"
+      "source_file": "worker/src/works.js",
+      "source_location": "L17"
     },
     {
-      "id": "worker_src_contact_setmessagestatus",
-      "label": "setMessageStatus()",
+      "id": "worker_src_works_reorderlogos",
+      "label": "reorderLogos()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "setmessagestatus()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L148"
+      "norm_label": "reorderlogos()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L179"
     },
     {
-      "id": "worker_src_contact_submitcontact",
-      "label": "submitContact()",
+      "id": "worker_src_works_reorderworks",
+      "label": "reorderWorks()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "submitcontact()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L62"
+      "norm_label": "reorderworks()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L115"
     },
     {
-      "id": "worker_src_hyp_configured",
-      "label": "configured()",
+      "id": "worker_src_works_rowout",
+      "label": "rowOut()",
       "_callable": true,
       "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
+      "community": 31,
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "configured()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L52"
+      "norm_label": "rowout()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L29"
     },
     {
-      "id": "worker_src_hyp_decodevalue",
-      "label": "decodeValue()",
+      "id": "worker_src_works_savelogo",
+      "label": "saveLogo()",
       "_callable": true,
       "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
+      "community": 31,
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "decodevalue()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L78"
+      "norm_label": "savelogo()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L152"
     },
     {
-      "id": "worker_src_hyp_handlereturn",
-      "label": "handleReturn()",
+      "id": "worker_src_works_savework",
+      "label": "saveWork()",
       "_callable": true,
       "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
+      "community": 31,
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "handlereturn()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L217"
+      "norm_label": "savework()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L68"
     },
     {
-      "id": "worker_src_hyp_hypstatus",
-      "label": "hypStatus()",
+      "id": "worker_src_works_uploadworkfile",
+      "label": "uploadWorkFile()",
       "_callable": true,
       "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
+      "community": 31,
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "hypstatus()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L318"
-    },
-    {
-      "id": "worker_src_hyp_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L46"
-    },
-    {
-      "id": "worker_src_hyp_liststale",
-      "label": "listStale()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
-      "file_type": "code",
-      "norm_label": "liststale()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L307"
-    },
-    {
-      "id": "worker_src_hyp_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L45"
-    },
-    {
-      "id": "worker_src_hyp_parsehyp",
-      "label": "parseHyp()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
-      "file_type": "code",
-      "norm_label": "parsehyp()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L86"
-    },
-    {
-      "id": "worker_src_hyp_percentbytes",
-      "label": "percentBytes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
-      "file_type": "code",
-      "norm_label": "percentbytes()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L66"
-    },
-    {
-      "id": "worker_src_hyp_startcheckout",
-      "label": "startCheckout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
-      "file_type": "code",
-      "norm_label": "startcheckout()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L105"
-    },
-    {
-      "id": "worker_src_hyp_verifyreturn",
-      "label": "verifyReturn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
-      "file_type": "code",
-      "norm_label": "verifyreturn()",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L186"
+      "norm_label": "uploadworkfile()",
+      "source_file": "worker/src/works.js",
+      "source_location": "L207"
     },
     {
       "id": "js_mutra_artist_panel_albumsof",
@@ -4680,6 +4572,138 @@
       "source_location": "L52"
     },
     {
+      "id": "worker_src_hyp_configured",
+      "label": "configured()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "configured()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L52"
+    },
+    {
+      "id": "worker_src_hyp_decodevalue",
+      "label": "decodeValue()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "decodevalue()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L78"
+    },
+    {
+      "id": "worker_src_hyp_handlereturn",
+      "label": "handleReturn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "handlereturn()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L217"
+    },
+    {
+      "id": "worker_src_hyp_hypstatus",
+      "label": "hypStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "hypstatus()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L318"
+    },
+    {
+      "id": "worker_src_hyp_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_hyp_liststale",
+      "label": "listStale()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "liststale()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L307"
+    },
+    {
+      "id": "worker_src_hyp_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "worker_src_hyp_parsehyp",
+      "label": "parseHyp()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "parsehyp()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L86"
+    },
+    {
+      "id": "worker_src_hyp_percentbytes",
+      "label": "percentBytes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "percentbytes()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L66"
+    },
+    {
+      "id": "worker_src_hyp_startcheckout",
+      "label": "startCheckout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "startcheckout()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L105"
+    },
+    {
+      "id": "worker_src_hyp_verifyreturn",
+      "label": "verifyReturn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "verifyreturn()",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L186"
+    },
+    {
       "id": "worker_src_licensing_calendarlink",
       "label": "calendarLink()",
       "_callable": true,
@@ -4689,7 +4713,7 @@
       "file_type": "code",
       "norm_label": "calendarlink()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L98"
+      "source_location": "L99"
     },
     {
       "id": "worker_src_licensing_clean",
@@ -4701,7 +4725,7 @@
       "file_type": "code",
       "norm_label": "clean()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L26"
+      "source_location": "L27"
     },
     {
       "id": "worker_src_licensing_createrequest",
@@ -4713,7 +4737,7 @@
       "file_type": "code",
       "norm_label": "createrequest()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L204"
+      "source_location": "L205"
     },
     {
       "id": "worker_src_licensing_declinerequest",
@@ -4725,7 +4749,7 @@
       "file_type": "code",
       "norm_label": "declinerequest()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L528"
+      "source_location": "L557"
     },
     {
       "id": "worker_src_licensing_freezetext",
@@ -4737,7 +4761,7 @@
       "file_type": "code",
       "norm_label": "freezetext()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L87"
+      "source_location": "L88"
     },
     {
       "id": "worker_src_licensing_grantfromdashboard",
@@ -4749,7 +4773,7 @@
       "file_type": "code",
       "norm_label": "grantfromdashboard()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L479"
+      "source_location": "L508"
     },
     {
       "id": "worker_src_licensing_grantlicence",
@@ -4761,7 +4785,7 @@
       "file_type": "code",
       "norm_label": "grantlicence()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L391"
+      "source_location": "L411"
     },
     {
       "id": "worker_src_licensing_json",
@@ -4773,7 +4797,7 @@
       "file_type": "code",
       "norm_label": "json()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L20"
+      "source_location": "L21"
     },
     {
       "id": "worker_src_licensing_listqueue",
@@ -4785,7 +4809,7 @@
       "file_type": "code",
       "norm_label": "listqueue()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L325"
+      "source_location": "L345"
     },
     {
       "id": "worker_src_licensing_logadmin",
@@ -4797,7 +4821,7 @@
       "file_type": "code",
       "norm_label": "logadmin()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L181"
+      "source_location": "L182"
     },
     {
       "id": "worker_src_licensing_makeref",
@@ -4809,7 +4833,7 @@
       "file_type": "code",
       "norm_label": "makeref()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L192"
+      "source_location": "L193"
     },
     {
       "id": "worker_src_licensing_mylicences",
@@ -4821,7 +4845,7 @@
       "file_type": "code",
       "norm_label": "mylicences()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L294"
+      "source_location": "L314"
     },
     {
       "id": "worker_src_licensing_now",
@@ -4833,7 +4857,7 @@
       "file_type": "code",
       "norm_label": "now()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L19"
+      "source_location": "L20"
     },
     {
       "id": "worker_src_licensing_recordpayment",
@@ -4845,7 +4869,7 @@
       "file_type": "code",
       "norm_label": "recordpayment()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L364"
+      "source_location": "L384"
     },
     {
       "id": "worker_src_licensing_revokelicence",
@@ -4857,7 +4881,7 @@
       "file_type": "code",
       "norm_label": "revokelicence()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L511"
+      "source_location": "L540"
     },
     {
       "id": "worker_src_licensing_sendgrantmail",
@@ -4869,7 +4893,7 @@
       "file_type": "code",
       "norm_label": "sendgrantmail()",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L112"
+      "source_location": "L113"
     },
     {
       "id": "worker_src_pricing_isbuyer",
@@ -5145,7 +5169,7 @@
       "file_type": "code",
       "norm_label": "gauge()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1213"
+      "source_location": "L1232"
     },
     {
       "id": "js_dashboard_load",
@@ -5325,7 +5349,7 @@
       "file_type": "code",
       "norm_label": "paintstorage()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1225"
+      "source_location": "L1244"
     },
     {
       "id": "js_dashboard_paintsubmissions",
@@ -6305,6 +6329,39 @@
       "source_location": "L41"
     },
     {
+      "id": "worker_src_profile",
+      "label": "profile.js",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "profile.js",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_profile_field_cols",
+      "label": "FIELD_COLS",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "field_cols",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "worker_src_profile_img_ext",
+      "label": "IMG_EXT",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "img_ext",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L112"
+    },
+    {
       "id": "worker_src_user",
       "label": "user.js",
       "_origin": "ast",
@@ -6357,28 +6414,6 @@
       "file_type": "code",
       "norm_label": "showreel",
       "source_file": "js/data.js",
-      "source_location": "L6"
-    },
-    {
-      "id": "js_mutra_data",
-      "label": "mutra-data.js",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "file_type": "code",
-      "norm_label": "mutra-data.js",
-      "source_file": "js/mutra-data.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "js_mutra_data_mutra",
-      "label": "MUTRA",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "file_type": "code",
-      "norm_label": "mutra",
-      "source_file": "js/mutra-data.js",
       "source_location": "L6"
     },
     {
@@ -6459,6 +6494,28 @@
       "source_location": "L1"
     },
     {
+      "id": "js_mutra_data",
+      "label": "mutra-data.js",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "file_type": "code",
+      "norm_label": "mutra-data.js",
+      "source_file": "js/mutra-data.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "js_mutra_data_mutra",
+      "label": "MUTRA",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "file_type": "code",
+      "norm_label": "mutra",
+      "source_file": "js/mutra-data.js",
+      "source_location": "L6"
+    },
+    {
       "id": "js_mutra_highlights",
       "label": "mutra-highlights.js",
       "_origin": "ast",
@@ -6503,28 +6560,6 @@
       "source_location": "L45"
     },
     {
-      "id": "worker_src_analytics",
-      "label": "analytics.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "analytics.js",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_analytics_valid_types",
-      "label": "VALID_TYPES",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "valid_types",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L31"
-    },
-    {
       "id": "worker_src_artistreg",
       "label": "artistreg.js",
       "_origin": "ast",
@@ -6534,6 +6569,28 @@
       "norm_label": "artistreg.js",
       "source_file": "worker/src/artistreg.js",
       "source_location": "L1"
+    },
+    {
+      "id": "worker_src_artists",
+      "label": "artists.js",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "artists.js",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_artists_audio_ext",
+      "label": "AUDIO_EXT",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "audio_ext",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L21"
     },
     {
       "id": "worker_src_clearlist",
@@ -6624,6 +6681,28 @@
       "source_location": "L68"
     },
     {
+      "id": "worker_src_mail",
+      "label": "mail.js",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "mail.js",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_mail_senders",
+      "label": "SENDERS",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "senders",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L33"
+    },
+    {
       "id": "worker_src_members",
       "label": "members.js",
       "_origin": "ast",
@@ -6635,37 +6714,26 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_profile",
-      "label": "profile.js",
+      "id": "worker_src_rights",
+      "label": "rights.js",
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "profile.js",
-      "source_file": "worker/src/profile.js",
+      "norm_label": "rights.js",
+      "source_file": "worker/src/rights.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_profile_field_cols",
-      "label": "FIELD_COLS",
+      "id": "worker_src_rights_rights_texts",
+      "label": "RIGHTS_TEXTS",
       "_origin": "ast",
       "community": 25,
       "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "field_cols",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L37"
-    },
-    {
-      "id": "worker_src_profile_img_ext",
-      "label": "IMG_EXT",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "img_ext",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L112"
+      "norm_label": "rights_texts",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L31"
     },
     {
       "id": "worker_src_session",
@@ -6688,61 +6756,6 @@
       "norm_label": "site.js",
       "source_file": "worker/src/site.js",
       "source_location": "L1"
-    },
-    {
-      "id": "worker_src_works",
-      "label": "works.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "works.js",
-      "source_file": "worker/src/works.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_works_credit_keys",
-      "label": "CREDIT_KEYS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "credit_keys",
-      "source_file": "worker/src/works.js",
-      "source_location": "L27"
-    },
-    {
-      "id": "worker_src_works_media_tags",
-      "label": "MEDIA_TAGS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "media_tags",
-      "source_file": "worker/src/works.js",
-      "source_location": "L25"
-    },
-    {
-      "id": "worker_src_works_upload_types",
-      "label": "UPLOAD_TYPES",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "upload_types",
-      "source_file": "worker/src/works.js",
-      "source_location": "L202"
-    },
-    {
-      "id": "worker_src_works_work_tags",
-      "label": "WORK_TAGS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "work_tags",
-      "source_file": "worker/src/works.js",
-      "source_location": "L26"
     },
     {
       "id": "worker_schema_analytics",
@@ -6852,70 +6865,59 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_artists",
-      "label": "artists.js",
+      "id": "worker_src_analytics",
+      "label": "analytics.js",
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "artists.js",
-      "source_file": "worker/src/artists.js",
+      "norm_label": "analytics.js",
+      "source_file": "worker/src/analytics.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_artists_audio_ext",
-      "label": "AUDIO_EXT",
+      "id": "worker_src_analytics_alert_kinds",
+      "label": "ALERT_KINDS",
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "audio_ext",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L21"
+      "norm_label": "alert_kinds",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L167"
     },
     {
-      "id": "worker_src_mail",
-      "label": "mail.js",
+      "id": "worker_src_analytics_valid_types",
+      "label": "VALID_TYPES",
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "mail.js",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_mail_senders",
-      "label": "SENDERS",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "senders",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L33"
-    },
-    {
-      "id": "worker_src_rights",
-      "label": "rights.js",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "rights.js",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_rights_rights_texts",
-      "label": "RIGHTS_TEXTS",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "rights_texts",
-      "source_file": "worker/src/rights.js",
+      "norm_label": "valid_types",
+      "source_file": "worker/src/analytics.js",
       "source_location": "L31"
+    },
+    {
+      "id": "worker_src_contact",
+      "label": "contact.js",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "contact.js",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_contact_routes",
+      "label": "ROUTES",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "routes",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L34"
     },
     {
       "id": "worker_src_stream",
@@ -6929,59 +6931,59 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_contact",
-      "label": "contact.js",
+      "id": "worker_src_works",
+      "label": "works.js",
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "contact.js",
-      "source_file": "worker/src/contact.js",
+      "norm_label": "works.js",
+      "source_file": "worker/src/works.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_contact_routes",
-      "label": "ROUTES",
+      "id": "worker_src_works_credit_keys",
+      "label": "CREDIT_KEYS",
       "_origin": "ast",
       "community": 31,
-      "community_name": "contact.js",
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "routes",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L34"
+      "norm_label": "credit_keys",
+      "source_file": "worker/src/works.js",
+      "source_location": "L27"
     },
     {
-      "id": "worker_src_hyp",
-      "label": "hyp.js",
+      "id": "worker_src_works_media_tags",
+      "label": "MEDIA_TAGS",
       "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
+      "community": 31,
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "hyp.js",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L1"
+      "norm_label": "media_tags",
+      "source_file": "worker/src/works.js",
+      "source_location": "L25"
     },
     {
-      "id": "worker_src_hyp_cp1255",
-      "label": "CP1255",
+      "id": "worker_src_works_upload_types",
+      "label": "UPLOAD_TYPES",
       "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
+      "community": 31,
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "cp1255",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L63"
+      "norm_label": "upload_types",
+      "source_file": "worker/src/works.js",
+      "source_location": "L202"
     },
     {
-      "id": "worker_src_hyp_utf8_strict",
-      "label": "UTF8_STRICT",
+      "id": "worker_src_works_work_tags",
+      "label": "WORK_TAGS",
       "_origin": "ast",
-      "community": 35,
-      "community_name": "hyp.js",
+      "community": 31,
+      "community_name": "works.js",
       "file_type": "code",
-      "norm_label": "utf8_strict",
-      "source_file": "worker/src/hyp.js",
-      "source_location": "L64"
+      "norm_label": "work_tags",
+      "source_file": "worker/src/works.js",
+      "source_location": "L26"
     },
     {
       "id": "js_mutra_artist_panel",
@@ -6993,6 +6995,39 @@
       "norm_label": "mutra-artist-panel.js",
       "source_file": "js/mutra-artist-panel.js",
       "source_location": "L1"
+    },
+    {
+      "id": "worker_src_hyp",
+      "label": "hyp.js",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "hyp.js",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_hyp_cp1255",
+      "label": "CP1255",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "cp1255",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L63"
+    },
+    {
+      "id": "worker_src_hyp_utf8_strict",
+      "label": "UTF8_STRICT",
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "licensing.js",
+      "file_type": "code",
+      "norm_label": "utf8_strict",
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L64"
     },
     {
       "id": "worker_src_licensing",
@@ -7014,7 +7049,7 @@
       "file_type": "code",
       "norm_label": "grant_reasons",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L46"
+      "source_location": "L47"
     },
     {
       "id": "worker_src_licensing_licence_texts",
@@ -7025,7 +7060,7 @@
       "file_type": "code",
       "norm_label": "licence_texts",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L50"
+      "source_location": "L51"
     },
     {
       "id": "worker_src_licensing_pay_methods",
@@ -7036,7 +7071,7 @@
       "file_type": "code",
       "norm_label": "pay_methods",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L45"
+      "source_location": "L46"
     },
     {
       "id": "worker_src_licensing_tier_terms",
@@ -7047,7 +7082,7 @@
       "file_type": "code",
       "norm_label": "tier_terms",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L32"
+      "source_location": "L33"
     },
     {
       "id": "worker_src_pricing",
@@ -7804,6 +7839,21 @@
       "source_url": null
     },
     {
+      "id": "index_audio_branding",
+      "label": "Audio Branding service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "audio branding service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "index_mutra_teaser",
       "label": "Mutra teaser section on the homepage",
       "_origin": "semantic",
@@ -7829,6 +7879,66 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "organization json-ld structured data",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_original_music",
+      "label": "Original Music service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "original music service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_post_sound_sfx",
+      "label": "Post Sound / SFX service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "post sound / sfx service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_services",
+      "label": "Four services section",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "four services section",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_soundscapes",
+      "label": "SoundScapes service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "soundscapes service",
       "source_file": "index.html",
       "source_location": null,
       "source_url": null
@@ -7889,21 +7999,6 @@
       "contributor": null,
       "file_type": "rationale",
       "norm_label": "brand assets: menu morph gif and lulo clean wordmark png",
-      "source_file": "README.md",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "readme_content_editing_contract",
-      "label": "Content editing via js/data.js and js/mutra-data.js",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "content editing via js/data.js and js/mutra-data.js",
       "source_file": "README.md",
       "source_location": null,
       "source_url": null
@@ -8025,96 +8120,6 @@
       "file_type": "rationale",
       "norm_label": "identical reply whether or not the address has an account",
       "source_file": "reset.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_acum_registration",
-      "label": "ACUM / royalties-society registration flag",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "acum / royalties-society registration flag",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_approval_rule",
-      "label": "Who can approve a licence (any vs all)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "who can approve a licence (any vs all)",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_co_owner_shares",
-      "label": "Co-owner share splits (batch or per-track)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "co-owner share splits (batch or per-track)",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_controller_declaration",
-      "label": "External controller declaration (label / publisher / distributor)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "external controller declaration (label / publisher / distributor)",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_instant_vs_quote_lane",
-      "label": "Instant vs quote licensing lane",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "instant vs quote licensing lane",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_rights_declaration",
-      "label": "Signed rights declaration on upload",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "signed rights declaration on upload",
-      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
@@ -8344,21 +8349,6 @@
       "source_url": null
     },
     {
-      "id": "terms_performance_royalties",
-      "label": "Performance royalties stay with broadcaster / venue",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "performance royalties stay with broadcaster / venue",
-      "source_file": "terms.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "terms_prohibited_uses",
       "label": "What is never included (redistribution, ML training, Content ID registration)",
       "_origin": "semantic",
@@ -8369,21 +8359,6 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "what is never included (redistribution, ml training, content id registration)",
-      "source_file": "terms.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "terms_quote_only_tracks",
-      "label": "Get-a-quote tracks (someone else has a say)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "get-a-quote tracks (someone else has a say)",
       "source_file": "terms.html",
       "source_location": null,
       "source_url": null
@@ -8490,21 +8465,6 @@
       "file_type": "document",
       "norm_label": "licence terms",
       "source_file": "terms.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_direct_child_selectors",
-      "label": "Direct-child CSS selectors for nested checkbox labels",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "direct-child css selectors for nested checkbox labels",
-      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
@@ -8659,6 +8619,21 @@
       "source_url": null
     },
     {
+      "id": "readme_content_editing_contract",
+      "label": "Content editing via js/data.js and js/mutra-data.js",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "content editing via js/data.js and js/mutra-data.js",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "refund_no_change_of_mind",
       "label": "No change-of-mind refunds on instant delivery",
       "_origin": "semantic",
@@ -8674,77 +8649,137 @@
       "source_url": null
     },
     {
-      "id": "index_audio_branding",
-      "label": "Audio Branding service",
+      "id": "artists_acum_registration",
+      "label": "ACUM / royalties-society registration flag",
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
       "community": 32,
-      "community_name": "Four services section",
+      "community_name": "Signed rights declaration on upload",
       "contributor": null,
       "file_type": "concept",
-      "norm_label": "audio branding service",
-      "source_file": "index.html",
+      "norm_label": "acum / royalties-society registration flag",
+      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
     {
-      "id": "index_original_music",
-      "label": "Original Music service",
+      "id": "artists_approval_rule",
+      "label": "Who can approve a licence (any vs all)",
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
       "community": 32,
-      "community_name": "Four services section",
+      "community_name": "Signed rights declaration on upload",
       "contributor": null,
       "file_type": "concept",
-      "norm_label": "original music service",
-      "source_file": "index.html",
+      "norm_label": "who can approve a licence (any vs all)",
+      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
     {
-      "id": "index_post_sound_sfx",
-      "label": "Post Sound / SFX service",
+      "id": "artists_co_owner_shares",
+      "label": "Co-owner share splits (batch or per-track)",
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
       "community": 32,
-      "community_name": "Four services section",
+      "community_name": "Signed rights declaration on upload",
       "contributor": null,
       "file_type": "concept",
-      "norm_label": "post sound / sfx service",
-      "source_file": "index.html",
+      "norm_label": "co-owner share splits (batch or per-track)",
+      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
     {
-      "id": "index_services",
-      "label": "Four services section",
+      "id": "artists_controller_declaration",
+      "label": "External controller declaration (label / publisher / distributor)",
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
       "community": 32,
-      "community_name": "Four services section",
+      "community_name": "Signed rights declaration on upload",
       "contributor": null,
       "file_type": "concept",
-      "norm_label": "four services section",
-      "source_file": "index.html",
+      "norm_label": "external controller declaration (label / publisher / distributor)",
+      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
     {
-      "id": "index_soundscapes",
-      "label": "SoundScapes service",
+      "id": "artists_instant_vs_quote_lane",
+      "label": "Instant vs quote licensing lane",
       "_origin": "semantic",
       "author": null,
       "captured_at": null,
       "community": 32,
-      "community_name": "Four services section",
+      "community_name": "Signed rights declaration on upload",
       "contributor": null,
       "file_type": "concept",
-      "norm_label": "soundscapes service",
-      "source_file": "index.html",
+      "norm_label": "instant vs quote licensing lane",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_rights_declaration",
+      "label": "Signed rights declaration on upload",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 32,
+      "community_name": "Signed rights declaration on upload",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "signed rights declaration on upload",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "terms_performance_royalties",
+      "label": "Performance royalties stay with broadcaster / venue",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 32,
+      "community_name": "Signed rights declaration on upload",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "performance royalties stay with broadcaster / venue",
+      "source_file": "terms.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "terms_quote_only_tracks",
+      "label": "Get-a-quote tracks (someone else has a say)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 32,
+      "community_name": "Signed rights declaration on upload",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "get-a-quote tracks (someone else has a say)",
+      "source_file": "terms.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_direct_child_selectors",
+      "label": "Direct-child CSS selectors for nested checkbox labels",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 32,
+      "community_name": "Signed rights declaration on upload",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "direct-child css selectors for nested checkbox labels",
+      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
@@ -9674,7 +9709,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1175",
+      "source_location": "L1177",
       "weight": 1.0
     },
     {
@@ -9830,7 +9865,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1233",
+      "source_location": "L1252",
       "weight": 1.0
     },
     {
@@ -9842,7 +9877,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1235",
+      "source_location": "L1254",
       "weight": 1.0
     },
     {
@@ -9854,7 +9889,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1236",
+      "source_location": "L1255",
       "weight": 1.0
     },
     {
@@ -13158,6 +13193,30 @@
       "weight": 1.0
     },
     {
+      "source": "worker_src_analytics_alert",
+      "target": "worker_src_analytics_alertsmuted",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_analytics_alert",
+      "target": "worker_src_analytics_logalert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
       "source": "worker_src_analytics_handledownload",
       "target": "worker_src_analytics_json",
       "relation": "calls",
@@ -13166,7 +13225,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L359",
+      "source_location": "L448",
       "weight": 1.0
     },
     {
@@ -13178,7 +13237,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L370",
+      "source_location": "L459",
       "weight": 1.0
     },
     {
@@ -13190,7 +13249,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L380",
+      "source_location": "L469",
       "weight": 1.0
     },
     {
@@ -13202,7 +13261,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L288",
+      "source_location": "L377",
       "weight": 1.0
     },
     {
@@ -13214,7 +13273,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L200",
+      "source_location": "L289",
       "weight": 1.0
     },
     {
@@ -13226,7 +13285,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L203",
+      "source_location": "L292",
       "weight": 1.0
     },
     {
@@ -13298,19 +13357,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L180",
+      "source_location": "L238",
       "weight": 1.0
     },
     {
       "source": "worker_src_analytics_listalerts",
-      "target": "worker_src_analytics_alertsmuted",
+      "target": "worker_src_analytics_mutedmap",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L184",
+      "source_location": "L242",
       "weight": 1.0
     },
     {
@@ -13322,7 +13381,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L172",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
@@ -13358,7 +13417,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L310",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -13370,7 +13429,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L331",
+      "source_location": "L420",
       "weight": 1.0
     },
     {
@@ -13382,7 +13441,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L332",
+      "source_location": "L421",
       "weight": 1.0
     },
     {
@@ -13394,7 +13453,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/analytics.js",
-      "source_location": "L189",
+      "source_location": "L248",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_analytics_setalertsmuted",
+      "target": "worker_src_analytics_mutedmap",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L283",
       "weight": 1.0
     },
     {
@@ -14150,7 +14221,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/contact.js",
-      "source_location": "L131",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -14162,7 +14233,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/contact.js",
-      "source_location": "L132",
+      "source_location": "L130",
       "weight": 1.0
     },
     {
@@ -14174,7 +14245,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/contact.js",
-      "source_location": "L149",
+      "source_location": "L147",
       "weight": 1.0
     },
     {
@@ -14186,7 +14257,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/contact.js",
-      "source_location": "L152",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -15842,7 +15913,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L205",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -15854,7 +15925,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L206",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -15866,7 +15937,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L227",
+      "source_location": "L228",
       "weight": 1.0
     },
     {
@@ -15878,7 +15949,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L228",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -15890,7 +15961,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L248",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -15902,7 +15973,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L253",
+      "source_location": "L254",
       "weight": 1.0
     },
     {
@@ -15914,7 +15985,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L277",
+      "source_location": "L278",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_licensing_createrequest",
+      "target": "worker_src_analytics_alert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/licensing.js",
+      "source_location": "L286",
       "weight": 1.0
     },
     {
@@ -15926,7 +16009,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L529",
+      "source_location": "L558",
       "weight": 1.0
     },
     {
@@ -15938,7 +16021,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L536",
+      "source_location": "L565",
       "weight": 1.0
     },
     {
@@ -15950,7 +16033,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L536",
+      "source_location": "L565",
       "weight": 1.0
     },
     {
@@ -15962,7 +16045,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L537",
+      "source_location": "L566",
       "weight": 1.0
     },
     {
@@ -15974,7 +16057,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L90",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -15986,7 +16069,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L480",
+      "source_location": "L509",
       "weight": 1.0
     },
     {
@@ -15998,7 +16081,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L492",
+      "source_location": "L521",
       "weight": 1.0
     },
     {
@@ -16010,7 +16093,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L497",
+      "source_location": "L526",
       "weight": 1.0
     },
     {
@@ -16022,7 +16105,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L412",
+      "source_location": "L432",
       "weight": 1.0
     },
     {
@@ -16034,7 +16117,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L413",
+      "source_location": "L433",
       "weight": 1.0
     },
     {
@@ -16046,7 +16129,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L434",
+      "source_location": "L454",
       "weight": 1.0
     },
     {
@@ -16058,7 +16141,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L441",
+      "source_location": "L461",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_licensing_grantlicence",
+      "target": "worker_src_analytics_alert",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/licensing.js",
+      "source_location": "L470",
       "weight": 1.0
     },
     {
@@ -16070,7 +16165,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L450",
+      "source_location": "L479",
       "weight": 1.0
     },
     {
@@ -16082,7 +16177,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L473",
+      "source_location": "L502",
       "weight": 1.0
     },
     {
@@ -16094,7 +16189,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L314",
+      "source_location": "L334",
       "weight": 1.0
     },
     {
@@ -16106,7 +16201,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L326",
+      "source_location": "L346",
       "weight": 1.0
     },
     {
@@ -16118,7 +16213,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L327",
+      "source_location": "L347",
       "weight": 1.0
     },
     {
@@ -16130,7 +16225,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L185",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -16142,7 +16237,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L185",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -16154,7 +16249,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L295",
+      "source_location": "L315",
       "weight": 1.0
     },
     {
@@ -16166,7 +16261,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L365",
+      "source_location": "L385",
       "weight": 1.0
     },
     {
@@ -16178,7 +16273,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L369",
+      "source_location": "L389",
       "weight": 1.0
     },
     {
@@ -16190,7 +16285,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L377",
+      "source_location": "L397",
       "weight": 1.0
     },
     {
@@ -16202,7 +16297,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L379",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -16214,7 +16309,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L512",
+      "source_location": "L541",
       "weight": 1.0
     },
     {
@@ -16226,7 +16321,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L516",
+      "source_location": "L545",
       "weight": 1.0
     },
     {
@@ -16238,7 +16333,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L521",
+      "source_location": "L550",
       "weight": 1.0
     },
     {
@@ -16250,7 +16345,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L524",
+      "source_location": "L553",
       "weight": 1.0
     },
     {
@@ -16262,7 +16357,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L114",
+      "source_location": "L115",
       "weight": 1.0
     },
     {
@@ -16274,7 +16369,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L123",
+      "source_location": "L124",
       "weight": 1.0
     },
     {
@@ -16286,7 +16381,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/licensing.js",
-      "source_location": "L173",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -17791,7 +17886,7 @@
     },
     {
       "source": "worker_src_contact_submitcontact",
-      "target": "worker_src_mail",
+      "target": "worker_src_analytics",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17799,7 +17894,7 @@
       "context": "import",
       "deferred": true,
       "source_file": "worker/src/contact.js",
-      "source_location": "L111",
+      "source_location": "L110",
       "weight": 1.0
     },
     {
@@ -19124,6 +19219,18 @@
       "weight": 1.0
     },
     {
+      "source": "worker_src_licensing",
+      "target": "worker_src_analytics_alert",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "worker/src/licensing.js",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
       "source": "worker_src_oauth",
       "target": "worker_src_rights_linkonsignin",
       "relation": "imports",
@@ -20113,13 +20220,24 @@
     },
     {
       "source": "js_dashboard",
+      "target": "js_dashboard_commitreview",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "js/dashboard.js",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "js_dashboard",
       "target": "js_dashboard_gauge",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1213",
+      "source_location": "L1232",
       "weight": 1.0
     },
     {
@@ -20130,18 +20248,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1225",
-      "weight": 1.0
-    },
-    {
-      "source": "js_dashboard",
-      "target": "js_dashboard_commitreview",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "js/dashboard.js",
-      "source_location": "L123",
+      "source_location": "L1244",
       "weight": 1.0
     },
     {
@@ -23127,57 +23234,46 @@
     },
     {
       "source": "worker_src_analytics",
+      "target": "worker_src_analytics_alert_kinds",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L167",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_analytics",
       "target": "worker_src_analytics_alertsmuted",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/analytics.js",
-      "source_location": "L163",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
       "source": "worker_src_analytics",
-      "target": "worker_src_analytics_logalert",
+      "target": "worker_src_analytics_mutedmap",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/analytics.js",
-      "source_location": "L168",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
       "source": "worker_src_analytics",
-      "target": "worker_src_analytics_listalerts",
+      "target": "worker_src_analytics_alert",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/analytics.js",
-      "source_location": "L179",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_analytics",
-      "target": "worker_src_analytics_setalertsmuted",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L188",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_analytics",
-      "target": "worker_src_analytics_handlestats",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L199",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -23204,24 +23300,46 @@
     },
     {
       "source": "worker_src_analytics",
-      "target": "worker_src_analytics_handlejourney",
+      "target": "worker_src_analytics_logalert",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/analytics.js",
-      "source_location": "L287",
+      "source_location": "L226",
       "weight": 1.0
     },
     {
       "source": "worker_src_analytics",
-      "target": "worker_src_analytics_senddigest",
+      "target": "worker_src_analytics_listalerts",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/analytics.js",
-      "source_location": "L309",
+      "source_location": "L237",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_analytics",
+      "target": "worker_src_analytics_setalertsmuted",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L247",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_analytics",
+      "target": "worker_src_analytics_handlestats",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L288",
       "weight": 1.0
     },
     {
@@ -23248,13 +23366,24 @@
     },
     {
       "source": "worker_src_analytics",
-      "target": "worker_src_analytics_handledownload",
+      "target": "worker_src_analytics_handlejourney",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/analytics.js",
-      "source_location": "L358",
+      "source_location": "L376",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_analytics",
+      "target": "worker_src_analytics_senddigest",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L398",
       "weight": 1.0
     },
     {
@@ -23266,6 +23395,17 @@
       "confidence_score": 1.0,
       "source_file": "worker/src/analytics.js",
       "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_analytics",
+      "target": "worker_src_analytics_handledownload",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L447",
       "weight": 1.0
     },
     {
@@ -23925,7 +24065,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/contact.js",
-      "source_location": "L130",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -23936,7 +24076,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/contact.js",
-      "source_location": "L148",
+      "source_location": "L146",
       "weight": 1.0
     },
     {
@@ -24431,7 +24571,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L112",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -24442,18 +24582,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L181",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_licensing",
-      "target": "worker_src_licensing_now",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/licensing.js",
-      "source_location": "L19",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -24464,12 +24593,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L192",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
       "source": "worker_src_licensing",
-      "target": "worker_src_licensing_json",
+      "target": "worker_src_licensing_now",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -24486,7 +24615,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L204",
+      "source_location": "L205",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_licensing",
+      "target": "worker_src_licensing_json",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/licensing.js",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -24497,7 +24637,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -24508,18 +24648,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L294",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_licensing",
-      "target": "worker_src_licensing_haslivelicence",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/licensing.js",
-      "source_location": "L312",
+      "source_location": "L314",
       "weight": 1.0
     },
     {
@@ -24530,7 +24659,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L32",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_licensing",
+      "target": "worker_src_licensing_haslivelicence",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/licensing.js",
+      "source_location": "L332",
       "weight": 1.0
     },
     {
@@ -24541,7 +24681,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L325",
+      "source_location": "L345",
       "weight": 1.0
     },
     {
@@ -24552,7 +24692,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L364",
+      "source_location": "L384",
       "weight": 1.0
     },
     {
@@ -24563,7 +24703,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L391",
+      "source_location": "L411",
       "weight": 1.0
     },
     {
@@ -24574,7 +24714,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -24585,7 +24725,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -24596,7 +24736,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L479",
+      "source_location": "L508",
       "weight": 1.0
     },
     {
@@ -24607,7 +24747,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -24618,7 +24758,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L511",
+      "source_location": "L540",
       "weight": 1.0
     },
     {
@@ -24629,7 +24769,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L528",
+      "source_location": "L557",
       "weight": 1.0
     },
     {
@@ -24640,7 +24780,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -24651,7 +24791,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/licensing.js",
-      "source_location": "L98",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -25822,7 +25962,7 @@
     },
     {
       "source": "worker_src_contact",
-      "target": "worker_src_mail",
+      "target": "worker_src_analytics",
       "relation": "dynamic_import",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -28853,5 +28993,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "d61564f1102fad876dabecd0ba94c00a8f85ba07"
+  "built_at_commit": "36c4feea3764687179ced7962abbc38384351a9f"
 }

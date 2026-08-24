@@ -596,7 +596,7 @@
           </div>
         </li>`;
       }).join('')}</ul>` : ''}
-      ${reqs.length ? `<p class="acct-label acct-lic-pending">Waiting on us</p>
+      ${reqs.length ? `<p class="acct-label acct-lic-pending">In review</p>
         <ul class="acct-list">${reqs.map((r) => `
           <li><a href="${trackLink(r.slug)}">${esc(r.slug)}</a>
             <span class="acct-item-date">${esc(r.status)}</span></li>`).join('')}</ul>` : ''}`;

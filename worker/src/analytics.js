@@ -129,8 +129,8 @@ async function maybeAlert(env, sid) {
 
   // Muted still records the alert — you can read what you would have been sent,
   // which is the point of a switch you can turn back on.
-  if (await alertsMuted(env)) {
-    await logAlert(env, 'visitor', subject, text, 'suppressed', 'alerts muted');
+  if (await alertsMuted(env, 'visitor')) {
+    await logAlert(env, 'visitor', subject, text, 'suppressed', 'visitor alerts muted');
     return;
   }
 
@@ -160,9 +160,67 @@ async function maybeAlert(env, sid) {
  * whatever happens to it, including the ones the kill switch suppressed, so
  * "why did I stop getting these" has an answer on the page.
  */
-async function alertsMuted(env) {
-  const r = await env.DB.prepare('SELECT v FROM meta WHERE k = ?').bind('alerts:off').first();
-  return !!(r && r.v === '1');
+/* The kinds of alert, and what each is for. One switch for all of them was
+   too blunt: the visitor alert is chatty and the one worth muting, while a
+   licence request or a payment is the whole point of the site and should never
+   be silenced by the same click. */
+export const ALERT_KINDS = {
+  visitor: { label: 'Someone is browsing',
+             note: 'A visitor played several tracks or clicked License. The chatty one.' },
+  request: { label: 'A licence was requested',
+             note: 'Somebody went through the funnel and asked for a track.' },
+  payment: { label: 'A payment landed',
+             note: 'Money arrived, by card or by hand.' },
+  contact: { label: 'A message came in',
+             note: 'Someone used Get in touch. Claims and rights disputes always alert.' },
+  digest:  { label: 'The morning digest',
+             note: 'One summary at 07:00 UTC.' },
+};
+
+/** Per-kind now. The old global key is still honoured, so a mute set before
+ *  this existed keeps working rather than silently un-muting everything. */
+async function alertsMuted(env, kind) {
+  const rows = await env.DB.prepare(
+    "SELECT k, v FROM meta WHERE k = 'alerts:off' OR k LIKE 'alerts:off:%'"
+  ).all().catch(() => ({ results: [] }));
+  const m = Object.fromEntries((rows.results || []).map((r) => [r.k, r.v]));
+  if (m['alerts:off'] === '1') return true;                       // legacy: all off
+  if (kind && m['alerts:off:' + kind] === '1') return true;
+  return false;
+}
+
+async function mutedMap(env) {
+  const rows = await env.DB.prepare(
+    "SELECT k, v FROM meta WHERE k = 'alerts:off' OR k LIKE 'alerts:off:%'"
+  ).all().catch(() => ({ results: [] }));
+  const m = Object.fromEntries((rows.results || []).map((r) => [r.k, r.v]));
+  const all = m['alerts:off'] === '1';
+  const out = {};
+  for (const k of Object.keys(ALERT_KINDS)) out[k] = all || m['alerts:off:' + k] === '1';
+  return { kinds: out, all };
+}
+
+/**
+ * Send an alert of a given kind. The one place that decides whether it goes,
+ * so a new alert type cannot forget the cap, the mute or the log.
+ */
+export async function alert(env, kind, subject, text, opts) {
+  const day = new Date().toISOString().slice(0, 10);
+  // `force` is for the ones with a legal or commercial clock — a Content ID
+  // claim, a rights dispute. Muting "a message came in" should not silence a
+  // legal notice, and making that a separate un-mutable KIND would just hide
+  // the exception somewhere less obvious.
+  if (!(opts && opts.force) && await alertsMuted(env, kind)) {
+    await logAlert(env, kind, subject, text, 'suppressed', kind + ' alerts muted');
+    return;
+  }
+  try {
+    await env.EMAIL.send({ to: env.ALERT_TO, from: 'alerts@snowstar.company', subject, text });
+    await logAlert(env, kind, subject, text, 'sent');
+  } catch (e) {
+    await logAlert(env, kind, subject, text, 'failed', String((e && e.message) || e));
+  }
+  void day;
 }
 
 async function logAlert(env, kind, subject, body, status, note = '') {
@@ -181,7 +239,8 @@ export async function listAlerts(env, user) {
   const r = await env.DB.prepare(
     'SELECT id, kind, subject, body, ts, status, note FROM alerts ORDER BY id DESC LIMIT 200'
   ).all();
-  return json({ alerts: r.results || [], muted: await alertsMuted(env) });
+  const m = await mutedMap(env);
+  return json({ alerts: r.results || [], muted: m.all, kinds: m.kinds, labels: ALERT_KINDS });
 }
 
 /** Owner: flip the kill switch. Suppressed alerts are still logged. */
@@ -189,10 +248,40 @@ export async function setAlertsMuted(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const b = await req.json().catch(() => ({}));
   const v = b.muted ? '1' : '0';
-  await env.DB.prepare(
-    'INSERT INTO meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = ?'
-  ).bind('alerts:off', v, v).run();
-  return json({ ok: true, muted: v === '1' });
+  const kind = String(b.kind || '').trim();
+
+  if (kind && ALERT_KINDS[kind]) {
+    // Turning one kind back on has to clear the legacy global mute too, or the
+    // switch appears to do nothing — the global would keep overriding it.
+    await env.DB.prepare(
+      'INSERT INTO meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = ?'
+    ).bind('alerts:off:' + kind, v, v).run();
+    if (v === '0') {
+      const g = await env.DB.prepare("SELECT v FROM meta WHERE k = 'alerts:off'").first();
+      if (g && g.v === '1') {
+        // spread the old blanket mute across the kinds, then drop the blanket
+        for (const k of Object.keys(ALERT_KINDS)) {
+          if (k === kind) continue;
+          await env.DB.prepare(
+            'INSERT INTO meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = ?'
+          ).bind('alerts:off:' + k, '1', '1').run();
+        }
+        await env.DB.prepare("UPDATE meta SET v = '0' WHERE k = 'alerts:off'").run();
+      }
+    }
+  } else {
+    // no kind = the old all-or-nothing switch
+    await env.DB.prepare(
+      'INSERT INTO meta (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = ?'
+    ).bind('alerts:off', v, v).run();
+    if (v === '0') {
+      for (const k of Object.keys(ALERT_KINDS)) {
+        await env.DB.prepare("UPDATE meta SET v = '0' WHERE k = ?").bind('alerts:off:' + k).run();
+      }
+    }
+  }
+  const m = await mutedMap(env);
+  return json({ ok: true, muted: m.all, kinds: m.kinds });
 }
 
 /** Admin-only stats read. */

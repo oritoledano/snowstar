@@ -103,25 +103,23 @@ export async function submitContact(req, env) {
     return json({ error: 'save_failed', detail: String(e).slice(0, 160) }, 500);
   }
 
-  // The owner hears about it. A claim or a rights dispute has a clock on it and
-  // goes now; everything else can wait for the daily digest rather than
-  // training someone to ignore their own alerts.
-  if (route.priority === 'claim' || route.priority === 'rights') {
-    try {
-      const { sendMail } = await import('./mail.js');
-      await sendMail(env, {
-        to: 'hello@snowstar.company',
-        replyTo: email,
-        subject: `[${route.label}] ${ref} — ${clean(b.track || b.video_url || email, 80)}`,
-        html: `<p><b>${route.label}</b> · ${ref}</p>
-               <p>From: ${email}${b.name ? ' (' + clean(b.name, 120) + ')' : ''}</p>
-               ${b.track ? `<p>Track: <b>${clean(b.track, 140)}</b></p>` : ''}
-               ${b.video_url ? `<p>Video: ${clean(b.video_url, 400)}</p>` : ''}
-               ${b.platform ? `<p>Platform: ${clean(b.platform, 40)}</p>` : ''}
-               <pre style="white-space:pre-wrap;font:inherit">${message}</pre>`,
-      });
-    } catch { /* the message is saved; a failed alert must not lose it */ }
-  }
+  // The owner hears about it. Claims and rights disputes have a clock on them
+  // and always go, even if contact alerts are muted — muting "a message came
+  // in" should not silence a legal notice.
+  try {
+    const { alert } = await import('./analytics.js');
+    const urgent = route.priority === 'claim' || route.priority === 'rights';
+    const text = `${route.label} · ${ref}\n\n`
+      + `From:  ${email}${b.name ? ' (' + clean(b.name, 120) + ')' : ''}\n`
+      + (b.track ? `Track: ${clean(b.track, 140)}\n` : '')
+      + (b.video_url ? `Video: ${clean(b.video_url, 400)}\n` : '')
+      + (b.platform ? `Where: ${clean(b.platform, 40)}\n` : '')
+      + (b.order_ref ? `Ref:   ${clean(b.order_ref, 40)}\n` : '')
+      + `\n${message}\n\nInbox: https://snowstar.company/dashboard.html\n`;
+    await alert(env, 'contact',
+      `[${route.label}] ${ref} — ${clean(b.track || b.video_url || email, 70)}`,
+      text, { force: urgent });
+  } catch { /* the message is saved; a failed alert must not lose it */ }
 
   return json({ ok: true, ref });
 }
