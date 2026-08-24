@@ -1014,3 +1014,66 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .lic-check1 span{color:var(--text);font-size:.84rem;line-height:1.45}
 .lic-check1 i{display:block;color:var(--dim);font-style:normal;font-size:.75rem;margin-top:2px}
 .lic-incl li b{color:var(--text);font-weight:600}
+
+/* ═══════════ Artist profile ═══════════
+   A lightbox, not a page: clicking a name to find out who somebody is should
+   not throw away your filters, your scroll position, or the track you have
+   playing. */
+.artist-link{background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;
+  text-align:left;border-bottom:1px solid transparent;transition:color .15s,border-color .15s}
+.artist-link:hover{color:var(--text);border-bottom-color:currentColor}
+.artist-sep{opacity:.6}
+.pl-bpm{opacity:.7}
+
+.apx-lb{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;
+  padding:4vh 16px}
+.apx-back{position:absolute;inset:0;background:rgba(3,5,12,.74);backdrop-filter:blur(8px)}
+.apx-panel{position:relative;width:min(680px,100%);max-height:92vh;overflow-y:auto;
+  background:var(--bg);border:1px solid var(--line-2,var(--line));border-radius:20px;
+  padding:0 0 20px}
+.apx-close{position:absolute;top:12px;right:14px;z-index:2;background:rgba(0,0,0,.4);
+  border:0;border-radius:50%;width:30px;height:30px;color:#fff;font-size:1.4rem;line-height:1;
+  cursor:pointer}
+.apx-close:hover{background:rgba(0,0,0,.7)}
+.apx-loading{padding:60px;text-align:center;color:var(--muted);font-size:.9rem}
+
+.apx-hero{display:flex;gap:18px;align-items:center;padding:26px 26px 20px}
+.apx-avatar{width:96px;height:96px;border-radius:50%;object-fit:cover;flex:none;
+  border:1px solid var(--line)}
+.apx-blank{background:var(--panel)}
+.apx-kicker{font-size:.63rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);
+  margin-bottom:5px}
+.apx-name{font-family:var(--font-display);font-size:1.7rem;margin:0 0 4px;line-height:1.1}
+.apx-count{color:var(--muted);font-size:.82rem;margin-bottom:10px}
+.apx-social{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.apx-social a{color:var(--muted);font-size:.78rem;text-decoration:none;
+  border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+.apx-social a:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.apx-hint{color:var(--dim);font-size:.7rem}
+.apx-bio{color:var(--muted);font-size:.86rem;line-height:1.65;margin:0 26px 20px}
+.apx-h{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  margin:0 26px 10px;font-weight:500}
+.apx-albums{display:flex;gap:8px;flex-wrap:wrap;margin:0 26px 22px}
+.apx-album{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+  color:var(--text);font:inherit;font-size:.84rem;padding:9px 15px;cursor:pointer}
+.apx-album:hover{border-color:var(--amber,var(--coral))}
+
+.apx-tracks{margin:0 14px}
+.apx-trk{display:grid;grid-template-columns:30px 36px 1fr auto auto;gap:11px;align-items:center;
+  padding:8px 12px;border-radius:11px}
+.apx-trk:hover{background:var(--panel)}
+.apx-play{background:none;border:0;color:var(--muted);font-size:.8rem;cursor:pointer;padding:6px}
+.apx-play:hover{color:var(--amber,var(--coral))}
+.apx-cover{width:36px;height:36px;border-radius:7px;object-fit:cover}
+.apx-title{color:var(--text);font-size:.88rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.apx-meta{color:var(--dim);font-size:.74rem;font-variant-numeric:tabular-nums}
+.apx-lic{background:none;border:1px solid var(--line-2,var(--line));border-radius:99px;
+  color:var(--muted);font:inherit;font-size:.75rem;padding:5px 13px;cursor:pointer}
+.apx-lic:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.apx-empty{color:var(--muted);font-size:.85rem;margin:0 26px}
+@media (max-width:560px){
+  .apx-hero{flex-direction:column;text-align:center;padding:24px 18px 16px}
+  .apx-social{justify-content:center}
+  .apx-trk{grid-template-columns:28px 1fr auto;gap:9px}
+  .apx-cover,.apx-meta{display:none}
+}

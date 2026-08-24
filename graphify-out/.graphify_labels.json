@@ -1,5 +1,5 @@
 {
-  "0": "index.js",
+  "0": "rights.js",
   "1": "Mutra Catalogue Page",
   "2": "Licence terms",
   "3": "analytics.js",
@@ -24,12 +24,17 @@
   "22": "Privacy policy",
   "23": "Track catalogue browse + search",
   "24": "watermark.py",
-  "25": "Four services section",
+  "25": "index.js",
   "26": "schema-analytics.sql",
   "27": "make-stream-renditions.sh",
   "28": "schema-tracks.sql",
   "29": "mutra-license.js",
   "30": "stream.js",
   "31": "artistreg.js",
-  "32": "works.js"
+  "32": "works.js",
+  "33": "crypto.js",
+  "34": "profile.js",
+  "35": "clearlist.js",
+  "36": "mutra-artist-panel.js",
+  "37": "members.js"
 }
