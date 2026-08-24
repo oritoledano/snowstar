@@ -345,8 +345,39 @@
     setProgressUI(frac);
     plCur.textContent = fmt(audio.currentTime);
   }
+  /* ── the scrub gate ──────────────────────────────────────────────────────
+     Scrubbing is the tell that someone has stopped browsing and started
+     WORKING — they are hunting for the drop, checking whether the middle
+     eight fits their edit. That is the moment an account is worth asking for,
+     and it is a far better trigger than a timer, because it is the visitor's
+     own behaviour that chose it.
+
+     Two scrubs, then ask. Dismissing buys two more. It never hard-stops
+     playback and it never blocks the scrub itself — the seek always happens,
+     the prompt arrives after. A gate that took the seek away would punish the
+     exact behaviour we are trying to reward.
+
+     Counted per session, not per track: the same person hunting across four
+     tracks is one person doing one job. */
+  const SCRUBS_PER_PROMPT = 2;
+  let scrubCount = 0;
+  let scrubPromptAt = SCRUBS_PER_PROMPT;
+
+  function noteScrub() {
+    if (window.SnowstarAccount && SnowstarAccount.user) return;   // members scrub freely
+    scrubCount++;
+    if (scrubCount < scrubPromptAt) return;
+    scrubPromptAt = scrubCount + SCRUBS_PER_PROMPT;   // dismissing buys two more
+    if (window.SnowstarOpenAuth) {
+      SnowstarOpenAuth('signup',
+        'Looking for the right moment in the track? Free account \u2014 save the ones you like, '
+        + '10% off your first licence, and first listen to unreleased music.');
+    }
+    if (window.mutraTrack) mutraTrack('scrub_gate', current ? current.track.slug : 'none');
+  }
+
   let dragging = false;
-  const startDrag = e => { dragging = true; player.classList.add('seeking'); seekFromEvent(e); e.preventDefault(); };
+  const startDrag = e => { dragging = true; player.classList.add('seeking'); seekFromEvent(e); noteScrub(); e.preventDefault(); };
   const moveDrag = e => { if (dragging) seekFromEvent(e); };
   const endDrag = () => { dragging = false; player.classList.remove('seeking'); };
   plSeek.addEventListener('mousedown', startDrag);
@@ -359,6 +390,59 @@
     if (!current || !audio.duration) return;
     if (e.key === 'ArrowRight') audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
     if (e.key === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
+  });
+
+  /* ── volume ──────────────────────────────────────────────────────────────
+     Remembered across visits, because someone who turned it down had a reason
+     and being shouted at on the next page load undoes the setting they made.
+     Mute keeps the old level so unmuting returns to it rather than to full. */
+  const plVolSlide = $('#plVolSlide'), plVolFill = $('#plVolFill'), plMute = $('#plMute');
+  const VOL_KEY = 'mutraVolume';
+  let lastVol = 1;
+
+  const ICON_VOL = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M18.5 5.5a9 9 0 010 13"/></svg>';
+  const ICON_VOL_LOW = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/></svg>';
+  const ICON_MUTE = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
+
+  function paintVol() {
+    const v = audio.muted ? 0 : audio.volume;
+    plVolFill.style.width = (v * 100) + '%';
+    plVolSlide.setAttribute('aria-valuenow', Math.round(v * 100));
+    plMute.innerHTML = v === 0 ? ICON_MUTE : v < 0.5 ? ICON_VOL_LOW : ICON_VOL;
+    plMute.setAttribute('aria-label', v === 0 ? 'Unmute' : 'Mute');
+    plVol.classList.toggle('is-muted', v === 0);
+  }
+  function setVol(v, remember) {
+    v = Math.max(0, Math.min(1, v));
+    audio.volume = v;
+    audio.muted = v === 0;
+    if (v > 0) lastVol = v;
+    if (remember !== false) { try { localStorage.setItem(VOL_KEY, String(v)); } catch { /* private mode */ } }
+    paintVol();
+  }
+  const plVol = $('#plVol');
+  try {
+    const saved = Number(localStorage.getItem(VOL_KEY));
+    setVol(Number.isFinite(saved) && saved >= 0 && saved <= 1 ? saved : 1, false);
+  } catch { setVol(1, false); }
+
+  function volFromEvent(e) {
+    const r = plVolSlide.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    setVol(x / r.width);
+  }
+  let volDragging = false;
+  const startVol = (e) => { volDragging = true; volFromEvent(e); e.preventDefault(); };
+  plVolSlide.addEventListener('mousedown', startVol);
+  plVolSlide.addEventListener('touchstart', startVol, { passive: false });
+  addEventListener('mousemove', (e) => { if (volDragging) volFromEvent(e); });
+  addEventListener('touchmove', (e) => { if (volDragging) volFromEvent(e); }, { passive: false });
+  addEventListener('mouseup', () => { volDragging = false; });
+  addEventListener('touchend', () => { volDragging = false; });
+  plMute.addEventListener('click', () => setVol(audio.muted || audio.volume === 0 ? lastVol : 0));
+  plVolSlide.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') setVol(audio.volume + 0.05);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') setVol(audio.volume - 0.05);
   });
 
   // ── render catalog ──
@@ -611,6 +695,9 @@
         if (!audio.duration) return;
         const r = wave.getBoundingClientRect();
         audio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * audio.duration;
+        // clicking a row's own waveform is the same act as dragging the player
+        // bar, so it has to count the same or the gate has an obvious hole
+        noteScrub();
       });
       const cnv = row.querySelector('.trk-wave canvas');
       cnv._peaks = waveform(track, i + 1);
@@ -941,6 +1028,12 @@
      "mutra.picks" — public to read (so every visitor gets the same order),
      admin-only to write, same gate the inline site editor already uses. */
   const PICKS_KEY = 'mutra.picks';
+  /** For a value going into an HTML attribute. A credit name is owner-typed,
+   *  but an unescaped quote would still break the input it lands in. */
+  const escAttr = (v) => String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
   let curateMode = false;   // owner editing mode
   let curateSaveTimer = 0;
   let overrides = {};
@@ -1282,6 +1375,46 @@
       el.addEventListener('input', () => { draft[f] = el.value; });
     });
     q('.te-cimg').src = draft.cover;
+
+    // ── credits ──
+    // The markup for these two shipped without handlers: the button did
+    // nothing and the textarea was never read back into the draft, so lyrics
+    // typed here were discarded on save. Both are wired here.
+    const CREDIT_ROLES = ['Composer', 'Producer', 'Performer', 'Vocals', 'Featuring',
+                          'Mix', 'Master', 'Lyrics', 'Arrangement'];
+    function paintCredits() {
+      const box = q('.te-crlist');
+      box.innerHTML = draft.credits.map((c, i) => `
+        <div class="te-cr" data-i="${i}">
+          <input class="te-crrole" list="te-roles" placeholder="Role" value="${escAttr(c.role || '')}">
+          <input class="te-crname" placeholder="Name" value="${escAttr(c.name || '')}">
+          <button type="button" class="te-crdel" aria-label="Remove this credit">\u00d7</button>
+        </div>`).join('')
+        + `<datalist id="te-roles">${CREDIT_ROLES.map(r => `<option value="${r}">`).join('')}</datalist>`;
+      box.querySelectorAll('.te-cr').forEach((elr) => {
+        const i = Number(elr.dataset.i);
+        elr.querySelector('.te-crrole').addEventListener('input', (e) => { draft.credits[i].role = e.target.value; });
+        elr.querySelector('.te-crname').addEventListener('input', (e) => { draft.credits[i].name = e.target.value; });
+        elr.querySelector('.te-crdel').addEventListener('click', () => {
+          draft.credits.splice(i, 1); paintCredits();
+        });
+      });
+    }
+    paintCredits();
+    q('.te-addcr').addEventListener('click', () => {
+      draft.credits.push({ role: '', name: '' });
+      paintCredits();
+      // land the cursor in the row that was just made, or adding several in a
+      // row means reaching for the mouse between each one
+      const rows = q('.te-crlist').querySelectorAll('.te-cr');
+      const last = rows[rows.length - 1];
+      if (last) last.querySelector('.te-crrole').focus();
+    });
+
+    // ── lyrics ──
+    const lyr = q('.te-lyrics');
+    lyr.value = draft.lyrics;
+    lyr.addEventListener('input', () => { draft.lyrics = lyr.value; });
 
     // ── facet chips: click to toggle, type to add a new one ──
     function paintChips() {

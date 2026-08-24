@@ -887,3 +887,35 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   .bulk-tagrow .bulk-tagval2{grid-column:1}
   .bulk-card{padding:22px 18px 16px}
 }
+
+/* credits editor — the markup existed, the handlers did not */
+.te-crlist{display:grid;gap:7px;margin-bottom:9px}
+.te-cr{display:grid;grid-template-columns:130px 1fr 32px;gap:7px;align-items:center}
+.te-cr input{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  padding:8px 11px;color:var(--text);font:inherit;font-size:.84rem;outline:0;min-width:0}
+.te-cr input:focus{border-color:var(--amber,var(--coral))}
+.te-crdel{background:none;border:1px solid var(--line);border-radius:9px;color:var(--dim);
+  font-size:1.1rem;line-height:1;cursor:pointer;height:34px}
+.te-crdel:hover{color:#ff8f8f;border-color:#ff8f8f}
+.te-lyrics{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:11px;
+  padding:11px 13px;color:var(--text);font:inherit;font-size:.85rem;line-height:1.6;
+  outline:0;resize:vertical}
+.te-lyrics:focus{border-color:var(--amber,var(--coral))}
+@media (max-width:520px){.te-cr{grid-template-columns:1fr 1fr 32px}}
+
+/* ═══════════ Player volume ═══════════
+   Between the seek bar and the License button, so the two things you touch
+   while listening sit together and the buying action stays on its own. */
+.pl-vol{display:flex;align-items:center;gap:8px;flex:none}
+.pl-mute{background:none;border:0;color:var(--muted);cursor:pointer;padding:4px;
+  display:flex;align-items:center;line-height:0}
+.pl-mute:hover{color:var(--text)}
+.pl-vol.is-muted .pl-mute{color:var(--dim)}
+.pl-volslide{width:74px;padding:8px 0;cursor:pointer;touch-action:none}
+.pl-voltrack{height:3px;border-radius:99px;background:var(--line-2,var(--line));position:relative}
+.pl-volfill{height:100%;border-radius:99px;background:var(--muted);transition:width .08s linear}
+.pl-volslide:hover .pl-volfill{background:var(--amber,var(--coral))}
+.pl-volslide:focus-visible{outline:2px solid var(--amber,var(--coral));outline-offset:4px;border-radius:4px}
+/* the volume is the first thing to go when the bar gets tight — the seek bar
+   and the License button both matter more on a phone */
+@media (max-width:860px){.pl-vol{display:none}}

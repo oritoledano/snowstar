@@ -127,8 +127,16 @@ export async function handleStream(req, env) {
   let obj = await env.MASTERS.get('stream/' + row.audio_key, opts);
   let which = 'stream';
   if (!obj) {
-    // No rendition yet: the watermarked preview, never the master. Erring
-    // towards the marked file is the safe direction to be wrong in.
+    // No rendition yet — fall back to the MASTER, not the watermarked preview.
+    // Both are wrong in some way: the master is the file we sell, the preview
+    // is unlistenable for choosing music. But a watermark on the player is the
+    // exact problem this whole endpoint exists to solve, so being briefly too
+    // generous beats being briefly useless. The gates above still apply, so
+    // this only reaches something that looks like a browser playing audio.
+    obj = await env.MASTERS.get(row.audio_key, opts);
+    which = 'master-fallback';
+  }
+  if (!obj) {
     obj = await env.MEDIA.get(row.audio_key, opts);
     which = 'preview';
   }

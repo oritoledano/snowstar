@@ -15,8 +15,8 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="preload" href="assets/fonts/commit-mono.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/skins.css?v=10">
-<link rel="stylesheet" href="css/account.css?v=8">
-<link rel="stylesheet" href="css/mutra.css?v=68">
+<link rel="stylesheet" href="css/account.css?v=9">
+<link rel="stylesheet" href="css/mutra.css?v=69">
 <link rel="stylesheet" href="css/spotlight.css?v=13">
 <link rel="stylesheet" href="css/artist.css?v=1">
 <script type="application/ld+json">
@@ -154,6 +154,13 @@
       </div>
       <span class="pl-time total" id="plTot">0:00</span>
     </div>
+    <div class="pl-vol" id="plVol">
+      <button class="pl-mute" id="plMute" aria-label="Mute"></button>
+      <div class="pl-volslide" id="plVolSlide" role="slider" aria-label="Volume" tabindex="0"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+        <div class="pl-voltrack"><div class="pl-volfill" id="plVolFill"></div></div>
+      </div>
+    </div>
     <div class="pl-actions">
       <a class="pl-lic" id="plLic" href="#">License</a>
       <button class="pl-close" id="plClose" aria-label="Close player">&times;</button>
@@ -172,9 +179,9 @@
 <script src="js/mutra-artist-lightbox.js?v=1"></script>
 <script src="js/mutra-spotlight.js?v=9"></script>
 <script src="js/mutra-license.js?v=14"></script>
-<script src="js/mutra-page.js?v=56"></script>
+<script src="js/mutra-page.js?v=57"></script>
 <script src="js/mutra-bulk.js?v=3"></script>
-<script src="js/account-ui.js?v=15"></script>
+<script src="js/account-ui.js?v=16"></script>
 <script src="js/site-edit.js?v=2"></script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "73a85d296d5c4ab9a337d3e1e841f34e"}'></script><!-- End Cloudflare Web Analytics -->
 <script src="js/mutra-track.js?v=3"></script>

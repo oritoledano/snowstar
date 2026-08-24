@@ -58,6 +58,26 @@
   modal.innerHTML = `
     <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
       <button class="auth-close" aria-label="Close" title="Close">&times;</button>
+      <aside class="auth-sell" hidden aria-hidden="true">
+        <div class="auth-sell-top">
+          <div class="auth-sell-kicker">Free account</div>
+          <ul class="auth-perks">
+            <li>Save tracks and build shortlists</li>
+            <li>Download watermarked previews for your edit</li>
+            <li><b>10% off</b> your first licence</li>
+            <li>First listen to unreleased music</li>
+          </ul>
+        </div>
+        <div class="auth-sell-bot">
+          <div class="auth-sell-kicker">When you're ready</div>
+          <ul class="auth-perks auth-perks-dim">
+            <li>Clean, un-watermarked files</li>
+            <li>Cleared for commercial use, worldwide</li>
+            <li>Your channels whitelisted \u2014 no Content ID claims</li>
+          </ul>
+          <p class="auth-sell-price">Licences from <b>\u20aa149</b> per track</p>
+        </div>
+      </aside>
       <div class="auth-body">
       <h3 id="authTitle">Sign in</h3>
       <p class="auth-sub">Save tracks to your favorites and pick up where you left off.</p>
@@ -117,6 +137,7 @@
   const toSignup = modal.querySelector('.auth-to-signup');
   const toLogin = modal.querySelector('.auth-to-login');
   const bodyEl = modal.querySelector('.auth-body');
+  const sellEl = modal.querySelector('.auth-sell');
   const okEl = modal.querySelector('.auth-ok');
   const okTitle = modal.querySelector('.auth-ok-title');
   const okSub = modal.querySelector('.auth-ok-sub');
@@ -134,7 +155,7 @@
 
   const SUB = {
     login: 'One Snowstar account — for Mutra and everything else we make.',
-    signup: 'One Snowstar account — for Mutra and everything else we make.',
+    signup: 'No card. Takes about twenty seconds.',
   };
 
   /** Prefer the page's own toast (the catalog puts one above the player). */
@@ -155,7 +176,7 @@
   function setMode(next) {
     mode = next;
     const signup = mode === 'signup';
-    titleEl.textContent = signup ? 'Create an account' : 'Sign in';
+    titleEl.textContent = signup ? 'Start with a free account' : 'Sign in';
     subEl.textContent = SUB[mode];
     submitEl.textContent = signup ? 'Create account' : 'Sign in';
     nameField.hidden = !signup;
@@ -164,6 +185,11 @@
     toSignup.hidden = signup;
     toLogin.hidden = !signup;
     form.password.setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+    // The sell panel is for people who have NOT decided yet. Someone signing
+    // in has already decided, and pitching them their own account is noise.
+    sellEl.hidden = !signup;
+    sellEl.setAttribute('aria-hidden', signup ? 'false' : 'true');
+    modal.querySelector('.auth-card').classList.toggle('has-sell', signup);
     errEl.hidden = true;
   }
 
