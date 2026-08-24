@@ -231,8 +231,81 @@ export async function reviewSubmission(req, env, user) {
   if (!['approved', 'rejected', 'pending'].includes(b.status)) return json({ error: 'bad_status' }, 400);
   const row = await env.DB.prepare('SELECT id FROM submissions WHERE id = ?').bind(id).first();
   if (!row) return json({ error: 'not_found' }, 404);
+  const note = String(b.note || '').trim().slice(0, 2000);
   await env.DB.prepare(
     'UPDATE submissions SET status = ?, review_note = ?, reviewed_at = ? WHERE id = ?'
-  ).bind(b.status, String(b.note || '').trim().slice(0, 2000), now(), id).run();
+  ).bind(b.status, note, now(), id).run();
+
+  // Tell the artist. Until now a decision was invisible from their side: they
+  // uploaded, and then nothing — no approval, no rejection, no reason. It goes
+  // through mail_outbox rather than straight out, because that queue is the
+  // owner's "nothing is sent without me" gate and a status email is exactly the
+  // kind of thing worth reading before it leaves.
+  if (b.status !== 'pending') {
+    try { await queueReviewMail(env, id, b.status, note); }
+    catch { /* the decision is recorded either way */ }
+  }
   return json({ ok: true });
+}
+
+async function queueReviewMail(env, submissionId, status, note) {
+  // The address can come from either side: an uploader with an account, or a
+  // managed artist someone filed on behalf of. Prefer the account — that is the
+  // person who pressed upload and is waiting for an answer.
+  const s = await env.DB.prepare(
+    `SELECT sub.title,
+            u.email  AS user_email,  u.name AS user_name,
+            ma.email AS artist_email, ma.name AS artist_name
+       FROM submissions sub
+       LEFT JOIN users u            ON u.id  = sub.user_id
+       LEFT JOIN managed_artists ma ON ma.id = sub.managed_artist_id
+      WHERE sub.id = ?`
+  ).bind(submissionId).first().catch(() => null);
+  if (!s) return;
+  const to = s.user_email || s.artist_email;
+  if (!to) return;
+
+  const who = s.user_name || s.artist_name || '';
+  const title = s.title || 'your track';
+  const approved = status === 'approved';
+
+  const subject = approved
+    ? `“${title}” is approved for Mutra`
+    : `About “${title}”`;
+
+  const body = approved
+    ? `Hi${who ? ' ' + who : ''},
+
+“${title}” has been approved for the Mutra catalogue.
+${note ? '\n' + note + '\n' : ''}
+It is not live yet — approval means it is queued to be prepared: analysed, given a
+waveform and artwork, and added to the catalogue. We will email you again when it
+is up and licensable.
+
+Your rights declaration is on file as you submitted it. If anything about the
+splits or the controlling parties changes, tell us and we will amend it.
+
+— Snowstar
+snowstar.company/mutra.html`
+    : `Hi${who ? ' ' + who : ''},
+
+We are not able to take “${title}” into the Mutra catalogue.
+
+${note}
+
+This is not a judgement of the track — most of the time it is about fit with what
+the catalogue is being asked for, or something unresolved in the rights. If you
+think we have it wrong, reply to this email and we will look again.
+
+You are welcome to submit other work.
+
+— Snowstar
+snowstar.company/mutra.html`;
+
+  await env.DB.prepare(
+    `INSERT INTO mail_outbox (to_email, to_name, subject, body, kind, submission_id, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).bind(to, who, subject, body,
+         approved ? 'submission-approved' : 'submission-rejected',
+         submissionId, Math.floor(Date.now() / 1000)).run();
 }

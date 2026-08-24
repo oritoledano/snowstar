@@ -3957,7 +3957,7 @@
       "file_type": "code",
       "norm_label": "resetemail()",
       "source_file": "worker/src/mail.js",
-      "source_location": "L97"
+      "source_location": "L101"
     },
     {
       "id": "worker_src_mail_sendmail",
@@ -15749,7 +15749,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/mail.js",
-      "source_location": "L104",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -23791,6 +23791,17 @@
     },
     {
       "source": "worker_src_mail",
+      "target": "worker_src_mail_resetemail",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/mail.js",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_mail",
       "target": "worker_src_mail_maillive",
       "relation": "contains",
       "_origin": "ast",
@@ -23853,17 +23864,6 @@
       "confidence_score": 1.0,
       "source_file": "worker/src/mail.js",
       "source_location": "L73",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_mail",
-      "target": "worker_src_mail_resetemail",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/mail.js",
-      "source_location": "L97",
       "weight": 1.0
     },
     {

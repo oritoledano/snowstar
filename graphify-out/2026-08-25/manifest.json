@@ -222,10 +222,10 @@
     "semantic_hash": ""
   },
   "worker/src/mail.js": {
-    "mtime": 1787514226.8876276,
-    "seen": 1787572556.9173498,
-    "ast_hash": "dc9178f68926d9bb758750521c510cc4",
-    "semantic_hash": "dc9178f68926d9bb758750521c510cc4"
+    "mtime": 1787609381.717651,
+    "seen": 1787609388.1251671,
+    "ast_hash": "94619af6398b703581d69354d21bd27e",
+    "semantic_hash": ""
   },
   "worker/src/members.js": {
     "mtime": 1787393665.147011,

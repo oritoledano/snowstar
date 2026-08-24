@@ -1,7 +1,7 @@
 # Graph Report - snowstar  (2026-08-25)
 
 ## Corpus Check
-- 56 files · ~344,214 words
+- 56 files · ~344,252 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -65,7 +65,7 @@
 7. `Owner dashboard` - 16 edges
 8. `paint()` - 14 edges
 9. `toggle()` - 14 edges
-10. `Artist submission portal` - 14 edges
+10. `Licence terms` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Owner-side track upload and metadata editor` --semantically_similar_to--> `Multi-file track upload flow`  [INFERRED] [semantically similar]
