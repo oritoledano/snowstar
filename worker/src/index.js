@@ -38,6 +38,7 @@ import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { handleStream } from './stream.js';
 import { certificate } from './certificate.js';
+import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
 import { currentUser, readCookies } from './session.js';
@@ -241,6 +242,12 @@ async function handle(req, env, ctx) {
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
   if (path === '/licence/mine' && method === 'GET') return myLicences(env, await currentUser(req, env));
   if (path === '/licence/certificate' && method === 'GET') return certificate(req, env, await currentUser(req, env));
+  // Public and unauthenticated on purpose: someone whose video just got claimed,
+  // or a co-owner who has found their song in a catalogue they never agreed to,
+  // is exactly the person without an account.
+  if (path === '/contact' && method === 'POST') return submitContact(req, env);
+  if (path === '/messages' && method === 'GET') return listMessages(env, await currentUser(req, env), url);
+  if (path === '/messages/status' && method === 'POST') return setMessageStatus(req, env, await currentUser(req, env));
   if (path === '/licence/queue' && method === 'GET') return listQueue(env, await currentUser(req, env), url);
   if (path === '/licence/payment' && method === 'POST') return recordPayment(req, env, await currentUser(req, env));
   if (path === '/licence/grant' && method === 'POST') return grantFromDashboard(req, env, await currentUser(req, env));

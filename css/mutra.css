@@ -1119,3 +1119,28 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .acct-lic-acts a{color:var(--amber,var(--coral));font-size:.76rem;text-decoration:none}
 .acct-lic-acts a:hover{text-decoration:underline}
 .acct-lic-pending{margin-top:14px}
+
+/* ═══════════ Get in touch ═══════════
+   Reuses the licence wizard's shell — same card, same option cards, same
+   crumb — because it is the same interaction and a second visual language for
+   it would just be more to maintain. */
+.ct-card{max-width:520px}
+.ct-head{margin-bottom:18px}
+.ct-head h3{font-family:var(--font-display);font-size:1.3rem;margin:3px 0 0}
+.ct-body{color:var(--muted);font-size:.86rem;line-height:1.65;margin:0 0 18px;white-space:pre-line}
+.ct-alt{display:block;margin-top:14px}
+.ct-deflect{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.ct-deflect a{color:var(--muted);font-size:.76rem;text-decoration:none;
+  border:1px solid var(--line);border-radius:99px;padding:5px 12px}
+.ct-deflect a:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.ct-priv{color:var(--dim);font-size:.72rem;margin:12px 0 0}
+.ct-priv a{color:var(--muted)}
+.lic-field span i{font-style:normal;color:var(--dim);text-transform:none;letter-spacing:0;
+  font-size:.9em;margin-left:4px}
+.ct-card textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:11px;
+  padding:11px 13px;color:var(--text);font:inherit;font-size:.9rem;line-height:1.6;
+  outline:0;resize:vertical}
+.ct-card textarea:focus{border-color:var(--amber,var(--coral))}
+.ct-card select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:11px;
+  padding:11px 13px;color:var(--text);font:inherit;font-size:.9rem;outline:0}
+.ct-addphone{margin:-4px 0 14px}

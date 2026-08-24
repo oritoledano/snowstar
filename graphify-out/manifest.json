@@ -210,9 +210,9 @@
     "semantic_hash": "cf7ff836a6fe1949eca373cb8d1e7e65"
   },
   "worker/src/index.js": {
-    "mtime": 1787589872.1293669,
-    "seen": 1787589878.69255,
-    "ast_hash": "a79c8318a3a8e7460e5244c3efb9b755",
+    "mtime": 1787610385.1268222,
+    "seen": 1787610390.951423,
+    "ast_hash": "a2d739725c3bdec7c66a959f0ad3b5dc",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1787609398.0681615,
-    "seen": 1787609807.637061,
-    "ast_hash": "803a3d54193749e846a98d656492e0c2",
+    "mtime": 1787609931.484627,
+    "seen": 1787610378.2595031,
+    "ast_hash": "c24227415480bb9d1cc74dca6f61abc3",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1257,6 +1257,18 @@
     "mtime": 1787589791.1361725,
     "seen": 1787589796.733425,
     "ast_hash": "240ab15e68343b09c639c024f7a119ab",
+    "semantic_hash": ""
+  },
+  "worker/src/contact.js": {
+    "mtime": 1787610372.3606243,
+    "seen": 1787610378.259485,
+    "ast_hash": "c7f06569c091e361059db0f860d84691",
+    "semantic_hash": ""
+  },
+  "js/mutra-contact.js": {
+    "mtime": 1787610473.2184186,
+    "seen": 1787610478.6611981,
+    "ast_hash": "d9a43a583523f0aceb8e97bbd4d9a774",
     "semantic_hash": ""
   }
 }
