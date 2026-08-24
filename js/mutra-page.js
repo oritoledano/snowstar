@@ -1538,14 +1538,17 @@
     // One row per licence tier, taken straight off the chooser's own list so
     // the two can never drift apart. Blank means "use the catalogue default",
     // which is why the placeholder shows that default rather than a dash.
-    const LIC_TIERS = (window.mutraLicense && mutraLicense.TIERS) || [];
+    // Rows are BUYER BANDS now, not the seven where-it-runs tiers. Prices moved
+    // onto who-is-buying when the funnel was rebuilt; a grid of the old tiers
+    // would edit fields nothing reads any more.
+    const BANDS = (window.mutraLicense && mutraLicense.BUYERS) || {};
     const pgrid = panel.querySelector('.te-pgrid');
-    pgrid.innerHTML = LIC_TIERS.map(t => `
+    pgrid.innerHTML = Object.entries(BANDS).map(([id, b]) => `
       <label class="te-prow">
-        <span>${esc(t.label)}</span>
-        <input type="number" min="0" data-tier="${esc(t.id)}"
-               placeholder="${t.quote ? 'quote only' : '₪' + t.price}"
-               ${t.quote ? 'disabled' : ''}>
+        <span>${esc(b.short)}</span>
+        <input type="number" min="0" data-tier="${esc(id)}"
+               placeholder="${b.base == null ? 'quote only' : '₪' + b.base}"
+               ${b.base == null ? 'disabled' : ''}>
       </label>`).join('');
     pgrid.querySelectorAll('input[data-tier]').forEach(inp => {
       const id = inp.dataset.tier;

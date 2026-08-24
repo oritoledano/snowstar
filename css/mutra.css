@@ -937,3 +937,69 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   color:var(--muted);font:inherit;font-size:.8rem;padding:9px 15px;cursor:pointer;flex:none}
 .bulk-avup:hover{color:var(--text);border-color:var(--amber,var(--coral))}
 .bulk-pvmiss{color:var(--dim);font-size:.78rem}
+
+/* ═══════════ The licence funnel ═══════════
+   One question per screen, two to four answers, and nothing preselected where
+   the answer moves the price — a default on the client-work question would be
+   us choosing the buyer's band for them. */
+.lic-wiz{max-width:520px}
+.lic-q{font-family:var(--font-display);font-size:1.05rem;margin:0 0 14px;font-weight:600}
+.lic-q2{margin-top:22px}
+.lic-hint{color:var(--muted);font-size:.82rem;line-height:1.5;margin:-8px 0 12px}
+.lic-foot{color:var(--dim);font-size:.78rem;line-height:1.5;margin:14px 0 0}
+
+.lic-cards2{display:grid;gap:9px}
+.lic-opt{display:block;width:100%;text-align:left;background:var(--panel);
+  border:1px solid var(--line);border-radius:13px;padding:14px 16px;cursor:pointer;
+  transition:border-color .15s,transform .15s,background .15s}
+.lic-opt:hover{border-color:var(--amber,var(--coral));transform:translateY(-1px)}
+.lic-opt b{display:block;color:var(--text);font-family:var(--font-display);
+  font-size:.95rem;font-weight:600;margin-bottom:3px}
+.lic-opt span{display:block;color:var(--muted);font-size:.81rem;line-height:1.5}
+
+.lic-crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:-6px 0 18px;
+  font-size:.75rem}
+.lic-crumbs i{color:var(--dim);font-style:normal}
+.lic-crumb{background:none;border:0;color:var(--muted);font:inherit;font-size:.75rem;
+  cursor:pointer;padding:2px 0;text-decoration:underline;text-underline-offset:3px}
+.lic-crumb:hover{color:var(--amber,var(--coral))}
+
+.lic-radios{display:grid;gap:8px}
+.lic-radio{display:block;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:12px 14px;cursor:pointer}
+.lic-radio.on{border-color:var(--amber,var(--coral))}
+.lic-radio input{margin-right:9px;accent-color:var(--amber,var(--coral))}
+.lic-radio b{color:var(--text);font-size:.9rem;font-weight:600}
+.lic-radio span{display:block;color:var(--muted);font-size:.79rem;margin-top:3px;padding-left:23px}
+
+.lic-segs{display:flex;gap:7px;flex-wrap:wrap}
+.lic-seg{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+  color:var(--muted);font:inherit;font-size:.82rem;padding:9px 14px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.25}
+.lic-seg b{font-weight:500;color:inherit}
+.lic-seg i{font-style:normal;font-size:.66rem;color:var(--dim)}
+.lic-seg:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.lic-seg.on{background:var(--amber,var(--coral));border-color:var(--amber,var(--coral));
+  color:var(--on-accent,#0d0a12)}
+.lic-seg.on i{color:var(--on-accent,#0d0a12);opacity:.7}
+.lic-terms{margin-bottom:9px}
+.lic-termline{color:var(--muted);font-size:.78rem;margin:0 0 16px}
+
+.lic-summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  color:var(--muted);font-size:.8rem;padding:9px 13px;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;margin-bottom:18px}
+.lic-summary i{color:var(--dim);font-style:normal}
+
+.lic-checks{display:grid;gap:7px;margin-bottom:16px}
+.lic-checks label{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:.83rem;
+  cursor:pointer}
+.lic-checks input{accent-color:var(--amber,var(--coral));width:15px;height:15px}
+
+.lic-field input{width:100%;background:var(--bg);border:1px solid var(--line);
+  border-radius:11px;padding:11px 13px;color:var(--text);font:inherit;font-size:.9rem;outline:0}
+.lic-field input:focus{border-color:var(--amber,var(--coral))}
+.lic-err{color:#ff8f8f;font-size:.82rem;margin:10px 0 0}
+.lic-textlink{background:none;border:0;color:var(--amber,var(--coral));font:inherit;
+  font-size:.8rem;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
+.lic-go[disabled]{opacity:.45;cursor:default}
+.lic-next{width:100%;margin-top:18px}

@@ -13,6 +13,8 @@
  * wiring the button straight into an INSERT.
  */
 
+import { priceFor, isBuyer, isCoverage, isTerm, BUYERS } from './pricing.js';
+
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -114,6 +116,14 @@ export async function createRequest(req, env, user) {
   const email = clean(user ? user.email : b.email, 254).toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ error: 'email_required' }, 400);
 
+  // The buyer band is the new price axis, and it arrives from the browser — so
+  // it is validated here and the AMOUNT is re-derived from it. Nothing about
+  // the figure travels from the client.
+  const buyer = clean(b.buyer, 30);
+  const coverage = clean(b.coverage, 20) || 'standard';
+  if (buyer && !isBuyer(buyer)) return json({ error: 'bad_buyer' }, 400);
+  if (!isCoverage(coverage)) return json({ error: 'bad_coverage' }, 400);
+
   // The price is looked up server-side and snapshotted. Never trust an amount
   // that arrived from the browser — it is the one field worth forging.
   const ov = await env.DB.prepare('SELECT patch FROM track_overrides WHERE slug = ?').bind(slug).first();
@@ -127,10 +137,14 @@ export async function createRequest(req, env, user) {
       if (shek != null) listAgorot = Math.round(shek * 100);
     } catch { /* a corrupt override must not block a sale */ }
   }
-  if (listAgorot == null && Number.isFinite(b.list_price)) {
-    // fall back to the catalogue's published tier price, still bounded
-    const n = Math.round(Number(b.list_price) * 100);
-    if (n >= 0 && n < 1e9) listAgorot = n;
+  // Price from the band. The track record the browser sees is rebuilt here from
+  // the override so the same inputs give the same number on both sides.
+  if (buyer) {
+    let tr = { lane, prices: {}, fee: null };
+    if (ov) { try { const p = JSON.parse(ov.patch); tr = { lane, prices: p.prices || {}, fee: p.fee }; } catch { /* corrupt override */ } }
+    const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '12m');
+    listAgorot = pr.quote ? null : pr.amount * 100;
+    if (pr.quote) lane = 'quote';
   }
 
   const t = now();

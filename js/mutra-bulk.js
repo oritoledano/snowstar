@@ -37,10 +37,13 @@
      between tiers that was thought about once, and moving one price without
      the others silently unpicks it. TV commercial is quote-only and has no
      number, so it never takes a suggestion. */
+  /* BUYER BANDS, not the old where-it-runs tiers — the funnel rebuild moved
+     pricing onto who is buying. The number is the twelve-month Standard price,
+     and it is what the proportional suggestion is derived from. */
   const TIERS = [
-    ['digital', 'Digital', 149], ['corporate', 'Corporate', 350],
-    ['paid', 'Paid campaign', 249], ['tvshow', 'TV show', 900],
-    ['film', 'Film', 1200], ['radio', 'Radio', 1200], ['tvc', 'TV commercial', null],
+    ['individual-own', 'My own work', 180], ['wedding', 'Wedding clients', 250],
+    ['individual-client', 'Client work', 450], ['business-small', 'Business · 0–100', 650],
+    ['business-mid', 'Business · 101–250', 1200], ['business-large', 'Business · 250+', null],
   ];
   const defaultOf = (id) => (TIERS.find((t) => t[0] === id) || [])[2] || null;
   /** Nearest ten minus one — the same shape as 149, so a suggestion looks like

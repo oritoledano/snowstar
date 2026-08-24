@@ -1,185 +1,508 @@
-/* ═══════════ Mutra — licence chooser ═══════════
-   Replaces the mailto that used to fire off the License button. Picking a
-   licence is a real decision — what it covers, where it runs, for how long,
-   what it costs — and none of that fits in an email draft.
+/* ═══════════ Mutra — the licence funnel ═══════════
 
-   Prices are per track in ILS, because the first market is Israel and a
-   quote in dollars invites a currency conversation nobody wanted. A track
-   can override any tier (see the catalog editor); anything it doesn't set
-   falls back to the defaults below.
+   Rebuilt to Musicbed's shape, because their funnel asks a question Mutra
+   never did.
 
-   The dialog is deep-linkable: ?license=<slug> opens it on that track, so a
-   link can be sent to whoever actually signs off on the budget. */
+   Mutra used to ask one thing: where will the music run? Seven tiers, digital
+   through TV commercial. That axis is real, but it is not where the money is.
+   Musicbed asks WHO IS BUYING first, and only then where it runs — and on their
+   live funnel the same track, same distribution, same everything is $69 to a
+   wedding filmmaker and $349 once a brand's name is on the video. A 5x spread
+   on a question we were not asking. Under the old scheme a 400-person insurer
+   and a two-person studio both paid the same for a corporate film.
+
+   So: seven where-it-runs tiers collapse to two COVERAGE bands, and the price
+   moves onto six BUYER bands. Nothing is priced until the buyer has said who
+   they are.
+
+   WHAT IS DELIBERATELY NOT COPIED
+   Musicbed's licences are perpetual — "they never expire, even if the
+   subscription is not renewed". Mutra's term is hard and the renewal IS the
+   business, so the term survives this rewrite untouched. Their subscription
+   tiers are not built either; every branch here ends in a per-track price.
+
+   SCREENS
+     1  who is licensing            business | individual
+     2a individual: what are you    youtube · wedding · freelance · supervisor
+     3a individual: who is it for   own work | client work        <- the price lever
+     2b business: coverage + size   standard|extended · 0-100|101-250|250+
+     4  extended                    quote form, with a published floor
+     5  price + term                the only screen with a number on it
+     6  project details             end client + project name, per project
+     7  receipt / pay
+
+   The price is computed here to show it, and recomputed server-side from the
+   same table before a shekel is charged. Nothing sent from this file is
+   trusted as an amount. */
 (function () {
-  const CUR = '\u20aa';
-  const USD_RATE = 3.0;      // Bank of Israel representative rate, Aug 2026
+  const CUR = '₪';
 
-  /* Prices are ex-VAT. Every Israeli tariff in this sector states that
-     explicitly — ACUM's, the Federation's 2026 price list, Eshkolot's — and
-     the Consumer Protection Law's VAT-inclusive rule is B2C only, so B2B
-     quoting ex-VAT is both the norm and legally fine here. VAT is 18%
-     (since 1 Jan 2025). */
-  const VAT_NOTE = 'Prices exclude VAT (18%)';
+  /* Bands and multipliers. MUST stay in step with worker/src/pricing.js — that
+     file is the authority, this one is the shop window. */
+  const BUYERS = {
+    'individual-own':    { short: 'My own work',      base: 180 },
+    'wedding':           { short: 'Wedding clients',  base: 250 },
+    'individual-client': { short: 'Client work',      base: 450 },
+    'business-small':    { short: 'Business · 0–100', base: 650 },
+    'business-mid':      { short: 'Business · 101–250', base: 1200 },
+    'business-large':    { short: 'Business · 250+',  base: null },
+  };
+  const TERMS = [
+    { id: '6m',   label: '6 months',    months: 6,    mult: 0.55, note: '' },
+    { id: '12m',  label: '12 months',   months: 12,   mult: 1.00, note: '' },
+    { id: '24m',  label: '24 months',   months: 24,   mult: 1.65, note: 'save 25%' },
+    { id: '36m',  label: '36 months',   months: 36,   mult: 2.15, note: 'save 35%' },
+    { id: 'perp', label: 'No end date', months: null, mult: 4.40, note: 'never expires' },
+    { id: 'excl', label: 'Exclusive',   months: null, mult: null, note: 'by arrangement' },
+  ];
+  const termById = (id) => TERMS.find((t) => t.id === id) || TERMS[1];
+  const pricePoint = (n) => Math.max(0, Math.round(n / 10) * 10 - 1);
+  const LEGACY_DIGITAL = 149;
 
-  /** The tiers, cheapest first. `quote` means the tier is negotiated rather
-   *  than self-serve — broadcast money is too project-specific to post a
-   *  number against, and it is where a rights conflict would actually bite. */
-  /* Benchmarked against three things, in descending order of authority:
-
-     1. The MCPS/PRS Production Music Rate Card, Q1 2026 — the only published,
-        authoritative needledrop card in this industry, covering 100+ libraries
-        (Universal Production Music, Warner Chappell PM, Extreme, West One, BMG).
-        GBP ex-VAT; roughly ₪4.6 to the pound. Its SHAPE is the important part:
-        advertising is expensive, programme use is cheap, corporate is cheapest.
-        A single-country linear TV ad is £1,750 per 30s — but a cue inside a
-        TV programme is £35, and a corporate production £250. Anyone pricing
-        in-programme use like advertising has the curve upside down, which is
-        exactly what the previous draft of this file did.
-     2. Published per-track competitors: PremiumBeat $39/$59/$199/$999 (with
-        broadcast tiered by territory count — 1 / 5 / worldwide), Soundstripe
-        single-use $49/$199/$399/$1,249, Musicbed single song from $349,
-        Foximusic (Tel Aviv) $29 commercial / $150 extended incl. broadcast.
-     3. The subscription ceiling: Artlist — an Israeli company — sells Music
-        Pro at ~₪112/mo with paid ads AND broadcast included. No per-track
-        price can sit near a year of that, which is what caps the entry tier.
-
-     Where the rate cards and the subscriptions disagree, the cards win on
-     broadcast (they price it as the scarce thing it is) and the subscriptions
-     win on digital (they have already commoditised it). */
   /* Bit is the only alternative to the card, because it is the only one we can
-     actually take: there is no bank account published for transfers and no
-     Paybox. Offering a payment method you cannot receive is worse than
-     offering none — it strands the buyer after they have decided to pay. */
+     actually receive: there is no published bank account and no Paybox. */
   const BIT_NUMBER = '054-449-8389';
-
-  const TIERS = [
-    { id: 'digital', label: 'Digital — web & social',
-      blurb: 'Your own channels and organic social — site, YouTube, Instagram, TikTok, podcasts, showreels.',
-      price: 149 },
-    { id: 'corporate', label: 'Business & corporate',
-      blurb: 'Company promos, explainers, training, event and in-store screens, on-hold. Paid media moves it up a tier.',
-      price: 350 },
-    { id: 'paid', label: 'Digital — paid campaign',
-      blurb: 'The above plus paid media online — promoted social, pre-roll, display, paid influencer.',
-      // 450 was a TWELVE-month price, from when this tier alone carried a term.
-      // Every tier is quoted per six months now, so the base has to be the
-      // six-month figure or the ladder multiplies a year by 1.8 and sells two.
-      // 249 x 1.8 = 449, so the price people actually buy is unchanged.
-      price: 249 },
-    { id: 'tvshow', label: 'TV show / series',
-      blurb: 'Per episode — Israeli broadcast plus catch-up. A whole series or worldwide release is quoted.',
-      price: 900 },
-    { id: 'film', label: 'Film',
-      blurb: 'Feature, short or documentary, festivals and streaming included. Budgets over ₪10m are quoted.',
-      price: 1200 },
-    { id: 'radio', label: 'Radio',
-      blurb: 'Radio advertising in Israel. Covers the sync; the station settles its own ACUM dues.',
-      price: 1200 },
-    { id: 'tvc', label: 'TV commercial',
-      blurb: 'Commercial airtime. Priced per campaign against territory, run length and media weight.',
-      quote: true },
-  ];
-
-  /** Open a mailto in a new tab, without stranding a blank one.
-   *  window.open('mailto:…') can leave an empty tab behind once the mail
-   *  client takes the handoff; a detached anchor does not. */
-  function openMail(url) {
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
-
-  /* How long the licence runs. Six months is the default because most work is a
-     campaign, not a monument — and a short default makes the renewal a real
-     decision rather than a surprise.
-
-     The listed tier price IS the six-month price. A year is 1.6x rather than
-     2x, and the owner's discounts then apply per further year: the second year
-     at 75% off (+0.4) and the third at 50% off (+0.8). Change MULT alone to
-     reprice; nothing else reads these numbers.  */
-  /* The ladder is solved for a CONSTANT break-even, not for round discounts.
-     At 1.8 / 3.0 / 3.9 a buyer should prepay only if they are about 80% sure,
-     per six-month period, that they will still be using the track — the same
-     answer at every rung, which is what makes the curve read as principled
-     rather than picked out of the air.
-
-     It also has to stay under the straight line. Because the term is hard,
-     36 months IS six consecutive six-month licences, so no rung may cost more
-     than 6.0x; these sit 10 / 25 / 35% below it. The first attempt at this
-     (2nd year 75% off, 3rd 50%) put the break-even at 55%, which means anyone
-     even coin-flip confident prepays for two years — and the renewal business
-     that the hard term exists to create never happens.
-
-     'Perpetual' is published on purpose. A hard term with no visible ceiling
-     reads as a trap; with one, it reads as a choice. It is still NON-exclusive
-     — exclusive is a different thing and stays a conversation. */
-  const DURATIONS = [
-    { id: '6m',  label: '6 months',  months: 6,   mult: 1.0,  note: '' },
-    { id: '12m', label: '12 months', months: 12,  mult: 1.8,  note: 'save 10%' },
-    { id: '24m', label: '24 months', months: 24,  mult: 3.0,  note: 'save 25%' },
-    { id: '36m', label: '36 months', months: 36,  mult: 3.9,  note: 'save 35%' },
-    { id: 'perp', label: 'No end date', months: null, mult: 8.0, note: 'never expires' },
-    { id: 'excl', label: 'Exclusive rights', months: null, mult: null, note: 'by arrangement' },
-  ];
-  const durById = (id) => DURATIONS.find((d) => d.id === id) || DURATIONS[0];
 
   const esc = (v) => String(v == null ? '' : v)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-  const basePrice = (track, tier) => {
-    const over = (track.prices || {})[tier.id];
-    if (Number.isFinite(over)) return over;
-    if (Number.isFinite(track.fee)) return track.fee;   // one flat fee for everything
-    return tier.price;
-  };
-  /** Tier sets what you may do; duration sets how long. Price is the product,
-   *  landed on a real price point: ILS 149 is a deliberate figure and ILS 268.20
-   *  is not. Nearest 10, minus 1 — the same shape as the base prices. */
-  const priceFor = (track, tier, durId) => {
-    const d = durById(durId || '6m');
-    if (d.mult == null) return null;                    // exclusive is quoted
-    const raw = basePrice(track, tier) * d.mult;
-    return d.mult === 1 ? Math.round(raw) : Math.round(raw / 10) * 10 - 1;
-  };
+  /** A track edited to 199 when the catalogue said 149 was marked up by hand;
+   *  that intent should survive the restructure rather than be flattened. */
+  function trackFactor(track) {
+    const p = (track && track.prices) || {};
+    const legacy = Number.isFinite(p.digital) ? p.digital
+                 : Number.isFinite(track && track.fee) ? track.fee : null;
+    if (legacy == null || legacy <= 0) return 1;
+    return Math.min(Math.max(legacy / LEGACY_DIGITAL, 0.2), 8);
+  }
 
-  /** Send the request, then show the reference and how to pay it. */
-  async function submitRequest(track, tier, quoteOnly, subject, body, straightToCard, dur) {
-    const go = el.querySelector('.lic-go');
-    const was = go.innerHTML;   // innerHTML: textContent would drop the card marks
-    go.disabled = true; go.textContent = 'Sending…';
+  /** Four separate reasons a price becomes a conversation, and they are not
+   *  the same thing: the track is co-owned, the buyer is too big, the use is
+   *  broadcast, or they want exclusivity. */
+  function priceFor(track, buyerId, coverageId, termId) {
+    const b = BUYERS[buyerId], t = termById(termId);
+    if (!b) return { quote: true, reason: 'unknown' };
+    if (track && track.lane === 'quote') return { quote: true, reason: 'co_owned' };
+    if (coverageId === 'extended') return { quote: true, reason: 'extended_coverage' };
+    if (b.base == null) return { quote: true, reason: 'large_client' };
+    if (t.mult == null) return { quote: true, reason: 'exclusive' };
+    // a per-band override on the track wins outright
+    const over = track && track.prices && track.prices[buyerId];
+    const base = Number.isFinite(over) && over > 0 ? over : b.base * trackFactor(track);
+    return { quote: false, amount: pricePoint(base * t.mult) };
+  }
+
+  /** Open a mailto without stranding a blank tab. */
+  function openMail(url) {
+    const a = document.createElement('a');
+    a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  /* ── funnel state ──────────────────────────────────────────────────────── */
+
+  let el = null, current = null, screen = 1;
+  const pick = { who: null, persona: null, forWhom: null, coverage: 'standard',
+                 size: null, term: '12m' };
+
+  function resetPick() {
+    pick.who = pick.persona = pick.forWhom = pick.size = null;
+    pick.coverage = 'standard';
+    pick.term = '12m';
+  }
+
+  /** The six bands are reached by different routes; this is the one place that
+   *  decides which one a set of answers lands on. */
+  function buyerId() {
+    if (pick.who === 'business') {
+      return pick.size === 'mid' ? 'business-mid'
+           : pick.size === 'large' ? 'business-large'
+           : pick.size === 'small' ? 'business-small' : null;
+    }
+    if (pick.persona === 'wedding') {
+      return pick.forWhom === 'wedding-only' ? 'wedding'
+           : pick.forWhom === 'wedding-commercial' ? 'individual-client' : null;
+    }
+    if (pick.persona === 'supervisor') {
+      // a supervisor is buying on someone else's behalf, so they answer the
+      // business questions — same as Musicbed routes them
+      return pick.size === 'mid' ? 'business-mid'
+           : pick.size === 'large' ? 'business-large'
+           : pick.size === 'small' ? 'business-small' : null;
+    }
+    if (pick.forWhom === 'own') return 'individual-own';
+    if (pick.forWhom === 'client') return 'individual-client';
+    return null;
+  }
+
+  const bandLabel = () => (BUYERS[buyerId()] || {}).short || '—';
+
+  /* ── shell ─────────────────────────────────────────────────────────────── */
+
+  const SHELL = `
+    <div class="lic-card lic-wiz" role="dialog" aria-modal="true" aria-labelledby="licTitle">
+      <button class="lic-close" aria-label="Close">&times;</button>
+      <div class="lic-head">
+        <img class="lic-cover" alt="">
+        <div>
+          <div class="lic-kicker">Licence</div>
+          <h3 id="licTitle"></h3>
+          <div class="lic-artist"></div>
+        </div>
+      </div>
+      <div class="lic-crumbs" hidden></div>
+      <div class="lic-body"></div>
+    </div>`;
+
+  function build() {
+    if (el) return el;
+    el = document.createElement('div');
+    el.className = 'lic-modal';
+    el.hidden = true;
+    el.innerHTML = SHELL;
+    document.body.appendChild(el);
+    el.addEventListener('click', (e) => { if (e.target === el) close(); });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && el && !el.hidden) close(); });
+    return el;
+  }
+
+  const body = () => el.querySelector('.lic-body');
+
+  /** Cards are the whole interaction: one question, two to four answers, no
+   *  preselection where the answer moves the price. */
+  function cards(list) {
+    return `<div class="lic-cards2">${list.map((c) => `
+      <button type="button" class="lic-opt" data-v="${esc(c.v)}">
+        <b>${esc(c.t)}</b><span>${esc(c.d)}</span>
+      </button>`).join('')}</div>`;
+  }
+
+  function onCards(fn) {
+    body().querySelectorAll('.lic-opt').forEach((b) =>
+      b.addEventListener('click', () => fn(b.dataset.v)));
+  }
+
+  /** The trail back. Musicbed's EDIT link, made into a full breadcrumb because
+   *  Mutra's funnel is shorter and there is room to show the whole path. */
+  function crumbs() {
+    const c = el.querySelector('.lic-crumbs');
+    const bits = [];
+    if (pick.who) bits.push([1, pick.who === 'business' ? 'Business' : 'Individual']);
+    if (pick.persona) bits.push([2, { youtube: 'Creator', wedding: 'Wedding',
+      freelance: 'Freelance', supervisor: 'Supervisor' }[pick.persona]]);
+    if (pick.forWhom) bits.push([3, { own: 'Own work', client: 'Client work',
+      'wedding-only': 'Wedding only', 'wedding-commercial': 'Wedding + commercial' }[pick.forWhom]]);
+    if (pick.who === 'business' && pick.size) bits.push([2, BUYERS[buyerId()] ? BUYERS[buyerId()].short : '']);
+    if (pick.coverage === 'extended') bits.push([2, 'Extended']);
+    c.hidden = !bits.length;
+    c.innerHTML = bits.map(([s, t]) =>
+      `<button type="button" class="lic-crumb" data-s="${s}">${esc(t)}</button>`).join('<i>›</i>');
+    c.querySelectorAll('.lic-crumb').forEach((b) =>
+      b.addEventListener('click', () => { go(Number(b.dataset.s)); }));
+  }
+
+  function go(n) { screen = n; render(); }
+
+  /* ── the screens ───────────────────────────────────────────────────────── */
+
+  function render() {
+    if (!current) return;
+    crumbs();
+    const t = current;
+
+    // A co-owned track can never be configured into a price, so it does not
+    // get a funnel at all — sending someone through five screens to reach
+    // "we'll get back to you" is worse than saying so first.
+    if (t.lane === 'quote' && screen < 6) return screenQuote('co_owned');
+
+    if (screen === 1) return screen1();
+    if (screen === 2) return pick.who === 'business' ? screen2b() : screen2a();
+    if (screen === 3) return screen3a();
+    if (screen === 4) return screenQuote('extended_coverage');
+    if (screen === 5) return screen5();
+    if (screen === 6) return screen6();
+  }
+
+  function screen1() {
+    body().innerHTML = `
+      <h4 class="lic-q">Who is this licence for?</h4>
+      ${cards([
+        { v: 'business', t: 'Business', d: 'Agency, production company, brand, non-profit, institution.' },
+        { v: 'individual', t: 'Individual', d: 'YouTube, freelance, wedding, music supervisor.' },
+      ])}`;
+    onCards((v) => { pick.who = v; go(2); });
+  }
+
+  function screen2a() {
+    body().innerHTML = `
+      <h4 class="lic-q">What best describes you?</h4>
+      ${cards([
+        { v: 'youtube', t: 'YouTube creator / podcaster', d: 'Video or audio you publish under your own name.' },
+        { v: 'wedding', t: 'Wedding filmmaker', d: 'Films for couples and their families.' },
+        { v: 'freelance', t: 'Freelance filmmaker', d: 'Work you shoot and edit, for yourself or for others.' },
+        { v: 'supervisor', t: 'Music supervisor / agency', d: 'You choose music on someone else’s behalf.' },
+      ])}
+      <button type="button" class="lic-textlink lic-else">Something else? Tell us →</button>`;
+    onCards((v) => {
+      pick.persona = v;
+      // a supervisor answers the business questions — they are buying for
+      // someone whose size is the thing that matters
+      go(v === 'supervisor' ? 2 : 3);
+      if (v === 'supervisor') { pick.who = 'business'; render(); }
+    });
+    body().querySelector('.lic-else').addEventListener('click', () => screenQuote('other'));
+  }
+
+  function screen3a() {
+    const wedding = pick.persona === 'wedding';
+    body().innerHTML = `
+      <h4 class="lic-q">Who is the work for?</h4>
+      ${cards(wedding ? [
+        { v: 'wedding-only', t: 'Wedding clients only', d: 'Films for the couple.' },
+        { v: 'wedding-commercial', t: 'Wedding and commercial clients', d: 'Also venues, planners, brands.' },
+      ] : [
+        { v: 'own', t: 'My own channel or work', d: 'The video is yours. No client’s name on it, no client paying for it.' },
+        { v: 'client', t: 'Client work', d: 'Someone else commissioned it, or someone else’s brand appears in it.' },
+      ])}
+      <p class="lic-foot">Personal coverage does not cover accounts over 500k followers.
+        <button type="button" class="lic-textlink lic-ask">Ask us →</button></p>`;
+    onCards((v) => { pick.forWhom = v; go(5); });
+    body().querySelector('.lic-ask').addEventListener('click', () => screenQuote('big_account'));
+  }
+
+  function screen2b() {
+    const sizes = [['small', '0–100 employees'], ['mid', '101–250'], ['large', 'Over 250']];
+    body().innerHTML = `
+      <h4 class="lic-q">Coverage</h4>
+      <div class="lic-radios">
+        ${[['standard', 'Standard', 'Web, social, podcast, internal and industrial video.'],
+           ['extended', 'Extended', 'TV, cinema, VOD and OTT, film festivals, radio, commercials.']]
+          .map(([v, t, d]) => `
+          <label class="lic-radio${pick.coverage === v ? ' on' : ''}">
+            <input type="radio" name="cov" value="${v}"${pick.coverage === v ? ' checked' : ''}>
+            <b>${t}</b><span>${d}</span></label>`).join('')}
+      </div>
+      <h4 class="lic-q lic-q2">Size of the end client</h4>
+      <p class="lic-hint">The company whose name appears in the video. If the work is
+        for your own brand, that’s you.</p>
+      <div class="lic-segs">
+        ${sizes.map(([v, t]) => `<button type="button" class="lic-seg${pick.size === v ? ' on' : ''}"
+          data-v="${v}">${t}</button>`).join('')}
+      </div>
+      <button type="button" class="lic-go lic-next" ${pick.size ? '' : 'disabled'}>Continue</button>`;
+
+    body().querySelectorAll('input[name="cov"]').forEach((r) =>
+      r.addEventListener('change', () => { pick.coverage = r.value; render(); }));
+    body().querySelectorAll('.lic-seg').forEach((b) =>
+      b.addEventListener('click', () => { pick.size = b.dataset.v; render(); }));
+    body().querySelector('.lic-next').addEventListener('click', () =>
+      go(pick.coverage === 'extended' ? 4 : 5));
+  }
+
+  /* Screen 5 — the only screen with a number on it. The term selector lives
+     HERE, next to the price, and not on a screen of its own: the term is the
+     product, and burying it makes it read as a tax rather than a choice. */
+  function screen5() {
+    const t = current;
+    const bid = buyerId();
+    const p = priceFor(t, bid, pick.coverage, pick.term);
+    const term = termById(pick.term);
+
+    const ends = term.months
+      ? new Date(Date.now() + term.months * 30.44 * 864e5)
+          .toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+      : null;
+
+    body().innerHTML = `
+      <div class="lic-summary">
+        <span>${esc(bandLabel())}</span><i>·</i>
+        <span>${pick.coverage === 'extended' ? 'Extended' : 'Standard'} coverage</span>
+      </div>
+
+      <h4 class="lic-q lic-q2">For how long</h4>
+      <div class="lic-segs lic-terms">
+        ${TERMS.map((x) => `<button type="button" class="lic-seg${pick.term === x.id ? ' on' : ''}"
+          data-v="${x.id}"><b>${x.label}</b>${x.note ? `<i>${x.note}</i>` : ''}</button>`).join('')}
+      </div>
+      <p class="lic-termline">${ends
+        ? `Ends ${ends}. We email you 30 days before.`
+        : term.id === 'perp' ? 'Never expires. Nothing to renew.'
+        : 'Priced per case.'}</p>
+
+      <div class="lic-priceline">
+        <span class="lic-price">${p.quote ? 'On request' : CUR + p.amount.toLocaleString()}</span>
+        <span class="lic-per">${p.quote ? '' : 'one track, one project · ex VAT'}</span>
+      </div>
+
+      <ul class="lic-incl">
+        <li>One track, one project, worldwide.</li>
+        <li>Web, social, podcast, internal and industrial video.</li>
+        <li>Paid media up to ${CUR}25,000 per video.</li>
+        <li>${term.id === 'perp'
+          ? 'Yours with no end date, and nothing to renew.'
+          : 'Renew before it ends to keep using it — renewals cost less.'}</li>
+        <li>Clean, un-watermarked files.</li>
+      </ul>
+
+      <div class="lic-acts">
+        <button class="lic-go lic-next">${p.quote ? 'Request a quote'
+          : 'Continue <span class="lic-cards" aria-hidden="true"><i class="cb-visa">VISA</i><i class="cb-mc"></i><i class="cb-amex">AMEX</i></span>'}</button>
+        <button class="lic-share">Copy link</button>
+      </div>`;
+
+    body().querySelectorAll('.lic-seg').forEach((b) =>
+      b.addEventListener('click', () => { pick.term = b.dataset.v; render(); }));
+    body().querySelector('.lic-next').addEventListener('click', () =>
+      p.quote ? screenQuote(p.reason) : go(6));
+    body().querySelector('.lic-share').addEventListener('click', shareLink);
+  }
+
+  /* Screen 6 — the load-bearing one. End client and project name are what make
+     "one track, one project" enforceable, and what lets a renewal email name
+     the video it is about rather than just the track. */
+  function screen6() {
+    const t = current;
+    const p = priceFor(t, buyerId(), pick.coverage, pick.term);
+    body().innerHTML = `
+      <h4 class="lic-q">What is it for?</h4>
+      <p class="lic-hint">Printed on the licence. A licence covers one project, so
+        this is what it names.</p>
+      <label class="lic-field"><span>Project name</span>
+        <input class="lic-proj" type="text" maxlength="140" placeholder="Spring brand film"></label>
+      <label class="lic-field"><span>End client</span>
+        <input class="lic-client" type="text" maxlength="140"
+          placeholder="${pick.who === 'business' ? 'The company in the video' : 'Yourself, or the client'}"></label>
+      <div class="lic-priceline">
+        <span class="lic-price">${CUR}${p.amount.toLocaleString()}</span>
+        <span class="lic-per">+ VAT 18%</span>
+      </div>
+      <p class="lic-err" hidden></p>
+      <div class="lic-acts">
+        <button class="lic-go lic-submit">Pay by Card <span class="lic-cards" aria-hidden="true"><i class="cb-visa">VISA</i><i class="cb-mc"></i><i class="cb-amex">AMEX</i></span></button>
+      </div>
+      <button class="lic-alt" type="button">Pay with Bit instead</button>`;
+
+    const proj = body().querySelector('.lic-proj');
+    const client = body().querySelector('.lic-client');
+    const err = body().querySelector('.lic-err');
+    const need = () => {
+      if (proj.value.trim() && client.value.trim()) return true;
+      err.hidden = false;
+      err.textContent = 'Both fields, please — the licence names the project it covers.';
+      return false;
+    };
+    body().querySelector('.lic-submit').addEventListener('click', () => {
+      if (need()) submitRequest(true, proj.value.trim(), client.value.trim());
+    });
+    body().querySelector('.lic-alt').addEventListener('click', () => {
+      if (!need()) return;
+      if (!(window.SnowstarAccount && SnowstarAccount.user)) {
+        // A Bit payment is released by hand, so it needs somewhere to send the
+        // files. Take the account first, then pick the request back up.
+        pending = { slug: current.slug, pick: { ...pick },
+                    proj: proj.value.trim(), client: client.value.trim() };
+        try { sessionStorage.setItem('mutraPendingLicence', JSON.stringify(pending)); } catch {}
+        close();
+        if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup',
+          'Create a free account and we’ll send the Bit details and the files.');
+        return;
+      }
+      submitRequest(false, proj.value.trim(), client.value.trim());
+    });
+  }
+
+  /** Every dead end that is really a conversation. Four different reasons, and
+   *  saying which one it is matters — "co-owned" and "too big" are not the
+   *  same news. */
+  function screenQuote(reason) {
+    const t = current;
+    const why = {
+      co_owned: 'This track is co-owned. Commercial use goes through the other rights holder, so we price it case by case. Same catalogue, one extra email.',
+      extended_coverage: 'Broadcast, cinema and radio we price by hand. From ' + CUR + '1,600 per track. Tell us the project and you’ll have a price the same day.',
+      large_client: 'For an end client over 250 people we price per campaign. Tell us the project and you’ll have a price the same day.',
+      exclusive: 'Exclusive use — nobody else licences this track while you hold it. Priced per case.',
+      big_account: 'Over 500k followers we price per campaign. Tell us where it runs and you’ll have a price the same day.',
+      other: 'Tell us what you’re making and we’ll come back with the right licence.',
+    }[reason] || 'Tell us about the project and we’ll come back with a price.';
+
+    const ext = reason === 'extended_coverage';
+    body().innerHTML = `
+      <h4 class="lic-q">${ext ? 'Where will it run?' : 'Tell us about the project'}</h4>
+      <p class="lic-hint">${esc(why)}</p>
+      ${ext ? `<div class="lic-checks">${
+        ['TV show / VOD / OTT', 'Cinema', 'Film festival', 'Radio or streaming audio',
+         'TV commercial', 'Video game', 'Podcast over 10k downloads/month']
+          .map((x) => `<label><input type="checkbox" value="${esc(x)}"> ${esc(x)}</label>`).join('')
+      }</div>` : ''}
+      <label class="lic-field"><span>Project</span>
+        <input class="lic-proj" type="text" maxlength="140" placeholder="What are you making?"></label>
+      <label class="lic-field"><span>End client</span>
+        <input class="lic-client" type="text" maxlength="140" placeholder="Whose name is on it"></label>
+      <label class="lic-field"><span>Territory and dates</span>
+        <input class="lic-terr" type="text" maxlength="140" placeholder="Israel, from March, 6 weeks"></label>
+      <p class="lic-err" hidden></p>
+      <div class="lic-acts"><button class="lic-go lic-submit">Get a price</button></div>`;
+
+    body().querySelector('.lic-submit').addEventListener('click', () => {
+      const proj = body().querySelector('.lic-proj').value.trim();
+      const client = body().querySelector('.lic-client').value.trim();
+      const terr = body().querySelector('.lic-terr').value.trim();
+      const where = [...body().querySelectorAll('.lic-checks input:checked')].map((i) => i.value);
+      const err = body().querySelector('.lic-err');
+      if (!proj) { err.hidden = false; err.textContent = 'What are you making?'; return; }
+      submitRequest(false, proj, client, { quote: true, reason, territory: terr, where });
+    });
+  }
+
+  /* ── submit ────────────────────────────────────────────────────────────── */
+
+  async function submitRequest(straightToCard, project, client, quoteInfo) {
+    const t = current;
+    const btn = body().querySelector('.lic-submit') || body().querySelector('.lic-go');
+    const was = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    const bid = buyerId();
+    const term = termById(pick.term);
     try {
       const r = await fetch('/api/licence/request', {
         method: 'POST', credentials: 'same-origin',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          slug: track.slug, tier: tier.id,
-          duration: (dur || durById('6m')).id,
-          months: (dur || durById('6m')).months,
-          list_price: tier.quote ? null : priceFor(track, tier, (dur || durById('6m')).id),
+          slug: t.slug,
+          buyer: bid,
+          coverage: pick.coverage,
+          duration: pick.term,
+          months: term.months,
+          project_name: project,
+          licensee_name: client,
+          use_territory: quoteInfo ? quoteInfo.territory : '',
+          use_where: quoteInfo && quoteInfo.where ? quoteInfo.where.join(', ') : '',
+          quote_only: !!(quoteInfo && quoteInfo.quote),
+          // legacy field the server still snapshots; harmless and keeps old
+          // requests comparable
+          tier: pick.coverage === 'extended' ? 'tvshow' : 'digital',
         }),
       });
       const d = await r.json();
       if (!r.ok || !d.ok) {
         if (r.status === 400 && d.error === 'email_required') {
-          go.disabled = false; go.innerHTML = was;
+          if (btn) { btn.disabled = false; btn.innerHTML = was; }
           if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup',
             'Create a free account so we can send you the licence and the files.');
           return;
         }
         throw new Error(d.error || 'failed');
       }
-      if (straightToCard) return goToCard(d.ref, () => showReceipt(track, tier, quoteOnly, d));
-      showReceipt(track, tier, quoteOnly, d);
+      if (straightToCard) return goToCard(d.ref, () => showReceipt(d, !!quoteInfo));
+      showReceipt(d, !!quoteInfo);
     } catch {
-      // API unreachable — fall back to the email draft rather than lose it
-      go.disabled = false; go.innerHTML = was;
+      if (btn) { btn.disabled = false; btn.innerHTML = was; }
       openMail('mailto:licensing@snowstar.company?subject='
-        + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+        + encodeURIComponent(`Mutra — licence: ${t.title}`)
+        + '&body=' + encodeURIComponent(
+          `Track: ${t.title} — ${t.artist}\nBand: ${bandLabel()}\nCoverage: ${pick.coverage}\n`
+          + `Term: ${term.label}\nProject: ${project}\nClient: ${client}\n`));
     }
   }
 
@@ -187,8 +510,6 @@
    *  receipt so the reference is never lost — a buyer who has decided to pay
    *  must not hit a dead end. */
   async function goToCard(ref, onFail) {
-    const go = el.querySelector('.lic-go');
-    go.disabled = true; go.textContent = 'Opening secure page\u2026';
     try {
       const r = await fetch('/api/hyp/checkout', {
         method: 'POST', credentials: 'same-origin',
@@ -197,60 +518,51 @@
       });
       const j = await r.json();
       if (!r.ok || !j.url) throw new Error(j.error || 'checkout_failed');
+      if (window.mutraTrack) mutraTrack('checkout', current ? current.slug : 'unknown');
       location.href = j.url;
-    } catch {
-      go.disabled = false;
-      onFail();
-    }
+    } catch { onFail(); }
   }
 
-  function showReceipt(track, tier, quoteOnly, d) {
+  function showReceipt(d, quoteOnly) {
     const ex = d.amount_ex_vat != null ? d.amount_ex_vat / 100 : null;
     const vat = ex != null ? Math.round(ex * 0.18) : null;
-    const card = el.querySelector('.lic-card');
-    card.innerHTML = `
-      <button class="lic-close" aria-label="Close">&times;</button>
+    el.querySelector('.lic-crumbs').hidden = true;
+    body().innerHTML = `
       <div class="lic-kicker">Request received</div>
-      <h3>${esc(track.title)}</h3>
-      <div class="lic-artist">${esc(tier.label)}</div>
       <div class="lic-ref">
-        <span>Your reference</span>
-        <b>${esc(d.ref)}</b>
+        <span>Your reference</span><b>${esc(d.ref)}</b>
         <button class="lic-copyref" type="button">Copy</button>
       </div>
       ${quoteOnly || ex == null
-        ? `<p class="lic-note">We\u2019ll come back to you with terms and a price. Nothing is charged
-             until you\u2019ve seen them in writing and said yes.</p>`
+        ? `<p class="lic-note">We’ll come back to you with terms and a price. Nothing is
+             charged until you’ve seen them in writing and said yes.</p>`
         : `<ul class="lic-sum">
              <li><span>Licence</span><b>${CUR}${ex.toLocaleString()}</b></li>
              <li><span>VAT 18%</span><b>${CUR}${vat.toLocaleString()}</b></li>
              <li class="lic-tot"><span>To pay</span><b>${CUR}${(ex + vat).toLocaleString()}</b></li>
            </ul>
-           <p class="lic-note">Pay by card and the clean file unlocks the moment the payment
-             clears \u2014 usually seconds.</p>
+           <p class="lic-note">Pay by card and the clean file unlocks the moment the
+             payment clears — usually seconds.</p>
            <details class="lic-bit">
              <summary>Pay with Bit instead</summary>
              <p>Send <b>${CUR}${(ex + vat).toLocaleString()}</b> by Bit to
-               <b class="lic-bitnum">${BIT_NUMBER}</b>, and put <b>${esc(d.ref)}</b> in the note
-               so it can be matched.</p>
+               <b class="lic-bitnum">${BIT_NUMBER}</b>, and put <b>${esc(d.ref)}</b> in the
+               note so it can be matched.</p>
              <img class="lic-bitqr" src="assets/bit-qr.png" alt="Bit payment QR code"
                   loading="lazy" onerror="this.remove()">
-             <p class="lic-bitwait">Released by hand once it lands \u2014 same day, not seconds.</p>
+             <p class="lic-bitwait">Released by hand once it lands — same day, not seconds.</p>
            </details>`}
       <div class="lic-acts">
         ${quoteOnly || ex == null ? '' : '<button class="lic-go lic-card-pay">Pay by card</button>'}
         <button class="lic-share lic-done">Done</button>
       </div>
       <p class="lic-payerr" hidden></p>`;
-    card.querySelector('.lic-close').addEventListener('click', close);
-    card.querySelector('.lic-done').addEventListener('click', close);
-    // Card payment: the server re-derives the price from its own snapshot of the
-    // request, so nothing about the amount travels from here — this button only
-    // says WHICH request to charge.
-    const payBtn = card.querySelector('.lic-card-pay');
+
+    body().querySelector('.lic-done').addEventListener('click', close);
+    const payBtn = body().querySelector('.lic-card-pay');
     if (payBtn) payBtn.addEventListener('click', async () => {
-      const err = card.querySelector('.lic-payerr');
-      payBtn.disabled = true; payBtn.textContent = 'Opening secure page\u2026';
+      const err = body().querySelector('.lic-payerr');
+      payBtn.disabled = true; payBtn.textContent = 'Opening secure page…';
       try {
         const r = await fetch('/api/hyp/checkout', {
           method: 'POST', credentials: 'same-origin',
@@ -259,18 +571,16 @@
         });
         const j = await r.json();
         if (!r.ok || !j.url) throw new Error(j.error || 'checkout_failed');
-        if (window.mutraTrack) mutraTrack('checkout', track.slug);
-        location.href = j.url;                 // hosted card page, PCI stays theirs
+        location.href = j.url;
       } catch (e) {
         payBtn.disabled = false; payBtn.textContent = 'Pay by card';
         err.hidden = false;
         err.textContent = String(e.message) === 'quote_lane_not_self_serve'
-          ? 'This track needs a quote rather than a card payment \u2014 we\u2019ll be in touch.'
-          : 'Could not open the payment page. Your reference is saved \u2014 transfer with it, or try again.';
+          ? 'This track needs a quote rather than a card payment — we’ll be in touch.'
+          : 'Could not open the payment page. Your reference is saved — pay by Bit with it, or try again.';
       }
     });
-
-    const cp = card.querySelector('.lic-copyref');
+    const cp = body().querySelector('.lic-copyref');
     cp.addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(d.ref); cp.textContent = 'Copied'; }
       catch { prompt('Your reference:', d.ref); }
@@ -278,187 +588,29 @@
     });
   }
 
-  /* The card markup, kept as a constant because showReceipt() and the payment
-     outcome screen both REPLACE it. Without restoring it on every open the
-     next click found a card with no .lic-sel, threw, and the modal could not
-     be opened again until a reload. */
-  const CARD_HTML = `
-      <div class="lic-card" role="dialog" aria-modal="true" aria-labelledby="licTitle">
-        <button class="lic-close" aria-label="Close">&times;</button>
-        <div class="lic-head">
-          <img class="lic-cover" alt="">
-          <div>
-            <div class="lic-kicker">Licence</div>
-            <h3 id="licTitle"></h3>
-            <div class="lic-artist"></div>
-          </div>
-        </div>
-        <label class="lic-field"><span>Use</span>
-          <select class="lic-sel"></select></label>
-        <label class="lic-field"><span>For how long</span>
-          <select class="lic-dur"></select></label>
-        <p class="lic-blurb"></p>
-        <div class="lic-priceline">
-          <span class="lic-price"></span>
-          <span class="lic-per">one-time, per track</span>
-        </div>
-        <ul class="lic-incl"></ul>
-        <div class="lic-acts">
-          <button class="lic-go"></button>
-          <button class="lic-share" title="Copy a link to this licence">Copy link</button>
-        </div>
-        <button class="lic-alt" type="button" hidden></button>
-        <p class="lic-note"></p>
-      </div>`;
-
-  let el = null;
-
-  function build() {
-    if (el) return el;
-    el = document.createElement('div');
-    el.className = 'lic-modal';
-    el.hidden = true;
-    el.innerHTML = CARD_HTML;
-    document.body.appendChild(el);
-
-    el.querySelector('.lic-close').addEventListener('click', close);
-    el.addEventListener('click', (e) => { if (e.target === el) close(); });
-    addEventListener('keydown', (e) => { if (e.key === 'Escape' && el && !el.hidden) close(); });
-    return el;
+  async function shareLink() {
+    const url = location.origin + location.pathname + '?license=' + encodeURIComponent(current.slug);
+    try {
+      await navigator.clipboard.writeText(url);
+      if (window.mutraToast) mutraToast('Link copied');
+    } catch { prompt('Link to this track:', url); }
   }
 
-  let current = null;
-
-  function paint() {
-    const track = current;
-    if (!track) return;
-    const sel = el.querySelector('.lic-sel');
-    const durSel = el.querySelector('.lic-dur');
-    const tier = TIERS.find((t) => t.id === sel.value) || TIERS[0];
-    const dur = durById(durSel.value);
-    // exclusivity is never self-serve, whatever the track's lane
-    const quoteOnly = tier.quote || track.lane === 'quote' || dur.mult == null;
-    const price = priceFor(track, tier, dur.id);
-
-    el.querySelector('.lic-blurb').textContent = dur.mult == null
-      ? 'Exclusive use of this track \u2014 nobody else licences it while you hold it. Priced per case.'
-      : dur.id === 'perp'
-        ? tier.blurb + ' No end date, so nothing to renew \u2014 still non-exclusive.'
-        : tier.blurb;
-    // The first bullet is a promise, so it has to match the lane. On a
-    // quote-lane track we do not yet know we can clear it — saying "cleared"
-    // next to "someone else has a say" is the kind of contradiction a licensee
-    // is entitled to hold us to.
-    const broadcast = ['tvshow', 'film', 'radio', 'tvc'].includes(tier.id);
-    el.querySelector('.lic-incl').innerHTML = [
-      track.lane === 'quote' ? 'Cleared once the other rights holder agrees'
-                             : 'Cleared for commercial use, worldwide',
-      // The term is HARD — when it ends, so does the right to use the track,
-      // including in work already published. Say it here rather than let
-      // someone find it in the terms after they have paid.
-      dur.mult == null ? 'Nobody else licences the track while you hold it'
-        : dur.id === 'perp' ? 'Yours with no end date, and nothing to renew'
-        : 'Renew before it ends to keep using it \u2014 renewals cost less',
-      broadcast ? 'Broadcast royalties stay with the broadcaster'
-                : 'Your channels whitelisted \u2014 no Content ID claims',
-      'Clean, un-watermarked files',
-    ].map((t) => `<li>${esc(t)}</li>`).join('');
-    el.querySelector('.lic-price').textContent = quoteOnly ? 'On request' : CUR + price.toLocaleString();
-    const per = el.querySelector('.lic-per');
-    per.hidden = quoteOnly;
-    per.textContent = quoteOnly ? ''
-      : `${dur.label}${dur.note ? ' \u00b7 ' + dur.note : ''} \u00b7 ex VAT`;
-    // Priced tracks lead with PAY. Making the buyer file a request first and
-    // find the card button on a second screen was a step too many — the money
-    // is the thing they came to do.
-    const goBtn = el.querySelector('.lic-go');
-    goBtn.innerHTML = quoteOnly
-      ? 'Request a quote'
-      : 'Pay by Card <span class="lic-cards" aria-hidden="true">'
-        + '<i class="cb-visa">VISA</i><i class="cb-mc"></i><i class="cb-amex">AMEX</i></span>';
-    const alt = el.querySelector('.lic-alt');
-    if (alt) {
-      alt.hidden = quoteOnly;
-      alt.textContent = 'Pay with Bit instead';
-    }
-    // Three different promises, and getting them mixed up matters: a
-    // quote-lane track is a rights question, a quote-only tier is a pricing
-    // question, and everything else is a purchase.
-    // Only says something where there is a wait to explain. On a card purchase
-    // the buyer finds out in ten seconds, so the line was pure filler.
-    const note = el.querySelector('.lic-note');
-    note.textContent = track.lane === 'quote'
-      ? 'Another rights holder has a say here, so this one goes through us. We’ll come back with terms.'
-      : tier.quote ? 'Tell us where it runs and on what weight, and we’ll come back with a figure.'
-      : '';
-    note.hidden = !note.textContent;
-  }
+  /* ── open / close ──────────────────────────────────────────────────────── */
 
   function open(track) {
     build();
-    el.innerHTML = CARD_HTML;          // undo any receipt/outcome screen
+    el.innerHTML = SHELL;
     el.querySelector('.lic-close').addEventListener('click', close);
     current = track;
+    resetPick();
+    screen = 1;
     el.querySelector('.lic-cover').src = track.cover || '';
     el.querySelector('#licTitle').textContent = track.title;
     el.querySelector('.lic-artist').textContent = track.artist || '';
-    const sel = el.querySelector('.lic-sel');
-    sel.innerHTML = TIERS.map((t) => `<option value="${t.id}">${esc(t.label)}</option>`).join('');
-    sel.onchange = paint;
-    const durSel = el.querySelector('.lic-dur');
-    durSel.innerHTML = DURATIONS.map((d) =>
-      `<option value="${d.id}">${esc(d.label)}${d.note ? ' \u2014 ' + esc(d.note) : ''}</option>`).join('');
-    durSel.value = '6m';                       // short default: renewal is a decision
-    durSel.onchange = paint;
-
-    el.querySelector('.lic-go').onclick = () => {
-      const tier = TIERS.find((t) => t.id === sel.value) || TIERS[0];
-      const dur = durById(durSel.value);
-      const quoteOnly = tier.quote || track.lane === 'quote' || dur.mult == null;
-      const subject = `Mutra — ${quoteOnly ? 'quote' : 'licence'}: ${track.title} (${tier.label})`;
-      const body = `Track: ${track.title} — ${track.artist}\nLicence: ${tier.label}`
-        + (quoteOnly ? '' : `\nPrice: ${CUR}${priceFor(track, tier)}`)
-        + `\n\nWhere it will run:\nTerritory:\nHow long for:\n\n`
-        + `Link: ${location.origin + location.pathname}?license=${encodeURIComponent(track.slug)}\n`;
-      // A real request, recorded with a reference the money can travel with.
-      // The mailto is kept only as the fallback when the API is unreachable —
-      // losing a licence enquiry because a fetch failed is not acceptable.
-      submitRequest(track, tier, quoteOnly, subject, body, !quoteOnly, dur);
-      if (window.mutraTrack) mutraTrack(quoteOnly ? 'quote' : 'license', track.slug);
-    };
-
-    const altBtn = el.querySelector('.lic-alt');
-    if (altBtn) altBtn.onclick = () => {
-      const tier = TIERS.find((t) => t.id === sel.value) || TIERS[0];
-      const dur = durById(durSel.value);
-      const signedIn = !!(window.SnowstarAccount && SnowstarAccount.user);
-      if (!signedIn) {
-        // A transfer needs somewhere to send the files, so it needs an account.
-        // Remember the intent, close THIS box first (it used to sit on top of
-        // the auth panel), and resume automatically once they are in.
-        pending = { slug: track.slug, tier: tier.id, dur: dur.id };
-        try { sessionStorage.setItem('mutraPendingLicence', JSON.stringify(pending)); } catch {}
-        close();
-        if (window.SnowstarOpenAuth) {
-          SnowstarOpenAuth('signup', 'Create a free account and we\u2019ll send the Bit details and the files.');
-        }
-        return;
-      }
-      submitRequest(track, tier, false, '', '', false, dur);
-    };
-
-    el.querySelector('.lic-share').onclick = async () => {
-      const url = `${location.origin}${location.pathname}?license=${encodeURIComponent(track.slug)}`;
-      const btn = el.querySelector('.lic-share');
-      try { await navigator.clipboard.writeText(url); btn.textContent = 'Copied'; }
-      catch { prompt('Copy this link:', url); }
-      setTimeout(() => { btn.textContent = 'Copy link'; }, 1600);
-    };
-
-    paint();
+    render();
     el.hidden = false;
     document.body.style.overflow = 'hidden';
-    setTimeout(() => sel.focus(), 50);
     if (window.mutraTrack) mutraTrack('license-open', track.slug, { once: true });
   }
 
@@ -470,9 +622,7 @@
   }
 
   /* Coming back from HYP. The Worker has already verified the payment against
-     HYP's own servers and granted the licence by the time this runs — this is
-     purely telling the human what happened, and cleaning the query string so a
-     refresh doesn't re-announce it. */
+     HYP's own servers and granted the licence by the time this runs. */
   function showPaymentOutcome() {
     const q = new URLSearchParams(location.search);
     const state = q.get('pay');
@@ -480,7 +630,9 @@
     const ref = q.get('ref') || '';
     const reason = q.get('reason') || '';
     build();
-    const card = el.querySelector('.lic-card');
+    el.innerHTML = SHELL;
+    el.querySelector('.lic-close').addEventListener('click', close);
+    el.querySelector('.lic-head').hidden = true;
     const ok = state === 'ok';
     const why = {
       declined: 'The card was declined. Nothing has been charged.',
@@ -490,28 +642,26 @@
       bad_ref: 'That payment reference was not recognised.',
       unknown_ref: 'That payment reference was not recognised.',
     }[reason] || 'The payment did not complete. Nothing has been charged.';
-    card.innerHTML = `
-      <button class="lic-close" aria-label="Close">&times;</button>
+    body().innerHTML = `
       <div class="lic-kicker">${ok ? 'Payment received' : 'Payment not completed'}</div>
-      <h3>${ok ? 'Your licence is live' : 'Nothing was charged'}</h3>
+      <h3 class="lic-q">${ok ? 'Your licence is live' : 'Nothing was charged'}</h3>
       ${ref ? `<div class="lic-ref"><span>Reference</span><b>${esc(ref)}</b></div>` : ''}
       <p class="lic-note">${ok
-        ? 'The clean, un-watermarked file is now yours to download \u2014 look for the download arrow on the track, or in Account \u203a Downloads. A confirmation is on its way by email.'
+        ? 'The clean, un-watermarked file is now yours to download — look for the download arrow on the track, or in Account › Downloads. A confirmation is on its way by email.'
         : esc(why)}</p>
       <div class="lic-acts"><button class="lic-go lic-done">${ok ? 'Download it' : 'Close'}</button></div>`;
-    card.querySelector('.lic-close').addEventListener('click', close);
-    card.querySelector('.lic-done').addEventListener('click', close);
+    body().querySelector('.lic-done').addEventListener('click', close);
     el.hidden = false;
     document.body.style.overflow = 'hidden';
-    // strip the params so a reload does not repeat the message
     q.delete('pay'); q.delete('ref'); q.delete('reason');
     history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q : ''));
   }
   addEventListener('DOMContentLoaded', showPaymentOutcome);
   if (document.readyState !== 'loading') showPaymentOutcome();
 
-  /* Someone chose "pay by transfer" while signed out. They were sent to sign up;
-     the moment an account exists, pick the request back up where they left it. */
+  /* Someone chose Bit while signed out. They were sent to sign up; the moment
+     an account exists, pick the request back up exactly where they left it —
+     including every funnel answer, so they do not walk the five screens twice. */
   let pending = null;
   function resumePending() {
     if (!(window.SnowstarAccount && SnowstarAccount.user)) return;
@@ -521,13 +671,17 @@
     pending = null;
     try { sessionStorage.removeItem('mutraPendingLicence'); } catch {}
     const track = window.mutraPlayer && mutraPlayer.find(p.slug);
-    const tier = TIERS.find((t) => t.id === p.tier);
-    if (!track || !tier) return;
+    if (!track) return;
     open(track);
-    submitRequest(track, tier, false, '', '', false, durById(p.dur));
+    if (p.pick) Object.assign(pick, p.pick);
+    screen = 6;
+    render();
+    const proj = body().querySelector('.lic-proj'), cl = body().querySelector('.lic-client');
+    if (proj && p.proj) proj.value = p.proj;
+    if (cl && p.client) cl.value = p.client;
   }
   if (window.MutraMembers && MutraMembers.onChange) MutraMembers.onChange(resumePending);
   addEventListener('DOMContentLoaded', resumePending);
 
-  window.mutraLicense = { open, close, TIERS, priceFor };
+  window.mutraLicense = { open, close, priceFor, BUYERS, TERMS };
 })();
