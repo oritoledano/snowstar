@@ -41,7 +41,7 @@
      file is the authority, this one is the shop window. */
   const BUYERS = {
     'individual-own':    { short: 'My own work',      base: 180 },
-    'wedding':           { short: 'Wedding clients',  base: 250 },
+    'wedding':           { short: 'Ceremony films',   base: 250 },
     'individual-client': { short: 'Client work',      base: 450 },
     'business-small':    { short: 'Business · 0–100', base: 650 },
     'business-mid':      { short: 'Business · 101–250', base: 1200 },
@@ -52,7 +52,10 @@
     { id: '12m',  label: '12 months',   months: 12,   mult: 1.00, note: '' },
     { id: '24m',  label: '24 months',   months: 24,   mult: 1.65, note: 'save 25%' },
     { id: '36m',  label: '36 months',   months: 36,   mult: 2.15, note: 'save 35%' },
-    { id: 'perp', label: 'No end date', months: null, mult: 4.40, note: 'never expires' },
+    // Organic only. A perpetual licence with no cap on paid media is an
+    // unlimited advertising buy sold once, at a price set for a website.
+    { id: 'perp', label: 'No end date', months: null, mult: 4.40,
+      note: 'organic only', noPaid: true },
     { id: 'excl', label: 'Exclusive',   months: null, mult: null, note: 'by arrangement' },
   ];
   const termById = (id) => TERMS.find((t) => t.id === id) || TERMS[1];
@@ -86,6 +89,7 @@
     if (coverageId === 'extended') return { quote: true, reason: 'extended_coverage' };
     if (b.base == null) return { quote: true, reason: 'large_client' };
     if (t.mult == null) return { quote: true, reason: 'exclusive' };
+    if (t.noPaid && pick.paid) return { quote: true, reason: 'perp_no_paid' };
     // a per-band override on the track wins outright
     const over = track && track.prices && track.prices[buyerId];
     const base = Number.isFinite(over) && over > 0 ? over : b.base * trackFactor(track);
@@ -104,12 +108,13 @@
 
   let el = null, current = null, screen = 1;
   const pick = { who: null, persona: null, forWhom: null, coverage: 'standard',
-                 size: null, term: '12m' };
+                 size: null, term: '12m', paid: false };
 
   function resetPick() {
     pick.who = pick.persona = pick.forWhom = pick.size = null;
     pick.coverage = 'standard';
     pick.term = '12m';
+    pick.paid = false;
   }
 
   /** The six bands are reached by different routes; this is the one place that
@@ -189,10 +194,10 @@
     const c = el.querySelector('.lic-crumbs');
     const bits = [];
     if (pick.who) bits.push([1, pick.who === 'business' ? 'Business' : 'Individual']);
-    if (pick.persona) bits.push([2, { youtube: 'Creator', wedding: 'Wedding',
+    if (pick.persona) bits.push([2, { youtube: 'Creator', wedding: 'Ceremony',
       freelance: 'Freelance', supervisor: 'Supervisor' }[pick.persona]]);
     if (pick.forWhom) bits.push([3, { own: 'Own work', client: 'Client work',
-      'wedding-only': 'Wedding only', 'wedding-commercial': 'Wedding + commercial' }[pick.forWhom]]);
+      'wedding-only': 'Families only', 'wedding-commercial': 'Families + commercial' }[pick.forWhom]]);
     if (pick.who === 'business' && pick.size) bits.push([2, BUYERS[buyerId()] ? BUYERS[buyerId()].short : '']);
     if (pick.coverage === 'extended') bits.push([2, 'Extended']);
     c.hidden = !bits.length;
@@ -239,7 +244,7 @@
       <h4 class="lic-q">What best describes you?</h4>
       ${cards([
         { v: 'youtube', t: 'YouTube creator / podcaster', d: 'Video or audio you publish under your own name.' },
-        { v: 'wedding', t: 'Wedding filmmaker', d: 'Films for couples and their families.' },
+        { v: 'wedding', t: 'Ceremony filmmaker', d: 'Weddings, bar and bat mitzvahs, brit milah, birthdays, sweet sixteens.' },
         { v: 'freelance', t: 'Freelance filmmaker', d: 'Work you shoot and edit, for yourself or for others.' },
         { v: 'supervisor', t: 'Music supervisor / agency', d: 'You choose music on someone else’s behalf.' },
       ])}
@@ -259,8 +264,8 @@
     body().innerHTML = `
       <h4 class="lic-q">Who is the work for?</h4>
       ${cards(wedding ? [
-        { v: 'wedding-only', t: 'Wedding clients only', d: 'Films for the couple.' },
-        { v: 'wedding-commercial', t: 'Wedding and commercial clients', d: 'Also venues, planners, brands.' },
+        { v: 'wedding-only', t: 'Families only', d: 'Films for the family or the couple, and nobody else.' },
+        { v: 'wedding-commercial', t: 'Families and commercial clients', d: 'Also venues, planners, caterers, brands.' },
       ] : [
         { v: 'own', t: 'My own channel or work', d: 'The video is yours. No client’s name on it, no client paying for it.' },
         { v: 'client', t: 'Client work', d: 'Someone else commissioned it, or someone else’s brand appears in it.' },
@@ -330,15 +335,25 @@
         : term.id === 'perp' ? 'Never expires. Nothing to renew.'
         : 'Priced per case.'}</p>
 
+      <label class="lic-check1">
+        <input type="checkbox" class="lic-paid"${pick.paid ? ' checked' : ''}>
+        <span>There will be paid promotion behind this project
+          <i>Promoted posts, pre-roll, display, paid influencer.</i></span>
+      </label>
+
       <div class="lic-priceline">
         <span class="lic-price">${p.quote ? 'On request' : CUR + p.amount.toLocaleString()}</span>
         <span class="lic-per">${p.quote ? '' : 'one track, one project · ex VAT'}</span>
       </div>
 
       <ul class="lic-incl">
-        <li>One track, one project, worldwide.</li>
-        <li>Web, social, podcast, internal and industrial video.</li>
-        <li>Paid media up to ${CUR}25,000 per video.</li>
+        <li><b>One project only.</b> This licence covers the project you name at
+          checkout and no other. A second project needs its own licence, even for
+          the same track and the same client.</li>
+        <li>Web, social, podcast, internal and industrial video, worldwide.</li>
+        <li>${term.id === 'perp'
+          ? 'Organic only — no paid promotion behind this project.'
+          : `Paid media up to ${CUR}25,000 behind this project.`}</li>
         <li>${term.id === 'perp'
           ? 'Yours with no end date, and nothing to renew.'
           : 'Renew before it ends to keep using it — renewals cost less.'}</li>
@@ -353,6 +368,8 @@
 
     body().querySelectorAll('.lic-seg').forEach((b) =>
       b.addEventListener('click', () => { pick.term = b.dataset.v; render(); }));
+    const paidBox = body().querySelector('.lic-paid');
+    if (paidBox) paidBox.addEventListener('change', () => { pick.paid = paidBox.checked; render(); });
     body().querySelector('.lic-next').addEventListener('click', () =>
       p.quote ? screenQuote(p.reason) : go(6));
     body().querySelector('.lic-share').addEventListener('click', shareLink);
@@ -423,6 +440,7 @@
       large_client: 'For an end client over 250 people we price per campaign. Tell us the project and you’ll have a price the same day.',
       exclusive: 'Exclusive use — nobody else licences this track while you hold it. Priced per case.',
       big_account: 'Over 500k followers we price per campaign. Tell us where it runs and you’ll have a price the same day.',
+      perp_no_paid: 'A licence with no end date covers organic use only — a site, a social page, a channel. Paid promotion behind the project needs a dated term instead, so pick 12, 24 or 36 months, or tell us about the campaign and we’ll quote it.',
       other: 'Tell us what you’re making and we’ll come back with the right licence.',
     }[reason] || 'Tell us about the project and we’ll come back with a price.';
 
@@ -444,6 +462,13 @@
       <p class="lic-err" hidden></p>
       <div class="lic-acts"><button class="lic-go lic-submit">Get a price</button></div>`;
 
+    if (reason === 'perp_no_paid') {
+      const back = document.createElement('button');
+      back.type = 'button'; back.className = 'lic-textlink';
+      back.textContent = '← Pick a dated term instead';
+      back.addEventListener('click', () => go(5));
+      body().insertBefore(back, body().querySelector('.lic-field'));
+    }
     body().querySelector('.lic-submit').addEventListener('click', () => {
       const proj = body().querySelector('.lic-proj').value.trim();
       const client = body().querySelector('.lic-client').value.trim();
@@ -472,6 +497,7 @@
           slug: t.slug,
           buyer: bid,
           coverage: pick.coverage,
+          paid_media: !!pick.paid,
           duration: pick.term,
           months: term.months,
           project_name: project,

@@ -1003,3 +1003,14 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   font-size:.8rem;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px}
 .lic-go[disabled]{opacity:.45;cursor:default}
 .lic-next{width:100%;margin-top:18px}
+
+/* the paid-media question — a real answer, because "no end date" and an
+   uncapped advertising buy cannot be sold together */
+.lic-check1{display:flex;gap:10px;align-items:flex-start;background:var(--panel);
+  border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:16px;
+  cursor:pointer}
+.lic-check1 input{margin-top:2px;width:15px;height:15px;flex:none;
+  accent-color:var(--amber,var(--coral))}
+.lic-check1 span{color:var(--text);font-size:.84rem;line-height:1.45}
+.lic-check1 i{display:block;color:var(--dim);font-style:normal;font-size:.75rem;margin-top:2px}
+.lic-incl li b{color:var(--text);font-weight:600}

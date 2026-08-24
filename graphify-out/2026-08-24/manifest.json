@@ -66,10 +66,10 @@
     "semantic_hash": "71879bce55a2621f595b391b2978bbaa"
   },
   "js/mutra-bulk.js": {
-    "mtime": 1787533587.759953,
-    "seen": 1787572556.917328,
-    "ast_hash": "2a9f940142dd759e1fa80cbc2342c1b8",
-    "semantic_hash": "2a9f940142dd759e1fa80cbc2342c1b8"
+    "mtime": 1787579281.6386876,
+    "seen": 1787579286.676712,
+    "ast_hash": "0c1f10f127843f527285dc282a3d394b",
+    "semantic_hash": ""
   },
   "js/mutra-data.js": {
     "mtime": 1787348461.3326464,
@@ -84,16 +84,16 @@
     "semantic_hash": "092ca0935da7bb46ee8a6d003ccc2ff7"
   },
   "js/mutra-license.js": {
-    "mtime": 1787579226.9543831,
-    "seen": 1787579232.390971,
-    "ast_hash": "c36a8fb75bf362c558bb7dc35e8793de",
+    "mtime": 1787581052.2903883,
+    "seen": 1787581057.492589,
+    "ast_hash": "b3f6c954422ca4589c4464ef02812a72",
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1787568115.2832255,
-    "seen": 1787572556.917331,
-    "ast_hash": "c415a8b0803f9289a96f807e595da6de",
-    "semantic_hash": "c415a8b0803f9289a96f807e595da6de"
+    "mtime": 1787579281.613505,
+    "seen": 1787579286.676715,
+    "ast_hash": "322ce990b52c9a60567f8d217e8d4f35",
+    "semantic_hash": ""
   },
   "js/mutra-similar.js": {
     "mtime": 1786614925.9971802,
@@ -216,9 +216,9 @@
     "semantic_hash": "58232380e87d19e3f1c269306bd0258f"
   },
   "worker/src/licensing.js": {
-    "mtime": 1787579260.680808,
-    "seen": 1787579266.327497,
-    "ast_hash": "59419323fb60940fb145c2be0982403b",
+    "mtime": 1787580893.3420386,
+    "seen": 1787580898.890196,
+    "ast_hash": "21e5cded4b2736fa95bb29d6566ab6f8",
     "semantic_hash": ""
   },
   "worker/src/mail.js": {
@@ -324,10 +324,10 @@
     "semantic_hash": "9b2cdf692f24f065defdb2d9b09c9d61"
   },
   "mutra.html": {
-    "mtime": 1787568115.3833783,
-    "seen": 1787572556.917362,
-    "ast_hash": "950ecd4536adb8c2a29fc4994beae925",
-    "semantic_hash": "950ecd4536adb8c2a29fc4994beae925"
+    "mtime": 1787579798.4667609,
+    "seen": 1787580898.890211,
+    "ast_hash": "ab1e9d366aa7efcaa0278f58d78def59",
+    "semantic_hash": ""
   },
   "privacy.html": {
     "mtime": 1787341159.460632,
@@ -1242,9 +1242,9 @@
     "semantic_hash": "7f430eddd1ba742bee066e3ea63454e5"
   },
   "worker/src/pricing.js": {
-    "mtime": 1787579260.627698,
-    "seen": 1787579266.3275,
-    "ast_hash": "82e2cba904b2f269fccb38e739fc678b",
+    "mtime": 1787581009.4850464,
+    "seen": 1787581014.704831,
+    "ast_hash": "8682cfcb0a5e3c15f23ab87e9422ac4c",
     "semantic_hash": ""
   }
 }

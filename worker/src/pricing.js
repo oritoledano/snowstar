@@ -43,10 +43,14 @@ export const BUYERS = {
     note: 'The video is yours. No client’s name on it, no client paying for it.',
   },
   'wedding': {
-    label: 'Wedding filmmaker — wedding clients only',
-    short: 'Wedding clients',
+    // Weddings are one occasion among several here — bar and bat mitzvahs,
+    // brit milah, birthdays, sweet sixteens are the same job, the same buyer
+    // and the same budget, and a wedding-only label sends them to the wrong
+    // band or out of the funnel entirely.
+    label: 'Ceremony filmmaker — families only',
+    short: 'Ceremony films',
     base: 250,
-    note: 'Films for the couple and their families.',
+    note: 'Weddings, bar and bat mitzvahs, brit milah, birthdays, sweet sixteens.',
   },
   'individual-client': {
     label: 'Individual — client work',
@@ -106,7 +110,12 @@ export const TERMS = [
   { id: '12m',  label: '12 months',   months: 12,   mult: 1.00, note: '' },
   { id: '24m',  label: '24 months',   months: 24,   mult: 1.65, note: 'save 25%' },
   { id: '36m',  label: '36 months',   months: 36,   mult: 2.15, note: 'save 35%' },
-  { id: 'perp', label: 'No end date', months: null, mult: 4.40, note: 'never expires' },
+  // No end date is ORGANIC ONLY. A licence with no expiry and no cap on paid
+  // media is an unlimited advertising buy sold once, at a price set for a
+  // website and a social page. The two things cannot travel together, so the
+  // rung carries the restriction rather than the price trying to cover it.
+  { id: 'perp', label: 'No end date', months: null, mult: 4.40,
+    note: 'organic only', noPaid: true },
   { id: 'excl', label: 'Exclusive rights', months: null, mult: null, note: 'by arrangement' },
 ];
 
@@ -149,7 +158,7 @@ export function trackFactor(track) {
  *   - the use is broadcast/cinema/radio                        (coverage)
  *   - the buyer wants exclusivity                              (term)
  */
-export function priceFor(track, buyerId, coverageId, termId) {
+export function priceFor(track, buyerId, coverageId, termId, paidMedia) {
   const buyer = BUYERS[buyerId];
   const cov = COVERAGE[coverageId];
   const term = termById(termId);
@@ -159,6 +168,9 @@ export function priceFor(track, buyerId, coverageId, termId) {
   if (cov.quote) return { amount: null, quote: true, reason: 'extended_coverage' };
   if (buyer.base == null) return { amount: null, quote: true, reason: 'large_client' };
   if (term.mult == null) return { amount: null, quote: true, reason: 'exclusive' };
+  // Paid media and a perpetual term are mutually exclusive, and the funnel
+  // should not be able to produce the pair even by a crafted request.
+  if (term.noPaid && paidMedia) return { amount: null, quote: true, reason: 'perp_no_paid' };
 
   // A per-band override on the track wins outright — that is the owner saying
   // "this one is worth more to a business" and it must not be second-guessed

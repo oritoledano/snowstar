@@ -61,10 +61,16 @@ against this licence.`,
   // of a non-exclusive time-limited licence — it is a rental, and the renewal
   // is the business. Saying so here, in the licence itself, is what stops it
   // being a surprise later.
-  'lic.v2':
+  'lic.v3':
 `This licence permits the licensee named above to synchronise the track named above with their own
-content, for the use tier named above and no wider. It is granted to that person or business only,
-is not transferable, and may not be resold, sub-licensed or included in another library.
+content, for the ONE PROJECT named on this licence and for no other. Using the track in a second
+project requires a second licence, even where the track, the licensee and the end client are the
+same. It is granted to that person or business only, is not transferable, and may not be resold,
+sub-licensed or included in another library.
+
+Where the term is shown as "no end date", the permission granted is for organic use only: the
+licensee's own site, social pages and channels. It does not cover paid promotion of the project —
+promoted posts, pre-roll, display or paid influencer placement — which requires a dated term.
 The recording and the composition remain the property of their rights holders.
 
 The licence runs for the term shown above, from the grant date. When the term ends the permission
@@ -109,9 +115,17 @@ function makeRef(id, slug) {
 export async function createRequest(req, env, user) {
   const b = await req.json().catch(() => ({}));
   const slug = clean(b.slug, 120);
-  const tier = clean(b.tier, 30);
   if (!SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
-  if (!TIER_TERMS[tier]) return json({ error: 'bad_tier' }, 400);
+
+  // The funnel sends a BUYER BAND, not one of the seven old use tiers. `tier`
+  // survives as a column because granted licences reference it and the queue
+  // renders it, so it is derived here rather than demanded from the caller —
+  // requiring a field the current client has no concept of is how an endpoint
+  // quietly stops accepting the traffic it was rebuilt for.
+  const rawTier = clean(b.tier, 30);
+  const coverageIn = clean(b.coverage, 20) || 'standard';
+  const tier = TIER_TERMS[rawTier] ? rawTier
+             : coverageIn === 'extended' ? 'tvshow' : 'digital';
 
   const email = clean(user ? user.email : b.email, 254).toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ error: 'email_required' }, 400);
@@ -120,7 +134,7 @@ export async function createRequest(req, env, user) {
   // it is validated here and the AMOUNT is re-derived from it. Nothing about
   // the figure travels from the client.
   const buyer = clean(b.buyer, 30);
-  const coverage = clean(b.coverage, 20) || 'standard';
+  const coverage = coverageIn;
   if (buyer && !isBuyer(buyer)) return json({ error: 'bad_buyer' }, 400);
   if (!isCoverage(coverage)) return json({ error: 'bad_coverage' }, 400);
 
@@ -142,7 +156,7 @@ export async function createRequest(req, env, user) {
   if (buyer) {
     let tr = { lane, prices: {}, fee: null };
     if (ov) { try { const p = JSON.parse(ov.patch); tr = { lane, prices: p.prices || {}, fee: p.fee }; } catch { /* corrupt override */ } }
-    const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '12m');
+    const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '12m', !!b.paid_media);
     listAgorot = pr.quote ? null : pr.amount * 100;
     if (pr.quote) lane = 'quote';
   }
@@ -293,7 +307,7 @@ export async function grantLicence(env, opts) {
     return { ok: false, error: 'controller_not_cleared' };
   }
 
-  await freezeText(env, 'lic.v2');
+  await freezeText(env, 'lic.v3');
   const t = now();
   const starts = Number.isFinite(starts_at) ? starts_at : t;
   // The buyer chooses the term now, so it wins over the tier's old default.
@@ -313,7 +327,7 @@ export async function grantLicence(env, opts) {
          (ref, request_id, user_id, email, slug, tier, terms_id, scope_text,
           licensee_name, licensee_tax_id, amount, currency, grant_reason,
           controller_cleared, granted_by, granted_at, starts_at, expires_at)
-       VALUES ('', ?, ?, ?, ?, ?, 'lic.v2', ?, ?, ?, ?, 'ILS', ?, ?, ?, ?, ?, ?)`
+       VALUES ('', ?, ?, ?, ?, ?, 'lic.v3', ?, ?, ?, ?, 'ILS', ?, ?, ?, ?, ?, ?)`
     ).bind(request_id || null, user_id || null, String(email || '').toLowerCase(),
            slug, tier, clean(scope_text, 1000), clean(licensee_name, 200),
            clean(licensee_tax_id, 40), Math.round(amount || 0), reason,
