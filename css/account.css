@@ -196,7 +196,9 @@
    later. Keeping them visually separate is what stops the free tier reading
    as a trial of the paid one. */
 .auth-card.has-sell{display:grid;grid-template-columns:1fr 300px;gap:0;
-  max-width:820px;overflow:hidden;padding:0}
+  width:min(800px,100%);overflow:hidden;padding:0}
+.auth-card.has-sell .auth-body{grid-column:1;grid-row:1}
+.auth-card.has-sell .auth-sell{grid-column:2;grid-row:1}
 .auth-card.has-sell .auth-body{padding:34px 30px 26px}
 .auth-sell{background:linear-gradient(165deg,
     color-mix(in srgb,var(--amber,#e8b98a) 13%,transparent),
@@ -220,9 +222,10 @@
 /* Below 760 the two columns would each be too narrow to read, so the panel
    goes above the form rather than beside it — the pitch still comes first. */
 @media (max-width:760px){
-  .auth-card.has-sell{grid-template-columns:1fr;max-width:440px}
-  .auth-card.has-sell .auth-body{padding:22px 24px 24px;order:2}
-  .auth-sell{order:1;border-left:0;border-bottom:1px solid var(--line);
-    padding:24px 24px 20px;gap:16px}
+  .auth-card.has-sell{grid-template-columns:1fr;width:min(440px,100%)}
+  /* the pitch comes first on a phone, the form under it */
+  .auth-card.has-sell .auth-body{padding:22px 24px 24px;grid-column:1;grid-row:2}
+  .auth-card.has-sell .auth-sell{grid-column:1;grid-row:1;border-left:0;
+    border-bottom:1px solid var(--line);padding:22px 24px 18px;gap:16px}
   .auth-sell-bot{display:none}   /* keep the fold shallow on a phone */
 }
