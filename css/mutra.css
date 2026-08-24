@@ -794,3 +794,96 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .te-flat>span{font-size:.82rem;color:var(--muted)}
 .te-pgrid.muted{opacity:.45}
 @media (max-width:560px){.lic-card{padding:22px 18px 18px}.lic-go{min-width:0}}
+
+/* ═══════════ Bulk catalogue editing ═══════════
+   Owner-only, and only inside curate mode. The bar sits above the sticky
+   player rather than replacing it, because you go on auditioning tracks while
+   you tag them — that is the whole point of doing this on the catalogue page
+   instead of in a spreadsheet. */
+.trk-pick{appearance:none;width:15px;height:15px;flex:none;margin:0;border-radius:4px;
+  border:1.5px solid var(--line-2,var(--line));background:transparent;cursor:pointer;
+  position:relative;transition:border-color .15s,background .15s}
+.trk-pick:hover{border-color:var(--amber,var(--coral))}
+.trk-pick:checked{background:var(--amber,var(--coral));border-color:var(--amber,var(--coral))}
+.trk-pick:checked::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;
+  border:solid var(--on-accent,#0d0a12);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.trk-pick:focus-visible{outline:2px solid var(--amber,var(--coral));outline-offset:2px}
+.trk.trk-picked{background:color-mix(in srgb,var(--amber,var(--coral)) 7%,transparent)}
+
+/* sits above the player bar; --pl-h is the player's own height */
+.bulk-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--pl-h,86px) + 14px);
+  z-index:70;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line-2,var(--line));border-radius:99px;
+  padding:9px 10px 9px 20px;box-shadow:0 12px 40px rgba(0,0,0,.45);max-width:calc(100vw - 24px)}
+.bulk-count{font-size:.84rem;color:var(--muted);white-space:nowrap}
+.bulk-count b{color:var(--text);font-family:var(--font-display);font-size:1rem}
+.bulk-off{color:var(--amber,var(--coral));font-size:.78rem}
+.bulk-acts{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.bulk-acts button{background:none;border:1px solid var(--line-2,var(--line));border-radius:99px;
+  color:var(--muted);font:inherit;font-size:.8rem;padding:7px 14px;cursor:pointer;white-space:nowrap}
+.bulk-acts button:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.bulk-primary{background:var(--grad) !important;border:0 !important;
+  color:var(--on-accent,#0d0a12) !important;font-weight:600}
+.bulk-undo{border-color:var(--amber,var(--coral)) !important;color:var(--amber,var(--coral)) !important}
+
+.bulk-modal{position:fixed;inset:0;z-index:90;background:rgba(3,5,12,.72);
+  backdrop-filter:blur(7px);display:flex;align-items:flex-start;justify-content:center;
+  padding:5vh 16px;overflow-y:auto}
+.bulk-card{position:relative;width:min(660px,100%);background:var(--bg);
+  border:1px solid var(--line-2,var(--line));border-radius:20px;padding:26px 26px 20px}
+.bulk-close{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--dim);
+  font-size:1.6rem;line-height:1;cursor:pointer}
+.bulk-close:hover{color:var(--text)}
+.bulk-card h3{font-family:var(--font-display);font-size:1.25rem;margin:0 0 4px}
+.bulk-lede{color:var(--muted);font-size:.84rem;margin:0 0 18px}
+.bulk-sec{border-top:1px solid var(--line);padding:16px 0}
+.bulk-sec h4{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+  margin:0 0 11px;font-weight:500}
+.bulk-tagrow{display:grid;grid-template-columns:96px 130px 1fr;gap:8px;align-items:center;
+  margin-bottom:8px}
+.bulk-tagrow .bulk-tagval2{grid-column:3}
+.bulk-tagname{color:var(--muted);font-size:.82rem}
+.bulk-prow{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.bulk-inline{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.82rem}
+.bulk-card select,.bulk-card input[type=text],.bulk-card input[type=number]{
+  background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:9px 11px;
+  color:var(--text);font:inherit;font-size:.85rem;outline:0;min-width:0}
+.bulk-card input[type=number]{width:104px}
+.bulk-card select:focus,.bulk-card input:focus{border-color:var(--amber,var(--coral))}
+.bulk-card input:disabled{opacity:.4;cursor:not-allowed}
+.bulk-card input[type=text]{flex:1}
+/* replace is the one that destroys work — it should look different before it
+   is pressed, not explain itself afterwards */
+.bulk-tagrow.is-replace .bulk-tagop,.bulk-tagrow.is-replace .bulk-tagval{
+  border-color:var(--amber,var(--coral))}
+.bulk-warn{color:var(--amber,var(--coral));font-size:.78rem;line-height:1.55;margin:10px 0 0}
+
+.bulk-preview{border-top:1px solid var(--line);padding:15px 0;max-height:44vh;overflow-y:auto}
+.bulk-pvhead{font-size:.9rem;color:var(--text);margin-bottom:9px}
+.bulk-pvhead b{font-family:var(--font-display);font-size:1.1rem}
+.bulk-pvfields{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.bulk-pvfields span{background:var(--panel);border:1px solid var(--line);border-radius:99px;
+  padding:3px 10px;font-size:.72rem;color:var(--muted)}
+.bulk-pvfields b{color:var(--text)}
+.bulk-pvlist{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.bulk-pvlist li{display:flex;gap:9px;flex-wrap:wrap;align-items:baseline;font-size:.78rem;
+  padding-bottom:7px;border-bottom:1px solid var(--line)}
+.bulk-pvslug{color:var(--text);font-family:var(--font-display);min-width:140px}
+.bulk-pvch{color:var(--dim)}
+.bulk-pvch i{font-style:normal;text-decoration:line-through;opacity:.65}
+.bulk-pvch b{color:var(--amber,var(--coral));font-weight:500}
+.bulk-none,.bulk-more{color:var(--muted);font-size:.82rem;margin:0}
+.bulk-err{color:#ff8f8f;font-size:.82rem;margin:10px 0 0}
+.bulk-foot{display:flex;gap:9px;justify-content:flex-end;border-top:1px solid var(--line);
+  padding-top:15px;margin-top:4px}
+.bulk-foot button{background:none;border:1px solid var(--line-2,var(--line));border-radius:99px;
+  color:var(--muted);font:inherit;font-size:.85rem;padding:10px 20px;cursor:pointer}
+.bulk-foot button:hover{color:var(--text)}
+.bulk-apply{background:var(--amber,var(--coral)) !important;border:0 !important;
+  color:var(--on-accent,#0d0a12) !important;font-weight:600}
+@media (max-width:600px){
+  .bulk-bar{padding:9px 12px;border-radius:16px;gap:10px}
+  .bulk-tagrow{grid-template-columns:1fr;gap:6px}
+  .bulk-tagrow .bulk-tagval2{grid-column:1}
+  .bulk-card{padding:22px 18px 16px}
+}

@@ -623,6 +623,7 @@
         hlOf(track.slug)))
     });
     sentinel.hidden = shown >= list.length;
+    if (curateMode && window.mutraBulkSync) window.mutraBulkSync();
     // keep the live "playing" row reference valid after a re-render
     if (current) {
       const live = [...tracksEl.querySelectorAll('.trk')].find((_, idx) => list[idx] === current.track);
@@ -980,6 +981,26 @@
     render();
   }).catch(() => {});
 
+  /* What the bulk editor needs, and nothing more. Kept to four things on
+     purpose: a wider surface here turns into two modules that each half-own
+     the catalogue state. */
+  window.mutraCatalog = {
+    filtered: () => list,
+    all: () => MUTRA.tracks,
+    /* After a bulk write the local copy is stale in a way a re-render cannot
+       fix — the patches changed server-side. Refetch, re-merge, redraw. */
+    reload: async () => {
+      try {
+        const r = await fetch('/api/tracks', { credentials: 'same-origin' });
+        const d = await r.json();
+        overrides = d.overrides || {};
+        applyOverrides();
+        refreshVocab(); syncChips();
+        render();
+      } catch { render(); }
+    },
+  };
+
   async function saveTrack(slug, patch) {
     overrides[slug] = patch;
     try {
@@ -1060,6 +1081,11 @@
       render();
     });
     wrap.querySelector('.trk-cur-edit').addEventListener('click', e => { e.stopPropagation(); openEditor(track, row); });
+    // the bulk checkbox leads the group — it is the control you reach for most
+    // once you are working through the catalogue rather than fixing one track
+    if (window.mutraBulkRowControl) {
+      wrap.insertBefore(window.mutraBulkRowControl(row, track), wrap.firstChild);
+    }
     row.querySelector('.trk-right').insertAdjacentElement('afterbegin', wrap);
   }
 
@@ -1472,10 +1498,11 @@
       btn.classList.toggle('on', curateMode);
       if (!curateMode) state.hiddenOnly = false;   // don't strand them in an empty view
       syncHiddenToggle();
+      if (window.mutraBulkSetMode) window.mutraBulkSetMode(curateMode);
       // the pick ORDER arrows only mean anything in the picks sort, but the
       // rest of the editor works in any order, so don't hijack the sort
       render();
-      toast(curateMode ? 'Editing — ◇ pins a staff pick, ✎ edits a track' : 'Editing off');
+      toast(curateMode ? 'Editing — tick rows to edit in bulk, ✎ edits one' : 'Editing off');
     });
     favToggle.insertAdjacentElement('afterend', btn);
     syncHiddenToggle();
