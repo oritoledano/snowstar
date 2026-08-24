@@ -428,8 +428,13 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   background:var(--player-bg);backdrop-filter:blur(20px);border-top:1px solid var(--line-2);
   transform:translateY(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .player.up{transform:none}
+/* THREE columns, three children — now-playing, seek, actions. The volume
+   control used to sit here as a fourth child, which grid placed on an implicit
+   second row and took the License button down with it. It lives in the header
+   now; this stays three so that cannot recur. */
 .player-in{max-width:var(--maxw);margin:0 auto;height:100%;padding:0 clamp(16px,4vw,40px);
-  display:grid;grid-template-columns:minmax(150px,1fr) 2.4fr minmax(120px,1fr);align-items:center;gap:20px}
+  display:grid;grid-template-columns:minmax(150px,1fr) 2.4fr minmax(120px,1fr);
+  grid-template-rows:1fr;align-items:center;gap:20px}
 .pl-now{display:flex;align-items:center;gap:14px;min-width:0}
 .pl-play{width:46px;height:46px;border-radius:50%;background:var(--grad);color:var(--on-accent);border:0;cursor:pointer;display:grid;place-items:center;flex:none;transition:transform .15s}
 .pl-play:hover{transform:scale(1.06)}
@@ -906,7 +911,7 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 /* ═══════════ Player volume ═══════════
    Between the seek bar and the License button, so the two things you touch
    while listening sit together and the buying action stays on its own. */
-.pl-vol{display:flex;align-items:center;gap:8px;flex:none}
+.pl-vol{display:flex;align-items:center;gap:7px;flex:none;margin-right:4px}
 .pl-mute{background:none;border:0;color:var(--muted);cursor:pointer;padding:4px;
   display:flex;align-items:center;line-height:0}
 .pl-mute:hover{color:var(--text)}
@@ -916,9 +921,13 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .pl-volfill{height:100%;border-radius:99px;background:var(--muted);transition:width .08s linear}
 .pl-volslide:hover .pl-volfill{background:var(--amber,var(--coral))}
 .pl-volslide:focus-visible{outline:2px solid var(--amber,var(--coral));outline-offset:4px;border-radius:4px}
-/* the volume is the first thing to go when the bar gets tight — the seek bar
-   and the License button both matter more on a phone */
-@media (max-width:860px){.pl-vol{display:none}}
+/* first to go when the header gets tight — on a phone the burger, the logo and
+   the account control all matter more than a volume slider */
+@media (max-width:720px){.pl-vol{display:none}}
+/* in the header the track is short and quiet until you reach for it */
+.mnav-right .pl-volslide{width:56px;transition:width .18s}
+.mnav-right .pl-vol:hover .pl-volslide,
+.mnav-right .pl-volslide:focus-visible{width:78px}
 
 /* proportional price suggestions — the point is that the OTHER tiers are
    visible and editable, not that they move silently */
@@ -1082,10 +1091,13 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
    A cover tells you nothing about tempo, tags, lyrics or price. Playing one
    now drops the actual catalogue row in beneath the strip, tinted and joined
    to it so it reads as belonging to that cover rather than as a stray row. */
-.spot-expand{margin:0 0 6px;padding:2px 0 8px;
+/* One frame. The row inside carries its own 1px border and 14px radius, so a
+   border on the wrapper too drew a second line a few pixels outside the first.
+   The wrapper keeps the tint and does the joining; the row keeps the outline. */
+.spot-expand{margin:0 0 6px;padding:0;
   background:color-mix(in srgb,var(--amber,var(--coral)) 8%,transparent);
-  border:1px solid color-mix(in srgb,var(--amber,var(--coral)) 26%,transparent);
-  border-radius:14px;animation:spotIn .22s ease-out}
+  border:0;border-radius:14px;animation:spotIn .22s ease-out}
+.spot-expand .trk{border-color:color-mix(in srgb,var(--amber,var(--coral)) 30%,transparent)}
 @keyframes spotIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
 .spot-expand .trk{background:transparent}
 .spot-expand .trk:hover{background:color-mix(in srgb,var(--amber,var(--coral)) 6%,transparent)}
