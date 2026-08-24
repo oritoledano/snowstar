@@ -74,6 +74,10 @@
     cb.checked = sel.has(track.slug);
     cb.setAttribute('aria-label', 'Select ' + track.title);
     if (cb.checked) row.classList.add('trk-picked');
+    // The row is draggable in curate mode (pick reordering), so a pointerdown
+    // that reaches it starts a drag instead of ticking the box.
+    ['pointerdown', 'mousedown', 'dragstart'].forEach((ev) =>
+      cb.addEventListener(ev, (e) => e.stopPropagation()));
     cb.addEventListener('click', (e) => {
       e.stopPropagation();
       if (e.shiftKey && anchor && anchor !== track.slug && pickRange(track.slug)) {
@@ -180,7 +184,9 @@
                 <option value="rename">Rename</option>
                 <option value="replace">Replace all</option>
               </select>
-              <input class="bulk-tagval" type="text" placeholder="comma, separated" disabled>
+              <input class="bulk-tagval" type="text" placeholder="comma, separated"
+                     list="bulkvocab-${f}" autocomplete="off" disabled>
+              <datalist id="bulkvocab-${f}"></datalist>
               <input class="bulk-tagval2" type="text" placeholder="new name" hidden>
             </div>`).join('')}
           <p class="bulk-warn" hidden>Replace all wipes the existing tags on every selected
@@ -234,6 +240,17 @@
         </div>
       </div>`;
     document.body.appendChild(panel);
+
+    // Fill the typeaheads from what the catalogue already uses. Free text still
+    // works — the point is that "Cinemtaic" should require ignoring a list of
+    // real tags rather than just being typed.
+    TAG_FIELDS.forEach(([f]) => {
+      const seen = new Set();
+      api().all().forEach((t) => (t[f] || []).forEach((v) => v && seen.add(v)));
+      const dl = panel.querySelector('#bulkvocab-' + f);
+      if (dl) dl.innerHTML = [...seen].sort((a, b) => a.localeCompare(b))
+        .map((v) => `<option value="${esc(v)}">`).join('');
+    });
 
     const close = () => { panel.remove(); panel = null; };
     panel.querySelector('.bulk-close').addEventListener('click', close);
@@ -297,7 +314,7 @@
         const r = await fetch('/api/tracks/bulk', {
           method: 'POST', credentials: 'same-origin',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ slugs, ops, base, dryRun: dry }),
+          body: JSON.stringify({ slugs, ops, base, dryRun: dry, note: describe(ops) }),
         });
         const d = await r.json();
         if (!r.ok || !d.ok) throw new Error(d.error || 'failed');
@@ -347,6 +364,26 @@
       panel.querySelector('.bulk-apply').hidden = false;
       panel.querySelector('.bulk-apply').textContent = `Apply to ${changing.length}`;
       panel.querySelector('.bulk-dry').hidden = true;
+    }
+
+    /** Plain English, stored with the batch. "b1787…-421" tells you nothing six
+     *  weeks later; "add cinematic to genres · prices +20%" tells you everything. */
+    function describe(ops) {
+      const bits = [];
+      if (ops.tags) for (const [f, op] of Object.entries(ops.tags)) {
+        if (op.add) bits.push(`add ${op.add.join('/')} to ${f}`);
+        if (op.remove) bits.push(`remove ${op.remove.join('/')} from ${f}`);
+        if (op.replace) bits.push(`replace ${f} with ${op.replace.join('/')}`);
+        if (op.rename) bits.push(`rename ${f} ${op.rename.from}→${op.rename.to}`);
+      }
+      if (ops.prices) {
+        if (ops.prices.set) bits.push('set ' + Object.entries(ops.prices.set)
+          .map(([k, v]) => `${k} ${v}`).join(', '));
+        if (ops.prices.scalePct) bits.push(`prices ${ops.prices.scalePct > 0 ? '+' : ''}${ops.prices.scalePct}%`);
+      }
+      if (ops.set) bits.push(Object.entries(ops.set)
+        .map(([k, v]) => `${k}=${v === null ? 'clear' : v}`).join(', '));
+      return bits.join(' · ').slice(0, 200);
     }
 
     function fmt(v) {
@@ -422,6 +459,14 @@
   /** Curate mode off: the bar goes, the selection goes with it. Leaving a
    *  selection alive behind a closed editor is how you come back an hour later
    *  and edit 40 tracks you have forgotten you chose. */
+  // Escape is the universal "I did not mean that" — with 300 rows ticked it is
+  // the fastest way back, and it costs nothing to honour.
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || !sel.size) return;
+    if (panel) return;                       // the panel owns Escape while open
+    clearAll();
+  });
+
   window.mutraBulkSetMode = function (on) {
     build();
     if (!on) { sel.clear(); anchor = null; if (panel) { panel.remove(); panel = null; } }

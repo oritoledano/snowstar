@@ -29,7 +29,10 @@ const SLUG_RE = /^[a-z0-9][a-z0-9:-]{0,120}$/;
 export const TIER_TERMS = {
   digital:   { label: 'Digital — web & social',    months: null },
   corporate: { label: 'Business & corporate',      months: null },
-  paid:      { label: 'Digital — paid campaign',   months: 12 },
+  // Six months everywhere now: the term is chosen at checkout and carried on
+  // the request. These are only the fallback for rows written before durations
+  // existed, and 'paid' moved to a six-month base price with the price ladder.
+  paid:      { label: 'Digital — paid campaign',   months: 6 },
   tvshow:    { label: 'TV show / series',          months: null },
   film:      { label: 'Film',                      months: null },
   radio:     { label: 'Radio',                     months: 6 },
@@ -141,8 +144,12 @@ export async function createRequest(req, env, user) {
          clean(b.licensee_name, 200), clean(b.licensee_tax_id, 40),
          clean(b.use_where, 500), clean(b.use_territory, 120),
          clean(b.use_duration, 120), clean(b.note, 1000),
-         // the chosen term, bounded — it decides expires_at at grant time
-         [6, 12, 24, 36].includes(Number(b.months)) ? Number(b.months) : 6,
+         // The chosen term, bounded — it decides expires_at at grant time.
+         // 'perp' is the one legitimate way to arrive with no months: it means
+         // no end date, so it must pass through as NULL rather than be
+         // defaulted to six months and quietly expire on a perpetual sale.
+         clean(b.duration, 8) === 'perp' ? null
+           : [6, 12, 24, 36].includes(Number(b.months)) ? Number(b.months) : 6,
          clean(b.duration, 8) || '6m', t).run();
 
   const id = r.meta.last_row_id;
@@ -277,8 +284,11 @@ export async function grantLicence(env, opts) {
   const starts = Number.isFinite(starts_at) ? starts_at : t;
   // The buyer chooses the term now, so it wins over the tier's old default.
   // Falling back to the tier only covers rows created before durations existed.
+  // A request that named a duration is authoritative, INCLUDING when it named
+  // 'perp' and therefore has no months. Falling through to the tier default
+  // there would turn a perpetual sale into a term one.
   const months = Number.isFinite(opts.months) ? opts.months
-               : (reqRow && reqRow.months) ? reqRow.months
+               : (reqRow && reqRow.duration_id) ? (reqRow.months || null)
                : TIER_TERMS[tier].months;
   const expires = months ? starts + Math.round(months * 30.44 * 86400) : null;
 

@@ -61,7 +61,11 @@
       price: 350 },
     { id: 'paid', label: 'Digital — paid campaign',
       blurb: 'The above plus paid media online — promoted social, pre-roll, display, paid influencer.',
-      price: 450 },
+      // 450 was a TWELVE-month price, from when this tier alone carried a term.
+      // Every tier is quoted per six months now, so the base has to be the
+      // six-month figure or the ladder multiplies a year by 1.8 and sells two.
+      // 249 x 1.8 = 449, so the price people actually buy is unchanged.
+      price: 249 },
     { id: 'tvshow', label: 'TV show / series',
       blurb: 'Per episode — Israeli broadcast plus catch-up. A whole series or worldwide release is quoted.',
       price: 900 },
@@ -98,11 +102,28 @@
      2x, and the owner's discounts then apply per further year: the second year
      at 75% off (+0.4) and the third at 50% off (+0.8). Change MULT alone to
      reprice; nothing else reads these numbers.  */
+  /* The ladder is solved for a CONSTANT break-even, not for round discounts.
+     At 1.8 / 3.0 / 3.9 a buyer should prepay only if they are about 80% sure,
+     per six-month period, that they will still be using the track — the same
+     answer at every rung, which is what makes the curve read as principled
+     rather than picked out of the air.
+
+     It also has to stay under the straight line. Because the term is hard,
+     36 months IS six consecutive six-month licences, so no rung may cost more
+     than 6.0x; these sit 10 / 25 / 35% below it. The first attempt at this
+     (2nd year 75% off, 3rd 50%) put the break-even at 55%, which means anyone
+     even coin-flip confident prepays for two years — and the renewal business
+     that the hard term exists to create never happens.
+
+     'Perpetual' is published on purpose. A hard term with no visible ceiling
+     reads as a trap; with one, it reads as a choice. It is still NON-exclusive
+     — exclusive is a different thing and stays a conversation. */
   const DURATIONS = [
-    { id: '6m',  label: '6 months',  months: 6,  mult: 1.0,  note: '' },
-    { id: '12m', label: '12 months', months: 12, mult: 1.6,  note: '' },
-    { id: '24m', label: '24 months', months: 24, mult: 2.0,  note: '2nd year 75% off' },
-    { id: '36m', label: '36 months', months: 36, mult: 2.8,  note: '3rd year 50% off' },
+    { id: '6m',  label: '6 months',  months: 6,   mult: 1.0,  note: '' },
+    { id: '12m', label: '12 months', months: 12,  mult: 1.8,  note: 'save 10%' },
+    { id: '24m', label: '24 months', months: 24,  mult: 3.0,  note: 'save 25%' },
+    { id: '36m', label: '36 months', months: 36,  mult: 3.9,  note: 'save 35%' },
+    { id: 'perp', label: 'No end date', months: null, mult: 8.0, note: 'never expires' },
     { id: 'excl', label: 'Exclusive rights', months: null, mult: null, note: 'by arrangement' },
   ];
   const durById = (id) => DURATIONS.find((d) => d.id === id) || DURATIONS[0];
@@ -116,11 +137,14 @@
     if (Number.isFinite(track.fee)) return track.fee;   // one flat fee for everything
     return tier.price;
   };
-  /** Tier sets what you may do; duration sets how long. Price is the product. */
+  /** Tier sets what you may do; duration sets how long. Price is the product,
+   *  landed on a real price point: ILS 149 is a deliberate figure and ILS 268.20
+   *  is not. Nearest 10, minus 1 — the same shape as the base prices. */
   const priceFor = (track, tier, durId) => {
     const d = durById(durId || '6m');
     if (d.mult == null) return null;                    // exclusive is quoted
-    return Math.round(basePrice(track, tier) * d.mult);
+    const raw = basePrice(track, tier) * d.mult;
+    return d.mult === 1 ? Math.round(raw) : Math.round(raw / 10) * 10 - 1;
   };
 
   /** Send the request, then show the reference and how to pay it. */
@@ -318,7 +342,9 @@
 
     el.querySelector('.lic-blurb').textContent = dur.mult == null
       ? 'Exclusive use of this track \u2014 nobody else licences it while you hold it. Priced per case.'
-      : tier.blurb;
+      : dur.id === 'perp'
+        ? tier.blurb + ' No end date, so nothing to renew \u2014 still non-exclusive.'
+        : tier.blurb;
     // The first bullet is a promise, so it has to match the lane. On a
     // quote-lane track we do not yet know we can clear it — saying "cleared"
     // next to "someone else has a say" is the kind of contradiction a licensee
@@ -331,7 +357,8 @@
       // including in work already published. Say it here rather than let
       // someone find it in the terms after they have paid.
       dur.mult == null ? 'Nobody else licences the track while you hold it'
-                       : 'Renew before it ends to keep using it \u2014 renewals are cheaper',
+        : dur.id === 'perp' ? 'Yours with no end date, and nothing to renew'
+        : 'Renew before it ends to keep using it \u2014 renewals cost less',
       broadcast ? 'Broadcast royalties stay with the broadcaster'
                 : 'Your channels whitelisted \u2014 no Content ID claims',
       'Clean, un-watermarked files',
