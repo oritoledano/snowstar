@@ -275,7 +275,8 @@
     };
     audio.play().catch(() => {});
     plTitle.textContent = track.title;
-    plArtist.textContent = track.artist + (track.bpm ? ' · ' + track.bpm + ' BPM' : '');
+    plArtist.innerHTML = artistLinks(track.artist)
+      + (track.bpm ? '<span class="pl-bpm"> · ' + track.bpm + ' BPM</span>' : '');
     plTot.textContent = fmt(track.duration);
     plCur.textContent = '0:00';
     setProgressUI(0);
@@ -603,7 +604,7 @@
         <img class="trk-cover" src="${track.cover}" alt="" loading="lazy">
         <div class="trk-id">
           <div class="trk-title" role="button" tabindex="0" title="Credits"><span class="tt-in">${track.title}</span></div>
-          <div class="trk-artist">${track.artist}</div>
+          <div class="trk-artist">${artistLinks(track.artist)}</div>
         </div>
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
         <div class="trk-tags">${tags}</div>
@@ -1082,6 +1083,17 @@
   const PICKS_KEY = 'mutra.picks';
   /** For a value going into an HTML attribute. A credit name is owner-typed,
    *  but an unescaped quote would still break the input it lands in. */
+  /** "KAYMA, Omri Smadar" is two people, and both should be clickable. Split
+   *  on commas rather than linking the whole field, or one name's page opens
+   *  for a click on the other. */
+  function artistLinks(raw) {
+    const names = String(raw || '').split(',').map((x) => x.trim()).filter(Boolean);
+    if (!names.length) return '';
+    return names.map((n) =>
+      `<button type="button" class="artist-link" data-artist="${escAttr(n)}">${escAttr(n)}</button>`)
+      .join('<span class="artist-sep">, </span>');
+  }
+
   const escAttr = (v) => String(v == null ? '' : v)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
