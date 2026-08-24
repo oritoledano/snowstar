@@ -84,9 +84,9 @@
     "semantic_hash": "092ca0935da7bb46ee8a6d003ccc2ff7"
   },
   "js/mutra-license.js": {
-    "mtime": 1787581052.2903883,
-    "seen": 1787581057.492589,
-    "ast_hash": "b3f6c954422ca4589c4464ef02812a72",
+    "mtime": 1787583737.7249258,
+    "seen": 1787583743.792945,
+    "ast_hash": "aa32fc67f259d8cdbf670ffbf4c7d44c",
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
@@ -1242,9 +1242,9 @@
     "semantic_hash": "7f430eddd1ba742bee066e3ea63454e5"
   },
   "worker/src/pricing.js": {
-    "mtime": 1787581009.4850464,
-    "seen": 1787581014.704831,
-    "ast_hash": "8682cfcb0a5e3c15f23ab87e9422ac4c",
+    "mtime": 1787583737.723945,
+    "seen": 1787583743.792979,
+    "ast_hash": "e80376467716872e5dbdee93a1e7623e",
     "semantic_hash": ""
   },
   "js/mutra-artist-panel.js": {

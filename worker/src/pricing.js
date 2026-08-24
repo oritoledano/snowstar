@@ -121,8 +121,18 @@ export const TERMS = [
 
 export const termById = (id) => TERMS.find((t) => t.id === id) || TERMS[1];
 
-/** Nearest ten minus one. ILS 149 was a chosen figure; ILS 297.30 is not. */
-export const pricePoint = (n) => Math.max(0, Math.round(n / 10) * 10 - 1);
+/**
+ * Nearest ten minus one. ILS 149 was a chosen figure; ILS 297.30 is not.
+ *
+ * Below ILS 20 the rule is switched off and the figure passes through to the
+ * agora. Rounding to "nearest ten minus one" turns anything under ILS 5 into
+ * ILS 0 — round(0.1/10)*10-1 is -1, clamped to zero — so a deliberately cheap
+ * track, or a test charge, would have been silently given away for nothing.
+ * The shape only matters at prices a buyer reads as a price.
+ */
+export const pricePoint = (n) =>
+  n < 20 ? Math.max(0, Math.round(n * 100) / 100)
+         : Math.max(0, Math.round(n / 10) * 10 - 1);
 
 /* The old per-tier defaults, kept ONLY to read forward the price overrides
    that already exist on individual tracks. A track edited to ILS 199 when the

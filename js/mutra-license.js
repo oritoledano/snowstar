@@ -59,7 +59,10 @@
     { id: 'excl', label: 'Exclusive',   months: null, mult: null, note: 'by arrangement' },
   ];
   const termById = (id) => TERMS.find((t) => t.id === id) || TERMS[1];
-  const pricePoint = (n) => Math.max(0, Math.round(n / 10) * 10 - 1);
+  // Below ILS 20 the rounding is off: round(n/10)*10-1 turns anything under
+  // ILS 5 into zero, which would give a cheap track away for nothing.
+  const pricePoint = (n) => n < 20 ? Math.max(0, Math.round(n * 100) / 100)
+                                   : Math.max(0, Math.round(n / 10) * 10 - 1);
   const LEGACY_DIGITAL = 149;
 
   /* Bit is the only alternative to the card, because it is the only one we can

@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1787579281.613505,
-    "seen": 1787579286.676715,
-    "ast_hash": "322ce990b52c9a60567f8d217e8d4f35",
+    "mtime": 1787581544.008051,
+    "seen": 1787581549.138734,
+    "ast_hash": "45621f79497aa93aedf8db2af9774c86",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -324,9 +324,9 @@
     "semantic_hash": "9b2cdf692f24f065defdb2d9b09c9d61"
   },
   "mutra.html": {
-    "mtime": 1787581078.629556,
-    "seen": 1787581084.495414,
-    "ast_hash": "a700d4135a8b513960b91039b1f3de54",
+    "mtime": 1787581544.0706143,
+    "seen": 1787581549.138777,
+    "ast_hash": "8baaf40aa32e43f55bc5b40721bd0ef6",
     "semantic_hash": ""
   },
   "privacy.html": {
