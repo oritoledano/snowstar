@@ -27,7 +27,10 @@ const LIST_FIELDS = ['genres', 'moods', 'instruments', 'packages'];
 
 const clean = (v, max = 120) => String(v == null ? '' : v).trim().slice(0, max);
 
-function sanitize(raw) {
+// Exported so bulk.js runs edits through EXACTLY the same validation as a
+// single-track save. Two sanitizers would drift, and the one that drifted would
+// be the one nobody tested.
+export function sanitize(raw) {
   const p = {};
   for (const f of STRING_FIELDS) {
     if (raw[f] === undefined) continue;

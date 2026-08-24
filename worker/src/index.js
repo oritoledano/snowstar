@@ -23,6 +23,7 @@ import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport } from './site.js';
 import { listOverrides, saveOverride, uploadCover } from './catalog.js';
+import { bulkEdit, bulkUndo, listBatches } from './bulk.js';
 import { listArtists, ensureArtists, saveArtist } from './artistreg.js';
 import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
@@ -201,6 +202,10 @@ async function handle(req, env, ctx) {
   if (path === '/avatar/clear' && method === 'POST') return clearAvatar(req, env, await currentUser(req, env));
   if (path === '/tracks' && method === 'GET') return listOverrides(env);
   if (path === '/tracks' && method === 'POST') return saveOverride(req, env, await currentUser(req, env));
+  // Bulk: dry-run by default, snapshotted so every batch is undoable.
+  if (path === '/tracks/bulk' && method === 'POST') return bulkEdit(req, env, await currentUser(req, env));
+  if (path === '/tracks/bulk/undo' && method === 'POST') return bulkUndo(req, env, await currentUser(req, env));
+  if (path === '/tracks/bulk/batches' && method === 'GET') return listBatches(env, await currentUser(req, env));
   if (path === '/tracks/cover' && method === 'PUT') return uploadCover(req, env, await currentUser(req, env), url);
   if (path === '/texts' && method === 'GET') return listTexts(env);
   if (path === '/texts' && method === 'POST') return saveText(req, env, await currentUser(req, env));
