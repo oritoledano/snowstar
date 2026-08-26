@@ -127,11 +127,21 @@
       const n = Number(bpmExact[1]);
       want.bpm = [n - 8, n + 8];
     } else {
-      for (const [re, range] of TEMPO) if (re.test(stripped)) { want.bpm = range; break; }
+      for (const [re, range] of TEMPO) {
+        const m = stripped.match(re);
+        if (m) { want.bpm = range; want._tempoWord = m[0]; break; }
+      }
     }
 
+    /* Word boundaries, not substrings. "ad" lives inside "sad", so a
+       substring test turned "sad piano" into an advert brief and returned
+       Happy and Uplifting — the exact opposite of what was asked for. */
+    const hasWord = (w) => new RegExp('\\b' + w.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + '\\b')
+      .test(stripped);
+    const usedWords = [];
     for (const [word, cfg] of Object.entries(OCCASIONS)) {
-      if (!stripped.includes(word)) continue;
+      if (!hasWord(word)) continue;
+      usedWords.push(...word.split(/\s+/));
       (cfg.moods || []).forEach((m) => want.moods.push(m));
       (cfg.genres || []).forEach((g) => want.genres.push(g));
       if (cfg.vocal && !want.vocal) want.vocal = cfg.vocal;
@@ -145,8 +155,10 @@
         if (stripped.includes(norm(term))) want[field].push(term);
       }
       for (const [say, mean] of Object.entries(SYNONYMS[field])) {
-        if (new RegExp('\\b' + say.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&') + '\\b').test(stripped)
-            && vocab[field].includes(mean)) want[field].push(mean);
+        if (hasWord(say) && vocab[field].includes(mean)) {
+          want[field].push(mean);
+          usedWords.push(say);          // it worked; do not call it ignored
+        }
       }
     }
 
@@ -156,9 +168,15 @@
     const STOP = new Set(('a an the and or for with some something track music song '
       + 'need want looking find me my i of to in on that this like sounds sound very '
       + 'really bit quite more less please').split(' '));
+    /* Everything that contributed: the catalogue terms themselves, the synonym
+       and occasion words that reached them, and the tempo word. Reporting a
+       word as ignored when it silently steered the whole result is worse than
+       saying nothing — it teaches the user to distrust a search that worked. */
     const placed = new Set([...want.genres, ...want.moods, ...want.instruments]
       .flatMap((t) => norm(t).split(/[^a-z]+/)));
-    Object.keys(OCCASIONS).forEach((o) => { if (stripped.includes(o)) placed.add(o); });
+    usedWords.forEach((w) => norm(w).split(/[^a-z]+/).forEach((x) => x && placed.add(x)));
+    if (want._tempoWord) norm(want._tempoWord).split(/[^a-z]+/).forEach((x) => x && placed.add(x));
+    delete want._tempoWord;
     want.unmatched = [...new Set(stripped.split(/[^a-z0-9]+/).filter(Boolean))]
       .filter((w) => w.length > 2 && !STOP.has(w) && !placed.has(w)
         && !/^\d+$/.test(w) && !/bpm|instrumental|vocals?/.test(w))
