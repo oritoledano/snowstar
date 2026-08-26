@@ -269,10 +269,16 @@
             stands today.</p>
           <div class="bulk-segs bulk-cls">
             <button type="button" class="bulk-seg" data-cls="">— no change —</button>
-            <button type="button" class="bulk-seg" data-cls="A">A</button>
-            <button type="button" class="bulk-seg" data-cls="B">B</button>
-            <button type="button" class="bulk-seg" data-cls="C">C</button>
+            <button type="button" class="bulk-seg" data-cls="A">A · 320%</button>
+            <button type="button" class="bulk-seg" data-cls="B">B · 180%</button>
+            <button type="button" class="bulk-seg" data-cls="C">C · 100%</button>
           </div>
+          <div class="bulk-prow" style="margin-top:9px">
+            <label class="bulk-inline">or a custom
+              <input class="bulk-pct" type="number" min="10" max="2000" step="10" placeholder="%"> %</label>
+          </div>
+          <p class="bulk-hint">A percentage overrides the class. Anything that matches no
+            preset shows as ◈ on the row.</p>
         </section>
 
         <section class="bulk-sec">
@@ -666,7 +672,9 @@
       }
 
       const set = {};
-      if (clsPick) set.cls = clsPick;
+      const pctRaw = panel.querySelector('.bulk-pct').value.trim();
+      if (pctRaw !== '') set.pct = Math.round(Number(pctRaw));
+      else if (clsPick) { set.cls = clsPick; set.pct = null; }
       const artist = panel.querySelector('.bulk-artist').value.trim();
       if (artist) set.artist = artist;
       const lane = panel.querySelector('.bulk-lane').value;

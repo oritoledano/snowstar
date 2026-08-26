@@ -1113,6 +1113,12 @@
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
+  /* Mirrors worker/src/pricing.js. Refreshed from the API on load so a tuned
+     multiplier shows without a deploy; these are only the fallbacks. */
+  const CLASS_MULT = { A: 3.2, B: 1.8, C: 1.0 };
+  /** Slugs a signed declaration pins to the quote lane. */
+  const LANE_LOCKED = new Set();
+
   let curateMode = false;   // owner editing mode
   let curateSaveTimer = 0;
   let overrides = {};
@@ -1147,6 +1153,7 @@
     fetch('/api/texts').then(r => r.ok ? r.json() : { texts: {} }).catch(() => ({ texts: {} })),
   ]).then(([tr, tx]) => {
     overrides = tr.overrides || {};
+    (tr.laneLocked || []).forEach((sl) => LANE_LOCKED.add(sl));
     applyOverrides();
     try { curated = JSON.parse((tx.texts || {})[PICKS_KEY] || '[]'); } catch { curated = []; }
     if (!Array.isArray(curated)) curated = [];
@@ -1267,23 +1274,95 @@
     });
     wrap.querySelector('.trk-cur-edit').addEventListener('click', e => { e.stopPropagation(); openEditor(track, row); });
 
-    /* A / B / C on the row itself. Grading 374 tracks means one decision per
-       track and then move on; opening an editor for each would make the pass
-       an afternoon instead of twenty minutes. */
+    /* Grade, custom percentage, and the quote toggle — the three decisions a
+       pass through 374 tracks is actually made of. On the row rather than
+       behind an editor: one decision per track, then move on.
+
+       The letter and the percentage are the SAME control seen two ways. A
+       preset is a shortcut to a number, so typing 250 simply lights none of
+       them and shows the custom mark instead. */
+    const ov = overrides[track.slug] || {};
     const clsWrap = document.createElement('span');
     clsWrap.className = 'trk-cls';
-    const cur = (overrides[track.slug] || {}).cls || track.cls || 'C';
+
+    const gradeOf = () => {
+      const pct = Number(ov.pct);
+      if (Number.isFinite(pct) && pct > 0) {
+        const hit = Object.entries(CLASS_MULT).find(([, m]) => Math.abs(m * 100 - pct) < 0.5);
+        return hit ? hit[0] : '◈';
+      }
+      return (ov.cls || 'C').toUpperCase();
+    };
+
+    function paintCls() {
+      const g = gradeOf();
+      clsWrap.querySelectorAll('.trk-clsb').forEach(x =>
+        x.classList.toggle('on', x.dataset.c === g));
+      const pctInp = clsWrap.querySelector('.trk-pct');
+      if (pctInp && document.activeElement !== pctInp) {
+        pctInp.value = Number.isFinite(Number(ov.pct)) && ov.pct ? ov.pct : '';
+      }
+      clsWrap.querySelector('.trk-custom').hidden = g !== '◈';
+    }
+
     clsWrap.innerHTML = ['A', 'B', 'C'].map(c =>
-      `<button type="button" class="trk-clsb${c === cur ? ' on' : ''}" data-c="${c}"
-         title="Price class ${c}">${c}</button>`).join('');
+      `<button type="button" class="trk-clsb" data-c="${c}" title="Price class ${c}">${c}</button>`).join('')
+      + '<span class="trk-custom" data-c="◈" title="Custom percentage" hidden>◈</span>'
+      + '<input class="trk-pct" type="number" min="10" max="2000" step="10" placeholder="%"'
+      + ' title="Custom percentage — overrides the class">';
+
     clsWrap.querySelectorAll('.trk-clsb').forEach(b => b.addEventListener('click', async e => {
       e.stopPropagation();
-      const patch = { ...(overrides[track.slug] || {}), cls: b.dataset.c };
-      clsWrap.querySelectorAll('.trk-clsb').forEach(x => x.classList.toggle('on', x === b));
-      track.cls = b.dataset.c;
-      await saveTrack(track.slug, patch);
+      // choosing a letter clears any custom percentage, or the two would
+      // disagree and the number would silently win
+      delete ov.pct;
+      ov.cls = b.dataset.c;
+      overrides[track.slug] = ov;
+      track.cls = ov.cls; delete track.pct;
+      paintCls();
+      await saveTrack(track.slug, { ...ov });
     }));
+
+    const pctInp = clsWrap.querySelector('.trk-pct');
+    ['click', 'pointerdown', 'mousedown'].forEach(ev =>
+      pctInp.addEventListener(ev, e => e.stopPropagation()));
+    pctInp.addEventListener('change', async () => {
+      const v = pctInp.value.trim();
+      if (v === '') delete ov.pct; else ov.pct = Math.round(Number(v));
+      overrides[track.slug] = ov;
+      track.pct = ov.pct;
+      paintCls();
+      await saveTrack(track.slug, { ...ov });
+    });
+
+    /* Quote toggle. A rights declaration naming a controller LOCKS it — an
+       owner must not be able to click past a legal fact — but where nothing
+       forces it, it is free, because plenty of tracks are quote-worthy for
+       commercial reasons that have nothing to do with rights. */
+    const locked = LANE_LOCKED.has(track.slug);
+    const qBtn = document.createElement('button');
+    qBtn.type = 'button';
+    qBtn.className = 'trk-qtog' + (track.lane === 'quote' ? ' on' : '') + (locked ? ' locked' : '');
+    qBtn.textContent = locked ? '🔒' : '₪';
+    qBtn.title = locked
+      ? 'Quote only — fixed by the signed rights declaration'
+      : (track.lane === 'quote' ? 'Quote only — click to allow instant pricing'
+                                : 'Instant price — click to make it quote only');
+    qBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+      if (locked) { toast('The rights declaration names a controller — this one stays quote only'); return; }
+      const next = track.lane === 'quote' ? 'instant' : 'quote';
+      ov.lane = next;
+      overrides[track.slug] = ov;
+      track.lane = next;
+      qBtn.classList.toggle('on', next === 'quote');
+      await saveTrack(track.slug, { ...ov });
+      render();
+    });
+
+    paintCls();
     wrap.insertBefore(clsWrap, wrap.querySelector('.trk-cur-edit'));
+    wrap.insertBefore(qBtn, wrap.querySelector('.trk-cur-edit'));
     // the bulk checkbox leads the group — it is the control you reach for most
     // once you are working through the catalogue rather than fixing one track
     if (window.mutraBulkRowControl) {

@@ -77,6 +77,14 @@ export function sanitize(raw) {
   // Price class: A / B / C. C is the baseline and the same as absent, so it is
   // stored rather than dropped — an explicit C is the owner saying "I looked at
   // this one", which is different from never having graded it.
+  // A per-track percentage overrides the class outright — the letter is a
+  // preset, not a cage. Bounded for the same reason the class multipliers are:
+  // it multiplies every band and every term at once.
+  if (raw.pct !== undefined) {
+    const n = Math.round(Number(raw.pct));
+    if (Number.isFinite(n) && n >= 10 && n <= 2000) p.pct = n;
+    else delete p.pct;
+  }
   if (typeof raw.cls === 'string') {
     const c = raw.cls.trim().toUpperCase();
     if (['A', 'B', 'C'].includes(c)) p.cls = c;
@@ -101,7 +109,31 @@ export async function listOverrides(env) {
   for (const row of r.results || []) {
     try { overrides[row.slug] = JSON.parse(row.patch); } catch { /* skip a corrupt row rather than break the catalog */ }
   }
-  return json({ overrides });
+
+  /* Which tracks are pinned to the quote lane by a signed declaration.
+     The lane is otherwise a free toggle — plenty of tracks are quote-worthy for
+     commercial reasons that have nothing to do with rights — but where somebody
+     has DECLARED that a label, publisher or co-owner has a say, an owner must
+     not be able to click past it. A legal fact is not a preference. */
+  const locked = [];
+  try {
+    const d = await env.DB.prepare(
+      `SELECT s.published_slug AS slug, rd.controllers
+         FROM rights_decls rd
+         JOIN submissions s ON s.id = rd.submission_id
+        WHERE s.published_slug IS NOT NULL AND s.published_slug <> ''`
+    ).all();
+    for (const row of d.results || []) {
+      let ctrl = [];
+      try {
+        const parsed = JSON.parse(row.controllers || '{}');
+        ctrl = Array.isArray(parsed) ? parsed : (parsed.controllers || []);
+      } catch { /* a corrupt declaration must not lock or unlock anything */ }
+      if (ctrl.length) locked.push(row.slug);
+    }
+  } catch { /* pre-migration schema — nothing is locked rather than everything */ }
+
+  return json({ overrides, laneLocked: locked });
 }
 
 /** Owner-only. An empty patch deletes the row, i.e. reverts to the source file. */

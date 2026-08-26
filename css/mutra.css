@@ -1155,3 +1155,22 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .trk-clsb.on{background:var(--amber,var(--coral));border-color:var(--amber,var(--coral));
   color:var(--on-accent,#0d0a12)}
 .bulk-hint{color:var(--dim);font-size:.75rem;line-height:1.5;margin:-4px 0 10px}
+
+/* the grade control: letters and a percentage are the same decision seen two
+   ways, so they sit together and only one of them is ever lit */
+.trk-cls{display:inline-flex;gap:2px;align-items:center;margin-right:6px}
+.trk-custom{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;
+  background:var(--amber,var(--coral));color:var(--on-accent,#0d0a12);font-size:.7rem}
+.trk-pct{width:42px;height:20px;border-radius:5px;border:1px solid var(--line);
+  background:none;color:var(--muted);font:inherit;font-size:.62rem;text-align:center;
+  padding:0 2px;outline:0;-moz-appearance:textfield}
+.trk-pct::-webkit-outer-spin-button,.trk-pct::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.trk-pct:focus{border-color:var(--amber,var(--coral));color:var(--text)}
+/* the quote toggle — locked when a signed declaration says so */
+.trk-qtog{width:20px;height:20px;border-radius:5px;border:1px solid var(--line);
+  background:none;color:var(--dim);font-size:.66rem;cursor:pointer;display:grid;
+  place-items:center;padding:0;margin-right:6px;line-height:1}
+.trk-qtog:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.trk-qtog.on{background:var(--amber,var(--coral));border-color:var(--amber,var(--coral));
+  color:var(--on-accent,#0d0a12)}
+.trk-qtog.locked{cursor:not-allowed;opacity:.75}

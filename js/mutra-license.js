@@ -64,10 +64,16 @@
      worker/src/pricing.js; the server re-derives every figure regardless, and
      these defaults are overwritten by /api/pricing/classes on load so a tuned
      multiplier shows the moment it is saved rather than after a deploy. */
-  const CLASSES = {
-    A: { mult: 3.2, quote: true },
-    B: { mult: 1.8, quote: false },
-    C: { mult: 1.0, quote: false },
+  const CLASSES = { A: { mult: 3.2 }, B: { mult: 1.8 }, C: { mult: 1.0 } };
+
+  /** A per-track percentage overrides the class — the letter is a preset, not
+   *  a cage. Whether a track needs a QUOTE is a rights question and lives on
+   *  the lane, never on the class: every class sells self-serve, however dear. */
+  const classMult = (track) => {
+    const pct = Number(track && track.pct);
+    if (Number.isFinite(pct) && pct > 0) return pct / 100;
+    const c = CLASSES[String((track && track.cls) || 'C').toUpperCase()];
+    return (c || CLASSES.C).mult;
   };
   fetch('/api/pricing/classes', { credentials: 'same-origin' })
     .then((r) => (r.ok ? r.json() : null))
@@ -107,12 +113,10 @@
     if (b.base == null) return { quote: true, reason: 'large_client' };
     if (t.mult == null) return { quote: true, reason: 'exclusive' };
     if (t.noPaid && pick.paid) return { quote: true, reason: 'perp_no_paid' };
-    const cls = CLASSES[String((track && track.cls) || 'C').toUpperCase()] || CLASSES.C;
-    if (cls.quote) return { quote: true, reason: 'class_a' };
     // a per-band override on the track wins outright
     const over = track && track.prices && track.prices[buyerId];
     const base = Number.isFinite(over) && over > 0 ? over : b.base * trackFactor(track);
-    return { quote: false, amount: pricePoint(base * cls.mult * t.mult) };
+    return { quote: false, amount: pricePoint(base * classMult(track) * t.mult) };
   }
 
   /** Open a mailto without stranding a blank tab. */
@@ -463,7 +467,6 @@
       exclusive: 'Exclusive use — nobody else licences this track while you hold it. Priced per case.',
       big_account: 'Over 500k followers we price per campaign. Tell us where it runs and you’ll have a price the same day.',
       perp_no_paid: 'A licence with no end date covers organic use only — a site, a social page, a channel. Paid promotion behind the project needs a dated term instead, so pick 12, 24 or 36 months, or tell us about the campaign and we’ll quote it.',
-      class_a: 'This is one of the tracks we price by hand. Tell us the project and you’ll have a figure the same day — it is usually worth asking, the terms are more flexible than the form allows.',
       other: 'Tell us what you’re making and we’ll come back with the right licence.',
     }[reason] || 'Tell us about the project and we’ll come back with a price.';
 

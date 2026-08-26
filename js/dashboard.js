@@ -875,10 +875,12 @@
         <h2>Price classes</h2>
         <p class="db-empty" style="padding-top:0">Each class multiplies the WHOLE ladder —
           every buyer band and every term together — so the relationships between them stay
-          as they were solved. <b>C is the catalogue as it stands</b>; nothing moves at 100%.</p>
+          as they were solved. <b>C is the catalogue as it stands</b>; nothing moves at 100%.
+          All three sell self-serve — whether a track needs a quote is a rights question,
+          set per track, not a price tier.</p>
 
         <table class="pc-table">
-          <tr><th></th><th>Of the baseline</th><th>Always quote</th>
+          <tr><th></th><th>Of the baseline</th>
             ${bandIds.filter((b) => buyers[b].base != null).map((b) =>
               `<th>${esc(buyers[b].short)}</th>`).join('')}</tr>
           ${['A', 'B', 'C'].map((c) => `
@@ -886,9 +888,8 @@
               <td class="pc-name"><b>${c}</b></td>
               <td><input class="pc-pct" type="number" min="10" max="2000" step="5"
                     value="${Math.round((cls[c]?.mult ?? 1) * 100)}"> %</td>
-              <td><input class="pc-quote" type="checkbox"${cls[c]?.quote ? ' checked' : ''}></td>
               ${bandIds.filter((b) => buyers[b].base != null).map((b) =>
-                `<td class="pc-cell" data-b="${b}">${cls[c]?.quote ? '—' : '₪' + (pv[c]?.[b] ?? '')}</td>`).join('')}
+                `<td class="pc-cell" data-b="${b}">₪${(pv[c]?.[b] ?? '')}</td>`).join('')}
             </tr>`).join('')}
         </table>
         <p class="db-empty">Prices shown are the twelve-month Standard figure per band.
@@ -903,24 +904,19 @@
     const repaint = () => {
       app.querySelectorAll('.pc-table tr[data-c]').forEach((row) => {
         const pct = Number(row.querySelector('.pc-pct').value) / 100;
-        const q = row.querySelector('.pc-quote').checked;
         row.querySelectorAll('.pc-cell').forEach((td) => {
           const base = buyers[td.dataset.b].base;
-          td.textContent = q ? '—'
-            : '₪' + Math.max(0, Math.round(base * pct / 10) * 10 - 1).toLocaleString();
+          td.textContent = '₪' + Math.max(0, Math.round(base * pct / 10) * 10 - 1).toLocaleString();
         });
       });
     };
-    app.querySelectorAll('.pc-pct, .pc-quote').forEach((i) =>
+    app.querySelectorAll('.pc-pct').forEach((i) =>
       i.addEventListener('input', repaint));
 
     document.getElementById('pcSave').addEventListener('click', async () => {
       const body = {};
       app.querySelectorAll('.pc-table tr[data-c]').forEach((row) => {
-        body[row.dataset.c] = {
-          pct: Number(row.querySelector('.pc-pct').value),
-          quote: row.querySelector('.pc-quote').checked,
-        };
+        body[row.dataset.c] = { pct: Number(row.querySelector('.pc-pct').value) };
       });
       const msg = app.querySelector('.pc-msg');
       msg.textContent = 'Saving…';

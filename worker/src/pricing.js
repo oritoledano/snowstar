@@ -99,13 +99,51 @@ export const BUYERS = {
  * percentages without a deploy. These are only the fallbacks.
  */
 export const CLASSES = {
-  A: { label: 'A', mult: 3.2, quote: true,
-       note: 'Signature tracks. Priced high and usually quoted — the deals have terms in them.' },
-  B: { label: 'B', mult: 1.8, quote: false,
-       note: 'Strong catalogue. Sits between A and the baseline.' },
-  C: { label: 'C', mult: 1.0, quote: false,
-       note: 'The baseline — every price in the catalogue today is a C price.' },
+  A: { label: 'A', mult: 3.2, note: 'Signature tracks. The top of the ladder.' },
+  B: { label: 'B', mult: 1.8, note: 'Strong catalogue. Between A and the baseline.' },
+  C: { label: 'C', mult: 1.0, note: 'The baseline — every price in the catalogue today is a C price.' },
 };
+
+/**
+ * CLASS AND LANE ARE DIFFERENT AXES, and conflating them was a mistake worth
+ * naming here so it does not come back.
+ *
+ * The class is a PRICE decision: what is this track worth. All three classes
+ * are self-serve — an expensive track is still a track somebody can buy with a
+ * card, and making A quote-only put a wall in front of the highest-margin
+ * sales for no reason.
+ *
+ * The lane is a RIGHTS decision: may we sell this at all without asking
+ * somebody first. It comes from the signed declaration — a named controller, a
+ * co-owner whose approval is required — and where it does, it is LOCKED: an
+ * owner cannot click past a legal fact. Where no declaration forces it, the
+ * lane is a free toggle, because plenty of tracks are quote-worthy for
+ * commercial reasons that have nothing to do with rights.
+ */
+export function laneLocked(track) {
+  if (!track) return false;
+  const d = track.decl || {};
+  const controllers = Array.isArray(d.controllers) ? d.controllers : [];
+  return !!(controllers.length || d.approval === 'all' || d.shared_rights);
+}
+
+/** The multiplier a track actually prices at, and what to call it.
+ *  A per-track percentage overrides the class outright — the letter is a
+ *  preset, not a cage. When the number matches no preset it is "custom", shown
+ *  as a mark rather than a letter so a glance down the list still reads. */
+export function gradeOf(track, classes) {
+  const CL = classes || CLASSES;
+  const pct = Number(track && track.pct);
+  if (Number.isFinite(pct) && pct > 0) {
+    const hit = Object.entries(CL).find(([, c]) => Math.abs(c.mult * 100 - pct) < 0.5);
+    return hit
+      ? { letter: hit[0], mult: hit[1].mult, custom: false }
+      : { letter: '◈', mult: pct / 100, custom: true, pct };
+  }
+  const c = String((track && track.cls) || 'C').toUpperCase();
+  const cfg = CL[c] || CL.C;
+  return { letter: CL[c] ? c : 'C', mult: cfg.mult, custom: false };
+}
 
 export const isClass = (c) => Object.prototype.hasOwnProperty.call(CLASSES, String(c || '').toUpperCase());
 
@@ -119,7 +157,6 @@ export async function loadClasses(env) {
       const tuned = JSON.parse(r.v);
       for (const k of Object.keys(out)) {
         if (Number.isFinite(tuned[k]?.mult) && tuned[k].mult > 0) out[k].mult = tuned[k].mult;
-        if (typeof tuned[k]?.quote === 'boolean') out[k].quote = tuned[k].quote;
       }
     }
   } catch { /* a corrupt setting must never take the catalogue offline */ }
@@ -221,14 +258,12 @@ export function priceFor(track, buyerId, coverageId, termId, paidMedia, classes)
   const cov = COVERAGE[coverageId];
   const term = termById(termId);
 
-  const CL = classes || CLASSES;
-  const cls = CL[String((track && track.cls) || 'C').toUpperCase()] || CL.C;
+  const grade = gradeOf(track, classes);
 
   if (!buyer || !cov) return { amount: null, quote: true, reason: 'unknown_selection' };
+  // The LANE is the only thing that makes a track quote-only. The class never
+  // does — every class is self-serve, however dear.
   if (track && track.lane === 'quote') return { amount: null, quote: true, reason: 'co_owned' };
-  // An A track is quoted by default — the tracks worth the most are the ones
-  // whose deals have terms in them, and a card payment is the wrong shape.
-  if (cls.quote) return { amount: null, quote: true, reason: 'class_a' };
   if (cov.quote) return { amount: null, quote: true, reason: 'extended_coverage' };
   if (buyer.base == null) return { amount: null, quote: true, reason: 'large_client' };
   if (term.mult == null) return { amount: null, quote: true, reason: 'exclusive' };
@@ -243,7 +278,8 @@ export function priceFor(track, buyerId, coverageId, termId, paidMedia, classes)
   const base = Number.isFinite(over) && over > 0 ? over : buyer.base * trackFactor(track);
   // The class multiplies the whole ladder — every band, every term, together —
   // so the relationships solved once stay solved.
-  return { amount: pricePoint(base * cls.mult * term.mult), quote: false, reason: null };
+  return { amount: pricePoint(base * grade.mult * term.mult), quote: false, reason: null,
+           grade: grade.letter };
 }
 
 /** Valid ids, for request validation. */
@@ -290,7 +326,6 @@ export async function setClasses(req, env, user) {
     // once, so a fat-fingered 10000 would put the whole catalogue out of reach
     // and a 0 would give it away.
     if (Number.isFinite(pct) && pct >= 10 && pct <= 2000) next[k].mult = pct / 100;
-    if (typeof b[k].quote === 'boolean') next[k].quote = b[k].quote;
   }
   await env.DB.prepare(
     "INSERT INTO meta (k, v) VALUES ('pricing:classes', ?) ON CONFLICT(k) DO UPDATE SET v = ?"
