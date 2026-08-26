@@ -22,7 +22,8 @@ import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGAC
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport } from './site.js';
-import { listOverrides, saveOverride, uploadCover } from './catalog.js';
+import { listOverrides, saveOverride, uploadCover, listUses, saveUse,
+         setOrigTitle, listOrigTitles } from './catalog.js';
 import { bulkEdit, bulkUndo, listBatches, bulkArtist } from './bulk.js';
 import { listArtists, ensureArtists, saveArtist } from './artistreg.js';
 import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
@@ -210,6 +211,11 @@ async function handle(req, env, ctx) {
   if (path === '/tracks/bulk/undo' && method === 'POST') return bulkUndo(req, env, await currentUser(req, env));
   if (path === '/tracks/bulk/batches' && method === 'GET') return listBatches(env, await currentUser(req, env));
   if (path === '/tracks/bulk/artist' && method === 'POST') return bulkArtist(req, env, await currentUser(req, env));
+  // where a track has been used before — the fact that sells it
+  if (path === '/tracks/uses' && method === 'GET') return listUses(env, url);
+  if (path === '/tracks/uses' && method === 'POST') return saveUse(req, env, await currentUser(req, env));
+  if (path === '/tracks/orig' && method === 'GET') return listOrigTitles(env);
+  if (path === '/tracks/orig' && method === 'POST') return setOrigTitle(req, env, await currentUser(req, env));
   if (path === '/pricing/classes' && method === 'GET') return getClasses(env, await currentUser(req, env));
   if (path === '/pricing/classes' && method === 'POST') return setClasses(req, env, await currentUser(req, env));
   if (path === '/tracks/cover' && method === 'PUT') return uploadCover(req, env, await currentUser(req, env), url);

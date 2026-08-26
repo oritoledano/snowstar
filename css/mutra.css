@@ -1244,3 +1244,21 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   color:var(--muted);font:inherit;font-size:.8rem;padding:9px;cursor:pointer}
 .ag-all:hover{color:var(--text);border-color:var(--amber,var(--coral))}
 @media (max-width:560px){.ag-row{grid-template-columns:24px 1fr auto}.ag-row img,.ag-m,.ag-s{display:none}}
+
+/* the name a track shipped with, and where it has been used before */
+.te-origname{margin:0 0 4px;color:var(--text);font-family:var(--font-display);font-size:.95rem}
+.te-uselist{display:grid;gap:6px;margin-bottom:9px}
+.te-use{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);
+  border-radius:9px;padding:8px 11px;font-size:.83rem;color:var(--muted)}
+.te-use b{color:var(--text);font-weight:600}
+.te-use i{font-style:normal;color:var(--dim);font-size:.75rem;margin-left:auto}
+.te-udel{background:none;border:0;color:var(--dim);font-size:1rem;cursor:pointer;padding:0 2px}
+.te-udel:hover{color:#ff8f8f}
+.te-userow{display:grid;grid-template-columns:1fr 1fr 84px 34px;gap:6px}
+.te-userow input{background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  padding:8px 10px;color:var(--text);font:inherit;font-size:.82rem;outline:0;min-width:0}
+.te-userow input:focus{border-color:var(--amber,var(--coral))}
+.te-uadd{background:none;border:1px solid var(--line);border-radius:9px;color:var(--muted);
+  font-size:1rem;cursor:pointer}
+.te-uadd:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+@media (max-width:520px){.te-userow{grid-template-columns:1fr 1fr;grid-auto-rows:auto}}

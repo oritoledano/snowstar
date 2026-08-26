@@ -1118,6 +1118,8 @@
   const CLASS_MULT = { A: 3.2, B: 1.8, C: 1.0, D: 0.5 };
   /** Slugs a signed declaration pins to the quote lane. */
   const LANE_LOCKED = new Set();
+  /** slug -> the name it shipped with, where it differs from the name now. */
+  const ORIG_TITLES = {};
 
   let curateMode = false;   // owner editing mode
   let curateSaveTimer = 0;
@@ -1154,6 +1156,13 @@
   ]).then(([tr, tx]) => {
     overrides = tr.overrides || {};
     (tr.laneLocked || []).forEach((sl) => LANE_LOCKED.add(sl));
+    // only fetched in curate mode — a visitor has no use for the old names
+    if (curateMode || (window.MutraMembers && MutraMembers.user && MutraMembers.user.admin)) {
+      fetch('/api/tracks/orig', { credentials: 'same-origin' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => { if (d && d.orig) Object.assign(ORIG_TITLES, d.orig); })
+        .catch(() => {});
+    }
     applyOverrides();
     try { curated = JSON.parse((tx.texts || {})[PICKS_KEY] || '[]'); } catch { curated = []; }
     if (!Array.isArray(curated)) curated = [];
@@ -1559,6 +1568,24 @@
           <button type="button" class="te-hlplay">Preview</button>
         </div>
       </div>
+      <div class="te-facet te-orig" hidden>
+        <div class="te-flabel">Originally called</div>
+        <p class="te-origname"></p>
+        <p class="te-hint">The name this track shipped with when the catalogue was
+          imported. Shown so a renamed track is still recognisable.</p>
+      </div>
+      <div class="te-facet te-uses">
+        <div class="te-flabel">Used before</div>
+        <div class="te-uselist"></div>
+        <div class="te-userow">
+          <input class="te-uc" placeholder="Client" maxlength="140">
+          <input class="te-up" placeholder="Project" maxlength="200">
+          <input class="te-uy" type="number" placeholder="Year" min="1990" max="2100">
+          <button type="button" class="te-uadd">＋</button>
+        </div>
+        <p class="te-hint">A track that has already carried a campaign sells on that.
+          It is also what you need in front of you before selling an exclusive.</p>
+      </div>
       <div class="te-facet te-pin">
         <div class="te-flabel">Pin to the top of staff picks</div>
         <select class="te-pinsel">
@@ -1610,6 +1637,51 @@
       el.addEventListener('input', () => { draft[f] = el.value; });
     });
     q('.te-cimg').src = draft.cover;
+
+    // ── the name it shipped with ──
+    const origBox = q('.te-orig');
+    const orig = ORIG_TITLES[track.slug];
+    if (orig && orig.toUpperCase() !== String(track.title || '').toUpperCase()) {
+      origBox.hidden = false;
+      q('.te-origname').textContent = orig;
+    }
+
+    // ── used before ──
+    async function paintUses() {
+      const box = q('.te-uselist');
+      box.innerHTML = '<p class="te-hint">Loading…</p>';
+      let d;
+      try { d = await (await fetch('/api/tracks/uses?slug=' + encodeURIComponent(track.slug))).json(); }
+      catch { box.innerHTML = '<p class="te-hint">Couldn’t load those.</p>'; return; }
+      const uses = d.uses || [];
+      box.innerHTML = uses.length ? uses.map(u => `
+        <div class="te-use" data-id="${u.id}">
+          <b>${esc(u.client)}</b>${u.project ? ' — ' + esc(u.project) : ''}
+          ${u.year ? `<i>${u.year}</i>` : ''}
+          <button type="button" class="te-udel" aria-label="Remove">×</button>
+        </div>`).join('') : '<p class="te-hint">No recorded uses yet.</p>';
+      box.querySelectorAll('.te-udel').forEach(b => b.addEventListener('click', async () => {
+        await fetch('/api/tracks/uses', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ remove: Number(b.closest('.te-use').dataset.id) }),
+        });
+        paintUses();
+      }));
+    }
+    paintUses();
+    q('.te-uadd').addEventListener('click', async () => {
+      const client = q('.te-uc').value.trim();
+      if (!client) { q('.te-uc').focus(); return; }
+      await fetch('/api/tracks/uses', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ slug: track.slug, client,
+          project: q('.te-up').value.trim(), year: q('.te-uy').value.trim() }),
+      });
+      q('.te-uc').value = q('.te-up').value = q('.te-uy').value = '';
+      paintUses();
+    });
 
     // ── pin ──
     const pinSel = q('.te-pinsel');

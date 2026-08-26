@@ -172,3 +172,80 @@ export async function uploadCover(req, env, user, url) {
   await env.MEDIA.put(key, body, { httpMetadata: { contentType: type } });
   return json({ ok: true, url: `https://cdn.snowstar.company/${key}` });
 }
+
+
+/* ═══════════ Where a track has been used before ═══════════
+
+   A sync library's most persuasive fact about a track is not its tempo, it is
+   that it has already carried a national campaign. "Shorditch 14" was written
+   for Plus 500 / Atletico Madrid and later placed on April Perfumes — that
+   history sells the track, and it is also the thing the owner most needs at
+   hand when a buyer asks whether it has been used before, because an exclusive
+   cannot be sold over a placement nobody remembered.
+
+   Kept as rows rather than a text field so the same track can carry several,
+   each dated, and so a year can be filtered on later. */
+
+const USE_MAX = 40;
+
+export async function listUses(env, url) {
+  const slug = String(url.searchParams.get('slug') || '').trim();
+  if (slug && !SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
+  const r = slug
+    ? await env.DB.prepare(
+        'SELECT * FROM track_uses WHERE slug = ? ORDER BY year DESC, id DESC LIMIT ?'
+      ).bind(slug, USE_MAX).all()
+    : await env.DB.prepare(
+        'SELECT * FROM track_uses ORDER BY year DESC, id DESC LIMIT 500'
+      ).all();
+  return json({ uses: r.results || [] });
+}
+
+export async function saveUse(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+
+  if (b.remove) {
+    const id = Number(b.remove);
+    if (!Number.isInteger(id)) return json({ error: 'bad_id' }, 400);
+    await env.DB.prepare('DELETE FROM track_uses WHERE id = ?').bind(id).run();
+    return json({ ok: true, removed: id });
+  }
+
+  const slug = String(b.slug || '').trim();
+  if (!SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
+  const client = clean(b.client, 140);
+  if (!client) return json({ error: 'client_required' }, 400);
+  const yr = Number(b.year);
+  const year = Number.isInteger(yr) && yr >= 1990 && yr <= 2100 ? yr : null;
+
+  const r = await env.DB.prepare(
+    'INSERT INTO track_uses (slug, client, project, year, note, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+  ).bind(slug, client, clean(b.project, 200), year, clean(b.note, 500), now()).run();
+  return json({ ok: true, id: r.meta.last_row_id });
+}
+
+/** Owner: the original title a track shipped with, so a renamed one is still
+ *  recognisable. Only meaningful for the catalogue that was imported in bulk —
+ *  anything uploaded since was named once, by the person who made it. */
+export async function setOrigTitle(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const slug = String(b.slug || '').trim();
+  if (!SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
+  await env.DB.prepare('UPDATE tracks SET orig_title = ? WHERE slug = ?')
+    .bind(clean(b.orig_title, 200), slug).run();
+  return json({ ok: true });
+}
+
+/** Public: slug -> the name it shipped with, where that differs from now.
+ *  Only the differences travel; sending 374 identical pairs would be pure
+ *  weight on every page load. */
+export async function listOrigTitles(env) {
+  const r = await env.DB.prepare(
+    'SELECT slug, orig_title FROM tracks WHERE orig_title IS NOT NULL'
+  ).all().catch(() => ({ results: [] }));
+  const out = {};
+  for (const row of r.results || []) out[row.slug] = row.orig_title;
+  return json({ orig: out });
+}

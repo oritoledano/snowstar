@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1787784395.7808423,
-    "seen": 1787784401.652704,
-    "ast_hash": "c51207892719ef7f42cadfdce110afe3",
+    "mtime": 1787787500.4660444,
+    "seen": 1787787506.2454772,
+    "ast_hash": "f0d0b0f38de3ef51353ba12d8f0fcf10",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -186,9 +186,9 @@
     "semantic_hash": ""
   },
   "worker/src/catalog.js": {
-    "mtime": 1787784236.862624,
-    "seen": 1787784243.0870101,
-    "ast_hash": "fe7465f4d05a0185d9a1ffa5ca8a0b41",
+    "mtime": 1787787457.2035637,
+    "seen": 1787787463.7498791,
+    "ast_hash": "f0b7f4ded123416cd195f8797b5431e1",
     "semantic_hash": ""
   },
   "worker/src/clearlist.js": {
@@ -210,9 +210,9 @@
     "semantic_hash": "cf7ff836a6fe1949eca373cb8d1e7e65"
   },
   "worker/src/index.js": {
-    "mtime": 1787774852.353832,
-    "seen": 1787774859.2871292,
-    "ast_hash": "c86f3e56728044bb72f090b9e7345a8a",
+    "mtime": 1787787457.2582877,
+    "seen": 1787787463.749884,
+    "ast_hash": "e1e1ffa5c1f8d887247dba0a14f78b64",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
@@ -276,10 +276,10 @@
     "semantic_hash": "f6c54d10558accdad2e80663914fe906"
   },
   "worker/src/works.js": {
-    "mtime": 1786874911.0781333,
-    "seen": 1787572556.917357,
-    "ast_hash": "08b5da90d5e724c3db622c4159637f56",
-    "semantic_hash": "08b5da90d5e724c3db622c4159637f56"
+    "mtime": 1787787422.4758856,
+    "seen": 1787787428.2091799,
+    "ast_hash": "696e549143df232df9c83f7dec8eee03",
+    "semantic_hash": ""
   },
   "README.md": {
     "mtime": 1784843108.1757903,
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1787784395.8377056,
-    "seen": 1787784401.652746,
-    "ast_hash": "461b0bd7935e96ca823f89f52c9cb245",
+    "mtime": 1787784740.0602064,
+    "seen": 1787784746.133591,
+    "ast_hash": "dba08c86bb854e97964b0bd65cbd6045",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1272,9 +1272,9 @@
     "semantic_hash": ""
   },
   "js/mutra-agent.js": {
-    "mtime": 1787784356.7537074,
-    "seen": 1787784362.9012108,
-    "ast_hash": "98b0fd1fba6f123ac27a773054483399",
+    "mtime": 1787784740.0042012,
+    "seen": 1787784746.133541,
+    "ast_hash": "6daef1fa2b440817227941641255d13a",
     "semantic_hash": ""
   }
 }

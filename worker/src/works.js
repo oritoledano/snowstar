@@ -83,6 +83,13 @@ export async function saveWork(req, env, user, ctx) {
   const preview = cleanUrl(b.preview);
   const mp4 = cleanUrl(b.mp4);
   const vimeo = /^\d{6,12}$/.test(String(b.vimeo || '')) ? Number(b.vimeo) : null;
+  /* The year the work was made. Reconstructed from the price-offer archive
+     where it could be, so it carries HOW it was determined alongside it —
+     a guess presented as a fact is worse than a blank, and this one has to
+     survive being read off a portfolio years from now. */
+  const yr = Number(b.year);
+  const year = Number.isInteger(yr) && yr >= 1990 && yr <= 2100 ? yr : null;
+  const yearSrc = String(b.year_src || '').trim().slice(0, 200) || null;
   const t = now();
 
   if (b.id) {
@@ -90,9 +97,10 @@ export async function saveWork(req, env, user, ctx) {
     const old = await env.DB.prepare('SELECT thumb, preview, mp4 FROM works WHERE id = ?').bind(id).first();
     if (!old) return json({ error: 'not_found' }, 404);
     await env.DB.prepare(
-      `UPDATE works SET title=?, thumb=?, preview=?, mp4=?, vimeo=?, credits=?, tags=?, media=?, updated_at=? WHERE id=?`
+      `UPDATE works SET title=?, thumb=?, preview=?, mp4=?, vimeo=?, credits=?, tags=?, media=?,
+              year=?, year_src=?, updated_at=? WHERE id=?`
     ).bind(title, thumb, preview, mp4, vimeo, JSON.stringify(credits),
-           JSON.stringify(tags), JSON.stringify(media), t, id).run();
+           JSON.stringify(tags), JSON.stringify(media), year, yearSrc, t, id).run();
     // a replaced upload leaves its old file orphaned in R2 — drop it
     dropCdnFiles(env, ctx, [
       old.thumb !== thumb && old.thumb,
@@ -105,10 +113,11 @@ export async function saveWork(req, env, user, ctx) {
   // new works land on top; the owner drags them where they belong
   await env.DB.prepare('UPDATE works SET position = position + 1').run();
   const r = await env.DB.prepare(
-    `INSERT INTO works (position, title, thumb, preview, mp4, vimeo, credits, tags, media, updated_at)
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO works (position, title, thumb, preview, mp4, vimeo, credits, tags, media,
+                        year, year_src, updated_at)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(title, thumb, preview, mp4, vimeo, JSON.stringify(credits),
-         JSON.stringify(tags), JSON.stringify(media), t).run();
+         JSON.stringify(tags), JSON.stringify(media), year, yearSrc, t).run();
   return json({ ok: true, id: r.meta.last_row_id });
 }
 
