@@ -16,7 +16,7 @@
 <link rel="preload" href="assets/fonts/commit-mono.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/mutra.css?v=81">
+<link rel="stylesheet" href="css/mutra.css?v=82">
 <link rel="stylesheet" href="css/spotlight.css?v=13">
 <link rel="stylesheet" href="css/artist.css?v=1">
 <script type="application/ld+json">
@@ -96,6 +96,17 @@
     <div class="browse-search rv">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <input type="search" id="search" placeholder="Search tracks…" aria-label="Search tracks">
+      <!-- Describe-it search. Sits inside the search box rather than beside it,
+           because it is the same job done a different way — not a second feature. -->
+      <button class="browse-agent" data-agent type="button"
+              title="Describe what you need instead of searching">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l1.7 4.6L18 9.3l-4.3 1.7L12 15.6l-1.7-4.6L6 9.3l4.3-1.7L12 3z"/>
+          <path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/>
+        </svg>
+        <span>Describe it</span>
+      </button>
     </div>
     <div class="fbar rv" id="fbar">
       <button class="fcat" data-cat="genres" aria-expanded="false">Genre<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -183,10 +194,11 @@
 <script src="js/mutra-artist-lightbox.js?v=1"></script>
 <script src="js/mutra-artist-panel.js?v=1"></script>
 <script src="js/mutra-contact.js?v=1"></script>
+<script src="js/mutra-agent.js?v=1"></script>
 <script src="js/mutra-spotlight.js?v=11"></script>
-<script src="js/mutra-license.js?v=21"></script>
-<script src="js/mutra-page.js?v=66"></script>
-<script src="js/mutra-bulk.js?v=8"></script>
+<script src="js/mutra-license.js?v=22"></script>
+<script src="js/mutra-page.js?v=67"></script>
+<script src="js/mutra-bulk.js?v=9"></script>
 <script src="js/account-ui.js?v=18"></script>
 <script src="js/site-edit.js?v=2"></script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "73a85d296d5c4ab9a337d3e1e841f34e"}'></script><!-- End Cloudflare Web Analytics -->

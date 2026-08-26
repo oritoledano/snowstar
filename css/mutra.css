@@ -1186,3 +1186,61 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   display:inline-block}
 .bulk-avup:hover{color:var(--text);border-color:var(--amber,var(--coral))}
 .bulk-avup.is-busy{opacity:.6;cursor:default}
+
+/* ═══════════ Describe-it search ═══════════
+   Inside the search box, not beside it: the same job done a different way,
+   rather than a second feature competing for the same intent. */
+.browse-agent{display:flex;align-items:center;gap:6px;flex:none;background:none;
+  border:1px solid var(--line-2,var(--line));border-radius:99px;color:var(--muted);
+  font:inherit;font-size:.76rem;padding:6px 13px;cursor:pointer;margin-left:8px;white-space:nowrap}
+.browse-agent:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+@media (max-width:560px){.browse-agent span{display:none}.browse-agent{padding:6px 9px}}
+
+.ag-modal{position:fixed;inset:0;z-index:96;background:rgba(3,5,12,.76);
+  backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;
+  padding:6vh 16px;overflow-y:auto}
+.ag-card{position:relative;width:min(640px,100%);background:var(--bg);
+  border:1px solid var(--line-2,var(--line));border-radius:20px;padding:26px 26px 22px}
+.ag-close{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--dim);
+  font-size:1.6rem;line-height:1;cursor:pointer}
+.ag-close:hover{color:var(--text)}
+.ag-h{font-family:var(--font-display);font-size:1.2rem;margin:0 0 14px}
+.ag-inwrap{display:flex;gap:9px;align-items:flex-end}
+.ag-in{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+  padding:11px 13px;color:var(--text);font:inherit;font-size:.92rem;line-height:1.5;
+  outline:0;resize:none}
+.ag-in:focus{border-color:var(--amber,var(--coral))}
+.ag-go{background:var(--grad);border:0;border-radius:99px;color:var(--on-accent,#0d0a12);
+  font-family:var(--font-display);font-weight:600;font-size:.86rem;padding:11px 22px;cursor:pointer}
+.ag-examples{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.ag-eg{background:none;border:1px solid var(--line);border-radius:99px;color:var(--dim);
+  font:inherit;font-size:.73rem;padding:5px 11px;cursor:pointer}
+.ag-eg:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.ag-read{color:var(--muted);font-size:.84rem;margin:20px 0 4px}
+.ag-read b{color:var(--text)}
+.ag-none{color:var(--dim)}
+.ag-miss{color:var(--dim);font-size:.75rem;margin:0 0 8px}
+.ag-refine{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
+.ag-chip{background:none;border:1px solid var(--line);border-radius:99px;color:var(--muted);
+  font:inherit;font-size:.73rem;padding:4px 11px;cursor:pointer}
+.ag-chip:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.ag-chip.on{background:var(--amber,var(--coral));border-color:var(--amber,var(--coral));
+  color:var(--on-accent,#0d0a12)}
+.ag-list{display:grid;gap:4px;max-height:46vh;overflow-y:auto;margin-bottom:12px}
+.ag-row{display:grid;grid-template-columns:26px 34px 1fr auto auto auto;gap:10px;
+  align-items:center;padding:6px 9px;border-radius:10px}
+.ag-row:hover{background:var(--panel)}
+.ag-play{background:none;border:0;color:var(--muted);font-size:.75rem;cursor:pointer;padding:5px}
+.ag-play:hover{color:var(--amber,var(--coral))}
+.ag-row img{width:34px;height:34px;border-radius:6px;object-fit:cover}
+.ag-t{color:var(--text);font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ag-t i{display:block;color:var(--dim);font-style:normal;font-size:.72rem}
+.ag-m{color:var(--dim);font-size:.72rem;font-variant-numeric:tabular-nums}
+.ag-s{color:var(--amber,var(--coral));font-size:.6rem;letter-spacing:1px}
+.ag-lic{background:none;border:1px solid var(--line-2,var(--line));border-radius:99px;
+  color:var(--muted);font:inherit;font-size:.72rem;padding:4px 12px;cursor:pointer}
+.ag-lic:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.ag-all{width:100%;background:none;border:1px solid var(--line);border-radius:11px;
+  color:var(--muted);font:inherit;font-size:.8rem;padding:9px;cursor:pointer}
+.ag-all:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+@media (max-width:560px){.ag-row{grid-template-columns:24px 1fr auto}.ag-row img,.ag-m,.ag-s{display:none}}

@@ -102,6 +102,10 @@ export const CLASSES = {
   A: { label: 'A', mult: 3.2, note: 'Signature tracks. The top of the ladder.' },
   B: { label: 'B', mult: 1.8, note: 'Strong catalogue. Between A and the baseline.' },
   C: { label: 'C', mult: 1.0, note: 'The baseline — every price in the catalogue today is a C price.' },
+  // Half the baseline. Lands on ILS 49 for a creator's own six-month use and
+  // ILS 179 for a small business's — both round exactly, which is why 50% is
+  // the number rather than something near it.
+  D: { label: 'D', mult: 0.5, note: 'Entry. Beds, stings, short cues — volume rather than margin.' },
 };
 
 /**

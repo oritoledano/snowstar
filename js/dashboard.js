@@ -883,7 +883,7 @@
           <tr><th></th><th>Of the baseline</th>
             ${bandIds.filter((b) => buyers[b].base != null).map((b) =>
               `<th>${esc(buyers[b].short)}</th>`).join('')}</tr>
-          ${['A', 'B', 'C'].map((c) => `
+          ${['A', 'B', 'C', 'D'].map((c) => `
             <tr data-c="${c}">
               <td class="pc-name"><b>${c}</b></td>
               <td><input class="pc-pct" type="number" min="10" max="2000" step="5"

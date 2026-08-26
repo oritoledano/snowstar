@@ -64,7 +64,7 @@
      worker/src/pricing.js; the server re-derives every figure regardless, and
      these defaults are overwritten by /api/pricing/classes on load so a tuned
      multiplier shows the moment it is saved rather than after a deploy. */
-  const CLASSES = { A: { mult: 3.2 }, B: { mult: 1.8 }, C: { mult: 1.0 } };
+  const CLASSES = { A: { mult: 3.2 }, B: { mult: 1.8 }, C: { mult: 1.0 }, D: { mult: 0.5 } };
 
   /** A per-track percentage overrides the class — the letter is a preset, not
    *  a cage. Whether a track needs a QUOTE is a rights question and lives on
@@ -222,7 +222,9 @@
     if (pick.forWhom) bits.push([3, { own: 'Own work', client: 'Client work',
       'wedding-only': 'Families only', 'wedding-commercial': 'Families + commercial' }[pick.forWhom]]);
     if (pick.who === 'business' && pick.size) bits.push([2, BUYERS[buyerId()] ? BUYERS[buyerId()].short : '']);
-    if (pick.coverage === 'extended') bits.push([2, 'Extended']);
+    // coverage is a business-branch answer; showing it on the individual path
+    // is how a stale value announces itself as part of a route it never took
+    if (pick.who === 'business' && pick.coverage === 'extended') bits.push([2, 'Extended']);
     c.hidden = !bits.length;
     c.innerHTML = bits.map(([s, t]) =>
       `<button type="button" class="lic-crumb" data-s="${s}">${esc(t)}</button>`).join('<i>›</i>');
@@ -230,7 +232,26 @@
       b.addEventListener('click', () => { go(Number(b.dataset.s)); }));
   }
 
-  function go(n) { screen = n; render(); }
+  /**
+   * Going BACK must forget what came after.
+   *
+   * Without this, answering Business → Extended and then stepping back to pick
+   * Individual left pick.coverage on 'extended' — so the trail read
+   * "Individual › Creator › Extended", a path that does not exist, and the
+   * price was computed against a coverage the buyer had abandoned. State from
+   * an abandoned branch is worse than no state: it is invisible and it is
+   * wrong.
+   */
+  function go(n) {
+    if (n <= screen) {
+      if (n <= 1) { pick.who = null; }
+      if (n <= 2) { pick.persona = null; pick.size = null; pick.coverage = 'standard'; }
+      if (n <= 3) { pick.forWhom = null; }
+      if (n <= 5) { pick.paid = false; }
+    }
+    screen = n;
+    render();
+  }
 
   /* ── the screens ───────────────────────────────────────────────────────── */
 

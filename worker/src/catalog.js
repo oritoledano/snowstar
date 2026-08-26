@@ -87,7 +87,7 @@ export function sanitize(raw) {
   }
   if (typeof raw.cls === 'string') {
     const c = raw.cls.trim().toUpperCase();
-    if (['A', 'B', 'C'].includes(c)) p.cls = c;
+    if (['A', 'B', 'C', 'D'].includes(c)) p.cls = c;
     else if (c === '') delete p.cls;
   }
   // highlight window, as [start, end] fractions of the track

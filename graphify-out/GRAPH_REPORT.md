@@ -1,20 +1,21 @@
 # Graph Report - snowstar  (2026-08-27)
 
 ## Corpus Check
-- 58 files · ~352,140 words
+- 59 files · ~354,490 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 743 nodes · 1765 edges · 34 communities (32 shown, 2 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 87 edges (avg confidence: 0.87)
+- 753 nodes · 1785 edges · 35 communities (33 shown, 2 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 89 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e2267f72`
+- Built from commit: `524f16af`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
+- mutra-agent.js
 - mutra-page.js
 - Licence terms
 - analytics.js
@@ -44,10 +45,10 @@
 - make-stream-renditions.sh
 - schema-tracks.sql
 - mutra-license.js
+- stream.js
 - hyp.js
 - Four services section
 - certificate.js
-- works.js
 - mutra-artist-panel.js
 
 ## God Nodes (most connected - your core abstractions)
@@ -82,7 +83,11 @@
 - **Rights clearance pipeline (artist declaration → owner review → licensable lane)** — artists_rights_declaration, artists_co_owner_shares, artists_controller_declaration, artists_countersign_claim, artists_instant_vs_quote_lane, dashboard_submissions_queue, dashboard_clearance_status, terms_quote_only_tracks [INFERRED 0.85]
 - **One Snowstar account across catalogue, portal, dashboard and reset** — js_account, js_account_ui, css_account, artists_account_gate, reset_page, dashboard_page, privacy_account_data [INFERRED 0.85]
 
-## Communities (34 total, 2 thin omitted)
+## Communities (35 total, 2 thin omitted)
+
+### Community 0 - "mutra-agent.js"
+Cohesion: 0.44
+Nodes (9): build(), catalogueVocab(), chip(), close(), interpret(), open(), paint(), rank() (+1 more)
 
 ### Community 1 - "mutra-page.js"
 Cohesion: 0.07
@@ -93,12 +98,12 @@ Cohesion: 0.08
 Nodes (32): ACUM / royalties-society registration flag, Who can approve a licence (any vs all), Co-owner share splits (batch or per-track), External controller declaration (label / publisher / distributor), Direct-child CSS selectors for nested checkbox labels, Instant vs quote licensing lane, Signed rights declaration on upload, CLAIM subject-line escalation path (+24 more)
 
 ### Community 3 - "analytics.js"
-Cohesion: 0.16
-Nodes (25): ALERT_KINDS, alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json(), listAlerts() (+17 more)
+Cohesion: 0.13
+Nodes (30): alert(), ALERT_KINDS, alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json() (+22 more)
 
 ### Community 4 - "licensing.js"
-Cohesion: 0.11
-Nodes (37): alert(), calendarLink(), clean(), createRequest(), declineRequest(), freezeText(), GRANT_REASONS, grantFromDashboard() (+29 more)
+Cohesion: 0.12
+Nodes (36): calendarLink(), clean(), createRequest(), declineRequest(), freezeText(), GRANT_REASONS, grantFromDashboard(), grantLicence() (+28 more)
 
 ### Community 5 - "main.js"
 Cohesion: 0.07
@@ -141,8 +146,8 @@ Cohesion: 0.21
 Nodes (17): build(), clearAll(), openPanel(), applyAvatar(), artistNames(), describe(), fmt(), paintSuggestions() (+9 more)
 
 ### Community 15 - "oauth.js"
-Cohesion: 0.14
-Nodes (29): b64url(), bounce(), claimHandoff(), enc, facebookDataDeletion(), finishOAuth(), issueSession(), KILL_LEGACY_COOKIE (+21 more)
+Cohesion: 0.11
+Nodes (35): b64(), enc, pbkdf2(), PBKDF2_ITERS, peppered(), safeEqual(), verifyPassword(), b64url() (+27 more)
 
 ### Community 16 - "Owner dashboard"
 Cohesion: 0.16
@@ -182,7 +187,7 @@ Nodes (6): duration(), loudness(), offsets(), Tag placement. Returns [] only whe
 
 ### Community 25 - "index.js"
 Cohesion: 0.05
-Nodes (102): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNames(), AUDIO_EXT, cleanupOrphanUploads() (+94 more)
+Nodes (103): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNames(), AUDIO_EXT, cleanupOrphanUploads() (+95 more)
 
 ### Community 26 - "schema-analytics.sql"
 Cohesion: 0.50
@@ -191,6 +196,10 @@ Nodes (3): events, meta, sessions_seen
 ### Community 29 - "mutra-license.js"
 Cohesion: 0.22
 Nodes (26): build(), buyerId(), cards(), close(), crumbs(), go(), goToCard(), onCards() (+18 more)
+
+### Community 30 - "stream.js"
+Cohesion: 0.46
+Nodes (7): breadthExceeded(), handleStream(), json(), looksLikePlayback(), now(), parseRange(), serve()
 
 ### Community 31 - "hyp.js"
 Cohesion: 0.33
@@ -203,10 +212,6 @@ Nodes (5): Audio Branding service, Original Music service, Post Sound / SFX serv
 ### Community 33 - "certificate.js"
 Cohesion: 0.52
 Nodes (6): certificate(), certificateSvg(), esc(), fmtDate(), json(), wrap()
-
-### Community 35 - "works.js"
-Cohesion: 0.21
-Nodes (18): cleanUrl(), CREDIT_KEYS, deleteLogo(), deleteWork(), dropCdnFiles(), json(), listLogos(), listWorks() (+10 more)
 
 ### Community 36 - "mutra-artist-panel.js"
 Cohesion: 0.44
@@ -221,11 +226,11 @@ Nodes (8): albumsOf(), build(), close(), loadRoster(), open(), paint(), socialHt
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Owner dashboard` connect `Owner dashboard` to `dashboard.js`, `Mutra royalty-free music catalogue page`, `account-ui.js`, `Snowstar agency homepage`, `account.js`, `Privacy policy`?**
-  _High betweenness centrality (0.440) - this node is a cross-community bridge._
+  _High betweenness centrality (0.428) - this node is a cross-community bridge._
 - **Why does `openMember()` connect `dashboard.js` to `certificate.js`?**
-  _High betweenness centrality (0.412) - this node is a cross-community bridge._
+  _High betweenness centrality (0.401) - this node is a cross-community bridge._
 - **Why does `esc()` connect `certificate.js` to `dashboard.js`?**
-  _High betweenness centrality (0.412) - this node is a cross-community bridge._
+  _High betweenness centrality (0.401) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `render()` (e.g. with `matches()` and `wireBpmRange()`) actually correct?**
   _`render()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS` to the rest of the system?**

@@ -41,7 +41,7 @@
      pricing onto who is buying. The number is the twelve-month Standard price,
      and it is what the proportional suggestion is derived from. */
   const TIERS = [
-    ['individual-own', 'My own work', 180], ['wedding', 'Wedding clients', 250],
+    ['individual-own', 'My own work', 180], ['wedding', 'Ceremony films', 250],
     ['individual-client', 'Client work', 450], ['business-small', 'Business · 0–100', 650],
     ['business-mid', 'Business · 101–250', 1200], ['business-large', 'Business · 250+', null],
   ];
@@ -272,6 +272,7 @@
             <button type="button" class="bulk-seg" data-cls="A">A · 320%</button>
             <button type="button" class="bulk-seg" data-cls="B">B · 180%</button>
             <button type="button" class="bulk-seg" data-cls="C">C · 100%</button>
+            <button type="button" class="bulk-seg" data-cls="D">D · 50%</button>
           </div>
           <div class="bulk-prow" style="margin-top:9px">
             <label class="bulk-inline">or a custom

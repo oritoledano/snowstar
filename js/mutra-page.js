@@ -1115,7 +1115,7 @@
 
   /* Mirrors worker/src/pricing.js. Refreshed from the API on load so a tuned
      multiplier shows without a deploy; these are only the fallbacks. */
-  const CLASS_MULT = { A: 3.2, B: 1.8, C: 1.0 };
+  const CLASS_MULT = { A: 3.2, B: 1.8, C: 1.0, D: 0.5 };
   /** Slugs a signed declaration pins to the quote lane. */
   const LANE_LOCKED = new Set();
 
@@ -1174,6 +1174,26 @@
     // paint on the next frame rather than now
     requestAnimationFrame(() => paintRowWave(row, track));
     return row;
+  };
+
+  /* Show an explicit set of slugs, in the order given. The agent search ranks
+     by relevance, and re-sorting that into the catalogue's own order would
+     throw away the only thing the ranking was for. */
+  window.mutraShowSlugs = function (slugs, label) {
+    const order = new Map(slugs.map((sl, i) => [sl, i]));
+    // clearFilters() ends in render(), which would rebuild `list` from the
+    // facets and throw the ranking away — so the set is written after it, not
+    // before.
+    clearFilters();
+    state.q = '';
+    const se = $('#search'); if (se) se.value = '';
+    list = MUTRA.tracks.filter((t) => order.has(t.slug))
+      .sort((a, b) => order.get(a.slug) - order.get(b.slug));
+    shown = 0;
+    tracksEl.innerHTML = '';
+    appendPage();
+    if (label && window.mutraToast) mutraToast(`${list.length} for “${label}”`);
+    tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   window.mutraCatalog = {
@@ -1322,7 +1342,7 @@
       clsWrap.querySelector('.trk-custom').hidden = g !== '◈';
     }
 
-    clsWrap.innerHTML = ['A', 'B', 'C'].map(c =>
+    clsWrap.innerHTML = ['A', 'B', 'C', 'D'].map(c =>
       `<button type="button" class="trk-clsb" data-c="${c}" title="Price class ${c}">${c}</button>`).join('')
       + '<span class="trk-custom" data-c="◈" title="Custom percentage" hidden>◈</span>'
       + '<input class="trk-pct" type="number" min="10" max="2000" step="10" placeholder="%"'
