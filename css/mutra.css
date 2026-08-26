@@ -1144,3 +1144,14 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .ct-card select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:11px;
   padding:11px 13px;color:var(--text);font:inherit;font-size:.9rem;outline:0}
 .ct-addphone{margin:-4px 0 14px}
+
+/* A / B / C on the row, curate mode only — grading 374 tracks means one
+   decision per track and then move on. */
+.trk-cls{display:inline-flex;gap:2px;margin-right:6px}
+.trk-clsb{width:20px;height:20px;border-radius:5px;border:1px solid var(--line);
+  background:none;color:var(--dim);font:inherit;font-size:.66rem;font-weight:600;
+  cursor:pointer;line-height:1;display:grid;place-items:center;padding:0}
+.trk-clsb:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.trk-clsb.on{background:var(--amber,var(--coral));border-color:var(--amber,var(--coral));
+  color:var(--on-accent,#0d0a12)}
+.bulk-hint{color:var(--dim);font-size:.75rem;line-height:1.5;margin:-4px 0 10px}

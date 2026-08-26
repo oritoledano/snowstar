@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'inbox', 'members', 'licensing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
+  const TABS = ['overview', 'stats', 'inbox', 'members', 'licensing', 'pricing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -66,6 +66,7 @@
       if (tab === 'notifications') return paintMail();
       if (tab === 'licensing') return paintLicensing();
       if (tab === 'inbox') return paintInbox();
+      if (tab === 'pricing') return paintPricing();
       if (tab === 'alerts') return paintAlerts();
       if (tab === 'storage') return paintStorage();
       if (tab === 'upload') return paintUpload();
@@ -856,6 +857,76 @@
         if (status === 'pending') return commitReview(item, status, '');
         openReviewNote(item, status);
       }));
+  }
+
+  /* ── pricing classes ────────────────────────────────────────────────────
+     A multiplier is not a price. "1.8x" tells nobody whether the result is
+     sane, so every change previews the actual shekels it produces across every
+     band before it is saved. */
+  async function paintPricing() {
+    const d = await get('/pricing/classes');
+    const cls = d.classes || {};
+    const pv = d.preview || {};
+    const buyers = d.buyers || {};
+    const bandIds = Object.keys(buyers);
+
+    paint(`
+      <div class="db-panel">
+        <h2>Price classes</h2>
+        <p class="db-empty" style="padding-top:0">Each class multiplies the WHOLE ladder —
+          every buyer band and every term together — so the relationships between them stay
+          as they were solved. <b>C is the catalogue as it stands</b>; nothing moves at 100%.</p>
+
+        <table class="pc-table">
+          <tr><th></th><th>Of the baseline</th><th>Always quote</th>
+            ${bandIds.filter((b) => buyers[b].base != null).map((b) =>
+              `<th>${esc(buyers[b].short)}</th>`).join('')}</tr>
+          ${['A', 'B', 'C'].map((c) => `
+            <tr data-c="${c}">
+              <td class="pc-name"><b>${c}</b></td>
+              <td><input class="pc-pct" type="number" min="10" max="2000" step="5"
+                    value="${Math.round((cls[c]?.mult ?? 1) * 100)}"> %</td>
+              <td><input class="pc-quote" type="checkbox"${cls[c]?.quote ? ' checked' : ''}></td>
+              ${bandIds.filter((b) => buyers[b].base != null).map((b) =>
+                `<td class="pc-cell" data-b="${b}">${cls[c]?.quote ? '—' : '₪' + (pv[c]?.[b] ?? '')}</td>`).join('')}
+            </tr>`).join('')}
+        </table>
+        <p class="db-empty">Prices shown are the twelve-month Standard figure per band.
+          Terms multiply on top, unchanged.</p>
+        <div class="rv-acts">
+          <button class="rv-btn rv-ok" id="pcSave">Save</button>
+          <span class="pc-msg"></span>
+        </div>
+      </div>`);
+
+    // live preview: type a percentage, see the shekels move before saving
+    const repaint = () => {
+      app.querySelectorAll('.pc-table tr[data-c]').forEach((row) => {
+        const pct = Number(row.querySelector('.pc-pct').value) / 100;
+        const q = row.querySelector('.pc-quote').checked;
+        row.querySelectorAll('.pc-cell').forEach((td) => {
+          const base = buyers[td.dataset.b].base;
+          td.textContent = q ? '—'
+            : '₪' + Math.max(0, Math.round(base * pct / 10) * 10 - 1).toLocaleString();
+        });
+      });
+    };
+    app.querySelectorAll('.pc-pct, .pc-quote').forEach((i) =>
+      i.addEventListener('input', repaint));
+
+    document.getElementById('pcSave').addEventListener('click', async () => {
+      const body = {};
+      app.querySelectorAll('.pc-table tr[data-c]').forEach((row) => {
+        body[row.dataset.c] = {
+          pct: Number(row.querySelector('.pc-pct').value),
+          quote: row.querySelector('.pc-quote').checked,
+        };
+      });
+      const msg = app.querySelector('.pc-msg');
+      msg.textContent = 'Saving…';
+      const r = await post('/pricing/classes', body);
+      msg.textContent = r && r.ok ? 'Saved — live now.' : 'Could not save.';
+    });
   }
 
   /* ── inbox: what came in through Get in touch ──────────────────────────

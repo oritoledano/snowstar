@@ -13,7 +13,7 @@
  * wiring the button straight into an INSERT.
  */
 
-import { priceFor, isBuyer, isCoverage, isTerm, BUYERS } from './pricing.js';
+import { priceFor, isBuyer, isCoverage, isTerm, BUYERS, loadClasses } from './pricing.js';
 import { sendMail } from './mail.js';
 import { alert } from './analytics.js';
 
@@ -244,9 +244,15 @@ export async function createRequest(req, env, user) {
   // Price from the band. The track record the browser sees is rebuilt here from
   // the override so the same inputs give the same number on both sides.
   if (buyer) {
-    let tr = { lane, prices: {}, fee: null };
-    if (ov) { try { const p = JSON.parse(ov.patch); tr = { lane, prices: p.prices || {}, fee: p.fee }; } catch { /* corrupt override */ } }
-    const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '12m', !!b.paid_media);
+    let tr = { lane, prices: {}, fee: null, cls: 'C' };
+    if (ov) {
+      try {
+        const p = JSON.parse(ov.patch);
+        tr = { lane, prices: p.prices || {}, fee: p.fee, cls: p.cls || 'C' };
+      } catch { /* corrupt override */ }
+    }
+    const classes = await loadClasses(env);
+    const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '12m', !!b.paid_media, classes);
     listAgorot = pr.quote ? null : pr.amount * 100;
     if (pr.quote) lane = 'quote';
   }

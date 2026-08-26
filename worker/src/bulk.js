@@ -49,7 +49,7 @@ const TAG_FIELDS = ['genres', 'moods', 'instruments', 'packages'];
  *  by one person, or a name misspelt across forty tracks, is exactly the case
  *  this tool exists for. `title` is NOT, and never should be: every track has
  *  its own, so setting it across a selection can only ever destroy them. */
-const SET_FIELDS = ['lane', 'hidden', 'vocal', 'key', 'scale', 'bpm', 'artist'];
+const SET_FIELDS = ['lane', 'hidden', 'vocal', 'key', 'scale', 'bpm', 'artist', 'cls'];
 
 const clean = (v, max = 120) => String(v == null ? '' : v).trim().slice(0, max);
 const tagList = (v) =>

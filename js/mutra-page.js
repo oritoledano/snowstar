@@ -1266,6 +1266,24 @@
       render();
     });
     wrap.querySelector('.trk-cur-edit').addEventListener('click', e => { e.stopPropagation(); openEditor(track, row); });
+
+    /* A / B / C on the row itself. Grading 374 tracks means one decision per
+       track and then move on; opening an editor for each would make the pass
+       an afternoon instead of twenty minutes. */
+    const clsWrap = document.createElement('span');
+    clsWrap.className = 'trk-cls';
+    const cur = (overrides[track.slug] || {}).cls || track.cls || 'C';
+    clsWrap.innerHTML = ['A', 'B', 'C'].map(c =>
+      `<button type="button" class="trk-clsb${c === cur ? ' on' : ''}" data-c="${c}"
+         title="Price class ${c}">${c}</button>`).join('');
+    clsWrap.querySelectorAll('.trk-clsb').forEach(b => b.addEventListener('click', async e => {
+      e.stopPropagation();
+      const patch = { ...(overrides[track.slug] || {}), cls: b.dataset.c };
+      clsWrap.querySelectorAll('.trk-clsb').forEach(x => x.classList.toggle('on', x === b));
+      track.cls = b.dataset.c;
+      await saveTrack(track.slug, patch);
+    }));
+    wrap.insertBefore(clsWrap, wrap.querySelector('.trk-cur-edit'));
     // the bulk checkbox leads the group — it is the control you reach for most
     // once you are working through the catalogue rather than fixing one track
     if (window.mutraBulkRowControl) {

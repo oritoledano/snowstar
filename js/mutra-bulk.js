@@ -263,6 +263,19 @@
         </section>
 
         <section class="bulk-sec">
+          <h4>Price class</h4>
+          <p class="bulk-hint">Multiplies the whole ladder — every buyer band and every
+            term together — so the relationships stay intact. C is the catalogue as it
+            stands today.</p>
+          <div class="bulk-segs bulk-cls">
+            <button type="button" class="bulk-seg" data-cls="">— no change —</button>
+            <button type="button" class="bulk-seg" data-cls="A">A</button>
+            <button type="button" class="bulk-seg" data-cls="B">B</button>
+            <button type="button" class="bulk-seg" data-cls="C">C</button>
+          </div>
+        </section>
+
+        <section class="bulk-sec">
           <h4>Lane and visibility</h4>
           <div class="bulk-prow">
             <select class="bulk-lane">
@@ -320,6 +333,15 @@
         resetPreview();
       });
     });
+    let clsPick = '';
+    panel.querySelectorAll('.bulk-cls .bulk-seg').forEach((b) =>
+      b.addEventListener('click', () => {
+        clsPick = b.dataset.cls;
+        panel.querySelectorAll('.bulk-cls .bulk-seg').forEach((x) =>
+          x.classList.toggle('on', x === b && !!clsPick));
+        resetPreview();
+      }));
+
     const ptier = panel.querySelector('.bulk-ptier'), pval = panel.querySelector('.bulk-pval');
     const sugg = panel.querySelector('.bulk-sugg');
     const suggGrid = panel.querySelector('.bulk-sugggrid');
@@ -577,6 +599,7 @@
       if (ops.credits) for (const [verb, list] of Object.entries(ops.credits)) {
         bits.push(`${verb} credits ${list.map((c) => (c.role ? c.role + ':' : '') + c.name).join('/')}`);
       }
+      if (ops.set && ops.set.cls) bits.push(`class ${ops.set.cls}`);
       if (ops.set) bits.push(Object.entries(ops.set)
         .map(([k, v]) => `${k}=${v === null ? 'clear' : v}`).join(', '));
       return bits.join(' · ').slice(0, 200);
@@ -643,6 +666,7 @@
       }
 
       const set = {};
+      if (clsPick) set.cls = clsPick;
       const artist = panel.querySelector('.bulk-artist').value.trim();
       if (artist) set.artist = artist;
       const lane = panel.querySelector('.bulk-lane').value;

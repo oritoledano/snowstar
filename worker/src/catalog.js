@@ -74,6 +74,14 @@ export function sanitize(raw) {
     })).filter((c) => c.role && c.name);
   }
   if (raw.lane === 'instant' || raw.lane === 'quote') p.lane = raw.lane;
+  // Price class: A / B / C. C is the baseline and the same as absent, so it is
+  // stored rather than dropped — an explicit C is the owner saying "I looked at
+  // this one", which is different from never having graded it.
+  if (typeof raw.cls === 'string') {
+    const c = raw.cls.trim().toUpperCase();
+    if (['A', 'B', 'C'].includes(c)) p.cls = c;
+    else if (c === '') delete p.cls;
+  }
   // highlight window, as [start, end] fractions of the track
   if (Array.isArray(raw.hl) && raw.hl.length === 2) {
     let [a, b] = raw.hl.map(Number);

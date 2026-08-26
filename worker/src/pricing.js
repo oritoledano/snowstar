@@ -78,6 +78,54 @@ export const BUYERS = {
   },
 };
 
+/**
+ * PRICE CLASS — the second axis, after the buyer band.
+ *
+ * The band asks who is buying. The class asks what the track is worth. A
+ * signature vocal cut and a fifteen-second logo sting are not the same asset
+ * and should never have carried the same price, but until now the only way to
+ * say so was to hand-edit six band prices per track across 374 tracks.
+ *
+ * C is the catalogue as it stands — every existing price is a C price and
+ * nothing moves when this ships. B and A multiply the WHOLE ladder: every band,
+ * every term, together, so the relationships that were solved once stay solved.
+ *
+ * A also flips the track to the quote lane by default. That is the point of an
+ * A rather than just a bigger number: the tracks worth the most are the ones
+ * where the deal has terms in it, and a self-serve card payment is the wrong
+ * shape for them.
+ *
+ * The multipliers live in `meta` so they can be tuned from the dashboard as
+ * percentages without a deploy. These are only the fallbacks.
+ */
+export const CLASSES = {
+  A: { label: 'A', mult: 3.2, quote: true,
+       note: 'Signature tracks. Priced high and usually quoted — the deals have terms in them.' },
+  B: { label: 'B', mult: 1.8, quote: false,
+       note: 'Strong catalogue. Sits between A and the baseline.' },
+  C: { label: 'C', mult: 1.0, quote: false,
+       note: 'The baseline — every price in the catalogue today is a C price.' },
+};
+
+export const isClass = (c) => Object.prototype.hasOwnProperty.call(CLASSES, String(c || '').toUpperCase());
+
+/** Reads the tuned multipliers, falling back to the defaults above. Called on
+ *  every price, so it is cached per request rather than per call. */
+export async function loadClasses(env) {
+  const out = JSON.parse(JSON.stringify(CLASSES));
+  try {
+    const r = await env.DB.prepare("SELECT v FROM meta WHERE k = 'pricing:classes'").first();
+    if (r && r.v) {
+      const tuned = JSON.parse(r.v);
+      for (const k of Object.keys(out)) {
+        if (Number.isFinite(tuned[k]?.mult) && tuned[k].mult > 0) out[k].mult = tuned[k].mult;
+        if (typeof tuned[k]?.quote === 'boolean') out[k].quote = tuned[k].quote;
+      }
+    }
+  } catch { /* a corrupt setting must never take the catalogue offline */ }
+  return out;
+}
+
 /* Coverage. Standard is self-serve; Extended is always quoted, because
    broadcast and cinema deals turn on territory, flight dates and media weight
    that no form can capture. The floors are published anyway — a blank price on
@@ -168,13 +216,19 @@ export function trackFactor(track) {
  *   - the use is broadcast/cinema/radio                        (coverage)
  *   - the buyer wants exclusivity                              (term)
  */
-export function priceFor(track, buyerId, coverageId, termId, paidMedia) {
+export function priceFor(track, buyerId, coverageId, termId, paidMedia, classes) {
   const buyer = BUYERS[buyerId];
   const cov = COVERAGE[coverageId];
   const term = termById(termId);
 
+  const CL = classes || CLASSES;
+  const cls = CL[String((track && track.cls) || 'C').toUpperCase()] || CL.C;
+
   if (!buyer || !cov) return { amount: null, quote: true, reason: 'unknown_selection' };
   if (track && track.lane === 'quote') return { amount: null, quote: true, reason: 'co_owned' };
+  // An A track is quoted by default — the tracks worth the most are the ones
+  // whose deals have terms in them, and a card payment is the wrong shape.
+  if (cls.quote) return { amount: null, quote: true, reason: 'class_a' };
   if (cov.quote) return { amount: null, quote: true, reason: 'extended_coverage' };
   if (buyer.base == null) return { amount: null, quote: true, reason: 'large_client' };
   if (term.mult == null) return { amount: null, quote: true, reason: 'exclusive' };
@@ -187,10 +241,59 @@ export function priceFor(track, buyerId, coverageId, termId, paidMedia) {
   // by the legacy digital-price factor.
   const over = track && track.prices && track.prices[buyerId];
   const base = Number.isFinite(over) && over > 0 ? over : buyer.base * trackFactor(track);
-  return { amount: pricePoint(base * term.mult), quote: false, reason: null };
+  // The class multiplies the whole ladder — every band, every term, together —
+  // so the relationships solved once stay solved.
+  return { amount: pricePoint(base * cls.mult * term.mult), quote: false, reason: null };
 }
 
 /** Valid ids, for request validation. */
 export const isBuyer = (id) => Object.prototype.hasOwnProperty.call(BUYERS, id);
 export const isCoverage = (id) => Object.prototype.hasOwnProperty.call(COVERAGE, id);
 export const isTerm = (id) => TERMS.some((t) => t.id === id);
+
+const json = (data, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+  });
+
+/** GET /pricing/classes — the tuned multipliers, plus what they produce. */
+export async function getClasses(env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const classes = await loadClasses(env);
+  // Show the owner the actual shekels, not just the ratio. A multiplier is not
+  // a price and "1.8x" tells nobody whether the result is sane.
+  const preview = {};
+  for (const [c, cfg] of Object.entries(classes)) {
+    preview[c] = {};
+    for (const [bid, band] of Object.entries(BUYERS)) {
+      preview[c][bid] = band.base == null ? null : pricePoint(band.base * cfg.mult);
+    }
+  }
+  return json({ classes, preview, buyers: BUYERS });
+}
+
+/**
+ * POST /pricing/classes — tune them as percentages.
+ * Body: { A: {pct: 320, quote: true}, B: {pct: 180}, C: {pct: 100} }
+ *
+ * Percent rather than a raw multiplier because that is how the owner asked,
+ * and because "180%" reads as a decision where "1.8" reads as a constant.
+ */
+export async function setClasses(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const next = await loadClasses(env);
+  for (const k of Object.keys(next)) {
+    if (!b[k]) continue;
+    const pct = Number(b[k].pct);
+    // Bounded: a class multiplier is applied to every band and every term at
+    // once, so a fat-fingered 10000 would put the whole catalogue out of reach
+    // and a 0 would give it away.
+    if (Number.isFinite(pct) && pct >= 10 && pct <= 2000) next[k].mult = pct / 100;
+    if (typeof b[k].quote === 'boolean') next[k].quote = b[k].quote;
+  }
+  await env.DB.prepare(
+    "INSERT INTO meta (k, v) VALUES ('pricing:classes', ?) ON CONFLICT(k) DO UPDATE SET v = ?"
+  ).bind(JSON.stringify(next), JSON.stringify(next)).run();
+  return json({ ok: true, classes: next });
+}

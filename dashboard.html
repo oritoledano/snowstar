@@ -258,6 +258,20 @@
 /* inbox */
 .ib-urgent{color:#ff8f8f}
 .ib-body{white-space:pre-wrap}
+
+/* price classes */
+.pc-table{width:100%;border-collapse:collapse;margin:14px 0}
+.pc-table th{text-align:left;padding:7px 10px;font-size:.68rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted,#93a0b8);font-weight:500;
+  border-bottom:1px solid var(--line,rgba(255,255,255,.1))}
+.pc-table td{padding:9px 10px;border-bottom:1px solid var(--line,rgba(255,255,255,.06));
+  color:var(--text,#eef3fb);font-size:.86rem;font-variant-numeric:tabular-nums}
+.pc-name b{font-family:var(--font-display,inherit);font-size:1.1rem}
+.pc-pct{width:66px;background:var(--bg,#0b0e17);border:1px solid var(--line,rgba(255,255,255,.1));
+  border-radius:8px;padding:6px 9px;color:var(--text,#eef3fb);font:inherit;font-size:.85rem;outline:0}
+.pc-pct:focus{border-color:var(--coral,#e8b98a)}
+.pc-quote{width:15px;height:15px;accent-color:var(--coral,#e8b98a)}
+.pc-msg{color:var(--muted,#93a0b8);font-size:.8rem;margin-left:10px}
 </style>
 </head>
 <body>
@@ -280,6 +294,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=18"></script>
-<script src="js/dashboard.js?v=15"></script>
+<script src="js/dashboard.js?v=16"></script>
 </body>
 </html>

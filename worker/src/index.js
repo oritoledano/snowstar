@@ -37,6 +37,7 @@ import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { handleStream } from './stream.js';
+import { getClasses, setClasses } from './pricing.js';
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
@@ -209,6 +210,8 @@ async function handle(req, env, ctx) {
   if (path === '/tracks/bulk/undo' && method === 'POST') return bulkUndo(req, env, await currentUser(req, env));
   if (path === '/tracks/bulk/batches' && method === 'GET') return listBatches(env, await currentUser(req, env));
   if (path === '/tracks/bulk/artist' && method === 'POST') return bulkArtist(req, env, await currentUser(req, env));
+  if (path === '/pricing/classes' && method === 'GET') return getClasses(env, await currentUser(req, env));
+  if (path === '/pricing/classes' && method === 'POST') return setClasses(req, env, await currentUser(req, env));
   if (path === '/tracks/cover' && method === 'PUT') return uploadCover(req, env, await currentUser(req, env), url);
   if (path === '/texts' && method === 'GET') return listTexts(env);
   if (path === '/texts' && method === 'POST') return saveText(req, env, await currentUser(req, env));
