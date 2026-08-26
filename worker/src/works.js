@@ -36,11 +36,15 @@ const rowOut = (r) => ({
   credits: JSON.parse(r.credits || '{}'),
   tags: JSON.parse(r.tags || '[]'),
   media: JSON.parse(r.media || '[]'),
+  year: r.year || undefined,
+  // how the year was arrived at, so a reconstructed one is never mistaken for
+  // a remembered one
+  year_src: r.year_src || undefined,
 });
 
 export async function listWorks(env) {
   const r = await env.DB.prepare(
-    'SELECT id, title, thumb, preview, mp4, vimeo, credits, tags, media FROM works ORDER BY position'
+    'SELECT id, title, thumb, preview, mp4, vimeo, credits, tags, media, year, year_src FROM works ORDER BY position'
   ).all();
   return json({ works: (r.results || []).map(rowOut) });
 }

@@ -1,7 +1,7 @@
 # Graph Report - snowstar  (2026-08-27)
 
 ## Corpus Check
-- 59 files · ~355,696 words
+- 59 files · ~355,725 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ab212786`
+- Built from commit: `52d2cfb6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -70,10 +70,10 @@
   dashboard.html → artists.html
 - `Upward tier change credits the earlier payment` --semantically_similar_to--> `Use tiers (digital, corporate, paid, TV, film, radio, commercial)`  [INFERRED] [semantically similar]
   refund.html → terms.html
-- `Instant vs quote licensing lane` --semantically_similar_to--> `Get-a-quote tracks (someone else has a say)`  [INFERRED] [semantically similar]
-  artists.html → terms.html
 - `Newsletter signup form` --semantically_similar_to--> `Signed-out account gate`  [INFERRED] [semantically similar]
   index.html → artists.html
+- `Instant vs quote licensing lane` --semantically_similar_to--> `Get-a-quote tracks (someone else has a say)`  [INFERRED] [semantically similar]
+  artists.html → terms.html
 
 ## Import Cycles
 - None detected.

@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1787784395.7808423,
-    "seen": 1787784401.652704,
-    "ast_hash": "c51207892719ef7f42cadfdce110afe3",
+    "mtime": 1787787500.4660444,
+    "seen": 1787787506.2454772,
+    "ast_hash": "f0d0b0f38de3ef51353ba12d8f0fcf10",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -276,9 +276,9 @@
     "semantic_hash": "f6c54d10558accdad2e80663914fe906"
   },
   "worker/src/works.js": {
-    "mtime": 1787787422.4758856,
-    "seen": 1787787428.2091799,
-    "ast_hash": "696e549143df232df9c83f7dec8eee03",
+    "mtime": 1787787610.6695542,
+    "seen": 1787787615.6039839,
+    "ast_hash": "45aad22b3590c7d8b0da76c795af9dc9",
     "semantic_hash": ""
   },
   "README.md": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1787784740.0602064,
-    "seen": 1787784746.133591,
-    "ast_hash": "dba08c86bb854e97964b0bd65cbd6045",
+    "mtime": 1787787523.9323092,
+    "seen": 1787787615.603991,
+    "ast_hash": "a11a607edea560c2da09c8782e44a549",
     "semantic_hash": ""
   },
   "privacy.html": {
