@@ -245,8 +245,8 @@
           <div class="bulk-prow">
             <input class="bulk-avatar" type="text"
                    placeholder="Artist photo URL — applies to the artist, not the track">
-            <button type="button" class="bulk-avup">Upload…</button>
-            <input type="file" class="bulk-avfile" accept="image/*" hidden>
+            <label class="bulk-avup">Upload…<input type="file" class="bulk-avfile"
+                   accept="image/jpeg,image/png,image/webp" hidden></label>
           </div>
           <div class="bulk-tagrow" data-field="credits">
             <span class="bulk-tagname">Collaborators</span>
@@ -414,26 +414,44 @@
 
     // uploading a photo goes through the cover endpoint, which already takes a
     // raw image body and hands back a CDN URL
+    /* The upload is a LABEL wrapping the input, not a button that calls
+       .click() on a hidden one — the same pattern the per-track cover editor
+       uses, and the reason this silently did nothing before. It also called
+       POST /api/catalog/cover; the route is PUT /api/tracks/cover. Three
+       mistakes in one call, none of which surfaced an error. */
     const avFile = panel.querySelector('.bulk-avfile');
     const avUrl = panel.querySelector('.bulk-avatar');
-    panel.querySelector('.bulk-avup').addEventListener('click', () => avFile.click());
+    const avLbl = panel.querySelector('.bulk-avup');
     avFile.addEventListener('change', async () => {
       const f = avFile.files && avFile.files[0];
       if (!f) return;
-      const btn = panel.querySelector('.bulk-avup');
-      btn.disabled = true; btn.textContent = 'Uploading…';
+      if (f.size > 8 * 1024 * 1024) { toast('That image is over 8MB'); avFile.value = ''; return; }
+
+      // The endpoint keys on a slug. An avatar is not a track, so it gets a
+      // slug of its own derived from the artist name rather than borrowing
+      // some selected track's — which would have overwritten that track's art.
+      const who = (panel.querySelector('.bulk-artist').value.trim() || artistNames()[0] || 'artist');
+      const slug = 'artist-' + who.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '').slice(0, 60);
+
+      const was = avLbl.firstChild.nodeValue;
+      avLbl.firstChild.nodeValue = 'Uploading…';
+      avLbl.classList.add('is-busy');
       try {
-        const r = await fetch('/api/catalog/cover?slug=' + encodeURIComponent([...sel][0] || 'artist'), {
-          method: 'POST', credentials: 'same-origin',
+        const r = await fetch('/api/tracks/cover?slug=' + encodeURIComponent(slug), {
+          method: 'PUT', credentials: 'same-origin',
           headers: { 'content-type': f.type }, body: f,
         });
         const d = await r.json();
         if (!r.ok || !d.url) throw new Error(d.error || 'failed');
         avUrl.value = d.url;
+        toast('Photo uploaded — press Preview to apply it');
       } catch (e) {
         toast('Upload failed — ' + String(e.message || e));
       } finally {
-        btn.disabled = false; btn.textContent = 'Upload…'; avFile.value = '';
+        avLbl.firstChild.nodeValue = was;
+        avLbl.classList.remove('is-busy');
+        avFile.value = '';
       }
     });
     panel.querySelectorAll('input, select').forEach((i) =>

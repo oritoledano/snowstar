@@ -1,4 +1,5 @@
 {
+  "0": "artistreg.js",
   "1": "mutra-page.js",
   "2": "Licence terms",
   "3": "analytics.js",
@@ -13,7 +14,7 @@
   "12": "account-ui.js",
   "13": "artists-page.js",
   "14": "openPanel",
-  "15": "oauth.js",
+  "15": "profile.js",
   "16": "Owner dashboard",
   "17": "Snowstar agency homepage",
   "18": "mutra-contact.js",
@@ -23,14 +24,19 @@
   "22": "Privacy policy",
   "23": "Track catalogue browse + search",
   "24": "watermark.py",
-  "25": "index.js",
+  "25": "rights.js",
   "26": "schema-analytics.sql",
   "27": "make-stream-renditions.sh",
   "28": "schema-tracks.sql",
   "29": "mutra-license.js",
+  "30": "stream.js",
   "31": "hyp.js",
   "32": "Four services section",
   "33": "certificate.js",
+  "34": "index.js",
   "35": "works.js",
-  "36": "mutra-artist-panel.js"
+  "36": "mutra-artist-panel.js",
+  "37": "crypto.js",
+  "38": "clearlist.js",
+  "39": "contact.js"
 }

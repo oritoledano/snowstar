@@ -1236,6 +1236,23 @@
     render();
   }
 
+  /**
+   * Put a track AT a place, rather than nudging it there one arrow at a time.
+   * Ten arrow clicks to move something from 11th to 1st is the kind of thing
+   * that stops a staff-picks list from ever being curated.
+   *
+   * place is 1-based, or 0 to unpin. Anything already in the list is removed
+   * first, so pinning to 3 means "third", not "third counting the copy of
+   * itself that used to be second".
+   */
+  function pinCurated(slug, place) {
+    const i = curated.indexOf(slug);
+    if (i >= 0) curated.splice(i, 1);
+    if (place > 0) curated.splice(Math.min(place - 1, curated.length), 0, slug);
+    saveCurated();
+    render();
+  }
+
   function toggleCurated(slug) {
     const i = curated.indexOf(slug);
     if (i < 0) curated.push(slug); else curated.splice(i, 1);
@@ -1522,6 +1539,15 @@
           <button type="button" class="te-hlplay">Preview</button>
         </div>
       </div>
+      <div class="te-facet te-pin">
+        <div class="te-flabel">Pin to the top of staff picks</div>
+        <select class="te-pinsel">
+          <option value="0">Not pinned</option>
+          ${Array.from({ length: 10 }, (_, i) =>
+            `<option value="${i + 1}">${i + 1}${['st', 'nd', 'rd'][i] || 'th'}</option>`).join('')}
+        </select>
+        <p class="te-hint te-pinnote"></p>
+      </div>
       <div class="te-facet te-credits">
         <div class="te-flabel">Credits \u2014 who did what</div>
         <div class="te-crlist"></div>
@@ -1564,6 +1590,26 @@
       el.addEventListener('input', () => { draft[f] = el.value; });
     });
     q('.te-cimg').src = draft.cover;
+
+    // ── pin ──
+    const pinSel = q('.te-pinsel');
+    const pinNote = q('.te-pinnote');
+    const paintPin = () => {
+      const at = curated.indexOf(track.slug);
+      pinSel.value = at >= 0 && at < 10 ? String(at + 1) : '0';
+      pinNote.textContent = at < 0
+        ? 'Not in staff picks.'
+        : at < 10 ? `Currently ${at + 1} of ${curated.length} picks.`
+                  : `In picks at ${at + 1} — outside the top ten.`;
+    };
+    paintPin();
+    pinSel.addEventListener('change', () => {
+      // Only meaningful in the picks sort, so say so rather than let someone
+      // set it and see nothing move.
+      pinCurated(track.slug, Number(pinSel.value));
+      paintPin();
+      if (state.sort !== 'picks') toast('Pinned — switch Sort to Staff picks to see it');
+    });
 
     // ── credits ──
     // The markup for these two shipped without handlers: the button did
