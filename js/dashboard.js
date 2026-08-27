@@ -1421,8 +1421,11 @@
     const q = jobQ.trim().toLowerCase();
     return jobsAll.filter((j) => {
       if (jobYear && (j.job_date || '').slice(0, 4) !== jobYear) return false;
-      if (jobLic === 'y' && !j.licensed) return false;
-      if (jobLic === 'n' && j.licensed) return false;
+      // Three-way, so "no licence" means an established no rather than
+      // sweeping in every row nobody has looked at yet.
+      if (jobLic === 'y' && j.licensed !== 1) return false;
+      if (jobLic === 'n' && j.licensed !== 0) return false;
+      if (jobLic === '?' && j.licensed != null) return false;
       if (!q) return true;
       return [j.project, j.client, j.agency, j.service, j.lic_media,
         j.lic_territory, j.note, j.source].some((v) => v && String(v).toLowerCase().includes(q));
@@ -1441,17 +1444,19 @@
       <div class="db-panel jb-panel">
         <h2>Jobs <span class="pill" id="jb-count"></span></h2>
         <p class="db-empty" style="padding-top:0">Every piece of work sold, and — the part
-          that is nowhere else — exactly what licence went with it. Seeded from the price-offer
-          archive, so the older rows have a date and a name and nothing more. Type in any cell;
-          it saves when you click away.</p>
+          that is nowhere else — exactly what licence went with it. Read out of the price-offer
+          archive twice over, by two readers who never saw each other’s answers: a cell is
+          filled only where both read it off the page and agreed. Where they didn’t, it is
+          blank and the ● says why. Type in any cell; it saves when you click away.</p>
 
         <div class="jb-bar">
           <input id="jb-q" class="jb-search" type="search" placeholder="Search project, client, anything…" value="${esc(jobQ)}">
           <select id="jb-year"><option value="">All years</option>${
             jobYears().map((y) => `<option value="${y}"${y === jobYear ? ' selected' : ''}>${y}</option>`).join('')}</select>
-          <select id="jb-lic"><option value="">Licensed &amp; not</option>
-            <option value="y"${jobLic === 'y' ? ' selected' : ''}>Licensed only</option>
-            <option value="n"${jobLic === 'n' ? ' selected' : ''}>No licence</option></select>
+          <select id="jb-lic"><option value="">Any licence state</option>
+            <option value="y"${jobLic === 'y' ? ' selected' : ''}>Licensed</option>
+            <option value="n"${jobLic === 'n' ? ' selected' : ''}>No licence</option>
+            <option value="?"${jobLic === '?' ? ' selected' : ''}>Licence unknown</option></select>
           <button class="rv-btn rv-ok" id="jb-new">+ New job</button>
           <a class="rv-btn" id="jb-csv" href="/api/jobs/export">Export CSV</a>
         </div>

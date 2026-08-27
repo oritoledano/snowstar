@@ -5613,7 +5613,7 @@
       "file_type": "code",
       "norm_label": "paintjobs()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1435"
+      "source_location": "L1438"
     },
     {
       "id": "js_dashboard_paintjobs_fill",
@@ -5625,7 +5625,7 @@
       "file_type": "code",
       "norm_label": "fill()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1478"
+      "source_location": "L1481"
     },
     {
       "id": "js_dashboard_paintjobs_save",
@@ -5637,7 +5637,7 @@
       "file_type": "code",
       "norm_label": "save()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1538"
+      "source_location": "L1544"
     },
     {
       "id": "js_dashboard_paintjobs_togglenote",
@@ -5649,7 +5649,7 @@
       "file_type": "code",
       "norm_label": "togglenote()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1515"
+      "source_location": "L1521"
     },
     {
       "id": "js_dashboard_paintlicensing",
@@ -10362,7 +10362,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1440",
+      "source_location": "L1443",
       "weight": 1.0
     },
     {
@@ -10374,7 +10374,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1479",
+      "source_location": "L1482",
       "weight": 1.0
     },
     {
@@ -18966,7 +18966,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1478",
+      "source_location": "L1481",
       "weight": 1.0
     },
     {
@@ -18978,7 +18978,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1515",
+      "source_location": "L1521",
       "weight": 1.0
     },
     {
@@ -18990,7 +18990,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1538",
+      "source_location": "L1544",
       "weight": 1.0
     },
     {
@@ -21677,7 +21677,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1435",
+      "source_location": "L1438",
       "weight": 1.0
     },
     {
@@ -30820,5 +30820,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "67e15f857636937dcfcfea57c03c3b2ba2e1765e"
+  "built_at_commit": "689d63fa64629af256a24fd7946fee89238e184a"
 }
