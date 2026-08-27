@@ -204,7 +204,7 @@
    */
   function rank(want) {
     const all = (window.mutraCatalog && mutraCatalog.all()) || [];
-    const W = { mood: 3, genre: 2.5, instrument: 1.5, bpm: 2, vocal: 2 };
+    const W = { mood: 3, genre: 2.5, instrument: 1.5, bpm: 2, vocal: 2, keyword: 2.5 };
     const out = [];
 
     for (const t of all) {
@@ -214,6 +214,15 @@
       for (const m of want.moods) if ((t.moods || []).includes(m)) { score += W.mood; hits++; }
       for (const g of want.genres) if ((t.genres || []).includes(g)) { score += W.genre; hits++; }
       for (const i of want.instruments) if ((t.instruments || []).includes(i)) { score += W.instrument; hits++; }
+
+      /* Words the model pulled out of the brief that are not tags at all — a
+         theme, a place, a reference. "Star Trek themed wedding" yields
+         "space", which no mood or genre can carry, and which the titles
+         sometimes can. */
+      if (want.keywords && want.keywords.length) {
+        const title = norm(t.title + ' ' + (t.artist || ''));
+        for (const k of want.keywords) if (title.includes(k)) { score += W.keyword; hits++; }
+      }
 
       if (want.vocal) {
         if (t.vocal === want.vocal) { score += W.vocal; hits++; }
@@ -246,16 +255,19 @@
     el.innerHTML = `
       <div class="ag-card" role="dialog" aria-modal="true" aria-label="Describe what you need">
         <button class="ag-close" aria-label="Close">&times;</button>
-        <h3 class="ag-h">Describe what you need</h3>
+        <h3 class="ag-h">Tell me about your project</h3>
+        <p class="ag-sub">A sentence or two about the film, the brand and the feeling.
+          Write it the way you would say it to a composer — the situation is more
+          use to me than a list of adjectives.</p>
         <div class="ag-inwrap">
-          <textarea class="ag-in" rows="2" placeholder="Warm and hopeful for a wedding montage, no vocals"></textarea>
+          <textarea class="ag-in" rows="4" placeholder="Opening titles for a true-crime podcast. Unsettling, sparse, builds slowly — and it sits under narration, so nothing that sings."></textarea>
           <button class="ag-go" type="button">Find</button>
         </div>
         <div class="ag-examples">
-          ${['Tense build for a thriller trailer',
-             'Upbeat instrumental for a corporate explainer',
-             'Sad piano, slow, no drums',
-             'Lo-fi beats for a vlog, around 90 bpm'].map((x) =>
+          ${['Bar mitzvah entrance — big, celebratory, everyone on their feet',
+             'Bank commercial. Trustworthy and modern, nothing cheesy',
+             '30s sneaker drop for Instagram. Street, confident, hard beat',
+             'Hospital fundraising film. Soft bed, nothing that pulls focus'].map((x) =>
             `<button type="button" class="ag-eg">${esc(x)}</button>`).join('')}
         </div>
         <div class="ag-out"></div>
@@ -275,11 +287,39 @@
     return el;
   }
 
-  function run() {
+  /**
+   * Ask the model first, fall back to the dictionary.
+   *
+   * The dictionary stays because it is the difference between a degraded
+   * search and no search at all: if Workers AI is down, rate-limited or slow,
+   * "sad piano" must still work. But it is now the fallback rather than the
+   * plan — it could only ever recognise words someone had written into it, and
+   * the briefs people actually type are an open set.
+   */
+  async function run() {
     const prompt = el.querySelector('.ag-in').value.trim();
     if (!prompt) return;
-    lastWant = interpret(prompt);
-    paint(lastWant, prompt);
+    const out = el.querySelector('.ag-out');
+    const go = el.querySelector('.ag-go');
+    out.innerHTML = '<p class="ag-read ag-busy">Reading your brief…</p>';
+    go.disabled = true;
+
+    let want = null, how = 'ai';
+    try {
+      const r = await fetch('/api/agent', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ brief: prompt, vocab: catalogueVocab() }),
+      });
+      const d = await r.json();
+      // `not` and `unmatched` are the dictionary's shape; the model does its
+      // negation inline, so they are empty here and rank/paint stay unchanged.
+      if (d && d.ok && d.want) want = Object.assign({ not: [], unmatched: [] }, d.want);
+    } catch (e) { /* offline or blocked — the fallback below covers it */ }
+
+    if (!want) { want = interpret(prompt); how = 'local'; }
+    go.disabled = false;
+    lastWant = want;
+    paint(want, prompt, how);
     if (window.mutraTrack) mutraTrack('agent-search', prompt.slice(0, 80));
   }
 
@@ -292,12 +332,13 @@
     return b;
   }
 
-  function paint(want, prompt) {
+  function paint(want, prompt, how) {
     const ranked = rank(want);
     const out = el.querySelector('.ag-out');
     const top = ranked.slice(0, 12);
 
     const read = [];
+    if (want.keywords && want.keywords.length) read.push(want.keywords.join(', '));
     if (want.moods.length) read.push(want.moods.join(', '));
     if (want.genres.length) read.push(want.genres.join(', '));
     if (want.instruments.length) read.push(want.instruments.join(', '));
@@ -305,11 +346,17 @@
     if (want.bpm) read.push(`${want.bpm[0]}–${want.bpm[1]} bpm`);
 
     out.innerHTML = `
+      ${want.summary ? `<p class="ag-sum">${esc(want.summary)}</p>` : ''}
       ${read.length
         ? `<p class="ag-read">Looking for <b>${esc(read.join(' · '))}</b></p>`
         : `<p class="ag-read ag-none">Nothing in that I could match to the catalogue.
              Try a mood, a genre, or an occasion — “tense”, “folk”, “wedding”.</p>`}
-      ${want.unmatched.length
+      ${/* The fallback says so. A search that has quietly dropped to keyword
+            matching should not present itself as having understood you. */''}
+      ${how === 'local' && read.length
+        ? `<p class="ag-miss">Matched on keywords only — the brief reader is unreachable
+             right now, so this is a rougher read than usual.</p>` : ''}
+      ${(want.unmatched || []).length
         ? `<p class="ag-miss">Ignored: ${esc(want.unmatched.join(', '))} — not something the
              catalogue is tagged for.</p>` : ''}
       <div class="ag-refine"></div>

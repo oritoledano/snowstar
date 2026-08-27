@@ -1204,7 +1204,8 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .ag-close{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--dim);
   font-size:1.6rem;line-height:1;cursor:pointer}
 .ag-close:hover{color:var(--text)}
-.ag-h{font-family:var(--font-display);font-size:1.2rem;margin:0 0 14px}
+.ag-h{font-family:var(--font-display);font-size:1.2rem;margin:0 0 6px}
+.ag-sub{color:var(--dim);font-size:.82rem;line-height:1.5;margin:0 0 14px;max-width:56ch}
 .ag-inwrap{display:flex;gap:9px;align-items:flex-end}
 .ag-in{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;
   padding:11px 13px;color:var(--text);font:inherit;font-size:.92rem;line-height:1.5;
@@ -1216,9 +1217,21 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .ag-eg{background:none;border:1px solid var(--line);border-radius:99px;color:var(--dim);
   font:inherit;font-size:.73rem;padding:5px 11px;cursor:pointer}
 .ag-eg:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+/* What the brief was understood to mean, in the reader's own words. It goes
+   above the tag list because "ominous slow build" is checkable at a glance and
+   "Dark · Tense · 60–100 bpm" is not. */
+.ag-sum{font-family:var(--font-display);font-size:1.02rem;color:var(--text);
+  margin:20px 0 2px;line-height:1.35}
 .ag-read{color:var(--muted);font-size:.84rem;margin:20px 0 4px}
+.ag-sum + .ag-read{margin-top:4px}
 .ag-read b{color:var(--text)}
 .ag-none{color:var(--dim)}
+.ag-busy{opacity:.75}
+.ag-busy::after{content:'';display:inline-block;width:.6em;height:.6em;margin-left:.5em;
+  border:2px solid currentColor;border-right-color:transparent;border-radius:50%;
+  vertical-align:-1px;animation:ag-spin .7s linear infinite}
+@keyframes ag-spin{to{transform:rotate(360deg)}}
+.ag-go:disabled{opacity:.5;cursor:default}
 .ag-miss{color:var(--dim);font-size:.75rem;margin:0 0 8px}
 .ag-refine{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
 .ag-chip{background:none;border:1px solid var(--line);border-radius:99px;color:var(--muted);

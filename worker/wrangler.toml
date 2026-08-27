@@ -9,6 +9,12 @@ routes = [
   { pattern = "snowstar.company/api/*", zone_name = "snowstar.company" }
 ]
 
+# Workers AI: the search agent needs to understand a sentence, not match a
+# word list. Everything else here stays deterministic — the model only turns
+# a brief into catalogue facets, and the ranking is still ours.
+[ai]
+binding = "AI"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "snowstar-members"
