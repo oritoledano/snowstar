@@ -461,7 +461,7 @@
   const PAGE = 40;   // rows added per scroll-in
   const facet = () => ({ inc: new Set(), exc: new Set() });
   const state = {
-    genres: facet(), moods: facet(), instruments: facet(), scales: facet(),
+    genres: facet(), moods: facet(), characteristics: facet(), instruments: facet(), scales: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
     sort: 'picks', highlights: true, lyrics: false, keys: false, hiddenOnly: false,
   };
@@ -496,7 +496,7 @@
     const sc = state.scales;
     if (sc.inc.size && !sc.inc.has(scaleOf(t))) return false;
     if (sc.exc.size && sc.exc.has(scaleOf(t))) return false;
-    for (const key of ['genres', 'moods', 'instruments']) {
+    for (const key of ['genres', 'moods', 'characteristics', 'instruments']) {
       const vals = t[key] || [], f = state[key];
       if (f.inc.size && !vals.some(v => f.inc.has(v))) return false;
       if (f.exc.size && vals.some(v => f.exc.has(v))) return false;
@@ -516,7 +516,8 @@
       // there put a Vocals chip on half the catalogue. The Lyrics filter reads
       // t.vocal, and so does search, so typing the word still finds the tracks.
       const hay = (t.title + ' ' + (t.artist || '') + ' ' + t.genres.join(' ') + ' ' +
-        (t.moods || []).join(' ') + ' ' + (t.instruments || []).join(' ') + ' ' +
+        (t.moods || []).join(' ') + ' ' + (t.characteristics || []).join(' ') + ' ' +
+        (t.instruments || []).join(' ') + ' ' +
         (t.vocal || '')).toLowerCase();
       if (!hay.includes(state.q)) return false;
     }
@@ -600,6 +601,7 @@
       const tags = [
         ...tagSet(track.genres, '', 'genres'),
         ...tagSet(track.moods, 'mood', 'moods'),
+        ...tagSet(track.characteristics, 'char', 'characteristics'),
         ...tagSet(track.instruments, 'inst', 'instruments'),
       ].join('');
       row.innerHTML = `
@@ -837,11 +839,16 @@
   const FACETS = {
     genres:      { label: 'Genre',      values: () => MUTRA.genres },
     moods:       { label: 'Mood',       values: () => MUTRA.moods },
+    /* Mood is how it FEELS, characteristic is how it SOUNDS. Keeping both in
+       one list is what forced 'Dark' to sit next to 'Happy' and made a single
+       tag answer two unrelated questions. */
+    characteristics: { label: 'Sound', values: () => CHARACTERISTICS },
     instruments: { label: 'Instrument', values: () => INSTRUMENTS },
     scales:      { label: 'Scale',      values: () => SCALES },
   };
   // built from the catalog so it stays honest as the tagging is refined
   const INSTRUMENTS = [...new Set(MUTRA.tracks.flatMap(t => t.instruments || []))].sort();
+  const CHARACTERISTICS = [...new Set(MUTRA.tracks.flatMap(t => t.characteristics || []))].sort();
   const scaleOf = t => (t.key ? t.key + ' ' + t.scale : '');
   // chromatic rather than alphabetical, so the list reads like a keyboard
   const SCALES = [...new Set(MUTRA.tracks.map(scaleOf).filter(Boolean))]
@@ -1153,6 +1160,7 @@
     MUTRA.moods.splice(0, MUTRA.moods.length, ...uniq('moods'));
     MUTRA.packages.splice(0, MUTRA.packages.length, ...uniq('packages'));
     INSTRUMENTS.splice(0, INSTRUMENTS.length, ...uniq('instruments'));
+    CHARACTERISTICS.splice(0, CHARACTERISTICS.length, ...uniq('characteristics'));
   }
 
   Promise.all([

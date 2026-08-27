@@ -1,91 +1,120 @@
 /* ═══════════ Mutra — agent search ═══════════
 
-   One prompt, one set of results. Type "something warm for a wedding montage,
-   no vocals" and get tracks, not a chat.
+   Describe the job, get tracks. "Bar mitzvah entrance, big, celebratory" or
+   "unsettling titles for a true-crime podcast, sits under narration".
 
-   WHY THIS IS NOT AN LLM CALL — at least not yet.
+   TWO HALVES, ON PURPOSE.
 
-   The catalogue's vocabulary is closed and small: 21 genres, 14 moods, 9
-   instruments, two vocal states, and a BPM. A language model would spend a
-   round trip and a token budget to land back inside that same list, and it
-   would sometimes land outside it and return nothing. Matching directly
-   against the vocabulary is instant, free, offline, and — the part that
-   matters most for search — PREDICTABLE: the same words give the same tracks
-   every time, and when it finds nothing it can say precisely which word it
-   failed on.
+   Understanding the brief is a model's job and happens server-side, at
+   /api/agent: it maps a sentence onto the tags the catalogue actually uses,
+   and its answer is intersected against the real vocabulary before anyone
+   trusts it. This replaced a hand-written dictionary that could only ever
+   recognise words somebody had thought to type into it — it returned nothing
+   at all for "sneaker drop, street, confident, hard beat", and answered an
+   unsettling true-crime brief with EPIC FAST DRUMS.
 
-   Where a model genuinely helps is the phrasing the vocabulary cannot reach:
-   "like the Stranger Things titles", "for a sad dog food advert". So the
-   parser is isolated behind one function, `interpret()`, and a model can be
-   dropped in front of it later without touching anything else. The hook is
-   marked.
+   Choosing the tracks stays here, deterministic and inspectable, because a
+   result you cannot see the reasoning for is a result you cannot correct.
+
+   The dictionary below survives as the FALLBACK. If the model is unreachable,
+   "sad piano" must still work, and the panel says plainly that it has dropped
+   to keyword matching rather than pretending to have understood.
 
    PINPOINTING is the second half. Every result set comes back with the facets
-   it actually matched on and the ones it could still narrow by, as chips — so
-   the follow-up is a click rather than a re-typed sentence. */
+   it matched on and the ones it could still narrow by, as chips — so the
+   follow-up is a click rather than a re-typed sentence. */
 (function () {
   const esc = (v) => String(v == null ? '' : v)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
   /* Everyday words that mean a catalogue term. The catalogue says "Chill /
      Lo-Fi"; nobody types that. Each entry is [what people say, what we store]. */
+  /* Everyday words that mean a catalogue term. The catalogue says "Chill /
+     Lo-Fi"; nobody types that. Each entry is [what people say, what we store].
+     Kept in step with the mood/characteristic split — a word like "dark" is a
+     characteristic now, not a mood. */
   const SYNONYMS = {
     genres: {
       'lo-fi': 'Chill / Lo-Fi', lofi: 'Chill / Lo-Fi', chillhop: 'Chill / Lo-Fi',
-      orchestral: 'Classical', orchestra: 'Classical', strings: 'Classical',
-      epic: 'Cinematic', trailer: 'Cinematic', film: 'Cinematic', score: 'Cinematic',
-      edm: 'Dance', house: 'Dance', techno: 'Dance', club: 'Dance',
+      orchestral: 'Classical', orchestra: 'Classical',
+      trailer: 'Cinematic', film: 'Cinematic', score: 'Cinematic',
+      edm: 'Dance', club: 'Dance', house: 'House & Techno', techno: 'House & Techno',
       electro: 'Electronic', synthwave: 'Electronic', ambient: 'Ambient',
-      acoustic: 'Folk & Acoustic', folk: 'Folk & Acoustic', guitar: 'Folk & Acoustic',
+      acoustic: 'Folk & Acoustic', folk: 'Folk & Acoustic',
       funk: 'Funk & Soul', soul: 'Funk & Soul', motown: 'Funk & Soul',
-      rap: 'Hip Hop', trap: 'Hip Hop', beats: 'Hip Hop',
-      rock: 'Rock', indie: 'Indie', pop: 'Pop', jazz: 'Jazz',
-      world: 'World', latin: 'World', african: 'World', middleeastern: 'World',
+      rap: 'Hip Hop', beats: 'Hip Hop', trap: 'Trap',
+      rock: 'Rock', indie: 'Indie', pop: 'Pop', jazz: 'Jazz & Blues', blues: 'Jazz & Blues',
+      metal: 'Metal', world: 'World', latin: 'Latin', chiptune: 'Retro 8-Bit',
     },
     moods: {
-      happy: 'Happy', joyful: 'Happy', cheerful: 'Happy', fun: 'Happy',
-      sad: 'Sad', melancholy: 'Sad', sombre: 'Sad', somber: 'Sad',
-      calm: 'Chill', relaxed: 'Chill', mellow: 'Chill', laid: 'Chill',
-      dark: 'Dark', moody: 'Dark', sinister: 'Dark', ominous: 'Dark',
-      tense: 'Tense', suspense: 'Tense', anxious: 'Tense', urgent: 'Tense',
-      uplifting: 'Uplifting', hopeful: 'Uplifting', positive: 'Uplifting',
-      inspiring: 'Motivational', motivational: 'Motivational', driving: 'Motivational',
-      emotional: 'Emotional', touching: 'Emotional', heartfelt: 'Emotional',
-      warm: 'Emotional', tender: 'Emotional', romantic: 'Romantic', love: 'Romantic',
+      happy: 'Happy', joyful: 'Happy', cheerful: 'Happy',
+      fun: 'Fun', celebratory: 'Fun', festive: 'Fun', party: 'Fun',
+      sad: 'Sad', melancholy: 'Sad', sombre: 'Sad', somber: 'Sad', mournful: 'Sad',
+      calm: 'Calm', gentle: 'Calm', peaceful: 'Calm', restrained: 'Calm',
+      chill: 'Chill', relaxed: 'Chill', mellow: 'Chill',
+      tense: 'Tense', anxious: 'Tense', urgent: 'Tense',
+      suspenseful: 'Suspenseful', suspense: 'Suspenseful', unsettling: 'Suspenseful',
+      ominous: 'Suspenseful', creepy: 'Scary', scary: 'Scary', horror: 'Scary',
+      uplifting: 'Uplifting', positive: 'Uplifting', triumphant: 'Uplifting',
+      hopeful: 'Hopeful', optimistic: 'Hopeful', warm: 'Hopeful',
+      inspiring: 'Inspiring', motivational: 'Inspiring', aspirational: 'Inspiring',
+      reflective: 'Reflective', emotional: 'Reflective', thoughtful: 'Reflective',
+      heartfelt: 'Reflective', touching: 'Reflective', nostalgic: 'Reflective',
+      romantic: 'Romantic', love: 'Romantic', tender: 'Romantic',
+      playful: 'Playful', whimsical: 'Playful', quirky: 'Quirky', odd: 'Quirky',
+      angry: 'Angry', furious: 'Angry',
+    },
+    characteristics: {
+      dark: 'Dark', moody: 'Dark', sinister: 'Dark',
+      epic: 'Epic', huge: 'Epic', cinematic: 'Epic', big: 'Epic',
+      aggressive: 'Aggressive', heavy: 'Aggressive', hard: 'Aggressive',
       dreamy: 'Dreamy', ethereal: 'Dreamy', floaty: 'Dreamy',
-      dramatic: 'Dramatic', cinematic: 'Dramatic',
-      party: 'Party', celebration: 'Party', energetic: 'Party',
-      aggressive: 'Aggressive', angry: 'Aggressive', heavy: 'Aggressive',
-      playful: 'Playful', quirky: 'Playful', whimsical: 'Playful',
+      atmospheric: 'Atmospheric', ambient: 'Atmospheric', textural: 'Atmospheric',
+      minimal: 'Minimal', sparse: 'Minimal', simple: 'Minimal', understated: 'Minimal',
+      building: 'Building', builds: 'Building', rising: 'Building', swelling: 'Building',
+      soaring: 'Soaring', sweeping: 'Soaring',
+      dancey: 'Dancey', danceable: 'Dancey', groovy: 'Dancey',
+      upbeat: 'Upbeat', bouncy: 'Upbeat', energetic: 'Upbeat',
+      intense: 'Intense', driving: 'Intense', relentless: 'Intense',
+      chaotic: 'Chaotic', frantic: 'Chaotic', messy: 'Chaotic',
+      droning: 'Droning', drone: 'Droning', static: 'Droning',
+      dynamic: 'Dynamic', retro: 'Retro', vintage: 'Retro', throwback: 'Retro',
+      soulful: 'Soulful', sophisticated: 'Sophisticated', classy: 'Sophisticated',
+      elegant: 'Sophisticated', beautiful: 'Beautiful', pretty: 'Beautiful',
+      cruising: 'Cruising', steady: 'Cruising',
+      rebellious: 'Rebellious', childlike: 'Childlike', innocent: 'Childlike',
     },
     instruments: {
-      piano: 'Piano', keys: 'Piano', guitar: 'Guitar', drums: 'Drums',
-      percussion: 'Drums', synth: 'Synth', synths: 'Synth',
+      piano: 'Piano', keys: 'Piano', rhodes: 'Rhodes',
+      guitar: 'Guitar', banjo: 'Banjo', ukulele: 'Ukulele',
+      drums: 'Drums', percussion: 'Percussion', bass: 'Bass',
+      synth: 'Synth', synths: 'Synth', organ: 'Organ', samples: 'Samples',
       strings: 'Strings', violin: 'Strings', cello: 'Strings',
-      choir: 'Choir', vocals: 'Vocals', voice: 'Vocals',
-      flute: 'Flute', brass: 'Brass', horns: 'Brass', sax: 'Brass',
+      choir: 'Choir', flute: 'Flute', brass: 'Horns', horns: 'Horns', sax: 'Horns',
+      harmonica: 'Harmonica', accordion: 'Accordion', whistling: 'Whistling',
+      woodwinds: 'Woodwinds', pads: 'Ambient Tones', textures: 'Ambient Tones',
     },
   };
 
   /* Occasions people describe instead of naming a mood. A wedding montage is
      not a genre, but it is a very good predictor of several. */
   const OCCASIONS = {
-    wedding: { moods: ['Emotional', 'Romantic', 'Uplifting'] },
-    montage: { moods: ['Uplifting', 'Motivational'] },
-    documentary: { moods: ['Emotional', 'Dramatic'], genres: ['Cinematic'] },
-    corporate: { moods: ['Motivational', 'Uplifting'] },
-    advert: { moods: ['Uplifting', 'Happy'] },
-    ad: { moods: ['Uplifting', 'Happy'] },
-    commercial: { moods: ['Uplifting', 'Happy'] },
-    vlog: { moods: ['Chill', 'Happy'], genres: ['Chill / Lo-Fi'] },
-    podcast: { moods: ['Chill'], vocal: 'Instrumental' },
-    workout: { moods: ['Motivational', 'Party'], bpm: [125, 175] },
-    gaming: { moods: ['Tense', 'Aggressive'] },
-    fashion: { moods: ['Party'], genres: ['Electronic'] },
-    travel: { moods: ['Uplifting', 'Dreamy'] },
-    trailer: { moods: ['Epic', 'Dramatic'], genres: ['Cinematic'] },
-    'time lapse': { moods: ['Dreamy'], bpm: [100, 140] },
-    timelapse: { moods: ['Dreamy'], bpm: [100, 140] },
+    wedding:      { moods: ['Romantic', 'Hopeful'], characteristics: ['Beautiful'] },
+    montage:      { moods: ['Uplifting', 'Inspiring'], characteristics: ['Building'] },
+    documentary:  { moods: ['Reflective'], characteristics: ['Atmospheric'], genres: ['Cinematic'] },
+    corporate:    { moods: ['Inspiring', 'Hopeful'], characteristics: ['Upbeat'] },
+    advert:       { moods: ['Uplifting', 'Happy'] },
+    ad:           { moods: ['Uplifting', 'Happy'] },
+    commercial:   { moods: ['Uplifting', 'Happy'] },
+    vlog:         { moods: ['Chill', 'Happy'], genres: ['Chill / Lo-Fi'] },
+    podcast:      { moods: ['Calm'], characteristics: ['Minimal'], vocal: 'Instrumental' },
+    workout:      { moods: ['Fun'], characteristics: ['Intense', 'Dancey'], bpm: [125, 175] },
+    gaming:       { moods: ['Tense'], characteristics: ['Intense'] },
+    fashion:      { characteristics: ['Sophisticated', 'Dancey'], genres: ['Electronic'] },
+    travel:       { moods: ['Uplifting'], characteristics: ['Soaring'] },
+    trailer:      { moods: ['Suspenseful'], characteristics: ['Epic', 'Building'], genres: ['Cinematic'] },
+    'time lapse': { characteristics: ['Dreamy'], bpm: [100, 140] },
+    timelapse:    { characteristics: ['Dreamy'], bpm: [100, 140] },
   };
 
   const TEMPO = [
@@ -107,8 +136,8 @@
    */
   function interpret(prompt) {
     const q = norm(prompt);
-    const want = { genres: [], moods: [], instruments: [], not: [], bpm: null,
-                   vocal: null, unmatched: [] };
+    const want = { genres: [], moods: [], characteristics: [], instruments: [],
+                   not: [], bpm: null, vocal: null, unmatched: [] };
 
     // negation first, so "no vocals" does not also read as "vocals"
     const negations = [...q.matchAll(/\b(?:no|not|without|avoid|minus)\s+([a-z\- ]{2,20})/g)]
@@ -144,13 +173,14 @@
       usedWords.push(...word.split(/\s+/));
       (cfg.moods || []).forEach((m) => want.moods.push(m));
       (cfg.genres || []).forEach((g) => want.genres.push(g));
+      (cfg.characteristics || []).forEach((c) => want.characteristics.push(c));
       if (cfg.vocal && !want.vocal) want.vocal = cfg.vocal;
       if (cfg.bpm && !want.bpm) want.bpm = cfg.bpm;
     }
 
     // the catalogue's own vocabulary wins over any synonym
     const vocab = catalogueVocab();
-    for (const field of ['genres', 'moods', 'instruments']) {
+    for (const field of ['genres', 'moods', 'characteristics', 'instruments']) {
       for (const term of vocab[field]) {
         if (stripped.includes(norm(term))) want[field].push(term);
       }
@@ -162,7 +192,7 @@
       }
     }
 
-    ['genres', 'moods', 'instruments'].forEach((f) => { want[f] = [...new Set(want[f])]; });
+    ['genres', 'moods', 'characteristics', 'instruments'].forEach((f) => { want[f] = [...new Set(want[f])]; });
 
     // words we could not place, so the UI can admit it rather than guess
     const STOP = new Set(('a an the and or for with some something track music song '
@@ -172,7 +202,7 @@
        and occasion words that reached them, and the tempo word. Reporting a
        word as ignored when it silently steered the whole result is worse than
        saying nothing — it teaches the user to distrust a search that worked. */
-    const placed = new Set([...want.genres, ...want.moods, ...want.instruments]
+    const placed = new Set([...want.genres, ...want.moods, ...want.characteristics, ...want.instruments]
       .flatMap((t) => norm(t).split(/[^a-z]+/)));
     usedWords.forEach((w) => norm(w).split(/[^a-z]+/).forEach((x) => x && placed.add(x)));
     if (want._tempoWord) norm(want._tempoWord).split(/[^a-z]+/).forEach((x) => x && placed.add(x));
@@ -190,7 +220,8 @@
     if (_vocab) return _vocab;
     const all = (window.mutraCatalog && mutraCatalog.all()) || [];
     const grab = (f) => [...new Set(all.flatMap((t) => t[f] || []))];
-    _vocab = { genres: grab('genres'), moods: grab('moods'), instruments: grab('instruments') };
+    _vocab = { genres: grab('genres'), moods: grab('moods'),
+               characteristics: grab('characteristics'), instruments: grab('instruments') };
     return _vocab;
   }
 
@@ -204,7 +235,11 @@
    */
   function rank(want) {
     const all = (window.mutraCatalog && mutraCatalog.all()) || [];
-    const W = { mood: 3, genre: 2.5, instrument: 1, bpm: 1.5, vocal: 1.5, keyword: 1 };
+    /* Characteristics carry nearly as much weight as mood now: they are what
+       separates two tracks that share a mood, which was the whole reason for
+       splitting the axis. */
+    const W = { mood: 2.6, characteristic: 2.4, genre: 2, instrument: 1,
+                bpm: 1.5, vocal: 1.5, keyword: 1 };
     const out = [];
     const avoid = want.avoid || { moods: [], genres: [] };
     const overlap = (a, b) => (a || []).filter((x) => (b || []).includes(x)).length;
@@ -220,6 +255,8 @@
          for makes a partial match read as a partial match. */
       const mood = want.moods.length ? overlap(t.moods, want.moods) / want.moods.length : null;
       const genre = want.genres.length ? overlap(t.genres, want.genres) / want.genres.length : null;
+      const chr = (want.characteristics || []).length
+        ? overlap(t.characteristics, want.characteristics) / want.characteristics.length : null;
       const inst = want.instruments.length
         ? overlap(t.instruments, want.instruments) / want.instruments.length : null;
 
@@ -235,6 +272,7 @@
       let score = 0;
       if (mood != null) score += W.mood * mood;
       if (genre != null) score += W.genre * genre;
+      if (chr != null) score += W.characteristic * chr;
       if (inst != null) score += W.instrument * inst;
 
       if (want.vocal === 'Vocals') score += t.vocal === 'Vocals' ? W.vocal : -W.vocal;
@@ -256,12 +294,16 @@
       // Negative evidence, weighted heavily: being wrong disqualifies faster
       // than being right qualifies.
       score -= 2.2 * overlap(t.moods, avoid.moods);
+      score -= 1.8 * overlap(t.characteristics, avoid.characteristics || []);
       score -= 1.4 * overlap(t.genres, avoid.genres);
 
       /* A floor, and a mood gate. Without them every track sharing one loose
          genre is called a match, which is how a search returns 90% of the
          catalogue and means nothing by it. */
-      const gated = want.moods.length && mood === 0 && (genre == null || genre < 0.5);
+      // The gate now accepts a strong sonic match too — a brief can be all
+      // about how something sounds and name no mood at all.
+      const gated = want.moods.length && mood === 0
+                    && (chr == null || chr === 0) && (genre == null || genre < 0.5);
       if (gated || score < 1.4) continue;
 
       out.push({ t, score });
@@ -368,6 +410,7 @@
     const read = [];
     if (want.keywords && want.keywords.length) read.push(want.keywords.join(', '));
     if (want.moods.length) read.push(want.moods.join(', '));
+    if ((want.characteristics || []).length) read.push(want.characteristics.join(', '));
     if (want.genres.length) read.push(want.genres.join(', '));
     if (want.instruments.length) read.push(want.instruments.join(', '));
     if (want.vocal) read.push(want.vocal === 'Instrumental' ? 'no vocals' : 'with vocals');

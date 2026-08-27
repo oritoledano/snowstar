@@ -39,7 +39,7 @@ const MAX_BRIEF = 1200;
    model produces is checked against the vocabulary the page actually sent, so
    a hallucinated "Vaporwave" genre is dropped rather than silently producing
    zero results downstream. */
-const LIST_FIELDS = ['moods', 'genres', 'instruments'];
+const LIST_FIELDS = ['moods', 'characteristics', 'genres', 'instruments'];
 
 const SYSTEM = `You are a music supervisor for a production-music catalogue.
 
@@ -50,6 +50,10 @@ Rules:
 - Only ever return tags from the provided lists, copied character for character.
 - Pick the 2-4 tags per list that a supervisor would actually reach for. Do not
   return every tag that is loosely related; precision matters more than recall.
+- moods are how the music FEELS; characteristics are how it SOUNDS. A brief
+  usually gives you both — "unsettling, sparse, builds slowly" is the mood
+  Suspenseful and the characteristics Minimal and Building. Use both lists;
+  the characteristics are what separate two tracks sharing one mood.
 - Infer mood from the situation, not just from adjectives. A hospital
   fundraising film wants something restrained and warm even if the brief never
   says "emotional". A sneaker drop wants confidence and a hard beat.
@@ -68,8 +72,9 @@ Rules:
   Write it to the user, in plain English. No preamble.
 
 Return ONLY a JSON object, no markdown fence, with exactly these keys:
-{"moods":[],"genres":[],"instruments":[],"bpm":null,"vocal":null,"keywords":[],
- "avoid":{"moods":[],"genres":[]},"summary":""}`;
+{"moods":[],"characteristics":[],"genres":[],"instruments":[],"bpm":null,
+ "vocal":null,"keywords":[],"avoid":{"moods":[],"characteristics":[],"genres":[]},
+ "summary":""}`;
 
 function clampList(v, allowed, max = 5) {
   if (!Array.isArray(v)) return [];
@@ -113,6 +118,7 @@ export async function interpretBrief(req, env) {
     moods: Array.isArray(vocab.moods) ? vocab.moods.slice(0, 80) : [],
     genres: Array.isArray(vocab.genres) ? vocab.genres.slice(0, 80) : [],
     instruments: Array.isArray(vocab.instruments) ? vocab.instruments.slice(0, 80) : [],
+    characteristics: Array.isArray(vocab.characteristics) ? vocab.characteristics.slice(0, 80) : [],
   };
   if (!allowed.moods.length || !allowed.genres.length) {
     return json({ ok: false, reason: 'no_vocab' }, 400);
@@ -120,6 +126,7 @@ export async function interpretBrief(req, env) {
 
   const user = `CATALOGUE TAGS
 moods: ${allowed.moods.join(' | ')}
+characteristics: ${allowed.characteristics.join(' | ')}
 genres: ${allowed.genres.join(' | ')}
 instruments: ${allowed.instruments.join(' | ')}
 
@@ -165,6 +172,7 @@ ${brief}`;
 
   const want = {
     moods: clampList(parsed.moods, allowed.moods),
+    characteristics: clampList(parsed.characteristics, allowed.characteristics),
     genres: clampList(parsed.genres, allowed.genres),
     instruments: clampList(parsed.instruments, allowed.instruments),
     bpm: clampBpm(parsed.bpm),
@@ -183,12 +191,14 @@ ${brief}`;
         .filter((m) => !clampList(parsed.moods, allowed.moods).includes(m)),
       genres: clampList(parsed.avoid && parsed.avoid.genres, allowed.genres, 6)
         .filter((g) => !clampList(parsed.genres, allowed.genres).includes(g)),
+      characteristics: clampList(parsed.avoid && parsed.avoid.characteristics, allowed.characteristics, 6)
+        .filter((c) => !clampList(parsed.characteristics, allowed.characteristics).includes(c)),
     },
   };
 
   // A reply with nothing usable in it is a failure dressed as a success — the
   // caller should fall back rather than show an empty result set.
-  if (!want.moods.length && !want.genres.length && !want.instruments.length
+  if (!want.moods.length && !want.characteristics.length && !want.genres.length && !want.instruments.length
       && !want.bpm && !want.vocal && !want.keywords.length) {
     return json({ ok: false, reason: 'nothing_matched', summary: want.summary }, 200);
   }
