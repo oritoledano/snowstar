@@ -606,3 +606,8 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 [data-theme="light"] .grad{
   background:linear-gradient(100deg,#8a5a2e 0%,#b4501f 52%,#8f3013 110%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* how a portfolio year was arrived at — a reconstructed year that looks
+   identical to a remembered one is how a wrong date becomes permanent */
+.wed-yearsrc{display:block;font-style:normal;font-size:.7rem;color:var(--muted,#93a0b8);
+  margin-top:4px;opacity:.8}

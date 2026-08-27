@@ -138,10 +138,10 @@
     "semantic_hash": "7bdb48cd3b9b53b9f482039de84b453a"
   },
   "js/works-admin.js": {
-    "mtime": 1786874087.1548564,
-    "seen": 1787572556.917336,
-    "ast_hash": "4b0d48bd42140ffe708da1573c1b1e41",
-    "semantic_hash": "4b0d48bd42140ffe708da1573c1b1e41"
+    "mtime": 1787821859.489422,
+    "seen": 1787821865.252691,
+    "ast_hash": "771d28f1258ad3e4bc45d76f36780652",
+    "semantic_hash": ""
   },
   "tools/make-stream-renditions.sh": {
     "mtime": 1787531992.617741,
@@ -318,9 +318,9 @@
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1787611093.180067,
-    "seen": 1787611100.0838232,
-    "ast_hash": "b75347ae413642cac5c58dd486290522",
+    "mtime": 1787821859.570316,
+    "seen": 1787821865.2527392,
+    "ast_hash": "5c6ddf0eb2b0465c0d299f5c23bb5aef",
     "semantic_hash": ""
   },
   "mutra.html": {
@@ -1275,6 +1275,12 @@
     "mtime": 1787784740.0042012,
     "seen": 1787784746.133541,
     "ast_hash": "6daef1fa2b440817227941641255d13a",
+    "semantic_hash": ""
+  },
+  "PORTFOLIO-YEARS.md": {
+    "mtime": 1787787676.0885818,
+    "seen": 1787821848.814157,
+    "ast_hash": "b44e696b3d0dabff6bcfbd72787213d8",
     "semantic_hash": ""
   }
 }

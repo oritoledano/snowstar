@@ -4521,7 +4521,7 @@
       "file_type": "code",
       "norm_label": "cleanurl()",
       "source_file": "worker/src/works.js",
-      "source_location": "L49"
+      "source_location": "L53"
     },
     {
       "id": "worker_src_works_deletelogo",
@@ -4533,7 +4533,7 @@
       "file_type": "code",
       "norm_label": "deletelogo()",
       "source_file": "worker/src/works.js",
-      "source_location": "L201"
+      "source_location": "L205"
     },
     {
       "id": "worker_src_works_deletework",
@@ -4545,7 +4545,7 @@
       "file_type": "code",
       "norm_label": "deletework()",
       "source_file": "worker/src/works.js",
-      "source_location": "L138"
+      "source_location": "L142"
     },
     {
       "id": "worker_src_works_dropcdnfiles",
@@ -4557,7 +4557,7 @@
       "file_type": "code",
       "norm_label": "dropcdnfiles()",
       "source_file": "worker/src/works.js",
-      "source_location": "L57"
+      "source_location": "L61"
     },
     {
       "id": "worker_src_works_json",
@@ -4581,7 +4581,7 @@
       "file_type": "code",
       "norm_label": "listlogos()",
       "source_file": "worker/src/works.js",
-      "source_location": "L154"
+      "source_location": "L158"
     },
     {
       "id": "worker_src_works_listworks",
@@ -4593,7 +4593,7 @@
       "file_type": "code",
       "norm_label": "listworks()",
       "source_file": "worker/src/works.js",
-      "source_location": "L41"
+      "source_location": "L45"
     },
     {
       "id": "worker_src_works_now",
@@ -4617,7 +4617,7 @@
       "file_type": "code",
       "norm_label": "reorderlogos()",
       "source_file": "worker/src/works.js",
-      "source_location": "L188"
+      "source_location": "L192"
     },
     {
       "id": "worker_src_works_reorderworks",
@@ -4629,7 +4629,7 @@
       "file_type": "code",
       "norm_label": "reorderworks()",
       "source_file": "worker/src/works.js",
-      "source_location": "L124"
+      "source_location": "L128"
     },
     {
       "id": "worker_src_works_rowout",
@@ -4653,7 +4653,7 @@
       "file_type": "code",
       "norm_label": "savelogo()",
       "source_file": "worker/src/works.js",
-      "source_location": "L161"
+      "source_location": "L165"
     },
     {
       "id": "worker_src_works_savework",
@@ -4665,7 +4665,7 @@
       "file_type": "code",
       "norm_label": "savework()",
       "source_file": "worker/src/works.js",
-      "source_location": "L68"
+      "source_location": "L72"
     },
     {
       "id": "worker_src_works_uploadworkfile",
@@ -4677,7 +4677,7 @@
       "file_type": "code",
       "norm_label": "uploadworkfile()",
       "source_file": "worker/src/works.js",
-      "source_location": "L216"
+      "source_location": "L220"
     },
     {
       "id": "worker_src_certificate_certificate",
@@ -7316,7 +7316,7 @@
       "file_type": "code",
       "norm_label": "upload_types",
       "source_file": "worker/src/works.js",
-      "source_location": "L211"
+      "source_location": "L215"
     },
     {
       "id": "worker_src_works_work_tags",
@@ -18395,7 +18395,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L202",
+      "source_location": "L206",
       "weight": 1.0
     },
     {
@@ -18407,7 +18407,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L207",
+      "source_location": "L211",
       "weight": 1.0
     },
     {
@@ -18419,7 +18419,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L139",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -18431,7 +18431,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L146",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -18443,7 +18443,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L158",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -18455,7 +18455,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L45",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -18467,7 +18467,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L189",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -18479,7 +18479,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L125",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -18491,7 +18491,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L162",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -18503,7 +18503,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L164",
+      "source_location": "L168",
       "weight": 1.0
     },
     {
@@ -18515,7 +18515,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L167",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -18527,7 +18527,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L176",
+      "source_location": "L180",
       "weight": 1.0
     },
     {
@@ -18539,7 +18539,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L105",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -18551,7 +18551,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L69",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -18563,7 +18563,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L82",
+      "source_location": "L86",
       "weight": 1.0
     },
     {
@@ -18575,7 +18575,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L93",
+      "source_location": "L97",
       "weight": 1.0
     },
     {
@@ -18587,7 +18587,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/works.js",
-      "source_location": "L217",
+      "source_location": "L221",
       "weight": 1.0
     },
     {
@@ -26957,7 +26957,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L124",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -26968,7 +26968,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L138",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -26979,7 +26979,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L154",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -26990,7 +26990,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L161",
+      "source_location": "L165",
       "weight": 1.0
     },
     {
@@ -27006,17 +27006,6 @@
     },
     {
       "source": "worker_src_works",
-      "target": "worker_src_works_reorderlogos",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/works.js",
-      "source_location": "L188",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_works",
       "target": "worker_src_works_json",
       "relation": "contains",
       "_origin": "ast",
@@ -27028,13 +27017,24 @@
     },
     {
       "source": "worker_src_works",
+      "target": "worker_src_works_reorderlogos",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/works.js",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_works",
       "target": "worker_src_works_deletelogo",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L201",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -27045,7 +27045,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L211",
+      "source_location": "L215",
       "weight": 1.0
     },
     {
@@ -27056,7 +27056,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L216",
+      "source_location": "L220",
       "weight": 1.0
     },
     {
@@ -27111,7 +27111,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L41",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -27122,7 +27122,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L49",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -27133,7 +27133,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L57",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -27144,7 +27144,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/works.js",
-      "source_location": "L68",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -27876,7 +27876,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "worker/src/works.js",
-      "source_location": "L45",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -30204,5 +30204,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "ab212786bc750e01a3f1a5bf3b59dea5bc77768d"
+  "built_at_commit": "52d2cfb6ca78c169b95d8b046ae71df8de81af07"
 }

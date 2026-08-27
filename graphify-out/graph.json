@@ -2088,6 +2088,114 @@
       "source_location": "L112"
     },
     {
+      "id": "worker_src_profile_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "worker_src_profile_clearavatar",
+      "label": "clearAvatar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "clearavatar()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L143"
+    },
+    {
+      "id": "worker_src_profile_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_profile_mydownloads",
+      "label": "myDownloads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "mydownloads()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L88"
+    },
+    {
+      "id": "worker_src_profile_myfavoriteslist",
+      "label": "myFavoritesList()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "myfavoriteslist()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L99"
+    },
+    {
+      "id": "worker_src_profile_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L20"
+    },
+    {
+      "id": "worker_src_profile_updateprofile",
+      "label": "updateProfile()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "updateprofile()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L39"
+    },
+    {
+      "id": "worker_src_profile_uploadavatar",
+      "label": "uploadAvatar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "uploadavatar()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L122"
+    },
+    {
+      "id": "worker_src_profile_validemail",
+      "label": "validEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "validemail()",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L27"
+    },
+    {
       "id": "worker_src_user_publicuser",
       "label": "publicUser()",
       "_callable": true,
@@ -2098,18 +2206,6 @@
       "norm_label": "publicuser()",
       "source_file": "worker/src/user.js",
       "source_location": "L4"
-    },
-    {
-      "id": "js_mutra_skin_apply",
-      "label": "apply()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "file_type": "code",
-      "norm_label": "apply()",
-      "source_file": "js/mutra-skin.js",
-      "source_location": "L16"
     },
     {
       "id": "js_mutra_contact_build",
@@ -2556,78 +2652,6 @@
       "source_location": "L65"
     },
     {
-      "id": "worker_src_artistreg_ensureartists",
-      "label": "ensureArtists()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "ensureartists()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L42"
-    },
-    {
-      "id": "worker_src_artistreg_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "worker_src_artistreg_listartists",
-      "label": "listArtists()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listartists()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L30"
-    },
-    {
-      "id": "worker_src_artistreg_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L18"
-    },
-    {
-      "id": "worker_src_artistreg_saveartist",
-      "label": "saveArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "saveartist()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L70"
-    },
-    {
-      "id": "worker_src_artistreg_splitnames",
-      "label": "splitNames()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "splitnames()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L26"
-    },
-    {
       "id": "worker_src_artists_cleanuporphanuploads",
       "label": "cleanupOrphanUploads()",
       "_callable": true,
@@ -2638,330 +2662,6 @@
       "norm_label": "cleanuporphanuploads()",
       "source_file": "worker/src/artists.js",
       "source_location": "L165"
-    },
-    {
-      "id": "worker_src_artists_createsubmission",
-      "label": "createSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "createsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L69"
-    },
-    {
-      "id": "worker_src_artists_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L15"
-    },
-    {
-      "id": "worker_src_artists_listartistsadmin",
-      "label": "listArtistsAdmin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listartistsadmin()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L184"
-    },
-    {
-      "id": "worker_src_artists_listsubmissions",
-      "label": "listSubmissions()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listsubmissions()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L204"
-    },
-    {
-      "id": "worker_src_artists_myuploads",
-      "label": "myUploads()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "myuploads()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L39"
-    },
-    {
-      "id": "worker_src_artists_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L14"
-    },
-    {
-      "id": "worker_src_artists_queuereviewmail",
-      "label": "queueReviewMail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "queuereviewmail()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L251"
-    },
-    {
-      "id": "worker_src_artists_registerartist",
-      "label": "registerArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "registerartist()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_artists_reviewsubmission",
-      "label": "reviewSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "reviewsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L227"
-    },
-    {
-      "id": "worker_src_artists_slug",
-      "label": "slug()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "slug()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L25"
-    },
-    {
-      "id": "worker_src_artists_streamsubmission",
-      "label": "streamSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "streamsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L128"
-    },
-    {
-      "id": "worker_src_artists_uploadtrack",
-      "label": "uploadTrack()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "uploadtrack()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L54"
-    },
-    {
-      "id": "worker_src_clearlist_addchannel",
-      "label": "addChannel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "addchannel()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L46"
-    },
-    {
-      "id": "worker_src_clearlist_allchannels",
-      "label": "allChannels()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "allchannels()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L77"
-    },
-    {
-      "id": "worker_src_clearlist_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L35"
-    },
-    {
-      "id": "worker_src_clearlist_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "worker_src_clearlist_listchannels",
-      "label": "listChannels()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listchannels()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L37"
-    },
-    {
-      "id": "worker_src_clearlist_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L15"
-    },
-    {
-      "id": "worker_src_clearlist_removechannel",
-      "label": "removeChannel()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "removechannel()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L65"
-    },
-    {
-      "id": "worker_src_clearlist_setchannelstatus",
-      "label": "setChannelStatus()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "setchannelstatus()",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L89"
-    },
-    {
-      "id": "worker_src_crypto_b64",
-      "label": "b64()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "b64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L10"
-    },
-    {
-      "id": "worker_src_crypto_pbkdf2",
-      "label": "pbkdf2()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "pbkdf2()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_crypto_peppered",
-      "label": "peppered()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "peppered()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L22"
-    },
-    {
-      "id": "worker_src_crypto_randb64",
-      "label": "randB64()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "randb64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L11"
-    },
-    {
-      "id": "worker_src_crypto_safeequal",
-      "label": "safeEqual()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "safeequal()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L38"
-    },
-    {
-      "id": "worker_src_crypto_sha256b64",
-      "label": "sha256b64()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "sha256b64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L13"
-    },
-    {
-      "id": "worker_src_crypto_verifypassword",
-      "label": "verifyPassword()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "verifypassword()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L46"
     },
     {
       "id": "worker_src_index_authed",
@@ -3072,18 +2772,6 @@
       "source_location": "L71"
     },
     {
-      "id": "worker_src_index_randtoken",
-      "label": "randToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "randtoken()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L64"
-    },
-    {
       "id": "worker_src_index_scheduled",
       "label": "scheduled()",
       "_callable": true,
@@ -3130,78 +2818,6 @@
       "norm_label": "validemail()",
       "source_file": "worker/src/index.js",
       "source_location": "L66"
-    },
-    {
-      "id": "worker_src_mail_mailfrom",
-      "label": "mailFrom()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "mailfrom()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L40"
-    },
-    {
-      "id": "worker_src_mail_maillive",
-      "label": "mailLive()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "maillive()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "worker_src_mail_mailto",
-      "label": "mailTo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "mailto()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L45"
-    },
-    {
-      "id": "worker_src_mail_resetemail",
-      "label": "resetEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "resetemail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L101"
-    },
-    {
-      "id": "worker_src_mail_sendmail",
-      "label": "sendMail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "sendmail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L73"
-    },
-    {
-      "id": "worker_src_mail_shell",
-      "label": "shell()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "shell()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L51"
     },
     {
       "id": "worker_src_members_deletemember",
@@ -3262,366 +2878,6 @@
       "norm_label": "updatemember()",
       "source_file": "worker/src/members.js",
       "source_location": "L21"
-    },
-    {
-      "id": "worker_src_profile_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_profile_clearavatar",
-      "label": "clearAvatar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "clearavatar()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L143"
-    },
-    {
-      "id": "worker_src_profile_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "worker_src_profile_mydownloads",
-      "label": "myDownloads()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "mydownloads()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L88"
-    },
-    {
-      "id": "worker_src_profile_myfavoriteslist",
-      "label": "myFavoritesList()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "myfavoriteslist()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L99"
-    },
-    {
-      "id": "worker_src_profile_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L20"
-    },
-    {
-      "id": "worker_src_profile_updateprofile",
-      "label": "updateProfile()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "updateprofile()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L39"
-    },
-    {
-      "id": "worker_src_profile_uploadavatar",
-      "label": "uploadAvatar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "uploadavatar()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L122"
-    },
-    {
-      "id": "worker_src_profile_validemail",
-      "label": "validEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "validemail()",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L27"
-    },
-    {
-      "id": "worker_src_rights_amenddeclaration",
-      "label": "amendDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "amenddeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L389"
-    },
-    {
-      "id": "worker_src_rights_claimstatus",
-      "label": "claimStatus()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "claimstatus()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L362"
-    },
-    {
-      "id": "worker_src_rights_cleanemail",
-      "label": "cleanEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "cleanemail()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L27"
-    },
-    {
-      "id": "worker_src_rights_countersignclaim",
-      "label": "countersignClaim()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "countersignclaim()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L337"
-    },
-    {
-      "id": "worker_src_rights_createmanagedartist",
-      "label": "createManagedArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "createmanagedartist()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L316"
-    },
-    {
-      "id": "worker_src_rights_freezetext",
-      "label": "freezeText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "freezetext()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L48"
-    },
-    {
-      "id": "worker_src_rights_invitebody",
-      "label": "inviteBody()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "invitebody()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L161"
-    },
-    {
-      "id": "worker_src_rights_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "worker_src_rights_linkonsignin",
-      "label": "linkOnSignIn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "linkonsignin()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L281"
-    },
-    {
-      "id": "worker_src_rights_listmanagedartists",
-      "label": "listManagedArtists()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listmanagedartists()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L308"
-    },
-    {
-      "id": "worker_src_rights_listoutbox",
-      "label": "listOutbox()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listoutbox()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L180"
-    },
-    {
-      "id": "worker_src_rights_mycredits",
-      "label": "myCredits()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "mycredits()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L240"
-    },
-    {
-      "id": "worker_src_rights_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L20"
-    },
-    {
-      "id": "worker_src_rights_parsedeclaration",
-      "label": "parseDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "parsedeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L59"
-    },
-    {
-      "id": "worker_src_rights_recorddeclaration",
-      "label": "recordDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "recorddeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L126"
-    },
-    {
-      "id": "worker_src_rights_respondcredit",
-      "label": "respondCredit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "respondcredit()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L256"
-    },
-    {
-      "id": "worker_src_rights_sendoutbox",
-      "label": "sendOutbox()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "sendoutbox()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L192"
-    },
-    {
-      "id": "worker_src_rights_validemail",
-      "label": "validEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "validemail()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L28"
-    },
-    {
-      "id": "worker_src_session_currentuser",
-      "label": "currentUser()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "currentuser()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L18"
-    },
-    {
-      "id": "worker_src_session_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L6"
-    },
-    {
-      "id": "worker_src_session_readcookies",
-      "label": "readCookies()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "readcookies()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L8"
     },
     {
       "id": "worker_src_site_deletenote",
@@ -4032,6 +3288,18 @@
       "source_location": "L97"
     },
     {
+      "id": "worker_src_analytics_alert",
+      "label": "alert()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "alert()",
+      "source_file": "worker/src/analytics.js",
+      "source_location": "L207"
+    },
+    {
       "id": "worker_src_analytics_alertsmuted",
       "label": "alertsMuted()",
       "_callable": true,
@@ -4200,88 +3468,100 @@
       "source_location": "L247"
     },
     {
-      "id": "worker_src_contact_clean",
-      "label": "clean()",
+      "id": "worker_src_crypto_b64",
+      "label": "b64()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L28"
+      "norm_label": "b64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L10"
     },
     {
-      "id": "worker_src_contact_json",
-      "label": "json()",
+      "id": "worker_src_crypto_pbkdf2",
+      "label": "pbkdf2()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/contact.js",
+      "norm_label": "pbkdf2()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "worker_src_crypto_peppered",
+      "label": "peppered()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "peppered()",
+      "source_file": "worker/src/crypto.js",
       "source_location": "L22"
     },
     {
-      "id": "worker_src_contact_listmessages",
-      "label": "listMessages()",
+      "id": "worker_src_crypto_randb64",
+      "label": "randB64()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "listmessages()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L128"
+      "norm_label": "randb64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L11"
     },
     {
-      "id": "worker_src_contact_makeref",
-      "label": "makeRef()",
+      "id": "worker_src_crypto_safeequal",
+      "label": "safeEqual()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "makeref()",
-      "source_file": "worker/src/contact.js",
+      "norm_label": "safeequal()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L38"
+    },
+    {
+      "id": "worker_src_crypto_sha256b64",
+      "label": "sha256b64()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "sha256b64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L13"
+    },
+    {
+      "id": "worker_src_crypto_verifypassword",
+      "label": "verifyPassword()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "verifypassword()",
+      "source_file": "worker/src/crypto.js",
       "source_location": "L46"
     },
     {
-      "id": "worker_src_contact_now",
-      "label": "now()",
+      "id": "worker_src_index_randtoken",
+      "label": "randToken()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "worker_src_contact_setmessagestatus",
-      "label": "setMessageStatus()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "analytics.js",
-      "file_type": "code",
-      "norm_label": "setmessagestatus()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L146"
-    },
-    {
-      "id": "worker_src_contact_submitcontact",
-      "label": "submitContact()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "analytics.js",
-      "file_type": "code",
-      "norm_label": "submitcontact()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L62"
+      "norm_label": "randtoken()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L64"
     },
     {
       "id": "worker_src_licensing_haslivelicence",
@@ -4294,6 +3574,42 @@
       "norm_label": "haslivelicence()",
       "source_file": "worker/src/licensing.js",
       "source_location": "L338"
+    },
+    {
+      "id": "worker_src_session_currentuser",
+      "label": "currentUser()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "currentuser()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "worker_src_session_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "worker_src_session_readcookies",
+      "label": "readCookies()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "readcookies()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L8"
     },
     {
       "id": "worker_src_stream_breadthexceeded",
@@ -4752,6 +4068,438 @@
       "source_location": "L31"
     },
     {
+      "id": "worker_src_artists_createsubmission",
+      "label": "createSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "createsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L69"
+    },
+    {
+      "id": "worker_src_mail_mailfrom",
+      "label": "mailFrom()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "mailfrom()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L40"
+    },
+    {
+      "id": "worker_src_mail_maillive",
+      "label": "mailLive()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "maillive()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "worker_src_mail_mailto",
+      "label": "mailTo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "mailto()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "worker_src_mail_resetemail",
+      "label": "resetEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "resetemail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L101"
+    },
+    {
+      "id": "worker_src_mail_sendmail",
+      "label": "sendMail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "sendmail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L73"
+    },
+    {
+      "id": "worker_src_mail_shell",
+      "label": "shell()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "shell()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L51"
+    },
+    {
+      "id": "worker_src_rights_amenddeclaration",
+      "label": "amendDeclaration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "amenddeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L389"
+    },
+    {
+      "id": "worker_src_rights_claimstatus",
+      "label": "claimStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "claimstatus()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L362"
+    },
+    {
+      "id": "worker_src_rights_cleanemail",
+      "label": "cleanEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "cleanemail()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L27"
+    },
+    {
+      "id": "worker_src_rights_countersignclaim",
+      "label": "countersignClaim()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "countersignclaim()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L337"
+    },
+    {
+      "id": "worker_src_rights_createmanagedartist",
+      "label": "createManagedArtist()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "createmanagedartist()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L316"
+    },
+    {
+      "id": "worker_src_rights_freezetext",
+      "label": "freezeText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "freezetext()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L48"
+    },
+    {
+      "id": "worker_src_rights_invitebody",
+      "label": "inviteBody()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "invitebody()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L161"
+    },
+    {
+      "id": "worker_src_rights_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_rights_linkonsignin",
+      "label": "linkOnSignIn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "linkonsignin()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L281"
+    },
+    {
+      "id": "worker_src_rights_listmanagedartists",
+      "label": "listManagedArtists()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "listmanagedartists()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L308"
+    },
+    {
+      "id": "worker_src_rights_listoutbox",
+      "label": "listOutbox()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "listoutbox()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L180"
+    },
+    {
+      "id": "worker_src_rights_mycredits",
+      "label": "myCredits()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "mycredits()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L240"
+    },
+    {
+      "id": "worker_src_rights_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L20"
+    },
+    {
+      "id": "worker_src_rights_parsedeclaration",
+      "label": "parseDeclaration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "parsedeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L59"
+    },
+    {
+      "id": "worker_src_rights_recorddeclaration",
+      "label": "recordDeclaration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "recorddeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L126"
+    },
+    {
+      "id": "worker_src_rights_respondcredit",
+      "label": "respondCredit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "respondcredit()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L256"
+    },
+    {
+      "id": "worker_src_rights_sendoutbox",
+      "label": "sendOutbox()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "sendoutbox()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L192"
+    },
+    {
+      "id": "worker_src_rights_validemail",
+      "label": "validEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "validemail()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L28"
+    },
+    {
+      "id": "worker_src_catalog_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L28"
+    },
+    {
+      "id": "worker_src_catalog_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_catalog_listorigtitles",
+      "label": "listOrigTitles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "listorigtitles()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L244"
+    },
+    {
+      "id": "worker_src_catalog_listoverrides",
+      "label": "listOverrides()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "listoverrides()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L106"
+    },
+    {
+      "id": "worker_src_catalog_listuses",
+      "label": "listUses()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "listuses()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L191"
+    },
+    {
+      "id": "worker_src_catalog_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "worker_src_catalog_sanitize",
+      "label": "sanitize()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "sanitize()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L33"
+    },
+    {
+      "id": "worker_src_catalog_saveoverride",
+      "label": "saveOverride()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "saveoverride()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L140"
+    },
+    {
+      "id": "worker_src_catalog_saveuse",
+      "label": "saveUse()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "saveuse()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L204"
+    },
+    {
+      "id": "worker_src_catalog_setorigtitle",
+      "label": "setOrigTitle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "setorigtitle()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L231"
+    },
+    {
+      "id": "worker_src_catalog_uploadcover",
+      "label": "uploadCover()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "uploadcover()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L159"
+    },
+    {
       "id": "js_mutra_artist_panel_albumsof",
       "label": "albumsOf()",
       "_callable": true,
@@ -4848,16 +4596,316 @@
       "source_location": "L52"
     },
     {
-      "id": "worker_src_analytics_alert",
-      "label": "alert()",
+      "id": "worker_src_artists_json",
+      "label": "json()",
       "_callable": true,
       "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
+      "community": 37,
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "alert()",
-      "source_file": "worker/src/analytics.js",
-      "source_location": "L207"
+      "norm_label": "json()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_artists_listartistsadmin",
+      "label": "listArtistsAdmin()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "listartistsadmin()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L184"
+    },
+    {
+      "id": "worker_src_artists_listsubmissions",
+      "label": "listSubmissions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "listsubmissions()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L204"
+    },
+    {
+      "id": "worker_src_artists_myuploads",
+      "label": "myUploads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "myuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L39"
+    },
+    {
+      "id": "worker_src_artists_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "worker_src_artists_queuereviewmail",
+      "label": "queueReviewMail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "queuereviewmail()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L251"
+    },
+    {
+      "id": "worker_src_artists_registerartist",
+      "label": "registerArtist()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "registerartist()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "worker_src_artists_reviewsubmission",
+      "label": "reviewSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "reviewsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L227"
+    },
+    {
+      "id": "worker_src_artists_slug",
+      "label": "slug()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "slug()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L25"
+    },
+    {
+      "id": "worker_src_artists_streamsubmission",
+      "label": "streamSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "streamsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_artists_uploadtrack",
+      "label": "uploadTrack()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "uploadtrack()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L54"
+    },
+    {
+      "id": "worker_src_clearlist_addchannel",
+      "label": "addChannel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "addchannel()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_clearlist_allchannels",
+      "label": "allChannels()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "allchannels()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L77"
+    },
+    {
+      "id": "worker_src_clearlist_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L35"
+    },
+    {
+      "id": "worker_src_clearlist_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "worker_src_clearlist_listchannels",
+      "label": "listChannels()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "listchannels()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "worker_src_clearlist_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_clearlist_removechannel",
+      "label": "removeChannel()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "removechannel()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L65"
+    },
+    {
+      "id": "worker_src_clearlist_setchannelstatus",
+      "label": "setChannelStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "setchannelstatus()",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L89"
+    },
+    {
+      "id": "worker_src_contact_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L28"
+    },
+    {
+      "id": "worker_src_contact_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "worker_src_contact_listmessages",
+      "label": "listMessages()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "listmessages()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_contact_makeref",
+      "label": "makeRef()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "makeref()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_contact_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_contact_setmessagestatus",
+      "label": "setMessageStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "setmessagestatus()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L146"
+    },
+    {
+      "id": "worker_src_contact_submitcontact",
+      "label": "submitContact()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "submitcontact()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L62"
     },
     {
       "id": "worker_src_licensing_calendarlink",
@@ -5218,6 +5266,78 @@
       "norm_label": "trackfactor()",
       "source_file": "worker/src/pricing.js",
       "source_location": "L237"
+    },
+    {
+      "id": "worker_src_artistreg_ensureartists",
+      "label": "ensureArtists()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "ensureartists()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L42"
+    },
+    {
+      "id": "worker_src_artistreg_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "worker_src_artistreg_listartists",
+      "label": "listArtists()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "listartists()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L30"
+    },
+    {
+      "id": "worker_src_artistreg_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "worker_src_artistreg_saveartist",
+      "label": "saveArtist()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "saveartist()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L70"
+    },
+    {
+      "id": "worker_src_artistreg_splitnames",
+      "label": "splitNames()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "splitnames()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L26"
     },
     {
       "id": "js_main_applyworkfilter",
@@ -5793,7 +5913,7 @@
       "file_type": "code",
       "norm_label": "addlogo()",
       "source_file": "js/works-admin.js",
-      "source_location": "L437"
+      "source_location": "L450"
     },
     {
       "id": "js_works_admin_api",
@@ -5817,7 +5937,7 @@
       "file_type": "code",
       "norm_label": "buildlogosmodal()",
       "source_file": "js/works-admin.js",
-      "source_location": "L355"
+      "source_location": "L368"
     },
     {
       "id": "js_works_admin_buildmodal",
@@ -5841,7 +5961,7 @@
       "file_type": "code",
       "norm_label": "closeform()",
       "source_file": "js/works-admin.js",
-      "source_location": "L221"
+      "source_location": "L230"
     },
     {
       "id": "js_works_admin_decorate",
@@ -5865,7 +5985,7 @@
       "file_type": "code",
       "norm_label": "marqueerefresh()",
       "source_file": "js/works-admin.js",
-      "source_location": "L458"
+      "source_location": "L471"
     },
     {
       "id": "js_works_admin_mount",
@@ -5889,7 +6009,7 @@
       "file_type": "code",
       "norm_label": "normalizelogo()",
       "source_file": "js/works-admin.js",
-      "source_location": "L289"
+      "source_location": "L302"
     },
     {
       "id": "js_works_admin_openform",
@@ -5901,7 +6021,7 @@
       "file_type": "code",
       "norm_label": "openform()",
       "source_file": "js/works-admin.js",
-      "source_location": "L202"
+      "source_location": "L205"
     },
     {
       "id": "js_works_admin_openlogos",
@@ -5913,7 +6033,7 @@
       "file_type": "code",
       "norm_label": "openlogos()",
       "source_file": "js/works-admin.js",
-      "source_location": "L385"
+      "source_location": "L398"
     },
     {
       "id": "js_works_admin_paintlogos",
@@ -5925,7 +6045,7 @@
       "file_type": "code",
       "norm_label": "paintlogos()",
       "source_file": "js/works-admin.js",
-      "source_location": "L391"
+      "source_location": "L404"
     },
     {
       "id": "js_works_admin_removework",
@@ -5949,7 +6069,7 @@
       "file_type": "code",
       "norm_label": "save()",
       "source_file": "js/works-admin.js",
-      "source_location": "L227"
+      "source_location": "L236"
     },
     {
       "id": "js_works_admin_say",
@@ -5973,7 +6093,7 @@
       "file_type": "code",
       "norm_label": "status()",
       "source_file": "js/works-admin.js",
-      "source_location": "L222"
+      "source_location": "L231"
     },
     {
       "id": "js_works_admin_sync",
@@ -5985,7 +6105,7 @@
       "file_type": "code",
       "norm_label": "sync()",
       "source_file": "js/works-admin.js",
-      "source_location": "L461"
+      "source_location": "L474"
     },
     {
       "id": "js_works_admin_toggle",
@@ -6156,136 +6276,16 @@
       "source_location": "L55"
     },
     {
-      "id": "worker_src_catalog_clean",
-      "label": "clean()",
+      "id": "js_mutra_skin_apply",
+      "label": "apply()",
       "_callable": true,
       "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
+      "community": 9,
+      "community_name": "Mutra royalty-free music catalogue page",
       "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L28"
-    },
-    {
-      "id": "worker_src_catalog_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L15"
-    },
-    {
-      "id": "worker_src_catalog_listorigtitles",
-      "label": "listOrigTitles()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "listorigtitles()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L244"
-    },
-    {
-      "id": "worker_src_catalog_listoverrides",
-      "label": "listOverrides()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "listoverrides()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L106"
-    },
-    {
-      "id": "worker_src_catalog_listuses",
-      "label": "listUses()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "listuses()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L191"
-    },
-    {
-      "id": "worker_src_catalog_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L14"
-    },
-    {
-      "id": "worker_src_catalog_sanitize",
-      "label": "sanitize()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "sanitize()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L33"
-    },
-    {
-      "id": "worker_src_catalog_saveoverride",
-      "label": "saveOverride()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "saveoverride()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L140"
-    },
-    {
-      "id": "worker_src_catalog_saveuse",
-      "label": "saveUse()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "saveuse()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L204"
-    },
-    {
-      "id": "worker_src_catalog_setorigtitle",
-      "label": "setOrigTitle()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "setorigtitle()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L231"
-    },
-    {
-      "id": "worker_src_catalog_uploadcover",
-      "label": "uploadCover()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "uploadcover()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L159"
+      "norm_label": "apply()",
+      "source_file": "js/mutra-skin.js",
+      "source_location": "L16"
     },
     {
       "id": "js_mutra_agent",
@@ -6629,6 +6629,39 @@
       "source_location": "L41"
     },
     {
+      "id": "worker_src_profile",
+      "label": "profile.js",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "profile.js",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_profile_field_cols",
+      "label": "FIELD_COLS",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "field_cols",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "worker_src_profile_img_ext",
+      "label": "IMG_EXT",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "img_ext",
+      "source_file": "worker/src/profile.js",
+      "source_location": "L112"
+    },
+    {
       "id": "worker_src_user",
       "label": "user.js",
       "_origin": "ast",
@@ -6637,17 +6670,6 @@
       "file_type": "code",
       "norm_label": "user.js",
       "source_file": "worker/src/user.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "js_mutra_skin",
-      "label": "mutra-skin.js",
-      "_origin": "ast",
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "file_type": "code",
-      "norm_label": "mutra-skin.js",
-      "source_file": "js/mutra-skin.js",
       "source_location": "L1"
     },
     {
@@ -6692,6 +6714,28 @@
       "file_type": "code",
       "norm_label": "showreel",
       "source_file": "js/data.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "js_mutra_data",
+      "label": "mutra-data.js",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "file_type": "code",
+      "norm_label": "mutra-data.js",
+      "source_file": "js/mutra-data.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "js_mutra_data_mutra",
+      "label": "MUTRA",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "file_type": "code",
+      "norm_label": "mutra",
+      "source_file": "js/mutra-data.js",
       "source_location": "L6"
     },
     {
@@ -6772,28 +6816,6 @@
       "source_location": "L1"
     },
     {
-      "id": "js_mutra_data",
-      "label": "mutra-data.js",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Track catalogue browse + search",
-      "file_type": "code",
-      "norm_label": "mutra-data.js",
-      "source_file": "js/mutra-data.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "js_mutra_data_mutra",
-      "label": "MUTRA",
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "Track catalogue browse + search",
-      "file_type": "code",
-      "norm_label": "mutra",
-      "source_file": "js/mutra-data.js",
-      "source_location": "L6"
-    },
-    {
       "id": "js_mutra_highlights",
       "label": "mutra-highlights.js",
       "_origin": "ast",
@@ -6838,94 +6860,6 @@
       "source_location": "L45"
     },
     {
-      "id": "worker_src_artistreg",
-      "label": "artistreg.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "artistreg.js",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_artists",
-      "label": "artists.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "artists.js",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_artists_audio_ext",
-      "label": "AUDIO_EXT",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "audio_ext",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "worker_src_clearlist",
-      "label": "clearlist.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "clearlist.js",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_clearlist_platforms",
-      "label": "PLATFORMS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "platforms",
-      "source_file": "worker/src/clearlist.js",
-      "source_location": "L24"
-    },
-    {
-      "id": "worker_src_crypto",
-      "label": "crypto.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "crypto.js",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_crypto_enc",
-      "label": "enc",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "enc",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L7"
-    },
-    {
-      "id": "worker_src_crypto_pbkdf2_iters",
-      "label": "PBKDF2_ITERS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "pbkdf2_iters",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L8"
-    },
-    {
       "id": "worker_src_index",
       "label": "index.js",
       "_origin": "ast",
@@ -6959,28 +6893,6 @@
       "source_location": "L70"
     },
     {
-      "id": "worker_src_mail",
-      "label": "mail.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "mail.js",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_mail_senders",
-      "label": "SENDERS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "senders",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L33"
-    },
-    {
       "id": "worker_src_members",
       "label": "members.js",
       "_origin": "ast",
@@ -6989,72 +6901,6 @@
       "file_type": "code",
       "norm_label": "members.js",
       "source_file": "worker/src/members.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_profile",
-      "label": "profile.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "profile.js",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_profile_field_cols",
-      "label": "FIELD_COLS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "field_cols",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L37"
-    },
-    {
-      "id": "worker_src_profile_img_ext",
-      "label": "IMG_EXT",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "img_ext",
-      "source_file": "worker/src/profile.js",
-      "source_location": "L112"
-    },
-    {
-      "id": "worker_src_rights",
-      "label": "rights.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "rights.js",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_rights_rights_texts",
-      "label": "RIGHTS_TEXTS",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "rights_texts",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L31"
-    },
-    {
-      "id": "worker_src_session",
-      "label": "session.js",
-      "_origin": "ast",
-      "community": 25,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "session.js",
-      "source_file": "worker/src/session.js",
       "source_location": "L1"
     },
     {
@@ -7209,26 +7055,48 @@
       "source_location": "L31"
     },
     {
-      "id": "worker_src_contact",
-      "label": "contact.js",
+      "id": "worker_src_crypto",
+      "label": "crypto.js",
       "_origin": "ast",
       "community": 3,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "contact.js",
-      "source_file": "worker/src/contact.js",
+      "norm_label": "crypto.js",
+      "source_file": "worker/src/crypto.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_contact_routes",
-      "label": "ROUTES",
+      "id": "worker_src_crypto_enc",
+      "label": "enc",
       "_origin": "ast",
       "community": 3,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "routes",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L34"
+      "norm_label": "enc",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "worker_src_crypto_pbkdf2_iters",
+      "label": "PBKDF2_ITERS",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "pbkdf2_iters",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L8"
+    },
+    {
+      "id": "worker_src_session",
+      "label": "session.js",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "session.js",
+      "source_file": "worker/src/session.js",
+      "source_location": "L1"
     },
     {
       "id": "worker_src_stream",
@@ -7341,6 +7209,83 @@
       "source_location": "L1"
     },
     {
+      "id": "worker_src_mail",
+      "label": "mail.js",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "mail.js",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_mail_senders",
+      "label": "SENDERS",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "senders",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L33"
+    },
+    {
+      "id": "worker_src_rights",
+      "label": "rights.js",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "rights.js",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_rights_rights_texts",
+      "label": "RIGHTS_TEXTS",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "rights_texts",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L31"
+    },
+    {
+      "id": "worker_src_catalog",
+      "label": "catalog.js",
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "catalog.js",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_catalog_list_fields",
+      "label": "LIST_FIELDS",
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "list_fields",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "worker_src_catalog_string_fields",
+      "label": "STRING_FIELDS",
+      "_origin": "ast",
+      "community": 35,
+      "community_name": "catalog.js",
+      "file_type": "code",
+      "norm_label": "string_fields",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L25"
+    },
+    {
       "id": "js_mutra_artist_panel",
       "label": "mutra-artist-panel.js",
       "_origin": "ast",
@@ -7350,6 +7295,72 @@
       "norm_label": "mutra-artist-panel.js",
       "source_file": "js/mutra-artist-panel.js",
       "source_location": "L1"
+    },
+    {
+      "id": "worker_src_artists",
+      "label": "artists.js",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "artists.js",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_artists_audio_ext",
+      "label": "AUDIO_EXT",
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "audio_ext",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_clearlist",
+      "label": "clearlist.js",
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "clearlist.js",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_clearlist_platforms",
+      "label": "PLATFORMS",
+      "_origin": "ast",
+      "community": 38,
+      "community_name": "clearlist.js",
+      "file_type": "code",
+      "norm_label": "platforms",
+      "source_file": "worker/src/clearlist.js",
+      "source_location": "L24"
+    },
+    {
+      "id": "worker_src_contact",
+      "label": "contact.js",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "contact.js",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_contact_routes",
+      "label": "ROUTES",
+      "_origin": "ast",
+      "community": 39,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "routes",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L34"
     },
     {
       "id": "worker_src_licensing",
@@ -7460,6 +7471,77 @@
       "norm_label": "terms",
       "source_file": "worker/src/pricing.js",
       "source_location": "L197"
+    },
+    {
+      "id": "worker_src_artistreg",
+      "label": "artistreg.js",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "artistreg.js",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "portfolio_years",
+      "label": "PORTFOLIO-YEARS.md",
+      "_origin": "ast",
+      "community": 42,
+      "community_name": "Portfolio years \u2014 what still needs your eye",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "portfolio-years.md",
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "portfolio_years_leads_a_likely_year_but_not_one_i_would_print",
+      "label": "Leads \u2014 a likely year, but not one I would print",
+      "_origin": "ast",
+      "community": 42,
+      "community_name": "Portfolio years \u2014 what still needs your eye",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "leads \u2014 a likely year, but not one i would print",
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "portfolio_years_no_price_offer_found_likely_needs_the_gmail_search",
+      "label": "No price offer found \u2014 likely needs the Gmail search",
+      "_origin": "ast",
+      "community": 42,
+      "community_name": "Portfolio years \u2014 what still needs your eye",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "no price offer found \u2014 likely needs the gmail search",
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "portfolio_years_portfolio_years_what_still_needs_your_eye",
+      "label": "Portfolio years \u2014 what still needs your eye",
+      "_origin": "ast",
+      "community": 42,
+      "community_name": "Portfolio years \u2014 what still needs your eye",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "portfolio years \u2014 what still needs your eye",
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "portfolio_years_your_own_artist_work_no_offer_exists_by_definition",
+      "label": "Your own artist work \u2014 no offer exists by definition",
+      "_origin": "ast",
+      "community": 42,
+      "community_name": "Portfolio years \u2014 what still needs your eye",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "your own artist work \u2014 no offer exists by definition",
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L68"
     },
     {
       "id": "js_main",
@@ -7759,39 +7841,6 @@
       "source_location": "L47"
     },
     {
-      "id": "worker_src_catalog",
-      "label": "catalog.js",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "catalog.js",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_catalog_list_fields",
-      "label": "LIST_FIELDS",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "list_fields",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L26"
-    },
-    {
-      "id": "worker_src_catalog_string_fields",
-      "label": "STRING_FIELDS",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "string_fields",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L25"
-    },
-    {
       "id": "js_mutra_artist_data",
       "label": "mutra-artist-data.js",
       "_origin": "ast",
@@ -7845,6 +7894,17 @@
       "norm_label": "mutra_similar",
       "source_file": "js/mutra-similar.js",
       "source_location": "L4"
+    },
+    {
+      "id": "js_mutra_skin",
+      "label": "mutra-skin.js",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "Mutra royalty-free music catalogue page",
+      "file_type": "code",
+      "norm_label": "mutra-skin.js",
+      "source_file": "js/mutra-skin.js",
+      "source_location": "L1"
     },
     {
       "id": "js_mutra_spotlight_data",
@@ -7906,36 +7966,6 @@
       "source_url": null
     },
     {
-      "id": "css_account",
-      "label": "css/account.css \u2014 auth UI styles",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "code",
-      "norm_label": "css/account.css \u2014 auth ui styles",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "css_skins",
-      "label": "css/skins.css \u2014 per-product skin variables",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "code",
-      "norm_label": "css/skins.css \u2014 per-product skin variables",
-      "source_file": "mutra.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "artists_countersign_claim",
       "label": "Countersign banner for tracks uploaded on the artist's behalf",
       "_origin": "semantic",
@@ -7946,21 +7976,6 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "countersign banner for tracks uploaded on the artist's behalf",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_credits_list",
-      "label": "Credits: tracks where you are listed as a rights holder",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "credits: tracks where you are listed as a rights holder",
       "source_file": "artists.html",
       "source_location": null,
       "source_url": null
@@ -7996,6 +8011,21 @@
       "source_url": null
     },
     {
+      "id": "dashboard_clearance_status",
+      "label": "Clearance status states (pending / cleared / rejected)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "clearance status states (pending / cleared / rejected)",
+      "source_file": "dashboard.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "dashboard_ghost_vs_account_badge",
       "label": "Ghost vs claimed vs account artist badges",
       "_origin": "semantic",
@@ -8006,6 +8036,21 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "ghost vs claimed vs account artist badges",
+      "source_file": "dashboard.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "dashboard_licensing_queue",
+      "label": "Licensing queue with quote/instant lanes",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "licensing queue with quote/instant lanes",
       "source_file": "dashboard.html",
       "source_location": null,
       "source_url": null
@@ -8052,21 +8097,6 @@
       "file_type": "concept",
       "norm_label": "submissions review queue",
       "source_file": "dashboard.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_page",
-      "label": "Artist submission portal",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "document",
-      "norm_label": "artist submission portal",
-      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
@@ -8131,6 +8161,21 @@
       "source_url": null
     },
     {
+      "id": "dashboard_licence_readback",
+      "label": "Licence read-back sentence before the confirm button",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "licence read-back sentence before the confirm button",
+      "source_file": "dashboard.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "dashboard_member_drawer",
       "label": "Member drawer (side sheet, not a modal)",
       "_origin": "semantic",
@@ -8142,21 +8187,6 @@
       "file_type": "rationale",
       "norm_label": "member drawer (side sheet, not a modal)",
       "source_file": "dashboard.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "mutra_product_skin",
-      "label": "data-product skin switch (snowstar vs mutra)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "data-product skin switch (snowstar vs mutra)",
-      "source_file": "mutra.html",
       "source_location": null,
       "source_url": null
     },
@@ -8191,21 +8221,6 @@
       "source_url": null
     },
     {
-      "id": "index_audio_branding",
-      "label": "Audio Branding service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "audio branding service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "index_mutra_teaser",
       "label": "Mutra teaser section on the homepage",
       "_origin": "semantic",
@@ -8231,66 +8246,6 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "organization json-ld structured data",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_original_music",
-      "label": "Original Music service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "original music service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_post_sound_sfx",
-      "label": "Post Sound / SFX service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "post sound / sfx service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_services",
-      "label": "Four services section",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "four services section",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_soundscapes",
-      "label": "SoundScapes service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "soundscapes service",
       "source_file": "index.html",
       "source_location": null,
       "source_url": null
@@ -8351,6 +8306,21 @@
       "contributor": null,
       "file_type": "rationale",
       "norm_label": "brand assets: menu morph gif and lulo clean wordmark png",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "readme_content_editing_contract",
+      "label": "Content editing via js/data.js and js/mutra-data.js",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "content editing via js/data.js and js/mutra-data.js",
       "source_file": "README.md",
       "source_location": null,
       "source_url": null
@@ -8607,36 +8577,6 @@
       "file_type": "concept",
       "norm_label": "trading name and sole-trader contracting entity",
       "source_file": "contact.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "dashboard_clearance_status",
-      "label": "Clearance status states (pending / cleared / rejected)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "clearance status states (pending / cleared / rejected)",
-      "source_file": "dashboard.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "dashboard_licensing_queue",
-      "label": "Licensing queue with quote/instant lanes",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "licensing queue with quote/instant lanes",
-      "source_file": "dashboard.html",
       "source_location": null,
       "source_url": null
     },
@@ -8986,21 +8926,6 @@
       "source_url": null
     },
     {
-      "id": "dashboard_licence_readback",
-      "label": "Licence read-back sentence before the confirm button",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 2,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "licence read-back sentence before the confirm button",
-      "source_file": "dashboard.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "dashboard_mail_log",
       "label": "Outbound mail log panel",
       "_origin": "semantic",
@@ -9151,21 +9076,6 @@
       "source_url": null
     },
     {
-      "id": "readme_content_editing_contract",
-      "label": "Content editing via js/data.js and js/mutra-data.js",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 23,
-      "community_name": "Track catalogue browse + search",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "content editing via js/data.js and js/mutra-data.js",
-      "source_file": "README.md",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "refund_no_change_of_mind",
       "label": "No change-of-mind refunds on instant delivery",
       "_origin": "semantic",
@@ -9177,6 +9087,96 @@
       "file_type": "rationale",
       "norm_label": "no change-of-mind refunds on instant delivery",
       "source_file": "refund.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_audio_branding",
+      "label": "Audio Branding service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 41,
+      "community_name": "Four services section",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "audio branding service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_original_music",
+      "label": "Original Music service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 41,
+      "community_name": "Four services section",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "original music service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_post_sound_sfx",
+      "label": "Post Sound / SFX service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 41,
+      "community_name": "Four services section",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "post sound / sfx service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_services",
+      "label": "Four services section",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 41,
+      "community_name": "Four services section",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "four services section",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_soundscapes",
+      "label": "SoundScapes service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 41,
+      "community_name": "Four services section",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "soundscapes service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "css_account",
+      "label": "css/account.css \u2014 auth UI styles",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 9,
+      "community_name": "Mutra royalty-free music catalogue page",
+      "contributor": null,
+      "file_type": "code",
+      "norm_label": "css/account.css \u2014 auth ui styles",
+      "source_file": "index.html",
       "source_location": null,
       "source_url": null
     },
@@ -9206,6 +9206,21 @@
       "contributor": null,
       "file_type": "code",
       "norm_label": "css/mutra.css \u2014 mutra design system (warm palette)",
+      "source_file": "mutra.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "css_skins",
+      "label": "css/skins.css \u2014 per-product skin variables",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 9,
+      "community_name": "Mutra royalty-free music catalogue page",
+      "contributor": null,
+      "file_type": "code",
+      "norm_label": "css/skins.css \u2014 per-product skin variables",
       "source_file": "mutra.html",
       "source_location": null,
       "source_url": null
@@ -9241,6 +9256,21 @@
       "source_url": null
     },
     {
+      "id": "artists_credits_list",
+      "label": "Credits: tracks where you are listed as a rights holder",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 9,
+      "community_name": "Mutra royalty-free music catalogue page",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "credits: tracks where you are listed as a rights holder",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "mutra_musicplaylist_jsonld",
       "label": "MusicPlaylist JSON-LD structured data",
       "_origin": "semantic",
@@ -9271,6 +9301,21 @@
       "source_url": null
     },
     {
+      "id": "artists_page",
+      "label": "Artist submission portal",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 9,
+      "community_name": "Mutra royalty-free music catalogue page",
+      "contributor": null,
+      "file_type": "document",
+      "norm_label": "artist submission portal",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "mutra_page",
       "label": "Mutra royalty-free music catalogue page",
       "_origin": "semantic",
@@ -9281,6 +9326,21 @@
       "contributor": null,
       "file_type": "document",
       "norm_label": "mutra royalty-free music catalogue page",
+      "source_file": "mutra.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "mutra_product_skin",
+      "label": "data-product skin switch (snowstar vs mutra)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 9,
+      "community_name": "Mutra royalty-free music catalogue page",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "data-product skin switch (snowstar vs mutra)",
       "source_file": "mutra.html",
       "source_location": null,
       "source_url": null
@@ -13391,7 +13451,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L444",
+      "source_location": "L457",
       "weight": 1.0
     },
     {
@@ -13403,7 +13463,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L447",
+      "source_location": "L460",
       "weight": 1.0
     },
     {
@@ -13415,7 +13475,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L448",
+      "source_location": "L461",
       "weight": 1.0
     },
     {
@@ -13427,7 +13487,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L450",
+      "source_location": "L463",
       "weight": 1.0
     },
     {
@@ -13439,7 +13499,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L451",
+      "source_location": "L464",
       "weight": 1.0
     },
     {
@@ -13451,7 +13511,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L452",
+      "source_location": "L465",
       "weight": 1.0
     },
     {
@@ -13499,7 +13559,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L216",
+      "source_location": "L225",
       "weight": 1.0
     },
     {
@@ -13511,7 +13571,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L388",
+      "source_location": "L401",
       "weight": 1.0
     },
     {
@@ -13523,7 +13583,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L409",
+      "source_location": "L422",
       "weight": 1.0
     },
     {
@@ -13535,7 +13595,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L409",
+      "source_location": "L422",
       "weight": 1.0
     },
     {
@@ -13547,7 +13607,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L409",
+      "source_location": "L422",
       "weight": 1.0
     },
     {
@@ -13559,7 +13619,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L421",
+      "source_location": "L434",
       "weight": 1.0
     },
     {
@@ -13595,7 +13655,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L230",
+      "source_location": "L239",
       "weight": 1.0
     },
     {
@@ -13607,7 +13667,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L265",
+      "source_location": "L278",
       "weight": 1.0
     },
     {
@@ -13619,7 +13679,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L268",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -13631,7 +13691,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L270",
+      "source_location": "L283",
       "weight": 1.0
     },
     {
@@ -13643,7 +13703,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L271",
+      "source_location": "L284",
       "weight": 1.0
     },
     {
@@ -13655,7 +13715,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L272",
+      "source_location": "L285",
       "weight": 1.0
     },
     {
@@ -13667,7 +13727,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/works-admin.js",
-      "source_location": "L461",
+      "source_location": "L474",
       "weight": 1.0
     },
     {
@@ -23833,7 +23893,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L202",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -23844,7 +23904,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L221",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
@@ -23855,7 +23915,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L222",
+      "source_location": "L231",
       "weight": 1.0
     },
     {
@@ -23866,7 +23926,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L227",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -23877,7 +23937,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L289",
+      "source_location": "L302",
       "weight": 1.0
     },
     {
@@ -23899,7 +23959,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L355",
+      "source_location": "L368",
       "weight": 1.0
     },
     {
@@ -23910,7 +23970,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L385",
+      "source_location": "L398",
       "weight": 1.0
     },
     {
@@ -23921,7 +23981,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L391",
+      "source_location": "L404",
       "weight": 1.0
     },
     {
@@ -23932,7 +23992,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L437",
+      "source_location": "L450",
       "weight": 1.0
     },
     {
@@ -23943,7 +24003,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L458",
+      "source_location": "L471",
       "weight": 1.0
     },
     {
@@ -23954,7 +24014,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
-      "source_location": "L461",
+      "source_location": "L474",
       "weight": 1.0
     },
     {
@@ -23988,6 +24048,50 @@
       "confidence_score": 1.0,
       "source_file": "js/works-admin.js",
       "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "portfolio_years",
+      "target": "portfolio_years_portfolio_years_what_still_needs_your_eye",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "portfolio_years_portfolio_years_what_still_needs_your_eye",
+      "target": "portfolio_years_no_price_offer_found_likely_needs_the_gmail_search",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "portfolio_years_portfolio_years_what_still_needs_your_eye",
+      "target": "portfolio_years_leads_a_likely_year_but_not_one_i_would_print",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "portfolio_years_portfolio_years_what_still_needs_your_eye",
+      "target": "portfolio_years_your_own_artist_work_no_offer_exists_by_definition",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "PORTFOLIO-YEARS.md",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -27804,7 +27908,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/works-admin.js",
-      "source_location": "L377",
+      "source_location": "L390",
       "weight": 1.0
     },
     {
@@ -27816,7 +27920,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/works-admin.js",
-      "source_location": "L195",
+      "source_location": "L198",
       "weight": 1.0
     },
     {
@@ -27828,7 +27932,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/works-admin.js",
-      "source_location": "L198",
+      "source_location": "L201",
       "weight": 1.0
     },
     {
@@ -30204,5 +30308,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "52d2cfb6ca78c169b95d8b046ae71df8de81af07"
+  "built_at_commit": "9001a2cc0f1023113f690ad08f5e591245a2e016"
 }

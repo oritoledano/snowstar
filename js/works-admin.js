@@ -171,6 +171,9 @@
       <h3 id="wedTitle">Add work</h3>
       <form id="wedForm" novalidate>
         <label class="wed-field"><span>Title</span><input name="title" required maxlength="120"></label>
+        <label class="wed-field"><span>Year</span>
+          <input name="year" type="number" min="1990" max="2100" placeholder="e.g. 2019">
+          <i class="wed-yearsrc"></i></label>
         <div class="wed-two">
           <label class="wed-field"><span>Work credit (what Snowstar did)</span><input name="work" maxlength="300" placeholder="Original music & sound design"></label>
           <label class="wed-field"><span>Production</span><input name="production" maxlength="300"></label>
@@ -205,6 +208,12 @@
     modal.querySelector('#wedTitle').textContent = work ? 'Edit work' : 'Add work';
     if (work) {
       form.title.value = work.title;
+      form.year.value = work.year || '';
+      // Show HOW the year was arrived at. Most were reconstructed from the
+      // price-offer archive or from mail, and a reconstructed year that looks
+      // identical to a remembered one is how a wrong date becomes permanent.
+      const ys = modal.querySelector('.wed-yearsrc');
+      if (ys) ys.textContent = work.year_src ? 'from ' + work.year_src : '';
       const c = work.credits || {};
       ['work', 'production', 'agency', 'director'].forEach((k) => { form[k].value = c[k] || ''; });
       form.vimeo.value = work.vimeo || '';
@@ -245,6 +254,10 @@
     const body = {
       id: current ? current.id : undefined,
       title,
+      year: form.year.value.trim() ? Number(form.year.value) : null,
+      // typing over it makes it yours, so the provenance note stops applying
+      year_src: form.year.value.trim() && form.year.value.trim() !== String((current && current.year) || '')
+        ? 'set by hand' : ((current && current.year_src) || null),
       credits: { work: form.work.value, production: form.production.value,
                  agency: form.agency.value, director: form.director.value },
       vimeo: form.vimeo.value.trim() || undefined,
