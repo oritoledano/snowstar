@@ -2076,6 +2076,30 @@
       "source_location": "L112"
     },
     {
+      "id": "worker_src_user_publicuser",
+      "label": "publicUser()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "publicuser()",
+      "source_file": "worker/src/user.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "js_mutra_skin_apply",
+      "label": "apply()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "file_type": "code",
+      "norm_label": "apply()",
+      "source_file": "js/mutra-skin.js",
+      "source_location": "L16"
+    },
+    {
       "id": "js_mutra_contact_build",
       "label": "build()",
       "_callable": true,
@@ -2532,6 +2556,18 @@
       "source_location": "L165"
     },
     {
+      "id": "worker_src_crypto_randb64",
+      "label": "randB64()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "randb64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L11"
+    },
+    {
       "id": "worker_src_index_authed",
       "label": "authed()",
       "_callable": true,
@@ -2640,6 +2676,18 @@
       "source_location": "L72"
     },
     {
+      "id": "worker_src_index_randtoken",
+      "label": "randToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "randtoken()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L65"
+    },
+    {
       "id": "worker_src_index_scheduled",
       "label": "scheduled()",
       "_callable": true,
@@ -2746,6 +2794,114 @@
       "norm_label": "updatemember()",
       "source_file": "worker/src/members.js",
       "source_location": "L21"
+    },
+    {
+      "id": "worker_src_oauth_facebookdatadeletion",
+      "label": "facebookDataDeletion()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "facebookdatadeletion()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L310"
+    },
+    {
+      "id": "worker_src_site_deletenote",
+      "label": "deleteNote()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "deletenote()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L126"
+    },
+    {
+      "id": "worker_src_site_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "worker_src_site_listnotes",
+      "label": "listNotes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "listnotes()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L49"
+    },
+    {
+      "id": "worker_src_site_listtexts",
+      "label": "listTexts()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "listtexts()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L24"
+    },
+    {
+      "id": "worker_src_site_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_site_savenote",
+      "label": "saveNote()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "savenote()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L60"
+    },
+    {
+      "id": "worker_src_site_savetext",
+      "label": "saveText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "savetext()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L31"
+    },
+    {
+      "id": "worker_src_site_storagereport",
+      "label": "storageReport()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "storagereport()",
+      "source_file": "worker/src/site.js",
+      "source_location": "L94"
     },
     {
       "id": "js_mutra_license_build",
@@ -3096,18 +3252,6 @@
       "source_location": "L22"
     },
     {
-      "id": "worker_src_crypto_randb64",
-      "label": "randB64()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "crypto.js",
-      "file_type": "code",
-      "norm_label": "randb64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L11"
-    },
-    {
       "id": "worker_src_crypto_safeequal",
       "label": "safeEqual()",
       "_callable": true,
@@ -3142,18 +3286,6 @@
       "norm_label": "verifypassword()",
       "source_file": "worker/src/crypto.js",
       "source_location": "L46"
-    },
-    {
-      "id": "worker_src_index_randtoken",
-      "label": "randToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "crypto.js",
-      "file_type": "code",
-      "norm_label": "randtoken()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L65"
     },
     {
       "id": "worker_src_session_currentuser",
@@ -3660,138 +3792,6 @@
       "source_location": "L69"
     },
     {
-      "id": "worker_src_artists_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L15"
-    },
-    {
-      "id": "worker_src_artists_listartistsadmin",
-      "label": "listArtistsAdmin()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "listartistsadmin()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L184"
-    },
-    {
-      "id": "worker_src_artists_listsubmissions",
-      "label": "listSubmissions()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "listsubmissions()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L204"
-    },
-    {
-      "id": "worker_src_artists_myuploads",
-      "label": "myUploads()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "myuploads()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L39"
-    },
-    {
-      "id": "worker_src_artists_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L14"
-    },
-    {
-      "id": "worker_src_artists_queuereviewmail",
-      "label": "queueReviewMail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "queuereviewmail()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L251"
-    },
-    {
-      "id": "worker_src_artists_registerartist",
-      "label": "registerArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "registerartist()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_artists_reviewsubmission",
-      "label": "reviewSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "reviewsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L227"
-    },
-    {
-      "id": "worker_src_artists_slug",
-      "label": "slug()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "slug()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L25"
-    },
-    {
-      "id": "worker_src_artists_streamsubmission",
-      "label": "streamSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "streamsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L128"
-    },
-    {
-      "id": "worker_src_artists_uploadtrack",
-      "label": "uploadTrack()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "uploadtrack()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L54"
-    },
-    {
       "id": "worker_src_mail_mailfrom",
       "label": "mailFrom()",
       "_callable": true,
@@ -3862,18 +3862,6 @@
       "norm_label": "shell()",
       "source_file": "worker/src/mail.js",
       "source_location": "L51"
-    },
-    {
-      "id": "worker_src_oauth_facebookdatadeletion",
-      "label": "facebookDataDeletion()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "facebookdatadeletion()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L310"
     },
     {
       "id": "worker_src_rights_amenddeclaration",
@@ -4200,18 +4188,6 @@
       "source_location": "L27"
     },
     {
-      "id": "worker_src_user_publicuser",
-      "label": "publicUser()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "profile.js",
-      "file_type": "code",
-      "norm_label": "publicuser()",
-      "source_file": "worker/src/user.js",
-      "source_location": "L4"
-    },
-    {
       "id": "js_mutra_artist_panel_albumsof",
       "label": "albumsOf()",
       "_callable": true,
@@ -4308,136 +4284,136 @@
       "source_location": "L52"
     },
     {
-      "id": "worker_src_catalog_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L28"
-    },
-    {
-      "id": "worker_src_catalog_json",
+      "id": "worker_src_artists_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/catalog.js",
+      "source_file": "worker/src/artists.js",
       "source_location": "L15"
     },
     {
-      "id": "worker_src_catalog_listorigtitles",
-      "label": "listOrigTitles()",
+      "id": "worker_src_artists_listartistsadmin",
+      "label": "listArtistsAdmin()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "listorigtitles()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L244"
+      "norm_label": "listartistsadmin()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L184"
     },
     {
-      "id": "worker_src_catalog_listoverrides",
-      "label": "listOverrides()",
+      "id": "worker_src_artists_listsubmissions",
+      "label": "listSubmissions()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "listoverrides()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L106"
+      "norm_label": "listsubmissions()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L204"
     },
     {
-      "id": "worker_src_catalog_listuses",
-      "label": "listUses()",
+      "id": "worker_src_artists_myuploads",
+      "label": "myUploads()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "listuses()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L191"
+      "norm_label": "myuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L39"
     },
     {
-      "id": "worker_src_catalog_now",
+      "id": "worker_src_artists_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/catalog.js",
+      "source_file": "worker/src/artists.js",
       "source_location": "L14"
     },
     {
-      "id": "worker_src_catalog_sanitize",
-      "label": "sanitize()",
+      "id": "worker_src_artists_queuereviewmail",
+      "label": "queueReviewMail()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "sanitize()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L33"
+      "norm_label": "queuereviewmail()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L251"
     },
     {
-      "id": "worker_src_catalog_saveoverride",
-      "label": "saveOverride()",
+      "id": "worker_src_artists_registerartist",
+      "label": "registerArtist()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "saveoverride()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L140"
+      "norm_label": "registerartist()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L29"
     },
     {
-      "id": "worker_src_catalog_saveuse",
-      "label": "saveUse()",
+      "id": "worker_src_artists_reviewsubmission",
+      "label": "reviewSubmission()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "saveuse()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L204"
+      "norm_label": "reviewsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L227"
     },
     {
-      "id": "worker_src_catalog_setorigtitle",
-      "label": "setOrigTitle()",
+      "id": "worker_src_artists_slug",
+      "label": "slug()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "setorigtitle()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L231"
+      "norm_label": "slug()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L25"
     },
     {
-      "id": "worker_src_catalog_uploadcover",
-      "label": "uploadCover()",
+      "id": "worker_src_artists_streamsubmission",
+      "label": "streamSubmission()",
       "_callable": true,
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "uploadcover()",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L159"
+      "norm_label": "streamsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_artists_uploadtrack",
+      "label": "uploadTrack()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 37,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "uploadtrack()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L54"
     },
     {
       "id": "worker_src_clearlist_addchannel",
@@ -4557,7 +4533,7 @@
       "file_type": "code",
       "norm_label": "exportjobs()",
       "source_file": "worker/src/jobs.js",
-      "source_location": "L128"
+      "source_location": "L132"
     },
     {
       "id": "worker_src_jobs_json",
@@ -5316,102 +5292,6 @@
       "source_location": "L338"
     },
     {
-      "id": "worker_src_site_deletenote",
-      "label": "deleteNote()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "deletenote()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L126"
-    },
-    {
-      "id": "worker_src_site_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "worker_src_site_listnotes",
-      "label": "listNotes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "listnotes()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L49"
-    },
-    {
-      "id": "worker_src_site_listtexts",
-      "label": "listTexts()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "listtexts()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L24"
-    },
-    {
-      "id": "worker_src_site_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L15"
-    },
-    {
-      "id": "worker_src_site_savenote",
-      "label": "saveNote()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "savenote()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L60"
-    },
-    {
-      "id": "worker_src_site_savetext",
-      "label": "saveText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "savetext()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L31"
-    },
-    {
-      "id": "worker_src_site_storagereport",
-      "label": "storageReport()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "storagereport()",
-      "source_file": "worker/src/site.js",
-      "source_location": "L94"
-    },
-    {
       "id": "js_main_applyworkfilter",
       "label": "applyWorkFilter()",
       "_callable": true,
@@ -5757,7 +5637,19 @@
       "file_type": "code",
       "norm_label": "save()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1503"
+      "source_location": "L1538"
+    },
+    {
+      "id": "js_dashboard_paintjobs_togglenote",
+      "label": "toggleNote()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "dashboard.js",
+      "file_type": "code",
+      "norm_label": "togglenote()",
+      "source_file": "js/dashboard.js",
+      "source_location": "L1515"
     },
     {
       "id": "js_dashboard_paintlicensing",
@@ -6396,16 +6288,136 @@
       "source_location": "L55"
     },
     {
-      "id": "js_mutra_skin_apply",
-      "label": "apply()",
+      "id": "worker_src_catalog_clean",
+      "label": "clean()",
       "_callable": true,
       "_origin": "ast",
-      "community": 9,
-      "community_name": "Mutra royalty-free music catalogue page",
+      "community": 8,
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "apply()",
-      "source_file": "js/mutra-skin.js",
-      "source_location": "L16"
+      "norm_label": "clean()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L28"
+    },
+    {
+      "id": "worker_src_catalog_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_catalog_listorigtitles",
+      "label": "listOrigTitles()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "listorigtitles()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L244"
+    },
+    {
+      "id": "worker_src_catalog_listoverrides",
+      "label": "listOverrides()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "listoverrides()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L106"
+    },
+    {
+      "id": "worker_src_catalog_listuses",
+      "label": "listUses()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "listuses()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L191"
+    },
+    {
+      "id": "worker_src_catalog_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "worker_src_catalog_sanitize",
+      "label": "sanitize()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "sanitize()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L33"
+    },
+    {
+      "id": "worker_src_catalog_saveoverride",
+      "label": "saveOverride()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "saveoverride()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L140"
+    },
+    {
+      "id": "worker_src_catalog_saveuse",
+      "label": "saveUse()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "saveuse()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L204"
+    },
+    {
+      "id": "worker_src_catalog_setorigtitle",
+      "label": "setOrigTitle()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "setorigtitle()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L231"
+    },
+    {
+      "id": "worker_src_catalog_uploadcover",
+      "label": "uploadCover()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "uploadcover()",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L159"
     },
     {
       "id": "js_mutra_agent",
@@ -6749,6 +6761,28 @@
       "source_location": "L41"
     },
     {
+      "id": "worker_src_user",
+      "label": "user.js",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "user.js",
+      "source_file": "worker/src/user.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "js_mutra_skin",
+      "label": "mutra-skin.js",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "file_type": "code",
+      "norm_label": "mutra-skin.js",
+      "source_file": "js/mutra-skin.js",
+      "source_location": "L1"
+    },
+    {
       "id": "js_data",
       "label": "data.js",
       "_origin": "ast",
@@ -6790,28 +6824,6 @@
       "file_type": "code",
       "norm_label": "showreel",
       "source_file": "js/data.js",
-      "source_location": "L6"
-    },
-    {
-      "id": "js_mutra_data",
-      "label": "mutra-data.js",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "file_type": "code",
-      "norm_label": "mutra-data.js",
-      "source_file": "js/mutra-data.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "js_mutra_data_mutra",
-      "label": "MUTRA",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "file_type": "code",
-      "norm_label": "mutra",
-      "source_file": "js/mutra-data.js",
       "source_location": "L6"
     },
     {
@@ -6890,6 +6902,28 @@
       "norm_label": "mutra-track.js",
       "source_file": "js/mutra-track.js",
       "source_location": "L1"
+    },
+    {
+      "id": "js_mutra_data",
+      "label": "mutra-data.js",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "file_type": "code",
+      "norm_label": "mutra-data.js",
+      "source_file": "js/mutra-data.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "js_mutra_data_mutra",
+      "label": "MUTRA",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "file_type": "code",
+      "norm_label": "mutra",
+      "source_file": "js/mutra-data.js",
+      "source_location": "L6"
     },
     {
       "id": "js_mutra_highlights",
@@ -6977,6 +7011,17 @@
       "file_type": "code",
       "norm_label": "members.js",
       "source_file": "worker/src/members.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_site",
+      "label": "site.js",
+      "_origin": "ast",
+      "community": 25,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "site.js",
+      "source_file": "worker/src/site.js",
       "source_location": "L1"
     },
     {
@@ -7241,28 +7286,6 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_artists",
-      "label": "artists.js",
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "artists.js",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_artists_audio_ext",
-      "label": "AUDIO_EXT",
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "audio_ext",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L21"
-    },
-    {
       "id": "worker_src_mail",
       "label": "mail.js",
       "_origin": "ast",
@@ -7340,17 +7363,6 @@
       "source_location": "L112"
     },
     {
-      "id": "worker_src_user",
-      "label": "user.js",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "profile.js",
-      "file_type": "code",
-      "norm_label": "user.js",
-      "source_file": "worker/src/user.js",
-      "source_location": "L1"
-    },
-    {
       "id": "js_mutra_artist_panel",
       "label": "mutra-artist-panel.js",
       "_origin": "ast",
@@ -7362,37 +7374,26 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_catalog",
-      "label": "catalog.js",
+      "id": "worker_src_artists",
+      "label": "artists.js",
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "catalog.js",
-      "source_file": "worker/src/catalog.js",
+      "norm_label": "artists.js",
+      "source_file": "worker/src/artists.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_catalog_list_fields",
-      "label": "LIST_FIELDS",
+      "id": "worker_src_artists_audio_ext",
+      "label": "AUDIO_EXT",
       "_origin": "ast",
       "community": 37,
-      "community_name": "catalog.js",
+      "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "list_fields",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L26"
-    },
-    {
-      "id": "worker_src_catalog_string_fields",
-      "label": "STRING_FIELDS",
-      "_origin": "ast",
-      "community": 37,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "string_fields",
-      "source_file": "worker/src/catalog.js",
-      "source_location": "L25"
+      "norm_label": "audio_ext",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L21"
     },
     {
       "id": "worker_src_clearlist",
@@ -7696,17 +7697,6 @@
       "source_location": "L7"
     },
     {
-      "id": "worker_src_site",
-      "label": "site.js",
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "site.js",
-      "file_type": "code",
-      "norm_label": "site.js",
-      "source_file": "worker/src/site.js",
-      "source_location": "L1"
-    },
-    {
       "id": "js_main",
       "label": "main.js",
       "_origin": "ast",
@@ -8004,6 +7994,39 @@
       "source_location": "L47"
     },
     {
+      "id": "worker_src_catalog",
+      "label": "catalog.js",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "catalog.js",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_catalog_list_fields",
+      "label": "LIST_FIELDS",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "list_fields",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "worker_src_catalog_string_fields",
+      "label": "STRING_FIELDS",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "string_fields",
+      "source_file": "worker/src/catalog.js",
+      "source_location": "L25"
+    },
+    {
       "id": "js_mutra_artist_data",
       "label": "mutra-artist-data.js",
       "_origin": "ast",
@@ -8057,17 +8080,6 @@
       "norm_label": "mutra_similar",
       "source_file": "js/mutra-similar.js",
       "source_location": "L4"
-    },
-    {
-      "id": "js_mutra_skin",
-      "label": "mutra-skin.js",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "Mutra royalty-free music catalogue page",
-      "file_type": "code",
-      "norm_label": "mutra-skin.js",
-      "source_file": "js/mutra-skin.js",
-      "source_location": "L1"
     },
     {
       "id": "js_mutra_spotlight_data",
@@ -8129,6 +8141,36 @@
       "source_url": null
     },
     {
+      "id": "css_account",
+      "label": "css/account.css \u2014 auth UI styles",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "code",
+      "norm_label": "css/account.css \u2014 auth ui styles",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "css_skins",
+      "label": "css/skins.css \u2014 per-product skin variables",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "code",
+      "norm_label": "css/skins.css \u2014 per-product skin variables",
+      "source_file": "mutra.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "artists_countersign_claim",
       "label": "Countersign banner for tracks uploaded on the artist's behalf",
       "_origin": "semantic",
@@ -8139,6 +8181,21 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "countersign banner for tracks uploaded on the artist's behalf",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_credits_list",
+      "label": "Credits: tracks where you are listed as a rights holder",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "credits: tracks where you are listed as a rights holder",
       "source_file": "artists.html",
       "source_location": null,
       "source_url": null
@@ -8174,21 +8231,6 @@
       "source_url": null
     },
     {
-      "id": "dashboard_clearance_status",
-      "label": "Clearance status states (pending / cleared / rejected)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "clearance status states (pending / cleared / rejected)",
-      "source_file": "dashboard.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "dashboard_ghost_vs_account_badge",
       "label": "Ghost vs claimed vs account artist badges",
       "_origin": "semantic",
@@ -8199,21 +8241,6 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "ghost vs claimed vs account artist badges",
-      "source_file": "dashboard.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "dashboard_licensing_queue",
-      "label": "Licensing queue with quote/instant lanes",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "licensing queue with quote/instant lanes",
       "source_file": "dashboard.html",
       "source_location": null,
       "source_url": null
@@ -8260,6 +8287,21 @@
       "file_type": "concept",
       "norm_label": "submissions review queue",
       "source_file": "dashboard.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_page",
+      "label": "Artist submission portal",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "document",
+      "norm_label": "artist submission portal",
+      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
@@ -8324,21 +8366,6 @@
       "source_url": null
     },
     {
-      "id": "dashboard_licence_readback",
-      "label": "Licence read-back sentence before the confirm button",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 16,
-      "community_name": "Owner dashboard",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "licence read-back sentence before the confirm button",
-      "source_file": "dashboard.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "dashboard_member_drawer",
       "label": "Member drawer (side sheet, not a modal)",
       "_origin": "semantic",
@@ -8350,6 +8377,21 @@
       "file_type": "rationale",
       "norm_label": "member drawer (side sheet, not a modal)",
       "source_file": "dashboard.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "mutra_product_skin",
+      "label": "data-product skin switch (snowstar vs mutra)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "data-product skin switch (snowstar vs mutra)",
+      "source_file": "mutra.html",
       "source_location": null,
       "source_url": null
     },
@@ -8384,6 +8426,21 @@
       "source_url": null
     },
     {
+      "id": "index_audio_branding",
+      "label": "Audio Branding service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "audio branding service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "index_mutra_teaser",
       "label": "Mutra teaser section on the homepage",
       "_origin": "semantic",
@@ -8409,6 +8466,66 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "organization json-ld structured data",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_original_music",
+      "label": "Original Music service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "original music service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_post_sound_sfx",
+      "label": "Post Sound / SFX service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "post sound / sfx service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_services",
+      "label": "Four services section",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "four services section",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_soundscapes",
+      "label": "SoundScapes service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "soundscapes service",
       "source_file": "index.html",
       "source_location": null,
       "source_url": null
@@ -8469,21 +8586,6 @@
       "contributor": null,
       "file_type": "rationale",
       "norm_label": "brand assets: menu morph gif and lulo clean wordmark png",
-      "source_file": "README.md",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "readme_content_editing_contract",
-      "label": "Content editing via js/data.js and js/mutra-data.js",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "content editing via js/data.js and js/mutra-data.js",
       "source_file": "README.md",
       "source_location": null,
       "source_url": null
@@ -8740,6 +8842,36 @@
       "file_type": "concept",
       "norm_label": "trading name and sole-trader contracting entity",
       "source_file": "contact.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "dashboard_clearance_status",
+      "label": "Clearance status states (pending / cleared / rejected)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 2,
+      "community_name": "Licence terms",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "clearance status states (pending / cleared / rejected)",
+      "source_file": "dashboard.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "dashboard_licensing_queue",
+      "label": "Licensing queue with quote/instant lanes",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 2,
+      "community_name": "Licence terms",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "licensing queue with quote/instant lanes",
+      "source_file": "dashboard.html",
       "source_location": null,
       "source_url": null
     },
@@ -9089,6 +9221,21 @@
       "source_url": null
     },
     {
+      "id": "dashboard_licence_readback",
+      "label": "Licence read-back sentence before the confirm button",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 2,
+      "community_name": "Licence terms",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "licence read-back sentence before the confirm button",
+      "source_file": "dashboard.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "dashboard_mail_log",
       "label": "Outbound mail log panel",
       "_origin": "semantic",
@@ -9239,6 +9386,21 @@
       "source_url": null
     },
     {
+      "id": "readme_content_editing_contract",
+      "label": "Content editing via js/data.js and js/mutra-data.js",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "content editing via js/data.js and js/mutra-data.js",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "refund_no_change_of_mind",
       "label": "No change-of-mind refunds on instant delivery",
       "_origin": "semantic",
@@ -9250,96 +9412,6 @@
       "file_type": "rationale",
       "norm_label": "no change-of-mind refunds on instant delivery",
       "source_file": "refund.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_audio_branding",
-      "label": "Audio Branding service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 44,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "audio branding service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_original_music",
-      "label": "Original Music service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 44,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "original music service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_post_sound_sfx",
-      "label": "Post Sound / SFX service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 44,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "post sound / sfx service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_services",
-      "label": "Four services section",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 44,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "four services section",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_soundscapes",
-      "label": "SoundScapes service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 44,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "soundscapes service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "css_account",
-      "label": "css/account.css \u2014 auth UI styles",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 9,
-      "community_name": "Mutra royalty-free music catalogue page",
-      "contributor": null,
-      "file_type": "code",
-      "norm_label": "css/account.css \u2014 auth ui styles",
-      "source_file": "index.html",
       "source_location": null,
       "source_url": null
     },
@@ -9369,21 +9441,6 @@
       "contributor": null,
       "file_type": "code",
       "norm_label": "css/mutra.css \u2014 mutra design system (warm palette)",
-      "source_file": "mutra.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "css_skins",
-      "label": "css/skins.css \u2014 per-product skin variables",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 9,
-      "community_name": "Mutra royalty-free music catalogue page",
-      "contributor": null,
-      "file_type": "code",
-      "norm_label": "css/skins.css \u2014 per-product skin variables",
       "source_file": "mutra.html",
       "source_location": null,
       "source_url": null
@@ -9419,21 +9476,6 @@
       "source_url": null
     },
     {
-      "id": "artists_credits_list",
-      "label": "Credits: tracks where you are listed as a rights holder",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 9,
-      "community_name": "Mutra royalty-free music catalogue page",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "credits: tracks where you are listed as a rights holder",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "mutra_musicplaylist_jsonld",
       "label": "MusicPlaylist JSON-LD structured data",
       "_origin": "semantic",
@@ -9464,21 +9506,6 @@
       "source_url": null
     },
     {
-      "id": "artists_page",
-      "label": "Artist submission portal",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 9,
-      "community_name": "Mutra royalty-free music catalogue page",
-      "contributor": null,
-      "file_type": "document",
-      "norm_label": "artist submission portal",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "mutra_page",
       "label": "Mutra royalty-free music catalogue page",
       "_origin": "semantic",
@@ -9489,21 +9516,6 @@
       "contributor": null,
       "file_type": "document",
       "norm_label": "mutra royalty-free music catalogue page",
-      "source_file": "mutra.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "mutra_product_skin",
-      "label": "data-product skin switch (snowstar vs mutra)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 9,
-      "community_name": "Mutra royalty-free music catalogue page",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "data-product skin switch (snowstar vs mutra)",
       "source_file": "mutra.html",
       "source_location": null,
       "source_url": null
@@ -16926,7 +16938,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/jobs.js",
-      "source_location": "L129",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -16950,7 +16962,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/jobs.js",
-      "source_location": "L104",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -18959,6 +18971,18 @@
     },
     {
       "source": "js_dashboard_paintjobs",
+      "target": "js_dashboard_paintjobs_togglenote",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "js/dashboard.js",
+      "source_location": "L1515",
+      "weight": 1.0
+    },
+    {
+      "source": "js_dashboard_paintjobs",
       "target": "js_dashboard_paintjobs_save",
       "relation": "contains",
       "_origin": "ast",
@@ -18966,7 +18990,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1503",
+      "source_location": "L1538",
       "weight": 1.0
     },
     {
@@ -26152,7 +26176,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/jobs.js",
-      "source_location": "L128",
+      "source_location": "L132",
       "weight": 1.0
     },
     {
@@ -30796,5 +30820,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "593d65f7ebbfba5de8407af3d115a7b3d3babdfd"
+  "built_at_commit": "67e15f857636937dcfcfea57c03c3b2ba2e1765e"
 }

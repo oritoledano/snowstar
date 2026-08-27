@@ -1483,13 +1483,20 @@
       body.innerHTML = rows.length ? rows.map((j) => {
         const t = (n, v, extra = '') =>
           `<input name="${n}" value="${esc(v == null ? '' : v)}"${extra}>`;
-        return `<tr data-id="${j.id}"${j.licensed ? '' : ' class="jb-nolic"'}>
+        // Three states: granted, not granted, and nobody has checked. Only an
+        // explicit "no" dims the licence columns — an unknown row must not look
+        // like a settled answer.
+        const L = j.licensed == null ? '?' : (j.licensed ? 'y' : 'n');
+        return `<tr data-id="${j.id}" class="${L === 'n' ? 'jb-nolic' : L === '?' ? 'jb-unk' : ''}">
           <td>${t('job_date', j.job_date, ' type="date"')}</td>
           <td class="jb-proj">${t('project', j.project, j.work_title ? ` title="Portfolio: ${esc(j.work_title)}"` : '')}${
             j.work_id ? '<span class="jb-link" title="Linked to a portfolio work">◆</span>' : ''}</td>
           <td>${t('client', j.client, ' list="dl-client"')}</td>
           <td>${t('service', j.service, ' list="dl-service"')}</td>
-          <td class="jb-c"><input name="licensed" type="checkbox"${j.licensed ? ' checked' : ''}></td>
+          <td class="jb-c"><button class="jb-lic jb-lic-${L}" data-l="${L}" title="${
+            L === 'y' ? 'A licence was granted' : L === 'n' ? 'No licence — click to cycle'
+                      : 'Not known — the document does not say. Click to set.'}">${
+            L === 'y' ? '✓' : L === 'n' ? '✕' : '–'}</button></td>
           <td>${t('lic_media', j.lic_media, ' list="dl-media"')}</td>
           <td>${t('lic_period', j.lic_period, ' list="dl-period"')}</td>
           <td>${t('lic_territory', j.lic_territory, ' list="dl-terr"')}</td>
@@ -1535,10 +1542,11 @@
       const id = Number(tr.dataset.id);
       const j = jobsAll.find((x) => x.id === id);
       if (!j) return;
-      tr.querySelectorAll('input[name]').forEach((el) => {
-        j[el.name] = el.type === 'checkbox' ? (el.checked ? 1 : 0) : el.value;
-      });
-      tr.classList.toggle('jb-nolic', !j.licensed);
+      tr.querySelectorAll('input[name]').forEach((el) => { j[el.name] = el.value; });
+      const L = tr.querySelector('.jb-lic').dataset.l;
+      j.licensed = L === 'y' ? 1 : L === 'n' ? 0 : null;
+      tr.classList.toggle('jb-nolic', L === 'n');
+      tr.classList.toggle('jb-unk', L === '?');
       tr.classList.add('jb-saving');
       const r = await post('/jobs', j);
       tr.classList.remove('jb-saving');
@@ -1552,6 +1560,14 @@
       if (tr && e.target.name) save(tr);
     });
     body.addEventListener('click', async (e) => {
+      const lb = e.target.closest('.jb-lic');
+      if (lb) {                                   // unknown -> yes -> no -> unknown
+        const next = { '?': 'y', y: 'n', n: '?' }[lb.dataset.l];
+        lb.dataset.l = next;
+        lb.className = 'jb-lic jb-lic-' + next;
+        lb.textContent = next === 'y' ? '✓' : next === 'n' ? '✕' : '–';
+        return save(lb.closest('tr'));
+      }
       const nb = e.target.closest('.jb-note');
       if (nb) return toggleNote(nb.closest('tr'));
       const b = e.target.closest('.jb-del');

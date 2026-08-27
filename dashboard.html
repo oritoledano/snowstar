@@ -94,12 +94,20 @@
     box-shadow:inset 0 0 0 1px var(--accent,#6ee7b7)}
   .jb-table input[type=date]{color:var(--muted)}
   .jb-table input.jb-n{text-align:center}
-  .jb-table input[type=checkbox]{accent-color:#34d399;width:15px;height:15px;cursor:pointer}
   .jb-table tr:hover td{background:rgba(128,128,128,.045)}
-  /* Rows with no licence dim their four licence columns: an empty period on a
-     work-for-hire job means "none", not "we forgot". */
+  /* Licence is three-state. Green tick = granted, red cross = explicitly not,
+     grey dash = nobody has established it either way. */
+  .jb-lic{width:22px;height:22px;border-radius:6px;border:1px solid var(--line);
+    background:none;cursor:pointer;font-size:.8rem;line-height:1;padding:0;color:var(--muted)}
+  .jb-lic-y{background:rgba(52,211,153,.18);border-color:rgba(52,211,153,.5);color:#34d399}
+  .jb-lic-n{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.4);color:#f87171}
+  .jb-lic-\?{border-style:dashed;opacity:.7}
+  /* Only an explicit "no" dims the licence columns — an empty period there means
+     none, not forgotten. An unknown row stays at full strength, because it is an
+     open question rather than a settled one. */
   .jb-nolic td:nth-child(6) input,.jb-nolic td:nth-child(7) input,
   .jb-nolic td:nth-child(8) input,.jb-nolic td:nth-child(9) input{opacity:.32}
+  .jb-unk td:nth-child(5){background:rgba(234,179,8,.07)}
   .jb-saving td{background:rgba(52,211,153,.09)}
   .jb-bad td{background:rgba(248,113,113,.14)}
   /* The portfolio-link marker sits beside the project name, not under it —
@@ -349,6 +357,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=18"></script>
-<script src="js/dashboard.js?v=20"></script>
+<script src="js/dashboard.js?v=21"></script>
 </body>
 </html>

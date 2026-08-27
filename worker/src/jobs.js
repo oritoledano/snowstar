@@ -89,7 +89,11 @@ export async function saveJob(req, env, user) {
     client: clean(b.client, 200) || null,
     agency: clean(b.agency, 200) || null,
     service: clean(b.service, 120) || null,
-    licensed: b.licensed ? 1 : 0,
+    // Three states, not two. Most of this ledger was read off scanned offers,
+    // and plenty of those documents simply never say whether a licence was
+    // granted. Storing 0 there would assert "no licence was granted", which is
+    // a claim nobody checked — so unknown stays NULL and shows as unknown.
+    licensed: b.licensed == null || b.licensed === '' ? null : (b.licensed ? 1 : 0),
     lic_media: Array.isArray(b.lic_media) ? b.lic_media.map((x) => clean(x, 40)).join(', ')
                                           : clean(b.lic_media, 200) || null,
     lic_period: clean(b.lic_period, 120) || null,
@@ -143,7 +147,7 @@ export async function exportJobs(env, user) {
   };
   const rows = (r.results || []).map((x) => [
     x.job_date || '', x.project, x.client || '', x.agency || '', x.service || '',
-    x.licensed ? 'Yes' : 'No', x.lic_media || '', x.lic_period || '',
+    x.licensed == null ? 'Unknown' : (x.licensed ? 'Yes' : 'No'), x.lic_media || '', x.lic_period || '',
     x.lic_territory || '', x.versions == null ? '' : x.versions, x.note || '',
   ].map(cell).join(','));
 

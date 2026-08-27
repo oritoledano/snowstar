@@ -30,9 +30,9 @@
     "semantic_hash": "a50db8d3130369b6138a0ad2e9c7a72f"
   },
   "js/dashboard.js": {
-    "mtime": 1787839304.8129997,
-    "seen": 1787839306.782225,
-    "ast_hash": "2e93b45d2e3001465419215b647d343e",
+    "mtime": 1787841570.5501156,
+    "seen": 1787841570.754535,
+    "ast_hash": "750ee4e7ae070a7729bdcdcd0e3f461f",
     "semantic_hash": ""
   },
   "js/data.js": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787835086.0770092,
-    "seen": 1787839306.7822762,
-    "ast_hash": "bad4505febd771a1c70bdcf7231efb7f",
+    "mtime": 1787839322.8252883,
+    "seen": 1787841556.284009,
+    "ast_hash": "e8821b31d785e39256d9ced0fd267ea7",
     "semantic_hash": ""
   },
   "index.html": {
@@ -1284,9 +1284,9 @@
     "semantic_hash": ""
   },
   "worker/src/jobs.js": {
-    "mtime": 1787830357.3418758,
-    "seen": 1787830363.539577,
-    "ast_hash": "0c4ff9679cbf0af8b43c5aa224a2d077",
+    "mtime": 1787841550.7561786,
+    "seen": 1787841556.283991,
+    "ast_hash": "d28c264be396d532f4212d786f79cfe8",
     "semantic_hash": ""
   }
 }
