@@ -1464,7 +1464,7 @@
 
         <div class="jb-scroll">
           <table class="jb-table"><thead><tr>
-            <th style="width:120px">Date</th><th>Project</th><th>Client</th><th style="width:130px">Service</th>
+            <th style="width:118px">Date</th><th>Project</th><th>Client</th><th style="width:150px">Service</th>
             <th style="width:44px" title="Was a licence granted?">Lic</th>
             <th style="width:130px">Media</th><th style="width:110px">Period</th>
             <th style="width:110px">Territory</th><th style="width:56px" title="Cuts, derivatives, versions">Cuts</th>
@@ -1485,7 +1485,7 @@
           `<input name="${n}" value="${esc(v == null ? '' : v)}"${extra}>`;
         return `<tr data-id="${j.id}"${j.licensed ? '' : ' class="jb-nolic"'}>
           <td>${t('job_date', j.job_date, ' type="date"')}</td>
-          <td>${t('project', j.project, j.work_title ? ` title="Portfolio: ${esc(j.work_title)}"` : '')}${
+          <td class="jb-proj">${t('project', j.project, j.work_title ? ` title="Portfolio: ${esc(j.work_title)}"` : '')}${
             j.work_id ? '<span class="jb-link" title="Linked to a portfolio work">◆</span>' : ''}</td>
           <td>${t('client', j.client, ' list="dl-client"')}</td>
           <td>${t('service', j.service, ' list="dl-service"')}</td>

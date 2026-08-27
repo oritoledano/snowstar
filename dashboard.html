@@ -102,7 +102,10 @@
   .jb-nolic td:nth-child(8) input,.jb-nolic td:nth-child(9) input{opacity:.32}
   .jb-saving td{background:rgba(52,211,153,.09)}
   .jb-bad td{background:rgba(248,113,113,.14)}
-  .jb-link{color:var(--accent,#6ee7b7);font-size:.6rem;padding-right:6px;vertical-align:middle}
+  /* The portfolio-link marker sits beside the project name, not under it —
+     the input is width:100%, so the cell has to be the flex row. */
+  .jb-proj{display:flex;align-items:center}
+  .jb-link{color:var(--accent,#6ee7b7);font-size:.62rem;padding:0 7px 0 1px;flex:none}
   .jb-del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:1rem;
     line-height:1;padding:6px;opacity:0;border-radius:6px}
   .jb-table tr:hover .jb-del{opacity:1}
@@ -333,6 +336,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=18"></script>
-<script src="js/dashboard.js?v=18"></script>
+<script src="js/dashboard.js?v=19"></script>
 </body>
 </html>
