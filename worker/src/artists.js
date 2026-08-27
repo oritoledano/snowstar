@@ -224,12 +224,14 @@ export async function listSubmissions(env, user, url) {
 }
 
 /** Owner: approve (queues for catalog ingestion) or reject, with a note. */
+import { trashObject } from './trash.js';
+
 export async function reviewSubmission(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const b = await req.json().catch(() => ({}));
   const id = Number(b.id);
   if (!['approved', 'rejected', 'pending'].includes(b.status)) return json({ error: 'bad_status' }, 400);
-  const row = await env.DB.prepare('SELECT id FROM submissions WHERE id = ?').bind(id).first();
+  const row = await env.DB.prepare('SELECT id, file_key, status FROM submissions WHERE id = ?').bind(id).first();
   if (!row) return json({ error: 'not_found' }, 404);
   const note = String(b.note || '').trim().slice(0, 2000);
   await env.DB.prepare(
@@ -245,7 +247,15 @@ export async function reviewSubmission(req, env, user) {
     try { await queueReviewMail(env, id, b.status, note); }
     catch { /* the decision is recorded either way */ }
   }
-  return json({ ok: true });
+
+  /* A rejected upload's audio used to sit in the live bucket forever — off the
+     catalogue but still stored, still billed, still fetchable by key. It moves
+     to trash/ rather than being deleted, because rejections get reversed. */
+    let trashed = null;
+  if (b.status === 'rejected' && row.file_key && row.status !== 'rejected') {
+    try { trashed = await trashObject(env, row.file_key); } catch { /* keep the decision */ }
+  }
+  return json({ ok: true, trashed: trashed && trashed.moved ? trashed.to : null });
 }
 
 async function queueReviewMail(env, submissionId, status, note) {

@@ -12,6 +12,8 @@
  */
 
 const now = () => Math.floor(Date.now() / 1000);
+import { notifyRename } from './ownership.js';
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -143,6 +145,17 @@ export async function saveOverride(req, env, user) {
   const slug = String(b.slug || '');
   if (!SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
 
+  /* What the track was called BEFORE this write, so a rename can be announced
+     to whoever uploaded it. Read from the stored override first and the tracks
+     row second — the override is what is actually being displayed. */
+  const prevRow = await env.DB.prepare(
+    `SELECT o.patch AS patch, t.title AS base_title
+       FROM tracks t LEFT JOIN track_overrides o ON o.slug = t.slug
+      WHERE t.slug = ?`).bind(slug).first().catch(() => null);
+  let before = {};
+  try { before = prevRow && prevRow.patch ? JSON.parse(prevRow.patch) : {}; } catch { before = {}; }
+  if (!before.title && prevRow) before.title = prevRow.base_title;
+
   const patch = sanitize(b.patch && typeof b.patch === 'object' ? b.patch : {});
   if (!Object.keys(patch).length) {
     await env.DB.prepare('DELETE FROM track_overrides WHERE slug = ?').bind(slug).run();
@@ -152,7 +165,12 @@ export async function saveOverride(req, env, user) {
     `INSERT INTO track_overrides (slug, patch, updated_at) VALUES (?, ?, ?)
      ON CONFLICT(slug) DO UPDATE SET patch = excluded.patch, updated_at = excluded.updated_at`
   ).bind(slug, JSON.stringify(patch), now()).run();
-  return json({ ok: true, patch });
+
+  // A rename is a small thing to whoever types it and a large one to whoever
+  // made the record. Queued, not sent — the outbox is still the owner's gate.
+  let told = null;
+  try { told = await notifyRename(env, slug, before, patch); } catch { /* the edit stands */ }
+  return json({ ok: true, patch, notified: told && told.to ? told.to : null });
 }
 
 /** Owner-only: replace a track's cover art. Body is the raw image. */

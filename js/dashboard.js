@@ -1372,6 +1372,7 @@
 
   async function paintStorage() {
     const s = await get('/storage');
+    const trash = await get('/storage/trash').catch(() => ({ count: 0, bytes: 0, items: [] }));
     let gh = null;
     try {
       const repo = await fetch('https://api.github.com/repos/oritoledano/snowstar').then((r) => r.ok ? r.json() : null);
@@ -1386,6 +1387,25 @@
           { label: 'Size', num: true, get: (r) => human(r[1]) },
           { label: 'Share', num: true, bar: true, get: (r) => (r[1] / s.r2.total * 100).toFixed(1) + '%' },
         ], { barKey: 1 })}</div>
+      <div class="db-panel"><h2>Trash <span class="pill">${trash.count || 0} file${
+          trash.count === 1 ? '' : 's'}</span></h2>
+        <p class="db-empty" style="padding-top:0">A rejected upload used to stay in the live
+          bucket forever — off the catalogue, still stored, still billed. Rejecting now moves
+          the audio here instead of deleting it, because rejections get reversed. Emptying is
+          the one thing on this page that cannot be undone.</p>
+        ${trash.count
+          ? `${table((trash.items || []).slice(0, 12), [
+               { label: 'File', get: (r) => esc(String(r.key).replace(/^trash\//, '')) },
+               { label: 'Size', num: true, get: (r) => human(r.size) },
+               { label: 'Binned', num: true, get: (r) => r.at ? fmtD(r.at) : '—' },
+             ])}
+             <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+               <button class="rv-btn rv-no" id="tr-empty">Empty trash — ${human(trash.bytes)}</button>
+               <span class="db-empty" style="padding:0">${trash.count} file${
+                 trash.count === 1 ? '' : 's'} deleted for good.</span>
+             </div>`
+          : '<p class="db-empty">Empty. Nothing rejected is taking up space.</p>'}
+      </div>
       <div class="db-grid">
         <div class="db-panel"><h2>Cloudflare D1 — accounts &amp; data</h2>
           ${table(Object.entries(s.d1.tables || {}).sort((a, b) => b[1] - a[1]).slice(0, 12), [
@@ -1399,6 +1419,25 @@
             ? gauge('Pages repository', gh, GB, 'GitHub Pages soft limit is 1 GB. The big videos moved to R2, so this stays lean.')
             : '<p class="db-empty">Couldn’t reach the GitHub API just now (rate limit) — try again in a minute.</p>'}</div>
       </div>`);
+
+    const emptyBtn = document.getElementById('tr-empty');
+    if (emptyBtn) emptyBtn.addEventListener('click', async () => {
+      if (!confirm(`Delete ${trash.count} rejected file${trash.count === 1 ? '' : 's'} for good?\n\n`
+                 + `This frees ${human(trash.bytes)} and cannot be undone.`)) return;
+      emptyBtn.disabled = true;
+      emptyBtn.textContent = 'Emptying…';
+      // The count goes with the request: a page left open since before three
+      // more rejections must not be able to delete files it never listed.
+      const r = await fetch(`/api/storage/trash?confirm=${trash.count}`,
+        { method: 'DELETE', credentials: 'same-origin' }).then((x) => x.json()).catch(() => null);
+      if (r && r.ok) { alert(`Deleted ${r.deleted} file${r.deleted === 1 ? '' : 's'}.`); load(); }
+      else {
+        alert(r && r.error === 'confirm_mismatch'
+          ? 'The trash changed since this page loaded. Refreshing.'
+          : 'Could not empty the trash.');
+        load();
+      }
+    });
   }
 
   /* ── jobs: the ledger of work sold ──────────────────────────────────────

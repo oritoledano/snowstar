@@ -42,6 +42,8 @@ import { getClasses, setClasses } from './pricing.js';
 import { listJobs, saveJob, exportJobs } from './jobs.js';
 import { interpretBrief } from './agent.js';
 import { listStacks, saveStack } from './stacks.js';
+import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
+import { reassignOwner, getOwner } from './ownership.js';
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
@@ -182,6 +184,13 @@ async function handle(req, env, ctx) {
   if (path === '/artist/file' && method === 'GET') return streamSubmission(req, env, await currentUser(req, env), url);
   if (path === '/artists' && method === 'GET') return listArtistsAdmin(env, await currentUser(req, env));
   if (path === '/storage' && method === 'GET') return storageReport(env, await currentUser(req, env));
+  // rejected uploads land in trash/ and are emptied deliberately, never silently
+  if (path === '/storage/trash' && method === 'GET') return listTrash(env, await currentUser(req, env));
+  if (path === '/storage/trash' && method === 'DELETE') return emptyTrash(req, env, await currentUser(req, env), url);
+  if (path === '/storage/trash/restore' && method === 'POST') return restoreFromTrash(req, env, await currentUser(req, env));
+  // who a published upload belongs to, and moving it to another account
+  if (path === '/tracks/owner' && method === 'GET') return getOwner(req, env, await currentUser(req, env), url);
+  if (path === '/tracks/owner' && method === 'POST') return reassignOwner(req, env, await currentUser(req, env));
   if (path === '/submissions' && method === 'GET') return listSubmissions(env, await currentUser(req, env), url);
   if (path === '/submissions/review' && method === 'POST') return reviewSubmission(req, env, await currentUser(req, env));
 
