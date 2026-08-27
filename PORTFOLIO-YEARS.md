@@ -1,78 +1,35 @@
-# Portfolio years — what still needs your eye
+# Portfolio years
 
-Reconstructed from the price-offer archive. 27 were unambiguous and are
-already written. These are not.
+84 of 90 works dated. Reconstructed from the
+price-offer archive and from Gmail — every one carries `year_src` saying which,
+and the Year field in the works editor is editable.
 
-## Leads — a likely year, but not one I would print
+## Worth a second look — medium confidence
 
-| Work | Best guess | Also possible | Match | From |
-|---|---|---|---|---|
-| AHAVA | 2018 | 2019 | 1.00 | AHAVA - MAMSH 10.12.18 |
-| ALL JOBS | 2019 | 2020 | 1.00 | HOOLIGANS - ALL JOBS "ALSO" - 14.4.19 |
-| APRIL - PERFUMES | 2025 | — | 0.50 | TIFERET - APRIL 5.3.2025 - RADIO LICENSE EXT |
-| BAGEL BAGEL | 2019 | — | 0.50 | GREAT - BAGEL BAGEL 24.1.19 |
-| CELLCOM SUPER WIFI | 2016 | 2017 | 0.33 | Hooligans - Cellcom Volume "SURPRISE" 10 EDIT |
-| DAN HOTELS - EILAT | 2023 | 2024, 2025 | 0.67 | WE DO - DAN HOTELS - 08.09.2023 |
-| DAN HOTELS - TEL AVIV | 2023 | 2024, 2025 | 0.50 | WE DO - DAN HOTELS - 08.09.2023 |
-| DORITOS USA | 2017 | — | 0.50 | DORITOS - TREFLER 26.4.17 |
-| FATAL - ONE HOME | 2017 | 2018, 2019, 2020, 2022 | 0.33 | MAMASH - FATAL 31.12.17 |
-| FIVERR | 2017 | 2020 | 1.00 | FIVERR - VIRTUAL OFFICE - 23.10.17 |
-| GOLDSTAR UF | 2019 | 2020, 2021 | 1.00 | MENCH - GOLDSTAR UF - 6.5.19 (Ori Toledano's c |
-| MITSUBISHI - ASX | 2019 | — | 0.50 | GITAM - MITSUBISHI - 3.11 |
-| PEPSI - VIETNAM | 2021 | — | 0.50 | MAY PRODUCTIONS - PEPSI 22.12.2021 |
-| PEPSI MAX | 2021 | — | 0.50 | MAY PRODUCTIONS - PEPSI 22.12.2021 |
-| PLUS 500 - ATLETICO MADRID | 2019 | — | 0.50 | MAMASH - PLUS 500 17.2.19 |
-| SHUFERSAL - HOLIDAY NIGHT | 2018 | — | 0.33 | SHOSHI & UDI - SHUFERSAL ONLINE NOVEMBER 21.10 |
-| SHUFERSAL - MONDIAL | 2018 | — | 0.50 | SHOSHI & UDI - SHUFERSAL ONLINE NOVEMBER 21.10 |
-| SHUFERSAL COSMETICS | 2018 | — | 0.50 | SHOSHI & UDI - SHUFERSAL ONLINE NOVEMBER 21.10 |
-| SHUFERSAL GALA | 2018 | — | 0.50 | SHOSHI & UDI - SHUFERSAL ONLINE NOVEMBER 21.10 |
-| STING - PEPSICO | 2017 | 2018, 2022 | 0.50 | AYEKA - A TALKER + COMPANY STING 10.1.2017 |
-| TELMA - CHAMPIONS | 2018 | — | 0.50 | GREAT - TELMA CHAMPS 5.12.18 |
-| TIVALL - VEGETABLES | 2018 | 2019 | 0.50 | BABUSHKA - TIVALL 30.4.18 |
-| TIVALL FACTORY | 2018 | 2019 | 0.50 | BABUSHKA - TIVALL 30.4.18 |
+| Year | Work | Why it is not certain |
+|---|---|---|
+| 2015 | FITMATE | 2015-03-09 "SFX Fitmate" (plus 2015-10-26 "fitmate new"); all Fitmate production traffic falls in 2015. |
+| 2015 | LANDWER | 9 Mar 2015 "קריינות לנדוור" / "לנדוור - ורסיה ארוכה"; first music thread dated 4 Dec 2014. |
+| 2015 | SWITCH | Sonic-logo work in "סוויץ' - סגיר מתון" Jan 2015 and a full TV/radio campaign Nov-Dec 2015; all production sits in 2015. |
+| 2016 | SODASTREAM | 7-10 Feb 2016 "Sodastream - Pop Ver." / "סודה - מוסיקה לאמריקה" final versions; a later 2019 SodaStream quote shows no production. |
+| 2017 | MINISTRY OF ENVIRONMENTAL PROTECTION | 31 Jan 2017 "ג׳ינגל ״לוקחים כל שקית ברצינות״" and final spots that night, commissioned via the government advertising bureau; the ministry itself is not named. |
+| 2018 | TIVALL FACTORY | Snowstar page post "** טבעול - מפעל **" 29 Dec 2018; Tivall work order and music May 2018. |
+| 2019 | AHAVA | Work order 25 Dec 2018 "AHAVA - הזמנת עבודה"; final delivered 4 Jan 2019 in "הזמנת עבודה - AHAVA" - work straddles both years. |
+| 2020 | BIGI TV | "ביגי" 22 Oct 2020 - music approved, plus mixes/VO Oct-Nov 2020 (a second BIGI job ran in 2021). |
+| 2020 | LIHI TOLEDANO - STORM | 1 Feb 2020 "ליהי טולדנו - סערה (Prod. By Ori Toledano)" master sent; rough mix dated 9 Dec 2019. |
+| 2021 | ONSITELOVER (OFFICIAL VIDEO) | Release-cycle mail 2021-09-18 "Your music is live: onsitelover"; campaign threads Jul-Oct 2021. No email names the video itself. |
+| 2022 | HISHGAD - MEFUNAKCHIK | 31 Jan 2022 "מפונקצ׳יק" final master delivered; work order dated 1 Jul 2021, release Aug 2022. |
+| 2022 | PEPSI - VIETNAM | Work order "PEPSICO - FIZZ" 21 Dec 2021; masters delivered in "PEPSI - DO IT MAJOR - FEMALE VER." 20 Feb 2022 (job spans both years). |
+| 2023 | BAD BLOOD (LIVE FROM BARBY TEL AVIV) | 2023-09-13 mail on broadcasting the recorded Barby show (7.10.2023); Barby album-launch cycle 2023. Filming not named. |
+| 2023 | DAN HOTELS - TEL AVIV | "מלונות דן - הזמנת עבודה" 8-10 Sep 2023 with work in progress; specific Tel Aviv project not named. |
+| 2023 | NEW TRYING OUTS (OFFICIAL VIDEO) | 2023-09-13 "new trying outs מעבר לפינה" release-campaign thread; album/single cycle Aug-Oct 2023. Video itself not named. |
+| 2025 | BIG FASHION - BUNNY | 20 & 23 Feb 2025 meeting invites "אורי טולדנו וביג פאשן"; no thread names the track. |
 
-## No price offer found — likely needs the Gmail search
+## Not established — nothing found
 
-- 24 OPTION - DINNER
-- 24 OPTION - HAIRDRESSER
-- 24 OPTION - PHOTOSHOT
-- 888 HOLDINGS
-- AZRIELI SARONA
-- BIG FASHION - BUNNY
-- BIGI TV
-- CAROLINA LEMKE
-- FITMATE
-- HISHGAD - MEFUNAKCHIK
-- JOHNNIE WALKER
-- LANDWER
-- LIHI TOLEDANO - STORM
-- LILY
-- MASKIT
-- MINISTRY OF ECONOMY
-- MINISTRY OF ENVIRONMENTAL PROTECTION
-- NOVO
-- PARIS
-- SHILTON HATSLALIM
-- SODASTREAM
-- SPOTLIGHT ID
-- STARTAPP
-- SUBARO - XV
-- SWITCH
-- TEVA - ALERGIX
-- WAVES AUDIO
-- WHITE NIGHT TLV
-- Waves Audio - Magma Spring Reverb
-- ZAP NINJA
-- ZEMACH HAMMERMAN
-
-## Your own artist work — no offer exists by definition
-
-- BAD BLOOD (LIVE FROM BARBY TEL AVIV)
-- BLUE
-- BUNNY (OFFICIAL VIDEO)
-- DANCING ON DUST
-- LEARN TO SAY NO (LIVE FROM BARBY TEL AVIV)
-- LEARN TO SAY NO (OFFICIAL VIDEO)
-- NEW TRYING OUTS (OFFICIAL VIDEO)
-- ONSITELOVER (LIVE FROM IMMANUEL CHURCH)
-- ONSITELOVER (OFFICIAL VIDEO)
+- **ZEMACH HAMMERMAN** — No thread found for Zemach Hammerman / צמח המרמן in any spelling.
+- **APRIL - PERFUMES** — No matching thread; mailbox holds almost no commercial-job correspondence after 2024.
+- **ONSITELOVER (LIVE FROM IMMANUEL CHURCH)** — not searched (no price offer, not in the Gmail batch)
+- **DANCING ON DUST** — Only streaming-stats mails mention the track (2024 milestones); no production or video correspondence found.
+- **LEARN TO SAY NO (LIVE FROM BARBY TEL AVIV)** — not searched (no price offer, not in the Gmail batch)
+- **BLUE** — not searched (no price offer, not in the Gmail batch)
