@@ -204,39 +204,67 @@
    */
   function rank(want) {
     const all = (window.mutraCatalog && mutraCatalog.all()) || [];
-    const W = { mood: 3, genre: 2.5, instrument: 1.5, bpm: 2, vocal: 2, keyword: 2.5 };
+    const W = { mood: 3, genre: 2.5, instrument: 1, bpm: 1.5, vocal: 1.5, keyword: 1 };
     const out = [];
+    const avoid = want.avoid || { moods: [], genres: [] };
+    const overlap = (a, b) => (a || []).filter((x) => (b || []).includes(x)).length;
 
     for (const t of all) {
       if (t.hidden) continue;
-      let score = 0, hits = 0;
 
-      for (const m of want.moods) if ((t.moods || []).includes(m)) { score += W.mood; hits++; }
-      for (const g of want.genres) if ((t.genres || []).includes(g)) { score += W.genre; hits++; }
-      for (const i of want.instruments) if ((t.instruments || []).includes(i)) { score += W.instrument; hits++; }
+      /* Proportional, not additive. The old version gave a track full mood
+         credit for matching ONE of three requested moods, so "Aggressive,
+         Happy, Uplifting" scored the same on a track that was merely Happy as
+         on one that was all three — and with sets that broad, 341 of 376
+         tracks came back as matches. Sharing the weight across what was asked
+         for makes a partial match read as a partial match. */
+      const mood = want.moods.length ? overlap(t.moods, want.moods) / want.moods.length : null;
+      const genre = want.genres.length ? overlap(t.genres, want.genres) / want.genres.length : null;
+      const inst = want.instruments.length
+        ? overlap(t.instruments, want.instruments) / want.instruments.length : null;
 
-      /* Words the model pulled out of the brief that are not tags at all — a
-         theme, a place, a reference. "Star Trek themed wedding" yields
-         "space", which no mood or genre can carry, and which the titles
-         sometimes can. */
+      /* Asking for instrumental is a requirement, not a preference: music that
+         sits under narration cannot sing. Score it down and it still surfaces;
+         drop it and the brief is honoured. */
+      if (want.vocal === 'Instrumental' && t.vocal === 'Vocals') continue;
+
+      // an explicit "no X" from the dictionary path is a veto, not a penalty
+      const bag = norm([...(t.moods || []), ...(t.genres || []), ...(t.instruments || [])].join(' '));
+      if ((want.not || []).some((n) => n.length > 2 && bag.includes(n))) continue;
+
+      let score = 0;
+      if (mood != null) score += W.mood * mood;
+      if (genre != null) score += W.genre * genre;
+      if (inst != null) score += W.instrument * inst;
+
+      if (want.vocal === 'Vocals') score += t.vocal === 'Vocals' ? W.vocal : -W.vocal;
+      if (want.bpm && t.bpm) {
+        score += (t.bpm >= want.bpm[0] && t.bpm <= want.bpm[1])
+          ? W.bpm
+          : -Math.min(1.5, Math.abs(t.bpm - (want.bpm[0] + want.bpm[1]) / 2) / 45);
+      }
+
+      /* Words no tag can carry — a theme, a place, a reference. A Star Trek
+         wedding yields "space". A bonus on top of a real match, never a way in
+         on its own, or a brief about crime returns everything with crime in
+         the title regardless of how it sounds. */
       if (want.keywords && want.keywords.length) {
         const title = norm(t.title + ' ' + (t.artist || ''));
-        for (const k of want.keywords) if (title.includes(k)) { score += W.keyword; hits++; }
+        for (const k of want.keywords) if (title.includes(k)) score += W.keyword;
       }
 
-      if (want.vocal) {
-        if (t.vocal === want.vocal) { score += W.vocal; hits++; }
-        else score -= W.vocal;            // asked for instrumental, this sings
-      }
-      if (want.bpm && t.bpm) {
-        if (t.bpm >= want.bpm[0] && t.bpm <= want.bpm[1]) { score += W.bpm; hits++; }
-        else score -= Math.min(2, Math.abs(t.bpm - (want.bpm[0] + want.bpm[1]) / 2) / 40);
-      }
-      // an explicit "no X" is a veto, not a penalty
-      const bag = norm([...(t.moods || []), ...(t.genres || []), ...(t.instruments || [])].join(' '));
-      if (want.not.some((n) => n.length > 2 && bag.includes(n))) continue;
+      // Negative evidence, weighted heavily: being wrong disqualifies faster
+      // than being right qualifies.
+      score -= 2.2 * overlap(t.moods, avoid.moods);
+      score -= 1.4 * overlap(t.genres, avoid.genres);
 
-      if (hits) out.push({ t, score });
+      /* A floor, and a mood gate. Without them every track sharing one loose
+         genre is called a match, which is how a search returns 90% of the
+         catalogue and means nothing by it. */
+      const gated = want.moods.length && mood === 0 && (genre == null || genre < 0.5);
+      if (gated || score < 1.4) continue;
+
+      out.push({ t, score });
     }
 
     out.sort((a, b) => b.score - a.score || (b.t.bpm || 0) - (a.t.bpm || 0));

@@ -69,7 +69,7 @@
       "file_type": "code",
       "norm_label": "build()",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L250"
+      "source_location": "L278"
     },
     {
       "id": "js_mutra_agent_cataloguevocab",
@@ -93,7 +93,7 @@
       "file_type": "code",
       "norm_label": "chip()",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L326"
+      "source_location": "L354"
     },
     {
       "id": "js_mutra_agent_close",
@@ -105,7 +105,7 @@
       "file_type": "code",
       "norm_label": "close()",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L427"
+      "source_location": "L455"
     },
     {
       "id": "js_mutra_agent_interpret",
@@ -129,7 +129,7 @@
       "file_type": "code",
       "norm_label": "open()",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L419"
+      "source_location": "L447"
     },
     {
       "id": "js_mutra_agent_paint",
@@ -141,7 +141,7 @@
       "file_type": "code",
       "norm_label": "paint()",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L335"
+      "source_location": "L363"
     },
     {
       "id": "js_mutra_agent_rank",
@@ -165,7 +165,7 @@
       "file_type": "code",
       "norm_label": "run()",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L299"
+      "source_location": "L327"
     },
     {
       "id": "js_mutra_page_addcuratecontrols",
@@ -5229,7 +5229,7 @@
       "file_type": "code",
       "norm_label": "clampbpm()",
       "source_file": "worker/src/agent.js",
-      "source_location": "L75"
+      "source_location": "L80"
     },
     {
       "id": "worker_src_agent_clamplist",
@@ -5241,7 +5241,7 @@
       "file_type": "code",
       "norm_label": "clamplist()",
       "source_file": "worker/src/agent.js",
-      "source_location": "L69"
+      "source_location": "L74"
     },
     {
       "id": "worker_src_agent_extractjson",
@@ -5253,7 +5253,7 @@
       "file_type": "code",
       "norm_label": "extractjson()",
       "source_file": "worker/src/agent.js",
-      "source_location": "L86"
+      "source_location": "L91"
     },
     {
       "id": "worker_src_agent_interpretbrief",
@@ -5265,7 +5265,7 @@
       "file_type": "code",
       "norm_label": "interpretbrief()",
       "source_file": "worker/src/agent.js",
-      "source_location": "L97"
+      "source_location": "L102"
     },
     {
       "id": "worker_src_agent_json",
@@ -10912,7 +10912,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L420",
+      "source_location": "L448",
       "weight": 1.0
     },
     {
@@ -10924,7 +10924,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L424",
+      "source_location": "L452",
       "weight": 1.0
     },
     {
@@ -10936,7 +10936,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L336",
+      "source_location": "L364",
       "weight": 1.0
     },
     {
@@ -10948,7 +10948,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L378",
+      "source_location": "L406",
       "weight": 1.0
     },
     {
@@ -10960,7 +10960,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L388",
+      "source_location": "L416",
       "weight": 1.0
     },
     {
@@ -10972,7 +10972,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L406",
+      "source_location": "L434",
       "weight": 1.0
     },
     {
@@ -10984,7 +10984,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L311",
+      "source_location": "L339",
       "weight": 1.0
     },
     {
@@ -10996,7 +10996,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L319",
+      "source_location": "L347",
       "weight": 1.0
     },
     {
@@ -11008,7 +11008,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L322",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -14121,6 +14121,18 @@
     },
     {
       "source": "worker_src_agent_interpretbrief",
+      "target": "worker_src_agent_json",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/agent.js",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_agent_interpretbrief",
       "target": "worker_src_agent_extractjson",
       "relation": "calls",
       "_origin": "ast",
@@ -14128,7 +14140,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/agent.js",
-      "source_location": "L155",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -14140,7 +14152,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/agent.js",
-      "source_location": "L162",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -14152,19 +14164,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/agent.js",
-      "source_location": "L165",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_agent_interpretbrief",
-      "target": "worker_src_agent_json",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/agent.js",
-      "source_location": "L98",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -22493,7 +22493,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-agent.js",
-      "source_location": "L250",
+      "source_location": "L278",
       "weight": 1.0
     },
     {
@@ -22504,7 +22504,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-agent.js",
-      "source_location": "L299",
+      "source_location": "L327",
       "weight": 1.0
     },
     {
@@ -22515,7 +22515,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-agent.js",
-      "source_location": "L326",
+      "source_location": "L354",
       "weight": 1.0
     },
     {
@@ -22526,7 +22526,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-agent.js",
-      "source_location": "L335",
+      "source_location": "L363",
       "weight": 1.0
     },
     {
@@ -22537,7 +22537,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-agent.js",
-      "source_location": "L419",
+      "source_location": "L447",
       "weight": 1.0
     },
     {
@@ -22548,7 +22548,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-agent.js",
-      "source_location": "L427",
+      "source_location": "L455",
       "weight": 1.0
     },
     {
@@ -24973,6 +24973,17 @@
     },
     {
       "source": "worker_src_agent",
+      "target": "worker_src_agent_interpretbrief",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/agent.js",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_agent",
       "target": "worker_src_agent_json",
       "relation": "contains",
       "_origin": "ast",
@@ -25001,7 +25012,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/agent.js",
-      "source_location": "L69",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -25012,7 +25023,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/agent.js",
-      "source_location": "L75",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -25023,18 +25034,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/agent.js",
-      "source_location": "L86",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_agent",
-      "target": "worker_src_agent_interpretbrief",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/agent.js",
-      "source_location": "L97",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -28316,7 +28316,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L276",
+      "source_location": "L304",
       "weight": 1.0
     },
     {
@@ -28328,7 +28328,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-agent.js",
-      "source_location": "L279",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -31064,5 +31064,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "97aedc8cc29892e57bd8ee616625430c3aa718eb"
+  "built_at_commit": "31716b8b7b59d841fd3aec8614819f166e048dd1"
 }

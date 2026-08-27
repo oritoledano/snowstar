@@ -60,11 +60,16 @@ Rules:
   anything under dialogue), "Vocals" if a song with a singer is wanted, else null.
 - keywords: 1-4 distinctive words from the brief worth matching against track
   titles - a theme, a place, a reference. Empty array if none.
+- avoid: the tags that would be WRONG for this brief - moods and genres a
+  supervisor would reject on hearing. This matters as much as the positive
+  tags: a hospital fundraising film is not just calm, it is actively not
+  aggressive and not tense. Be decisive, 2-5 moods.
 - summary: one short sentence, under 18 words, saying what you are looking for.
   Write it to the user, in plain English. No preamble.
 
 Return ONLY a JSON object, no markdown fence, with exactly these keys:
-{"moods":[],"genres":[],"instruments":[],"bpm":null,"vocal":null,"keywords":[],"summary":""}`;
+{"moods":[],"genres":[],"instruments":[],"bpm":null,"vocal":null,"keywords":[],
+ "avoid":{"moods":[],"genres":[]},"summary":""}`;
 
 function clampList(v, allowed, max = 5) {
   if (!Array.isArray(v)) return [];
@@ -169,6 +174,16 @@ ${brief}`;
           .map((k) => k.toLowerCase()).slice(0, 4)
       : [],
     summary: typeof parsed.summary === 'string' ? parsed.summary.trim().slice(0, 160) : '',
+    // Negative evidence. Knowing a hospital film must not sound aggressive
+    // removes far more wrong answers than knowing it should sound calm adds
+    // right ones — most of the catalogue is calm-adjacent, very little of it
+    // is calm AND not tense.
+    avoid: {
+      moods: clampList(parsed.avoid && parsed.avoid.moods, allowed.moods, 6)
+        .filter((m) => !clampList(parsed.moods, allowed.moods).includes(m)),
+      genres: clampList(parsed.avoid && parsed.avoid.genres, allowed.genres, 6)
+        .filter((g) => !clampList(parsed.genres, allowed.genres).includes(g)),
+    },
   };
 
   // A reply with nothing usable in it is a failure dressed as a success — the
