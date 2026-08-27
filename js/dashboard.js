@@ -1494,10 +1494,41 @@
           <td>${t('lic_period', j.lic_period, ' list="dl-period"')}</td>
           <td>${t('lic_territory', j.lic_territory, ' list="dl-terr"')}</td>
           <td>${t('versions', j.versions, ' type="number" min="0" class="jb-n"')}</td>
-          <td class="jb-c"><button class="jb-del" title="Delete this row">×</button></td>
+          <td class="jb-c jb-acts">
+            <button class="jb-note${j.note ? ' has' : ''}" title="${
+              j.note ? esc(j.note) : 'Add a note'}">${j.note ? '●' : '○'}</button>
+            <button class="jb-del" title="Delete this row">×</button></td>
         </tr>`;
       }).join('')
         : `<tr><td colspan="10"><p class="db-empty">Nothing matches.</p></td></tr>`;
+    }
+
+    /* Notes matter more here than in most tables: most of this ledger was read
+       off scanned offers by two independent readers, and a blank licence cell
+       means one of two very different things — the document did not say, or the
+       readers did not agree. The note is where that distinction lives, so it
+       needs to be one click away rather than CSV-only. */
+    function toggleNote(tr) {
+      const open = tr.nextElementSibling;
+      if (open && open.classList.contains('jb-noterow')) { open.remove(); return; }
+      body.querySelectorAll('.jb-noterow').forEach((r) => r.remove());
+      const j = jobsAll.find((x) => x.id === Number(tr.dataset.id));
+      const row = document.createElement('tr');
+      row.className = 'jb-noterow';
+      row.innerHTML = `<td colspan="10"><textarea placeholder="Why this row looks the way it does — what the document said, what it didn’t.">${
+        esc(j && j.note ? j.note : '')}</textarea></td>`;
+      tr.after(row);
+      const ta = row.querySelector('textarea');
+      ta.focus();
+      ta.addEventListener('change', async () => {
+        if (!j) return;
+        j.note = ta.value;
+        await post('/jobs', j);
+        const b = tr.querySelector('.jb-note');
+        b.classList.toggle('has', !!j.note);
+        b.textContent = j.note ? '●' : '○';
+        b.title = j.note || 'Add a note';
+      });
     }
 
     async function save(tr) {
@@ -1521,6 +1552,8 @@
       if (tr && e.target.name) save(tr);
     });
     body.addEventListener('click', async (e) => {
+      const nb = e.target.closest('.jb-note');
+      if (nb) return toggleNote(nb.closest('tr'));
       const b = e.target.closest('.jb-del');
       if (!b) return;
       const tr = b.closest('tr'), id = Number(tr.dataset.id);
