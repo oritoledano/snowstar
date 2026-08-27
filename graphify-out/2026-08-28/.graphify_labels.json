@@ -1,7 +1,7 @@
 {
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
-  "2": "artists.js",
+  "2": "crypto.js",
   "3": "rights.js",
   "4": "licensing.js",
   "5": "main.js",
@@ -31,7 +31,7 @@
   "29": "mutra-license.js",
   "30": "stream.js",
   "31": "hyp.js",
-  "32": "members.js",
+  "32": "stacks.js",
   "33": "certificate.js",
   "34": "oauth.js",
   "35": "Licence terms",
@@ -42,5 +42,9 @@
   "40": "Four services section",
   "41": "analytics.js",
   "42": "Portfolio years",
-  "43": "agent.js"
+  "43": "agent.js",
+  "44": "catalog.js",
+  "45": "site.js",
+  "46": "earnings.js",
+  "47": "ownership.js"
 }

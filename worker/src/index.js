@@ -44,6 +44,7 @@ import { interpretBrief } from './agent.js';
 import { listStacks, saveStack } from './stacks.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
+import { listEarnings, settleEarnings, myEarnings } from './earnings.js';
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
@@ -188,6 +189,10 @@ async function handle(req, env, ctx) {
   if (path === '/storage/trash' && method === 'GET') return listTrash(env, await currentUser(req, env));
   if (path === '/storage/trash' && method === 'DELETE') return emptyTrash(req, env, await currentUser(req, env), url);
   if (path === '/storage/trash/restore' && method === 'POST') return restoreFromTrash(req, env, await currentUser(req, env));
+  // what a licence earned and who it is owed to. Records payouts; never makes them.
+  if (path === '/earnings' && method === 'GET') return listEarnings(env, await currentUser(req, env));
+  if (path === '/earnings/settle' && method === 'POST') return settleEarnings(req, env, await currentUser(req, env));
+  if (path === '/earnings/mine' && method === 'GET') return myEarnings(env, await currentUser(req, env));
   // who a published upload belongs to, and moving it to another account
   if (path === '/tracks/owner' && method === 'GET') return getOwner(req, env, await currentUser(req, env), url);
   if (path === '/tracks/owner' && method === 'POST') return reassignOwner(req, env, await currentUser(req, env));

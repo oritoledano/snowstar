@@ -18,6 +18,8 @@ import { sendMail } from './mail.js';
 import { alert } from './analytics.js';
 
 const now = () => Math.floor(Date.now() / 1000);
+import { accrueEarnings } from './earnings.js';
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -538,6 +540,15 @@ export async function grantFromDashboard(req, env, user) {
     scope_text: b.scope_text,
     controller_cleared: !!b.controller_cleared,
   });
+  /* The money has already moved by this point, so the ledger is written
+     after the grant and never allowed to fail it. A missing earnings row can
+     be backfilled; a refused grant on a taken payment cannot be undone. */
+  if (out.ok) {
+    try {
+      await accrueEarnings(env, { slug: r.slug, licence_id: out.licence_id || out.id,
+                                  amount_agorot: agorot, reason });
+    } catch { /* deliberately swallowed — see above */ }
+  }
   return out.ok ? json(out) : json(out, out.error === 'already_licensed' ? 409 : 400);
 }
 
