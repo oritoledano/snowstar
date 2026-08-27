@@ -28,8 +28,6 @@
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
   /* Everyday words that mean a catalogue term. The catalogue says "Chill /
-     Lo-Fi"; nobody types that. Each entry is [what people say, what we store]. */
-  /* Everyday words that mean a catalogue term. The catalogue says "Chill /
      Lo-Fi"; nobody types that. Each entry is [what people say, what we store].
      Kept in step with the mood/characteristic split — a word like "dark" is a
      characteristic now, not a mood. */
@@ -315,15 +313,15 @@
 
   /* ── UI ───────────────────────────────────────────────────────────────── */
 
-  let el = null, lastWant = null;
+  let el = null, lastWant = null, lastHow = 'ai';
 
   function build() {
     if (el) return el;
     el = document.createElement('div');
-    el.className = 'ag-modal';
+    el.className = 'ag-dock';
     el.hidden = true;
     el.innerHTML = `
-      <div class="ag-card" role="dialog" aria-modal="true" aria-label="Describe what you need">
+      <div class="ag-card" role="dialog" aria-label="Describe what you need">
         <button class="ag-close" aria-label="Close">&times;</button>
         <h3 class="ag-h">Tell me about your project</h3>
         <p class="ag-sub">A sentence or two about the film, the brand and the feeling.
@@ -344,7 +342,7 @@
       </div>`;
     document.body.appendChild(el);
     el.querySelector('.ag-close').addEventListener('click', close);
-    el.addEventListener('click', (e) => { if (e.target === el) close(); });
+
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && el && !el.hidden) close(); });
     el.querySelector('.ag-go').addEventListener('click', run);
     el.querySelector('.ag-in').addEventListener('keydown', (e) => {
@@ -403,6 +401,8 @@
   }
 
   function paint(want, prompt, how) {
+    lastHow = how === undefined ? lastHow : how;
+    how = lastHow;
     const ranked = rank(want);
     const out = el.querySelector('.ag-out');
     const top = ranked.slice(0, 12);
@@ -416,33 +416,29 @@
     if (want.vocal) read.push(want.vocal === 'Instrumental' ? 'no vocals' : 'with vocals');
     if (want.bpm) read.push(`${want.bpm[0]}–${want.bpm[1]} bpm`);
 
+    /* The results land in the catalogue's own list. They used to render into
+       a second list inside the panel — the same rows, drawn a lesser way, with
+       no player integration, no favourites, no licence button, and a "show all"
+       button to escape into the real thing. The panel now only ever says what
+       it understood and how to narrow it. */
+    if (window.mutraShowSlugs) mutraShowSlugs(ranked.map(({ t }) => t.slug), prompt);
+
     out.innerHTML = `
       ${want.summary ? `<p class="ag-sum">${esc(want.summary)}</p>` : ''}
       ${read.length
         ? `<p class="ag-read">Looking for <b>${esc(read.join(' · '))}</b></p>`
         : `<p class="ag-read ag-none">Nothing in that I could match to the catalogue.
              Try a mood, a genre, or an occasion — “tense”, “folk”, “wedding”.</p>`}
-      ${/* The fallback says so. A search that has quietly dropped to keyword
-            matching should not present itself as having understood you. */''}
       ${how === 'local' && read.length
         ? `<p class="ag-miss">Matched on keywords only — the brief reader is unreachable
              right now, so this is a rougher read than usual.</p>` : ''}
       ${(want.unmatched || []).length
         ? `<p class="ag-miss">Ignored: ${esc(want.unmatched.join(', '))} — not something the
              catalogue is tagged for.</p>` : ''}
-      <div class="ag-refine"></div>
-      ${top.length
-        ? `<div class="ag-list">${top.map(({ t, score }) => `
-            <div class="ag-row" data-slug="${esc(t.slug)}">
-              <button type="button" class="ag-play" aria-label="Play ${esc(t.title)}">▶</button>
-              <img src="${esc(t.cover || '')}" alt="" loading="lazy">
-              <span class="ag-t">${esc(t.title)}<i>${esc(t.artist || '')}</i></span>
-              <span class="ag-m">${t.bpm ? t.bpm + ' bpm' : ''}</span>
-              <span class="ag-s" title="match strength">${'●'.repeat(Math.min(3, Math.ceil(score / 3)))}</span>
-              <button type="button" class="ag-lic">License</button>
-            </div>`).join('')}</div>
-           <button type="button" class="ag-all">Show all ${ranked.length} in the catalogue</button>`
-        : (read.length ? '<p class="ag-read ag-none">No track matches all of that. Loosen one of the chips above.</p>' : '')}`;
+      <p class="ag-count">${ranked.length
+        ? `<b>${ranked.length}</b> track${ranked.length > 1 ? 's' : ''} in the list &rarr;`
+        : 'Nothing matched. Loosen one of the chips below.'}</p>
+      <div class="ag-refine"></div>`;
 
     // ── pinpointing: narrow by a click, not by retyping ──
     const refine = out.querySelector('.ag-refine');
@@ -464,33 +460,16 @@
           refine.appendChild(chip('+ ' + v, false, () => { want[field].push(v); paint(want, prompt); })));
       });
     if (!want.vocal) refine.appendChild(chip('+ instrumental only', false, () => {
-      want.vocal = 'Instrumental'; paint(want, prompt);
+      want.vocal = 'Instrumental'; paint(want, prompt, how);
     }));
     void vocab;
 
-    out.querySelectorAll('.ag-row').forEach((row) => {
-      const t = (window.mutraPlayer && mutraPlayer.find(row.dataset.slug));
-      row.querySelector('.ag-play').addEventListener('click', () => {
-        if (t && window.mutraPlayer) mutraPlayer.play(t);   // panel stays open
-      });
-      row.querySelector('.ag-lic').addEventListener('click', () => {
-        close();
-        if (t && window.mutraLicense) mutraLicense.open(t);
-      });
-    });
-
-    const allBtn = out.querySelector('.ag-all');
-    if (allBtn) allBtn.addEventListener('click', () => {
-      // hand the whole result set to the catalogue's own list
-      close();
-      if (window.mutraShowSlugs) mutraShowSlugs(ranked.map(({ t }) => t.slug), prompt);
-    });
   }
 
   function open(seed) {
     build();
     el.hidden = false;
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('ag-open');
     const inp = el.querySelector('.ag-in');
     if (seed) { inp.value = seed; run(); }
     setTimeout(() => inp.focus(), 40);
@@ -498,7 +477,8 @@
   function close() {
     if (!el) return;
     el.hidden = true;
-    document.body.style.overflow = '';
+    document.body.classList.remove('ag-open');
+    if (window.mutraClearAgent) mutraClearAgent();
   }
 
   addEventListener('click', (e) => {

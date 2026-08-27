@@ -661,13 +661,17 @@
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
         <img class="trk-cover" src="${track.cover}" alt="" loading="lazy">
         <div class="trk-id">
-          <div class="trk-title" role="button" tabindex="0" title="Credits"><span class="tt-in">${track.title}</span></div>
-          <div class="trk-artist">${artistLinks(track.artist)}${(STACKS[track.slug] || []).length
-            ? `<button class="trk-stack" title="Other versions of this track"
-                 aria-expanded="${openStacks.has(track.slug)}">${
-                 STACKS[track.slug].length} version${STACKS[track.slug].length > 1 ? 's' : ''}</button>`
-            : ''}${PARENT_OF[track.slug] && curateMode
-            ? '<button class="trk-unstack" title="Take this out of its stack">unstack</button>' : ''}</div>
+          <div class="trk-idtext">
+            <div class="trk-title" role="button" tabindex="0" title="Credits"><span class="tt-in">${track.title}</span></div>
+            <div class="trk-artist">${artistLinks(track.artist)}${PARENT_OF[track.slug] && curateMode
+              ? '<button class="trk-unstack" title="Take this out of its stack">unstack</button>' : ''}</div>
+          </div>
+          ${(STACKS[track.slug] || []).length
+            ? `<button class="trk-stack" aria-expanded="${openStacks.has(track.slug)}"
+                 title="${STACKS[track.slug].length} other version${
+                 STACKS[track.slug].length > 1 ? 's' : ''} of this track">${
+                 openStacks.has(track.slug) ? '−' : '+'}${STACKS[track.slug].length}</button>`
+            : ''}
         </div>
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
         <div class="trk-tags">${tags}</div>
@@ -1289,7 +1293,18 @@
   /* Show an explicit set of slugs, in the order given. The agent search ranks
      by relevance, and re-sorting that into the catalogue's own order would
      throw away the only thing the ranking was for. */
+  /* Closing the Describe-it dock puts the catalogue back the way it was. The
+     dock drives the real list now, so leaving a brief's result set behind after
+     the panel is gone would look like the filters had broken. */
+  window.mutraClearAgent = function () {
+    if (!agentDriving) return;
+    agentDriving = false;
+    clearFilters();
+  };
+  let agentDriving = false;
+
   window.mutraShowSlugs = function (slugs, label) {
+    agentDriving = true;
     const order = new Map(slugs.map((sl, i) => [sl, i]));
     // clearFilters() ends in render(), which would rebuild `list` from the
     // facets and throw the ranking away — so the set is written after it, not
@@ -1302,7 +1317,6 @@
     shown = 0;
     tracksEl.innerHTML = '';
     appendPage();
-    if (label && window.mutraToast) mutraToast(`${list.length} for “${label}”`);
     tracksEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 

@@ -326,7 +326,11 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 /* Title 2.6fr against the waveform's 2.2fr, not 2.1 against 3. The waveform is
    decorative-plus-seekable and reads fine narrower; a clipped title is a name
    you cannot read. At a 1240px row this alone takes clipped titles from 6 to 1. */
-.trk{display:grid;grid-template-columns:52px 40px 2.6fr 2.2fr auto auto;align-items:center;gap:18px;
+/* The title column used to be WIDER than the waveform (2.6fr against 2.2fr),
+   which left a lake of empty space after most titles and squeezed the wave into
+   the smaller half. Flipped, and the gap tightened, so the waveform gets the
+   room it actually uses. */
+.trk{display:grid;grid-template-columns:52px 40px minmax(0,2fr) minmax(0,3.2fr) auto auto;align-items:center;gap:13px;
   padding:18px 16px;border-radius:14px;border:1px solid transparent;transition:background .2s,border-color .2s;cursor:default}
 .trk:hover{background:var(--panel)}
 .trk.playing{background:var(--panel-2);border-color:var(--line-2)}
@@ -336,7 +340,11 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .trk-play:hover{background:var(--coral);color:var(--on-accent);border-color:transparent}
 .trk.playing .trk-play{background:var(--grad);color:var(--on-accent);border-color:transparent}
 .trk-cover{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:none;background:var(--panel-2)}
-.trk-id{min-width:0}
+/* A flex row so the version badge can sit at the trailing edge of the id
+   block — visually between the title and the waveform — without a grid column
+   that would leave dead space on the 90% of rows that have no versions. */
+.trk-id{min-width:0;display:flex;align-items:center;gap:10px}
+.trk-idtext{min-width:0;flex:1}
 /* Titles fade out rather than truncating with an ellipsis. Hovering the name
    marquees it left to reveal the rest, and the fade swaps to whichever edge
    still hides text. Nothing else in the row moves. Sizes are 20% down. */
@@ -362,9 +370,13 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 /* One tag of each kind on the row; the rest are present but clipped, and
    slide into view on hover — the same reveal the long titles use, so the row
    stays a fixed height and nothing reflows. */
-.trk-tags{display:flex;gap:6px;flex-wrap:nowrap;justify-content:flex-end;max-width:230px;
-  overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 14px);
-  mask-image:linear-gradient(to right,transparent 0,#000 14px)}
+/* The left fade is what read as a shadow falling across the end of the
+   waveform. Kept — it is what makes the hover marquee look right — but pulled
+   in to 6px and given real clearance from the wave. */
+.trk-tags{display:flex;gap:6px;flex-wrap:nowrap;justify-content:flex-end;max-width:214px;
+  margin-left:6px;
+  overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 6px);
+  mask-image:linear-gradient(to right,transparent 0,#000 6px)}
 .trk-tags .tag-more{max-width:0;padding-left:0;padding-right:0;border-width:0;opacity:0;
   transition:max-width .3s ease,opacity .22s ease,padding .3s ease}
 /* The reveal now hangs off the TAGS, not the whole row: crossing a row on the
@@ -1210,11 +1222,21 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   .browse-search input{padding-right:56px}
 }
 
-.ag-modal{position:fixed;inset:0;z-index:96;background:rgba(3,5,12,.76);
-  backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;
-  padding:6vh 16px;overflow-y:auto}
-.ag-card{position:relative;width:min(640px,100%);background:var(--bg);
-  border:1px solid var(--line-2,var(--line));border-radius:20px;padding:26px 26px 22px}
+/* A dock, not a modal. The results now land in the catalogue's own list, so
+   the panel must not cover it or lock its scroll — it sits to the left and the
+   page slides over to make room, which is the whole point: you read the brief
+   you typed and the tracks it produced at the same time. */
+.ag-dock{position:fixed;left:0;top:0;bottom:0;z-index:96;width:min(390px,86vw);
+  background:var(--bg);border-right:1px solid var(--line);
+  box-shadow:24px 0 60px rgba(0,0,0,.45);overflow-y:auto;overscroll-behavior:contain}
+.ag-dock[hidden]{display:none}
+body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
+  transition:padding-left .28s ease}
+@media (min-width:1100px){
+  body.ag-open{padding-left:min(390px,86vw)}
+  body.ag-open .mnav{padding-left:min(390px,86vw)}
+}
+.ag-card{position:relative;width:100%;background:none;padding:26px 22px 40px}
 .ag-close{position:absolute;top:12px;right:14px;background:none;border:0;color:var(--dim);
   font-size:1.6rem;line-height:1;cursor:pointer}
 .ag-close:hover{color:var(--text)}
@@ -1294,11 +1316,17 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
    Alternate cuts filed under the track they belong to, so a family of five
    BASEGROUND mixes is one row that says "4 versions" instead of five rows a
    buyer has to tell apart by reading the brackets in the title. */
-.trk-stack{margin-left:9px;font:inherit;font-size:.66rem;letter-spacing:.03em;
-  padding:2px 9px;border-radius:99px;border:1px solid var(--line-2,var(--line));
-  background:none;color:var(--muted);cursor:pointer;vertical-align:1px;transition:.18s}
-.trk-stack:hover{color:var(--text);border-color:var(--amber,var(--coral))}
-.trk-stack[aria-expanded="true"]{color:var(--on-accent,#0d0a12);background:var(--grad);border-color:transparent}
+/* Reads as "+4 more of these", in the site's own gradient rather than a fifth
+   shade of grey — it is an action, and it should look like one. Opened, the
+   plus becomes a minus and the fill drops away, so the row does not shout
+   while its versions are on screen. */
+.trk-stack{flex:none;font-family:var(--font-display);font-weight:700;font-size:.72rem;
+  line-height:1;letter-spacing:.02em;padding:5px 9px;border-radius:8px;border:0;
+  background:var(--grad);color:var(--on-accent,#0d0a12);cursor:pointer;
+  transition:transform .15s,filter .15s,opacity .15s}
+.trk-stack:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.trk-stack[aria-expanded="true"]{background:none;color:var(--amber,var(--coral));
+  box-shadow:inset 0 0 0 1px currentColor}
 .trk-unstack{margin-left:9px;font:inherit;font-size:.64rem;background:none;border:0;
   color:var(--dim);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
 .trk-unstack:hover{color:var(--coral)}
@@ -1316,3 +1344,15 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .trk.drop-into{outline:2px solid var(--amber,var(--coral));outline-offset:-2px;
   border-radius:12px;background:var(--tint,rgba(128,128,128,.14))}
 .trk.drop-into .trk-title{color:var(--amber,var(--coral))}
+
+/* Dock-specific: the panel is narrow, so the composer stacks instead of
+   sitting on one line, and the count is the handoff to the list on the right. */
+.ag-dock .ag-inwrap{flex-direction:column;align-items:stretch;gap:10px}
+.ag-dock .ag-go{width:100%;padding:12px 22px}
+.ag-dock .ag-sub{max-width:none}
+.ag-count{margin:16px 0 4px;color:var(--muted);font-size:.86rem}
+.ag-count b{font-family:var(--font-display);font-size:1.15rem;color:var(--amber,var(--coral))}
+.ag-dock .ag-refine{margin-top:8px}
+@media (max-width:1099px){
+  .ag-dock{width:min(390px,92vw)}
+}

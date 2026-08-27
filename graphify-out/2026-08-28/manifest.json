@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1787871793.1772761,
-    "seen": 1787871799.5351338,
-    "ast_hash": "d6a7dd5cd2be9d17854fd8207fa4bedf",
+    "mtime": 1787874284.0142372,
+    "seen": 1787874290.171129,
+    "ast_hash": "5404a6b2e069bb3064916f8f68dba0ba",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1787871608.4367852,
-    "seen": 1787871671.463319,
-    "ast_hash": "52bb6d072e91a280afd6f8e641554660",
+    "mtime": 1787871831.4849312,
+    "seen": 1787874290.1711822,
+    "ast_hash": "21c0bcd0b27ceb6c5c8e570f4cb88853",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1787871608.4373877,
-    "seen": 1787871671.463321,
-    "ast_hash": "512cc8b38321944ad09cc84db52459f3",
+    "mtime": 1787871831.485422,
+    "seen": 1787874290.171183,
+    "ast_hash": "fe7f5ffb4ed7b32651655906dd714725",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -306,62 +306,62 @@
     "semantic_hash": ""
   },
   "contact.html": {
-    "mtime": 1787871608.4378874,
-    "seen": 1787871671.4633229,
+    "mtime": 1787871831.4859056,
+    "seen": 1787874290.171184,
     "ast_hash": "eb69178853aed64f007971506d541745",
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787871608.4383194,
-    "seen": 1787871671.4633238,
-    "ast_hash": "c9c126f84e5e97f4613d0cd5b5d2ad5b",
+    "mtime": 1787871831.486419,
+    "seen": 1787874290.1711848,
+    "ast_hash": "2be0ea7e1a8813db8ad4ad897e909cf9",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1787871608.4394274,
-    "seen": 1787871671.463325,
+    "mtime": 1787871831.4872355,
+    "seen": 1787874290.171186,
     "ast_hash": "5c6ddf0eb2b0465c0d299f5c23bb5aef",
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1787871608.440281,
-    "seen": 1787871671.463326,
-    "ast_hash": "f7a7e6586c13f5b22b12a5ffd0b5760f",
+    "mtime": 1787871831.4879386,
+    "seen": 1787874290.171187,
+    "ast_hash": "70eb899e49798b4f1a5b45d300f0f2b8",
     "semantic_hash": ""
   },
   "privacy.html": {
-    "mtime": 1787871608.440951,
-    "seen": 1787871671.463327,
+    "mtime": 1787871831.4891434,
+    "seen": 1787874290.1711879,
     "ast_hash": "58923bfd7ce0f4527ade458e80250192",
     "semantic_hash": "58923bfd7ce0f4527ade458e80250192"
   },
   "refund.html": {
-    "mtime": 1787871608.441502,
-    "seen": 1787871671.463328,
+    "mtime": 1787871831.4896905,
+    "seen": 1787874290.171189,
     "ast_hash": "13dc20051aa51d66572dec59d5f9d85e",
     "semantic_hash": "13dc20051aa51d66572dec59d5f9d85e"
   },
   "reset.html": {
-    "mtime": 1787871608.4423826,
-    "seen": 1787871671.463329,
+    "mtime": 1787871831.4900837,
+    "seen": 1787874290.17119,
     "ast_hash": "3f11ef32dcf0099f8e177d62d1841406",
     "semantic_hash": "3f11ef32dcf0099f8e177d62d1841406"
   },
   "review.html": {
-    "mtime": 1787871608.4428673,
-    "seen": 1787871671.46333,
+    "mtime": 1787871831.490368,
+    "seen": 1787874290.171191,
     "ast_hash": "f29b5f16a29502c619b5c0396ccbbdf0",
     "semantic_hash": "f29b5f16a29502c619b5c0396ccbbdf0"
   },
   "stats.html": {
-    "mtime": 1787871608.4434845,
-    "seen": 1787871671.463331,
+    "mtime": 1787871831.490617,
+    "seen": 1787874290.1711922,
     "ast_hash": "f2c8e3a89e05226a5beedc749d4b0b93",
     "semantic_hash": "f2c8e3a89e05226a5beedc749d4b0b93"
   },
   "terms.html": {
-    "mtime": 1787871608.4441433,
-    "seen": 1787871671.4633322,
+    "mtime": 1787871831.4910085,
+    "seen": 1787874290.1711922,
     "ast_hash": "77c3d6211227a48ed95739951fe2f5e3",
     "semantic_hash": "77c3d6211227a48ed95739951fe2f5e3"
   },
@@ -1272,9 +1272,9 @@
     "semantic_hash": ""
   },
   "js/mutra-agent.js": {
-    "mtime": 1787861339.4631908,
-    "seen": 1787861345.8426821,
-    "ast_hash": "f1ff1354a3398424302898c5edd2c29f",
+    "mtime": 1787874364.0735228,
+    "seen": 1787874370.603193,
+    "ast_hash": "03d61bfcf39c6e6f26eb793a5dd60997",
     "semantic_hash": ""
   },
   "PORTFOLIO-YEARS.md": {

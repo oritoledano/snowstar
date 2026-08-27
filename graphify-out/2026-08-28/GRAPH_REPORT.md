@@ -1,16 +1,16 @@
 # Graph Report - snowstar  (2026-08-28)
 
 ## Corpus Check
-- 63 files · ~348,185 words
+- 63 files · ~348,146 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 793 nodes · 1875 edges · 44 communities (42 shown, 2 thin omitted)
+- 793 nodes · 1874 edges · 45 communities (43 shown, 2 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 89 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `48104ff3`
+- Built from commit: `2ace671a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -48,6 +48,7 @@
 - stream.js
 - hyp.js
 - works.js
+- certificate.js
 - oauth.js
 - profile.js
 - mutra-artist-panel.js
@@ -92,10 +93,10 @@
 - **Rights clearance pipeline (artist declaration → owner review → licensable lane)** — artists_rights_declaration, artists_co_owner_shares, artists_controller_declaration, artists_countersign_claim, artists_instant_vs_quote_lane, dashboard_submissions_queue, dashboard_clearance_status, terms_quote_only_tracks [INFERRED 0.85]
 - **One Snowstar account across catalogue, portal, dashboard and reset** — js_account, js_account_ui, css_account, artists_account_gate, reset_page, dashboard_page, privacy_account_data [INFERRED 0.85]
 
-## Communities (44 total, 2 thin omitted)
+## Communities (45 total, 2 thin omitted)
 
 ### Community 0 - "mutra-agent.js"
-Cohesion: 0.47
+Cohesion: 0.44
 Nodes (9): build(), catalogueVocab(), chip(), close(), interpret(), open(), paint(), rank() (+1 more)
 
 ### Community 1 - "mutra-page.js"
@@ -119,8 +120,8 @@ Cohesion: 0.07
 Nodes (30): applyWorkFilter(), buildClientRows(), buildMarqueeRow(), buildWorkGrid(), cardObserver, categorize(), cg, FACETS (+22 more)
 
 ### Community 6 - "dashboard.js"
-Cohesion: 0.12
-Nodes (38): commitReview(), gate(), gauge(), jobsShown(), load(), openDeclEditor(), openMember(), openReviewNote() (+30 more)
+Cohesion: 0.15
+Nodes (32): commitReview(), gate(), gauge(), jobsShown(), load(), openDeclEditor(), openMember(), openReviewNote() (+24 more)
 
 ### Community 7 - "works-admin.js"
 Cohesion: 0.18
@@ -218,6 +219,10 @@ Nodes (13): configured(), CP1255, decodeValue(), handleReturn(), hypStatus(), js
 Cohesion: 0.21
 Nodes (18): cleanUrl(), CREDIT_KEYS, deleteLogo(), deleteWork(), dropCdnFiles(), json(), listLogos(), listWorks() (+10 more)
 
+### Community 33 - "certificate.js"
+Cohesion: 0.52
+Nodes (6): certificate(), certificateSvg(), esc(), fmtDate(), json(), wrap()
+
 ### Community 34 - "oauth.js"
 Cohesion: 0.29
 Nodes (17): b64url(), bounce(), claimHandoff(), enc, facebookDataDeletion(), finishOAuth(), issueSession(), KILL_LEGACY_COOKIE (+9 more)
@@ -272,6 +277,10 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Owner dashboard` connect `Owner dashboard` to `dashboard.js`, `Mutra royalty-free music catalogue page`, `account-ui.js`, `Snowstar agency homepage`, `account.js`, `Privacy policy`?**
   _High betweenness centrality (0.429) - this node is a cross-community bridge._
+- **Why does `openMember()` connect `dashboard.js` to `certificate.js`?**
+  _High betweenness centrality (0.405) - this node is a cross-community bridge._
+- **Why does `esc()` connect `certificate.js` to `dashboard.js`?**
+  _High betweenness centrality (0.405) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `render()` (e.g. with `matches()` and `wireBpmRange()`) actually correct?**
   _`render()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS` to the rest of the system?**
@@ -280,7 +289,3 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.06726606726606726 - nodes in this community are weakly interconnected._
 - **Should `licensing.js` be split into smaller, more focused modules?**
   _Cohesion score 0.11666666666666667 - nodes in this community are weakly interconnected._
-- **Should `main.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.07130124777183601 - nodes in this community are weakly interconnected._
-- **Should `dashboard.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.11962833914053426 - nodes in this community are weakly interconnected._
