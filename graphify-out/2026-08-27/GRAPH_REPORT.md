@@ -1,11 +1,11 @@
 # Graph Report - snowstar  (2026-08-27)
 
 ## Corpus Check
-- 61 files · ~358,244 words
+- 61 files · ~358,251 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 777 nodes · 1836 edges · 45 communities (43 shown, 2 thin omitted)
+- 777 nodes · 1837 edges · 45 communities (43 shown, 2 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 89 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
@@ -64,7 +64,7 @@
 ## God Nodes (most connected - your core abstractions)
 1. `handle()` - 113 edges
 2. `Mutra royalty-free music catalogue page` - 33 edges
-3. `load()` - 19 edges
+3. `load()` - 20 edges
 4. `render()` - 19 edges
 5. `Snowstar agency homepage` - 19 edges
 6. `paint()` - 17 edges

@@ -511,8 +511,13 @@
       if (!t.bpm || t.bpm < state.bpm.min || t.bpm > state.bpm.max) return false;
     }
     if (state.q) {
+      // `vocal` is in the haystack because "instrumental" and "vocals" stopped
+      // being instrument tags — they were never instruments, and having them
+      // there put a Vocals chip on half the catalogue. The Lyrics filter reads
+      // t.vocal, and so does search, so typing the word still finds the tracks.
       const hay = (t.title + ' ' + (t.artist || '') + ' ' + t.genres.join(' ') + ' ' +
-        (t.moods || []).join(' ') + ' ' + (t.instruments || []).join(' ')).toLowerCase();
+        (t.moods || []).join(' ') + ' ' + (t.instruments || []).join(' ') + ' ' +
+        (t.vocal || '')).toLowerCase();
       if (!hay.includes(state.q)) return false;
     }
     return true;

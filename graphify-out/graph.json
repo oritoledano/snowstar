@@ -177,7 +177,7 @@
       "file_type": "code",
       "norm_label": "addcuratecontrols()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1296"
+      "source_location": "L1301"
     },
     {
       "id": "js_mutra_page_addcuratecontrols_paintcls",
@@ -189,7 +189,7 @@
       "file_type": "code",
       "norm_label": "paintcls()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1343"
+      "source_location": "L1348"
     },
     {
       "id": "js_mutra_page_appendpage",
@@ -201,7 +201,7 @@
       "file_type": "code",
       "norm_label": "appendpage()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L722"
+      "source_location": "L727"
     },
     {
       "id": "js_mutra_page_applyoverrides",
@@ -213,7 +213,7 @@
       "file_type": "code",
       "norm_label": "applyoverrides()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1131"
+      "source_location": "L1136"
     },
     {
       "id": "js_mutra_page_artistlinks",
@@ -225,7 +225,7 @@
       "file_type": "code",
       "norm_label": "artistlinks()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1104"
+      "source_location": "L1109"
     },
     {
       "id": "js_mutra_page_buildrow",
@@ -237,7 +237,7 @@
       "file_type": "code",
       "norm_label": "buildrow()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L588"
+      "source_location": "L593"
     },
     {
       "id": "js_mutra_page_clearfilters",
@@ -249,7 +249,7 @@
       "file_type": "code",
       "norm_label": "clearfilters()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1020"
+      "source_location": "L1025"
     },
     {
       "id": "js_mutra_page_closedrawer",
@@ -261,7 +261,7 @@
       "file_type": "code",
       "norm_label": "closedrawer()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L976"
+      "source_location": "L981"
     },
     {
       "id": "js_mutra_page_closeplayer",
@@ -285,7 +285,7 @@
       "file_type": "code",
       "norm_label": "cycle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L858"
+      "source_location": "L863"
     },
     {
       "id": "js_mutra_page_drawdrop",
@@ -297,7 +297,7 @@
       "file_type": "code",
       "norm_label": "drawdrop()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L864"
+      "source_location": "L869"
     },
     {
       "id": "js_mutra_page_drawpills",
@@ -309,7 +309,7 @@
       "file_type": "code",
       "norm_label": "drawpills()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L998"
+      "source_location": "L1003"
     },
     {
       "id": "js_mutra_page_drawsortmenu",
@@ -321,7 +321,7 @@
       "file_type": "code",
       "norm_label": "drawsortmenu()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1976"
+      "source_location": "L1981"
     },
     {
       "id": "js_mutra_page_drawwave",
@@ -345,7 +345,7 @@
       "file_type": "code",
       "norm_label": "droponto()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1467"
+      "source_location": "L1472"
     },
     {
       "id": "js_mutra_page_ensureartists",
@@ -357,7 +357,7 @@
       "file_type": "code",
       "norm_label": "ensureartists()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1493"
+      "source_location": "L1498"
     },
     {
       "id": "js_mutra_page_filterbybpm",
@@ -369,7 +369,7 @@
       "file_type": "code",
       "norm_label": "filterbybpm()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1029"
+      "source_location": "L1034"
     },
     {
       "id": "js_mutra_page_finalizelisten",
@@ -393,7 +393,7 @@
       "file_type": "code",
       "norm_label": "focustrack()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2187"
+      "source_location": "L2192"
     },
     {
       "id": "js_mutra_page_keylabel",
@@ -405,7 +405,7 @@
       "file_type": "code",
       "norm_label": "keylabel()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L545"
+      "source_location": "L550"
     },
     {
       "id": "js_mutra_page_loadtrack",
@@ -429,7 +429,7 @@
       "file_type": "code",
       "norm_label": "makedraggable()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1430"
+      "source_location": "L1435"
     },
     {
       "id": "js_mutra_page_matches",
@@ -453,7 +453,7 @@
       "file_type": "code",
       "norm_label": "maybeinsertspotlight()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L782"
+      "source_location": "L787"
     },
     {
       "id": "js_mutra_page_measuretitles",
@@ -465,7 +465,7 @@
       "file_type": "code",
       "norm_label": "measuretitles()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L551"
+      "source_location": "L556"
     },
     {
       "id": "js_mutra_page_movecurated",
@@ -477,7 +477,7 @@
       "file_type": "code",
       "norm_label": "movecurated()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1259"
+      "source_location": "L1264"
     },
     {
       "id": "js_mutra_page_notescrub",
@@ -513,7 +513,7 @@
       "file_type": "code",
       "norm_label": "openeditor()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1520"
+      "source_location": "L1525"
     },
     {
       "id": "js_mutra_page_openeditor_paintchips",
@@ -525,7 +525,7 @@
       "file_type": "code",
       "norm_label": "paintchips()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1747"
+      "source_location": "L1752"
     },
     {
       "id": "js_mutra_page_openeditor_paintcredits",
@@ -537,7 +537,7 @@
       "file_type": "code",
       "norm_label": "paintcredits()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1712"
+      "source_location": "L1717"
     },
     {
       "id": "js_mutra_page_openeditor_paintlane",
@@ -549,7 +549,7 @@
       "file_type": "code",
       "norm_label": "paintlane()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1800"
+      "source_location": "L1805"
     },
     {
       "id": "js_mutra_page_openeditor_paintuses",
@@ -561,7 +561,7 @@
       "file_type": "code",
       "norm_label": "paintuses()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1650"
+      "source_location": "L1655"
     },
     {
       "id": "js_mutra_page_openeditor_synchl",
@@ -573,7 +573,7 @@
       "file_type": "code",
       "norm_label": "synchl()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1775"
+      "source_location": "L1780"
     },
     {
       "id": "js_mutra_page_openmail",
@@ -597,7 +597,7 @@
       "file_type": "code",
       "norm_label": "paint()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2226"
+      "source_location": "L2231"
     },
     {
       "id": "js_mutra_page_painthlbtn",
@@ -609,7 +609,7 @@
       "file_type": "code",
       "norm_label": "painthlbtn()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1998"
+      "source_location": "L2003"
     },
     {
       "id": "js_mutra_page_paintrowwave",
@@ -621,7 +621,7 @@
       "file_type": "code",
       "norm_label": "paintrowwave()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L714"
+      "source_location": "L719"
     },
     {
       "id": "js_mutra_page_painttoggle",
@@ -633,7 +633,7 @@
       "file_type": "code",
       "norm_label": "painttoggle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2015"
+      "source_location": "L2020"
     },
     {
       "id": "js_mutra_page_paintvol",
@@ -669,7 +669,7 @@
       "file_type": "code",
       "norm_label": "pincurated()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1277"
+      "source_location": "L1282"
     },
     {
       "id": "js_mutra_page_readpalette",
@@ -681,7 +681,7 @@
       "file_type": "code",
       "norm_label": "readpalette()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2215"
+      "source_location": "L2220"
     },
     {
       "id": "js_mutra_page_readwavecolours",
@@ -705,7 +705,7 @@
       "file_type": "code",
       "norm_label": "refreshvocab()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1145"
+      "source_location": "L1150"
     },
     {
       "id": "js_mutra_page_render",
@@ -717,7 +717,7 @@
       "file_type": "code",
       "norm_label": "render()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L570"
+      "source_location": "L575"
     },
     {
       "id": "js_mutra_page_repaintwaves",
@@ -741,7 +741,7 @@
       "file_type": "code",
       "norm_label": "rowpanel()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2089"
+      "source_location": "L2094"
     },
     {
       "id": "js_mutra_page_savecurated",
@@ -753,7 +753,7 @@
       "file_type": "code",
       "norm_label": "savecurated()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1244"
+      "source_location": "L1249"
     },
     {
       "id": "js_mutra_page_savetrack",
@@ -765,7 +765,7 @@
       "file_type": "code",
       "norm_label": "savetrack()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1225"
+      "source_location": "L1230"
     },
     {
       "id": "js_mutra_page_seekfromevent",
@@ -789,7 +789,7 @@
       "file_type": "code",
       "norm_label": "setcat()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L984"
+      "source_location": "L989"
     },
     {
       "id": "js_mutra_page_setmenu",
@@ -801,7 +801,7 @@
       "file_type": "code",
       "norm_label": "setmenu()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2322"
+      "source_location": "L2327"
     },
     {
       "id": "js_mutra_page_setprogressui",
@@ -837,7 +837,7 @@
       "file_type": "code",
       "norm_label": "showcredits()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2106"
+      "source_location": "L2111"
     },
     {
       "id": "js_mutra_page_showlyrics",
@@ -849,7 +849,7 @@
       "file_type": "code",
       "norm_label": "showlyrics()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2122"
+      "source_location": "L2127"
     },
     {
       "id": "js_mutra_page_showsimilar",
@@ -861,7 +861,7 @@
       "file_type": "code",
       "norm_label": "showsimilar()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2144"
+      "source_location": "L2149"
     },
     {
       "id": "js_mutra_page_spintoggle",
@@ -885,7 +885,7 @@
       "file_type": "code",
       "norm_label": "spotlightindex()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L765"
+      "source_location": "L770"
     },
     {
       "id": "js_mutra_page_startlicense",
@@ -909,7 +909,7 @@
       "file_type": "code",
       "norm_label": "startquote()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2135"
+      "source_location": "L2140"
     },
     {
       "id": "js_mutra_page_streamurl",
@@ -933,7 +933,7 @@
       "file_type": "code",
       "norm_label": "syncchips()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1066"
+      "source_location": "L1071"
     },
     {
       "id": "js_mutra_page_synccuratetoggle",
@@ -945,7 +945,7 @@
       "file_type": "code",
       "norm_label": "synccuratetoggle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1939"
+      "source_location": "L1944"
     },
     {
       "id": "js_mutra_page_synchiddentoggle",
@@ -957,7 +957,7 @@
       "file_type": "code",
       "norm_label": "synchiddentoggle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1905"
+      "source_location": "L1910"
     },
     {
       "id": "js_mutra_page_syncscalecat",
@@ -969,7 +969,7 @@
       "file_type": "code",
       "norm_label": "syncscalecat()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2004"
+      "source_location": "L2009"
     },
     {
       "id": "js_mutra_page_toast",
@@ -1005,7 +1005,7 @@
       "file_type": "code",
       "norm_label": "togglecurated()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1285"
+      "source_location": "L1290"
     },
     {
       "id": "js_mutra_page_volfromevent",
@@ -1041,7 +1041,7 @@
       "file_type": "code",
       "norm_label": "wirebpmrange()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L931"
+      "source_location": "L936"
     },
     {
       "id": "js_site_edit_boot",
@@ -11898,7 +11898,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1309",
+      "source_location": "L1314",
       "weight": 1.0
     },
     {
@@ -11910,7 +11910,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1311",
+      "source_location": "L1316",
       "weight": 1.0
     },
     {
@@ -11922,7 +11922,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1318",
+      "source_location": "L1323",
       "weight": 1.0
     },
     {
@@ -11934,7 +11934,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1319",
+      "source_location": "L1324",
       "weight": 1.0
     },
     {
@@ -11946,7 +11946,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1321",
+      "source_location": "L1326",
       "weight": 1.0
     },
     {
@@ -11958,7 +11958,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1399",
+      "source_location": "L1404",
       "weight": 1.0
     },
     {
@@ -11970,7 +11970,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1404",
+      "source_location": "L1409",
       "weight": 1.0
     },
     {
@@ -11982,7 +11982,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1346",
+      "source_location": "L1351",
       "weight": 1.0
     },
     {
@@ -11994,7 +11994,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L728",
+      "source_location": "L733",
       "weight": 1.0
     },
     {
@@ -12006,7 +12006,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L730",
+      "source_location": "L735",
       "weight": 1.0
     },
     {
@@ -12018,7 +12018,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L739",
+      "source_location": "L744",
       "weight": 1.0
     },
     {
@@ -12030,7 +12030,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1139",
+      "source_location": "L1144",
       "weight": 1.0
     },
     {
@@ -12042,7 +12042,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L605",
+      "source_location": "L610",
       "weight": 1.0
     },
     {
@@ -12054,7 +12054,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L617",
+      "source_location": "L622",
       "weight": 1.0
     },
     {
@@ -12066,7 +12066,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L623",
+      "source_location": "L628",
       "weight": 1.0
     },
     {
@@ -12078,7 +12078,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L628",
+      "source_location": "L633",
       "weight": 1.0
     },
     {
@@ -12090,7 +12090,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L632",
+      "source_location": "L637",
       "weight": 1.0
     },
     {
@@ -12102,7 +12102,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L641",
+      "source_location": "L646",
       "weight": 1.0
     },
     {
@@ -12114,7 +12114,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L654",
+      "source_location": "L659",
       "weight": 1.0
     },
     {
@@ -12126,7 +12126,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L678",
+      "source_location": "L683",
       "weight": 1.0
     },
     {
@@ -12138,7 +12138,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L686",
+      "source_location": "L691",
       "weight": 1.0
     },
     {
@@ -12150,7 +12150,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L692",
+      "source_location": "L697",
       "weight": 1.0
     },
     {
@@ -12162,7 +12162,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L703",
+      "source_location": "L708",
       "weight": 1.0
     },
     {
@@ -12174,7 +12174,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L706",
+      "source_location": "L711",
       "weight": 1.0
     },
     {
@@ -12186,7 +12186,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L708",
+      "source_location": "L713",
       "weight": 1.0
     },
     {
@@ -12198,7 +12198,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L708",
+      "source_location": "L713",
       "weight": 1.0
     },
     {
@@ -12210,7 +12210,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1025",
+      "source_location": "L1030",
       "weight": 1.0
     },
     {
@@ -12222,7 +12222,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1025",
+      "source_location": "L1030",
       "weight": 1.0
     },
     {
@@ -12258,7 +12258,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L908",
+      "source_location": "L913",
       "weight": 1.0
     },
     {
@@ -12270,7 +12270,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L908",
+      "source_location": "L913",
       "weight": 1.0
     },
     {
@@ -12282,7 +12282,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L911",
+      "source_location": "L916",
       "weight": 1.0
     },
     {
@@ -12294,7 +12294,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L920",
+      "source_location": "L925",
       "weight": 1.0
     },
     {
@@ -12306,7 +12306,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1014",
+      "source_location": "L1019",
       "weight": 1.0
     },
     {
@@ -12318,7 +12318,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1985",
+      "source_location": "L1990",
       "weight": 1.0
     },
     {
@@ -12330,7 +12330,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1475",
+      "source_location": "L1480",
       "weight": 1.0
     },
     {
@@ -12342,7 +12342,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1480",
+      "source_location": "L1485",
       "weight": 1.0
     },
     {
@@ -12354,7 +12354,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1482",
+      "source_location": "L1487",
       "weight": 1.0
     },
     {
@@ -12366,7 +12366,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1504",
+      "source_location": "L1509",
       "weight": 1.0
     },
     {
@@ -12378,7 +12378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1033",
+      "source_location": "L1038",
       "weight": 1.0
     },
     {
@@ -12390,7 +12390,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1033",
+      "source_location": "L1038",
       "weight": 1.0
     },
     {
@@ -12402,7 +12402,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1033",
+      "source_location": "L1038",
       "weight": 1.0
     },
     {
@@ -12414,7 +12414,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1034",
+      "source_location": "L1039",
       "weight": 1.0
     },
     {
@@ -12426,7 +12426,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2190",
+      "source_location": "L2195",
       "weight": 1.0
     },
     {
@@ -12438,7 +12438,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2191",
+      "source_location": "L2196",
       "weight": 1.0
     },
     {
@@ -12450,7 +12450,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2193",
+      "source_location": "L2198",
       "weight": 1.0
     },
     {
@@ -12462,7 +12462,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2195",
+      "source_location": "L2200",
       "weight": 1.0
     },
     {
@@ -12474,7 +12474,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2198",
+      "source_location": "L2203",
       "weight": 1.0
     },
     {
@@ -12486,7 +12486,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2204",
+      "source_location": "L2209",
       "weight": 1.0
     },
     {
@@ -12570,7 +12570,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1451",
+      "source_location": "L1456",
       "weight": 1.0
     },
     {
@@ -12582,7 +12582,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1460",
+      "source_location": "L1465",
       "weight": 1.0
     },
     {
@@ -12594,7 +12594,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L789",
+      "source_location": "L794",
       "weight": 1.0
     },
     {
@@ -12606,7 +12606,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L556",
+      "source_location": "L561",
       "weight": 1.0
     },
     {
@@ -12618,7 +12618,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1264",
+      "source_location": "L1269",
       "weight": 1.0
     },
     {
@@ -12630,7 +12630,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1265",
+      "source_location": "L1270",
       "weight": 1.0
     },
     {
@@ -12642,7 +12642,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1701",
+      "source_location": "L1706",
       "weight": 1.0
     },
     {
@@ -12654,7 +12654,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1703",
+      "source_location": "L1708",
       "weight": 1.0
     },
     {
@@ -12666,7 +12666,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1787",
+      "source_location": "L1792",
       "weight": 1.0
     },
     {
@@ -12678,7 +12678,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1882",
+      "source_location": "L1887",
       "weight": 1.0
     },
     {
@@ -12690,7 +12690,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1884",
+      "source_location": "L1889",
       "weight": 1.0
     },
     {
@@ -12702,7 +12702,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1887",
+      "source_location": "L1892",
       "weight": 1.0
     },
     {
@@ -12714,7 +12714,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1887",
+      "source_location": "L1892",
       "weight": 1.0
     },
     {
@@ -12726,7 +12726,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1888",
+      "source_location": "L1893",
       "weight": 1.0
     },
     {
@@ -12738,7 +12738,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1802",
+      "source_location": "L1807",
       "weight": 1.0
     },
     {
@@ -12750,7 +12750,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1781",
+      "source_location": "L1786",
       "weight": 1.0
     },
     {
@@ -12762,7 +12762,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1999",
+      "source_location": "L2004",
       "weight": 1.0
     },
     {
@@ -12774,7 +12774,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L717",
+      "source_location": "L722",
       "weight": 1.0
     },
     {
@@ -12786,7 +12786,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2016",
+      "source_location": "L2021",
       "weight": 1.0
     },
     {
@@ -12822,7 +12822,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1281",
+      "source_location": "L1286",
       "weight": 1.0
     },
     {
@@ -12834,7 +12834,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1282",
+      "source_location": "L1287",
       "weight": 1.0
     },
     {
@@ -12846,7 +12846,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L581",
+      "source_location": "L586",
       "weight": 1.0
     },
     {
@@ -12870,7 +12870,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1253",
+      "source_location": "L1258",
       "weight": 1.0
     },
     {
@@ -12882,7 +12882,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1236",
+      "source_location": "L1241",
       "weight": 1.0
     },
     {
@@ -12906,7 +12906,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L989",
+      "source_location": "L994",
       "weight": 1.0
     },
     {
@@ -12918,7 +12918,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L992",
+      "source_location": "L997",
       "weight": 1.0
     },
     {
@@ -12930,7 +12930,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2323",
+      "source_location": "L2328",
       "weight": 1.0
     },
     {
@@ -12966,7 +12966,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2113",
+      "source_location": "L2118",
       "weight": 1.0
     },
     {
@@ -12978,7 +12978,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2128",
+      "source_location": "L2133",
       "weight": 1.0
     },
     {
@@ -12990,7 +12990,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2179",
+      "source_location": "L2184",
       "weight": 1.0
     },
     {
@@ -13002,7 +13002,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2180",
+      "source_location": "L2185",
       "weight": 1.0
     },
     {
@@ -13038,7 +13038,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2139",
+      "source_location": "L2144",
       "weight": 1.0
     },
     {
@@ -13050,7 +13050,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1066",
+      "source_location": "L1071",
       "weight": 1.0
     },
     {
@@ -13062,7 +13062,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1948",
+      "source_location": "L1953",
       "weight": 1.0
     },
     {
@@ -13074,7 +13074,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1961",
+      "source_location": "L1966",
       "weight": 1.0
     },
     {
@@ -13086,7 +13086,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1963",
+      "source_location": "L1968",
       "weight": 1.0
     },
     {
@@ -13098,7 +13098,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1968",
+      "source_location": "L1973",
       "weight": 1.0
     },
     {
@@ -13110,7 +13110,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1919",
+      "source_location": "L1924",
       "weight": 1.0
     },
     {
@@ -13122,7 +13122,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1920",
+      "source_location": "L1925",
       "weight": 1.0
     },
     {
@@ -13134,7 +13134,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1921",
+      "source_location": "L1926",
       "weight": 1.0
     },
     {
@@ -13146,7 +13146,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2010",
+      "source_location": "L2015",
       "weight": 1.0
     },
     {
@@ -13158,7 +13158,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2011",
+      "source_location": "L2016",
       "weight": 1.0
     },
     {
@@ -13170,7 +13170,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2011",
+      "source_location": "L2016",
       "weight": 1.0
     },
     {
@@ -13182,7 +13182,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1288",
+      "source_location": "L1293",
       "weight": 1.0
     },
     {
@@ -13194,7 +13194,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1289",
+      "source_location": "L1294",
       "weight": 1.0
     },
     {
@@ -13218,7 +13218,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L949",
+      "source_location": "L954",
       "weight": 1.0
     },
     {
@@ -13230,7 +13230,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L955",
+      "source_location": "L960",
       "weight": 1.0
     },
     {
@@ -19050,7 +19050,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1343",
+      "source_location": "L1348",
       "weight": 1.0
     },
     {
@@ -19062,7 +19062,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1650",
+      "source_location": "L1655",
       "weight": 1.0
     },
     {
@@ -19074,7 +19074,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1712",
+      "source_location": "L1717",
       "weight": 1.0
     },
     {
@@ -19086,7 +19086,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1747",
+      "source_location": "L1752",
       "weight": 1.0
     },
     {
@@ -19098,7 +19098,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1800",
+      "source_location": "L1805",
       "weight": 1.0
     },
     {
@@ -23165,13 +23165,24 @@
     },
     {
       "source": "js_mutra_page",
+      "target": "js_mutra_page_drawpills",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "js/mutra-page.js",
+      "source_location": "L1003",
+      "weight": 1.0
+    },
+    {
+      "source": "js_mutra_page",
       "target": "js_mutra_page_clearfilters",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1020",
+      "source_location": "L1025",
       "weight": 1.0
     },
     {
@@ -23182,7 +23193,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1029",
+      "source_location": "L1034",
       "weight": 1.0
     },
     {
@@ -23193,7 +23204,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1066",
+      "source_location": "L1071",
       "weight": 1.0
     },
     {
@@ -23204,7 +23215,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1104",
+      "source_location": "L1109",
       "weight": 1.0
     },
     {
@@ -23215,7 +23226,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1131",
+      "source_location": "L1136",
       "weight": 1.0
     },
     {
@@ -23226,7 +23237,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1145",
+      "source_location": "L1150",
       "weight": 1.0
     },
     {
@@ -23248,7 +23259,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1225",
+      "source_location": "L1230",
       "weight": 1.0
     },
     {
@@ -23259,7 +23270,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1244",
+      "source_location": "L1249",
       "weight": 1.0
     },
     {
@@ -23270,7 +23281,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1259",
+      "source_location": "L1264",
       "weight": 1.0
     },
     {
@@ -23292,7 +23303,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1277",
+      "source_location": "L1282",
       "weight": 1.0
     },
     {
@@ -23303,7 +23314,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1285",
+      "source_location": "L1290",
       "weight": 1.0
     },
     {
@@ -23314,7 +23325,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1296",
+      "source_location": "L1301",
       "weight": 1.0
     },
     {
@@ -23325,7 +23336,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1430",
+      "source_location": "L1435",
       "weight": 1.0
     },
     {
@@ -23336,7 +23347,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1467",
+      "source_location": "L1472",
       "weight": 1.0
     },
     {
@@ -23347,7 +23358,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1493",
+      "source_location": "L1498",
       "weight": 1.0
     },
     {
@@ -23358,7 +23369,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1520",
+      "source_location": "L1525",
       "weight": 1.0
     },
     {
@@ -23396,17 +23407,6 @@
     },
     {
       "source": "js_mutra_page",
-      "target": "js_mutra_page_synchiddentoggle",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "js/mutra-page.js",
-      "source_location": "L1905",
-      "weight": 1.0
-    },
-    {
-      "source": "js_mutra_page",
       "target": "js_mutra_page_repaintwaves",
       "relation": "contains",
       "_origin": "ast",
@@ -23418,13 +23418,24 @@
     },
     {
       "source": "js_mutra_page",
+      "target": "js_mutra_page_synchiddentoggle",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "js/mutra-page.js",
+      "source_location": "L1910",
+      "weight": 1.0
+    },
+    {
+      "source": "js_mutra_page",
       "target": "js_mutra_page_synccuratetoggle",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1939",
+      "source_location": "L1944",
       "weight": 1.0
     },
     {
@@ -23435,7 +23446,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1976",
+      "source_location": "L1981",
       "weight": 1.0
     },
     {
@@ -23446,7 +23457,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1998",
+      "source_location": "L2003",
       "weight": 1.0
     },
     {
@@ -23457,7 +23468,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2004",
+      "source_location": "L2009",
       "weight": 1.0
     },
     {
@@ -23479,7 +23490,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2015",
+      "source_location": "L2020",
       "weight": 1.0
     },
     {
@@ -23490,7 +23501,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2089",
+      "source_location": "L2094",
       "weight": 1.0
     },
     {
@@ -23501,7 +23512,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2106",
+      "source_location": "L2111",
       "weight": 1.0
     },
     {
@@ -23512,7 +23523,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2122",
+      "source_location": "L2127",
       "weight": 1.0
     },
     {
@@ -23523,7 +23534,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2135",
+      "source_location": "L2140",
       "weight": 1.0
     },
     {
@@ -23534,18 +23545,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2144",
-      "weight": 1.0
-    },
-    {
-      "source": "js_mutra_page",
-      "target": "js_mutra_page_focustrack",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "js/mutra-page.js",
-      "source_location": "L2187",
+      "source_location": "L2149",
       "weight": 1.0
     },
     {
@@ -23561,13 +23561,24 @@
     },
     {
       "source": "js_mutra_page",
+      "target": "js_mutra_page_focustrack",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "js/mutra-page.js",
+      "source_location": "L2192",
+      "weight": 1.0
+    },
+    {
+      "source": "js_mutra_page",
       "target": "js_mutra_page_readpalette",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2215",
+      "source_location": "L2220",
       "weight": 1.0
     },
     {
@@ -23578,7 +23589,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2226",
+      "source_location": "L2231",
       "weight": 1.0
     },
     {
@@ -23589,7 +23600,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2322",
+      "source_location": "L2327",
       "weight": 1.0
     },
     {
@@ -23721,7 +23732,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L545",
+      "source_location": "L550",
       "weight": 1.0
     },
     {
@@ -23732,7 +23743,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L551",
+      "source_location": "L556",
       "weight": 1.0
     },
     {
@@ -23743,7 +23754,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L570",
+      "source_location": "L575",
       "weight": 1.0
     },
     {
@@ -23754,7 +23765,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L588",
+      "source_location": "L593",
       "weight": 1.0
     },
     {
@@ -23787,7 +23798,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L714",
+      "source_location": "L719",
       "weight": 1.0
     },
     {
@@ -23798,7 +23809,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L722",
+      "source_location": "L727",
       "weight": 1.0
     },
     {
@@ -23809,7 +23820,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L765",
+      "source_location": "L770",
       "weight": 1.0
     },
     {
@@ -23820,7 +23831,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L782",
+      "source_location": "L787",
       "weight": 1.0
     },
     {
@@ -23842,7 +23853,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L858",
+      "source_location": "L863",
       "weight": 1.0
     },
     {
@@ -23853,7 +23864,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L864",
+      "source_location": "L869",
       "weight": 1.0
     },
     {
@@ -23864,7 +23875,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L931",
+      "source_location": "L936",
       "weight": 1.0
     },
     {
@@ -23875,7 +23886,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L976",
+      "source_location": "L981",
       "weight": 1.0
     },
     {
@@ -23886,18 +23897,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L984",
-      "weight": 1.0
-    },
-    {
-      "source": "js_mutra_page",
-      "target": "js_mutra_page_drawpills",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "js/mutra-page.js",
-      "source_location": "L998",
+      "source_location": "L989",
       "weight": 1.0
     },
     {
@@ -28276,7 +28276,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-page.js",
-      "source_location": "L725",
+      "source_location": "L730",
       "weight": 1.0
     },
     {
@@ -28288,7 +28288,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-page.js",
-      "source_location": "L927",
+      "source_location": "L932",
       "weight": 1.0
     },
     {
@@ -28300,7 +28300,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1017",
+      "source_location": "L1022",
       "weight": 1.0
     },
     {
@@ -28312,7 +28312,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1784",
+      "source_location": "L1789",
       "weight": 1.0
     },
     {
@@ -28324,7 +28324,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-page.js",
-      "source_location": "L571",
+      "source_location": "L576",
       "weight": 1.0
     },
     {
@@ -28336,7 +28336,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-page.js",
-      "source_location": "L951",
+      "source_location": "L956",
       "weight": 1.0
     },
     {
@@ -30796,5 +30796,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "d5af5cf03ea2b511de9d046970fe99918056bb4a"
+  "built_at_commit": "593d65f7ebbfba5de8407af3d115a7b3d3babdfd"
 }
