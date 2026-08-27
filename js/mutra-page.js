@@ -573,8 +573,61 @@
 
   let list = [], shown = 0;
 
+  /* ── version stacks ───────────────────────────────────────────────────────
+     Alternate cuts filed under the track they belong to. STACKS maps a parent
+     slug to its children; PARENT_OF is the reverse, built once so the render
+     loop is not scanning the map per track. `openStacks` is view state only —
+     a stack a visitor opened stays open until they close it, and is never
+     persisted, because it is a way of looking rather than a fact. */
+  let STACKS = {}, PARENT_OF = {};
+  const openStacks = new Set();
+
+  function indexStacks() {
+    PARENT_OF = {};
+    for (const [parent, kids] of Object.entries(STACKS))
+      for (const k of kids) PARENT_OF[k] = parent;
+  }
+  const childrenOf = (slug) =>
+    (STACKS[slug] || []).map(sl => MUTRA.tracks.find(t => t.slug === sl)).filter(Boolean);
+
+  async function loadStacks() {
+    try {
+      const r = await fetch('/api/stacks', { credentials: 'same-origin' });
+      const d = await r.json();
+      STACKS = (d && d.stacks) || {};
+    } catch { STACKS = {}; }
+    indexStacks();
+  }
+
+  async function setStack(child, parent) {
+    const r = await fetch('/api/stacks', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ child, parent }),
+    }).then(x => x.json()).catch(() => null);
+    if (!r || !r.ok) {
+      toast(r && r.error === 'child_has_own_versions'
+        ? 'That track already has versions of its own — unstack those first'
+        : 'Could not stack that');
+      return false;
+    }
+    await loadStacks();
+    render();
+    return true;
+  }
+
   function render() {
-    list = MUTRA.tracks.filter(matches).sort(SORTERS[state.sort] || SORTERS.picks);
+    /* A version is not a separate result. It is reachable by opening its
+       parent, and while filtering it still counts — a stack whose CHILD matches
+       the filter surfaces via the parent, so narrowing to "Instrumental" never
+       silently hides the instrumental cut of a vocal track. */
+    const hit = new Set(MUTRA.tracks.filter(matches).map(t => t.slug));
+    list = MUTRA.tracks.filter(t => {
+      const parent = PARENT_OF[t.slug];
+      if (parent && !curateMode) return false;          // shown under its parent
+      if (hit.has(t.slug)) return true;
+      return !parent && (STACKS[t.slug] || []).some(c => hit.has(c));
+    }).sort(SORTERS[state.sort] || SORTERS.picks);
     shown = 0;
     tracksEl.innerHTML = '';
     if (!list.length) {
@@ -609,7 +662,12 @@
         <img class="trk-cover" src="${track.cover}" alt="" loading="lazy">
         <div class="trk-id">
           <div class="trk-title" role="button" tabindex="0" title="Credits"><span class="tt-in">${track.title}</span></div>
-          <div class="trk-artist">${artistLinks(track.artist)}</div>
+          <div class="trk-artist">${artistLinks(track.artist)}${(STACKS[track.slug] || []).length
+            ? `<button class="trk-stack" title="Other versions of this track"
+                 aria-expanded="${openStacks.has(track.slug)}">${
+                 STACKS[track.slug].length} version${STACKS[track.slug].length > 1 ? 's' : ''}</button>`
+            : ''}${PARENT_OF[track.slug] && curateMode
+            ? '<button class="trk-unstack" title="Take this out of its stack">unstack</button>' : ''}</div>
         </div>
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
         <div class="trk-tags">${tags}</div>
@@ -712,6 +770,19 @@
       const cnv = row.querySelector('.trk-wave canvas');
       cnv._peaks = waveform(track, i + 1);
       cnv._slug = track.slug;
+      const stackBtn = row.querySelector('.trk-stack');
+      if (stackBtn) stackBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (openStacks.has(track.slug)) openStacks.delete(track.slug);
+        else openStacks.add(track.slug);
+        render();
+      });
+      const unstackBtn = row.querySelector('.trk-unstack');
+      if (unstackBtn) unstackBtn.addEventListener('click', async e => {
+        e.stopPropagation();
+        if (await setStack(track.slug, null)) toast('Taken out of the stack');
+      });
+
       if (curateMode) { addCurateControls(row, track); makeDraggable(row, track); }
       return row;
   }
@@ -735,6 +806,17 @@
       const row = buildRow(track, i);
       tracksEl.appendChild(row);
       paintRowWave(row, track);
+      /* Versions are real rows, not a summary — they play, they license, they
+         carry their own tags. Building a lesser row type here would drift from
+         the main one the first time either changed. */
+      if (openStacks.has(track.slug) && !curateMode) {
+        childrenOf(track.slug).forEach(kid => {
+          const kr = buildRow(kid, MUTRA.tracks.indexOf(kid));
+          kr.classList.add('trk-child');
+          tracksEl.appendChild(kr);
+          paintRowWave(kr, kid);
+        });
+      }
     });
     sentinel.hidden = shown >= list.length;
     if (curateMode && window.mutraBulkSync) window.mutraBulkSync();
@@ -1166,7 +1248,13 @@
   Promise.all([
     fetch('/api/tracks').then(r => r.ok ? r.json() : { overrides: {} }).catch(() => ({ overrides: {} })),
     fetch('/api/texts').then(r => r.ok ? r.json() : { texts: {} }).catch(() => ({ texts: {} })),
-  ]).then(([tr, tx]) => {
+    // Stacks come in with the overrides rather than after them: arriving late
+    // would mean the first paint shows every version as its own row and then
+    // visibly collapses, which reads as a bug.
+    fetch('/api/stacks').then(r => r.ok ? r.json() : { stacks: {} }).catch(() => ({ stacks: {} })),
+  ]).then(([tr, tx, st]) => {
+    STACKS = st.stacks || {};
+    indexStacks();
     overrides = tr.overrides || {};
     (tr.laneLocked || []).forEach((sl) => LANE_LOCKED.add(sl));
     // only fetched in curate mode — a visitor has no use for the old names
@@ -1452,24 +1540,59 @@
     row.addEventListener('dragend', () => {
       dragSlug = null;
       row.classList.remove('dragging');
-      tracksEl.querySelectorAll('.drop-before,.drop-after')
-        .forEach(el => el.classList.remove('drop-before', 'drop-after'));
+      tracksEl.querySelectorAll('.drop-before,.drop-after,.drop-into,.drop-arming')
+        .forEach(el => el.classList.remove('drop-before', 'drop-after', 'drop-into', 'drop-arming'));
     });
+    /* Two drops, told apart by where you are and how long you have been there.
+       Near an edge, it is a reorder, as it always was. Rest in the middle of a
+       row for a beat and it becomes "file this under that one" — the same
+       spring-loading a file manager uses for dropping into a folder, so the
+       gesture is already known and the two meanings cannot be confused. */
+    let holdTimer = null;
+    const cancelHold = () => { clearTimeout(holdTimer); holdTimer = null; };
+
     row.addEventListener('dragover', (e) => {
       if (!dragSlug || dragSlug === track.slug) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
       const r = row.getBoundingClientRect();
-      const above = e.clientY < r.top + r.height / 2;
-      row.classList.toggle('drop-before', above);
-      row.classList.toggle('drop-after', !above);
+      const y = (e.clientY - r.top) / r.height;
+      const middle = y > 0.28 && y < 0.72;
+
+      if (!middle) {
+        cancelHold();
+        row.classList.remove('drop-into', 'drop-arming');
+        row.classList.toggle('drop-before', y <= 0.5);
+        row.classList.toggle('drop-after', y > 0.5);
+        return;
+      }
+      row.classList.remove('drop-before', 'drop-after');
+      if (row.classList.contains('drop-into') || holdTimer) return;
+      row.classList.add('drop-arming');                   // 400ms fill animation
+      holdTimer = setTimeout(() => {
+        holdTimer = null;
+        row.classList.remove('drop-arming');
+        row.classList.add('drop-into');
+      }, 400);
     });
-    row.addEventListener('dragleave', () => row.classList.remove('drop-before', 'drop-after'));
+    row.addEventListener('dragleave', () => {
+      cancelHold();
+      row.classList.remove('drop-before', 'drop-after', 'drop-into', 'drop-arming');
+    });
     row.addEventListener('drop', (e) => {
       if (!dragSlug || dragSlug === track.slug) return;
       e.preventDefault();
+      cancelHold();
+      const into = row.classList.contains('drop-into');
       const above = row.classList.contains('drop-before');
-      row.classList.remove('drop-before', 'drop-after');
+      row.classList.remove('drop-before', 'drop-after', 'drop-into', 'drop-arming');
+      if (into) {
+        const moved = dragSlug;
+        setStack(moved, track.slug).then(ok => {
+          if (ok) toast(`Filed under ${track.title}`);
+        });
+        return;
+      }
       dropOnto(dragSlug, track.slug, above);
     });
   }

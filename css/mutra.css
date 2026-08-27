@@ -227,9 +227,12 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .browse{padding:20px 0 90px}
 .browse-search{position:relative;max-width:560px;margin:0 auto 26px}
 .browse-search input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:99px;
-  padding:16px 22px 16px 52px;color:var(--text);font-family:var(--font-body);font-size:1rem;outline:none;transition:border-color .25s}
+  padding:16px 158px 16px 52px;color:var(--text);font-family:var(--font-body);font-size:1rem;outline:none;transition:border-color .25s}
 .browse-search input:focus{border-color:var(--coral)}
-.browse-search svg{position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--dim)}
+/* Direct child only. This was `.browse-search svg`, which also caught both
+   icons inside the Describe-it button and pinned them to the left edge of the
+   field, on top of the magnifier. */
+.browse-search > svg{position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--dim)}
 /* Artlist-style: a category opens a drawer that pushes the list down */
 .fbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:4px 4px 2px}
 .fbar-gap{flex:1 1 auto;min-width:8px}
@@ -1190,11 +1193,22 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 /* ═══════════ Describe-it search ═══════════
    Inside the search box, not beside it: the same job done a different way,
    rather than a second feature competing for the same intent. */
-.browse-agent{display:flex;align-items:center;gap:6px;flex:none;background:none;
+/* Inside the field, at the trailing edge — the same job as the search box, done
+   a different way, so it belongs in the box rather than under it. It was never
+   positioned, so it fell out of the field and sat below-left as a stray pill. */
+.browse-agent{position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  display:flex;align-items:center;gap:6px;background:var(--tint,rgba(128,128,128,.1));
   border:1px solid var(--line-2,var(--line));border-radius:99px;color:var(--muted);
-  font:inherit;font-size:.76rem;padding:6px 13px;cursor:pointer;margin-left:8px;white-space:nowrap}
-.browse-agent:hover{color:var(--text);border-color:var(--amber,var(--coral))}
-@media (max-width:560px){.browse-agent span{display:none}.browse-agent{padding:6px 9px}}
+  font:inherit;font-size:.78rem;padding:8px 15px;cursor:pointer;white-space:nowrap;
+  transition:color .2s,border-color .2s,background .2s}
+.browse-agent:hover{color:var(--text);border-color:var(--amber,var(--coral));
+  background:var(--panel-2,rgba(128,128,128,.16))}
+.browse-agent svg{color:var(--amber,var(--coral))}
+@media (max-width:560px){
+  .browse-agent span{display:none}
+  .browse-agent{padding:8px 10px;right:6px}
+  .browse-search input{padding-right:56px}
+}
 
 .ag-modal{position:fixed;inset:0;z-index:96;background:rgba(3,5,12,.76);
   backdrop-filter:blur(8px);display:flex;align-items:flex-start;justify-content:center;
@@ -1275,3 +1289,30 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   font-size:1rem;cursor:pointer}
 .te-uadd:hover{color:var(--text);border-color:var(--amber,var(--coral))}
 @media (max-width:520px){.te-userow{grid-template-columns:1fr 1fr;grid-auto-rows:auto}}
+
+/* ── version stacks ────────────────────────────────────────────────────────
+   Alternate cuts filed under the track they belong to, so a family of five
+   BASEGROUND mixes is one row that says "4 versions" instead of five rows a
+   buyer has to tell apart by reading the brackets in the title. */
+.trk-stack{margin-left:9px;font:inherit;font-size:.66rem;letter-spacing:.03em;
+  padding:2px 9px;border-radius:99px;border:1px solid var(--line-2,var(--line));
+  background:none;color:var(--muted);cursor:pointer;vertical-align:1px;transition:.18s}
+.trk-stack:hover{color:var(--text);border-color:var(--amber,var(--coral))}
+.trk-stack[aria-expanded="true"]{color:var(--on-accent,#0d0a12);background:var(--grad);border-color:transparent}
+.trk-unstack{margin-left:9px;font:inherit;font-size:.64rem;background:none;border:0;
+  color:var(--dim);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.trk-unstack:hover{color:var(--coral)}
+/* A version is indented and marked with a rule, so it reads as belonging to
+   the row above rather than as another result. */
+.trk-child{margin-left:34px;position:relative}
+.trk-child::before{content:'';position:absolute;left:-18px;top:0;bottom:0;
+  width:1px;background:var(--line-2,var(--line));opacity:.6}
+/* Spring-loading: the middle of a row fills over 400ms to say "keep holding
+   and this becomes a stack", then locks in. Without the fill the wait is
+   indistinguishable from the drag having failed. */
+@keyframes trk-arm{from{box-shadow:inset 0 0 0 0 var(--tint,rgba(128,128,128,.18))}
+  to{box-shadow:inset 0 0 0 60px var(--tint,rgba(128,128,128,.18))}}
+.trk.drop-arming{animation:trk-arm .4s linear forwards;border-radius:12px}
+.trk.drop-into{outline:2px solid var(--amber,var(--coral));outline-offset:-2px;
+  border-radius:12px;background:var(--tint,rgba(128,128,128,.14))}
+.trk.drop-into .trk-title{color:var(--amber,var(--coral))}
