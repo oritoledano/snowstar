@@ -9,7 +9,7 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'inbox', 'members', 'licensing', 'pricing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
+  const TABS = ['overview', 'stats', 'inbox', 'jobs', 'members', 'licensing', 'pricing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -66,6 +66,7 @@
       if (tab === 'notifications') return paintMail();
       if (tab === 'licensing') return paintLicensing();
       if (tab === 'inbox') return paintInbox();
+      if (tab === 'jobs') return paintJobs();
       if (tab === 'pricing') return paintPricing();
       if (tab === 'alerts') return paintAlerts();
       if (tab === 'storage') return paintStorage();
@@ -1398,6 +1399,158 @@
             ? gauge('Pages repository', gh, GB, 'GitHub Pages soft limit is 1 GB. The big videos moved to R2, so this stays lean.')
             : '<p class="db-empty">Couldn’t reach the GitHub API just now (rate limit) — try again in a minute.</p>'}</div>
       </div>`);
+  }
+
+  /* ── jobs: the ledger of work sold ──────────────────────────────────────
+     Every row is editable in place. There is no "edit" mode and no save
+     button, because the reason ledgers like this go stale is that updating
+     one cell costs four clicks; here it costs one, and the save happens when
+     the field loses focus.
+
+     Edits are merged into the stored row object rather than assembled from
+     the inputs alone. The server rewrites every column on update, so a field
+     the table does not show — work_id, source, the original filename this
+     row was parsed out of — would be blanked by anything that only sent what
+     was on screen. */
+  let jobsAll = [], jobsMeta = {}, jobQ = '', jobYear = '', jobLic = '';
+
+  const jobYears = () => [...new Set(jobsAll.map((j) => (j.job_date || '').slice(0, 4))
+    .filter(Boolean))].sort().reverse();
+
+  function jobsShown() {
+    const q = jobQ.trim().toLowerCase();
+    return jobsAll.filter((j) => {
+      if (jobYear && (j.job_date || '').slice(0, 4) !== jobYear) return false;
+      if (jobLic === 'y' && !j.licensed) return false;
+      if (jobLic === 'n' && j.licensed) return false;
+      if (!q) return true;
+      return [j.project, j.client, j.agency, j.service, j.lic_media,
+        j.lic_territory, j.note, j.source].some((v) => v && String(v).toLowerCase().includes(q));
+    });
+  }
+
+  const dl = (id, list) => `<datalist id="${id}">${
+    list.map((v) => `<option value="${esc(v)}">`).join('')}</datalist>`;
+
+  async function paintJobs() {
+    const d = await get('/jobs');
+    jobsAll = d.jobs || [];
+    jobsMeta = d;
+
+    paint(`
+      <div class="db-panel jb-panel">
+        <h2>Jobs <span class="pill" id="jb-count"></span></h2>
+        <p class="db-empty" style="padding-top:0">Every piece of work sold, and — the part
+          that is nowhere else — exactly what licence went with it. Seeded from the price-offer
+          archive, so the older rows have a date and a name and nothing more. Type in any cell;
+          it saves when you click away.</p>
+
+        <div class="jb-bar">
+          <input id="jb-q" class="jb-search" type="search" placeholder="Search project, client, anything…" value="${esc(jobQ)}">
+          <select id="jb-year"><option value="">All years</option>${
+            jobYears().map((y) => `<option value="${y}"${y === jobYear ? ' selected' : ''}>${y}</option>`).join('')}</select>
+          <select id="jb-lic"><option value="">Licensed &amp; not</option>
+            <option value="y"${jobLic === 'y' ? ' selected' : ''}>Licensed only</option>
+            <option value="n"${jobLic === 'n' ? ' selected' : ''}>No licence</option></select>
+          <button class="rv-btn rv-ok" id="jb-new">+ New job</button>
+          <a class="rv-btn" id="jb-csv" href="/api/jobs/export">Export CSV</a>
+        </div>
+
+        ${dl('dl-service', jobsMeta.services || [])}
+        ${dl('dl-media', jobsMeta.media || [])}
+        ${dl('dl-terr', jobsMeta.territories || [])}
+        ${dl('dl-period', ['6 months', '1 year', '2 years', '3 years', 'Perpetual', 'Campaign only', 'Unlimited'])}
+        ${dl('dl-client', [...new Set(jobsAll.map((j) => j.client).filter(Boolean))].sort())}
+
+        <div class="jb-scroll">
+          <table class="jb-table"><thead><tr>
+            <th style="width:120px">Date</th><th>Project</th><th>Client</th><th style="width:130px">Service</th>
+            <th style="width:44px" title="Was a licence granted?">Lic</th>
+            <th style="width:130px">Media</th><th style="width:110px">Period</th>
+            <th style="width:110px">Territory</th><th style="width:56px" title="Cuts, derivatives, versions">Cuts</th>
+            <th style="width:28px"></th>
+          </tr></thead><tbody id="jb-body"></tbody></table>
+        </div>
+      </div>`);
+
+    const body = document.getElementById('jb-body');
+
+    function fill() {
+      const rows = jobsShown();
+      document.getElementById('jb-count').textContent =
+        rows.length === jobsAll.length ? `${jobsAll.length} jobs`
+                                       : `${rows.length} of ${jobsAll.length}`;
+      body.innerHTML = rows.length ? rows.map((j) => {
+        const t = (n, v, extra = '') =>
+          `<input name="${n}" value="${esc(v == null ? '' : v)}"${extra}>`;
+        return `<tr data-id="${j.id}"${j.licensed ? '' : ' class="jb-nolic"'}>
+          <td>${t('job_date', j.job_date, ' type="date"')}</td>
+          <td>${t('project', j.project, j.work_title ? ` title="Portfolio: ${esc(j.work_title)}"` : '')}${
+            j.work_id ? '<span class="jb-link" title="Linked to a portfolio work">◆</span>' : ''}</td>
+          <td>${t('client', j.client, ' list="dl-client"')}</td>
+          <td>${t('service', j.service, ' list="dl-service"')}</td>
+          <td class="jb-c"><input name="licensed" type="checkbox"${j.licensed ? ' checked' : ''}></td>
+          <td>${t('lic_media', j.lic_media, ' list="dl-media"')}</td>
+          <td>${t('lic_period', j.lic_period, ' list="dl-period"')}</td>
+          <td>${t('lic_territory', j.lic_territory, ' list="dl-terr"')}</td>
+          <td>${t('versions', j.versions, ' type="number" min="0" class="jb-n"')}</td>
+          <td class="jb-c"><button class="jb-del" title="Delete this row">×</button></td>
+        </tr>`;
+      }).join('')
+        : `<tr><td colspan="10"><p class="db-empty">Nothing matches.</p></td></tr>`;
+    }
+
+    async function save(tr) {
+      const id = Number(tr.dataset.id);
+      const j = jobsAll.find((x) => x.id === id);
+      if (!j) return;
+      tr.querySelectorAll('input[name]').forEach((el) => {
+        j[el.name] = el.type === 'checkbox' ? (el.checked ? 1 : 0) : el.value;
+      });
+      tr.classList.toggle('jb-nolic', !j.licensed);
+      tr.classList.add('jb-saving');
+      const r = await post('/jobs', j);
+      tr.classList.remove('jb-saving');
+      // A row that failed to save must not look saved — the whole value of a
+      // ledger is that what is on screen is what is stored.
+      tr.classList.toggle('jb-bad', !r.ok);
+    }
+
+    body.addEventListener('change', (e) => {
+      const tr = e.target.closest('tr[data-id]');
+      if (tr && e.target.name) save(tr);
+    });
+    body.addEventListener('click', async (e) => {
+      const b = e.target.closest('.jb-del');
+      if (!b) return;
+      const tr = b.closest('tr'), id = Number(tr.dataset.id);
+      const j = jobsAll.find((x) => x.id === id);
+      if (!confirm(`Delete “${j ? j.project : id}”? This can’t be undone.`)) return;
+      await post('/jobs', { remove: id });
+      jobsAll = jobsAll.filter((x) => x.id !== id);
+      fill();
+    });
+
+    document.getElementById('jb-q').addEventListener('input', (e) => { jobQ = e.target.value; fill(); });
+    document.getElementById('jb-year').addEventListener('change', (e) => { jobYear = e.target.value; fill(); });
+    document.getElementById('jb-lic').addEventListener('change', (e) => { jobLic = e.target.value; fill(); });
+
+    document.getElementById('jb-new').addEventListener('click', async () => {
+      const r = await post('/jobs', { project: 'Untitled job', job_date: new Date().toISOString().slice(0, 10) });
+      if (!r.ok) return;
+      // Clear the filters, or the new row is created into a view that hides it.
+      jobQ = ''; jobYear = ''; jobLic = '';
+      document.getElementById('jb-q').value = '';
+      document.getElementById('jb-year').value = '';
+      document.getElementById('jb-lic').value = '';
+      jobsAll.unshift({ id: r.id, project: 'Untitled job', licensed: 0,
+        job_date: new Date().toISOString().slice(0, 10) });
+      fill();
+      const el = body.querySelector('tr [name="project"]');
+      if (el) { el.focus(); el.select(); }
+    });
+
+    fill();
   }
 
   addEventListener('hashchange', () => {

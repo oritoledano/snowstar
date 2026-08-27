@@ -30,9 +30,9 @@
     "semantic_hash": "a50db8d3130369b6138a0ad2e9c7a72f"
   },
   "js/dashboard.js": {
-    "mtime": 1787784252.963539,
-    "seen": 1787784258.878187,
-    "ast_hash": "562f1900ec69100ea7daa53cf9a1601c",
+    "mtime": 1787830704.7550054,
+    "seen": 1787830711.4444811,
+    "ast_hash": "7df063cc4ad0249196bf21be8a1af214",
     "semantic_hash": ""
   },
   "js/data.js": {
@@ -210,9 +210,9 @@
     "semantic_hash": "cf7ff836a6fe1949eca373cb8d1e7e65"
   },
   "worker/src/index.js": {
-    "mtime": 1787787457.2582877,
-    "seen": 1787787463.749884,
-    "ast_hash": "e1e1ffa5c1f8d887247dba0a14f78b64",
+    "mtime": 1787830367.296957,
+    "seen": 1787830373.8433752,
+    "ast_hash": "788c228a3ffdcbe1d627a3f5a05b4dfb",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
@@ -1278,9 +1278,15 @@
     "semantic_hash": ""
   },
   "PORTFOLIO-YEARS.md": {
-    "mtime": 1787787676.0885818,
-    "seen": 1787821848.814157,
-    "ast_hash": "b44e696b3d0dabff6bcfbd72787213d8",
+    "mtime": 1787822288.8480654,
+    "seen": 1787830363.539593,
+    "ast_hash": "bbb158f40fc2b74d199611f38d77169e",
+    "semantic_hash": ""
+  },
+  "worker/src/jobs.js": {
+    "mtime": 1787830357.3418758,
+    "seen": 1787830363.539577,
+    "ast_hash": "0c4ff9679cbf0af8b43c5aa224a2d077",
     "semantic_hash": ""
   }
 }

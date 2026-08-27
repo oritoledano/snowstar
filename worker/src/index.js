@@ -39,6 +39,7 @@ import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { handleStream } from './stream.js';
 import { getClasses, setClasses } from './pricing.js';
+import { listJobs, saveJob, exportJobs } from './jobs.js';
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
@@ -216,6 +217,10 @@ async function handle(req, env, ctx) {
   if (path === '/tracks/uses' && method === 'POST') return saveUse(req, env, await currentUser(req, env));
   if (path === '/tracks/orig' && method === 'GET') return listOrigTitles(env);
   if (path === '/tracks/orig' && method === 'POST') return setOrigTitle(req, env, await currentUser(req, env));
+  // the job ledger — what was sold, to whom, and on what licence
+  if (path === '/jobs' && method === 'GET') return listJobs(env, await currentUser(req, env));
+  if (path === '/jobs' && method === 'POST') return saveJob(req, env, await currentUser(req, env));
+  if (path === '/jobs/export' && method === 'GET') return exportJobs(env, await currentUser(req, env));
   if (path === '/pricing/classes' && method === 'GET') return getClasses(env, await currentUser(req, env));
   if (path === '/pricing/classes' && method === 'POST') return setClasses(req, env, await currentUser(req, env));
   if (path === '/tracks/cover' && method === 'PUT') return uploadCover(req, env, await currentUser(req, env), url);

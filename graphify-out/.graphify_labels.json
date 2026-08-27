@@ -2,7 +2,7 @@
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
   "2": "Licence terms",
-  "3": "analytics.js",
+  "3": "crypto.js",
   "4": "licensing.js",
   "5": "main.js",
   "6": "dashboard.js",
@@ -34,12 +34,14 @@
   "32": "works.js",
   "33": "certificate.js",
   "34": "rights.js",
-  "35": "catalog.js",
+  "35": "profile.js",
   "36": "mutra-artist-panel.js",
-  "37": "artists.js",
+  "37": "catalog.js",
   "38": "clearlist.js",
-  "39": "contact.js",
+  "39": "jobs.js",
   "40": "artistreg.js",
-  "41": "Four services section",
-  "42": "Portfolio years — what still needs your eye"
+  "41": "analytics.js",
+  "42": "Portfolio years",
+  "43": "site.js",
+  "44": "Four services section"
 }
