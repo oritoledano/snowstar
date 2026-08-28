@@ -799,21 +799,32 @@
     el.querySelector('.lic-close').addEventListener('click', close);
     el.querySelector('.lic-head').hidden = true;
     const ok = state === 'ok';
+    /* The card went through but our verification did not. Saying "nothing was
+       charged" to somebody whose card HAS been charged is the worst thing this
+       screen can do, and it is what it did. */
+    const confirming = state === 'confirming';
     const why = {
       declined: 'The card was declined. Nothing has been charged.',
+      unpaid_check: '',
       unverified: 'We could not confirm that payment with HYP, so nothing was released. If your card was charged, send us the reference and we will sort it out today.',
       amount_mismatch: 'The amount did not match the licence. Nothing was released.',
       quote_lane: 'This track needs a quote rather than a card payment.',
       bad_ref: 'That payment reference was not recognised.',
       unknown_ref: 'That payment reference was not recognised.',
     }[reason] || 'The payment did not complete. Nothing has been charged.';
+    const kicker = ok ? 'Payment received' : confirming ? 'Payment received' : 'Payment not completed';
+    const head = ok ? 'Your licence is live'
+      : confirming ? 'We are confirming it now' : 'Nothing was charged';
+    const note = ok
+      ? 'The clean, un-watermarked file is now yours to download — look for the download arrow on the track, or in Account › Downloads. A confirmation is on its way by email.'
+      : confirming
+        ? 'Your card went through. We could not complete the automatic check with the payment provider, so a person is confirming it — usually within the hour. Your licence will appear in Account › Licences and you will get an email. Nothing more is needed from you.'
+        : why;
     body().innerHTML = `
-      <div class="lic-kicker">${ok ? 'Payment received' : 'Payment not completed'}</div>
-      <h3 class="lic-q">${ok ? 'Your licence is live' : 'Nothing was charged'}</h3>
+      <div class="lic-kicker">${kicker}</div>
+      <h3 class="lic-q">${head}</h3>
       ${ref ? `<div class="lic-ref"><span>Reference</span><b>${esc(ref)}</b></div>` : ''}
-      <p class="lic-note">${ok
-        ? 'The clean, un-watermarked file is now yours to download — look for the download arrow on the track, or in Account › Downloads. A confirmation is on its way by email.'
-        : esc(why)}</p>
+      <p class="lic-note">${esc(note)}</p>
       <div class="lic-acts"><button class="lic-go lic-done">${ok ? 'Download it' : 'Close'}</button></div>`;
     body().querySelector('.lic-done').addEventListener('click', close);
     el.hidden = false;

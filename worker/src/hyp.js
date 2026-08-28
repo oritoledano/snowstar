@@ -161,6 +161,11 @@ export async function startCheckout(req, env, user) {
     Order: ref,                                      // comes back on the redirect
     UTF8: 'True',
     UTF8out: 'True',
+    /* Without this the redirect comes back carrying no Sign parameter, and
+       What=VERIFY has nothing to check — it answers CCode=200 and every real
+       payment is read as a failure. Two customers were charged and told
+       nothing had happened. */
+    signMe: '1',
     MoreData: 'True',                                // makes HYP return Coin etc.
     // Buyers are agencies and producers; the catalogue and terms are in English,
     // so the card page should not switch language mid-purchase.
@@ -263,6 +268,34 @@ export async function handleReturn(req, env, ctx) {
   //     discarding it and leaving the owner to guess.
   const v = await verifyReturn(env, raw);
   if (!v.ok) {
+    /* The dangerous case, and the one that actually happened. If the redirect
+       itself asserts a capture — CCode 0, a real authorisation code, and an
+       amount matching what WE priced — then the card has been charged even
+       though we cannot verify it. Granting on an unverified claim would let a
+       forged URL mint licences, so the licence still waits. But the customer
+       must not be told their payment failed, because it did not. */
+    const looksCharged = q.CCode === '0' && /^[0-9]{4,}$/.test(String(q.ACode || ''))
+      && Math.round(parseFloat(String(q.Amount || '0')) * 100)
+         === Math.round((( await env.DB.prepare('SELECT list_amount FROM licence_requests WHERE ref = ?')
+              .bind(ref).first().catch(() => null) ) || {}).list_amount * 1.18);
+    if (looksCharged) {
+      await env.DB.prepare(
+        `UPDATE hyp_checkouts SET status = 'charged_unverified', hyp_id = ? WHERE ref = ?`
+      ).bind(String(q.Id || ''), ref).run().catch(() => {});
+      await env.DB.prepare(
+        `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
+         VALUES (?, ?, ?, ?, ?, ?)`
+      ).bind(env.ALERT_TO || 'oritoledano@gmail.com', 'Snowstar',
+        'A card was charged but the payment could not be verified',
+        `Reference ${ref}\nHYP id ${q.Id || ''}, auth code ${q.ACode || ''}, ${q.Amount || ''} ILS\n\n`
+        + `The card was charged. HYP's VERIFY call did not confirm it, so the licence has NOT been\n`
+        + `granted automatically. Check the transaction at HYP and grant it from Licensing.\n\n`
+        + `The customer has been told their payment went through and the licence is being confirmed.`,
+        ref, now()).run().catch(() => null);
+      return Response.redirect(
+        `https://snowstar.company/mutra.html?pay=confirming&ref=${encodeURIComponent(ref)}`, 302);
+    }
+
     await env.DB.prepare(
       'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
     ).bind('system:hyp', 'hyp.verify_failed', ref,

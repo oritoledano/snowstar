@@ -565,7 +565,13 @@
     catch { el.innerHTML = '<p class="acct-empty">Couldn’t load that right now.</p>'; return; }
 
     const lics = d.licences || [];
-    const reqs = (d.requests || []).filter((r) => r.status !== 'granted');
+    const open = (d.requests || []).filter((r) => r.status !== 'granted');
+    /* "In review" means a person is deciding — which is only ever true of a
+       quote. A self-serve request that has not been paid yet is not under
+       review, it is unfinished, and calling it "in review" told a customer who
+       had just been charged that somebody was still thinking about it. */
+    const reqs = open.filter((r) => r.lane === 'quote');
+    const unpaid = open.filter((r) => r.lane !== 'quote');
     countFor('licences', lics.length);
 
     if (!lics.length && !reqs.length) {
@@ -599,7 +605,11 @@
       ${reqs.length ? `<p class="acct-label acct-lic-pending">In review</p>
         <ul class="acct-list">${reqs.map((r) => `
           <li><a href="${trackLink(r.slug)}">${esc(r.slug)}</a>
-            <span class="acct-item-date">${esc(r.status)}</span></li>`).join('')}</ul>` : ''}`;
+            <span class="acct-item-date">${esc(r.status)}</span></li>`).join('')}</ul>` : ''}
+      ${unpaid.length ? `<p class="acct-label">Not finished</p>
+        <ul class="acct-list">${unpaid.map((r) => `
+          <li><a href="${trackLink(r.slug)}">${esc(r.slug)}</a>
+            <span class="acct-item-date">payment not completed</span></li>`).join('')}</ul>` : ''}`;
   }
 
   /* ═══════════ Clearlist ═══════════
