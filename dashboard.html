@@ -205,6 +205,11 @@
   .db-warn{background:var(--panel-2,rgba(128,128,128,.07));border:1px solid var(--line);
     border-left:3px solid var(--amber,#8fd8ff);border-radius:12px;padding:12px 16px;
     margin:14px 0;font-size:.86rem;line-height:1.6;color:var(--muted)}
+  .inv-mail{display:flex;align-items:center;gap:8px;margin:14px 0 2px;font-size:.86rem;
+    color:var(--text);cursor:pointer;flex-wrap:wrap}
+  .inv-mail input{accent-color:var(--amber,#8fd8ff);width:16px;height:16px}
+  .inv-row>[data-preview]{white-space:nowrap}
+  @media(max-width:640px){.inv-row{grid-template-columns:1fr auto auto}}
   .db-warn code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;
     background:rgba(128,128,128,.14);border-radius:5px;padding:1px 6px;color:var(--text)}
   @media(max-width:640px){
@@ -487,6 +492,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=19"></script>
-<script src="js/dashboard.js?v=35"></script>
+<script src="js/dashboard.js?v=36"></script>
 </body>
 </html>

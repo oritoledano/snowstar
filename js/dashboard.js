@@ -1898,7 +1898,12 @@
         חשבונית מס/קבלה and the customer gets the PDF link.</p>
       ${setup}
 
-      ${d.pending.length ? `<div class="inv-list">${d.pending.map((p) => `
+      ${d.pending.length ? `<label class="inv-mail">
+          <input type="checkbox" id="inv-email"> Email the customer their invoice
+          <span class="inv-sub" style="display:inline">— morning sends it automatically when this is on.
+            Leave it off while testing.</span>
+        </label>
+        <div class="inv-list">${d.pending.map((p) => `
         <div class="inv-row">
           <div class="inv-main">
             <b>${esc(p.licensee_name || p.email || '—')}</b>
@@ -1908,6 +1913,7 @@
             <b>${ils(Math.round(p.amount * 1.18))}</b>
             <span class="inv-sub">${ils(p.amount)} + VAT · ${when(p.granted_at)}</span>
           </div>
+          <button class="rv-btn" data-preview="${p.id}"${d.configured ? '' : ' disabled'}>Preview</button>
           <button class="rv-btn rv-ok" data-issue="${p.id}"${d.configured ? '' : ' disabled'}>Issue</button>
         </div>`).join('')}</div>`
         : '<p class="db-empty">Nothing waiting. Every paid licence has its document.</p>'}
@@ -1936,28 +1942,58 @@
       const r = await get('/invoices/whoami').catch((e) => ({ error: String(e) }));
       who.disabled = false; who.textContent = 'Which business?';
       if (!r.ok) {
-        whoOut.innerHTML = `<div class="db-warn"><b>Not connected.</b> ${esc(r.detail || r.error || '')}</div>`;
+        whoOut.innerHTML = `<div class="db-warn"><b>Not connected.</b> ${esc(r.detail || r.error || '')}
+          <details style="margin-top:8px"><summary style="cursor:pointer">What morning replied</summary>
+            <pre style="white-space:pre-wrap;font-size:.72rem;margin-top:8px">${
+              esc(JSON.stringify(r.tried || r, null, 1))}</pre></details></div>`;
         return;
       }
-      // Whichever probe answered carries the business; show the name and tax id
-      // it found, and the raw reply underneath so nothing is taken on trust.
-      const found = (r.probes || []).find((p) => p.status === 200 && p.body);
-      const biz = found && (found.body.name || found.body.companyName
-        || (found.body.business && found.body.business.name));
-      const tax = found && (found.body.taxId || found.body.vatId
-        || (found.body.business && found.body.business.taxId));
+      const b = r.business;
+      const many = (r.businesses || []).length > 1;
       whoOut.innerHTML = `<div class="db-warn">
-        <b>Connected.</b> ${biz ? `Invoices will be issued from <b>${esc(biz)}</b>${
-          tax ? ` (${esc(tax)})` : ''}.` : 'Credentials work, but no probe returned a business name — see below.'}
-        <details style="margin-top:8px"><summary style="cursor:pointer">Raw reply</summary>
+        ${r.drifted ? '<b style="color:var(--bad,#e0645a)">The business changed since you locked it.</b> '
+          + 'Issuing is blocked until you look at this.<br>' : ''}
+        <b>Connected${r.via === 'oauth' ? ' (OAuth)' : ''}.</b>
+        ${b ? `Documents will be written to <b>${esc(b.name || b.nameEn || b.id)}</b>${
+          b.taxId ? ` · ${esc(b.taxId)}` : ''}${
+          b.documentCount != null ? ` · ${b.documentCount} documents so far` : ''}.`
+           : 'Credentials work but the business could not be read — see below.'}
+        ${many ? `<br><b>This login owns ${r.businesses.length} businesses.</b> morning gives no way to
+          choose one per document — it always uses the default, and that default can be changed from
+          the morning website. Lock the right one in so a change stops issuing instead of silently
+          switching your books:` : ''}
+        ${b ? `<div style="margin-top:10px">${(r.businesses || [b]).map((x) => `
+            <button class="rv-btn${x.id === r.pinned ? ' rv-ok' : ''}" data-pin="${esc(x.id)}"
+              data-pinname="${esc(x.name || x.id)}">${x.id === r.pinned ? '✓ locked: ' : 'Lock to '}${
+              esc(x.name || x.nameEn || x.id)}${x.taxId ? ' · ' + esc(x.taxId) : ''}</button>`).join(' ')}
+          </div>` : ''}
+        <details style="margin-top:10px"><summary style="cursor:pointer">Raw reply</summary>
           <pre style="white-space:pre-wrap;font-size:.72rem;margin-top:8px">${
-            esc(JSON.stringify({ tokenMeta: r.tokenMeta, probes: r.probes }, null, 1))}</pre>
-        </details></div>`;
+            esc(JSON.stringify(r.raw, null, 1))}</pre></details></div>`;
+
+      whoOut.querySelectorAll('[data-pin]').forEach((pb) => pb.onclick = async () => {
+        await post('/invoices/pin', { business_id: pb.dataset.pin, name: pb.dataset.pinname });
+        who.click();
+      });
     };
+
+    /* Preview renders the exact document morning would produce, without creating
+       one. It is the closest thing to a draft the API has — there is no draft for
+       outgoing documents, and issuing is final the moment it returns. */
+    app.querySelectorAll('[data-preview]').forEach((b) => b.onclick = async () => {
+      b.disabled = true; b.textContent = 'Rendering…';
+      const r = await post('/invoices/preview', { licence_id: Number(b.dataset.preview) });
+      b.disabled = false; b.textContent = 'Preview';
+      if (!r.ok) { alert(r.detail || JSON.stringify(r.body || r.error)); return; }
+      const bytes = Uint8Array.from(atob(r.pdf), (c) => c.charCodeAt(0));
+      window.open(URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' })), '_blank');
+    });
 
     app.querySelectorAll('[data-issue]').forEach((b) => b.onclick = async () => {
       b.disabled = true; b.textContent = 'Issuing…';
-      const r = await post('/invoices/issue', { licence_id: Number(b.dataset.issue) });
+      const sendMail = !!(app.querySelector('#inv-email') || {}).checked;
+      const r = await post('/invoices/issue',
+        { licence_id: Number(b.dataset.issue), email: sendMail });
       if (r.error) { b.textContent = 'Failed'; alert(r.detail || r.error); }
       load();
     });

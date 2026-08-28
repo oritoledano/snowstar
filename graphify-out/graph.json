@@ -2208,264 +2208,12 @@
       "source_location": "L66"
     },
     {
-      "id": "worker_src_crypto_b64",
-      "label": "b64()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "b64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L10"
-    },
-    {
-      "id": "worker_src_crypto_pbkdf2",
-      "label": "pbkdf2()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "pbkdf2()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_crypto_peppered",
-      "label": "peppered()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "peppered()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L22"
-    },
-    {
-      "id": "worker_src_crypto_randb64",
-      "label": "randB64()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "randb64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L11"
-    },
-    {
-      "id": "worker_src_crypto_safeequal",
-      "label": "safeEqual()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "safeequal()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L38"
-    },
-    {
-      "id": "worker_src_crypto_verifypassword",
-      "label": "verifyPassword()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "verifypassword()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L46"
-    },
-    {
-      "id": "worker_src_index_randtoken",
-      "label": "randToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "randtoken()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L75"
-    },
-    {
-      "id": "worker_src_oauth_b64url",
-      "label": "b64url()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "b64url()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L32"
-    },
-    {
-      "id": "worker_src_oauth_bounce",
-      "label": "bounce()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "bounce()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L108"
-    },
-    {
-      "id": "worker_src_oauth_claimhandoff",
-      "label": "claimHandoff()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "claimhandoff()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L275"
-    },
-    {
-      "id": "worker_src_oauth_facebookdatadeletion",
-      "label": "facebookDataDeletion()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "facebookdatadeletion()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L310"
-    },
-    {
-      "id": "worker_src_oauth_finishoauth",
-      "label": "finishOAuth()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "finishoauth()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L140"
-    },
-    {
-      "id": "worker_src_oauth_issuesession",
-      "label": "issueSession()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "issuesession()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L256"
-    },
-    {
-      "id": "worker_src_oauth_linkandsignin",
-      "label": "linkAndSignIn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "linkandsignin()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L212"
-    },
-    {
-      "id": "worker_src_oauth_note",
-      "label": "note()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "note()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L84"
-    },
-    {
-      "id": "worker_src_oauth_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L30"
-    },
-    {
-      "id": "worker_src_oauth_rand",
-      "label": "rand()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "rand()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L35"
-    },
-    {
-      "id": "worker_src_oauth_redirecturi",
-      "label": "redirectUri()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "redirecturi()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L91"
-    },
-    {
-      "id": "worker_src_oauth_safereturn",
-      "label": "safeReturn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "safereturn()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L95"
-    },
-    {
-      "id": "worker_src_oauth_sha256url",
-      "label": "sha256url()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "sha256url()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L37"
-    },
-    {
-      "id": "worker_src_oauth_startoauth",
-      "label": "startOAuth()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "startoauth()",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L112"
-    },
-    {
       "id": "worker_src_profile_clean",
       "label": "clean()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "clean()",
       "source_file": "worker/src/profile.js",
@@ -2477,7 +2225,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "clearavatar()",
       "source_file": "worker/src/profile.js",
@@ -2489,7 +2237,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "json()",
       "source_file": "worker/src/profile.js",
@@ -2501,7 +2249,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "mydownloads()",
       "source_file": "worker/src/profile.js",
@@ -2513,7 +2261,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "myfavoriteslist()",
       "source_file": "worker/src/profile.js",
@@ -2525,7 +2273,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "now()",
       "source_file": "worker/src/profile.js",
@@ -2537,7 +2285,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "updateprofile()",
       "source_file": "worker/src/profile.js",
@@ -2549,7 +2297,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "uploadavatar()",
       "source_file": "worker/src/profile.js",
@@ -2561,7 +2309,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "validemail()",
       "source_file": "worker/src/profile.js",
@@ -2573,7 +2321,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "publicuser()",
       "source_file": "worker/src/user.js",
@@ -3312,304 +3060,148 @@
       "source_location": "L97"
     },
     {
-      "id": "worker_src_artists_createsubmission",
-      "label": "createSubmission()",
+      "id": "worker_src_bulk_applyops",
+      "label": "applyOps()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "createsubmission()",
-      "source_file": "worker/src/artists.js",
+      "norm_label": "applyops()",
+      "source_file": "worker/src/bulk.js",
       "source_location": "L69"
     },
     {
-      "id": "worker_src_mail_mailfrom",
-      "label": "mailFrom()",
+      "id": "worker_src_bulk_bulkartist",
+      "label": "bulkArtist()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "mailfrom()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L40"
+      "norm_label": "bulkartist()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L366"
     },
     {
-      "id": "worker_src_mail_maillive",
-      "label": "mailLive()",
+      "id": "worker_src_bulk_bulkedit",
+      "label": "bulkEdit()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "maillive()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L19"
+      "norm_label": "bulkedit()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L203"
     },
     {
-      "id": "worker_src_mail_mailto",
-      "label": "mailTo()",
+      "id": "worker_src_bulk_bulkundo",
+      "label": "bulkUndo()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "mailto()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L45"
+      "norm_label": "bulkundo()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L300"
     },
     {
-      "id": "worker_src_mail_resetemail",
-      "label": "resetEmail()",
+      "id": "worker_src_bulk_clean",
+      "label": "clean()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "resetemail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L101"
+      "norm_label": "clean()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L54"
     },
     {
-      "id": "worker_src_mail_sendmail",
-      "label": "sendMail()",
+      "id": "worker_src_bulk_diffof",
+      "label": "diffOf()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "sendmail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L73"
+      "norm_label": "diffof()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L186"
     },
     {
-      "id": "worker_src_mail_shell",
-      "label": "shell()",
+      "id": "worker_src_bulk_hash",
+      "label": "hash()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "shell()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L51"
+      "norm_label": "hash()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L348"
     },
     {
-      "id": "worker_src_rights_amenddeclaration",
-      "label": "amendDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "amenddeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L389"
-    },
-    {
-      "id": "worker_src_rights_claimstatus",
-      "label": "claimStatus()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "claimstatus()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L362"
-    },
-    {
-      "id": "worker_src_rights_cleanemail",
-      "label": "cleanEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "cleanemail()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L27"
-    },
-    {
-      "id": "worker_src_rights_countersignclaim",
-      "label": "countersignClaim()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "countersignclaim()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L337"
-    },
-    {
-      "id": "worker_src_rights_createmanagedartist",
-      "label": "createManagedArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "createmanagedartist()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L316"
-    },
-    {
-      "id": "worker_src_rights_freezetext",
-      "label": "freezeText()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "freezetext()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L48"
-    },
-    {
-      "id": "worker_src_rights_invitebody",
-      "label": "inviteBody()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "invitebody()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L161"
-    },
-    {
-      "id": "worker_src_rights_json",
+      "id": "worker_src_bulk_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L21"
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L34"
     },
     {
-      "id": "worker_src_rights_linkonsignin",
-      "label": "linkOnSignIn()",
+      "id": "worker_src_bulk_keyof",
+      "label": "keyOf()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "linkonsignin()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L281"
+      "norm_label": "keyof()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L61"
     },
     {
-      "id": "worker_src_rights_listmanagedartists",
-      "label": "listManagedArtists()",
+      "id": "worker_src_bulk_listbatches",
+      "label": "listBatches()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "listmanagedartists()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L308"
+      "norm_label": "listbatches()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L337"
     },
     {
-      "id": "worker_src_rights_listoutbox",
-      "label": "listOutbox()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "listoutbox()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L180"
-    },
-    {
-      "id": "worker_src_rights_mycredits",
-      "label": "myCredits()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "mycredits()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L240"
-    },
-    {
-      "id": "worker_src_rights_now",
+      "id": "worker_src_bulk_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L20"
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L33"
     },
     {
-      "id": "worker_src_rights_parsedeclaration",
-      "label": "parseDeclaration()",
+      "id": "worker_src_bulk_taglist",
+      "label": "tagList()",
       "_callable": true,
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "parsedeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L59"
-    },
-    {
-      "id": "worker_src_rights_recorddeclaration",
-      "label": "recordDeclaration()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "recorddeclaration()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L126"
-    },
-    {
-      "id": "worker_src_rights_respondcredit",
-      "label": "respondCredit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "respondcredit()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L256"
-    },
-    {
-      "id": "worker_src_rights_sendoutbox",
-      "label": "sendOutbox()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "sendoutbox()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L192"
-    },
-    {
-      "id": "worker_src_rights_validemail",
-      "label": "validEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "validemail()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L28"
+      "norm_label": "taglist()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L55"
     },
     {
       "id": "worker_src_analytics_alert",
@@ -3792,6 +3384,18 @@
       "source_location": "L247"
     },
     {
+      "id": "worker_src_artists_cleanuporphanuploads",
+      "label": "cleanupOrphanUploads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "cleanuporphanuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L171"
+    },
+    {
       "id": "worker_src_contact_clean",
       "label": "clean()",
       "_callable": true,
@@ -3876,16 +3480,16 @@
       "source_location": "L62"
     },
     {
-      "id": "worker_src_crypto_sha256b64",
-      "label": "sha256b64()",
+      "id": "worker_src_index_scheduled",
+      "label": "scheduled()",
       "_callable": true,
       "_origin": "ast",
       "community": 30,
       "community_name": "analytics.js",
       "file_type": "code",
-      "norm_label": "sha256b64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L13"
+      "norm_label": "scheduled()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L558"
     },
     {
       "id": "worker_src_licensing_haslivelicence",
@@ -3900,124 +3504,64 @@
       "source_location": "L363"
     },
     {
-      "id": "worker_src_session_currentuser",
-      "label": "currentUser()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "analytics.js",
-      "file_type": "code",
-      "norm_label": "currentuser()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L18"
-    },
-    {
-      "id": "worker_src_session_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "analytics.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L6"
-    },
-    {
-      "id": "worker_src_session_readcookies",
-      "label": "readCookies()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 30,
-      "community_name": "analytics.js",
-      "file_type": "code",
-      "norm_label": "readcookies()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "worker_src_artistreg_ensureartists",
-      "label": "ensureArtists()",
+      "id": "worker_src_agent_clampbpm",
+      "label": "clampBpm()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "artistreg.js",
+      "community_name": "agent.js",
       "file_type": "code",
-      "norm_label": "ensureartists()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L42"
+      "norm_label": "clampbpm()",
+      "source_file": "worker/src/agent.js",
+      "source_location": "L85"
     },
     {
-      "id": "worker_src_artistreg_json",
+      "id": "worker_src_agent_clamplist",
+      "label": "clampList()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "agent.js",
+      "file_type": "code",
+      "norm_label": "clamplist()",
+      "source_file": "worker/src/agent.js",
+      "source_location": "L79"
+    },
+    {
+      "id": "worker_src_agent_extractjson",
+      "label": "extractJson()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "agent.js",
+      "file_type": "code",
+      "norm_label": "extractjson()",
+      "source_file": "worker/src/agent.js",
+      "source_location": "L96"
+    },
+    {
+      "id": "worker_src_agent_interpretbrief",
+      "label": "interpretBrief()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 31,
+      "community_name": "agent.js",
+      "file_type": "code",
+      "norm_label": "interpretbrief()",
+      "source_file": "worker/src/agent.js",
+      "source_location": "L107"
+    },
+    {
+      "id": "worker_src_agent_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 31,
-      "community_name": "artistreg.js",
+      "community_name": "agent.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "worker_src_artistreg_listartists",
-      "label": "listArtists()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "artistreg.js",
-      "file_type": "code",
-      "norm_label": "listartists()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L30"
-    },
-    {
-      "id": "worker_src_artistreg_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "artistreg.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L18"
-    },
-    {
-      "id": "worker_src_artistreg_saveartist",
-      "label": "saveArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "artistreg.js",
-      "file_type": "code",
-      "norm_label": "saveartist()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L70"
-    },
-    {
-      "id": "worker_src_artistreg_splitnames",
-      "label": "splitNames()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 31,
-      "community_name": "artistreg.js",
-      "file_type": "code",
-      "norm_label": "splitnames()",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L26"
-    },
-    {
-      "id": "worker_src_index_authed",
-      "label": "authed()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "handle",
-      "file_type": "code",
-      "norm_label": "authed()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L134"
+      "source_file": "worker/src/agent.js",
+      "source_location": "L24"
     },
     {
       "id": "worker_src_index_clearthrottle",
@@ -4044,18 +3588,6 @@
       "source_location": "L84"
     },
     {
-      "id": "worker_src_index_fetch",
-      "label": "fetch()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "handle",
-      "file_type": "code",
-      "norm_label": "fetch()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L561"
-    },
-    {
       "id": "worker_src_index_handle",
       "label": "handle()",
       "_callable": true,
@@ -4066,18 +3598,6 @@
       "norm_label": "handle()",
       "source_file": "worker/src/index.js",
       "source_location": "L147"
-    },
-    {
-      "id": "worker_src_index_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "handle",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L68"
     },
     {
       "id": "worker_src_index_now",
@@ -4320,160 +3840,604 @@
       "source_location": "L31"
     },
     {
-      "id": "worker_src_artists_cleanuporphanuploads",
-      "label": "cleanupOrphanUploads()",
+      "id": "worker_src_artists_createsubmission",
+      "label": "createSubmission()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "cleanuporphanuploads()",
+      "norm_label": "createsubmission()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L171"
+      "source_location": "L69"
     },
     {
-      "id": "worker_src_index_scheduled",
-      "label": "scheduled()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "scheduled()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L556"
-    },
-    {
-      "id": "worker_src_members_deletemember",
-      "label": "deleteMember()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "deletemember()",
-      "source_file": "worker/src/members.js",
-      "source_location": "L38"
-    },
-    {
-      "id": "worker_src_members_json",
+      "id": "worker_src_artists_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/members.js",
+      "source_file": "worker/src/artists.js",
       "source_location": "L15"
     },
     {
-      "id": "worker_src_members_memberdetail",
-      "label": "memberDetail()",
+      "id": "worker_src_artists_listartistsadmin",
+      "label": "listArtistsAdmin()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "memberdetail()",
-      "source_file": "worker/src/members.js",
-      "source_location": "L84"
+      "norm_label": "listartistsadmin()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L190"
     },
     {
-      "id": "worker_src_members_now",
+      "id": "worker_src_artists_listsubmissions",
+      "label": "listSubmissions()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "listsubmissions()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L210"
+    },
+    {
+      "id": "worker_src_artists_myuploads",
+      "label": "myUploads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "myuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L39"
+    },
+    {
+      "id": "worker_src_artists_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/members.js",
+      "source_file": "worker/src/artists.js",
       "source_location": "L14"
     },
     {
-      "id": "worker_src_members_updatemember",
-      "label": "updateMember()",
+      "id": "worker_src_artists_queuereviewmail",
+      "label": "queueReviewMail()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "updatemember()",
-      "source_file": "worker/src/members.js",
-      "source_location": "L21"
+      "norm_label": "queuereviewmail()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L267"
     },
     {
-      "id": "worker_src_share_esc",
-      "label": "esc()",
+      "id": "worker_src_artists_registerartist",
+      "label": "registerArtist()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "esc()",
-      "source_file": "worker/src/share.js",
-      "source_location": "L15"
+      "norm_label": "registerartist()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L29"
     },
     {
-      "id": "worker_src_share_sharepage",
-      "label": "sharePage()",
+      "id": "worker_src_artists_reviewsubmission",
+      "label": "reviewSubmission()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "sharepage()",
-      "source_file": "worker/src/share.js",
-      "source_location": "L23"
+      "norm_label": "reviewsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L235"
     },
     {
-      "id": "worker_src_trash_emptytrash",
-      "label": "emptyTrash()",
+      "id": "worker_src_artists_slug",
+      "label": "slug()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "emptytrash()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L77"
+      "norm_label": "slug()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L25"
     },
     {
-      "id": "worker_src_trash_json",
+      "id": "worker_src_artists_streamsubmission",
+      "label": "streamSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "streamsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L134"
+    },
+    {
+      "id": "worker_src_artists_uploadtrack",
+      "label": "uploadTrack()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "uploadtrack()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L54"
+    },
+    {
+      "id": "worker_src_mail_mailfrom",
+      "label": "mailFrom()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "mailfrom()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L40"
+    },
+    {
+      "id": "worker_src_mail_maillive",
+      "label": "mailLive()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "maillive()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "worker_src_mail_mailto",
+      "label": "mailTo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "mailto()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "worker_src_mail_resetemail",
+      "label": "resetEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "resetemail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L101"
+    },
+    {
+      "id": "worker_src_mail_sendmail",
+      "label": "sendMail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "sendmail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L73"
+    },
+    {
+      "id": "worker_src_mail_shell",
+      "label": "shell()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "shell()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L51"
+    },
+    {
+      "id": "worker_src_oauth_b64url",
+      "label": "b64url()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "b64url()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L32"
+    },
+    {
+      "id": "worker_src_oauth_bounce",
+      "label": "bounce()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "bounce()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L108"
+    },
+    {
+      "id": "worker_src_oauth_claimhandoff",
+      "label": "claimHandoff()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "claimhandoff()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L275"
+    },
+    {
+      "id": "worker_src_oauth_facebookdatadeletion",
+      "label": "facebookDataDeletion()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "facebookdatadeletion()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L310"
+    },
+    {
+      "id": "worker_src_oauth_finishoauth",
+      "label": "finishOAuth()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "finishoauth()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L140"
+    },
+    {
+      "id": "worker_src_oauth_issuesession",
+      "label": "issueSession()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "issuesession()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L256"
+    },
+    {
+      "id": "worker_src_oauth_linkandsignin",
+      "label": "linkAndSignIn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "linkandsignin()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L212"
+    },
+    {
+      "id": "worker_src_oauth_note",
+      "label": "note()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "note()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L84"
+    },
+    {
+      "id": "worker_src_oauth_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L30"
+    },
+    {
+      "id": "worker_src_oauth_rand",
+      "label": "rand()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "rand()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L35"
+    },
+    {
+      "id": "worker_src_oauth_redirecturi",
+      "label": "redirectUri()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "redirecturi()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L91"
+    },
+    {
+      "id": "worker_src_oauth_safereturn",
+      "label": "safeReturn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "safereturn()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L95"
+    },
+    {
+      "id": "worker_src_oauth_sha256url",
+      "label": "sha256url()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "sha256url()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "worker_src_oauth_startoauth",
+      "label": "startOAuth()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "startoauth()",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L112"
+    },
+    {
+      "id": "worker_src_rights_amenddeclaration",
+      "label": "amendDeclaration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "amenddeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L389"
+    },
+    {
+      "id": "worker_src_rights_claimstatus",
+      "label": "claimStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "claimstatus()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L362"
+    },
+    {
+      "id": "worker_src_rights_cleanemail",
+      "label": "cleanEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "cleanemail()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L27"
+    },
+    {
+      "id": "worker_src_rights_countersignclaim",
+      "label": "countersignClaim()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "countersignclaim()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L337"
+    },
+    {
+      "id": "worker_src_rights_createmanagedartist",
+      "label": "createManagedArtist()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "createmanagedartist()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L316"
+    },
+    {
+      "id": "worker_src_rights_freezetext",
+      "label": "freezeText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "freezetext()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L48"
+    },
+    {
+      "id": "worker_src_rights_invitebody",
+      "label": "inviteBody()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "invitebody()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L161"
+    },
+    {
+      "id": "worker_src_rights_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L16"
+      "source_file": "worker/src/rights.js",
+      "source_location": "L21"
     },
     {
-      "id": "worker_src_trash_listtrash",
-      "label": "listTrash()",
+      "id": "worker_src_rights_linkonsignin",
+      "label": "linkOnSignIn()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "listtrash()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L50"
+      "norm_label": "linkonsignin()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L281"
     },
     {
-      "id": "worker_src_trash_restorefromtrash",
-      "label": "restoreFromTrash()",
+      "id": "worker_src_rights_listmanagedartists",
+      "label": "listManagedArtists()",
       "_callable": true,
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "restorefromtrash()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L115"
+      "norm_label": "listmanagedartists()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L308"
+    },
+    {
+      "id": "worker_src_rights_listoutbox",
+      "label": "listOutbox()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "listoutbox()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L180"
+    },
+    {
+      "id": "worker_src_rights_mycredits",
+      "label": "myCredits()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "mycredits()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L240"
+    },
+    {
+      "id": "worker_src_rights_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L20"
+    },
+    {
+      "id": "worker_src_rights_parsedeclaration",
+      "label": "parseDeclaration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "parsedeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L59"
+    },
+    {
+      "id": "worker_src_rights_recorddeclaration",
+      "label": "recordDeclaration()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "recorddeclaration()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L126"
+    },
+    {
+      "id": "worker_src_rights_respondcredit",
+      "label": "respondCredit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "respondcredit()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L256"
+    },
+    {
+      "id": "worker_src_rights_sendoutbox",
+      "label": "sendOutbox()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "sendoutbox()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L192"
+    },
+    {
+      "id": "worker_src_rights_validemail",
+      "label": "validEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "validemail()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L28"
     },
     {
       "id": "tools_make_package_art_coeffs",
@@ -5712,136 +5676,172 @@
       "source_location": "L226"
     },
     {
-      "id": "worker_src_artists_json",
+      "id": "worker_src_index_authed",
+      "label": "authed()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "authed()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L134"
+    },
+    {
+      "id": "worker_src_index_fetch",
+      "label": "fetch()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "fetch()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L563"
+    },
+    {
+      "id": "worker_src_index_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/artists.js",
+      "source_file": "worker/src/index.js",
+      "source_location": "L68"
+    },
+    {
+      "id": "worker_src_members_deletemember",
+      "label": "deleteMember()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "deletemember()",
+      "source_file": "worker/src/members.js",
+      "source_location": "L38"
+    },
+    {
+      "id": "worker_src_members_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/members.js",
       "source_location": "L15"
     },
     {
-      "id": "worker_src_artists_listartistsadmin",
-      "label": "listArtistsAdmin()",
+      "id": "worker_src_members_memberdetail",
+      "label": "memberDetail()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "listartistsadmin()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L190"
+      "norm_label": "memberdetail()",
+      "source_file": "worker/src/members.js",
+      "source_location": "L84"
     },
     {
-      "id": "worker_src_artists_listsubmissions",
-      "label": "listSubmissions()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "artists.js",
-      "file_type": "code",
-      "norm_label": "listsubmissions()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L210"
-    },
-    {
-      "id": "worker_src_artists_myuploads",
-      "label": "myUploads()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 43,
-      "community_name": "artists.js",
-      "file_type": "code",
-      "norm_label": "myuploads()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L39"
-    },
-    {
-      "id": "worker_src_artists_now",
+      "id": "worker_src_members_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/artists.js",
+      "source_file": "worker/src/members.js",
       "source_location": "L14"
     },
     {
-      "id": "worker_src_artists_queuereviewmail",
-      "label": "queueReviewMail()",
+      "id": "worker_src_members_updatemember",
+      "label": "updateMember()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "queuereviewmail()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L267"
+      "norm_label": "updatemember()",
+      "source_file": "worker/src/members.js",
+      "source_location": "L21"
     },
     {
-      "id": "worker_src_artists_registerartist",
-      "label": "registerArtist()",
+      "id": "worker_src_share_esc",
+      "label": "esc()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "registerartist()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L29"
+      "norm_label": "esc()",
+      "source_file": "worker/src/share.js",
+      "source_location": "L15"
     },
     {
-      "id": "worker_src_artists_reviewsubmission",
-      "label": "reviewSubmission()",
+      "id": "worker_src_share_sharepage",
+      "label": "sharePage()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "reviewsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L235"
+      "norm_label": "sharepage()",
+      "source_file": "worker/src/share.js",
+      "source_location": "L23"
     },
     {
-      "id": "worker_src_artists_slug",
-      "label": "slug()",
+      "id": "worker_src_trash_emptytrash",
+      "label": "emptyTrash()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "slug()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L25"
+      "norm_label": "emptytrash()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L77"
     },
     {
-      "id": "worker_src_artists_streamsubmission",
-      "label": "streamSubmission()",
+      "id": "worker_src_trash_json",
+      "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "streamsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L134"
+      "norm_label": "json()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L16"
     },
     {
-      "id": "worker_src_artists_uploadtrack",
-      "label": "uploadTrack()",
+      "id": "worker_src_trash_listtrash",
+      "label": "listTrash()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "uploadtrack()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L54"
+      "norm_label": "listtrash()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L50"
+    },
+    {
+      "id": "worker_src_trash_restorefromtrash",
+      "label": "restoreFromTrash()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "restorefromtrash()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L115"
     },
     {
       "id": "worker_src_artistprofile_approveclaim",
@@ -5985,7 +5985,7 @@
       "file_type": "code",
       "norm_label": "clean()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L37"
+      "source_location": "L43"
     },
     {
       "id": "worker_src_greeninvoice_configured",
@@ -5997,7 +5997,7 @@
       "file_type": "code",
       "norm_label": "configured()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L39"
+      "source_location": "L45"
     },
     {
       "id": "worker_src_greeninvoice_draftfor",
@@ -6009,7 +6009,43 @@
       "file_type": "code",
       "norm_label": "draftfor()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L69"
+      "source_location": "L197"
+    },
+    {
+      "id": "worker_src_greeninvoice_findbyref",
+      "label": "findByRef()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "greeninvoice.js",
+      "file_type": "code",
+      "norm_label": "findbyref()",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L486"
+    },
+    {
+      "id": "worker_src_greeninvoice_gettoken",
+      "label": "getToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "greeninvoice.js",
+      "file_type": "code",
+      "norm_label": "gettoken()",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_greeninvoice_guardbusiness",
+      "label": "guardBusiness()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "greeninvoice.js",
+      "file_type": "code",
+      "norm_label": "guardbusiness()",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L91"
     },
     {
       "id": "worker_src_greeninvoice_issueinvoice",
@@ -6021,7 +6057,7 @@
       "file_type": "code",
       "norm_label": "issueinvoice()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L202"
+      "source_location": "L392"
     },
     {
       "id": "worker_src_greeninvoice_json",
@@ -6033,7 +6069,7 @@
       "file_type": "code",
       "norm_label": "json()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L30"
+      "source_location": "L36"
     },
     {
       "id": "worker_src_greeninvoice_listinvoices",
@@ -6045,7 +6081,7 @@
       "file_type": "code",
       "norm_label": "listinvoices()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L167"
+      "source_location": "L357"
     },
     {
       "id": "worker_src_greeninvoice_now",
@@ -6057,7 +6093,43 @@
       "file_type": "code",
       "norm_label": "now()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L36"
+      "source_location": "L42"
+    },
+    {
+      "id": "worker_src_greeninvoice_pinbusiness",
+      "label": "pinBusiness()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "greeninvoice.js",
+      "file_type": "code",
+      "norm_label": "pinbusiness()",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L70"
+    },
+    {
+      "id": "worker_src_greeninvoice_pinnedbusiness",
+      "label": "pinnedBusiness()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "greeninvoice.js",
+      "file_type": "code",
+      "norm_label": "pinnedbusiness()",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L64"
+    },
+    {
+      "id": "worker_src_greeninvoice_previewinvoice",
+      "label": "previewInvoice()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 45,
+      "community_name": "greeninvoice.js",
+      "file_type": "code",
+      "norm_label": "previewinvoice()",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L326"
     },
     {
       "id": "worker_src_greeninvoice_retryinvoice",
@@ -6069,7 +6141,7 @@
       "file_type": "code",
       "norm_label": "retryinvoice()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L269"
+      "source_location": "L501"
     },
     {
       "id": "worker_src_greeninvoice_token",
@@ -6081,7 +6153,7 @@
       "file_type": "code",
       "norm_label": "token()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L46"
+      "source_location": "L183"
     },
     {
       "id": "worker_src_greeninvoice_whoami",
@@ -6093,7 +6165,7 @@
       "file_type": "code",
       "norm_label": "whoami()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L115"
+      "source_location": "L249"
     },
     {
       "id": "js_mutra_analyse_analyse",
@@ -6192,232 +6264,136 @@
       "source_location": "L193"
     },
     {
-      "id": "worker_src_bulk_applyops",
-      "label": "applyOps()",
+      "id": "worker_src_crypto_b64",
+      "label": "b64()",
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "applyops()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L69"
+      "norm_label": "b64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L10"
     },
     {
-      "id": "worker_src_bulk_bulkartist",
-      "label": "bulkArtist()",
+      "id": "worker_src_crypto_pbkdf2",
+      "label": "pbkdf2()",
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "bulkartist()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L366"
+      "norm_label": "pbkdf2()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L29"
     },
     {
-      "id": "worker_src_bulk_bulkedit",
-      "label": "bulkEdit()",
+      "id": "worker_src_crypto_peppered",
+      "label": "peppered()",
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "bulkedit()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L203"
-    },
-    {
-      "id": "worker_src_bulk_bulkundo",
-      "label": "bulkUndo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "bulkundo()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L300"
-    },
-    {
-      "id": "worker_src_bulk_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L54"
-    },
-    {
-      "id": "worker_src_bulk_diffof",
-      "label": "diffOf()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "diffof()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L186"
-    },
-    {
-      "id": "worker_src_bulk_hash",
-      "label": "hash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "hash()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L348"
-    },
-    {
-      "id": "worker_src_bulk_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L34"
-    },
-    {
-      "id": "worker_src_bulk_keyof",
-      "label": "keyOf()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "keyof()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L61"
-    },
-    {
-      "id": "worker_src_bulk_listbatches",
-      "label": "listBatches()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "listbatches()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L337"
-    },
-    {
-      "id": "worker_src_bulk_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L33"
-    },
-    {
-      "id": "worker_src_bulk_taglist",
-      "label": "tagList()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "taglist()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L55"
-    },
-    {
-      "id": "worker_src_ownership_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L23"
-    },
-    {
-      "id": "worker_src_ownership_getowner",
-      "label": "getOwner()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "getowner()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L153"
-    },
-    {
-      "id": "worker_src_ownership_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "worker_src_ownership_notifyrename",
-      "label": "notifyRename()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "notifyrename()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L46"
-    },
-    {
-      "id": "worker_src_ownership_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 48,
-      "community_name": "bulk.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/ownership.js",
+      "norm_label": "peppered()",
+      "source_file": "worker/src/crypto.js",
       "source_location": "L22"
     },
     {
-      "id": "worker_src_ownership_ownerof",
-      "label": "ownerOf()",
+      "id": "worker_src_crypto_randb64",
+      "label": "randB64()",
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "ownerof()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L26"
+      "norm_label": "randb64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L11"
     },
     {
-      "id": "worker_src_ownership_reassignowner",
-      "label": "reassignOwner()",
+      "id": "worker_src_crypto_safeequal",
+      "label": "safeEqual()",
       "_callable": true,
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "reassignowner()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L91"
+      "norm_label": "safeequal()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L38"
+    },
+    {
+      "id": "worker_src_crypto_sha256b64",
+      "label": "sha256b64()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 48,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "sha256b64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L13"
+    },
+    {
+      "id": "worker_src_crypto_verifypassword",
+      "label": "verifyPassword()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 48,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "verifypassword()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_index_randtoken",
+      "label": "randToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 48,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "randtoken()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L75"
+    },
+    {
+      "id": "worker_src_session_currentuser",
+      "label": "currentUser()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 48,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "currentuser()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "worker_src_session_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 48,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "worker_src_session_readcookies",
+      "label": "readCookies()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 48,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "readcookies()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L8"
     },
     {
       "id": "worker_src_stacks_clean",
@@ -6696,64 +6672,160 @@
       "source_location": "L49"
     },
     {
-      "id": "worker_src_agent_clampbpm",
-      "label": "clampBpm()",
+      "id": "worker_src_artistreg_ensureartists",
+      "label": "ensureArtists()",
       "_callable": true,
       "_origin": "ast",
       "community": 51,
-      "community_name": "agent.js",
+      "community_name": "artistreg.js",
       "file_type": "code",
-      "norm_label": "clampbpm()",
-      "source_file": "worker/src/agent.js",
-      "source_location": "L85"
+      "norm_label": "ensureartists()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L42"
     },
     {
-      "id": "worker_src_agent_clamplist",
-      "label": "clampList()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "agent.js",
-      "file_type": "code",
-      "norm_label": "clamplist()",
-      "source_file": "worker/src/agent.js",
-      "source_location": "L79"
-    },
-    {
-      "id": "worker_src_agent_extractjson",
-      "label": "extractJson()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "agent.js",
-      "file_type": "code",
-      "norm_label": "extractjson()",
-      "source_file": "worker/src/agent.js",
-      "source_location": "L96"
-    },
-    {
-      "id": "worker_src_agent_interpretbrief",
-      "label": "interpretBrief()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 51,
-      "community_name": "agent.js",
-      "file_type": "code",
-      "norm_label": "interpretbrief()",
-      "source_file": "worker/src/agent.js",
-      "source_location": "L107"
-    },
-    {
-      "id": "worker_src_agent_json",
+      "id": "worker_src_artistreg_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 51,
-      "community_name": "agent.js",
+      "community_name": "artistreg.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/agent.js",
-      "source_location": "L24"
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "worker_src_artistreg_listartists",
+      "label": "listArtists()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 51,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "listartists()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L30"
+    },
+    {
+      "id": "worker_src_artistreg_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 51,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "worker_src_artistreg_saveartist",
+      "label": "saveArtist()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 51,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "saveartist()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L70"
+    },
+    {
+      "id": "worker_src_artistreg_splitnames",
+      "label": "splitNames()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 51,
+      "community_name": "artistreg.js",
+      "file_type": "code",
+      "norm_label": "splitnames()",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "worker_src_ownership_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L23"
+    },
+    {
+      "id": "worker_src_ownership_getowner",
+      "label": "getOwner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "getowner()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L153"
+    },
+    {
+      "id": "worker_src_ownership_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "worker_src_ownership_notifyrename",
+      "label": "notifyRename()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "notifyrename()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_ownership_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "worker_src_ownership_ownerof",
+      "label": "ownerOf()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "ownerof()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "worker_src_ownership_reassignowner",
+      "label": "reassignOwner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "reassignowner()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L91"
     },
     {
       "id": "js_dashboard_commitreview",
@@ -6909,7 +6981,7 @@
       "file_type": "code",
       "norm_label": "paintcollections()",
       "source_file": "js/dashboard.js",
-      "source_location": "L2033"
+      "source_location": "L2098"
     },
     {
       "id": "js_dashboard_paintcoupons",
@@ -6921,7 +6993,7 @@
       "file_type": "code",
       "norm_label": "paintcoupons()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1944"
+      "source_location": "L2009"
     },
     {
       "id": "js_dashboard_paintinbox",
@@ -8031,88 +8103,11 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_crypto",
-      "label": "crypto.js",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "crypto.js",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_crypto_enc",
-      "label": "enc",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "enc",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L7"
-    },
-    {
-      "id": "worker_src_crypto_pbkdf2_iters",
-      "label": "PBKDF2_ITERS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "pbkdf2_iters",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "worker_src_oauth",
-      "label": "oauth.js",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "oauth.js",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_oauth_enc",
-      "label": "enc",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "enc",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "worker_src_oauth_kill_legacy_cookie",
-      "label": "KILL_LEGACY_COOKIE",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "kill_legacy_cookie",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L28"
-    },
-    {
-      "id": "worker_src_oauth_providers",
-      "label": "PROVIDERS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "oauth.js",
-      "file_type": "code",
-      "norm_label": "providers",
-      "source_file": "worker/src/oauth.js",
-      "source_location": "L41"
-    },
-    {
       "id": "worker_src_profile",
       "label": "profile.js",
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "profile.js",
       "source_file": "worker/src/profile.js",
@@ -8123,7 +8118,7 @@
       "label": "FIELD_COLS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "field_cols",
       "source_file": "worker/src/profile.js",
@@ -8134,7 +8129,7 @@
       "label": "IMG_EXT",
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "img_ext",
       "source_file": "worker/src/profile.js",
@@ -8145,7 +8140,7 @@
       "label": "user.js",
       "_origin": "ast",
       "community": 2,
-      "community_name": "oauth.js",
+      "community_name": "profile.js",
       "file_type": "code",
       "norm_label": "user.js",
       "source_file": "worker/src/user.js",
@@ -8435,48 +8430,37 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_mail",
-      "label": "mail.js",
+      "id": "worker_src_bulk",
+      "label": "bulk.js",
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "mail.js",
-      "source_file": "worker/src/mail.js",
+      "norm_label": "bulk.js",
+      "source_file": "worker/src/bulk.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_mail_senders",
-      "label": "SENDERS",
+      "id": "worker_src_bulk_set_fields",
+      "label": "SET_FIELDS",
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "senders",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L33"
+      "norm_label": "set_fields",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L52"
     },
     {
-      "id": "worker_src_rights",
-      "label": "rights.js",
+      "id": "worker_src_bulk_tag_fields",
+      "label": "TAG_FIELDS",
       "_origin": "ast",
       "community": 3,
-      "community_name": "rights.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "rights.js",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_rights_rights_texts",
-      "label": "RIGHTS_TEXTS",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "rights_texts",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L31"
+      "norm_label": "tag_fields",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L47"
     },
     {
       "id": "worker_src_analytics",
@@ -8534,26 +8518,26 @@
       "source_location": "L34"
     },
     {
-      "id": "worker_src_session",
-      "label": "session.js",
+      "id": "worker_src_agent",
+      "label": "agent.js",
       "_origin": "ast",
-      "community": 30,
-      "community_name": "analytics.js",
+      "community": 31,
+      "community_name": "agent.js",
       "file_type": "code",
-      "norm_label": "session.js",
-      "source_file": "worker/src/session.js",
+      "norm_label": "agent.js",
+      "source_file": "worker/src/agent.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_artistreg",
-      "label": "artistreg.js",
+      "id": "worker_src_agent_list_fields",
+      "label": "LIST_FIELDS",
       "_origin": "ast",
       "community": 31,
-      "community_name": "artistreg.js",
+      "community_name": "agent.js",
       "file_type": "code",
-      "norm_label": "artistreg.js",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L1"
+      "norm_label": "list_fields",
+      "source_file": "worker/src/agent.js",
+      "source_location": "L42"
     },
     {
       "id": "worker_src_site",
@@ -8578,70 +8562,114 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_index",
-      "label": "index.js",
+      "id": "worker_src_artists",
+      "label": "artists.js",
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "index.js",
-      "source_file": "worker/src/index.js",
+      "norm_label": "artists.js",
+      "source_file": "worker/src/artists.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_index_allowed_origins",
-      "label": "ALLOWED_ORIGINS",
+      "id": "worker_src_artists_audio_ext",
+      "label": "AUDIO_EXT",
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "allowed_origins",
-      "source_file": "worker/src/index.js",
-      "source_location": "L64"
+      "norm_label": "audio_ext",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L21"
     },
     {
-      "id": "worker_src_index_products",
-      "label": "PRODUCTS",
+      "id": "worker_src_mail",
+      "label": "mail.js",
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "products",
-      "source_file": "worker/src/index.js",
-      "source_location": "L81"
-    },
-    {
-      "id": "worker_src_members",
-      "label": "members.js",
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "members.js",
-      "source_file": "worker/src/members.js",
+      "norm_label": "mail.js",
+      "source_file": "worker/src/mail.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_share",
-      "label": "share.js",
+      "id": "worker_src_mail_senders",
+      "label": "SENDERS",
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "share.js",
-      "source_file": "worker/src/share.js",
+      "norm_label": "senders",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L33"
+    },
+    {
+      "id": "worker_src_oauth",
+      "label": "oauth.js",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "oauth.js",
+      "source_file": "worker/src/oauth.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_trash",
-      "label": "trash.js",
+      "id": "worker_src_oauth_enc",
+      "label": "enc",
       "_origin": "ast",
       "community": 34,
-      "community_name": "index.js",
+      "community_name": "rights.js",
       "file_type": "code",
-      "norm_label": "trash.js",
-      "source_file": "worker/src/trash.js",
+      "norm_label": "enc",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "worker_src_oauth_kill_legacy_cookie",
+      "label": "KILL_LEGACY_COOKIE",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "kill_legacy_cookie",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L28"
+    },
+    {
+      "id": "worker_src_oauth_providers",
+      "label": "PROVIDERS",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "providers",
+      "source_file": "worker/src/oauth.js",
+      "source_location": "L41"
+    },
+    {
+      "id": "worker_src_rights",
+      "label": "rights.js",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "rights.js",
+      "source_file": "worker/src/rights.js",
       "source_location": "L1"
+    },
+    {
+      "id": "worker_src_rights_rights_texts",
+      "label": "RIGHTS_TEXTS",
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "rights.js",
+      "file_type": "code",
+      "norm_label": "rights_texts",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L31"
     },
     {
       "id": "tools_make_package_art",
@@ -9055,26 +9083,70 @@
       "source_location": "L7"
     },
     {
-      "id": "worker_src_artists",
-      "label": "artists.js",
+      "id": "worker_src_index",
+      "label": "index.js",
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "artists.js",
-      "source_file": "worker/src/artists.js",
+      "norm_label": "index.js",
+      "source_file": "worker/src/index.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_artists_audio_ext",
-      "label": "AUDIO_EXT",
+      "id": "worker_src_index_allowed_origins",
+      "label": "ALLOWED_ORIGINS",
       "_origin": "ast",
       "community": 43,
-      "community_name": "artists.js",
+      "community_name": "index.js",
       "file_type": "code",
-      "norm_label": "audio_ext",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L21"
+      "norm_label": "allowed_origins",
+      "source_file": "worker/src/index.js",
+      "source_location": "L64"
+    },
+    {
+      "id": "worker_src_index_products",
+      "label": "PRODUCTS",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "products",
+      "source_file": "worker/src/index.js",
+      "source_location": "L81"
+    },
+    {
+      "id": "worker_src_members",
+      "label": "members.js",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "members.js",
+      "source_file": "worker/src/members.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_share",
+      "label": "share.js",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "share.js",
+      "source_file": "worker/src/share.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_trash",
+      "label": "trash.js",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "trash.js",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L1"
     },
     {
       "id": "worker_src_artistprofile",
@@ -9107,18 +9179,7 @@
       "file_type": "code",
       "norm_label": "doc_invoice_receipt",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L28"
-    },
-    {
-      "id": "worker_src_greeninvoice_probes",
-      "label": "PROBES",
-      "_origin": "ast",
-      "community": 45,
-      "community_name": "greeninvoice.js",
-      "file_type": "code",
-      "norm_label": "probes",
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L112"
+      "source_location": "L34"
     },
     {
       "id": "worker_src_greeninvoice_tokencache",
@@ -9129,7 +9190,7 @@
       "file_type": "code",
       "norm_label": "tokencache",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L44"
+      "source_location": "L117"
     },
     {
       "id": "payouts",
@@ -9227,47 +9288,47 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_bulk",
-      "label": "bulk.js",
+      "id": "worker_src_crypto",
+      "label": "crypto.js",
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "bulk.js",
-      "source_file": "worker/src/bulk.js",
+      "norm_label": "crypto.js",
+      "source_file": "worker/src/crypto.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_bulk_set_fields",
-      "label": "SET_FIELDS",
+      "id": "worker_src_crypto_enc",
+      "label": "enc",
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "set_fields",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L52"
+      "norm_label": "enc",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L7"
     },
     {
-      "id": "worker_src_bulk_tag_fields",
-      "label": "TAG_FIELDS",
+      "id": "worker_src_crypto_pbkdf2_iters",
+      "label": "PBKDF2_ITERS",
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "tag_fields",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L47"
+      "norm_label": "pbkdf2_iters",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L8"
     },
     {
-      "id": "worker_src_ownership",
-      "label": "ownership.js",
+      "id": "worker_src_session",
+      "label": "session.js",
       "_origin": "ast",
       "community": 48,
-      "community_name": "bulk.js",
+      "community_name": "crypto.js",
       "file_type": "code",
-      "norm_label": "ownership.js",
-      "source_file": "worker/src/ownership.js",
+      "norm_label": "session.js",
+      "source_file": "worker/src/session.js",
       "source_location": "L1"
     },
     {
@@ -9568,26 +9629,26 @@
       "source_location": "L58"
     },
     {
-      "id": "worker_src_agent",
-      "label": "agent.js",
+      "id": "worker_src_artistreg",
+      "label": "artistreg.js",
       "_origin": "ast",
       "community": 51,
-      "community_name": "agent.js",
+      "community_name": "artistreg.js",
       "file_type": "code",
-      "norm_label": "agent.js",
-      "source_file": "worker/src/agent.js",
+      "norm_label": "artistreg.js",
+      "source_file": "worker/src/artistreg.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_agent_list_fields",
-      "label": "LIST_FIELDS",
+      "id": "worker_src_ownership",
+      "label": "ownership.js",
       "_origin": "ast",
-      "community": 51,
-      "community_name": "agent.js",
+      "community": 52,
+      "community_name": "ownership.js",
       "file_type": "code",
-      "norm_label": "list_fields",
-      "source_file": "worker/src/agent.js",
-      "source_location": "L42"
+      "norm_label": "ownership.js",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L1"
     },
     {
       "id": "js_dashboard",
@@ -12014,7 +12075,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2037",
+      "source_location": "L2102",
       "weight": 1.0
     },
     {
@@ -12026,7 +12087,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1950",
+      "source_location": "L2015",
       "weight": 1.0
     },
     {
@@ -12038,7 +12099,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1975",
+      "source_location": "L2040",
       "weight": 1.0
     },
     {
@@ -18026,7 +18087,67 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L77",
+      "source_location": "L209",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_findbyref",
+      "target": "worker_src_greeninvoice_gettoken",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L487",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_findbyref",
+      "target": "worker_src_greeninvoice_json",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L495",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_gettoken",
+      "target": "worker_src_greeninvoice_json",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_guardbusiness",
+      "target": "worker_src_greeninvoice_pinnedbusiness",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_guardbusiness",
+      "target": "worker_src_greeninvoice_json",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L94",
       "weight": 1.0
     },
     {
@@ -18038,7 +18159,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L203",
+      "source_location": "L393",
       "weight": 1.0
     },
     {
@@ -18050,7 +18171,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L204",
+      "source_location": "L394",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_issueinvoice",
+      "target": "worker_src_greeninvoice_gettoken",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L411",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_issueinvoice",
+      "target": "worker_src_greeninvoice_guardbusiness",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L413",
       "weight": 1.0
     },
     {
@@ -18062,7 +18207,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L224",
+      "source_location": "L421",
       "weight": 1.0
     },
     {
@@ -18074,19 +18219,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L233",
+      "source_location": "L430",
       "weight": 1.0
     },
     {
       "source": "worker_src_greeninvoice_issueinvoice",
-      "target": "worker_src_greeninvoice_token",
+      "target": "worker_src_greeninvoice_findbyref",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L237",
+      "source_location": "L446",
       "weight": 1.0
     },
     {
@@ -18098,7 +18243,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L256",
+      "source_location": "L452",
       "weight": 1.0
     },
     {
@@ -18110,7 +18255,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L168",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
@@ -18122,7 +18267,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L188",
+      "source_location": "L378",
       "weight": 1.0
     },
     {
@@ -18134,7 +18279,91 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L189",
+      "source_location": "L379",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_pinbusiness",
+      "target": "worker_src_greeninvoice_json",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_pinbusiness",
+      "target": "worker_src_greeninvoice_clean",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_pinbusiness",
+      "target": "worker_src_greeninvoice_now",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_previewinvoice",
+      "target": "worker_src_greeninvoice_json",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L327",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_previewinvoice",
+      "target": "worker_src_greeninvoice_configured",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L328",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_previewinvoice",
+      "target": "worker_src_greeninvoice_draftfor",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L338",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_previewinvoice",
+      "target": "worker_src_greeninvoice_gettoken",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L340",
       "weight": 1.0
     },
     {
@@ -18146,19 +18375,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L270",
+      "source_location": "L502",
       "weight": 1.0
     },
     {
       "source": "worker_src_greeninvoice_token",
-      "target": "worker_src_greeninvoice_json",
+      "target": "worker_src_greeninvoice_gettoken",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L53",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -18170,7 +18399,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L116",
+      "source_location": "L250",
       "weight": 1.0
     },
     {
@@ -18182,7 +18411,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L117",
+      "source_location": "L251",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_whoami",
+      "target": "worker_src_greeninvoice_gettoken",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice_whoami",
+      "target": "worker_src_greeninvoice_pinnedbusiness",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -18410,7 +18663,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L563",
+      "source_location": "L565",
       "weight": 1.0
     },
     {
@@ -18422,7 +18675,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L566",
+      "source_location": "L568",
       "weight": 1.0
     },
     {
@@ -18955,7 +19208,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_greeninvoice_issueinvoice",
+      "target": "worker_src_greeninvoice_pinbusiness",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18967,7 +19220,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_greeninvoice_retryinvoice",
+      "target": "worker_src_greeninvoice_previewinvoice",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18979,7 +19232,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistprofile_listprofiles",
+      "target": "worker_src_greeninvoice_issueinvoice",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L221",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_greeninvoice_retryinvoice",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18991,19 +19256,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistprofile_saveprofile",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L223",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_artistprofile_uploadartistphoto",
+      "target": "worker_src_artistprofile_listprofiles",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19015,7 +19268,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistprofile_deleteprofile",
+      "target": "worker_src_artistprofile_saveprofile",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19027,7 +19280,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistprofile_setmanager",
+      "target": "worker_src_artistprofile_uploadartistphoto",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19039,7 +19292,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistprofile_approveclaim",
+      "target": "worker_src_artistprofile_deleteprofile",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19051,7 +19304,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_ownership_getowner",
+      "target": "worker_src_artistprofile_setmanager",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L228",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_artistprofile_approveclaim",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19063,19 +19328,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_ownership_reassignowner",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L230",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_artists_listsubmissions",
+      "target": "worker_src_ownership_getowner",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19087,7 +19340,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artists_reviewsubmission",
+      "target": "worker_src_ownership_reassignowner",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19099,31 +19352,31 @@
     },
     {
       "source": "worker_src_index_handle",
+      "target": "worker_src_artists_listsubmissions",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_artists_reviewsubmission",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L234",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
       "target": "worker_src_rights_mycredits",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L235",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_rights_respondcredit",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L236",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_rights_claimstatus",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19135,7 +19388,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_countersignclaim",
+      "target": "worker_src_rights_respondcredit",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19147,7 +19400,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_listmanagedartists",
+      "target": "worker_src_rights_claimstatus",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19159,7 +19412,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_createmanagedartist",
+      "target": "worker_src_rights_countersignclaim",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19171,7 +19424,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_listoutbox",
+      "target": "worker_src_rights_listmanagedartists",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19183,7 +19436,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_sendoutbox",
+      "target": "worker_src_rights_createmanagedartist",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19195,31 +19448,31 @@
     },
     {
       "source": "worker_src_index_handle",
+      "target": "worker_src_rights_listoutbox",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L243",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_rights_sendoutbox",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L244",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
       "target": "worker_src_rights_amenddeclaration",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L245",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_artistreg_listartists",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L246",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_artistreg_ensureartists",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19231,7 +19484,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistreg_saveartist",
+      "target": "worker_src_artistreg_listartists",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19243,7 +19496,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_listchannels",
+      "target": "worker_src_artistreg_ensureartists",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19255,7 +19508,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_addchannel",
+      "target": "worker_src_artistreg_saveartist",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19267,7 +19520,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_removechannel",
+      "target": "worker_src_clearlist_listchannels",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19279,7 +19532,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_allchannels",
+      "target": "worker_src_clearlist_addchannel",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19291,7 +19544,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_setchannelstatus",
+      "target": "worker_src_clearlist_removechannel",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19303,7 +19556,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_profile_uploadavatar",
+      "target": "worker_src_clearlist_allchannels",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19315,7 +19568,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_profile_clearavatar",
+      "target": "worker_src_clearlist_setchannelstatus",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19327,7 +19580,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_listoverrides",
+      "target": "worker_src_profile_uploadavatar",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19339,7 +19592,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_saveoverride",
+      "target": "worker_src_profile_clearavatar",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19351,7 +19604,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_bulkedit",
+      "target": "worker_src_catalog_listoverrides",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L258",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_catalog_saveoverride",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19363,19 +19628,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_bulkundo",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L260",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_listbatches",
+      "target": "worker_src_bulk_bulkedit",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19387,7 +19640,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_bulkartist",
+      "target": "worker_src_bulk_bulkundo",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19399,7 +19652,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_listuses",
+      "target": "worker_src_bulk_listbatches",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_bulk_bulkartist",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19411,19 +19676,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_saveuse",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L265",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_listorigtitles",
+      "target": "worker_src_catalog_listuses",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19435,7 +19688,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_setorigtitle",
+      "target": "worker_src_catalog_saveuse",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19447,7 +19700,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_stacks_liststacks",
+      "target": "worker_src_catalog_listorigtitles",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L268",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_catalog_setorigtitle",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19459,19 +19724,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_stacks_savestack",
+      "target": "worker_src_stacks_liststacks",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L270",
+      "source_location": "L271",
       "weight": 1.0
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_agent_interpretbrief",
+      "target": "worker_src_stacks_savestack",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19483,7 +19748,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_jobs_listjobs",
+      "target": "worker_src_agent_interpretbrief",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19495,19 +19760,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_jobs_savejob",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L275",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_jobs_exportjobs",
+      "target": "worker_src_jobs_listjobs",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19519,7 +19772,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_pricing_getclasses",
+      "target": "worker_src_jobs_savejob",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19531,7 +19784,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_pricing_setclasses",
+      "target": "worker_src_jobs_exportjobs",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19543,7 +19796,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_uploadcover",
+      "target": "worker_src_pricing_getclasses",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19555,7 +19808,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_site_listtexts",
+      "target": "worker_src_pricing_setclasses",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19567,7 +19820,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_site_savetext",
+      "target": "worker_src_catalog_uploadcover",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19579,7 +19832,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_site_listnotes",
+      "target": "worker_src_site_listtexts",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19591,7 +19844,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_site_savenote",
+      "target": "worker_src_site_savetext",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19603,7 +19856,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_site_deletenote",
+      "target": "worker_src_site_listnotes",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19615,31 +19868,31 @@
     },
     {
       "source": "worker_src_index_handle",
+      "target": "worker_src_site_savenote",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L285",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_site_deletenote",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L286",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
       "target": "worker_src_works_listlogos",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L287",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_works_savelogo",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L288",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_works_reorderlogos",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19651,7 +19904,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_works_deletelogo",
+      "target": "worker_src_works_savelogo",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19663,31 +19916,31 @@
     },
     {
       "source": "worker_src_index_handle",
+      "target": "worker_src_works_reorderlogos",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L291",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_works_deletelogo",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L292",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
       "target": "worker_src_profile_updateprofile",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L293",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_profile_mydownloads",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L294",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_profile_myfavoriteslist",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19699,31 +19952,31 @@
     },
     {
       "source": "worker_src_index_handle",
+      "target": "worker_src_profile_mydownloads",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_profile_myfavoriteslist",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L297",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
       "target": "worker_src_hyp_startcheckout",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L300",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_hyp_handlereturn",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/index.js",
-      "source_location": "L301",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_index_handle",
-      "target": "worker_src_hyp_liststale",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19735,6 +19988,30 @@
     },
     {
       "source": "worker_src_index_handle",
+      "target": "worker_src_hyp_handlereturn",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L303",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
+      "target": "worker_src_hyp_liststale",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
       "target": "worker_src_hyp_hypstatus",
       "relation": "calls",
       "_origin": "ast",
@@ -19742,7 +20019,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L305",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -19754,7 +20031,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L309",
+      "source_location": "L311",
       "weight": 1.0
     },
     {
@@ -19766,7 +20043,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L310",
+      "source_location": "L312",
       "weight": 1.0
     },
     {
@@ -19778,7 +20055,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L311",
+      "source_location": "L313",
       "weight": 1.0
     },
     {
@@ -19790,7 +20067,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L315",
+      "source_location": "L317",
       "weight": 1.0
     },
     {
@@ -19802,7 +20079,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L316",
+      "source_location": "L318",
       "weight": 1.0
     },
     {
@@ -19814,7 +20091,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L317",
+      "source_location": "L319",
       "weight": 1.0
     },
     {
@@ -19826,7 +20103,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L318",
+      "source_location": "L320",
       "weight": 1.0
     },
     {
@@ -19838,7 +20115,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L319",
+      "source_location": "L321",
       "weight": 1.0
     },
     {
@@ -19850,7 +20127,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L320",
+      "source_location": "L322",
       "weight": 1.0
     },
     {
@@ -19862,7 +20139,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L321",
+      "source_location": "L323",
       "weight": 1.0
     },
     {
@@ -19874,7 +20151,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L322",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -19886,7 +20163,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L324",
+      "source_location": "L326",
       "weight": 1.0
     },
     {
@@ -19898,7 +20175,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L325",
+      "source_location": "L327",
       "weight": 1.0
     },
     {
@@ -19910,7 +20187,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L326",
+      "source_location": "L328",
       "weight": 1.0
     },
     {
@@ -19922,7 +20199,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L332",
+      "source_location": "L334",
       "weight": 1.0
     },
     {
@@ -19934,7 +20211,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L333",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -19946,7 +20223,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L333",
+      "source_location": "L335",
       "weight": 1.0
     },
     {
@@ -19958,7 +20235,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L346",
+      "source_location": "L348",
       "weight": 1.0
     },
     {
@@ -19970,7 +20247,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L350",
+      "source_location": "L352",
       "weight": 1.0
     },
     {
@@ -19982,7 +20259,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L355",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -19994,7 +20271,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L356",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
@@ -20006,7 +20283,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L358",
+      "source_location": "L360",
       "weight": 1.0
     },
     {
@@ -20018,7 +20295,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L367",
+      "source_location": "L369",
       "weight": 1.0
     },
     {
@@ -20030,7 +20307,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L371",
+      "source_location": "L373",
       "weight": 1.0
     },
     {
@@ -20042,7 +20319,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L373",
+      "source_location": "L375",
       "weight": 1.0
     },
     {
@@ -20054,7 +20331,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L374",
+      "source_location": "L376",
       "weight": 1.0
     },
     {
@@ -20066,7 +20343,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L399",
+      "source_location": "L401",
       "weight": 1.0
     },
     {
@@ -20078,7 +20355,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L401",
+      "source_location": "L403",
       "weight": 1.0
     },
     {
@@ -20090,7 +20367,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L422",
+      "source_location": "L424",
       "weight": 1.0
     },
     {
@@ -20102,7 +20379,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L442",
+      "source_location": "L444",
       "weight": 1.0
     },
     {
@@ -20114,7 +20391,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L451",
+      "source_location": "L453",
       "weight": 1.0
     },
     {
@@ -20126,7 +20403,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L451",
+      "source_location": "L453",
       "weight": 1.0
     },
     {
@@ -20150,7 +20427,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L557",
+      "source_location": "L559",
       "weight": 1.0
     },
     {
@@ -20162,7 +20439,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L558",
+      "source_location": "L560",
       "weight": 1.0
     },
     {
@@ -24166,6 +24443,30 @@
     },
     {
       "source": "worker_src_index",
+      "target": "worker_src_greeninvoice_pinbusiness",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "worker/src/index.js",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index",
+      "target": "worker_src_greeninvoice_previewinvoice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "worker/src/index.js",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index",
       "target": "worker_src_greeninvoice_retryinvoice",
       "relation": "imports",
       "_origin": "ast",
@@ -25916,7 +26217,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1944",
+      "source_location": "L2009",
       "weight": 1.0
     },
     {
@@ -25927,7 +26228,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L2033",
+      "source_location": "L2098",
       "weight": 1.0
     },
     {
@@ -30959,123 +31260,24 @@
     },
     {
       "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_probes",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L112",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_whoami",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L115",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_listinvoices",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L167",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_issueinvoice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L202",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_retryinvoice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L269",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_doc_invoice_receipt",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L28",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_json",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L30",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_now",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L36",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_clean",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L37",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_configured",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L39",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
       "target": "worker_src_greeninvoice_tokencache",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L44",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_gettoken",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -31086,7 +31288,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L46",
+      "source_location": "L183",
       "weight": 1.0
     },
     {
@@ -31097,7 +31299,161 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L69",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_whoami",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L249",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_previewinvoice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L326",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_doc_invoice_receipt",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_listinvoices",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L357",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_json",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_issueinvoice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L392",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_now",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_clean",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_configured",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_findbyref",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L486",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_retryinvoice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L501",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_pinnedbusiness",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_pinbusiness",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_guardbusiness",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -31306,7 +31662,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/index.js",
-      "source_location": "L556",
+      "source_location": "L558",
       "weight": 1.0
     },
     {
@@ -31317,7 +31673,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/index.js",
-      "source_location": "L561",
+      "source_location": "L563",
       "weight": 1.0
     },
     {
@@ -36356,5 +36712,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "ff41d3a548fadb4869c07e6f66a37f032dadee7e"
+  "built_at_commit": "ffb94779811c76ebf21fa569558991dd375e2513"
 }
