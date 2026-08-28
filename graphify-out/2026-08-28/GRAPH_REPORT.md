@@ -1,16 +1,16 @@
 # Graph Report - snowstar  (2026-08-28)
 
 ## Corpus Check
-- 75 files · ~387,153 words
+- 75 files · ~387,735 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 914 nodes · 2164 edges · 53 communities (51 shown, 2 thin omitted)
+- 915 nodes · 2167 edges · 53 communities (51 shown, 2 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 88 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `771a17b3`
+- Built from commit: `15536297`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -67,14 +67,14 @@
 - stacks.js
 - make-character-art.py
 - agent.js
-- trash.js
+- profile.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `handle()` - 143 edges
 2. `Mutra royalty-free music catalogue page` - 33 edges
-3. `load()` - 22 edges
+3. `load()` - 23 edges
 4. `render()` - 22 edges
-5. `paint()` - 19 edges
+5. `paint()` - 20 edges
 6. `Snowstar agency homepage` - 19 edges
 7. `buildRow()` - 18 edges
 8. `toggle()` - 16 edges
@@ -112,8 +112,8 @@ Cohesion: 0.06
 Nodes (74): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+66 more)
 
 ### Community 2 - "oauth.js"
-Cohesion: 0.14
-Nodes (29): b64url(), bounce(), claimHandoff(), enc, facebookDataDeletion(), finishOAuth(), issueSession(), KILL_LEGACY_COOKIE (+21 more)
+Cohesion: 0.29
+Nodes (17): b64url(), bounce(), claimHandoff(), enc, facebookDataDeletion(), finishOAuth(), issueSession(), KILL_LEGACY_COOKIE (+9 more)
 
 ### Community 3 - "rights.js"
 Cohesion: 0.12
@@ -128,8 +128,8 @@ Cohesion: 0.07
 Nodes (30): applyWorkFilter(), buildClientRows(), buildMarqueeRow(), buildWorkGrid(), cardObserver, categorize(), cg, FACETS (+22 more)
 
 ### Community 6 - "dashboard.js"
-Cohesion: 0.15
-Nodes (34): commitReview(), gate(), gauge(), jobsShown(), load(), openDeclEditor(), openMember(), openReviewNote() (+26 more)
+Cohesion: 0.14
+Nodes (35): commitReview(), gate(), gauge(), jobsShown(), load(), openDeclEditor(), openMember(), openReviewNote() (+27 more)
 
 ### Community 7 - "works-admin.js"
 Cohesion: 0.18
@@ -224,8 +224,8 @@ Cohesion: 0.62
 Nodes (6): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNames()
 
 ### Community 32 - "index.js"
-Cohesion: 0.15
-Nodes (28): ALLOWED_ORIGINS, authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), now() (+20 more)
+Cohesion: 0.13
+Nodes (32): ALLOWED_ORIGINS, authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), now() (+24 more)
 
 ### Community 33 - "certificate.js"
 Cohesion: 0.52
@@ -303,9 +303,9 @@ Nodes (10): backdrop(), figure(), grain(), lerp(), make(), Character art without
 Cohesion: 0.48
 Nodes (6): clampBpm(), clampList(), extractJson(), interpretBrief(), json(), LIST_FIELDS
 
-### Community 52 - "trash.js"
-Cohesion: 0.70
-Nodes (4): emptyTrash(), json(), listTrash(), restoreFromTrash()
+### Community 52 - "profile.js"
+Cohesion: 0.25
+Nodes (12): clean(), clearAvatar(), FIELD_COLS, IMG_EXT, json(), myDownloads(), myFavoritesList(), now() (+4 more)
 
 ## Knowledge Gaps
 - **101 isolated node(s):** `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS`, `nav`, `menuBtn` (+96 more)
@@ -327,5 +327,5 @@ _Questions this graph is uniquely positioned to answer:_
   _101 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `mutra-page.js` be split into smaller, more focused modules?**
   _Cohesion score 0.061416397296503084 - nodes in this community are weakly interconnected._
-- **Should `oauth.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.14112903225806453 - nodes in this community are weakly interconnected._
+- **Should `rights.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.11627906976744186 - nodes in this community are weakly interconnected._

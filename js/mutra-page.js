@@ -670,8 +670,15 @@
     for (const [parent, kids] of Object.entries(STACKS))
       for (const k of kids) PARENT_OF[k] = parent;
   }
+  /* Versions of a track, narrowed by whatever is currently filtered.
+     Opening a stack under an Instrumental filter must not hand back the vocal
+     cut — the fold is a way of tidying results, not a way around them. With no
+     filter on, `matches` is true for everything and the whole stack comes back,
+     which is why the default view is unchanged. Curate mode keeps the raw list:
+     you cannot restructure a stack whose members the filter has hidden. */
   const childrenOf = (slug) =>
-    (STACKS[slug] || []).map(sl => MUTRA.tracks.find(t => t.slug === sl)).filter(Boolean);
+    (STACKS[slug] || []).map(sl => MUTRA.tracks.find(t => t.slug === sl))
+      .filter(t => t && !DELETED.has(t.slug) && (curateMode || matches(t)));
 
   async function loadStacks() {
     try {
@@ -728,20 +735,24 @@
    * happens.
    */
   function render(forceKeep) {
-    /* A version is not a separate result. It is reachable by opening its
-       parent, and while filtering it still counts — a stack whose CHILD matches
-       the filter surfaces via the parent, so narrowing to "Instrumental" never
-       silently hides the instrumental cut of a vocal track. */
+    /* Nothing appears that did not match. A version normally hides inside its
+       parent, but if the filter picked the version and not the parent, the
+       VERSION is what gets the row — filtering to Instrumental must not answer
+       with the vocal parent of Kaviar Woman just because its instrumental cut
+       is somewhere underneath. The old rule surfaced the parent instead, which
+       put the exact thing you filtered away at the top of the results. */
     /* Deleted tracks are filtered before anything else, including before the
        owner's Hidden view — hidden and deleted are different states and the
        point of deleted is that it is gone from every view. */
     const hit = new Set(MUTRA.tracks.filter(t => !DELETED.has(t.slug)).filter(matches).map(t => t.slug));
     list = MUTRA.tracks.filter(t => {
       if (DELETED.has(t.slug)) return false;
+      if (!hit.has(t.slug)) return false;
       const parent = PARENT_OF[t.slug];
-      if (parent && !curateMode) return false;          // shown under its parent
-      if (hit.has(t.slug)) return true;
-      return !parent && (STACKS[t.slug] || []).some(c => hit.has(c));
+      // Curating is the one place the catalogue is shown flat: you cannot drag a
+      // version out of a stack you are not allowed to see.
+      if (!parent || curateMode) return true;
+      return !hit.has(parent);                          // promoted; nothing left to fold it under
     }).sort(SORTERS[state.sort] || SORTERS.picks);
 
     const key = list.map(t => t.slug).join('|');
@@ -774,6 +785,8 @@
   function buildRow(track, i) {
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
+      // Counted after the filter, so a "+2" can never open to reveal one.
+      const kids = childrenOf(track.slug);
       // one of each kind up front, the rest still in the DOM and revealed by
       // the hover marquee — same trick the long titles use
       const tagSet = (arr, cls, facet) => (arr || []).map((v, i) =>
@@ -793,11 +806,11 @@
             <div class="trk-artist">${artistLinks(track.artist)}${PARENT_OF[track.slug] && curateMode
               ? '<button class="trk-unstack" title="Take this out of its stack">unstack</button>' : ''}</div>
           </div>
-          ${(STACKS[track.slug] || []).length
+          ${kids.length
             ? `<button class="trk-stack" aria-expanded="${openStacks.has(track.slug)}"
-                 title="${STACKS[track.slug].length} other version${
-                 STACKS[track.slug].length > 1 ? 's' : ''} of this track">${
-                 openStacks.has(track.slug) ? '−' : '+'}${STACKS[track.slug].length}</button>`
+                 title="${kids.length} other version${
+                 kids.length > 1 ? 's' : ''} of this track">${
+                 openStacks.has(track.slug) ? '−' : '+'}${kids.length}</button>`
             : ''}
         </div>
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
