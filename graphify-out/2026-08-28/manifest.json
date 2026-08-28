@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1787944047.565573,
-    "seen": 1787944053.8074749,
-    "ast_hash": "5e79441ea3388c7a4c1a6b3722d4940e",
+    "mtime": 1787944083.83691,
+    "seen": 1787944089.4144142,
+    "ast_hash": "ca291d13e5fa06578605f67c286d706a",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -288,14 +288,14 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1787942900.0373225,
-    "seen": 1787944031.649865,
+    "mtime": 1787944083.8756084,
+    "seen": 1787944089.414471,
     "ast_hash": "43e103a98bb548390a32474adbb81cd0",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1787942900.0376775,
-    "seen": 1787944031.6498659,
+    "mtime": 1787944083.8759692,
+    "seen": 1787944089.414471,
     "ast_hash": "5212dfcc6a88f26a0199aca2060c0f94",
     "semantic_hash": ""
   },
@@ -306,62 +306,62 @@
     "semantic_hash": ""
   },
   "contact.html": {
-    "mtime": 1787942900.0379622,
-    "seen": 1787944031.649867,
+    "mtime": 1787944083.8762412,
+    "seen": 1787944089.414473,
     "ast_hash": "eb69178853aed64f007971506d541745",
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787942900.0383108,
-    "seen": 1787944031.649868,
-    "ast_hash": "81c256df581d0607c25d9f0102dd79ac",
+    "mtime": 1787944083.8766518,
+    "seen": 1787944089.414474,
+    "ast_hash": "184eb82c37d7da2b8a283b1cdffcc3e5",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1787942900.0386744,
-    "seen": 1787944031.649869,
+    "mtime": 1787944083.8770173,
+    "seen": 1787944089.414475,
     "ast_hash": "6dad0d7e3de8a96af2c487789ce20076",
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1787944047.6236959,
-    "seen": 1787944053.80754,
-    "ast_hash": "c613177dee0e99fda208a972f300758c",
+    "mtime": 1787944083.87759,
+    "seen": 1787944089.414476,
+    "ast_hash": "441b39d6630eb97bf99fa1774909df27",
     "semantic_hash": ""
   },
   "privacy.html": {
-    "mtime": 1787942900.039399,
-    "seen": 1787944031.649874,
+    "mtime": 1787944083.8780868,
+    "seen": 1787944089.414476,
     "ast_hash": "58923bfd7ce0f4527ade458e80250192",
     "semantic_hash": "58923bfd7ce0f4527ade458e80250192"
   },
   "refund.html": {
-    "mtime": 1787942900.0397666,
-    "seen": 1787944031.649875,
+    "mtime": 1787944083.8784099,
+    "seen": 1787944089.414477,
     "ast_hash": "13dc20051aa51d66572dec59d5f9d85e",
     "semantic_hash": "13dc20051aa51d66572dec59d5f9d85e"
   },
   "reset.html": {
-    "mtime": 1787942900.040186,
-    "seen": 1787944031.649875,
+    "mtime": 1787944083.8787076,
+    "seen": 1787944089.414478,
     "ast_hash": "3f11ef32dcf0099f8e177d62d1841406",
     "semantic_hash": "3f11ef32dcf0099f8e177d62d1841406"
   },
   "review.html": {
-    "mtime": 1787942900.040636,
-    "seen": 1787944031.6498759,
+    "mtime": 1787944083.8789847,
+    "seen": 1787944089.414479,
     "ast_hash": "f29b5f16a29502c619b5c0396ccbbdf0",
     "semantic_hash": "f29b5f16a29502c619b5c0396ccbbdf0"
   },
   "stats.html": {
-    "mtime": 1787942900.0410094,
-    "seen": 1787944031.649877,
+    "mtime": 1787944083.879311,
+    "seen": 1787944089.41448,
     "ast_hash": "f2c8e3a89e05226a5beedc749d4b0b93",
     "semantic_hash": "f2c8e3a89e05226a5beedc749d4b0b93"
   },
   "terms.html": {
-    "mtime": 1787942900.0414355,
-    "seen": 1787944031.649878,
+    "mtime": 1787944083.879618,
+    "seen": 1787944089.41448,
     "ast_hash": "77c3d6211227a48ed95739951fe2f5e3",
     "semantic_hash": "77c3d6211227a48ed95739951fe2f5e3"
   },

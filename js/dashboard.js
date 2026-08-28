@@ -2003,9 +2003,13 @@
             <label class="ar-f"><span>How they look — used to draw the package</span>
               <textarea class="pk-look" rows="2" maxlength="400"
                 placeholder="A suited secret agent in a doorway, pistol low, neon behind him">${esc(c.blurb)}</textarea></label>
-            <div class="pk-art">${c.art
-              ? `<img src="${esc(c.art)}" alt=""><span>Package artwork</span>`
-              : '<span class="db-empty" style="padding:0">No artwork yet.</span>'}</div>` : ''}
+            <div class="pk-art">
+              ${c.art ? `<img src="${esc(c.art)}" alt="">` : ''}
+              <label class="rv-btn pk-artbtn">${c.art ? 'Replace artwork' : 'Upload artwork'}
+                <input type="file" class="pk-artfile" accept="image/jpeg,image/png,image/webp,image/avif" hidden></label>
+              <span class="db-empty" style="padding:0;font-size:.78rem">A tall portrait works best —
+                the package crops to a case shape and the lower third is covered by the title.</span>
+            </div>` : ''}
             <label class="ar-f"><span>Tracks in this ${W.one}</span>
               <textarea class="pk-slugs" rows="3" placeholder="One slug per line, or comma separated">${
                 esc((c.tracks || []).join(', '))}</textarea></label>
@@ -2048,6 +2052,22 @@
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
       });
     });
+
+    /* Art uploads on choosing, like the artist photo — a file input that only
+       takes effect on Save is the one everyone forgets to press. */
+    app.querySelectorAll('.pk-artfile').forEach((inp) => inp.addEventListener('change', async () => {
+      const f = inp.files && inp.files[0];
+      if (!f) return;
+      const card = inp.closest('.pk-card');
+      const msg = card.querySelector('.pk-msg');
+      msg.textContent = 'Uploading artwork…';
+      const r = await fetch('/api/collections/art?id=' + card.dataset.id, {
+        method: 'PUT', credentials: 'same-origin',
+        headers: { 'content-type': f.type }, body: f,
+      }).then((x) => x.json()).catch(() => null);
+      msg.textContent = r && r.ok ? 'Artwork saved.' : 'Artwork failed.';
+      if (r && r.ok) load();
+    }));
 
     app.querySelectorAll('.pk-save').forEach((b) => b.addEventListener('click', async () => {
       const card = b.closest('.pk-card'), id = Number(card.dataset.id);

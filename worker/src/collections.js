@@ -160,3 +160,34 @@ export async function setCollectionTracks(req, env, user) {
 
   return json({ ok: true, added: slugs.length });
 }
+
+
+/**
+ * PUT /collections/art?id= — raw image body, straight to R2.
+ *
+ * The character's picture. Uploaded rather than generated because generated art
+ * costs credits and a character can perfectly well be drawn, commissioned or
+ * pulled from a shoot — the package does not care where the picture came from.
+ * Named by the Worker, not the caller, so nothing can overwrite another key.
+ */
+export async function uploadCollectionArt(req, env, user, url) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const id = Number(url.searchParams.get('id'));
+  if (!Number.isInteger(id)) return json({ error: 'bad_id' }, 400);
+
+  const type = req.headers.get('content-type') || '';
+  if (!/^image\/(jpeg|png|webp|avif)$/.test(type)) return json({ error: 'bad_type' }, 415);
+  const buf = await req.arrayBuffer();
+  if (!buf.byteLength || buf.byteLength > 8 * 1024 * 1024) return json({ error: 'bad_size' }, 413);
+
+  const ext = type.split('/')[1].replace('jpeg', 'jpg');
+  // Timestamped so a replacement is never served from the cache of the one it
+  // replaced — the same trap the track covers fell into.
+  const key = `mutra/collections/${id}-${Date.now()}.${ext}`;
+  await env.MEDIA.put(key, buf, {
+    httpMetadata: { contentType: type, cacheControl: 'public, max-age=31536000' },
+  });
+  const publicUrl = `https://cdn.snowstar.company/${key}`;
+  await env.DB.prepare('UPDATE collections SET art = ? WHERE id = ?').bind(publicUrl, id).run();
+  return json({ ok: true, url: publicUrl });
+}

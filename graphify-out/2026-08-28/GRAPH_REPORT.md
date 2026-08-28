@@ -1,11 +1,11 @@
 # Graph Report - snowstar  (2026-08-28)
 
 ## Corpus Check
-- 72 files · ~383,578 words
+- 72 files · ~383,641 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 878 nodes · 2096 edges · 51 communities (49 shown, 2 thin omitted)
+- 878 nodes · 2097 edges · 51 communities (49 shown, 2 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 88 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
@@ -64,7 +64,7 @@
 - Paying artists their cut
 - mutra-analyse.js
 - ownership.js
-- handle
+- site.js
 - trash.js
 
 ## God Nodes (most connected - your core abstractions)
@@ -107,7 +107,7 @@ Nodes (9): build(), catalogueVocab(), chip(), close(), interpret(), open(), pain
 
 ### Community 1 - "mutra-page.js"
 Cohesion: 0.06
-Nodes (72): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+64 more)
+Nodes (74): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+66 more)
 
 ### Community 2 - "bulk.js"
 Cohesion: 0.29
@@ -214,16 +214,16 @@ Cohesion: 0.22
 Nodes (26): build(), buyerId(), cards(), close(), crumbs(), go(), goToCard(), onCards() (+18 more)
 
 ### Community 30 - "analytics.js"
-Cohesion: 0.15
-Nodes (26): alert(), ALERT_KINDS, alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json() (+18 more)
+Cohesion: 0.14
+Nodes (28): alert(), ALERT_KINDS, alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json() (+20 more)
 
 ### Community 31 - "artistreg.js"
 Cohesion: 0.62
 Nodes (6): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNames()
 
 ### Community 32 - "index.js"
-Cohesion: 0.19
-Nodes (14): cleanupOrphanUploads(), ALLOWED_ORIGINS, PRODUCTS, scheduled(), deleteMember(), json(), memberDetail(), updateMember() (+6 more)
+Cohesion: 0.15
+Nodes (24): ALLOWED_ORIGINS, authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), now() (+16 more)
 
 ### Community 33 - "certificate.js"
 Cohesion: 0.52
@@ -289,9 +289,9 @@ Nodes (7): analyse(), chroma(), correlate(), detectBpm(), detectKey(), detectVoc
 Cohesion: 0.57
 Nodes (7): clean(), getOwner(), json(), notifyRename(), now(), ownerOf(), reassignOwner()
 
-### Community 49 - "handle"
-Cohesion: 0.17
-Nodes (20): authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), now(), originOk() (+12 more)
+### Community 49 - "site.js"
+Cohesion: 0.44
+Nodes (8): deleteNote(), json(), listNotes(), listTexts(), now(), saveNote(), saveText(), storageReport()
 
 ### Community 50 - "trash.js"
 Cohesion: 0.70
@@ -316,6 +316,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS` to the rest of the system?**
   _99 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `mutra-page.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.061122538936232734 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.061416397296503084 - nodes in this community are weakly interconnected._
 - **Should `rights.js` be split into smaller, more focused modules?**
   _Cohesion score 0.11962833914053426 - nodes in this community are weakly interconnected._
