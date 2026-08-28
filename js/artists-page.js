@@ -37,6 +37,50 @@
   }
   const get = (path) => fetch('/api' + path, { credentials: 'same-origin' }).then((r) => r.json());
 
+  /* ── the tag vocabulary ──────────────────────────────────────────────────
+     Derived, never listed. The shipped catalogue is merged with the owner's
+     server-side patches — the same two sources mutra-page.js's refreshVocab()
+     uses — so a tag added on the catalogue this morning is offerable here this
+     afternoon without anyone editing this file. A hardcoded list would be
+     wrong the first time a tag was added, and silently wrong after that.
+
+     If /api/tracks fails we keep the shipped catalogue: still a real list of
+     tags in use, just missing today's edits. */
+  let VOCAB = [];
+  const CANON = new Map();               // lowercase -> the catalogue's spelling
+
+  async function loadVocab() {
+    const M = window.MUTRA;
+    if (!M || !Array.isArray(M.tracks)) return;
+    let patches = {};
+    try { patches = (await get('/tracks')).overrides || {}; } catch { /* shipped only */ }
+
+    const seen = new Set();
+    const add = (v) => {
+      const s = String(v == null ? '' : v).trim();
+      if (!s || seen.has(s.toLowerCase())) return;
+      seen.add(s.toLowerCase());
+      CANON.set(s.toLowerCase(), s);
+    };
+    for (const t of M.tracks) {
+      const p = patches[t.slug] || {};
+      for (const k of ['genres', 'moods', 'characteristics', 'instruments']) {
+        for (const v of (p[k] || t[k] || [])) add(v);
+      }
+    }
+    VOCAB = [...CANON.values()].sort((a, b) => a.localeCompare(b));
+
+    const dl = document.getElementById('dl-uptags');
+    if (dl) dl.innerHTML = VOCAB.map((v) => `<option value="${esc(v)}"></option>`).join('');
+  }
+  loadVocab();
+
+  /** Match what someone typed to the catalogue's spelling, so "blues" files
+      alongside "Blues" instead of beside it. Unknown tags are kept as typed —
+      an artist describing their own music should not be silently overruled. */
+  const canonTag = (v) => CANON.get(String(v || '').trim().toLowerCase()) || String(v || '').trim();
+  const isKnownTag = (v) => CANON.has(String(v || '').trim().toLowerCase());
+
   // ── state machine: gate / register / dashboard, plus credits & claims ──
   let lastUser = null;
   async function render() {
@@ -149,7 +193,7 @@
                      // sent; `found` records what was suggested, so a field the
                      // uploader has corrected is never quietly overwritten by a
                      // later re-analysis.
-                     meta: { bpm: null, key: null, scale: null, vocal: null, lyrics: '', tags: [], links: [] },
+                     meta: { bpm: null, key: null, scale: null, vocal: null, duration: null, lyrics: '', tags: [], links: [] },
                      found: null, analysing: false, analyseStep: '' };
       staged.push(item);
 
@@ -164,6 +208,9 @@
             item.found = r;
             item.meta.bpm = r.bpm; item.meta.key = r.key;
             item.meta.scale = r.scale; item.meta.vocal = r.vocal;
+            // Duration was measured and shown but never copied onto meta, so it
+            // was thrown away in the browser before the submission was posted.
+            item.meta.duration = r.duration;
             if (r.title) item.title = r.title;
             paintStaged();
           })
@@ -223,7 +270,8 @@
               placeholder="Paste the words — used for search and for the licence certificate">${esc(s.meta.lyrics)}</textarea></label>` : ''}
           <label class="up-lyr">Tags
             <input class="up-tags" data-i="${i}" value="${esc((s.meta.tags || []).join(', '))}"
-              list="dl-uptags" placeholder="Comma separated — mood, genre, instrument"></label>
+              list="dl-uptags" placeholder="Start typing — pick from the tags we use">
+            <span class="up-newtags" hidden></span></label>
           <label class="up-lyr">Streaming links
             <textarea class="up-links" data-i="${i}" rows="2"
               placeholder="Paste Spotify / Apple / YouTube links and we will pick them out">${
@@ -245,7 +293,16 @@
     bind('.up-bpm', (it, el) => { it.meta.bpm = Number(el.value) || null; });
     bind('.up-lyrics', (it, el) => { it.meta.lyrics = el.value; });
     bind('.up-tags', (it, el) => {
-      it.meta.tags = el.value.split(',').map((x) => x.trim()).filter(Boolean).slice(0, 12);
+      it.meta.tags = el.value.split(',').map(canonTag).filter(Boolean).slice(0, 12);
+      // Say which tags are not in the catalogue yet, rather than accepting them
+      // silently and leaving the uploader thinking they picked something real.
+      const hint = el.parentElement.querySelector('.up-newtags');
+      if (hint) {
+        const unknown = it.meta.tags.filter((t) => !isKnownTag(t));
+        hint.textContent = unknown.length
+          ? `Not in the catalogue yet: ${unknown.join(', ')} — we'll review these.` : '';
+        hint.hidden = !unknown.length;
+      }
     });
     bind('.up-links', (it, el) => {
       it.meta.links = (window.mutraAnalyse ? mutraAnalyse.findLinks(el.value) : []);
@@ -473,6 +530,23 @@
     btn.disabled = !(filesReady && signed && sharesOk && controllersOk);
     const n = staged.filter((s) => s.key).length;
     btn.textContent = n ? `Submit ${n} track${n === 1 ? '' : 's'}` : 'Submit';
+
+    /* A disabled button with no explanation is a dead end — you can see that you
+       cannot submit and not why. One reason at a time, in the order they need
+       fixing, so the form never presents a list of complaints. */
+    const why = $('#arWhy');
+    if (why) {
+      const reason =
+        !filesReady ? (staged.length ? 'Waiting for the files to finish uploading.'
+                                     : 'Add at least one track first.')
+        : !sharesOk ? 'The co-owner shares need to add up to 100%.'
+        : !controllersOk ? 'Name whoever has a say in commercial use.'
+        : !$('#arAgree').checked ? 'Tick “I confirm the above” to submit.'
+        : $('#arSign').value.trim().length < 2 ? 'Type your name to sign the declaration.'
+        : '';
+      why.textContent = reason;
+      why.hidden = !reason;
+    }
   }
 
   $('#arSubmit').addEventListener('click', async () => {

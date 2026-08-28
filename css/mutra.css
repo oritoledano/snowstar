@@ -647,6 +647,33 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .te-save{background:var(--grad);border-color:transparent;color:var(--on-accent,#0d0a12);font-weight:600}
 .te-cover{margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .te-cover .te-flabel{width:100%;margin-bottom:0}
+
+/* ── shelf admin: the Packs / Characters dropdown in edit mode ──────────────
+   Two levels of switch. The shelf switch answers "is this whole idea ready to
+   be seen"; the per-row eye answers "is this one finished". A half-made pack
+   should not force the entire menu offline, and a ready menu should not go
+   live the moment its first item does. */
+.shelf-admin{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.shelf-sw{display:flex;gap:9px;align-items:center;font-size:.82rem;color:var(--text);cursor:pointer}
+.shelf-sw input{accent-color:var(--amber,#8fd8ff)}
+.sa-rows{margin:10px 0 8px;display:flex;flex-direction:column;gap:4px}
+.sa-row{display:grid;grid-template-columns:auto 1fr auto auto;gap:9px;align-items:center;
+  padding:5px 8px;border:1px solid var(--line);border-radius:9px;font-size:.84rem}
+.sa-eye,.sa-del{background:none;border:0;cursor:pointer;font-size:.9rem;line-height:1;padding:2px 4px;color:var(--muted)}
+.sa-eye.off{opacity:.5}
+.sa-del:hover{color:#f87171}
+.sa-n{color:var(--dim);font-size:.74rem;font-variant-numeric:tabular-nums}
+.sa-new{display:flex;gap:8px;margin-top:8px}
+.sa-name{flex:1;min-width:0;background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);
+  border-radius:9px;color:var(--text);font:inherit;font-size:.84rem;padding:7px 10px;outline:0}
+.sa-add{background:none;border:1px solid var(--line);border-radius:9px;color:var(--text);
+  font:inherit;font-size:.8rem;padding:7px 14px;cursor:pointer;white-space:nowrap}
+.sa-add:hover{border-color:var(--amber,#8fd8ff)}
+/* A shelf that is switched off still shows to the owner — dimmed, so it is
+   obvious at a glance that visitors are not seeing it. */
+.fcat.shelf-off{opacity:.5;border-style:dashed}
+.te-coll .te-hint{color:var(--dim);font-size:.78rem}
+
 .te-cimg{width:56px;height:56px;border-radius:8px;object-fit:cover;background:var(--bg)}
 .te-cbtn{display:inline-block}
 .te-cstat{font-size:.76rem;color:var(--muted)}

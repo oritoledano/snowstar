@@ -1,7 +1,7 @@
 {
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
-  "2": "profile.js",
+  "2": "artists.js",
   "3": "bulk.js",
   "4": "licensing.js",
   "5": "main.js",
@@ -31,7 +31,7 @@
   "29": "mutra-license.js",
   "30": "analytics.js",
   "31": "agent.js",
-  "32": "artists.js",
+  "32": "oauth.js",
   "33": "certificate.js",
   "34": "rights.js",
   "35": "make-package-art.py",

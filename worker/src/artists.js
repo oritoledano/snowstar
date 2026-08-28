@@ -211,7 +211,10 @@ export async function listSubmissions(env, user, url) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const status = url.searchParams.get('status') || 'pending';
   const r = await env.DB.prepare(
-    `SELECT s.id, s.title, s.status, s.size, s.ext, s.artist_note, s.review_note,
+    // s.meta carries what the uploader actually told us — tags, bpm, key, vocal,
+    // streaming links. It was written at submit and never read back, which is why
+    // reviewing a track showed none of it.
+    `SELECT s.id, s.title, s.status, s.size, s.ext, s.artist_note, s.review_note, s.meta,
             s.created_at, s.reviewed_at, u.email,
             COALESCE(m.name, u.artist_name) AS artist_name,
             d.kind AS decl_kind, d.signed_name, d.acum, d.splits_snapshot,

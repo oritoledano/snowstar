@@ -1019,6 +1019,41 @@
     };
     const laneChip = (s) => s.lane
       ? `<span class="rv-lane ${s.lane}">${s.lane === 'instant' ? 'instant licence' : 'custom quote'}</span>` : '';
+
+    /* What the uploader actually told us: tempo, key, voice, their own tags and
+       any streaming links. All of it was being written to the submission and
+       never read back, so a review decision was made on the title and the audio
+       alone. Links are checked against http(s) before they become an anchor —
+       they are text somebody else typed. */
+    const safeUrl = (u) => {
+      const v = String(u == null ? '' : u);
+      return /^https?:\/\/[^"'<>\s]+$/i.test(v) ? v : '';
+    };
+    const metaBlock = (s) => {
+      let m = {};
+      try { m = JSON.parse(s.meta || '{}') || {}; } catch { /* older rows have none */ }
+      const tags = Array.isArray(m.tags) ? m.tags : [];
+      const links = Array.isArray(m.links) ? m.links : [];
+      const facts = [
+        m.bpm ? `${m.bpm} BPM` : '',
+        m.key ? `${m.key}${m.scale ? ' ' + m.scale : ''}` : '',
+        m.vocal || '',
+        m.duration ? fmtDur(m.duration) : '',
+      ].filter(Boolean);
+      if (!facts.length && !tags.length && !links.length && !m.lyrics) return '';
+      return `<div class="rv-meta">
+        ${facts.length ? `<div class="rv-facts">${facts.map((f) => `<span>${esc(f)}</span>`).join('')}</div>` : ''}
+        ${tags.length ? `<div class="rv-tags">${tags.map((t) =>
+          `<span class="tagpill">${esc(t)}</span>`).join('')}</div>` : ''}
+        ${links.length ? `<div class="rv-links">${links.map((l) => {
+          const u = safeUrl(l && l.url);
+          return u ? `<a href="${esc(u)}" target="_blank" rel="noopener nofollow">${
+            esc((l && l.platform) || 'link')}</a>` : '';
+        }).join('')}</div>` : ''}
+        ${m.lyrics ? `<details class="rv-lyrics"><summary>Lyrics</summary><pre>${
+          esc(m.lyrics)}</pre></details>` : ''}
+      </div>`;
+    };
     paint(`
       <div style="display:flex;gap:8px;margin-bottom:16px">${['pending', 'approved', 'rejected'].map((t) =>
         `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${t}</button>`).join('')}</div>
@@ -1032,6 +1067,7 @@
               ? `<span class="rv-pub live">in catalog</span>`
               : `<span class="rv-pub">not in catalog yet</span>`) : ''}</div>
           <div class="rv-body">
+          ${metaBlock(s)}
           ${declBlock(s)}
           ${s.artist_note ? `<p class="rv-note">Artist: “${esc(s.artist_note)}”</p>` : ''}
           ${s.review_note ? `<p class="rv-note">You: “${esc(s.review_note)}”</p>` : ''}

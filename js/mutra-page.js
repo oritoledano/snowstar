@@ -646,9 +646,15 @@
   /* One switch hides the whole shelf while it is being built, and an empty
      shelf hides itself — a dropdown that opens onto nothing reads as broken. */
   function syncShelfButtons() {
+    /* A visitor never sees an empty or switched-off shelf. The owner always
+       does — otherwise hiding a shelf hides the only control that could bring
+       it back, which is exactly how Characters became unreachable: created
+       hidden, empty, and with no way in from this page. */
     for (const key of Object.keys(SHELF)) {
       const b = document.querySelector(`.fcat[data-cat="${key}"]`);
-      if (b) b.hidden = SHELF[key].hidden || !SHELF[key].list.length;
+      if (!b) continue;
+      b.hidden = !curateMode && (SHELF[key].hidden || !SHELF[key].list.length);
+      b.classList.toggle('shelf-off', curateMode && !!SHELF[key].hidden);
     }
   }
 
@@ -1167,9 +1173,11 @@
       wireBpmRange();
     } else {
       const def = FACETS[openCat], vals = def.values(), f = state[openCat];
+      const shelf = SHELF[openCat];                 // packs / characters only
       fdrop.innerHTML =
         `<p class="fhint">Click to include · click again to exclude</p>` +
         `<div class="fchips wide">${vals.map(v => triChip(v, modeOf(f, v))).join('')}</div>` +
+        (shelf && curateMode ? shelfAdminHtml(openCat) : '') +
         `<button class="fdrop-close" type="button">Close</button>`;
       [...fdrop.querySelector('.fchips').children].forEach((btn, i) => {
         btn.addEventListener('click', () => {
@@ -1179,8 +1187,91 @@
           drawPills(); render();
         });
       });
+      if (shelf && curateMode) wireShelfAdmin(openCat);
     }
     fdrop.querySelector('.fdrop-close').addEventListener('click', closeDrawer);
+  }
+
+  /* ── shelf admin, inside the Packs / Characters dropdown ──────────────────
+     Two levels of switch, because they answer different questions. The shelf
+     switch is "is this whole idea ready for anyone to see"; the per-item switch
+     is "is this one finished". Building only the first would mean a half-made
+     pack forces the whole shelf offline; only the second would mean revealing
+     the shelf the moment the first item is ready. */
+  function shelfAdminHtml(key) {
+    const sh = SHELF[key];
+    const label = key === 'packs' ? 'pack' : 'character';
+    return `<div class="shelf-admin">
+      <label class="shelf-sw"><input type="checkbox" class="sa-shelf"${sh.hidden ? ' checked' : ''}>
+        <span>Hide the whole ${key === 'packs' ? 'Packs' : 'Characters'} menu from visitors</span></label>
+      ${sh.list.length ? `<div class="sa-rows">${sh.list.map((c) => `
+        <div class="sa-row" data-id="${c.id}">
+          <button type="button" class="sa-eye${c.hidden ? ' off' : ''}"
+            title="${c.hidden ? 'Hidden from visitors' : 'Visible to visitors'}">${c.hidden ? '🚫' : '👁'}</button>
+          <b>${c.name}</b><span class="sa-n">${(c.tracks || []).length}</span>
+          <button type="button" class="sa-del" title="Delete this ${label}">×</button>
+        </div>`).join('')}</div>`
+        : `<p class="fhint">No ${label}s yet.</p>`}
+      <div class="sa-new">
+        <input class="sa-name" placeholder="New ${label} name" maxlength="60">
+        <button type="button" class="sa-add">Create</button>
+      </div>
+      <p class="fhint">Assign tracks from any row: turn on Edit, open a track, use
+        ${key === 'packs' ? 'Packs' : 'Characters'}.</p>
+    </div>`;
+  }
+
+  async function saveCollection(body) {
+    const r = await fetch('/api/collections', {
+      method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    return r.json().catch(() => ({}));
+  }
+
+  function wireShelfAdmin(key) {
+    const sh = SHELF[key], box = fdrop.querySelector('.shelf-admin');
+    if (!box) return;
+    const reload = async () => {
+      await loadShelf(key);
+      syncShelfButtons();
+      drawDrop();                      // redraw with the new state
+      drawPills(); render();
+    };
+
+    box.querySelector('.sa-shelf').addEventListener('change', async (e) => {
+      await saveCollection({ kind: sh.kind, shelf_hidden: e.target.checked });
+      sh.hidden = e.target.checked;
+      syncShelfButtons();
+    });
+
+    box.querySelectorAll('.sa-row').forEach((row) => {
+      const id = Number(row.dataset.id);
+      const c = sh.list.find((x) => x.id === id);
+      row.querySelector('.sa-eye').addEventListener('click', async () => {
+        await saveCollection({ kind: sh.kind, id, hidden: !c.hidden });
+        reload();
+      });
+      row.querySelector('.sa-del').addEventListener('click', async () => {
+        if (!confirm(`Delete “${c.name}”? The tracks themselves are not touched.`)) return;
+        await saveCollection({ kind: sh.kind, remove: id });
+        reload();
+      });
+    });
+
+    const nameEl = box.querySelector('.sa-name');
+    const create = async () => {
+      const name = nameEl.value.trim();
+      if (name.length < 2) return;
+      // Created hidden by the API on purpose; the eye above turns it on once it
+      // actually has something in it.
+      await saveCollection({ kind: sh.kind, name });
+      nameEl.value = '';
+      reload();
+    };
+    box.querySelector('.sa-add').addEventListener('click', create);
+    nameEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); create(); } });
   }
 
   /** Dual-handle slider + typed boxes, kept in step with each other. */
@@ -1902,6 +1993,11 @@
           <div class="te-chips"></div>
           <input class="te-add" placeholder="add \u2026" maxlength="60">
         </div>`).join('')}
+      ${['packs', 'characters'].map((k) => `
+        <div class="te-facet te-coll" data-shelf="${k}">
+          <div class="te-flabel">${k === 'packs' ? 'Packs' : 'Characters'}</div>
+          <div class="te-chips"></div>
+        </div>`).join('')}
       <div class="te-hl">
         <div class="te-flabel">Highlight \u2014 where preview starts</div>
         <div class="te-hlrow">
@@ -2102,6 +2198,45 @@
       });
     }
     paintChips();
+
+    /* Pack and character membership lives in its own table, not on the track,
+       so it saves on click rather than waiting for the panel's Save — batching
+       it into the patch would mean teaching saveOverride about collections.
+       This is the "easier way to add tracks" that was missing: previously the
+       only route was typing raw slugs into a textarea in the dashboard. */
+    function paintColl() {
+      panel.querySelectorAll('.te-coll').forEach((box) => {
+        const key = box.dataset.shelf, sh = SHELF[key];
+        const chips = box.querySelector('.te-chips');
+        if (!sh.list.length) {
+          chips.innerHTML = `<span class="te-hint">None yet — make one in the ${
+            key === 'packs' ? 'Packs' : 'Characters'} menu.</span>`;
+          return;
+        }
+        chips.innerHTML = sh.list.map((c) => {
+          const inIt = (c.tracks || []).includes(track.slug);
+          return `<button type="button" class="te-chip${inIt ? ' on' : ''}"
+            data-id="${c.id}">${c.name}${c.hidden ? ' ·hidden' : ''}</button>`;
+        }).join('');
+        chips.querySelectorAll('.te-chip').forEach((b) => b.addEventListener('click', async () => {
+          const id = Number(b.dataset.id);
+          const c = sh.list.find((x) => x.id === id);
+          const inIt = (c.tracks || []).includes(track.slug);
+          b.disabled = true;
+          await fetch('/api/collections/tracks', {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ id, slugs: [track.slug], remove: inIt || undefined }),
+          }).catch(() => null);
+          await loadShelf(key);
+          syncShelfButtons();
+          paintColl();
+          render();                    // the pack/character filter chips move with it
+        }));
+      });
+    }
+    paintColl();
+
     panel.querySelectorAll('.te-add').forEach(inp => inp.addEventListener('keydown', e => {
       if (e.key !== 'Enter') return;
       e.preventDefault();
@@ -2288,7 +2423,9 @@
       if (hb) hb.remove();
       // leaving edit mode must also drop the Hidden view, or a signed-out
       // visitor would be looking at an empty catalog with no way back
-      if (curateMode || state.hiddenOnly) { curateMode = false; state.hiddenOnly = false; render(); }
+      if (curateMode || state.hiddenOnly) {
+        curateMode = false; state.hiddenOnly = false; syncShelfButtons(); render();
+      }
       return;
     }
     if (btn) return;
@@ -2304,6 +2441,9 @@
       btn.classList.toggle('on', curateMode);
       if (!curateMode) state.hiddenOnly = false;   // don't strand them in an empty view
       syncHiddenToggle();
+      // Hidden shelves appear and disappear with edit mode, so the buttons have
+      // to be re-synced here — this used to run once at boot and never again.
+      syncShelfButtons();
       if (window.mutraBulkSetMode) window.mutraBulkSetMode(curateMode);
       // the pick ORDER arrows only mean anything in the picks sort, but the
       // rest of the editor works in any order, so don't hijack the sort

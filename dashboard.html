@@ -12,7 +12,7 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/mutra.css?v=96">
+<link rel="stylesheet" href="css/mutra.css?v=97">
 <style>
   body{padding-bottom:60px}
   .db-wrap{max-width:1180px;margin:0 auto;padding:96px clamp(16px,4vw,44px) 40px}
@@ -89,6 +89,18 @@
     padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--text)}
   .rv-ok{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.4)}
   .rv-no{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35)}
+  /* What the artist told us about the track, above the declaration — it is what
+     the approve/reject decision is actually made on. */
+  .rv-meta{margin:2px 0 12px;display:flex;flex-direction:column;gap:8px}
+  .rv-facts{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.8rem}
+  .rv-facts span{border:1px solid var(--line);border-radius:99px;padding:2px 10px}
+  .rv-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tagpill{font-size:.74rem;padding:3px 10px;border-radius:99px;
+    background:var(--panel-2,rgba(128,128,128,.09));color:var(--text)}
+  .rv-links{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem}
+  .rv-links a{color:var(--amber,#8fd8ff)}
+  .rv-lyrics summary{cursor:pointer;color:var(--muted);font-size:.8rem}
+  .rv-lyrics pre{white-space:pre-wrap;font:inherit;font-size:.82rem;color:var(--muted);margin-top:6px}
   .rv-decl{background:var(--panel-2,rgba(128,128,128,.08));border-radius:10px;padding:10px 12px;margin:8px 0;font-size:.8rem;color:var(--muted)}
   .rv-decl b{color:var(--text)}
   .rv-acum{color:#eab308;font-weight:600}
@@ -495,6 +507,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=19"></script>
-<script src="js/dashboard.js?v=38"></script>
+<script src="js/dashboard.js?v=39"></script>
 </body>
 </html>

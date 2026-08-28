@@ -207,9 +207,17 @@ export async function sendOutbox(req, env, user) {
     if (!claim.meta.changes) { results.push({ id, ok: false, error: 'already_claimed' }); continue; }
     try {
       if (live) {
-        // co-owner contact is a rights matter — it goes out as legal@
+        /* The sender follows what the message IS, not the queue it happened to
+           sit in. This was hardcoded to legal@ back when co-owner contact was the
+           only kind in the outbox; approvals and rejections were added later and
+           inherited it, so an artist got "Snowstar Legal" telling them their track
+           was turned down. Note the outbox `kind` vocabulary is not the SENDERS
+           vocabulary, hence a mapping rather than passing row.kind straight in. */
+        const toArtist = row.kind === 'artists'
+          || String(row.kind || '').startsWith('submission-');
+        const replyTo = toArtist ? 'artists@snowstar.company' : 'legal@snowstar.company';
         await sendMail(env, { to: row.to_email, subject: row.subject, text: row.body,
-          from: mailFrom(env, 'legal'), replyTo: 'legal@snowstar.company' });
+          from: mailFrom(env, toArtist ? 'artists' : 'legal'), replyTo });
       } else {
         // domain not verified yet: deliver to Ori with a forward banner
         await sendMail(env, {

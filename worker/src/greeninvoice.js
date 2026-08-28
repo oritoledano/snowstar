@@ -562,12 +562,19 @@ export async function skipInvoice(req, env, user) {
   return json({ ok: true, skipped: lic.ref });
 }
 
-/** POST /invoices/retry — clear a failed row so it can be issued again. */
+/**
+ * POST /invoices/retry — clear a failed row so it can be issued again.
+ *
+ * 'skipped' is excluded deliberately. A skip is a decision not to invoice, not a
+ * stuck attempt, and retry is the only thing here that can delete a row — so if it
+ * cleared skips, "never invoice this" would last exactly until somebody passed the
+ * wrong licence_id.
+ */
 export async function retryInvoice(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const b = await req.json().catch(() => ({}));
   const id = Number(b.licence_id);
   const r = await env.DB.prepare(
-    `DELETE FROM invoices WHERE licence_id = ? AND status != 'issued'`).bind(id).run();
+    `DELETE FROM invoices WHERE licence_id = ? AND status NOT IN ('issued', 'skipped')`).bind(id).run();
   return json({ ok: true, cleared: r.meta.changes });
 }
