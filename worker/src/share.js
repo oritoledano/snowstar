@@ -36,7 +36,11 @@ export async function sharePage(req, env, url) {
   // Overrides can have renamed the track since it shipped, and the share card
   // should say what the site says.
   let title = row.title;
-  let artist = 'Ori Toledano';
+  /* No artist default. The Worker has no artist column, so guessing "Ori
+     Toledano" made the description say one name while the card image said
+     another — BLUE is by KAYMA. Named only when an override actually states
+     it; otherwise the card carries the credit and the text does not repeat it. */
+  let artist = '';
   let cover = '';
   try {
     const o = await env.DB.prepare('SELECT patch FROM track_overrides WHERE slug = ?')
@@ -56,7 +60,9 @@ export async function sharePage(req, env, url) {
   let img = `${CDN}/og/${slug}.jpg`;
   const card = await env.MEDIA.head('og/' + slug + '.jpg').catch(() => null);
   if (!card && cover) img = cover;
-  const desc = `${title} by ${artist}. Preview and licence it on Mutra, by Snowstar.`;
+  const desc = artist
+    ? `${title} by ${artist}. Preview and licence it on Mutra, by Snowstar.`
+    : `${title} — preview and licence it on Mutra, by Snowstar.`;
 
   const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
