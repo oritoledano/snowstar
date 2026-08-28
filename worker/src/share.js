@@ -37,6 +37,7 @@ export async function sharePage(req, env, url) {
   // should say what the site says.
   let title = row.title;
   let artist = 'Ori Toledano';
+  let cover = '';
   try {
     const o = await env.DB.prepare('SELECT patch FROM track_overrides WHERE slug = ?')
       .bind(slug).first();
@@ -44,11 +45,18 @@ export async function sharePage(req, env, url) {
       const p = JSON.parse(o.patch);
       if (p.title) title = p.title;
       if (p.artist) artist = p.artist;
+      if (p.cover) cover = p.cover;
     }
   } catch { /* the shipped title is fine */ }
 
-  const img = `${CDN}/og/${slug}.jpg`;
-  const desc = `${title} by ${artist}. Royalty-free and truly cleared — preview and licence it on Mutra.`;
+  /* Prefer the composed card. If it is absent — which is exactly what happens
+     for the window between somebody uploading new artwork and the cards being
+     rebuilt — fall back to the cover itself. A plain cover is right; a card
+     showing the artwork it just replaced is wrong. */
+  let img = `${CDN}/og/${slug}.jpg`;
+  const card = await env.MEDIA.head('og/' + slug + '.jpg').catch(() => null);
+  if (!card && cover) img = cover;
+  const desc = `${title} by ${artist}. Preview and licence it on Mutra, by Snowstar.`;
 
   const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">

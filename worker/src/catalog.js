@@ -199,6 +199,12 @@ export async function uploadCover(req, env, user, url) {
   const key = `mutra/covers/${slug}-${now()}.${ext}`;
   await env.MEDIA.put(key, body, { httpMetadata: { contentType: type } });
   return json({ ok: true, url: `https://cdn.snowstar.company/${key}` });
+
+  /* The share card is baked from the cover, so a new cover makes the old card
+     a lie. Dropping it lets sharePage fall back to the cover itself until the
+     card is regenerated — a plain cover is right, a card showing the previous
+     artwork is wrong. */
+  try { await env.MEDIA.delete('og/' + slug + '.jpg'); } catch { /* nothing to drop */ }
 }
 
 
