@@ -1890,7 +1890,9 @@
       Until then this page lists what is waiting but cannot send it.</div>`;
 
     paint(`<div class="db-panel">
-      <h2>Invoices <span class="pill">${d.pending.length} to issue</span></h2>
+      <h2>Invoices <span class="pill">${d.pending.length} to issue</span>
+        <button class="rv-btn" id="inv-who" style="float:right">Which business?</button></h2>
+      <div id="inv-whoout"></div>
       <p class="db-empty" style="padding-top:0">Paid licences that have no tax document yet.
         Check the name and the amount, then issue — it goes straight to your morning account as a
         חשבונית מס/קבלה and the customer gets the PDF link.</p>
@@ -1923,6 +1925,35 @@
               : `<button class="rv-btn" data-retry="${i.licence_id}">Retry</button>`}
           </div>`).join('')}</div>` : ''}
     </div>`);
+
+    /* Two businesses live under one morning login, so "which one will this bill
+       from" is not answerable from the key alone. This asks Green Invoice, using
+       GETs only — it cannot create or issue anything, so it is safe to press. */
+    const who = app.querySelector('#inv-who');
+    const whoOut = app.querySelector('#inv-whoout');
+    if (who) who.onclick = async () => {
+      who.disabled = true; who.textContent = 'Checking…';
+      const r = await get('/invoices/whoami').catch((e) => ({ error: String(e) }));
+      who.disabled = false; who.textContent = 'Which business?';
+      if (!r.ok) {
+        whoOut.innerHTML = `<div class="db-warn"><b>Not connected.</b> ${esc(r.detail || r.error || '')}</div>`;
+        return;
+      }
+      // Whichever probe answered carries the business; show the name and tax id
+      // it found, and the raw reply underneath so nothing is taken on trust.
+      const found = (r.probes || []).find((p) => p.status === 200 && p.body);
+      const biz = found && (found.body.name || found.body.companyName
+        || (found.body.business && found.body.business.name));
+      const tax = found && (found.body.taxId || found.body.vatId
+        || (found.body.business && found.body.business.taxId));
+      whoOut.innerHTML = `<div class="db-warn">
+        <b>Connected.</b> ${biz ? `Invoices will be issued from <b>${esc(biz)}</b>${
+          tax ? ` (${esc(tax)})` : ''}.` : 'Credentials work, but no probe returned a business name — see below.'}
+        <details style="margin-top:8px"><summary style="cursor:pointer">Raw reply</summary>
+          <pre style="white-space:pre-wrap;font-size:.72rem;margin-top:8px">${
+            esc(JSON.stringify({ tokenMeta: r.tokenMeta, probes: r.probes }, null, 1))}</pre>
+        </details></div>`;
+    };
 
     app.querySelectorAll('[data-issue]').forEach((b) => b.onclick = async () => {
       b.disabled = true; b.textContent = 'Issuing…';

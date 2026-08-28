@@ -6909,7 +6909,7 @@
       "file_type": "code",
       "norm_label": "paintcollections()",
       "source_file": "js/dashboard.js",
-      "source_location": "L2033"
+      "source_location": "L2031"
     },
     {
       "id": "js_dashboard_paintcoupons",
@@ -6921,7 +6921,7 @@
       "file_type": "code",
       "norm_label": "paintcoupons()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1944"
+      "source_location": "L1942"
     },
     {
       "id": "js_dashboard_paintinbox",
@@ -12014,7 +12014,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2037",
+      "source_location": "L2035",
       "weight": 1.0
     },
     {
@@ -12026,7 +12026,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1950",
+      "source_location": "L1948",
       "weight": 1.0
     },
     {
@@ -12038,7 +12038,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1975",
+      "source_location": "L1973",
       "weight": 1.0
     },
     {
@@ -25916,7 +25916,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1944",
+      "source_location": "L1942",
       "weight": 1.0
     },
     {
@@ -25927,7 +25927,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L2033",
+      "source_location": "L2031",
       "weight": 1.0
     },
     {

@@ -47,7 +47,7 @@ import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim } from './artistprofile.js';
 import { listCoupons, saveCoupon, checkCoupon } from './coupons.js';
-import { listInvoices, issueInvoice, retryInvoice } from './greeninvoice.js';
+import { listInvoices, issueInvoice, retryInvoice, whoami } from './greeninvoice.js';
 import { listCollections, saveCollection, setCollectionTracks, uploadCollectionArt } from './collections.js';
 import { listEarnings, settleEarnings, myEarnings } from './earnings.js';
 import { certificate } from './certificate.js';
@@ -214,6 +214,7 @@ async function handle(req, env, ctx) {
   if (path === '/coupons' && method === 'POST') return saveCoupon(req, env, await currentUser(req, env));
   if (path === '/coupons/check' && method === 'POST') return checkCoupon(req, env);
 
+  if (path === '/invoices/whoami' && method === 'GET') return whoami(env, await currentUser(req, env));
   if (path === '/invoices' && method === 'GET') return listInvoices(env, await currentUser(req, env));
   if (path === '/invoices/issue' && method === 'POST') return issueInvoice(req, env, await currentUser(req, env));
   if (path === '/invoices/retry' && method === 'POST') return retryInvoice(req, env, await currentUser(req, env));

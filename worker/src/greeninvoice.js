@@ -98,6 +98,71 @@ export function draftFor(lic, track) {
   };
 }
 
+/**
+ * GET /invoices/whoami — which business do these credentials actually bill from?
+ *
+ * The owner has two businesses under one morning login. Reading the docs to work out
+ * which one a key belongs to is guessing; asking the API is knowing. Every call here
+ * is a GET, so the worst case is an error message — nothing is created, nothing is
+ * issued, and it can be run as often as you like.
+ *
+ * Several candidate paths are tried because the endpoint name is the one thing worth
+ * discovering empirically: whichever one answers is the answer.
+ */
+const PROBES = ['/account', '/account/me', '/businesses', '/account/business',
+                '/account/profile', '/clients?page=1&pageSize=1'];
+
+export async function whoami(env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  if (!configured(env)) {
+    return json({ error: 'not_configured',
+                  detail: 'GREENINVOICE_ID and GREENINVOICE_SECRET are not both set.' }, 503);
+  }
+
+  // Step one is the credential check on its own, so "the key is wrong" and "the
+  // secret is wrong" cannot hide behind a later failure. Pasting the same value
+  // into both prompts is the likely mistake and it surfaces exactly here.
+  let t, raw;
+  try {
+    const r = await fetch(`${API}/account/token`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: env.GREENINVOICE_ID, secret: env.GREENINVOICE_SECRET }),
+    });
+    raw = await r.json().catch(() => null);
+    if (!r.ok || !raw || !raw.token) {
+      return json({
+        ok: false, stage: 'token', status: r.status,
+        detail: r.status === 401
+          ? 'Green Invoice rejected the key/secret pair. The most likely cause is the same '
+            + 'value pasted into both prompts — the API key goes in GREENINVOICE_ID and the '
+            + 'API secret in GREENINVOICE_SECRET. Set them again, separately.'
+          : 'Token request failed.',
+        body: raw,
+      }, 200);
+    }
+    t = raw.token;
+  } catch (e) {
+    return json({ ok: false, stage: 'token', detail: String((e && e.message) || e) }, 200);
+  }
+
+  const probes = [];
+  for (const p of PROBES) {
+    try {
+      const r = await fetch(API + p, { headers: { authorization: `Bearer ${t}` } });
+      const b = await r.json().catch(() => null);
+      probes.push({ path: p, status: r.status, body: b });
+    } catch (e) {
+      probes.push({ path: p, status: 0, error: String((e && e.message) || e) });
+    }
+  }
+
+  // The token response itself sometimes carries the business, so it is reported
+  // alongside the probes — with the token stripped, because this goes to a browser.
+  const { token, ...tokenMeta } = raw;
+  return json({ ok: true, tokenMeta, probes });
+}
+
 /** GET /invoices — what is queued, what has been issued. */
 export async function listInvoices(env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
