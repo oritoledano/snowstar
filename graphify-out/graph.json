@@ -2781,7 +2781,7 @@
       "file_type": "code",
       "norm_label": "close()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L751"
+      "source_location": "L782"
     },
     {
       "id": "js_mutra_license_crumbs",
@@ -2817,7 +2817,7 @@
       "file_type": "code",
       "norm_label": "gotocard()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L645"
+      "source_location": "L676"
     },
     {
       "id": "js_mutra_license_oncards",
@@ -2841,7 +2841,7 @@
       "file_type": "code",
       "norm_label": "open()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L734"
+      "source_location": "L765"
     },
     {
       "id": "js_mutra_license_openmail",
@@ -2901,7 +2901,7 @@
       "file_type": "code",
       "norm_label": "resumepending()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L800"
+      "source_location": "L831"
     },
     {
       "id": "js_mutra_license_screen1",
@@ -2985,7 +2985,7 @@
       "file_type": "code",
       "norm_label": "screenquote()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L530"
+      "source_location": "L561"
     },
     {
       "id": "js_mutra_license_sharelink",
@@ -2997,7 +2997,7 @@
       "file_type": "code",
       "norm_label": "sharelink()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L724"
+      "source_location": "L755"
     },
     {
       "id": "js_mutra_license_showpaymentoutcome",
@@ -3009,7 +3009,7 @@
       "file_type": "code",
       "norm_label": "showpaymentoutcome()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L760"
+      "source_location": "L791"
     },
     {
       "id": "js_mutra_license_showreceipt",
@@ -3021,7 +3021,7 @@
       "file_type": "code",
       "norm_label": "showreceipt()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L659"
+      "source_location": "L690"
     },
     {
       "id": "js_mutra_license_submitrequest",
@@ -3033,7 +3033,7 @@
       "file_type": "code",
       "norm_label": "submitrequest()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L586"
+      "source_location": "L617"
     },
     {
       "id": "js_mutra_license_trackfactor",
@@ -3825,7 +3825,7 @@
       "file_type": "code",
       "norm_label": "handlereturn()",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L217"
+      "source_location": "L239"
     },
     {
       "id": "worker_src_hyp_hypstatus",
@@ -3837,7 +3837,7 @@
       "file_type": "code",
       "norm_label": "hypstatus()",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L318"
+      "source_location": "L340"
     },
     {
       "id": "worker_src_hyp_json",
@@ -3861,7 +3861,7 @@
       "file_type": "code",
       "norm_label": "liststale()",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L307"
+      "source_location": "L329"
     },
     {
       "id": "worker_src_hyp_now",
@@ -3921,7 +3921,7 @@
       "file_type": "code",
       "norm_label": "verifyreturn()",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L186"
+      "source_location": "L208"
     },
     {
       "id": "worker_src_index_authed",
@@ -12320,7 +12320,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L735",
+      "source_location": "L766",
       "weight": 1.0
     },
     {
@@ -12332,7 +12332,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L740",
+      "source_location": "L771",
       "weight": 1.0
     },
     {
@@ -12344,7 +12344,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L745",
+      "source_location": "L776",
       "weight": 1.0
     },
     {
@@ -12464,7 +12464,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L812",
+      "source_location": "L843",
       "weight": 1.0
     },
     {
@@ -12692,7 +12692,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L507",
+      "source_location": "L538",
       "weight": 1.0
     },
     {
@@ -12704,7 +12704,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L518",
+      "source_location": "L549",
       "weight": 1.0
     },
     {
@@ -12716,7 +12716,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L544",
+      "source_location": "L575",
       "weight": 1.0
     },
     {
@@ -12728,7 +12728,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L570",
+      "source_location": "L601",
       "weight": 1.0
     },
     {
@@ -12740,7 +12740,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L580",
+      "source_location": "L611",
       "weight": 1.0
     },
     {
@@ -12752,7 +12752,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L766",
+      "source_location": "L797",
       "weight": 1.0
     },
     {
@@ -12764,7 +12764,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L591",
+      "source_location": "L622",
       "weight": 1.0
     },
     {
@@ -12776,7 +12776,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L630",
+      "source_location": "L661",
       "weight": 1.0
     },
     {
@@ -12788,7 +12788,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L630",
+      "source_location": "L661",
       "weight": 1.0
     },
     {
@@ -12800,7 +12800,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L634",
+      "source_location": "L665",
       "weight": 1.0
     },
     {
@@ -16820,7 +16820,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L218",
+      "source_location": "L240",
       "weight": 1.0
     },
     {
@@ -16832,7 +16832,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L218",
+      "source_location": "L240",
       "weight": 1.0
     },
     {
@@ -16844,7 +16844,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L222",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
@@ -16856,7 +16856,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L233",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -16868,7 +16868,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L242",
+      "source_location": "L264",
       "weight": 1.0
     },
     {
@@ -16880,7 +16880,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L319",
+      "source_location": "L341",
       "weight": 1.0
     },
     {
@@ -16892,7 +16892,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L320",
+      "source_location": "L342",
       "weight": 1.0
     },
     {
@@ -16904,7 +16904,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L308",
+      "source_location": "L330",
       "weight": 1.0
     },
     {
@@ -16916,7 +16916,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L309",
+      "source_location": "L331",
       "weight": 1.0
     },
     {
@@ -16928,7 +16928,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L315",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -16976,7 +16976,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L158",
+      "source_location": "L180",
       "weight": 1.0
     },
     {
@@ -16988,7 +16988,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L163",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -17000,7 +17000,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/hyp.js",
-      "source_location": "L206",
+      "source_location": "L228",
       "weight": 1.0
     },
     {
@@ -21130,7 +21130,20 @@
       "context": "import",
       "deferred": true,
       "source_file": "worker/src/hyp.js",
-      "source_location": "L275",
+      "source_location": "L297",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_hyp_startcheckout",
+      "target": "worker_src_licensing",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "deferred": true,
+      "source_file": "worker/src/hyp.js",
+      "source_location": "L137",
       "weight": 1.0
     },
     {
@@ -25582,7 +25595,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L530",
+      "source_location": "L561",
       "weight": 1.0
     },
     {
@@ -25593,7 +25606,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L586",
+      "source_location": "L617",
       "weight": 1.0
     },
     {
@@ -25604,7 +25617,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L645",
+      "source_location": "L676",
       "weight": 1.0
     },
     {
@@ -25615,7 +25628,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L659",
+      "source_location": "L690",
       "weight": 1.0
     },
     {
@@ -25626,7 +25639,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L724",
+      "source_location": "L755",
       "weight": 1.0
     },
     {
@@ -25637,7 +25650,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L734",
+      "source_location": "L765",
       "weight": 1.0
     },
     {
@@ -25648,7 +25661,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L751",
+      "source_location": "L782",
       "weight": 1.0
     },
     {
@@ -25659,7 +25672,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L760",
+      "source_location": "L791",
       "weight": 1.0
     },
     {
@@ -25670,7 +25683,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L800",
+      "source_location": "L831",
       "weight": 1.0
     },
     {
@@ -28871,7 +28884,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/hyp.js",
-      "source_location": "L186",
+      "source_location": "L208",
       "weight": 1.0
     },
     {
@@ -28882,7 +28895,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/hyp.js",
-      "source_location": "L217",
+      "source_location": "L239",
       "weight": 1.0
     },
     {
@@ -28893,7 +28906,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/hyp.js",
-      "source_location": "L307",
+      "source_location": "L329",
       "weight": 1.0
     },
     {
@@ -28904,7 +28917,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/hyp.js",
-      "source_location": "L318",
+      "source_location": "L340",
       "weight": 1.0
     },
     {
@@ -31429,7 +31442,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-license.js",
-      "source_location": "L737",
+      "source_location": "L768",
       "weight": 1.0
     },
     {
@@ -31453,7 +31466,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-license.js",
-      "source_location": "L517",
+      "source_location": "L548",
       "weight": 1.0
     },
     {
@@ -31465,7 +31478,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-license.js",
-      "source_location": "L768",
+      "source_location": "L799",
       "weight": 1.0
     },
     {
@@ -31477,7 +31490,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-license.js",
-      "source_location": "L694",
+      "source_location": "L725",
       "weight": 1.0
     },
     {
@@ -34009,5 +34022,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "33b97ac2d39d89a4c79ca1250533310462f1aaa2"
+  "built_at_commit": "1373adfe3d85632b66130d01ae7ba7968a8147d9"
 }

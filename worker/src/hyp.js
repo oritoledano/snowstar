@@ -121,7 +121,29 @@ export async function startCheckout(req, env, user) {
   // must never reach a self-serve card page — that is the whole point of the
   // lane, and enforcing it here as well as at grant time is not redundant.
   if (r.lane === 'quote') return json({ error: 'quote_lane_not_self_serve' }, 409);
-  if (!r.list_amount) return json({ error: 'no_price' }, 409);
+  // NULL means there is no self-serve price at all; zero means a code took it
+  // to nothing. Only the first is a refusal — `!r.list_amount` caught both and
+  // turned a fully-discounted licence into "no_price".
+  if (r.list_amount == null) return json({ error: 'no_price' }, 409);
+
+  /* Nothing to charge. A card processor refuses a zero authorisation, so a
+     free licence is granted here instead of being sent to a checkout that
+     cannot succeed. It is still a real licence with a real certificate — the
+     only difference is that no money moved, which is what the reason records. */
+  if (r.list_amount === 0) {
+    // Imported here rather than at the top, matching the redirect handler:
+    // licensing.js imports coupons.js which imports nothing back, but a static
+    // cycle between these two modules has bitten before.
+    const { grantLicence } = await import('./licensing.js');
+    const out = await grantLicence(env, {
+      request_id: r.id, user_id: r.user_id, email: r.email, slug: r.slug,
+      tier: r.tier, amount: 0, reason: 'comp', actor: 'system:coupon',
+      licensee_name: r.licensee_name, licensee_tax_id: r.licensee_tax_id,
+    });
+    return out && out.ok
+      ? json({ free: true, ref: r.ref, licence_id: out.licence_id || out.id })
+      : json({ error: (out && out.error) || 'grant_failed' }, 400);
+  }
 
   const exVat = r.list_amount;                       // agorot, ex-VAT
   const gross = Math.round(exVat * 1.18);            // agorot, incl VAT

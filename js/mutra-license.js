@@ -457,6 +457,7 @@
         <input class="lic-client" type="text" maxlength="140"
           placeholder="${pick.who === 'business' ? 'The company in the video' : 'Yourself, or the client'}"></label>
       <div class="lic-priceline">
+        <span class="lic-was" hidden></span>
         <span class="lic-price">${CUR}${p.amount.toLocaleString()}</span>
         <span class="lic-per">+ VAT 18%</span>
       </div>
@@ -470,6 +471,31 @@
        answer is advisory: the price that gets charged is recomputed on the
        server at submit time, so a code that expires between the two is caught
        there rather than honoured because the browser said so. */
+    /* One place that writes the total, so the discounted figure, the struck-out
+       original and the button label can never disagree with each other. */
+    const showPrice = (amount, wasAmount) => {
+      const el2 = body().querySelector('.lic-price');
+      const was = body().querySelector('.lic-was');
+      const btn2 = body().querySelector('.lic-submit');
+      const alt = body().querySelector('.lic-alt');
+      if (!el2) return;
+      el2.textContent = amount == null ? 'On request' : CUR + amount.toLocaleString();
+      if (was) {
+        was.hidden = !(wasAmount != null && wasAmount !== amount);
+        was.textContent = wasAmount != null ? CUR + wasAmount.toLocaleString() : '';
+      }
+      /* A card charge of zero is refused by the processor, so a code that takes
+         the price to nothing has to complete without one rather than sending
+         somebody to a checkout that cannot succeed. */
+      const free = amount === 0;
+      if (btn2) btn2.innerHTML = free
+        ? 'Get it free'
+        : 'Pay by Card <span class="lic-cards" aria-hidden="true"><i class="cb-visa">VISA</i><i class="cb-mc"></i><i class="cb-amex">AMEX</i></span>';
+      if (alt) alt.hidden = free;
+      const per = body().querySelector('.lic-per');
+      if (per) per.hidden = free;
+    };
+
     const cin = body().querySelector('.lic-coupon');
     const cgo = body().querySelector('.lic-cpgo');
     const csaid = body().querySelector('.lic-cpsaid');
@@ -486,11 +512,16 @@
       if (r && r.ok) {
         couponCode = code;
         csaid.className = 'lic-cpsaid ok';
-        csaid.textContent = `${r.label} — you pay ₪${(r.amount / 100).toFixed(0)} + VAT`;
+        csaid.textContent = r.label;
+        // The figure at the bottom is the one people read before they press
+        // pay. Saying "100% off" up here while it still shows the full price
+        // down there is the version of this that loses trust.
+        showPrice(Math.round(r.amount / 100), priced.quote ? null : priced.amount);
       } else {
         couponCode = '';
         csaid.className = 'lic-cpsaid bad';
         csaid.textContent = (r && r.reason) || 'Could not check that code.';
+        showPrice(priced.quote ? null : priced.amount, null);
       }
     });
 

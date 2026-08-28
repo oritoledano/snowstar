@@ -1,16 +1,16 @@
 # Graph Report - snowstar  (2026-08-28)
 
 ## Corpus Check
-- 70 files · ~375,432 words
+- 70 files · ~375,833 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 852 nodes · 2036 edges · 49 communities (47 shown, 2 thin omitted)
+- 852 nodes · 2037 edges · 49 communities (47 shown, 2 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 88 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `33b97ac2`
+- Built from commit: `1373adfe`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
