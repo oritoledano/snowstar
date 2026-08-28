@@ -189,6 +189,19 @@ export async function startCheckout(req, env, user) {
     `INSERT INTO hyp_checkouts (ref, request_id, amount, status, created_at) VALUES (?, ?, ?, 'started', ?)`
   ).bind(ref, r.id, gross, now()).run().catch(() => {});
 
+  /* What HYP signed, minus the credentials. Verification has been failing and
+     there was no way to tell whether signMe survived into the signed URL —
+     which decides whether the fault is at this end or in how the return is
+     checked. Keys only for anything sensitive; the point is which parameters
+     exist, not their values. */
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind('system:hyp', 'hyp.signed', ref,
+         JSON.stringify({
+           askedFor: [...p.keys()],
+           hypReturned: text.slice(0, 900).replace(/(KEY|PassP)=[^&]*/gi, '$1=***'),
+         }).slice(0, 1800), now()).run().catch(() => {});
+
   // Use HYP's RESPONSE VERBATIM as the payment query string. It already is the
   // full pay URL — action=pay, every parameter we signed, in HYP's own order,
   // plus the signature — and KEY/PassP are not echoed back.

@@ -204,9 +204,9 @@
     "semantic_hash": "a71cfdf182fccca164321c9f26584b66"
   },
   "worker/src/hyp.js": {
-    "mtime": 1787933312.1858869,
-    "seen": 1787933317.920971,
-    "ast_hash": "c78b9c4f4130b3ba8dbcbc39beb83ae6",
+    "mtime": 1787936234.6343973,
+    "seen": 1787936240.329427,
+    "ast_hash": "55cb92d503ead1d4645044d8a0c69254",
     "semantic_hash": ""
   },
   "worker/src/index.js": {
@@ -1302,9 +1302,9 @@
     "semantic_hash": ""
   },
   "worker/src/ownership.js": {
-    "mtime": 1787936218.6155326,
-    "seen": 1787936224.017813,
-    "ast_hash": "89388ab484519509f57eeda830b2b769",
+    "mtime": 1787936234.60925,
+    "seen": 1787936240.329432,
+    "ast_hash": "b36a5c1050cbf9c0fb99bb42887e0ba5",
     "semantic_hash": ""
   },
   "worker/src/trash.js": {
@@ -1314,9 +1314,9 @@
     "semantic_hash": ""
   },
   "worker/src/earnings.js": {
-    "mtime": 1787936218.6150358,
-    "seen": 1787936224.017807,
-    "ast_hash": "f00b9da02941362c9d133c6de49b85da",
+    "mtime": 1787936234.609371,
+    "seen": 1787936240.3294258,
+    "ast_hash": "f7a314352a2e3421f7616dfab4373df4",
     "semantic_hash": ""
   },
   "PAYOUTS.md": {
@@ -1350,9 +1350,9 @@
     "semantic_hash": ""
   },
   "worker/src/artistprofile.js": {
-    "mtime": 1787936218.6145315,
-    "seen": 1787936224.017798,
-    "ast_hash": "1d747f5fd65fdc1e2787070048a16c6b",
+    "mtime": 1787936234.6088967,
+    "seen": 1787936240.329417,
+    "ast_hash": "70ebe6934e73a61ecc668adafdee5100",
     "semantic_hash": ""
   },
   "worker/src/coupons.js": {
