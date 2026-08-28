@@ -19,6 +19,7 @@ import { alert } from './analytics.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 import { accrueEarnings } from './earnings.js';
+import { findCoupon, couponProblem, couponAllowsClass, applyCoupon, burnCoupon } from './coupons.js';
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -234,6 +235,7 @@ export async function createRequest(req, env, user) {
   // that arrived from the browser — it is the one field worth forging.
   const ov = await env.DB.prepare('SELECT patch FROM track_overrides WHERE slug = ?').bind(slug).first();
   let lane = 'instant', listAgorot = null;
+  let couponCode = null, couponOff = 0;
   if (ov) {
     try {
       const p = JSON.parse(ov.patch);
@@ -257,6 +259,24 @@ export async function createRequest(req, env, user) {
     const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '12m', !!b.paid_media, classes);
     listAgorot = pr.quote ? null : pr.amount * 100;
     if (pr.quote) lane = 'quote';
+
+    /* The discount comes off HERE, after pricePoint has snapped the ladder to
+       a sales figure and before the number is snapshotted — the only place a
+       self-serve price is ever created. Applying it earlier would let the
+       rounding rule eat part of the discount; applying it in the browser would
+       make it forgeable. There is nothing to discount on a quote. */
+    if (listAgorot != null && clean(b.coupon, 40)) {
+      const c = await findCoupon(env, b.coupon);
+      const bad = couponProblem(c, listAgorot);
+      if (!bad && couponAllowsClass(c, pr.grade)) {
+        const res = applyCoupon(listAgorot, c);
+        if (res.off > 0) {
+          listAgorot = res.amount;
+          couponCode = c.code;
+          couponOff = res.off;
+        }
+      }
+    }
   }
 
   const t = now();
@@ -269,7 +289,10 @@ export async function createRequest(req, env, user) {
   ).bind(user ? user.id : null, email, slug, tier, lane, listAgorot,
          clean(b.licensee_name, 200), clean(b.licensee_tax_id, 40),
          clean(b.use_where, 500), clean(b.use_territory, 120),
-         clean(b.use_duration, 120), clean(b.note, 1000),
+         clean(b.use_duration, 120),
+         // The code rides along in the note so "why was this cheaper" has an
+         // answer on the request itself, without a schema change.
+         (couponCode ? `[coupon ${couponCode} -₪${(couponOff / 100).toFixed(0)}] ` : '') + clean(b.note, 1000),
          // The chosen term, bounded — it decides expires_at at grant time.
          // 'perp' is the one legitimate way to arrive with no months: it means
          // no end date, so it must pass through as NULL rather than be

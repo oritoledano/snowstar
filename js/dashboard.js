@@ -13,7 +13,7 @@
      work they are: the people buying, the people supplying, and the machine.
      The order inside each group is the order you actually touch them. */
   const GROUPS = [
-    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'jobs']],
+    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'jobs']],
     ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
     ['Admin',  ['pricing', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
@@ -86,6 +86,7 @@
       if (tab === 'licensing') return await paintLicensing();
       if (tab === 'inbox') return await paintInbox();
       if (tab === 'jobs') return await paintJobs();
+      if (tab === 'coupons') return await paintCoupons();
       if (tab === 'pricing') return await paintPricing();
       if (tab === 'alerts') return await paintAlerts();
       if (tab === 'storage') return await paintStorage();
@@ -1800,6 +1801,81 @@
     });
 
     fill();
+  }
+
+  /* ── coupons ──────────────────────────────────────────────────────────────
+     Codes are generated here and redeemed in the licence funnel. The discount
+     itself is applied server-side at the moment the price is snapshotted — the
+     browser never gets to decide what something costs. */
+  async function paintCoupons() {
+    const d = await get('/coupons');
+    const cs = d.coupons || [];
+    const ils = (n) => '₪' + (n / 100).toFixed(0);
+    const when = (t) => (t ? new Date(t * 1000).toLocaleDateString() : '—');
+
+    paint(`<div class="db-panel">
+      <h2>Discount codes <span class="pill">${cs.filter((c) => c.active).length} live</span></h2>
+      <p class="db-empty" style="padding-top:0">A code cuts the price at checkout. It is applied on the
+        server after the price is worked out, so what somebody is charged is exactly the discount you
+        set — and a code cannot be faked from the browser.</p>
+
+      <div class="cp-new">
+        <label class="ar-f"><span>Discount</span>
+          <div class="cp-row2">
+            <input id="cp-val" type="number" min="1" value="20">
+            <select id="cp-kind"><option value="percent">% off</option><option value="amount">₪ off</option></select>
+          </div></label>
+        <label class="ar-f"><span>Code (blank = generate)</span>
+          <input id="cp-code" placeholder="e.g. SUMMER25" maxlength="40"></label>
+        <label class="ar-f"><span>Prefix for generated</span><input id="cp-prefix" placeholder="MUTRA" maxlength="12"></label>
+        <label class="ar-f"><span>Max uses (0 = unlimited)</span><input id="cp-max" type="number" min="0" value="0"></label>
+        <label class="ar-f"><span>Minimum spend ₪</span><input id="cp-min" type="number" min="0" value="0"></label>
+        <label class="ar-f"><span>Classes it applies to</span>
+          <input id="cp-cls" placeholder="blank = all, e.g. CD" maxlength="4"></label>
+        <label class="ar-f"><span>Expires</span><input id="cp-exp" type="date"></label>
+        <label class="ar-f"><span>Note to self</span><input id="cp-note" maxlength="200" placeholder="Black Friday"></label>
+        <div class="ar-f"><span>&nbsp;</span><button class="rv-btn rv-ok" id="cp-make">Create code</button></div>
+      </div>
+      <p class="cp-said"></p>
+
+      ${cs.length ? table(cs, [
+        { label: 'Code', get: (c) => `<code class="cp-code">${esc(c.code)}</code>` },
+        { label: 'Worth', get: (c) => c.kind === 'percent' ? c.value + '%' : ils(c.value) },
+        { label: 'Applies to', get: (c) => esc(c.classes || 'all classes') },
+        { label: 'Min', get: (c) => (c.min_amount ? ils(c.min_amount) : '—') },
+        { label: 'Used', num: true, get: (c) => c.max_uses ? `${c.used}/${c.max_uses}` : String(c.used) },
+        { label: 'Expires', get: (c) => when(c.expires_at) },
+        { label: 'Note', get: (c) => esc(c.note || '') },
+        { label: '', get: (c) => `<button class="rv-btn cp-tog" data-id="${c.id}">${
+            c.active ? 'On' : 'Off'}</button> <button class="rv-btn cp-del" data-id="${c.id}">×</button>` },
+      ], { rowAttr: (c) => c.active ? '' : ' style="opacity:.45"' })
+      : '<p class="db-empty">No codes yet.</p>'}</div>`);
+
+    const said = document.querySelector('.cp-said');
+    document.getElementById('cp-make').addEventListener('click', async () => {
+      const exp = document.getElementById('cp-exp').value;
+      const r = await post('/coupons', {
+        kind: document.getElementById('cp-kind').value,
+        value: Number(document.getElementById('cp-val').value),
+        code: document.getElementById('cp-code').value,
+        prefix: document.getElementById('cp-prefix').value,
+        max_uses: Number(document.getElementById('cp-max').value),
+        min_amount: Number(document.getElementById('cp-min').value),
+        classes: document.getElementById('cp-cls').value,
+        note: document.getElementById('cp-note').value,
+        expires_at: exp ? Math.floor(new Date(exp + 'T23:59:59').getTime() / 1000) : null,
+      });
+      if (r && r.ok) { said.textContent = `Created ${r.code}`; load(); }
+      else said.textContent = r && r.error === 'code_taken' ? 'That code already exists.'
+        : (r && r.error) || 'Could not create that code.';
+    });
+    app.querySelectorAll('.cp-tog').forEach((b) => b.addEventListener('click', async () => {
+      await post('/coupons', { toggle: Number(b.dataset.id) }); load();
+    }));
+    app.querySelectorAll('.cp-del').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm('Delete this code? Anyone holding it will get "no such code".')) return;
+      await post('/coupons', { remove: Number(b.dataset.id) }); load();
+    }));
   }
 
   addEventListener('hashchange', () => {

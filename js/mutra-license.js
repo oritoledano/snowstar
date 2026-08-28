@@ -141,6 +141,10 @@
   /* ── funnel state ──────────────────────────────────────────────────────── */
 
   let el = null, current = null, screen = 1;
+  // The code the buyer entered and the server accepted at preview time. Reset
+  // whenever a new track opens, so a code checked against one price cannot
+  // ride along to a different one.
+  let couponCode = '';
   const pick = { who: null, persona: null, forWhom: null, coverage: 'standard',
                  size: null, term: '12m', paid: false };
 
@@ -444,6 +448,11 @@
         this is what it names.</p>
       <label class="lic-field"><span>Project name</span>
         <input class="lic-proj" type="text" maxlength="140" placeholder="Spring brand film"></label>
+      <label class="lic-field lic-cpwrap"><span>Discount code <i>optional</i></span>
+        <span class="lic-cprow"><input class="lic-coupon" type="text" maxlength="40"
+          placeholder="If you were given one" autocapitalize="characters" spellcheck="false">
+        <button class="lic-cpgo" type="button">Apply</button></span>
+        <em class="lic-cpsaid"></em></label>
       <label class="lic-field"><span>End client</span>
         <input class="lic-client" type="text" maxlength="140"
           placeholder="${pick.who === 'business' ? 'The company in the video' : 'Yourself, or the client'}"></label>
@@ -456,6 +465,34 @@
         <button class="lic-go lic-submit">Pay by Card <span class="lic-cards" aria-hidden="true"><i class="cb-visa">VISA</i><i class="cb-mc"></i><i class="cb-amex">AMEX</i></span></button>
       </div>
       <button class="lic-alt" type="button">Pay with Bit instead</button>`;
+
+    /* Checking a code shows what it would do before anyone commits. The
+       answer is advisory: the price that gets charged is recomputed on the
+       server at submit time, so a code that expires between the two is caught
+       there rather than honoured because the browser said so. */
+    const cin = body().querySelector('.lic-coupon');
+    const cgo = body().querySelector('.lic-cpgo');
+    const csaid = body().querySelector('.lic-cpsaid');
+    if (cgo) cgo.addEventListener('click', async () => {
+      const code = (cin.value || '').trim();
+      if (!code) { couponCode = ''; csaid.textContent = ''; return; }
+      csaid.textContent = 'Checking…';
+      const priced = priceFor(t, buyerId(), pick.coverage, pick.term);
+      const r = await fetch('/api/coupons/check', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ code, amount: priced.quote ? 0 : Math.round(priced.amount * 100),
+                               cls: String((t && t.cls) || 'C') }),
+      }).then((x) => x.json()).catch(() => null);
+      if (r && r.ok) {
+        couponCode = code;
+        csaid.className = 'lic-cpsaid ok';
+        csaid.textContent = `${r.label} — you pay ₪${(r.amount / 100).toFixed(0)} + VAT`;
+      } else {
+        couponCode = '';
+        csaid.className = 'lic-cpsaid bad';
+        csaid.textContent = (r && r.reason) || 'Could not check that code.';
+      }
+    });
 
     const proj = body().querySelector('.lic-proj');
     const client = body().querySelector('.lic-client');
@@ -567,6 +604,10 @@
           duration: pick.term,
           months: term.months,
           project_name: project,
+          // Sent as typed. The server looks the code up, decides whether it
+          // applies and works out the discount itself — the browser is never
+          // trusted with what something costs.
+          coupon: couponCode,
           licensee_name: client,
           use_territory: quoteInfo ? quoteInfo.territory : '',
           use_where: quoteInfo && quoteInfo.where ? quoteInfo.where.join(', ') : '',
@@ -695,6 +736,7 @@
     el.innerHTML = SHELL;
     el.querySelector('.lic-close').addEventListener('click', close);
     current = track;
+    couponCode = '';                 // a code checked against one price must not follow to another
     resetPick();
     screen = 1;
     el.querySelector('.lic-cover').src = track.cover || '';

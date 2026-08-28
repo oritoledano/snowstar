@@ -1365,3 +1365,16 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
    colour as every other control in the row. */
 .trk-cur .trk-cur-del{color:var(--dim);transition:color .15s,background .15s;border-radius:6px}
 .trk-cur .trk-cur-del:hover{color:#f87171;background:rgba(248,113,113,.14)}
+
+/* Discount code, in the licence funnel. Quiet until it has something to say —
+   it is optional, and a field shouting for attention next to the price reads
+   as "you are paying too much". */
+.lic-cpwrap i{font-style:normal;color:var(--dim);font-weight:400;font-size:.86em}
+.lic-cprow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.lic-cprow input{text-transform:uppercase;letter-spacing:.06em}
+.lic-cpgo{font:inherit;font-size:.8rem;padding:0 16px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--line-2,var(--line));background:none;color:var(--text)}
+.lic-cpgo:hover{border-color:var(--amber,var(--coral));color:var(--amber,var(--coral))}
+.lic-cpsaid{display:block;margin-top:6px;font-style:normal;font-size:.82rem;color:var(--muted);min-height:1.1em}
+.lic-cpsaid.ok{color:#34d399}
+.lic-cpsaid.bad{color:var(--coral)}

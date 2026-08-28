@@ -12,7 +12,7 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/mutra.css?v=89">
+<link rel="stylesheet" href="css/mutra.css?v=90">
 <style>
   body{padding-bottom:60px}
   .db-wrap{max-width:1180px;margin:0 auto;padding:96px clamp(16px,4vw,44px) 40px}
@@ -155,6 +155,18 @@
     line-height:1;padding:6px;opacity:0;border-radius:6px}
   .jb-table tr:hover .jb-del{opacity:1}
   .jb-del:hover{color:#f87171;background:rgba(248,113,113,.12)}
+  /* ── coupons ── */
+  .cp-new{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;
+    margin:14px 0 6px;align-items:end}
+  .cp-new .ar-f{margin-bottom:0}
+  .cp-new select{font:inherit;font-size:.86rem;color:var(--text);
+    background:var(--panel-2,rgba(128,128,128,.07));border:1px solid var(--line);
+    border-radius:9px;padding:9px 8px;outline:none}
+  .cp-row2{display:grid;grid-template-columns:1fr auto;gap:6px}
+  .cp-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.86rem;
+    letter-spacing:.06em;color:var(--amber,#8fd8ff)}
+  .cp-said{color:var(--muted);font-size:.84rem;min-height:1.2em;margin:8px 0 4px}
+
   /* ── artist profile cards ── */
   .ar-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;
     padding:10px 16px;margin-bottom:8px}
@@ -416,6 +428,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=18"></script>
-<script src="js/dashboard.js?v=27"></script>
+<script src="js/dashboard.js?v=28"></script>
 </body>
 </html>

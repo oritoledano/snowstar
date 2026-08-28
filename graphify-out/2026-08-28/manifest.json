@@ -30,9 +30,9 @@
     "semantic_hash": "a50db8d3130369b6138a0ad2e9c7a72f"
   },
   "js/dashboard.js": {
-    "mtime": 1787921090.2646134,
-    "seen": 1787921096.454189,
-    "ast_hash": "2d23151dd513b7c3c74fa22ed4ef5b55",
+    "mtime": 1787921509.6929154,
+    "seen": 1787921515.945635,
+    "ast_hash": "619e641303ec2bc3c8d08944450144aa",
     "semantic_hash": ""
   },
   "js/data.js": {
@@ -84,9 +84,9 @@
     "semantic_hash": "092ca0935da7bb46ee8a6d003ccc2ff7"
   },
   "js/mutra-license.js": {
-    "mtime": 1787916658.9438968,
-    "seen": 1787916665.0015612,
-    "ast_hash": "2c1ec3759cc1e7fb370473bf941a48ea",
+    "mtime": 1787921542.8809693,
+    "seen": 1787921548.671592,
+    "ast_hash": "075f2a4c46a494c52b4faf75e6570740",
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
@@ -210,15 +210,15 @@
     "semantic_hash": "cf7ff836a6fe1949eca373cb8d1e7e65"
   },
   "worker/src/index.js": {
-    "mtime": 1787921197.923564,
-    "seen": 1787921204.0679722,
-    "ast_hash": "fc9fa38ab0e2240b786a2811fbcea1ba",
+    "mtime": 1787921398.8290482,
+    "seen": 1787921405.0158982,
+    "ast_hash": "d8c47242a39413b86191bd55382f98b1",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
-    "mtime": 1787874813.423187,
-    "seen": 1787874819.9910882,
-    "ast_hash": "1ec0512e260bae1fe4547c33bdb0d88b",
+    "mtime": 1787921457.7789145,
+    "seen": 1787921463.574571,
+    "ast_hash": "403c7505586999e8ea7a029223fdda3e",
     "semantic_hash": ""
   },
   "worker/src/mail.js": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787921090.348461,
-    "seen": 1787921096.45425,
-    "ast_hash": "f8e11c522834ddd350e11c28a14d759b",
+    "mtime": 1787921509.7611003,
+    "seen": 1787921515.9457011,
+    "ast_hash": "d16e584b81dabf08e5fa0f45049bf807",
     "semantic_hash": ""
   },
   "index.html": {
@@ -1353,6 +1353,12 @@
     "mtime": 1787921188.999579,
     "seen": 1787921195.2281978,
     "ast_hash": "912076853dc0a218d7cdd761f2e1b0b1",
+    "semantic_hash": ""
+  },
+  "worker/src/coupons.js": {
+    "mtime": 1787921385.0613537,
+    "seen": 1787921390.994831,
+    "ast_hash": "929b4a1d37abdb4223307f9a69fac3b4",
     "semantic_hash": ""
   }
 }
