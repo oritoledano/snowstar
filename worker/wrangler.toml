@@ -6,7 +6,10 @@ workers_dev = false
 # Runs on the site's own domain so the session cookie is first-party.
 # Everything except /api/* falls through to GitHub Pages untouched.
 routes = [
-  { pattern = "snowstar.company/api/*", zone_name = "snowstar.company" }
+  { pattern = "snowstar.company/api/*", zone_name = "snowstar.company" },
+  # Per-track share links. A scraper reads tags specific to the track here;
+  # a person is redirected straight on to the catalogue with it open.
+  { pattern = "snowstar.company/t/*", zone_name = "snowstar.company" }
 ]
 
 # Workers AI: the search agent needs to understand a sentence, not match a

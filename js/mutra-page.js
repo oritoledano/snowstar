@@ -777,7 +777,11 @@
       // copy a direct link to this track
       row.querySelector('.trk-share').addEventListener('click', async e => {
         e.stopPropagation();
-        const url = location.origin + location.pathname + '?track=' + encodeURIComponent(track.slug);
+        /* /t/<slug>, not ?track=<slug>. The query form is a static page as far
+           as a scraper is concerned, so every shared track previewed as the same
+           generic Mutra card; this URL is served with tags for the actual track
+           and redirects a person straight on to the catalogue. */
+        const url = location.origin + '/t/' + encodeURIComponent(track.slug);
         try {
           await navigator.clipboard.writeText(url);
           toast('Link copied');

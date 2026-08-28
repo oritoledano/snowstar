@@ -42,6 +42,7 @@ import { getClasses, setClasses } from './pricing.js';
 import { listJobs, saveJob, exportJobs } from './jobs.js';
 import { interpretBrief } from './agent.js';
 import { listStacks, saveStack } from './stacks.js';
+import { sharePage } from './share.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listEarnings, settleEarnings, myEarnings } from './earnings.js';
@@ -141,6 +142,7 @@ function originOk(req) {
 
 async function handle(req, env, ctx) {
   const url = new URL(req.url);
+  if (url.pathname.startsWith('/t/')) return sharePage(req, env, url);
   const path = url.pathname.replace(/^\/api/, '') || '/';
   const method = req.method.toUpperCase();
   const ip = req.headers.get('cf-connecting-ip') || 'unknown';

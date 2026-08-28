@@ -189,7 +189,7 @@
       "file_type": "code",
       "norm_label": "paintcls()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1530"
+      "source_location": "L1529"
     },
     {
       "id": "js_mutra_page_appendpage",
@@ -321,7 +321,7 @@
       "file_type": "code",
       "norm_label": "drawsortmenu()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2198"
+      "source_location": "L2197"
     },
     {
       "id": "js_mutra_page_drawwave",
@@ -345,7 +345,7 @@
       "file_type": "code",
       "norm_label": "droponto()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1689"
+      "source_location": "L1688"
     },
     {
       "id": "js_mutra_page_ensureartists",
@@ -357,7 +357,7 @@
       "file_type": "code",
       "norm_label": "ensureartists()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1715"
+      "source_location": "L1714"
     },
     {
       "id": "js_mutra_page_filterbybpm",
@@ -393,7 +393,7 @@
       "file_type": "code",
       "norm_label": "focustrack()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2409"
+      "source_location": "L2408"
     },
     {
       "id": "js_mutra_page_indexstacks",
@@ -453,7 +453,7 @@
       "file_type": "code",
       "norm_label": "makedraggable()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1617"
+      "source_location": "L1616"
     },
     {
       "id": "js_mutra_page_matches",
@@ -537,7 +537,7 @@
       "file_type": "code",
       "norm_label": "openeditor()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1742"
+      "source_location": "L1741"
     },
     {
       "id": "js_mutra_page_openeditor_paintchips",
@@ -549,7 +549,7 @@
       "file_type": "code",
       "norm_label": "paintchips()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1969"
+      "source_location": "L1968"
     },
     {
       "id": "js_mutra_page_openeditor_paintcredits",
@@ -561,7 +561,7 @@
       "file_type": "code",
       "norm_label": "paintcredits()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1934"
+      "source_location": "L1933"
     },
     {
       "id": "js_mutra_page_openeditor_paintlane",
@@ -573,7 +573,7 @@
       "file_type": "code",
       "norm_label": "paintlane()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2022"
+      "source_location": "L2021"
     },
     {
       "id": "js_mutra_page_openeditor_paintuses",
@@ -585,7 +585,7 @@
       "file_type": "code",
       "norm_label": "paintuses()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1872"
+      "source_location": "L1871"
     },
     {
       "id": "js_mutra_page_openeditor_synchl",
@@ -597,7 +597,7 @@
       "file_type": "code",
       "norm_label": "synchl()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1997"
+      "source_location": "L1996"
     },
     {
       "id": "js_mutra_page_openmail",
@@ -621,7 +621,7 @@
       "file_type": "code",
       "norm_label": "paint()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2448"
+      "source_location": "L2447"
     },
     {
       "id": "js_mutra_page_painthlbtn",
@@ -633,7 +633,7 @@
       "file_type": "code",
       "norm_label": "painthlbtn()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2220"
+      "source_location": "L2219"
     },
     {
       "id": "js_mutra_page_paintrowwave",
@@ -657,7 +657,7 @@
       "file_type": "code",
       "norm_label": "painttoggle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2237"
+      "source_location": "L2236"
     },
     {
       "id": "js_mutra_page_paintvol",
@@ -705,7 +705,7 @@
       "file_type": "code",
       "norm_label": "readpalette()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2437"
+      "source_location": "L2436"
     },
     {
       "id": "js_mutra_page_readwavecolours",
@@ -765,7 +765,7 @@
       "file_type": "code",
       "norm_label": "rowpanel()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2311"
+      "source_location": "L2310"
     },
     {
       "id": "js_mutra_page_savecurated",
@@ -837,7 +837,7 @@
       "file_type": "code",
       "norm_label": "setmenu()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2544"
+      "source_location": "L2543"
     },
     {
       "id": "js_mutra_page_setprogressui",
@@ -885,7 +885,7 @@
       "file_type": "code",
       "norm_label": "showcredits()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2328"
+      "source_location": "L2327"
     },
     {
       "id": "js_mutra_page_showlyrics",
@@ -897,7 +897,7 @@
       "file_type": "code",
       "norm_label": "showlyrics()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2344"
+      "source_location": "L2343"
     },
     {
       "id": "js_mutra_page_showsimilar",
@@ -909,7 +909,7 @@
       "file_type": "code",
       "norm_label": "showsimilar()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2366"
+      "source_location": "L2365"
     },
     {
       "id": "js_mutra_page_spintoggle",
@@ -957,7 +957,7 @@
       "file_type": "code",
       "norm_label": "startquote()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2357"
+      "source_location": "L2356"
     },
     {
       "id": "js_mutra_page_streamurl",
@@ -993,7 +993,7 @@
       "file_type": "code",
       "norm_label": "synccuratetoggle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2161"
+      "source_location": "L2160"
     },
     {
       "id": "js_mutra_page_synchiddentoggle",
@@ -1005,7 +1005,7 @@
       "file_type": "code",
       "norm_label": "synchiddentoggle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2127"
+      "source_location": "L2126"
     },
     {
       "id": "js_mutra_page_syncscalecat",
@@ -1017,7 +1017,7 @@
       "file_type": "code",
       "norm_label": "syncscalecat()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2226"
+      "source_location": "L2225"
     },
     {
       "id": "js_mutra_page_toast",
@@ -2292,6 +2292,18 @@
       "source_location": "L22"
     },
     {
+      "id": "worker_src_crypto_randb64",
+      "label": "randB64()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "randb64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L11"
+    },
+    {
       "id": "worker_src_crypto_safeequal",
       "label": "safeEqual()",
       "_callable": true,
@@ -2326,6 +2338,18 @@
       "norm_label": "verifypassword()",
       "source_file": "worker/src/crypto.js",
       "source_location": "L46"
+    },
+    {
+      "id": "worker_src_index_randtoken",
+      "label": "randToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "crypto.js",
+      "file_type": "code",
+      "norm_label": "randtoken()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L70"
     },
     {
       "id": "worker_src_session_currentuser",
@@ -3096,18 +3120,6 @@
       "source_location": "L97"
     },
     {
-      "id": "worker_src_artists_createsubmission",
-      "label": "createSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "createsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L69"
-    },
-    {
       "id": "worker_src_mail_mailfrom",
       "label": "mailFrom()",
       "_callable": true,
@@ -3130,18 +3142,6 @@
       "norm_label": "maillive()",
       "source_file": "worker/src/mail.js",
       "source_location": "L19"
-    },
-    {
-      "id": "worker_src_mail_mailto",
-      "label": "mailTo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "mailto()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L45"
     },
     {
       "id": "worker_src_mail_resetemail",
@@ -3276,18 +3276,6 @@
       "source_location": "L21"
     },
     {
-      "id": "worker_src_rights_linkonsignin",
-      "label": "linkOnSignIn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "linkonsignin()",
-      "source_file": "worker/src/rights.js",
-      "source_location": "L281"
-    },
-    {
       "id": "worker_src_rights_listmanagedartists",
       "label": "listManagedArtists()",
       "_callable": true,
@@ -3396,12 +3384,96 @@
       "source_location": "L28"
     },
     {
+      "id": "worker_src_contact_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L28"
+    },
+    {
+      "id": "worker_src_contact_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "worker_src_contact_listmessages",
+      "label": "listMessages()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "listmessages()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_contact_makeref",
+      "label": "makeRef()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "makeref()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_contact_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_contact_setmessagestatus",
+      "label": "setMessageStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "setmessagestatus()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L146"
+    },
+    {
+      "id": "worker_src_contact_submitcontact",
+      "label": "submitContact()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "submitcontact()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L62"
+    },
+    {
       "id": "worker_src_stream_breadthexceeded",
       "label": "breadthExceeded()",
       "_callable": true,
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "breadthexceeded()",
       "source_file": "worker/src/stream.js",
@@ -3413,7 +3485,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "handlestream()",
       "source_file": "worker/src/stream.js",
@@ -3425,7 +3497,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "json()",
       "source_file": "worker/src/stream.js",
@@ -3437,7 +3509,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "lookslikeplayback()",
       "source_file": "worker/src/stream.js",
@@ -3449,7 +3521,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "now()",
       "source_file": "worker/src/stream.js",
@@ -3461,7 +3533,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "parserange()",
       "source_file": "worker/src/stream.js",
@@ -3473,7 +3545,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "serve()",
       "source_file": "worker/src/stream.js",
@@ -3624,18 +3696,6 @@
       "source_location": "L165"
     },
     {
-      "id": "worker_src_crypto_randb64",
-      "label": "randB64()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "randb64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L11"
-    },
-    {
       "id": "worker_src_index_authed",
       "label": "authed()",
       "_callable": true,
@@ -3742,18 +3802,6 @@
       "norm_label": "product()",
       "source_file": "worker/src/index.js",
       "source_location": "L77"
-    },
-    {
-      "id": "worker_src_index_randtoken",
-      "label": "randToken()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "randtoken()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L70"
     },
     {
       "id": "worker_src_index_scheduled",
@@ -4258,6 +4306,18 @@
       "norm_label": "validemail()",
       "source_file": "worker/src/profile.js",
       "source_location": "L27"
+    },
+    {
+      "id": "worker_src_rights_linkonsignin",
+      "label": "linkOnSignIn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 34,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "linkonsignin()",
+      "source_file": "worker/src/rights.js",
+      "source_location": "L281"
     },
     {
       "id": "worker_src_user_publicuser",
@@ -4788,90 +4848,6 @@
       "source_location": "L247"
     },
     {
-      "id": "worker_src_contact_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L28"
-    },
-    {
-      "id": "worker_src_contact_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L22"
-    },
-    {
-      "id": "worker_src_contact_listmessages",
-      "label": "listMessages()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "listmessages()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L128"
-    },
-    {
-      "id": "worker_src_contact_makeref",
-      "label": "makeRef()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "makeref()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L46"
-    },
-    {
-      "id": "worker_src_contact_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "worker_src_contact_setmessagestatus",
-      "label": "setMessageStatus()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "setmessagestatus()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L146"
-    },
-    {
-      "id": "worker_src_contact_submitcontact",
-      "label": "submitContact()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "submitcontact()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L62"
-    },
-    {
       "id": "worker_src_earnings_accrueearnings",
       "label": "accrueEarnings()",
       "_callable": true,
@@ -5316,6 +5292,42 @@
       "source_location": "L237"
     },
     {
+      "id": "worker_src_share_esc",
+      "label": "esc()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "share.js",
+      "file_type": "code",
+      "norm_label": "esc()",
+      "source_file": "worker/src/share.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_share_sharepage",
+      "label": "sharePage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "share.js",
+      "file_type": "code",
+      "norm_label": "sharepage()",
+      "source_file": "worker/src/share.js",
+      "source_location": "L23"
+    },
+    {
+      "id": "worker_src_artists_createsubmission",
+      "label": "createSubmission()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "createsubmission()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L69"
+    },
+    {
       "id": "worker_src_artists_json",
       "label": "json()",
       "_callable": true,
@@ -5446,6 +5458,18 @@
       "norm_label": "uploadtrack()",
       "source_file": "worker/src/artists.js",
       "source_location": "L54"
+    },
+    {
+      "id": "worker_src_mail_mailto",
+      "label": "mailTo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "mailto()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L45"
     },
     {
       "id": "worker_src_agent_clampbpm",
@@ -5721,7 +5745,7 @@
       "file_type": "code",
       "norm_label": "commitreview()",
       "source_file": "js/dashboard.js",
-      "source_location": "L126"
+      "source_location": "L129"
     },
     {
       "id": "js_dashboard_gate",
@@ -5745,7 +5769,7 @@
       "file_type": "code",
       "norm_label": "gauge()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1361"
+      "source_location": "L1364"
     },
     {
       "id": "js_dashboard_jobsshown",
@@ -5757,7 +5781,7 @@
       "file_type": "code",
       "norm_label": "jobsshown()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1459"
+      "source_location": "L1462"
     },
     {
       "id": "js_dashboard_load",
@@ -5781,7 +5805,7 @@
       "file_type": "code",
       "norm_label": "opendecleditor()",
       "source_file": "js/dashboard.js",
-      "source_location": "L143"
+      "source_location": "L146"
     },
     {
       "id": "js_dashboard_openmember",
@@ -5793,7 +5817,7 @@
       "file_type": "code",
       "norm_label": "openmember()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1224"
+      "source_location": "L1227"
     },
     {
       "id": "js_dashboard_openreviewnote",
@@ -5805,7 +5829,7 @@
       "file_type": "code",
       "norm_label": "openreviewnote()",
       "source_file": "js/dashboard.js",
-      "source_location": "L90"
+      "source_location": "L93"
     },
     {
       "id": "js_dashboard_paint",
@@ -5829,7 +5853,7 @@
       "file_type": "code",
       "norm_label": "paintalerts()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1299"
+      "source_location": "L1302"
     },
     {
       "id": "js_dashboard_paintartists",
@@ -5841,7 +5865,7 @@
       "file_type": "code",
       "norm_label": "paintartists()",
       "source_file": "js/dashboard.js",
-      "source_location": "L769"
+      "source_location": "L772"
     },
     {
       "id": "js_dashboard_paintclearlistadmin",
@@ -5853,7 +5877,7 @@
       "file_type": "code",
       "norm_label": "paintclearlistadmin()",
       "source_file": "js/dashboard.js",
-      "source_location": "L452"
+      "source_location": "L455"
     },
     {
       "id": "js_dashboard_paintinbox",
@@ -5865,7 +5889,7 @@
       "file_type": "code",
       "norm_label": "paintinbox()",
       "source_file": "js/dashboard.js",
-      "source_location": "L940"
+      "source_location": "L943"
     },
     {
       "id": "js_dashboard_paintjobs",
@@ -5877,7 +5901,7 @@
       "file_type": "code",
       "norm_label": "paintjobs()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1477"
+      "source_location": "L1480"
     },
     {
       "id": "js_dashboard_paintjobs_fill",
@@ -5889,7 +5913,7 @@
       "file_type": "code",
       "norm_label": "fill()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1522"
+      "source_location": "L1525"
     },
     {
       "id": "js_dashboard_paintjobs_save",
@@ -5901,7 +5925,7 @@
       "file_type": "code",
       "norm_label": "save()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1585"
+      "source_location": "L1588"
     },
     {
       "id": "js_dashboard_paintjobs_togglenote",
@@ -5913,7 +5937,7 @@
       "file_type": "code",
       "norm_label": "togglenote()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1562"
+      "source_location": "L1565"
     },
     {
       "id": "js_dashboard_paintlicensing",
@@ -5925,7 +5949,7 @@
       "file_type": "code",
       "norm_label": "paintlicensing()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1027"
+      "source_location": "L1030"
     },
     {
       "id": "js_dashboard_paintmail",
@@ -5937,7 +5961,7 @@
       "file_type": "code",
       "norm_label": "paintmail()",
       "source_file": "js/dashboard.js",
-      "source_location": "L990"
+      "source_location": "L993"
     },
     {
       "id": "js_dashboard_paintmembers",
@@ -5949,7 +5973,7 @@
       "file_type": "code",
       "norm_label": "paintmembers()",
       "source_file": "js/dashboard.js",
-      "source_location": "L678"
+      "source_location": "L681"
     },
     {
       "id": "js_dashboard_paintoverview",
@@ -5961,7 +5985,7 @@
       "file_type": "code",
       "norm_label": "paintoverview()",
       "source_file": "js/dashboard.js",
-      "source_location": "L569"
+      "source_location": "L572"
     },
     {
       "id": "js_dashboard_paintpipeline",
@@ -5973,7 +5997,7 @@
       "file_type": "code",
       "norm_label": "paintpipeline()",
       "source_file": "js/dashboard.js",
-      "source_location": "L494"
+      "source_location": "L497"
     },
     {
       "id": "js_dashboard_paintpricing",
@@ -5985,7 +6009,7 @@
       "file_type": "code",
       "norm_label": "paintpricing()",
       "source_file": "js/dashboard.js",
-      "source_location": "L867"
+      "source_location": "L870"
     },
     {
       "id": "js_dashboard_paintstats",
@@ -5997,7 +6021,7 @@
       "file_type": "code",
       "norm_label": "paintstats()",
       "source_file": "js/dashboard.js",
-      "source_location": "L606"
+      "source_location": "L609"
     },
     {
       "id": "js_dashboard_paintstorage",
@@ -6009,7 +6033,7 @@
       "file_type": "code",
       "norm_label": "paintstorage()",
       "source_file": "js/dashboard.js",
-      "source_location": "L1373"
+      "source_location": "L1376"
     },
     {
       "id": "js_dashboard_paintsubmissions",
@@ -6021,7 +6045,7 @@
       "file_type": "code",
       "norm_label": "paintsubmissions()",
       "source_file": "js/dashboard.js",
-      "source_location": "L786"
+      "source_location": "L789"
     },
     {
       "id": "js_dashboard_paintupload",
@@ -6033,7 +6057,7 @@
       "file_type": "code",
       "norm_label": "paintupload()",
       "source_file": "js/dashboard.js",
-      "source_location": "L237"
+      "source_location": "L240"
     },
     {
       "id": "js_dashboard_table",
@@ -6057,7 +6081,7 @@
       "file_type": "code",
       "norm_label": "uppaint()",
       "source_file": "js/dashboard.js",
-      "source_location": "L339"
+      "source_location": "L342"
     },
     {
       "id": "js_dashboard_upread",
@@ -6069,7 +6093,7 @@
       "file_type": "code",
       "norm_label": "upread()",
       "source_file": "js/dashboard.js",
-      "source_location": "L398"
+      "source_location": "L401"
     },
     {
       "id": "js_dashboard_uprow",
@@ -6081,7 +6105,7 @@
       "file_type": "code",
       "norm_label": "uprow()",
       "source_file": "js/dashboard.js",
-      "source_location": "L309"
+      "source_location": "L312"
     },
     {
       "id": "js_dashboard_upstage",
@@ -6093,7 +6117,7 @@
       "file_type": "code",
       "norm_label": "upstage()",
       "source_file": "js/dashboard.js",
-      "source_location": "L318"
+      "source_location": "L321"
     },
     {
       "id": "js_dashboard_upsubmit",
@@ -6105,7 +6129,7 @@
       "file_type": "code",
       "norm_label": "upsubmit()",
       "source_file": "js/dashboard.js",
-      "source_location": "L404"
+      "source_location": "L407"
     },
     {
       "id": "js_dashboard_upsync",
@@ -6117,7 +6141,7 @@
       "file_type": "code",
       "norm_label": "upsync()",
       "source_file": "js/dashboard.js",
-      "source_location": "L357"
+      "source_location": "L360"
     },
     {
       "id": "js_mutra_artist_lightbox_build",
@@ -7168,28 +7192,6 @@
       "source_location": "L6"
     },
     {
-      "id": "js_mutra_data",
-      "label": "mutra-data.js",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "file_type": "code",
-      "norm_label": "mutra-data.js",
-      "source_file": "js/mutra-data.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "js_mutra_data_mutra",
-      "label": "MUTRA",
-      "_origin": "ast",
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "file_type": "code",
-      "norm_label": "mutra",
-      "source_file": "js/mutra-data.js",
-      "source_location": "L6"
-    },
-    {
       "id": "js_mutra_contact",
       "label": "mutra-contact.js",
       "_origin": "ast",
@@ -7309,6 +7311,28 @@
       "norm_label": "mutra-track.js",
       "source_file": "js/mutra-track.js",
       "source_location": "L1"
+    },
+    {
+      "id": "js_mutra_data",
+      "label": "mutra-data.js",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "file_type": "code",
+      "norm_label": "mutra-data.js",
+      "source_file": "js/mutra-data.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "js_mutra_data_mutra",
+      "label": "MUTRA",
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "file_type": "code",
+      "norm_label": "mutra",
+      "source_file": "js/mutra-data.js",
+      "source_location": "L6"
     },
     {
       "id": "js_mutra_highlights",
@@ -7561,11 +7585,33 @@
       "source_location": "L31"
     },
     {
+      "id": "worker_src_contact",
+      "label": "contact.js",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "contact.js",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_contact_routes",
+      "label": "ROUTES",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "contact.js",
+      "file_type": "code",
+      "norm_label": "routes",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L34"
+    },
+    {
       "id": "worker_src_stream",
       "label": "stream.js",
       "_origin": "ast",
       "community": 30,
-      "community_name": "stream.js",
+      "community_name": "contact.js",
       "file_type": "code",
       "norm_label": "stream.js",
       "source_file": "worker/src/stream.js",
@@ -7891,28 +7937,6 @@
       "source_location": "L31"
     },
     {
-      "id": "worker_src_contact",
-      "label": "contact.js",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "contact.js",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_contact_routes",
-      "label": "ROUTES",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "licensing.js",
-      "file_type": "code",
-      "norm_label": "routes",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L34"
-    },
-    {
       "id": "worker_src_earnings",
       "label": "earnings.js",
       "_origin": "ast",
@@ -8043,6 +8067,17 @@
       "norm_label": "terms",
       "source_file": "worker/src/pricing.js",
       "source_location": "L197"
+    },
+    {
+      "id": "worker_src_share",
+      "label": "share.js",
+      "_origin": "ast",
+      "community": 40,
+      "community_name": "share.js",
+      "file_type": "code",
+      "norm_label": "share.js",
+      "source_file": "worker/src/share.js",
+      "source_location": "L1"
     },
     {
       "id": "worker_src_artists",
@@ -8698,6 +8733,66 @@
       "source_url": null
     },
     {
+      "id": "artists_acum_registration",
+      "label": "ACUM / royalties-society registration flag",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "acum / royalties-society registration flag",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_approval_rule",
+      "label": "Who can approve a licence (any vs all)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "who can approve a licence (any vs all)",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_co_owner_shares",
+      "label": "Co-owner share splits (batch or per-track)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "co-owner share splits (batch or per-track)",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_controller_declaration",
+      "label": "External controller declaration (label / publisher / distributor)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "external controller declaration (label / publisher / distributor)",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "artists_countersign_claim",
       "label": "Countersign banner for tracks uploaded on the artist's behalf",
       "_origin": "semantic",
@@ -8708,6 +8803,36 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "countersign banner for tracks uploaded on the artist's behalf",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_instant_vs_quote_lane",
+      "label": "Instant vs quote licensing lane",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "instant vs quote licensing lane",
+      "source_file": "artists.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_rights_declaration",
+      "label": "Signed rights declaration on upload",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "signed rights declaration on upload",
       "source_file": "artists.html",
       "source_location": null,
       "source_url": null
@@ -8833,6 +8958,36 @@
       "source_url": null
     },
     {
+      "id": "terms_performance_royalties",
+      "label": "Performance royalties stay with broadcaster / venue",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "performance royalties stay with broadcaster / venue",
+      "source_file": "terms.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "terms_quote_only_tracks",
+      "label": "Get-a-quote tracks (someone else has a say)",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "get-a-quote tracks (someone else has a say)",
+      "source_file": "terms.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "dashboard_page",
       "label": "Owner dashboard",
       "_origin": "semantic",
@@ -8874,6 +9029,21 @@
       "file_type": "document",
       "norm_label": "stats.html redirect stub",
       "source_file": "stats.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "artists_direct_child_selectors",
+      "label": "Direct-child CSS selectors for nested checkbox labels",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 16,
+      "community_name": "Owner dashboard",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "direct-child css selectors for nested checkbox labels",
+      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
@@ -8953,6 +9123,21 @@
       "source_url": null
     },
     {
+      "id": "index_audio_branding",
+      "label": "Audio Branding service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "audio branding service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "index_mutra_teaser",
       "label": "Mutra teaser section on the homepage",
       "_origin": "semantic",
@@ -8978,6 +9163,66 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "organization json-ld structured data",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_original_music",
+      "label": "Original Music service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "original music service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_post_sound_sfx",
+      "label": "Post Sound / SFX service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "post sound / sfx service",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_services",
+      "label": "Four services section",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "four services section",
+      "source_file": "index.html",
+      "source_location": null,
+      "source_url": null
+    },
+    {
+      "id": "index_soundscapes",
+      "label": "SoundScapes service",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 17,
+      "community_name": "Snowstar agency homepage",
+      "contributor": null,
+      "file_type": "concept",
+      "norm_label": "soundscapes service",
       "source_file": "index.html",
       "source_location": null,
       "source_url": null
@@ -9038,21 +9283,6 @@
       "contributor": null,
       "file_type": "rationale",
       "norm_label": "brand assets: menu morph gif and lulo clean wordmark png",
-      "source_file": "README.md",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "readme_content_editing_contract",
-      "label": "Content editing via js/data.js and js/mutra-data.js",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 17,
-      "community_name": "Snowstar agency homepage",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "content editing via js/data.js and js/mutra-data.js",
       "source_file": "README.md",
       "source_location": null,
       "source_url": null
@@ -9328,6 +9558,21 @@
       "source_url": null
     },
     {
+      "id": "readme_content_editing_contract",
+      "label": "Content editing via js/data.js and js/mutra-data.js",
+      "_origin": "semantic",
+      "author": null,
+      "captured_at": null,
+      "community": 23,
+      "community_name": "Track catalogue browse + search",
+      "contributor": null,
+      "file_type": "rationale",
+      "norm_label": "content editing via js/data.js and js/mutra-data.js",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null
+    },
+    {
       "id": "refund_no_change_of_mind",
       "label": "No change-of-mind refunds on instant delivery",
       "_origin": "semantic",
@@ -9339,96 +9584,6 @@
       "file_type": "rationale",
       "norm_label": "no change-of-mind refunds on instant delivery",
       "source_file": "refund.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_acum_registration",
-      "label": "ACUM / royalties-society registration flag",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "acum / royalties-society registration flag",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_approval_rule",
-      "label": "Who can approve a licence (any vs all)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "who can approve a licence (any vs all)",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_co_owner_shares",
-      "label": "Co-owner share splits (batch or per-track)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "co-owner share splits (batch or per-track)",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_controller_declaration",
-      "label": "External controller declaration (label / publisher / distributor)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "external controller declaration (label / publisher / distributor)",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_instant_vs_quote_lane",
-      "label": "Instant vs quote licensing lane",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "instant vs quote licensing lane",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_rights_declaration",
-      "label": "Signed rights declaration on upload",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "signed rights declaration on upload",
-      "source_file": "artists.html",
       "source_location": null,
       "source_url": null
     },
@@ -9658,21 +9813,6 @@
       "source_url": null
     },
     {
-      "id": "terms_performance_royalties",
-      "label": "Performance royalties stay with broadcaster / venue",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "performance royalties stay with broadcaster / venue",
-      "source_file": "terms.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
       "id": "terms_prohibited_uses",
       "label": "What is never included (redistribution, ML training, Content ID registration)",
       "_origin": "semantic",
@@ -9683,21 +9823,6 @@
       "contributor": null,
       "file_type": "concept",
       "norm_label": "what is never included (redistribution, ml training, content id registration)",
-      "source_file": "terms.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "terms_quote_only_tracks",
-      "label": "Get-a-quote tracks (someone else has a say)",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "get-a-quote tracks (someone else has a say)",
       "source_file": "terms.html",
       "source_location": null,
       "source_url": null
@@ -9804,96 +9929,6 @@
       "file_type": "document",
       "norm_label": "licence terms",
       "source_file": "terms.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "artists_direct_child_selectors",
-      "label": "Direct-child CSS selectors for nested checkbox labels",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 35,
-      "community_name": "Licence terms",
-      "contributor": null,
-      "file_type": "rationale",
-      "norm_label": "direct-child css selectors for nested checkbox labels",
-      "source_file": "artists.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_audio_branding",
-      "label": "Audio Branding service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 40,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "audio branding service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_original_music",
-      "label": "Original Music service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 40,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "original music service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_post_sound_sfx",
-      "label": "Post Sound / SFX service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 40,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "post sound / sfx service",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_services",
-      "label": "Four services section",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 40,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "four services section",
-      "source_file": "index.html",
-      "source_location": null,
-      "source_url": null
-    },
-    {
-      "id": "index_soundscapes",
-      "label": "SoundScapes service",
-      "_origin": "semantic",
-      "author": null,
-      "captured_at": null,
-      "community": 40,
-      "community_name": "Four services section",
-      "contributor": null,
-      "file_type": "concept",
-      "norm_label": "soundscapes service",
-      "source_file": "index.html",
       "source_location": null,
       "source_url": null
     },
@@ -10631,7 +10666,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L135",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -10643,7 +10678,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L61",
+      "source_location": "L64",
       "weight": 1.0
     },
     {
@@ -10655,7 +10690,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L62",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -10667,7 +10702,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L63",
+      "source_location": "L66",
       "weight": 1.0
     },
     {
@@ -10679,7 +10714,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L64",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -10691,7 +10726,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L65",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -10703,7 +10738,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L66",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -10715,7 +10750,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L67",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -10727,7 +10762,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L68",
+      "source_location": "L71",
       "weight": 1.0
     },
     {
@@ -10739,7 +10774,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L69",
+      "source_location": "L72",
       "weight": 1.0
     },
     {
@@ -10751,7 +10786,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L70",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -10763,7 +10798,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L71",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -10775,7 +10810,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L72",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -10787,7 +10822,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L73",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -10799,7 +10834,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L74",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -10811,7 +10846,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L75",
+      "source_location": "L78",
       "weight": 1.0
     },
     {
@@ -10823,7 +10858,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L77",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -10835,7 +10870,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L78",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -10847,7 +10882,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L122",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -10859,7 +10894,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1306",
+      "source_location": "L1309",
       "weight": 1.0
     },
     {
@@ -10871,7 +10906,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L771",
+      "source_location": "L774",
       "weight": 1.0
     },
     {
@@ -10883,7 +10918,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L772",
+      "source_location": "L775",
       "weight": 1.0
     },
     {
@@ -10895,7 +10930,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L457",
+      "source_location": "L460",
       "weight": 1.0
     },
     {
@@ -10907,7 +10942,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L944",
+      "source_location": "L947",
       "weight": 1.0
     },
     {
@@ -10919,7 +10954,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1482",
+      "source_location": "L1485",
       "weight": 1.0
     },
     {
@@ -10931,7 +10966,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1523",
+      "source_location": "L1526",
       "weight": 1.0
     },
     {
@@ -10943,7 +10978,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1033",
+      "source_location": "L1036",
       "weight": 1.0
     },
     {
@@ -10955,7 +10990,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L994",
+      "source_location": "L997",
       "weight": 1.0
     },
     {
@@ -10967,7 +11002,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L681",
+      "source_location": "L684",
       "weight": 1.0
     },
     {
@@ -10979,7 +11014,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L703",
+      "source_location": "L706",
       "weight": 1.0
     },
     {
@@ -10991,7 +11026,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L577",
+      "source_location": "L580",
       "weight": 1.0
     },
     {
@@ -11003,7 +11038,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L588",
+      "source_location": "L591",
       "weight": 1.0
     },
     {
@@ -11015,7 +11050,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L501",
+      "source_location": "L504",
       "weight": 1.0
     },
     {
@@ -11027,7 +11062,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L874",
+      "source_location": "L877",
       "weight": 1.0
     },
     {
@@ -11039,7 +11074,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L609",
+      "source_location": "L612",
       "weight": 1.0
     },
     {
@@ -11051,7 +11086,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L619",
+      "source_location": "L622",
       "weight": 1.0
     },
     {
@@ -11063,7 +11098,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1382",
+      "source_location": "L1385",
       "weight": 1.0
     },
     {
@@ -11075,7 +11110,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1384",
+      "source_location": "L1387",
       "weight": 1.0
     },
     {
@@ -11087,7 +11122,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1385",
+      "source_location": "L1388",
       "weight": 1.0
     },
     {
@@ -11099,7 +11134,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L816",
+      "source_location": "L819",
       "weight": 1.0
     },
     {
@@ -11111,7 +11146,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L847",
+      "source_location": "L850",
       "weight": 1.0
     },
     {
@@ -11123,7 +11158,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L858",
+      "source_location": "L861",
       "weight": 1.0
     },
     {
@@ -11135,7 +11170,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L859",
+      "source_location": "L862",
       "weight": 1.0
     },
     {
@@ -11147,7 +11182,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L240",
+      "source_location": "L243",
       "weight": 1.0
     },
     {
@@ -11159,7 +11194,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L286",
+      "source_location": "L289",
       "weight": 1.0
     },
     {
@@ -11171,7 +11206,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L290",
+      "source_location": "L293",
       "weight": 1.0
     },
     {
@@ -11183,7 +11218,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L294",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -11195,7 +11230,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L306",
+      "source_location": "L309",
       "weight": 1.0
     },
     {
@@ -11207,7 +11242,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L348",
+      "source_location": "L351",
       "weight": 1.0
     },
     {
@@ -11219,7 +11254,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L314",
+      "source_location": "L317",
       "weight": 1.0
     },
     {
@@ -11231,7 +11266,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L327",
+      "source_location": "L330",
       "weight": 1.0
     },
     {
@@ -11243,7 +11278,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L431",
+      "source_location": "L434",
       "weight": 1.0
     },
     {
@@ -11255,7 +11290,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L443",
+      "source_location": "L446",
       "weight": 1.0
     },
     {
@@ -11267,7 +11302,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L446",
+      "source_location": "L449",
       "weight": 1.0
     },
     {
@@ -11279,7 +11314,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L370",
+      "source_location": "L373",
       "weight": 1.0
     },
     {
@@ -12539,7 +12574,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1591",
+      "source_location": "L1590",
       "weight": 1.0
     },
     {
@@ -12551,7 +12586,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1533",
+      "source_location": "L1532",
       "weight": 1.0
     },
     {
@@ -12911,7 +12946,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2207",
+      "source_location": "L2206",
       "weight": 1.0
     },
     {
@@ -12923,7 +12958,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1697",
+      "source_location": "L1696",
       "weight": 1.0
     },
     {
@@ -12935,7 +12970,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1702",
+      "source_location": "L1701",
       "weight": 1.0
     },
     {
@@ -12947,7 +12982,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1704",
+      "source_location": "L1703",
       "weight": 1.0
     },
     {
@@ -12959,7 +12994,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1726",
+      "source_location": "L1725",
       "weight": 1.0
     },
     {
@@ -13019,7 +13054,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2412",
+      "source_location": "L2411",
       "weight": 1.0
     },
     {
@@ -13031,7 +13066,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2413",
+      "source_location": "L2412",
       "weight": 1.0
     },
     {
@@ -13043,7 +13078,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2415",
+      "source_location": "L2414",
       "weight": 1.0
     },
     {
@@ -13055,7 +13090,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2417",
+      "source_location": "L2416",
       "weight": 1.0
     },
     {
@@ -13067,7 +13102,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2420",
+      "source_location": "L2419",
       "weight": 1.0
     },
     {
@@ -13079,7 +13114,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2426",
+      "source_location": "L2425",
       "weight": 1.0
     },
     {
@@ -13175,7 +13210,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1651",
+      "source_location": "L1650",
       "weight": 1.0
     },
     {
@@ -13187,7 +13222,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1677",
+      "source_location": "L1676",
       "weight": 1.0
     },
     {
@@ -13199,7 +13234,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1678",
+      "source_location": "L1677",
       "weight": 1.0
     },
     {
@@ -13211,7 +13246,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1682",
+      "source_location": "L1681",
       "weight": 1.0
     },
     {
@@ -13271,7 +13306,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1923",
+      "source_location": "L1922",
       "weight": 1.0
     },
     {
@@ -13283,7 +13318,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1925",
+      "source_location": "L1924",
       "weight": 1.0
     },
     {
@@ -13295,7 +13330,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2009",
+      "source_location": "L2008",
       "weight": 1.0
     },
     {
@@ -13307,7 +13342,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2104",
+      "source_location": "L2103",
       "weight": 1.0
     },
     {
@@ -13319,7 +13354,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2106",
+      "source_location": "L2105",
       "weight": 1.0
     },
     {
@@ -13331,7 +13366,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2109",
+      "source_location": "L2108",
       "weight": 1.0
     },
     {
@@ -13343,7 +13378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2109",
+      "source_location": "L2108",
       "weight": 1.0
     },
     {
@@ -13355,7 +13390,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2110",
+      "source_location": "L2109",
       "weight": 1.0
     },
     {
@@ -13367,7 +13402,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2024",
+      "source_location": "L2023",
       "weight": 1.0
     },
     {
@@ -13379,7 +13414,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2003",
+      "source_location": "L2002",
       "weight": 1.0
     },
     {
@@ -13391,7 +13426,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2221",
+      "source_location": "L2220",
       "weight": 1.0
     },
     {
@@ -13415,7 +13450,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2238",
+      "source_location": "L2237",
       "weight": 1.0
     },
     {
@@ -13571,7 +13606,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2545",
+      "source_location": "L2544",
       "weight": 1.0
     },
     {
@@ -13643,7 +13678,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2335",
+      "source_location": "L2334",
       "weight": 1.0
     },
     {
@@ -13655,7 +13690,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2350",
+      "source_location": "L2349",
       "weight": 1.0
     },
     {
@@ -13667,7 +13702,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2401",
+      "source_location": "L2400",
       "weight": 1.0
     },
     {
@@ -13679,7 +13714,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2402",
+      "source_location": "L2401",
       "weight": 1.0
     },
     {
@@ -13715,7 +13750,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2361",
+      "source_location": "L2360",
       "weight": 1.0
     },
     {
@@ -13739,7 +13774,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2170",
+      "source_location": "L2169",
       "weight": 1.0
     },
     {
@@ -13751,7 +13786,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2183",
+      "source_location": "L2182",
       "weight": 1.0
     },
     {
@@ -13763,7 +13798,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2185",
+      "source_location": "L2184",
       "weight": 1.0
     },
     {
@@ -13775,7 +13810,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2190",
+      "source_location": "L2189",
       "weight": 1.0
     },
     {
@@ -13787,7 +13822,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2141",
+      "source_location": "L2140",
       "weight": 1.0
     },
     {
@@ -13799,7 +13834,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2142",
+      "source_location": "L2141",
       "weight": 1.0
     },
     {
@@ -13811,7 +13846,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2143",
+      "source_location": "L2142",
       "weight": 1.0
     },
     {
@@ -13823,7 +13858,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2232",
+      "source_location": "L2231",
       "weight": 1.0
     },
     {
@@ -13835,7 +13870,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2233",
+      "source_location": "L2232",
       "weight": 1.0
     },
     {
@@ -13847,7 +13882,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2233",
+      "source_location": "L2232",
       "weight": 1.0
     },
     {
@@ -19707,6 +19742,18 @@
       "weight": 1.0
     },
     {
+      "source": "worker_src_share_sharepage",
+      "target": "worker_src_share_esc",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/share.js",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
       "source": "worker_src_site_deletenote",
       "target": "worker_src_site_json",
       "relation": "calls",
@@ -20159,7 +20206,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1522",
+      "source_location": "L1525",
       "weight": 1.0
     },
     {
@@ -20171,7 +20218,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1562",
+      "source_location": "L1565",
       "weight": 1.0
     },
     {
@@ -20183,7 +20230,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1585",
+      "source_location": "L1588",
       "weight": 1.0
     },
     {
@@ -20267,7 +20314,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1530",
+      "source_location": "L1529",
       "weight": 1.0
     },
     {
@@ -20279,7 +20326,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1872",
+      "source_location": "L1871",
       "weight": 1.0
     },
     {
@@ -20291,7 +20338,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1934",
+      "source_location": "L1933",
       "weight": 1.0
     },
     {
@@ -20303,7 +20350,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1969",
+      "source_location": "L1968",
       "weight": 1.0
     },
     {
@@ -20315,7 +20362,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2022",
+      "source_location": "L2021",
       "weight": 1.0
     },
     {
@@ -23094,7 +23141,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1027",
+      "source_location": "L1030",
       "weight": 1.0
     },
     {
@@ -23105,7 +23152,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1224",
+      "source_location": "L1227",
       "weight": 1.0
     },
     {
@@ -23116,7 +23163,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L126",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -23127,7 +23174,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1299",
+      "source_location": "L1302",
       "weight": 1.0
     },
     {
@@ -23138,7 +23185,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1361",
+      "source_location": "L1364",
       "weight": 1.0
     },
     {
@@ -23149,7 +23196,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1373",
+      "source_location": "L1376",
       "weight": 1.0
     },
     {
@@ -23160,7 +23207,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L143",
+      "source_location": "L146",
       "weight": 1.0
     },
     {
@@ -23171,7 +23218,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1459",
+      "source_location": "L1462",
       "weight": 1.0
     },
     {
@@ -23182,7 +23229,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L1477",
+      "source_location": "L1480",
       "weight": 1.0
     },
     {
@@ -23193,7 +23240,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L237",
+      "source_location": "L240",
       "weight": 1.0
     },
     {
@@ -23215,18 +23262,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L309",
-      "weight": 1.0
-    },
-    {
-      "source": "js_dashboard",
-      "target": "js_dashboard_upstage",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "js/dashboard.js",
-      "source_location": "L318",
+      "source_location": "L312",
       "weight": 1.0
     },
     {
@@ -23242,13 +23278,24 @@
     },
     {
       "source": "js_dashboard",
+      "target": "js_dashboard_upstage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "js/dashboard.js",
+      "source_location": "L321",
+      "weight": 1.0
+    },
+    {
+      "source": "js_dashboard",
       "target": "js_dashboard_uppaint",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L339",
+      "source_location": "L342",
       "weight": 1.0
     },
     {
@@ -23259,7 +23306,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L357",
+      "source_location": "L360",
       "weight": 1.0
     },
     {
@@ -23270,7 +23317,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L398",
+      "source_location": "L401",
       "weight": 1.0
     },
     {
@@ -23281,7 +23328,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L404",
+      "source_location": "L407",
       "weight": 1.0
     },
     {
@@ -23292,7 +23339,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L452",
+      "source_location": "L455",
       "weight": 1.0
     },
     {
@@ -23303,7 +23350,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L494",
+      "source_location": "L497",
       "weight": 1.0
     },
     {
@@ -23325,7 +23372,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L569",
+      "source_location": "L572",
       "weight": 1.0
     },
     {
@@ -23347,7 +23394,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L606",
+      "source_location": "L609",
       "weight": 1.0
     },
     {
@@ -23358,7 +23405,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L678",
+      "source_location": "L681",
       "weight": 1.0
     },
     {
@@ -23369,7 +23416,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L769",
+      "source_location": "L772",
       "weight": 1.0
     },
     {
@@ -23380,7 +23427,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L786",
+      "source_location": "L789",
       "weight": 1.0
     },
     {
@@ -23391,7 +23438,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L867",
+      "source_location": "L870",
       "weight": 1.0
     },
     {
@@ -23402,7 +23449,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L90",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -23413,7 +23460,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L940",
+      "source_location": "L943",
       "weight": 1.0
     },
     {
@@ -23424,7 +23471,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L990",
+      "source_location": "L993",
       "weight": 1.0
     },
     {
@@ -24931,7 +24978,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1617",
+      "source_location": "L1616",
       "weight": 1.0
     },
     {
@@ -24942,7 +24989,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1689",
+      "source_location": "L1688",
       "weight": 1.0
     },
     {
@@ -24953,7 +25000,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1715",
+      "source_location": "L1714",
       "weight": 1.0
     },
     {
@@ -24964,7 +25011,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1742",
+      "source_location": "L1741",
       "weight": 1.0
     },
     {
@@ -25019,7 +25066,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2127",
+      "source_location": "L2126",
       "weight": 1.0
     },
     {
@@ -25030,7 +25077,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2161",
+      "source_location": "L2160",
       "weight": 1.0
     },
     {
@@ -25052,7 +25099,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2198",
+      "source_location": "L2197",
       "weight": 1.0
     },
     {
@@ -25063,7 +25110,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2220",
+      "source_location": "L2219",
       "weight": 1.0
     },
     {
@@ -25074,7 +25121,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2226",
+      "source_location": "L2225",
       "weight": 1.0
     },
     {
@@ -25085,7 +25132,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2237",
+      "source_location": "L2236",
       "weight": 1.0
     },
     {
@@ -25096,7 +25143,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2311",
+      "source_location": "L2310",
       "weight": 1.0
     },
     {
@@ -25107,7 +25154,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2328",
+      "source_location": "L2327",
       "weight": 1.0
     },
     {
@@ -25118,7 +25165,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2344",
+      "source_location": "L2343",
       "weight": 1.0
     },
     {
@@ -25129,7 +25176,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2357",
+      "source_location": "L2356",
       "weight": 1.0
     },
     {
@@ -25140,7 +25187,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2366",
+      "source_location": "L2365",
       "weight": 1.0
     },
     {
@@ -25151,7 +25198,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2409",
+      "source_location": "L2408",
       "weight": 1.0
     },
     {
@@ -25173,7 +25220,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2437",
+      "source_location": "L2436",
       "weight": 1.0
     },
     {
@@ -25184,7 +25231,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2448",
+      "source_location": "L2447",
       "weight": 1.0
     },
     {
@@ -25206,7 +25253,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2544",
+      "source_location": "L2543",
       "weight": 1.0
     },
     {
@@ -29247,6 +29294,28 @@
       "weight": 1.0
     },
     {
+      "source": "worker_src_share",
+      "target": "worker_src_share_esc",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/share.js",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_share",
+      "target": "worker_src_share_sharepage",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/share.js",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
       "source": "worker_src_site",
       "target": "worker_src_site_deletenote",
       "relation": "contains",
@@ -29968,19 +30037,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/dashboard.js",
-      "source_location": "L222",
-      "weight": 1.0
-    },
-    {
-      "source": "js_dashboard_openmember",
-      "target": "worker_src_certificate_esc",
-      "relation": "indirect_call",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "context": "argument",
-      "source_file": "js/dashboard.js",
-      "source_location": "L1232",
+      "source_location": "L225",
       "weight": 1.0
     },
     {
@@ -29992,7 +30049,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/dashboard.js",
-      "source_location": "L304",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -30292,7 +30349,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2006",
+      "source_location": "L2005",
       "weight": 1.0
     },
     {
@@ -32776,5 +32833,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "e2c25fd203aad7bffc9b394297eff5eb23535590"
+  "built_at_commit": "65d12fb538bf9e7fed3ee43c8a892711dfb6ef00"
 }
