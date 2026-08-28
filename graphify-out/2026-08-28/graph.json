@@ -5673,7 +5673,7 @@
       "file_type": "code",
       "norm_label": "cleanuporphanuploads()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L165"
+      "source_location": "L171"
     },
     {
       "id": "worker_src_artists_json",
@@ -5697,7 +5697,7 @@
       "file_type": "code",
       "norm_label": "listartistsadmin()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L184"
+      "source_location": "L190"
     },
     {
       "id": "worker_src_artists_listsubmissions",
@@ -5709,7 +5709,7 @@
       "file_type": "code",
       "norm_label": "listsubmissions()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L204"
+      "source_location": "L210"
     },
     {
       "id": "worker_src_artists_myuploads",
@@ -5745,7 +5745,7 @@
       "file_type": "code",
       "norm_label": "queuereviewmail()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L261"
+      "source_location": "L267"
     },
     {
       "id": "worker_src_artists_registerartist",
@@ -5769,7 +5769,7 @@
       "file_type": "code",
       "norm_label": "reviewsubmission()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L229"
+      "source_location": "L235"
     },
     {
       "id": "worker_src_artists_slug",
@@ -5793,7 +5793,7 @@
       "file_type": "code",
       "norm_label": "streamsubmission()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L128"
+      "source_location": "L134"
     },
     {
       "id": "worker_src_artists_uploadtrack",
@@ -15835,7 +15835,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L108",
+      "source_location": "L114",
       "weight": 1.0
     },
     {
@@ -15847,7 +15847,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L116",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -15859,7 +15859,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L117",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -15871,7 +15871,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L118",
+      "source_location": "L124",
       "weight": 1.0
     },
     {
@@ -15907,7 +15907,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L185",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -15919,7 +15919,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L205",
+      "source_location": "L211",
       "weight": 1.0
     },
     {
@@ -15955,7 +15955,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L230",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -15967,7 +15967,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L239",
+      "source_location": "L245",
       "weight": 1.0
     },
     {
@@ -15979,7 +15979,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L247",
+      "source_location": "L253",
       "weight": 1.0
     },
     {
@@ -15991,7 +15991,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L256",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -16003,7 +16003,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artists.js",
-      "source_location": "L129",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -21538,7 +21538,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "worker/src/artists.js",
-      "source_location": "L227",
+      "source_location": "L233",
       "weight": 1.0
     },
     {
@@ -23410,7 +23410,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "worker/src/artists.js",
-      "source_location": "L227",
+      "source_location": "L233",
       "weight": 1.0
     },
     {
@@ -28272,7 +28272,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artists.js",
-      "source_location": "L128",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -28305,7 +28305,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artists.js",
-      "source_location": "L165",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -28316,18 +28316,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artists.js",
-      "source_location": "L184",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_artists",
-      "target": "worker_src_artists_listsubmissions",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/artists.js",
-      "source_location": "L204",
+      "source_location": "L190",
       "weight": 1.0
     },
     {
@@ -28343,13 +28332,24 @@
     },
     {
       "source": "worker_src_artists",
+      "target": "worker_src_artists_listsubmissions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/artists.js",
+      "source_location": "L210",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_artists",
       "target": "worker_src_artists_reviewsubmission",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artists.js",
-      "source_location": "L229",
+      "source_location": "L235",
       "weight": 1.0
     },
     {
@@ -28371,7 +28371,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artists.js",
-      "source_location": "L261",
+      "source_location": "L267",
       "weight": 1.0
     },
     {

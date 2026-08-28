@@ -74,7 +74,10 @@
     }
     // Below this the histogram is too flat to mean anything — percussion,
     // sound design, a noise bed. Better to offer nothing than a coin toss.
-    return best.score < 0.55 ? null : { key: best.key, scale: best.scale, confidence: best.score };
+    /* Raised from 0.55 after testing: at that threshold it offered a key for
+       everything and got two of six right. A wrong key on a licence page is a
+       fact somebody repeats. */
+    return best.score < 0.78 ? null : { key: best.key, scale: best.scale, confidence: best.score };
   }
 
   /**
@@ -125,9 +128,17 @@
          will happily report 62 for a 124 track because half-time correlates
          just as well. */
       score *= Math.exp(-0.5 * Math.pow(Math.log(bpm / 120) / 0.55, 2));
-      if (score > best.score) best = { bpm, score };
+      if (score > best.score) best = { bpm, score, peak: Math.abs(num / (Math.sqrt(e1 * e2) || 1)) };
     }
-    if (!best.bpm) return null;
+    /* How much the winning lag actually stands out. Measured against six
+       tracks with known tempos this detector converged on roughly 120 whatever
+       it was given: the correlation curve is nearly flat on real music at this
+       envelope resolution, so the prior was choosing the answer. A flat curve
+       means "no tempo found", and saying nothing is the correct output —
+       a number that is always 123 is worse than an empty box, because an empty
+       box gets filled in and a wrong number gets trusted. */
+    const spread = best.score - (best.floor || 0);
+    if (!best.bpm || best.peak < 0.12) return null;
     const round = (n) => Math.round(n);
     const alts = [round(best.bpm / 2), round(best.bpm), round(best.bpm * 2)]
       .filter((n) => n >= 50 && n <= 220);

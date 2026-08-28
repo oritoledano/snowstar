@@ -174,9 +174,9 @@
     "semantic_hash": "8e0ec1d0d720563ddec281f0fe1233be"
   },
   "worker/src/artists.js": {
-    "mtime": 1787926736.8329585,
-    "seen": 1787926742.8382,
-    "ast_hash": "cce994f92e9282ff41fb13afa9497fe0",
+    "mtime": 1787926750.274244,
+    "seen": 1787926757.102089,
+    "ast_hash": "43a109ee8fb22997520b9f636e40faa8",
     "semantic_hash": ""
   },
   "worker/src/bulk.js": {
