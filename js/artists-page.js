@@ -50,7 +50,10 @@
   const CANON = new Map();               // lowercase -> the catalogue's spelling
 
   async function loadVocab() {
-    const M = window.MUTRA;
+    // mutra-data.js declares `const MUTRA` at top level, which is a lexical
+    // global — reachable by name but never as a property of window. Reading
+    // window.MUTRA here silently found nothing and left the list empty.
+    const M = typeof MUTRA !== 'undefined' ? MUTRA : null;
     if (!M || !Array.isArray(M.tracks)) return;
     let patches = {};
     try { patches = (await get('/tracks')).overrides || {}; } catch { /* shipped only */ }
