@@ -958,7 +958,9 @@
     const narrowed = !!q
       || ['genres', 'moods', 'characteristics', 'instruments', 'scales']
            .some((k) => state[k] && (state[k].inc.size || state[k].exc.size))
-      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly;
+      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
+      // Custom licence is a filter now, not an ordering, so it narrows too.
+      || state.sort === 'custom';
     if (narrowed) return -1;
 
     if (total < 8) return total;                       // after the last row
