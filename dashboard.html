@@ -12,7 +12,7 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/mutra.css?v=94">
+<link rel="stylesheet" href="css/mutra.css?v=95">
 <style>
   body{padding-bottom:60px}
   .db-wrap{max-width:1180px;margin:0 auto;padding:96px clamp(16px,4vw,44px) 40px}
@@ -155,6 +155,24 @@
     line-height:1;padding:6px;opacity:0;border-radius:6px}
   .jb-table tr:hover .jb-del{opacity:1}
   .jb-del:hover{color:#f87171;background:rgba(248,113,113,.12)}
+  /* ── packs ── */
+  .pk-shelf,.pk-vis{display:flex;gap:9px;align-items:center;font-size:.86rem;color:var(--text);
+    cursor:pointer;margin:4px 0 2px}
+  .pk-shelf input,.pk-vis input{accent-color:var(--amber,#8fd8ff);width:15px;height:15px;cursor:pointer}
+  .pk-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:10px 16px;margin-bottom:8px}
+  .pk-card.open{padding:16px 18px;margin-bottom:14px}
+  .pk-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;cursor:pointer;user-select:none}
+  .pk-head:hover b{color:var(--amber,#8fd8ff)}
+  .pk-head .meta{color:var(--muted);font-size:.8rem;margin-left:auto}
+  .pk-card.open .rv-caret{transform:rotate(90deg)}
+  .pk-on{color:#34d399;border-color:rgba(52,211,153,.45)}
+  .pk-off{color:var(--muted);border-style:dashed}
+  .pk-body{display:none;padding-top:14px}
+  .pk-card.open .pk-body{display:block}
+  .pk-slugs{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem !important}
+  .pk-msg{color:var(--muted);font-size:.8rem;align-self:center}
+
   /* ── coupons ── */
   .cp-new{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;
     margin:14px 0 6px;align-items:end}
@@ -441,6 +459,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=19"></script>
-<script src="js/dashboard.js?v=30"></script>
+<script src="js/dashboard.js?v=31"></script>
 </body>
 </html>

@@ -462,6 +462,7 @@
   const facet = () => ({ inc: new Set(), exc: new Set() });
   const state = {
     genres: facet(), moods: facet(), characteristics: facet(), instruments: facet(), scales: facet(),
+    packs: facet(),
     vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
     sort: 'picks', highlights: true, lyrics: false, keys: false, hiddenOnly: false,
   };
@@ -498,6 +499,13 @@
     const sc = state.scales;
     if (sc.inc.size && !sc.inc.has(scaleOf(t))) return false;
     if (sc.exc.size && sc.exc.has(scaleOf(t))) return false;
+    // Packs come from the join table, not from a field on the track.
+    const pf = state.packs;
+    if (pf.inc.size || pf.exc.size) {
+      const mine = PACK_OF[t.slug] || [];
+      if (pf.inc.size && !mine.some((v) => pf.inc.has(v))) return false;
+      if (pf.exc.size && mine.some((v) => pf.exc.has(v))) return false;
+    }
     for (const key of ['genres', 'moods', 'characteristics', 'instruments']) {
       const vals = t[key] || [], f = state[key];
       if (f.inc.size && !vals.some(v => f.inc.has(v))) return false;
@@ -618,6 +626,31 @@
      a stack a visitor opened stays open until they close it, and is never
      persisted, because it is a way of looking rather than a fact. */
   const DELETED = new Set();
+  /* Packs: named groups of tracks, loaded from the server rather than derived
+     from the catalogue file, because a pack can exist while it is still empty
+     and a derived list could never show one. PACK_OF is the reverse index so
+     the filter is a set lookup per track rather than a scan per pack. */
+  let PACKS = [], PACK_OF = {}, PACKS_HIDDEN = false;
+  /* One switch hides the whole shelf while it is being built, and an empty
+     shelf hides itself — a dropdown that opens onto nothing reads as broken. */
+  function syncPacksButton() {
+    const b = document.querySelector('.fcat[data-cat="packs"]');
+    if (!b) return;
+    b.hidden = PACKS_HIDDEN || !PACKS.length;
+  }
+
+  function indexPacks() {
+    PACK_OF = {};
+    for (const p of PACKS) for (const sl of (p.tracks || [])) (PACK_OF[sl] ||= []).push(p.name);
+  }
+  async function loadPacks() {
+    try {
+      const d = await fetch('/api/collections?kind=pack', { credentials: 'same-origin' }).then((r) => r.json());
+      PACKS = (d && d.collections) || [];
+      PACKS_HIDDEN = !!(d && d.shelfHidden);
+    } catch { PACKS = []; }
+    indexPacks();
+  }
   let STACKS = {}, PARENT_OF = {};
   const openStacks = new Set();
 
@@ -1028,6 +1061,7 @@
        one list is what forced 'Dark' to sit next to 'Happy' and made a single
        tag answer two unrelated questions. */
     characteristics: { label: 'Sound', values: () => CHARACTERISTICS },
+    packs: { label: 'Packs', values: () => PACKS.map((p) => p.name) },
     instruments: { label: 'Instrument', values: () => INSTRUMENTS },
     scales:      { label: 'Scale',      values: () => SCALES },
   };
@@ -1355,7 +1389,10 @@
     // would mean the first paint shows every version as its own row and then
     // visibly collapses, which reads as a bug.
     fetch('/api/stacks').then(r => r.ok ? r.json() : { stacks: {} }).catch(() => ({ stacks: {} })),
-  ]).then(([tr, tx, st]) => {
+    fetch('/api/collections?kind=pack').then(r => r.ok ? r.json() : null).catch(() => null),
+  ]).then(([tr, tx, st, pk]) => {
+    if (pk) { PACKS = pk.collections || []; PACKS_HIDDEN = !!pk.shelfHidden; indexPacks(); }
+    syncPacksButton();
     STACKS = st.stacks || {};
     indexStacks();
     overrides = tr.overrides || {};

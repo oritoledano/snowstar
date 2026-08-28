@@ -47,6 +47,7 @@ import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim } from './artistprofile.js';
 import { listCoupons, saveCoupon, checkCoupon } from './coupons.js';
+import { listCollections, saveCollection, setCollectionTracks } from './collections.js';
 import { listEarnings, settleEarnings, myEarnings } from './earnings.js';
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
@@ -200,6 +201,11 @@ async function handle(req, env, ctx) {
   // removing a track: audio to trash, slug onto the deleted list, both reversible
   if (path === '/tracks' && method === 'DELETE') return deleteTrack(req, env, await currentUser(req, env), url);
   if (path === '/tracks/undelete' && method === 'POST') return undeleteTrack(req, env, await currentUser(req, env));
+  // packs and characters — named groups of tracks. Reads are public so the
+  // catalogue can show the shelf; writes are the owner's.
+  if (path === '/collections' && method === 'GET') return listCollections(env, await currentUser(req, env), url);
+  if (path === '/collections' && method === 'POST') return saveCollection(req, env, await currentUser(req, env));
+  if (path === '/collections/tracks' && method === 'POST') return setCollectionTracks(req, env, await currentUser(req, env));
   // discount codes. /check is public so the funnel can preview a code; the
   // discount itself is only ever applied server-side at grant time.
   if (path === '/coupons' && method === 'GET') return listCoupons(env, await currentUser(req, env));

@@ -15,7 +15,7 @@
   const GROUPS = [
     ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'jobs']],
     ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
-    ['Admin',  ['pricing', 'notifications', 'alerts', 'storage', 'pipeline']],
+    ['Admin',  ['pricing', 'packs', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
   const TABS = GROUPS.flatMap(([, t]) => t);
   let tab = (location.hash || '').replace('#', '');
@@ -87,6 +87,7 @@
       if (tab === 'inbox') return await paintInbox();
       if (tab === 'jobs') return await paintJobs();
       if (tab === 'coupons') return await paintCoupons();
+      if (tab === 'packs') return await paintPacks();
       if (tab === 'pricing') return await paintPricing();
       if (tab === 'alerts') return await paintAlerts();
       if (tab === 'storage') return await paintStorage();
@@ -1941,6 +1942,123 @@
     app.querySelectorAll('.cp-del').forEach((b) => b.addEventListener('click', async () => {
       if (!confirm('Delete this code? Anyone holding it will get "no such code".')) return;
       await post('/coupons', { remove: Number(b.dataset.id) }); load();
+    }));
+  }
+
+  /* ── packs ────────────────────────────────────────────────────────────────
+     Named groups of tracks, with two switches: one per pack, and one for the
+     whole dropdown. A new pack starts hidden, because an empty pack is not
+     something a visitor should meet and creating-then-filling is otherwise a
+     race the visitor can lose. */
+  let openPacks = new Set();
+
+  async function paintPacks() {
+    const d = await get('/collections?kind=pack');
+    const packs = d.collections || [];
+    const all = await get('/tracks').catch(() => ({ overrides: {} }));
+    void all;
+
+    paint(`<div class="db-panel">
+      <h2>Packs <span class="pill">${packs.length}</span></h2>
+      <p class="db-empty" style="padding-top:0">Named groups of tracks — the “Packs” dropdown on the
+        catalogue. Each one has its own show/hide, and the switch below hides the whole dropdown
+        while you are still building them.</p>
+
+      <label class="pk-shelf"><input type="checkbox" id="pk-shelf" ${d.shelfHidden ? 'checked' : ''}>
+        <span>Hide the entire Packs dropdown from visitors</span></label>
+
+      <div class="ar-row" style="grid-template-columns:1fr auto;margin:14px 0 18px">
+        <input id="pk-new" placeholder="New pack name — e.g. Advertising Essentials" maxlength="120">
+        <button class="rv-btn rv-ok" id="pk-add">Create pack</button>
+      </div>
+      <p class="cp-said" id="pk-said"></p>
+
+      ${packs.length ? packs.map((c) => `
+        <div class="pk-card${openPacks.has(c.id) ? ' open' : ''}" data-id="${c.id}">
+          <div class="pk-head" role="button" tabindex="0">
+            <span class="rv-caret">▸</span>
+            <b>${esc(c.name)}</b>
+            <span class="meta">${c.count} track${c.count === 1 ? '' : 's'}</span>
+            <span class="pill ${c.hidden ? 'pk-off' : 'pk-on'}">${c.hidden ? 'hidden' : 'live'}</span>
+          </div>
+          <div class="pk-body">
+            <div class="ar-grid">
+              <label class="ar-f"><span>Name</span><input class="pk-name" value="${esc(c.name)}" maxlength="120"></label>
+              <label class="ar-f"><span>Blurb</span><input class="pk-blurb" value="${esc(c.blurb)}" maxlength="400"
+                placeholder="One line, shown on the pack"></label>
+            </div>
+            <label class="pk-vis"><input type="checkbox" class="pk-hide" ${c.hidden ? 'checked' : ''}>
+              <span>Hidden from visitors</span></label>
+            <label class="ar-f"><span>Tracks in this pack</span>
+              <textarea class="pk-slugs" rows="3" placeholder="One slug per line, or comma separated">${
+                esc((c.tracks || []).join(', '))}</textarea></label>
+            <p class="db-empty" style="padding:4px 0 8px;font-size:.78rem">Paste slugs, or tick tracks
+              in the catalogue’s Edit mode and use bulk edit. Removing a slug here takes it out of the pack;
+              the track itself is untouched.</p>
+            <div class="rv-acts">
+              <button class="rv-btn rv-ok pk-save">Save</button>
+              <button class="rv-btn rv-no pk-del">Delete pack</button>
+              <span class="pk-msg"></span>
+            </div>
+          </div>
+        </div>`).join('')
+      : '<p class="db-empty">No packs yet.</p>'}</div>`);
+
+    document.getElementById('pk-shelf').addEventListener('change', async (e) => {
+      await post('/collections', { kind: 'pack', shelf_hidden: e.target.checked });
+      document.getElementById('pk-said').textContent = e.target.checked
+        ? 'The Packs dropdown is hidden from visitors.' : 'The Packs dropdown is visible.';
+    });
+
+    document.getElementById('pk-add').addEventListener('click', async () => {
+      const name = document.getElementById('pk-new').value.trim();
+      if (name.length < 2) return;
+      const r = await post('/collections', { kind: 'pack', name });
+      const said = document.getElementById('pk-said');
+      if (r && r.ok) { said.textContent = `Created “${r.name}” — hidden until you show it.`; load(); }
+      else said.textContent = r && r.error === 'name_taken' ? 'There is already a pack with that name.'
+        : (r && r.error) || 'Could not create that pack.';
+    });
+
+    app.querySelectorAll('.pk-head').forEach((h) => {
+      const card = h.closest('.pk-card'), id = Number(card.dataset.id);
+      const toggle = () => {
+        const open = card.classList.toggle('open');
+        if (open) openPacks.add(id); else openPacks.delete(id);
+      };
+      h.addEventListener('click', toggle);
+      h.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
+
+    app.querySelectorAll('.pk-save').forEach((b) => b.addEventListener('click', async () => {
+      const card = b.closest('.pk-card'), id = Number(card.dataset.id);
+      const msg = card.querySelector('.pk-msg');
+      msg.textContent = 'Saving…';
+      const r1 = await post('/collections', { id, kind: 'pack',
+        name: card.querySelector('.pk-name').value,
+        blurb: card.querySelector('.pk-blurb').value,
+        hidden: card.querySelector('.pk-hide').checked });
+      /* Membership is replaced, not merged: the box shows what is in the pack,
+         so what it says after an edit has to be what the pack contains. */
+      const want = card.querySelector('.pk-slugs').value
+        .split(/[\n,]+/).map((x) => x.trim()).filter(Boolean);
+      const had = (packs.find((c) => c.id === id) || {}).tracks || [];
+      const add = want.filter((x) => !had.includes(x));
+      const gone = had.filter((x) => !want.includes(x));
+      if (gone.length) await post('/collections/tracks', { id, slugs: gone, remove: true });
+      if (add.length) await post('/collections/tracks', { id, slugs: add });
+      msg.textContent = r1 && r1.ok ? `Saved · +${add.length} −${gone.length}` : 'Could not save.';
+      if (r1 && r1.ok) load();
+    }));
+
+    app.querySelectorAll('.pk-del').forEach((b) => b.addEventListener('click', async () => {
+      const card = b.closest('.pk-card');
+      const name = card.querySelector('b').textContent;
+      if (!confirm(`Delete the pack “${name}”?\n\nThe tracks stay in the catalogue — only the grouping goes.`)) return;
+      const r = await post('/collections', { remove: Number(card.dataset.id) });
+      if (r && r.ok) load();
     }));
   }
 
