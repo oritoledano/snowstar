@@ -99,17 +99,33 @@
     const on = new Float64Array(env.length);
     for (let i = 1; i < env.length; i++) on[i] = Math.max(0, env[i] - env[i - 1]);
 
+    /* Mean-centre before correlating. Without this every lag scores roughly
+       mean-squared times the overlap, the DC term swamps the actual periodicity,
+       and the winner is decided by how many terms each lag happens to have —
+       which is why this returned the same tempo for every track it was given. */
+    const mu = mean(Array.from(on));
+    const c = new Float64Array(on.length);
+    for (let i = 0; i < on.length; i++) c[i] = on[i] - mu;
+
     const fps = sr / win;
     const lagFor = (bpm) => Math.round((60 / bpm) * fps);
-    let best = { bpm: 0, score: 0 };
+    let best = { bpm: 0, score: -Infinity };
     for (let bpm = 60; bpm <= 200; bpm += 0.5) {
       const lag = lagFor(bpm);
-      if (lag < 2 || lag >= on.length) continue;
-      let s = 0;
-      for (let i = 0; i + lag < on.length; i++) s += on[i] * on[i + lag];
-      // Normalise so slow tempos are not favoured purely by having more terms.
-      s /= (on.length - lag);
-      if (s > best.score) best = { bpm, score: s };
+      if (lag < 2 || lag >= c.length) continue;
+      let num = 0, e1 = 0, e2 = 0;
+      for (let i = 0; i + lag < c.length; i++) {
+        num += c[i] * c[i + lag]; e1 += c[i] * c[i]; e2 += c[i + lag] * c[i + lag];
+      }
+      // Normalised correlation, so lags are compared on shape rather than on
+      // how much signal happens to sit under them.
+      let score = num / (Math.sqrt(e1 * e2) || 1);
+      /* A gentle preference for the range people actually count in. Octave
+         errors are the classic failure here, and without a prior the detector
+         will happily report 62 for a 124 track because half-time correlates
+         just as well. */
+      score *= Math.exp(-0.5 * Math.pow(Math.log(bpm / 120) / 0.55, 2));
+      if (score > best.score) best = { bpm, score };
     }
     if (!best.bpm) return null;
     const round = (n) => Math.round(n);
