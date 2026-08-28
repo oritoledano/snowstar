@@ -210,9 +210,9 @@
     "semantic_hash": ""
   },
   "worker/src/index.js": {
-    "mtime": 1787942796.8676739,
-    "seen": 1787942802.759111,
-    "ast_hash": "9aac9fc36b368c57ded1e004cbd1aac9",
+    "mtime": 1787944222.3448951,
+    "seen": 1787944228.386941,
+    "ast_hash": "e05f7b840ae6a36ea42e25e565a32037",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
@@ -1368,9 +1368,9 @@
     "semantic_hash": ""
   },
   "worker/src/collections.js": {
-    "mtime": 1787942796.8405755,
-    "seen": 1787942802.7591062,
-    "ast_hash": "b1dfa5bec8555653f99f176db1fdd3e7",
+    "mtime": 1787944222.3442173,
+    "seen": 1787944228.386936,
+    "ast_hash": "db5c375df8ff2b7a29bba488990cf229",
     "semantic_hash": ""
   }
 }
