@@ -151,14 +151,32 @@ export async function setCollectionTracks(req, env, user) {
     return json({ ok: true, removed: slugs.length });
   }
 
+  /* Only real slugs get in. A membership row is just a string, so a mistyped or
+     pasted-in TITLE was accepted happily and then matched no track — which is
+     how "Secret Agent" came to hold one member, `THE DEVIOUS FOX`, and still
+     look empty. Titles are mapped to their slug where we can, so pasting a
+     title now does the obvious thing instead of failing quietly. */
+  const known = await env.DB.prepare(
+    `SELECT slug, title FROM tracks`).all().catch(() => ({ results: [] }));
+  const bySlug = new Set((known.results || []).map((t) => t.slug));
+  const byTitle = new Map((known.results || []).map((t) => [String(t.title || '').toLowerCase(), t.slug]));
+
+  const resolved = [], unknown = [];
+  for (const s of slugs) {
+    if (bySlug.has(s)) resolved.push(s);
+    else if (byTitle.has(s.toLowerCase())) resolved.push(byTitle.get(s.toLowerCase()));
+    else unknown.push(s);
+  }
+  if (!resolved.length) return json({ error: 'no_known_tracks', unknown }, 400);
+
   const max = await env.DB.prepare('SELECT MAX(sort) m FROM collection_tracks WHERE collection_id = ?')
     .bind(id).first().catch(() => ({ m: 0 }));
   let n = ((max && max.m) || 0) + 1;
-  await env.DB.batch(slugs.map((s) => env.DB.prepare(
+  await env.DB.batch(resolved.map((s) => env.DB.prepare(
     'INSERT OR IGNORE INTO collection_tracks (collection_id, slug, sort) VALUES (?, ?, ?)'
   ).bind(id, s, n++)));
 
-  return json({ ok: true, added: slugs.length });
+  return json({ ok: true, added: resolved.length, unknown });
 }
 
 

@@ -247,9 +247,13 @@
     if (!pinsShown) return;
     let notes;
     try {
-      notes = (await fetch('/api/notes?page=' + encodeURIComponent(PAGE),
-        { credentials: 'same-origin' }).then((r) => r.json())).notes || [];
-    } catch { return; }
+      const res = await fetch('/api/notes?page=' + encodeURIComponent(PAGE), { credentials: 'same-origin' });
+      const d = await res.json().catch(() => ({}));
+      // A 403 or a 500 still parses as JSON, so without this check a broken
+      // endpoint produced an empty list and looked exactly like "no notes".
+      if (!res.ok || d.error) throw new Error(d.error || ('http_' + res.status));
+      notes = d.notes || [];
+    } catch (e) { lit('notes', false); toast('Notes unavailable: ' + e.message); return; }
     if (!notes.length) { lit('notes', false); return; }
     lit('notes', true);
 
@@ -305,7 +309,18 @@
     pinLayer.appendChild(pop);
   }
 
-  function toggleNotes() { pinsShown = !pinsShown; loadPins(); }
+  /* Pins are already on screen at boot, so this button only ever hides or
+     re-shows them — and it used to do that with no feedback whatsoever. On the
+     hide press loadPins() returned before reaching lit(), so the lamp never
+     went out; with no notes on the page, pressing it changed nothing at all,
+     which is why it read as broken rather than as empty. */
+  async function toggleNotes() {
+    pinsShown = !pinsShown;
+    lit('notes', pinsShown);
+    if (!pinsShown) { loadPins(); toast('Notes hidden'); return; }
+    await loadPins();
+    if (!pinLayer) toast('No notes on this page yet — drag on the page to leave one');
+  }
 
   // ─────────── section visibility ───────────
   async function sectionsPanel() {

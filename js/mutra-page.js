@@ -529,7 +529,7 @@
       const hay = (t.title + ' ' + (t.artist || '') + ' ' + t.genres.join(' ') + ' ' +
         (t.moods || []).join(' ') + ' ' + (t.characteristics || []).join(' ') + ' ' +
         (t.instruments || []).join(' ') + ' ' +
-        (t.vocal || '')).toLowerCase();
+        (t.vocal || '') + ' ' + (t.lyrics || '')).toLowerCase();
       if (!hay.includes(state.q)) return false;
     }
     return true;
@@ -575,7 +575,15 @@
     if (artist.startsWith(q)) return 3;
     if (title.includes(q)) return 4;
     if (artist.includes(q)) return 5;
-    return 6;                                   // matched on a tag or a mood
+    /* A lyric hit is real but weaker than a tag: somebody searching "midnight"
+       wants tracks that ARE midnight before one that says the word once in the
+       second verse. So lyric-only matches sort last rather than level with
+       tags, which is where they would land if this just returned 6. */
+    const tagged = [...(t.genres || []), ...(t.moods || []),
+                    ...(t.characteristics || []), ...(t.instruments || [])]
+      .join(' ').toLowerCase();
+    if (tagged.includes(q)) return 6;           // matched on a tag or a mood
+    return 7;                                   // matched only inside the lyrics
   }
   const SORTERS = {
     picks: (a, b) => queryRank(a) - queryRank(b) || pickRank(a) - pickRank(b) ||

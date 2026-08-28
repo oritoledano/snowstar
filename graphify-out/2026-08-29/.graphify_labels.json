@@ -1,8 +1,8 @@
 {
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
-  "2": "artists.js",
-  "3": "crypto.js",
+  "2": "crypto.js",
+  "3": "bulk.js",
   "4": "licensing.js",
   "5": "main.js",
   "6": "dashboard.js",
@@ -30,6 +30,7 @@
   "28": "schema-tracks.sql",
   "29": "mutra-license.js",
   "30": "analytics.js",
+  "31": "ownership.js",
   "32": "oauth.js",
   "33": "certificate.js",
   "34": "rights.js",
@@ -49,5 +50,6 @@
   "48": "stacks.js",
   "49": "index.js",
   "50": "make-character-art.py",
-  "51": "artistreg.js"
+  "51": "artistreg.js",
+  "52": "agent.js"
 }

@@ -19,7 +19,13 @@ const json = (data, status = 200) =>
     headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
   });
 
-const KEY_RE = /^[a-z0-9][a-z0-9.-]{1,80}$/;
+/* The slash is here because section visibility is keyed by page path —
+   `sections.hidden./` on the homepage, `sections.hidden./artists.html`
+   elsewhere. Without it every save of that panel was rejected as a bad key and
+   the client reported nothing, so hiding a section looked like it worked until
+   the next reload. The key is only ever a bound D1 parameter, never a path or
+   a filename, so widening the class costs nothing. */
+const KEY_RE = /^[a-z0-9][a-z0-9./-]{1,80}$/;
 
 export async function listTexts(env) {
   const r = await env.DB.prepare('SELECT key, html FROM site_texts').all();

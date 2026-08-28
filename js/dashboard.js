@@ -15,7 +15,7 @@
   const GROUPS = [
     ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'invoices', 'jobs']],
     ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
-    ['Admin',  ['pricing', 'packs', 'characters', 'notifications', 'alerts', 'storage', 'pipeline']],
+    ['Admin',  ['pricing', 'packs', 'characters', 'notes', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
   const TABS = GROUPS.flatMap(([, t]) => t);
   let tab = (location.hash || '').replace('#', '');
@@ -88,6 +88,7 @@
       if (tab === 'jobs') return await paintJobs();
       if (tab === 'coupons') return await paintCoupons();
       if (tab === 'invoices') return await paintInvoices();
+      if (tab === 'notes') return await paintNotes();
       if (tab === 'packs') return await paintCollections('pack');
       if (tab === 'characters') return await paintCollections('character');
       if (tab === 'pricing') return await paintPricing();
@@ -1906,6 +1907,48 @@
     });
 
     fill();
+  }
+
+  /* ── site notes ───────────────────────────────────────────────────────────
+     Every note left with "Draw & note" on any page, in one list.
+
+     Without this the feature was a black hole: a note was only visible as a pin
+     on the exact page it was drawn on, so there was no way to see what you had
+     flagged, and no way to work through it. The API could already list across
+     pages — nothing ever called it. */
+  async function paintNotes() {
+    const d = await get('/notes').catch(() => ({ notes: [] }));
+    const open = d.notes || [];
+    const done = (await get('/notes?status=done').catch(() => ({ notes: [] }))).notes || [];
+
+    const row = (n, isDone) => `<div class="nt-row">
+      <div class="nt-main">
+        <b>${esc(n.note || '(drawing only)')}</b>
+        <span class="inv-sub">${esc(n.page || '/')}${n.near ? ' · near ' + esc(n.near) : ''} · ${
+          n.drawing ? 'has a drawing · ' : ''}${when(n.created_at)}</span>
+      </div>
+      <a class="rv-btn" href="${esc(n.page || '/')}" target="_blank" rel="noopener">Open page</a>
+      ${isDone ? '' : `<button class="rv-btn rv-ok" data-done="${n.id}">Mark done</button>`}
+    </div>`;
+
+    paint(`<div class="db-panel">
+      <h2>Site notes <span class="pill">${open.length} open</span></h2>
+      <p class="db-empty" style="padding-top:0">Notes and drawings left with “Draw &amp; note” on
+        any page. Each one records the page, the nearest element and where on the page it was
+        drawn — which is what makes it more useful than a screenshot: it says <em>where</em>,
+        not just what.</p>
+      ${open.length ? `<div class="inv-list">${open.map((n) => row(n, false)).join('')}</div>`
+        : `<p class="db-empty">No open notes. On any page, turn on edit mode and drag across
+           whatever needs changing — it lands here.</p>`}
+      ${done.length ? `<h3 style="margin-top:26px">Done <span class="pill">${done.length}</span></h3>
+        <div class="inv-list" style="opacity:.55">${done.map((n) => row(n, true)).join('')}</div>` : ''}
+    </div>`);
+
+    app.querySelectorAll('[data-done]').forEach((b) => b.onclick = async () => {
+      b.disabled = true;
+      await post('/notes', { id: Number(b.dataset.done), status: 'done' });
+      load();
+    });
   }
 
   /* ── invoices ─────────────────────────────────────────────────────────────

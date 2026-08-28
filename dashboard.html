@@ -223,6 +223,11 @@
   .inv-row>button{white-space:nowrap}
   /* Locks sit on their own line and wrap: two Hebrew business names plus a
      re-check will not fit beside each other on a laptop. */
+  .nt-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 16px}
+  .nt-main{min-width:0}
+  .nt-main b{display:block;font-size:.92rem;line-height:1.4}
+  @media(max-width:640px){.nt-row{grid-template-columns:1fr auto}}
   .inv-locks{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
   .db-warn code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;
     background:rgba(128,128,128,.14);border-radius:5px;padding:1px 6px;color:var(--text)}
@@ -507,6 +512,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=19"></script>
-<script src="js/dashboard.js?v=39"></script>
+<script src="js/dashboard.js?v=40"></script>
 </body>
 </html>
