@@ -492,6 +492,8 @@
     // somewhere to actually live. Without it the only way to find one was to
     // scroll the whole catalog in edit mode looking for a filled circle.
     if (state.hiddenOnly && !t.hidden) return false;
+    // The custom-licence view is a filter, not a ranking — see SORTERS.custom.
+    if (state.sort === 'custom' && t.lane !== 'quote') return false;
     if (state.favoritesOnly && !(window.MutraMembers && MutraMembers.isFavorite(t.slug))) return false;
     const sc = state.scales;
     if (sc.inc.size && !sc.inc.has(scaleOf(t))) return false;
@@ -572,7 +574,12 @@
     alpha: byTitle,
     bpm:   (a, b) => (a.bpm || 1e9) - (b.bpm || 1e9) || byTitle(a, b),
     // unpackaged one-offs first — those are the ones that tend to need a bespoke quote
-    custom: (a, b) => ((a.packages || []).length ? 1 : 0) - ((b.packages || []).length ? 1 : 0) || byTitle(a, b),
+    /* Not a sort — a view. Picking "Custom license" to be shown every track
+       with the quote ones merely nudged upwards is useless: the question being
+       asked is "which of these need a conversation", and the answer is a list
+       of exactly those. Filtering happens in matches(); this only orders what
+       survives it. */
+    custom: byTitle,
     // chromatic, majors before minors within a pitch
     scale: (a, b) => pitchIx(a.key) - pitchIx(b.key) ||
       (a.scale === b.scale ? 0 : a.scale === 'major' ? -1 : 1) || byTitle(a, b),
@@ -945,6 +952,15 @@
     const q = String(state.q || '').trim().toLowerCase();
     if (q.length >= 3 && spotArtist && spotArtist.toLowerCase().includes(q)) return 0;
 
+    /* Once somebody has narrowed the list, they are looking for something, and
+       an artist promo dropped into their results is an interruption rather than
+       a suggestion. Shown only while browsing everything. */
+    const narrowed = !!q
+      || ['genres', 'moods', 'characteristics', 'instruments', 'scales']
+           .some((k) => state[k] && (state[k].inc.size || state[k].exc.size))
+      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly;
+    if (narrowed) return -1;
+
     if (total < 8) return total;                       // after the last row
     if (total < 24) return Math.max(3, Math.round(total / 3));
     return window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10;
@@ -960,6 +976,7 @@
 
     const spot = window.mutraSpotlightMeta;
     const at = spotlightIndex(spot && spot.artist);
+    if (at < 0) return;                    // narrowed list — stay out of the way
     if (at < 0) return;
     const block = window.mutraSpotlightRow();
     if (!block) return;
