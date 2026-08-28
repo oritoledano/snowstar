@@ -618,7 +618,7 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 @media (max-width:900px){.trk-cur{display:none}}
 
 /* ───────── owner catalog editor ───────── */
-.trk-cur-hide,.trk-cur-edit{font-size:.8rem}
+.trk-cur-hide,.trk-cur-edit,.trk-cur-del{font-size:.8rem}
 .trk.hidden-row{opacity:.45}
 .trk-edit{background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line-2,var(--line));
   border-radius:14px;padding:16px 18px;margin:4px 0 10px}
@@ -1356,3 +1356,12 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 @media (max-width:1099px){
   .ag-dock{width:min(390px,92vw)}
 }
+
+/* Delete sits at the end of the edit-mode controls and stays grey until you
+   reach for it — it is the one control in the row that removes something, and
+   a red button you pass over forty times a session stops reading as a warning. */
+/* Scoped through .trk-cur because `.trk-cur button:hover` sets amber and beats
+   a bare class on specificity — the delete button would have hovered the same
+   colour as every other control in the row. */
+.trk-cur .trk-cur-del{color:var(--dim);transition:color .15s,background .15s;border-radius:6px}
+.trk-cur .trk-cur-del:hover{color:#f87171;background:rgba(248,113,113,.14)}

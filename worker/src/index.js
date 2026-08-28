@@ -22,8 +22,8 @@ import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGAC
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport } from './site.js';
-import { listOverrides, saveOverride, uploadCover, listUses, saveUse,
-         setOrigTitle, listOrigTitles } from './catalog.js';
+import {listOverrides, saveOverride, uploadCover, listUses, saveUse,
+         setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack } from './catalog.js';
 import { bulkEdit, bulkUndo, listBatches, bulkArtist } from './bulk.js';
 import { listArtists, ensureArtists, saveArtist } from './artistreg.js';
 import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
@@ -193,6 +193,9 @@ async function handle(req, env, ctx) {
   if (path === '/earnings' && method === 'GET') return listEarnings(env, await currentUser(req, env));
   if (path === '/earnings/settle' && method === 'POST') return settleEarnings(req, env, await currentUser(req, env));
   if (path === '/earnings/mine' && method === 'GET') return myEarnings(env, await currentUser(req, env));
+  // removing a track: audio to trash, slug onto the deleted list, both reversible
+  if (path === '/tracks' && method === 'DELETE') return deleteTrack(req, env, await currentUser(req, env), url);
+  if (path === '/tracks/undelete' && method === 'POST') return undeleteTrack(req, env, await currentUser(req, env));
   // who a published upload belongs to, and moving it to another account
   if (path === '/tracks/owner' && method === 'GET') return getOwner(req, env, await currentUser(req, env), url);
   if (path === '/tracks/owner' && method === 'POST') return reassignOwner(req, env, await currentUser(req, env));

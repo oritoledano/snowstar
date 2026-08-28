@@ -13,6 +13,7 @@
 
 const now = () => Math.floor(Date.now() / 1000);
 import { notifyRename } from './ownership.js';
+import { trashObject } from './trash.js';
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -135,7 +136,16 @@ export async function listOverrides(env) {
     }
   } catch { /* pre-migration schema — nothing is locked rather than everything */ }
 
-  return json({ overrides, laneLocked: locked });
+  /* Deleted slugs travel with the overrides rather than in their own request:
+     arriving late would mean the first paint shows a track that was deleted and
+     then visibly drops it, which reads as a glitch. */
+  let deleted = [];
+  try {
+    const dd = await env.DB.prepare('SELECT slug FROM deleted_tracks').all();
+    deleted = (dd.results || []).map((x) => x.slug);
+  } catch { /* pre-migration: nothing deleted rather than everything */ }
+
+  return json({ overrides, laneLocked: locked, deleted });
 }
 
 /** Owner-only. An empty patch deletes the row, i.e. reverts to the source file. */
@@ -266,4 +276,59 @@ export async function listOrigTitles(env) {
   const out = {};
   for (const row of r.results || []) out[row.slug] = row.orig_title;
   return json({ orig: out });
+}
+
+
+/**
+ * DELETE /tracks?slug= — take a track out of the catalogue.
+ *
+ * The catalogue itself is a static file in the repo, so this cannot literally
+ * remove the record — and should not. A delete here means three things
+ * together: the audio moves to trash/, the slug goes on a deleted list the
+ * page filters out, and the row stops being served. All three are reversible,
+ * which matters because "delete" on a music catalogue is almost always
+ * "I do not want to see this any more" and only rarely "destroy it".
+ *
+ * Deliberately NOT the same as hiding. Hidden means the owner can still see it
+ * in the Hidden view and it still occupies the bucket; deleted means it is
+ * gone from every view and its audio is out of the live bucket.
+ */
+export async function deleteTrack(req, env, user, url) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const slug = String(url.searchParams.get('slug') || '');
+  if (!SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
+
+  const row = await env.DB.prepare('SELECT slug, title, audio_key FROM tracks WHERE slug = ?')
+    .bind(slug).first().catch(() => null);
+
+  // Audio to the bin, not to oblivion — the same trash the dashboard empties.
+  let trashed = null;
+  if (row && row.audio_key) {
+    try { trashed = await trashObject(env, row.audio_key); } catch { /* record it anyway */ }
+  }
+
+  await env.DB.prepare(
+    `INSERT INTO deleted_tracks (slug, title, deleted_at, deleted_by, audio_key)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(slug) DO UPDATE SET deleted_at = excluded.deleted_at`
+  ).bind(slug, (row && row.title) || null, now(), user.email || 'owner',
+         (row && row.audio_key) || null).run();
+
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor, action, detail, created_at) VALUES (?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'delete_track',
+         `${slug}${trashed && trashed.moved ? ' (audio binned)' : ''}`, now())
+   .run().catch(() => null);
+
+  return json({ ok: true, slug, binned: !!(trashed && trashed.moved) });
+}
+
+/** POST /tracks/undelete — put one back. */
+export async function undeleteTrack(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const slug = String(b.slug || '');
+  if (!SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
+  await env.DB.prepare('DELETE FROM deleted_tracks WHERE slug = ?').bind(slug).run();
+  return json({ ok: true, slug, note: 'Audio may still be in the trash — restore it there too.' });
 }

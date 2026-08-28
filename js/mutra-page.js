@@ -579,6 +579,7 @@
      loop is not scanning the map per track. `openStacks` is view state only —
      a stack a visitor opened stays open until they close it, and is never
      persisted, because it is a way of looking rather than a fact. */
+  const DELETED = new Set();
   let STACKS = {}, PARENT_OF = {};
   const openStacks = new Set();
 
@@ -616,18 +617,58 @@
     return true;
   }
 
-  function render() {
+  /* Whatever actually scrolls. The page has an inner scroller on some layouts
+     and scrolls the document on others, and guessing wrong means every fix
+     below silently does nothing. */
+  function scroller() {
+    let n = tracksEl;
+    while (n && n !== document.body) {
+      const o = getComputedStyle(n).overflowY;
+      if ((o === 'auto' || o === 'scroll') && n.scrollHeight > n.clientHeight + 4) return n;
+      n = n.parentElement;
+    }
+    return document.scrollingElement || document.documentElement;
+  }
+
+  let lastListKey = '';
+
+  /**
+   * Re-render, without throwing the reader across the page.
+   *
+   * Every in-row action — hiding, grading, picking, opening a stack — ends in
+   * render(), and render() used to reset `shown` to one page and clear the
+   * list. Scrolled to track 200, you clicked something and landed back near the
+   * top, far from the row you had just touched.
+   *
+   * So: if the RESULT SET is unchanged, this was an edit rather than a new
+   * search. Rebuild to the same depth and put the scroll back. When the set does
+   * change — a filter, a search, a sort — going to the top is correct and still
+   * happens.
+   */
+  function render(forceKeep) {
     /* A version is not a separate result. It is reachable by opening its
        parent, and while filtering it still counts — a stack whose CHILD matches
        the filter surfaces via the parent, so narrowing to "Instrumental" never
        silently hides the instrumental cut of a vocal track. */
-    const hit = new Set(MUTRA.tracks.filter(matches).map(t => t.slug));
+    /* Deleted tracks are filtered before anything else, including before the
+       owner's Hidden view — hidden and deleted are different states and the
+       point of deleted is that it is gone from every view. */
+    const hit = new Set(MUTRA.tracks.filter(t => !DELETED.has(t.slug)).filter(matches).map(t => t.slug));
     list = MUTRA.tracks.filter(t => {
+      if (DELETED.has(t.slug)) return false;
       const parent = PARENT_OF[t.slug];
       if (parent && !curateMode) return false;          // shown under its parent
       if (hit.has(t.slug)) return true;
       return !parent && (STACKS[t.slug] || []).some(c => hit.has(c));
     }).sort(SORTERS[state.sort] || SORTERS.picks);
+
+    const key = list.map(t => t.slug).join('|');
+    const sameSet = forceKeep || key === lastListKey;
+    lastListKey = key;
+    const sc = scroller();
+    const keepTop = sameSet ? sc.scrollTop : 0;
+    const keepDepth = sameSet ? shown : 0;
+
     shown = 0;
     tracksEl.innerHTML = '';
     if (!list.length) {
@@ -638,6 +679,10 @@
       </div>`;
     }
     appendPage();
+    // Back to the same depth and the same place, so an edit at track 200 leaves
+    // you looking at track 200.
+    while (keepDepth > shown && shown < list.length) appendPage();
+    if (sameSet && keepTop) sc.scrollTop = keepTop;
   }
 
   /** Draw the next slice — called on render and again as the sentinel scrolls in. */
@@ -1260,6 +1305,7 @@
     STACKS = st.stacks || {};
     indexStacks();
     overrides = tr.overrides || {};
+    (tr.deleted || []).forEach((sl) => DELETED.add(sl));
     (tr.laneLocked || []).forEach((sl) => LANE_LOCKED.add(sl));
     // only fetched in curate mode — a visitor has no use for the old names
     if (curateMode || (window.MutraMembers && MutraMembers.user && MutraMembers.user.admin)) {
@@ -1420,7 +1466,9 @@
         <button type="button" class="trk-cur-dn" title="Move down" aria-label="Move ${track.title} down">\u25bc</button>` : ''}
       <button type="button" class="trk-cur-hide" title="${track.hidden ? 'Hidden \u2014 click to show' : 'Hide from the catalog'}"
         aria-label="${track.hidden ? 'Show' : 'Hide'} ${track.title}">${track.hidden ? '\u25cf' : '\u25cb'}</button>
-      <button type="button" class="trk-cur-edit" title="Edit this track" aria-label="Edit ${track.title}">\u270e</button>`;
+      <button type="button" class="trk-cur-edit" title="Edit this track" aria-label="Edit ${track.title}">\u270e</button>
+      <button type="button" class="trk-cur-del" title="Delete this track from the catalog"
+        aria-label="Delete ${track.title}">\u2715</button>`;
     wrap.querySelector('.trk-cur-star').addEventListener('click', e => { e.stopPropagation(); toggleCurated(track.slug); });
     const up = wrap.querySelector('.trk-cur-up'), dn = wrap.querySelector('.trk-cur-dn');
     if (up) up.addEventListener('click', e => { e.stopPropagation(); moveCurated(track.slug, -1); });
@@ -1434,6 +1482,29 @@
       render();
     });
     wrap.querySelector('.trk-cur-edit').addEventListener('click', e => { e.stopPropagation(); openEditor(track, row); });
+
+    /* Delete is not hide. Hidden keeps the track in the owner's Hidden view and
+       keeps its audio in the live bucket; deleted takes it out of every view and
+       moves the audio to the trash the dashboard empties. Both reversible — the
+       word people mean by "delete" here is almost always "get this out of my
+       sight", not "destroy it" — but the confirm says which one this is. */
+    wrap.querySelector('.trk-cur-del').addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm(`Delete “${track.title}” from the catalogue?\n\n`
+        + `It disappears from every view and its audio moves to the trash, where you can `
+        + `restore it or empty it for good from the dashboard.\n\n`
+        + `To simply take it off the public list instead, use the ○ hide button.`)) return;
+      const r = await fetch('/api/tracks?slug=' + encodeURIComponent(track.slug),
+        { method: 'DELETE', credentials: 'same-origin' }).then(x => x.json()).catch(() => null);
+      if (!r || !r.ok) return toast('Could not delete that track');
+      DELETED.add(track.slug);
+      // The set changed, so this render is a real one and going to the top would
+      // be correct — but the row is gone and the reader is mid-list, so hold the
+      // view anyway by dropping the row in place first.
+      row.remove();
+      render(true);            // one row fewer is still the same view
+      toast(`“${track.title}” deleted${r.binned ? ' — audio in the trash' : ''}`);
+    });
 
     /* Grade, custom percentage, and the quote toggle — the three decisions a
        pass through 374 tracks is actually made of. On the row rather than
