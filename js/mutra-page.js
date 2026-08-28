@@ -536,8 +536,39 @@
   };
   const pickScore = t => (t.packages || []).length * 10 + ((t.genres || []).length ? 1 : 0);
   const byTitle = (a, b) => a.title.localeCompare(b.title);
+
+  /* Price class as a tiebreaker: A first, D last.
+     All else equal, show the expensive work first — it is the work most worth
+     selling, and burying it under a cheap cut that happens to sort earlier
+     alphabetically costs real money. A tiebreaker and not an override: the
+     curated order, the tempo you asked to sort by, and how well a track
+     matches what you typed all still win, because a class is a price and not
+     a claim that the track is what you were looking for. */
+  const CLASS_RANK = { A: 0, B: 1, C: 2, D: 3 };
+  const byClass = (a, b) =>
+    (CLASS_RANK[String(a.cls || 'C').toUpperCase()] ?? 2) -
+    (CLASS_RANK[String(b.cls || 'C').toUpperCase()] ?? 2);
+
+  /* How squarely a track answers what was typed. A name search must not be
+     reordered by price — somebody typing "cash flow" wants CASH FLOW, whatever
+     class it is — so an exact or leading title match outranks everything, and
+     the class only separates tracks that match equally well. */
+  function queryRank(t) {
+    const q = state.q;
+    if (!q) return 0;
+    const lc = (v) => String(v || '').toLowerCase();
+    const title = lc(t.title), artist = lc(t.artist);
+    if (title === q) return 0;
+    if (artist === q) return 1;
+    if (title.startsWith(q)) return 2;
+    if (artist.startsWith(q)) return 3;
+    if (title.includes(q)) return 4;
+    if (artist.includes(q)) return 5;
+    return 6;                                   // matched on a tag or a mood
+  }
   const SORTERS = {
-    picks: (a, b) => pickRank(a) - pickRank(b) || pickScore(b) - pickScore(a) || byTitle(a, b),
+    picks: (a, b) => queryRank(a) - queryRank(b) || pickRank(a) - pickRank(b) ||
+      byClass(a, b) || pickScore(b) - pickScore(a) || byTitle(a, b),
     alpha: byTitle,
     bpm:   (a, b) => (a.bpm || 1e9) - (b.bpm || 1e9) || byTitle(a, b),
     // unpackaged one-offs first — those are the ones that tend to need a bespoke quote

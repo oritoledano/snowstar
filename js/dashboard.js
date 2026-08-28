@@ -21,6 +21,10 @@
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
+  /* Which submission rows are open. Module-level because every review action
+     ends in load(), which rebuilds the list from scratch — kept anywhere more
+     local and a row would slam shut the moment you approved the track in it. */
+  const openSubs = new Set();
 
   const get = (p) => fetch('/api' + p, { credentials: 'same-origin' }).then((r) => {
     if (r.status === 403) throw new Error('forbidden');
@@ -781,23 +785,140 @@
   }
 
   /* ── artists ── */
+  /* ── artists: a profile you can actually edit ─────────────────────────────
+     This was a read-only table of six columns. The write endpoint existed and
+     nothing called it, and the list query returned no id, so a row on screen
+     could not even be addressed. Both are fixed server-side; this is the card
+     that uses it. Photo, name, bio, links and supporting videos, for account
+     artists and for the ones you upload on behalf of alike. */
+  let openArtists = new Set();
+
   async function paintArtists() {
-    const d = await get('/artists');
-    paint(`<div class="db-panel"><h2>Artists <span class="pill">${(d.artists || []).length}</span></h2>
-      ${table(d.artists || [], [
-        { label: 'Artist', get: (r) => `<b>${esc(r.name || '—')}</b>` },
-        { label: 'Email', get: (r) => esc(r.email) },
-        { label: 'Status', get: (r) => `<span class="db-badge ${r.kind}">${
-            r.kind === 'ghost' ? 'awaiting signup' : r.kind === 'claimed' ? 'claimed' : 'has account'}</span>` },
-        { label: 'Uploads', num: true, get: (r) => r.uploads },
-        { label: 'Accepted', num: true, get: (r) => r.approved },
-        { label: 'Since', get: (r) => fmtD(r.created_at) },
-      ])}
-      <p class="db-empty">“Awaiting signup” artists are ones you upload for — they claim their profile
-      (and countersign their declarations) when they create an account with that email.</p></div>`);
+    const d = await get('/artists/profiles');
+    const artists = d.artists || [];
+    const kindWord = { ghost: 'awaiting signup', claimed: 'claimed', account: 'has account' };
+
+    const rowsHtml = artists.map((a) => `
+      <div class="ar-card${openArtists.has(a.pid) ? ' open' : ''}" data-pid="${esc(a.pid)}">
+        <div class="ar-head" role="button" tabindex="0">
+          <span class="rv-caret">▸</span>
+          ${a.avatar ? `<img class="ar-av" src="${esc(a.avatar)}" alt="">`
+                     : '<span class="ar-av ar-none"></span>'}
+          <b>${esc(a.name || '(no name)')}</b>
+          <span class="who">${esc(a.email || '—')}</span>
+          <span class="meta">${a.uploads} uploaded · ${a.approved} accepted</span>
+          <span class="pill">${kindWord[a.kind] || a.kind}</span>
+        </div>
+        <div class="ar-body">
+          <div class="ar-grid">
+            <label class="ar-f"><span>Name</span><input name="name" value="${esc(a.name)}" maxlength="120"></label>
+            <label class="ar-f"><span>Email</span><input name="email" value="${esc(a.email)}" maxlength="254"
+              ${a.kind === 'account' ? 'disabled title="This is the address they sign in with — change it in Members"' : ''}></label>
+          </div>
+          <label class="ar-f"><span>About</span><textarea name="bio" rows="4" maxlength="4000">${esc(a.bio)}</textarea></label>
+          <div class="ar-grid">
+            <label class="ar-f"><span>Profile photo</span>
+              <input type="file" class="ar-photo" accept="image/jpeg,image/png,image/webp,image/avif"></label>
+            <div class="ar-f"><span>Current</span>
+              ${a.avatar ? `<a href="${esc(a.avatar)}" target="_blank" rel="noopener">view</a>` : '<i>none</i>'}</div>
+          </div>
+          <div class="ar-sub"><span>Links</span>
+            <div class="ar-list ar-links">${(a.links.length ? a.links : [{ platform: '', url: '' }]).map((l) => `
+              <div class="ar-row"><input placeholder="Spotify" value="${esc(l.platform)}" data-k="platform" maxlength="80">
+                <input placeholder="https://…" value="${esc(l.url)}" data-k="url" maxlength="400">
+                <button class="ar-x" type="button" title="Remove">×</button></div>`).join('')}</div>
+            <button class="rv-btn ar-add" data-for="links" type="button">+ link</button></div>
+          <div class="ar-sub"><span>Supporting videos</span>
+            <div class="ar-list ar-videos">${(a.videos.length ? a.videos : [{ title: '', url: '' }]).map((v) => `
+              <div class="ar-row"><input placeholder="What it is" value="${esc(v.title)}" data-k="title" maxlength="80">
+                <input placeholder="YouTube / Vimeo URL" value="${esc(v.url)}" data-k="url" maxlength="400">
+                <button class="ar-x" type="button" title="Remove">×</button></div>`).join('')}</div>
+            <button class="rv-btn ar-add" data-for="videos" type="button">+ video</button></div>
+          <div class="rv-acts"><button class="rv-btn rv-ok ar-save" type="button">Save profile</button>
+            <span class="ar-said"></span></div>
+        </div>
+      </div>`).join('');
+
+    paint(`<div class="db-panel"><h2>Artists <span class="pill">${artists.length}</span></h2>
+      <p class="db-empty" style="padding-top:0">Click a name to edit their profile. “Awaiting signup”
+        artists are ones you upload for — they claim the profile, and countersign their declarations,
+        when they create an account with that email. Everything here is what shows on their public page.</p>
+      ${rowsHtml || '<p class="db-empty">No artists yet.</p>'}</div>`);
+
+    app.querySelectorAll('.ar-head').forEach((h) => {
+      const card = h.closest('.ar-card'), pid = card.dataset.pid;
+      const toggle = () => {
+        const open = card.classList.toggle('open');
+        if (open) openArtists.add(pid); else openArtists.delete(pid);
+      };
+      h.addEventListener('click', toggle);
+      h.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
+
+    const rowHtml = (kind) => kind === 'links'
+      ? `<div class="ar-row"><input placeholder="Spotify" data-k="platform" maxlength="80">
+           <input placeholder="https://…" data-k="url" maxlength="400">
+           <button class="ar-x" type="button" title="Remove">×</button></div>`
+      : `<div class="ar-row"><input placeholder="What it is" data-k="title" maxlength="80">
+           <input placeholder="YouTube / Vimeo URL" data-k="url" maxlength="400">
+           <button class="ar-x" type="button" title="Remove">×</button></div>`;
+
+    app.querySelectorAll('.ar-add').forEach((b) => b.addEventListener('click', () => {
+      const kind = b.dataset.for;
+      b.closest('.ar-sub').querySelector('.ar-list').insertAdjacentHTML('beforeend', rowHtml(kind));
+    }));
+    app.addEventListener('click', (e) => {
+      const x = e.target.closest('.ar-x');
+      if (x) x.closest('.ar-row').remove();
+    });
+
+    /* Photo goes up on its own the moment it is chosen, and the server writes
+       the URL — a file input that only takes effect on Save is the one everyone
+       forgets to press. */
+    app.querySelectorAll('.ar-photo').forEach((inp) => inp.addEventListener('change', async () => {
+      const f = inp.files && inp.files[0];
+      if (!f) return;
+      const card = inp.closest('.ar-card');
+      const said = card.querySelector('.ar-said');
+      said.textContent = 'Uploading photo…';
+      const r = await fetch('/api/artists/photo?pid=' + encodeURIComponent(card.dataset.pid), {
+        method: 'PUT', credentials: 'same-origin',
+        headers: { 'content-type': f.type }, body: f,
+      }).then((x) => x.json()).catch(() => null);
+      said.textContent = r && r.ok ? 'Photo saved.' : 'Photo failed.';
+      if (r && r.ok) {
+        const av = card.querySelector('.ar-av');
+        if (av) { const img = document.createElement('img'); img.className = 'ar-av';
+                  img.src = r.url; av.replaceWith(img); }
+      }
+    }));
+
+    app.querySelectorAll('.ar-save').forEach((b) => b.addEventListener('click', async () => {
+      const card = b.closest('.ar-card');
+      const said = card.querySelector('.ar-said');
+      const val = (n) => (card.querySelector(`[name="${n}"]`) || {}).value;
+      const listOf = (sel, keys) => [...card.querySelectorAll(sel + ' .ar-row')].map((r) => {
+        const o = {};
+        keys.forEach((k) => { o[k] = (r.querySelector(`[data-k="${k}"]`) || {}).value || ''; });
+        return o;
+      }).filter((o) => keys.every((k) => o[k].trim()));
+
+      const body = { pid: card.dataset.pid, name: val('name'), bio: val('bio'),
+        links: listOf('.ar-links', ['platform', 'url']),
+        videos: listOf('.ar-videos', ['title', 'url']) };
+      if (card.querySelector('[name="email"]') && !card.querySelector('[name="email"]').disabled) {
+        body.email = val('email');
+      }
+      b.disabled = true; said.textContent = 'Saving…';
+      const r = await post('/artists/profiles', body);
+      b.disabled = false;
+      said.textContent = r && r.ok ? 'Saved.' : (r && r.error) || 'Could not save.';
+    }));
   }
 
-  /* ── submissions (ported from review.html) ── */
+/* ── submissions (ported from review.html) ── */
   async function paintSubmissions() {
     const d = await get('/submissions?status=' + subTab);
     const items = d.submissions || [];
@@ -832,13 +953,15 @@
       <div style="display:flex;gap:8px;margin-bottom:16px">${['pending', 'approved', 'rejected'].map((t) =>
         `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${t}</button>`).join('')}</div>
       ${items.length ? items.map((s) => `
-        <div class="rv-item" data-id="${s.id}">
-          <div class="rv-top"><b>${esc(s.title)}</b>
+        <div class="rv-item${openSubs.has(s.id) ? ' open' : ''}" data-id="${s.id}">
+          <div class="rv-top rv-head" role="button" tabindex="0"
+               aria-expanded="${openSubs.has(s.id)}"><span class="rv-caret">▸</span><b>${esc(s.title)}</b>
             <span class="who">${esc(s.artist_name || s.email)}</span>
             <span class="meta">${(s.size / 1048576).toFixed(1)}MB · ${esc(s.ext)} · ${fmt(s.created_at)}</span>
             ${laneChip(s)}${s.status === 'approved' ? (s.published_slug
               ? `<span class="rv-pub live">in catalog</span>`
               : `<span class="rv-pub">not in catalog yet</span>`) : ''}</div>
+          <div class="rv-body">
           ${declBlock(s)}
           ${s.artist_note ? `<p class="rv-note">Artist: “${esc(s.artist_note)}”</p>` : ''}
           ${s.review_note ? `<p class="rv-note">You: “${esc(s.review_note)}”</p>` : ''}
@@ -850,12 +973,30 @@
             <button class="rv-btn rv-edit" type="button">Edit details</button>
           </div>
           <div class="rv-review" hidden></div>
-          <div class="rv-editor" hidden></div></div>`).join('')
+          <div class="rv-editor" hidden></div>
+          </div></div>`).join('')
       : `<p class="db-empty">${subTab === 'pending' ? 'Nothing waiting — inbox zero.' : 'Nothing here yet.'}</p>`}
       <p class="db-empty">Approving marks a track for the catalog — it does <b>not</b> publish it.
         The audio stays in the private submissions area until it is analysed, given a waveform and
         artwork, and added to the catalog file. Ask Claude to “process approved uploads” to take
         them live.</p>`);
+    /* Click the header to open a row. Not the whole row: the body holds the
+       player, the approve buttons and the editor, and a click anywhere in it
+       collapsing the thing you were working in would be maddening. */
+    app.querySelectorAll('.rv-head').forEach((h) => {
+      const item = h.closest('.rv-item');
+      const id = Number(item.dataset.id);
+      const toggle = () => {
+        const open = item.classList.toggle('open');
+        h.setAttribute('aria-expanded', String(open));
+        if (open) openSubs.add(id); else openSubs.delete(id);
+      };
+      h.addEventListener('click', toggle);
+      h.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
+
     app.querySelectorAll('[data-st]').forEach((b) =>
       b.addEventListener('click', () => { subTab = b.dataset.st; load(); }));
     app.querySelectorAll('.rv-edit').forEach((b) =>

@@ -45,6 +45,7 @@ import { listStacks, saveStack } from './stacks.js';
 import { sharePage } from './share.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
+import { listProfiles, saveProfile, uploadArtistPhoto } from './artistprofile.js';
 import { listEarnings, settleEarnings, myEarnings } from './earnings.js';
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
@@ -198,6 +199,10 @@ async function handle(req, env, ctx) {
   // removing a track: audio to trash, slug onto the deleted list, both reversible
   if (path === '/tracks' && method === 'DELETE') return deleteTrack(req, env, await currentUser(req, env), url);
   if (path === '/tracks/undelete' && method === 'POST') return undeleteTrack(req, env, await currentUser(req, env));
+  // artist profiles — one language for account artists and managed ones alike
+  if (path === '/artists/profiles' && method === 'GET') return listProfiles(env, await currentUser(req, env));
+  if (path === '/artists/profiles' && method === 'POST') return saveProfile(req, env, await currentUser(req, env));
+  if (path === '/artists/photo' && method === 'PUT') return uploadArtistPhoto(req, env, await currentUser(req, env), url);
   // who a published upload belongs to, and moving it to another account
   if (path === '/tracks/owner' && method === 'GET') return getOwner(req, env, await currentUser(req, env), url);
   if (path === '/tracks/owner' && method === 'POST') return reassignOwner(req, env, await currentUser(req, env));

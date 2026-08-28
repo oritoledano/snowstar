@@ -65,7 +65,19 @@
     padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:none}
   .chip.active{color:var(--on-accent,#04121d);background:var(--grad);border-color:transparent}
   /* submissions + mail (ported from review.html) */
-  .rv-item{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px}
+  /* Collapsed by default: a queue you have to scroll for two screens per item
+     is a queue you stop reading. One line each, opening to the full card. */
+  .rv-item{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:12px 18px;margin-bottom:8px;transition:padding .15s}
+  .rv-item.open{padding:18px 20px;margin-bottom:14px}
+  .rv-head{cursor:pointer;margin-bottom:0;user-select:none}
+  .rv-head:hover b{color:var(--amber,var(--coral))}
+  .rv-head:focus-visible{outline:2px solid var(--amber,var(--coral));outline-offset:4px;border-radius:8px}
+  .rv-caret{color:var(--dim);font-size:.7rem;transition:transform .18s;display:inline-block;flex:none}
+  .rv-item.open .rv-caret{transform:rotate(90deg)}
+  .rv-item.open .rv-head{margin-bottom:6px}
+  .rv-body{display:none}
+  .rv-item.open .rv-body{display:block}
   .rv-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
   .rv-top b{font-size:1.02rem}
   .rv-top .who{color:var(--amber,#8fd8ff);font-size:.86rem}
@@ -143,6 +155,41 @@
     line-height:1;padding:6px;opacity:0;border-radius:6px}
   .jb-table tr:hover .jb-del{opacity:1}
   .jb-del:hover{color:#f87171;background:rgba(248,113,113,.12)}
+  /* ── artist profile cards ── */
+  .ar-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:10px 16px;margin-bottom:8px}
+  .ar-card.open{padding:16px 18px;margin-bottom:14px}
+  .ar-head{display:flex;align-items:center;gap:11px;flex-wrap:wrap;cursor:pointer;user-select:none}
+  .ar-head:hover b{color:var(--amber,#8fd8ff)}
+  .ar-head .who{color:var(--amber,#8fd8ff);font-size:.84rem}
+  .ar-head .meta{color:var(--muted);font-size:.78rem;margin-left:auto}
+  .ar-card.open .rv-caret{transform:rotate(90deg)}
+  .ar-av{width:30px;height:30px;border-radius:50%;object-fit:cover;flex:none;
+    border:1px solid var(--line-2,var(--line))}
+  .ar-av.ar-none{background:var(--panel-2,rgba(128,128,128,.14));display:inline-block}
+  .ar-body{display:none;padding-top:14px}
+  .ar-card.open .ar-body{display:block}
+  .ar-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:760px){.ar-grid{grid-template-columns:1fr}}
+  .ar-f{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:.82rem}
+  .ar-f > span{color:var(--muted);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase}
+  .ar-f input,.ar-f textarea{font:inherit;font-size:.86rem;color:var(--text);
+    background:var(--panel-2,rgba(128,128,128,.07));border:1px solid var(--line);
+    border-radius:9px;padding:9px 11px;outline:none;resize:vertical}
+  .ar-f input:focus,.ar-f textarea:focus{border-color:var(--amber,#8fd8ff)}
+  .ar-f input:disabled{opacity:.5;cursor:not-allowed}
+  .ar-sub{margin:6px 0 14px}
+  .ar-sub > span{color:var(--muted);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+    display:block;margin-bottom:7px}
+  .ar-row{display:grid;grid-template-columns:minmax(90px,1fr) 2fr 30px;gap:7px;margin-bottom:6px}
+  .ar-row input{font:inherit;font-size:.84rem;color:var(--text);
+    background:var(--panel-2,rgba(128,128,128,.07));border:1px solid var(--line);
+    border-radius:8px;padding:7px 10px;outline:none;min-width:0}
+  .ar-row input:focus{border-color:var(--amber,#8fd8ff)}
+  .ar-x{background:none;border:0;color:var(--dim);cursor:pointer;font-size:1rem;border-radius:6px}
+  .ar-x:hover{color:#f87171;background:rgba(248,113,113,.12)}
+  .ar-add{font-size:.72rem;padding:5px 12px}
+  .ar-said{color:var(--muted);font-size:.8rem;align-self:center}
   .rv-mrow{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:.86rem}
   .rv-mrow summary{cursor:pointer;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;list-style:none}
   .rv-mrow pre{white-space:pre-wrap;color:var(--muted);font:inherit;font-size:.8rem;margin:10px 0;border-top:1px solid var(--line);padding-top:10px}
@@ -369,6 +416,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=18"></script>
-<script src="js/dashboard.js?v=25"></script>
+<script src="js/dashboard.js?v=27"></script>
 </body>
 </html>
