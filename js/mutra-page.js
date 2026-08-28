@@ -2231,7 +2231,12 @@
           await loadShelf(key);
           syncShelfButtons();
           paintColl();
-          render();                    // the pack/character filter chips move with it
+          /* Only re-render when a pack or character filter is actually on. A
+             plain render() here rebuilds every row and takes the open editor
+             with it — you would click "add to Nightmare" and the panel you were
+             working in would vanish. */
+          const f = state[key];
+          if (f && (f.inc.size || f.exc.size)) render();
         }));
       });
     }
