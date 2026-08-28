@@ -45,7 +45,7 @@ import { listStacks, saveStack } from './stacks.js';
 import { sharePage } from './share.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
-import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile } from './artistprofile.js';
+import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim } from './artistprofile.js';
 import { listCoupons, saveCoupon, checkCoupon } from './coupons.js';
 import { listEarnings, settleEarnings, myEarnings } from './earnings.js';
 import { certificate } from './certificate.js';
@@ -211,6 +211,7 @@ async function handle(req, env, ctx) {
   if (path === '/artists/photo' && method === 'PUT') return uploadArtistPhoto(req, env, await currentUser(req, env), url);
   if (path === '/artists/profiles' && method === 'DELETE') return deleteProfile(req, env, await currentUser(req, env), url);
   if (path === '/artists/managers' && method === 'POST') return setManager(req, env, await currentUser(req, env));
+  if (path === '/artists/claim' && method === 'POST') return approveClaim(req, env, await currentUser(req, env));
   // who a published upload belongs to, and moving it to another account
   if (path === '/tracks/owner' && method === 'GET') return getOwner(req, env, await currentUser(req, env), url);
   if (path === '/tracks/owner' && method === 'POST') return reassignOwner(req, env, await currentUser(req, env));

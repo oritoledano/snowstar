@@ -1,16 +1,16 @@
 # Graph Report - snowstar  (2026-08-28)
 
 ## Corpus Check
-- 71 files · ~379,661 words
+- 71 files · ~380,334 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 864 nodes · 2063 edges · 49 communities (47 shown, 2 thin omitted)
+- 865 nodes · 2068 edges · 48 communities (46 shown, 2 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 88 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `acbaafcb`
+- Built from commit: `893cb0ca`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -50,7 +50,6 @@
 - index.js
 - certificate.js
 - oauth.js
-- ownership.js
 - mutra-artist-panel.js
 - clearlist.js
 - artistreg.js
@@ -66,7 +65,7 @@
 - stacks.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `handle()` - 135 edges
+1. `handle()` - 136 edges
 2. `Mutra royalty-free music catalogue page` - 33 edges
 3. `render()` - 22 edges
 4. `load()` - 21 edges
@@ -97,7 +96,7 @@
 - **Rights clearance pipeline (artist declaration → owner review → licensable lane)** — artists_rights_declaration, artists_co_owner_shares, artists_controller_declaration, artists_countersign_claim, artists_instant_vs_quote_lane, dashboard_submissions_queue, dashboard_clearance_status, terms_quote_only_tracks [INFERRED 0.85]
 - **One Snowstar account across catalogue, portal, dashboard and reset** — js_account, js_account_ui, css_account, artists_account_gate, reset_page, dashboard_page, privacy_account_data [INFERRED 0.85]
 
-## Communities (49 total, 2 thin omitted)
+## Communities (48 total, 2 thin omitted)
 
 ### Community 0 - "mutra-agent.js"
 Cohesion: 0.44
@@ -108,12 +107,12 @@ Cohesion: 0.06
 Nodes (72): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+64 more)
 
 ### Community 2 - "bulk.js"
-Cohesion: 0.29
-Nodes (13): applyOps(), bulkArtist(), bulkEdit(), bulkUndo(), clean(), diffOf(), json(), keyOf() (+5 more)
+Cohesion: 0.18
+Nodes (20): applyOps(), bulkArtist(), bulkEdit(), bulkUndo(), clean(), diffOf(), json(), keyOf() (+12 more)
 
 ### Community 3 - "rights.js"
-Cohesion: 0.17
-Nodes (27): createSubmission(), mailFrom(), mailLive(), mailTo(), resetEmail(), SENDERS, sendMail(), shell() (+19 more)
+Cohesion: 0.23
+Nodes (21): mailFrom(), mailLive(), amendDeclaration(), claimStatus(), cleanEmail(), countersignClaim(), createManagedArtist(), freezeText() (+13 more)
 
 ### Community 4 - "licensing.js"
 Cohesion: 0.08
@@ -220,8 +219,8 @@ Cohesion: 0.33
 Nodes (13): configured(), CP1255, decodeValue(), handleReturn(), hypStatus(), json(), listStale(), now() (+5 more)
 
 ### Community 32 - "index.js"
-Cohesion: 0.15
-Nodes (28): ALLOWED_ORIGINS, authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), now() (+20 more)
+Cohesion: 0.14
+Nodes (30): cleanupOrphanUploads(), ALLOWED_ORIGINS, authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json() (+22 more)
 
 ### Community 33 - "certificate.js"
 Cohesion: 0.52
@@ -230,10 +229,6 @@ Nodes (6): certificate(), certificateSvg(), esc(), fmtDate(), json(), wrap()
 ### Community 34 - "oauth.js"
 Cohesion: 0.10
 Nodes (38): b64(), enc, pbkdf2(), PBKDF2_ITERS, peppered(), randB64(), safeEqual(), verifyPassword() (+30 more)
-
-### Community 35 - "ownership.js"
-Cohesion: 0.57
-Nodes (7): clean(), getOwner(), json(), notifyRename(), now(), ownerOf(), reassignOwner()
 
 ### Community 36 - "mutra-artist-panel.js"
 Cohesion: 0.44
@@ -256,8 +251,8 @@ Cohesion: 0.46
 Nodes (7): breadthExceeded(), handleStream(), json(), looksLikePlayback(), now(), parseRange(), serve()
 
 ### Community 41 - "artists.js"
-Cohesion: 0.23
-Nodes (14): AUDIO_EXT, cleanupOrphanUploads(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), queueReviewMail() (+6 more)
+Cohesion: 0.19
+Nodes (18): AUDIO_EXT, createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), queueReviewMail() (+10 more)
 
 ### Community 42 - "Portfolio years"
 Cohesion: 0.50
@@ -268,8 +263,8 @@ Cohesion: 0.48
 Nodes (6): clampBpm(), clampList(), extractJson(), interpretBrief(), json(), LIST_FIELDS
 
 ### Community 44 - "artistprofile.js"
-Cohesion: 0.42
-Nodes (10): clean(), deleteProfile(), json(), listOf(), listProfiles(), managersFor(), parseJson(), saveProfile() (+2 more)
+Cohesion: 0.39
+Nodes (11): approveClaim(), clean(), deleteProfile(), json(), listOf(), listProfiles(), managersFor(), parseJson() (+3 more)
 
 ### Community 45 - "trash.js"
 Cohesion: 0.70

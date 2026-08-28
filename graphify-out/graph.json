@@ -2316,6 +2316,90 @@
       "source_location": "L55"
     },
     {
+      "id": "worker_src_ownership_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L23"
+    },
+    {
+      "id": "worker_src_ownership_getowner",
+      "label": "getOwner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "getowner()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L153"
+    },
+    {
+      "id": "worker_src_ownership_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "worker_src_ownership_notifyrename",
+      "label": "notifyRename()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "notifyrename()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_ownership_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "worker_src_ownership_ownerof",
+      "label": "ownerOf()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "ownerof()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "worker_src_ownership_reassignowner",
+      "label": "reassignOwner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "reassignowner()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L91"
+    },
+    {
       "id": "js_mutra_artist_quotemailto",
       "label": "quoteMailto()",
       "_callable": true,
@@ -3048,18 +3132,6 @@
       "source_location": "L97"
     },
     {
-      "id": "worker_src_artists_createsubmission",
-      "label": "createSubmission()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "createsubmission()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L69"
-    },
-    {
       "id": "worker_src_mail_mailfrom",
       "label": "mailFrom()",
       "_callable": true,
@@ -3082,54 +3154,6 @@
       "norm_label": "maillive()",
       "source_file": "worker/src/mail.js",
       "source_location": "L19"
-    },
-    {
-      "id": "worker_src_mail_mailto",
-      "label": "mailTo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "mailto()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L45"
-    },
-    {
-      "id": "worker_src_mail_resetemail",
-      "label": "resetEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "resetemail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L101"
-    },
-    {
-      "id": "worker_src_mail_sendmail",
-      "label": "sendMail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "sendmail()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L73"
-    },
-    {
-      "id": "worker_src_mail_shell",
-      "label": "shell()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "shell()",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L51"
     },
     {
       "id": "worker_src_rights_amenddeclaration",
@@ -3804,6 +3828,18 @@
       "source_location": "L208"
     },
     {
+      "id": "worker_src_artists_cleanuporphanuploads",
+      "label": "cleanupOrphanUploads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "cleanuporphanuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L171"
+    },
+    {
       "id": "worker_src_index_authed",
       "label": "authed()",
       "_callable": true,
@@ -3849,7 +3885,7 @@
       "file_type": "code",
       "norm_label": "fetch()",
       "source_file": "worker/src/index.js",
-      "source_location": "L547"
+      "source_location": "L548"
     },
     {
       "id": "worker_src_index_handle",
@@ -3910,6 +3946,18 @@
       "norm_label": "product()",
       "source_file": "worker/src/index.js",
       "source_location": "L80"
+    },
+    {
+      "id": "worker_src_index_scheduled",
+      "label": "scheduled()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "scheduled()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L543"
     },
     {
       "id": "worker_src_index_sessioncookie",
@@ -4570,90 +4618,6 @@
       "norm_label": "publicuser()",
       "source_file": "worker/src/user.js",
       "source_location": "L4"
-    },
-    {
-      "id": "worker_src_ownership_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L23"
-    },
-    {
-      "id": "worker_src_ownership_getowner",
-      "label": "getOwner()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "getowner()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L153"
-    },
-    {
-      "id": "worker_src_ownership_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "worker_src_ownership_notifyrename",
-      "label": "notifyRename()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "notifyrename()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L46"
-    },
-    {
-      "id": "worker_src_ownership_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L22"
-    },
-    {
-      "id": "worker_src_ownership_ownerof",
-      "label": "ownerOf()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "ownerof()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L26"
-    },
-    {
-      "id": "worker_src_ownership_reassignowner",
-      "label": "reassignOwner()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "reassignowner()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L91"
     },
     {
       "id": "js_mutra_artist_panel_albumsof",
@@ -5664,16 +5628,16 @@
       "source_location": "L158"
     },
     {
-      "id": "worker_src_artists_cleanuporphanuploads",
-      "label": "cleanupOrphanUploads()",
+      "id": "worker_src_artists_createsubmission",
+      "label": "createSubmission()",
       "_callable": true,
       "_origin": "ast",
       "community": 41,
       "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "cleanuporphanuploads()",
+      "norm_label": "createsubmission()",
       "source_file": "worker/src/artists.js",
-      "source_location": "L171"
+      "source_location": "L69"
     },
     {
       "id": "worker_src_artists_json",
@@ -5808,16 +5772,52 @@
       "source_location": "L54"
     },
     {
-      "id": "worker_src_index_scheduled",
-      "label": "scheduled()",
+      "id": "worker_src_mail_mailto",
+      "label": "mailTo()",
       "_callable": true,
       "_origin": "ast",
       "community": 41,
       "community_name": "artists.js",
       "file_type": "code",
-      "norm_label": "scheduled()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L542"
+      "norm_label": "mailto()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "worker_src_mail_resetemail",
+      "label": "resetEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "resetemail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L101"
+    },
+    {
+      "id": "worker_src_mail_sendmail",
+      "label": "sendMail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "sendmail()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L73"
+    },
+    {
+      "id": "worker_src_mail_shell",
+      "label": "shell()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "shell()",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L51"
     },
     {
       "id": "worker_src_agent_clampbpm",
@@ -5880,6 +5880,18 @@
       "source_location": "L24"
     },
     {
+      "id": "worker_src_artistprofile_approveclaim",
+      "label": "approveClaim()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 44,
+      "community_name": "artistprofile.js",
+      "file_type": "code",
+      "norm_label": "approveclaim()",
+      "source_file": "worker/src/artistprofile.js",
+      "source_location": "L311"
+    },
+    {
       "id": "worker_src_artistprofile_clean",
       "label": "clean()",
       "_callable": true,
@@ -5901,7 +5913,7 @@
       "file_type": "code",
       "norm_label": "deleteprofile()",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L249"
+      "source_location": "L266"
     },
     {
       "id": "worker_src_artistprofile_json",
@@ -5973,7 +5985,7 @@
       "file_type": "code",
       "norm_label": "saveprofile()",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L122"
+      "source_location": "L139"
     },
     {
       "id": "worker_src_artistprofile_setmanager",
@@ -5985,7 +5997,7 @@
       "file_type": "code",
       "norm_label": "setmanager()",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L204"
+      "source_location": "L221"
     },
     {
       "id": "worker_src_artistprofile_uploadartistphoto",
@@ -5997,7 +6009,7 @@
       "file_type": "code",
       "norm_label": "uploadartistphoto()",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L170"
+      "source_location": "L187"
     },
     {
       "id": "worker_src_trash_emptytrash",
@@ -6057,7 +6069,7 @@
       "file_type": "code",
       "norm_label": "analyse()",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L242"
+      "source_location": "L253"
     },
     {
       "id": "js_mutra_analyse_chroma",
@@ -6093,7 +6105,7 @@
       "file_type": "code",
       "norm_label": "detectbpm()",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L88"
+      "source_location": "L91"
     },
     {
       "id": "js_mutra_analyse_detectkey",
@@ -6117,7 +6129,7 @@
       "file_type": "code",
       "norm_label": "detectvocals()",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L147"
+      "source_location": "L158"
     },
     {
       "id": "js_mutra_analyse_findlinks",
@@ -6129,7 +6141,7 @@
       "file_type": "code",
       "norm_label": "findlinks()",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L224"
+      "source_location": "L235"
     },
     {
       "id": "js_mutra_analyse_titlefrom",
@@ -6141,7 +6153,7 @@
       "file_type": "code",
       "norm_label": "titlefrom()",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L182"
+      "source_location": "L193"
     },
     {
       "id": "worker_src_stacks_clean",
@@ -7632,6 +7644,17 @@
       "source_location": "L47"
     },
     {
+      "id": "worker_src_ownership",
+      "label": "ownership.js",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "ownership.js",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L1"
+    },
+    {
       "id": "js_mutra_artist",
       "label": "mutra-artist.js",
       "_origin": "ast",
@@ -7913,28 +7936,6 @@
       "norm_label": "mutra-license.js",
       "source_file": "js/mutra-license.js",
       "source_location": "L1"
-    },
-    {
-      "id": "worker_src_mail",
-      "label": "mail.js",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "mail.js",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_mail_senders",
-      "label": "SENDERS",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "senders",
-      "source_file": "worker/src/mail.js",
-      "source_location": "L33"
     },
     {
       "id": "worker_src_rights",
@@ -8256,17 +8257,6 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_ownership",
-      "label": "ownership.js",
-      "_origin": "ast",
-      "community": 35,
-      "community_name": "ownership.js",
-      "file_type": "code",
-      "norm_label": "ownership.js",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L1"
-    },
-    {
       "id": "js_mutra_artist_panel",
       "label": "mutra-artist-panel.js",
       "_origin": "ast",
@@ -8540,6 +8530,28 @@
       "norm_label": "audio_ext",
       "source_file": "worker/src/artists.js",
       "source_location": "L21"
+    },
+    {
+      "id": "worker_src_mail",
+      "label": "mail.js",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "mail.js",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_mail_senders",
+      "label": "SENDERS",
+      "_origin": "ast",
+      "community": 41,
+      "community_name": "artists.js",
+      "file_type": "code",
+      "norm_label": "senders",
+      "source_file": "worker/src/mail.js",
+      "source_location": "L33"
     },
     {
       "id": "portfolio_years",
@@ -11971,7 +11983,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L268",
+      "source_location": "L279",
       "weight": 1.0
     },
     {
@@ -11983,7 +11995,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L270",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -11995,7 +12007,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L272",
+      "source_location": "L283",
       "weight": 1.0
     },
     {
@@ -12007,7 +12019,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L276",
+      "source_location": "L287",
       "weight": 1.0
     },
     {
@@ -15575,6 +15587,30 @@
       "weight": 1.0
     },
     {
+      "source": "worker_src_artistprofile_approveclaim",
+      "target": "worker_src_artistprofile_json",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/artistprofile.js",
+      "source_location": "L312",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_artistprofile_approveclaim",
+      "target": "worker_src_artistprofile_clean",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/artistprofile.js",
+      "source_location": "L314",
+      "weight": 1.0
+    },
+    {
       "source": "worker_src_artistprofile_deleteprofile",
       "target": "worker_src_artistprofile_json",
       "relation": "calls",
@@ -15583,7 +15619,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L250",
+      "source_location": "L267",
       "weight": 1.0
     },
     {
@@ -15595,7 +15631,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L251",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -15655,7 +15691,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L123",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -15667,7 +15703,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L125",
+      "source_location": "L142",
       "weight": 1.0
     },
     {
@@ -15679,7 +15715,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L141",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -15691,7 +15727,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L205",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -15703,7 +15739,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L207",
+      "source_location": "L224",
       "weight": 1.0
     },
     {
@@ -15715,7 +15751,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L171",
+      "source_location": "L188",
       "weight": 1.0
     },
     {
@@ -15727,7 +15763,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L172",
+      "source_location": "L189",
       "weight": 1.0
     },
     {
@@ -17299,7 +17335,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L549",
+      "source_location": "L550",
       "weight": 1.0
     },
     {
@@ -17311,7 +17347,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L552",
+      "source_location": "L553",
       "weight": 1.0
     },
     {
@@ -17832,19 +17868,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_ownership_getowner",
+      "target": "worker_src_artistprofile_approveclaim",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L215",
+      "source_location": "L214",
       "weight": 1.0
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_ownership_reassignowner",
+      "target": "worker_src_ownership_getowner",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17856,7 +17892,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artists_listsubmissions",
+      "target": "worker_src_ownership_reassignowner",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17868,7 +17904,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artists_reviewsubmission",
+      "target": "worker_src_artists_listsubmissions",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17880,19 +17916,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_mycredits",
+      "target": "worker_src_artists_reviewsubmission",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L221",
+      "source_location": "L219",
       "weight": 1.0
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_respondcredit",
+      "target": "worker_src_rights_mycredits",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17904,7 +17940,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_claimstatus",
+      "target": "worker_src_rights_respondcredit",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17916,7 +17952,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_countersignclaim",
+      "target": "worker_src_rights_claimstatus",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17928,7 +17964,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_listmanagedartists",
+      "target": "worker_src_rights_countersignclaim",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17940,7 +17976,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_createmanagedartist",
+      "target": "worker_src_rights_listmanagedartists",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17952,7 +17988,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_listoutbox",
+      "target": "worker_src_rights_createmanagedartist",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17964,7 +18000,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_sendoutbox",
+      "target": "worker_src_rights_listoutbox",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17976,19 +18012,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_rights_amenddeclaration",
+      "target": "worker_src_rights_sendoutbox",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L231",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistreg_listartists",
+      "target": "worker_src_rights_amenddeclaration",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18000,7 +18036,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistreg_ensureartists",
+      "target": "worker_src_artistreg_listartists",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18012,7 +18048,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_artistreg_saveartist",
+      "target": "worker_src_artistreg_ensureartists",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18024,7 +18060,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_listchannels",
+      "target": "worker_src_artistreg_saveartist",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18036,7 +18072,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_addchannel",
+      "target": "worker_src_clearlist_listchannels",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18048,7 +18084,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_removechannel",
+      "target": "worker_src_clearlist_addchannel",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18060,7 +18096,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_allchannels",
+      "target": "worker_src_clearlist_removechannel",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18072,7 +18108,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_clearlist_setchannelstatus",
+      "target": "worker_src_clearlist_allchannels",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18084,7 +18120,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_profile_uploadavatar",
+      "target": "worker_src_clearlist_setchannelstatus",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18096,7 +18132,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_profile_clearavatar",
+      "target": "worker_src_profile_uploadavatar",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18108,7 +18144,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_listoverrides",
+      "target": "worker_src_profile_clearavatar",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18120,7 +18156,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_saveoverride",
+      "target": "worker_src_catalog_listoverrides",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18132,19 +18168,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_bulkedit",
+      "target": "worker_src_catalog_saveoverride",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L245",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_bulkundo",
+      "target": "worker_src_bulk_bulkedit",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18156,7 +18192,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_listbatches",
+      "target": "worker_src_bulk_bulkundo",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18168,7 +18204,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_bulk_bulkartist",
+      "target": "worker_src_bulk_listbatches",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18180,19 +18216,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_listuses",
+      "target": "worker_src_bulk_bulkartist",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L250",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_saveuse",
+      "target": "worker_src_catalog_listuses",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18204,7 +18240,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_listorigtitles",
+      "target": "worker_src_catalog_saveuse",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18216,7 +18252,7 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_catalog_setorigtitle",
+      "target": "worker_src_catalog_listorigtitles",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18228,19 +18264,19 @@
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_stacks_liststacks",
+      "target": "worker_src_catalog_setorigtitle",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L255",
+      "source_location": "L254",
       "weight": 1.0
     },
     {
       "source": "worker_src_index_handle",
-      "target": "worker_src_stacks_savestack",
+      "target": "worker_src_stacks_liststacks",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18252,6 +18288,18 @@
     },
     {
       "source": "worker_src_index_handle",
+      "target": "worker_src_stacks_savestack",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/index.js",
+      "source_location": "L257",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index_handle",
       "target": "worker_src_agent_interpretbrief",
       "relation": "calls",
       "_origin": "ast",
@@ -18259,7 +18307,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L258",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -18271,7 +18319,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L260",
+      "source_location": "L261",
       "weight": 1.0
     },
     {
@@ -18283,7 +18331,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L261",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -18295,7 +18343,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L262",
+      "source_location": "L263",
       "weight": 1.0
     },
     {
@@ -18307,7 +18355,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L263",
+      "source_location": "L264",
       "weight": 1.0
     },
     {
@@ -18319,7 +18367,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L264",
+      "source_location": "L265",
       "weight": 1.0
     },
     {
@@ -18331,7 +18379,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L265",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -18343,7 +18391,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L266",
+      "source_location": "L267",
       "weight": 1.0
     },
     {
@@ -18355,7 +18403,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L267",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -18367,7 +18415,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L268",
+      "source_location": "L269",
       "weight": 1.0
     },
     {
@@ -18379,7 +18427,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L269",
+      "source_location": "L270",
       "weight": 1.0
     },
     {
@@ -18391,7 +18439,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L270",
+      "source_location": "L271",
       "weight": 1.0
     },
     {
@@ -18403,7 +18451,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L273",
+      "source_location": "L274",
       "weight": 1.0
     },
     {
@@ -18415,7 +18463,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L274",
+      "source_location": "L275",
       "weight": 1.0
     },
     {
@@ -18427,7 +18475,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L275",
+      "source_location": "L276",
       "weight": 1.0
     },
     {
@@ -18439,7 +18487,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L276",
+      "source_location": "L277",
       "weight": 1.0
     },
     {
@@ -18451,7 +18499,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L279",
+      "source_location": "L280",
       "weight": 1.0
     },
     {
@@ -18463,7 +18511,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L280",
+      "source_location": "L281",
       "weight": 1.0
     },
     {
@@ -18475,7 +18523,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L281",
+      "source_location": "L282",
       "weight": 1.0
     },
     {
@@ -18487,7 +18535,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L286",
+      "source_location": "L287",
       "weight": 1.0
     },
     {
@@ -18499,7 +18547,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L287",
+      "source_location": "L288",
       "weight": 1.0
     },
     {
@@ -18511,7 +18559,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L288",
+      "source_location": "L289",
       "weight": 1.0
     },
     {
@@ -18523,7 +18571,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L291",
+      "source_location": "L292",
       "weight": 1.0
     },
     {
@@ -18535,7 +18583,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L295",
+      "source_location": "L296",
       "weight": 1.0
     },
     {
@@ -18547,7 +18595,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L296",
+      "source_location": "L297",
       "weight": 1.0
     },
     {
@@ -18559,7 +18607,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L297",
+      "source_location": "L298",
       "weight": 1.0
     },
     {
@@ -18571,7 +18619,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L301",
+      "source_location": "L302",
       "weight": 1.0
     },
     {
@@ -18583,7 +18631,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L302",
+      "source_location": "L303",
       "weight": 1.0
     },
     {
@@ -18595,7 +18643,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L303",
+      "source_location": "L304",
       "weight": 1.0
     },
     {
@@ -18607,7 +18655,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L304",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -18619,7 +18667,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L305",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -18631,7 +18679,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L306",
+      "source_location": "L307",
       "weight": 1.0
     },
     {
@@ -18643,7 +18691,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L307",
+      "source_location": "L308",
       "weight": 1.0
     },
     {
@@ -18655,7 +18703,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L308",
+      "source_location": "L309",
       "weight": 1.0
     },
     {
@@ -18667,7 +18715,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L310",
+      "source_location": "L311",
       "weight": 1.0
     },
     {
@@ -18679,7 +18727,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L311",
+      "source_location": "L312",
       "weight": 1.0
     },
     {
@@ -18691,7 +18739,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L312",
+      "source_location": "L313",
       "weight": 1.0
     },
     {
@@ -18703,7 +18751,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L318",
+      "source_location": "L319",
       "weight": 1.0
     },
     {
@@ -18715,7 +18763,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L319",
+      "source_location": "L320",
       "weight": 1.0
     },
     {
@@ -18727,7 +18775,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L319",
+      "source_location": "L320",
       "weight": 1.0
     },
     {
@@ -18739,7 +18787,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L332",
+      "source_location": "L333",
       "weight": 1.0
     },
     {
@@ -18751,7 +18799,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L336",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -18763,7 +18811,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L341",
+      "source_location": "L342",
       "weight": 1.0
     },
     {
@@ -18775,7 +18823,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L342",
+      "source_location": "L343",
       "weight": 1.0
     },
     {
@@ -18787,7 +18835,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L344",
+      "source_location": "L345",
       "weight": 1.0
     },
     {
@@ -18799,7 +18847,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L353",
+      "source_location": "L354",
       "weight": 1.0
     },
     {
@@ -18811,7 +18859,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L357",
+      "source_location": "L358",
       "weight": 1.0
     },
     {
@@ -18823,7 +18871,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L359",
+      "source_location": "L360",
       "weight": 1.0
     },
     {
@@ -18835,7 +18883,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L360",
+      "source_location": "L361",
       "weight": 1.0
     },
     {
@@ -18847,7 +18895,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L385",
+      "source_location": "L386",
       "weight": 1.0
     },
     {
@@ -18859,7 +18907,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L387",
+      "source_location": "L388",
       "weight": 1.0
     },
     {
@@ -18871,7 +18919,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L408",
+      "source_location": "L409",
       "weight": 1.0
     },
     {
@@ -18883,7 +18931,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L428",
+      "source_location": "L429",
       "weight": 1.0
     },
     {
@@ -18895,7 +18943,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L437",
+      "source_location": "L438",
       "weight": 1.0
     },
     {
@@ -18907,7 +18955,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L437",
+      "source_location": "L438",
       "weight": 1.0
     },
     {
@@ -18931,7 +18979,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L543",
+      "source_location": "L544",
       "weight": 1.0
     },
     {
@@ -18943,7 +18991,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/index.js",
-      "source_location": "L544",
+      "source_location": "L545",
       "weight": 1.0
     },
     {
@@ -22815,6 +22863,18 @@
     },
     {
       "source": "worker_src_index",
+      "target": "worker_src_artistprofile_approveclaim",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "worker/src/index.js",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_index",
       "target": "worker_src_artistprofile_deleteprofile",
       "relation": "imports",
       "_origin": "ast",
@@ -25214,7 +25274,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L147",
+      "source_location": "L158",
       "weight": 1.0
     },
     {
@@ -25225,7 +25285,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L182",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -25236,7 +25296,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L224",
+      "source_location": "L235",
       "weight": 1.0
     },
     {
@@ -25247,7 +25307,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L242",
+      "source_location": "L253",
       "weight": 1.0
     },
     {
@@ -25291,7 +25351,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-analyse.js",
-      "source_location": "L88",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -28096,7 +28156,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L122",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -28107,7 +28167,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L170",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
@@ -28118,7 +28178,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L204",
+      "source_location": "L221",
       "weight": 1.0
     },
     {
@@ -28140,7 +28200,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artistprofile.js",
-      "source_location": "L249",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -28152,6 +28212,17 @@
       "confidence_score": 1.0,
       "source_file": "worker/src/artistprofile.js",
       "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_artistprofile",
+      "target": "worker_src_artistprofile_approveclaim",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/artistprofile.js",
+      "source_location": "L311",
       "weight": 1.0
     },
     {
@@ -29515,7 +29586,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/index.js",
-      "source_location": "L542",
+      "source_location": "L543",
       "weight": 1.0
     },
     {
@@ -29526,7 +29597,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/index.js",
-      "source_location": "L547",
+      "source_location": "L548",
       "weight": 1.0
     },
     {
@@ -34466,5 +34537,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "acbaafcbf732959d21b14a5f27f398f5acc530c8"
+  "built_at_commit": "893cb0ca5814093c262e4b99d15039b1dbbf37a6"
 }

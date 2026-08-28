@@ -210,9 +210,9 @@
     "semantic_hash": ""
   },
   "worker/src/index.js": {
-    "mtime": 1787926505.1881878,
-    "seen": 1787926511.399235,
-    "ast_hash": "8ac1f9dd92f8f3686c9fa05f79a8769c",
+    "mtime": 1787931651.597961,
+    "seen": 1787931658.434298,
+    "ast_hash": "7be1e76b509c1a661296c3ab3f9c1139",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1787926914.9838398,
-    "seen": 1787926921.552854,
-    "ast_hash": "b8248df128a00ee1887a48a3bf33ea62",
+    "mtime": 1787927008.250817,
+    "seen": 1787927014.9936068,
+    "ast_hash": "7b869626aea5589ac367f697ace611ba",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -1350,9 +1350,9 @@
     "semantic_hash": ""
   },
   "worker/src/artistprofile.js": {
-    "mtime": 1787926505.1546662,
-    "seen": 1787926511.399222,
-    "ast_hash": "fd174ff109d374bed702c1f530bc2aee",
+    "mtime": 1787931651.564846,
+    "seen": 1787931658.4342852,
+    "ast_hash": "00f318fdfbd21fd7c9da4b8d2d108f03",
     "semantic_hash": ""
   },
   "worker/src/coupons.js": {
@@ -1362,9 +1362,9 @@
     "semantic_hash": ""
   },
   "js/mutra-analyse.js": {
-    "mtime": 1787926914.9415193,
-    "seen": 1787926921.552777,
-    "ast_hash": "e71f6f24581f586cda730cce50b878da",
+    "mtime": 1787927008.241765,
+    "seen": 1787927014.993526,
+    "ast_hash": "8dafc70e3f0e35b380fe5f6244c341a3",
     "semantic_hash": ""
   }
 }

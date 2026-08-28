@@ -810,6 +810,7 @@
           <span class="who">${esc(a.email || '—')}</span>
           <span class="meta">${a.uploads} uploaded · ${a.approved} accepted</span>
           <span class="pill">${kindWord[a.kind] || a.kind}</span>
+          ${a.waiting ? '<span class="pill ar-wait">signed up — link them</span>' : ''}
         </div>
         <div class="ar-body">
           <div class="ar-grid">
@@ -836,6 +837,14 @@
                 <input placeholder="YouTube / Vimeo URL" value="${esc(v.url)}" data-k="url" maxlength="400">
                 <button class="ar-x" type="button" title="Remove">×</button></div>`).join('')}</div>
             <button class="rv-btn ar-add" data-for="videos" type="button">+ video</button></div>
+          ${a.waiting ? `
+          <div class="ar-claim">
+            <b>${esc(a.waiting.email)} has signed up with this artist's email.</b>
+            <p>Linking gives them their tracks, their earnings and anything waiting for their
+              signature. It is not automatic because typing an address is not proof of owning
+              one — you confirming it is.</p>
+            <button class="rv-btn rv-ok ar-link" type="button">Link to their account</button>
+          </div>` : ''}
           ${a.managers ? `
           <div class="ar-sub"><span>Managed by</span>
             <p class="db-empty" style="padding:0 0 7px;font-size:.8rem">Members who upload for this
@@ -918,6 +927,13 @@
     /* Assigning and de-assigning both reload, because a manager list that
        disagrees with the server is worse than a moment's flicker — this is who
        gets paid and who gets told. */
+    app.querySelectorAll('.ar-link').forEach((b) => b.addEventListener('click', async () => {
+      const card = b.closest('.ar-card');
+      const r = await post('/artists/claim', { pid: card.dataset.pid });
+      if (r && r.ok) load();
+      else card.querySelector('.ar-said').textContent = (r && r.detail) || 'Could not link that account.';
+    }));
+
     app.querySelectorAll('.ar-madd').forEach((b) => b.addEventListener('click', async () => {
       const card = b.closest('.ar-card');
       const inp = card.querySelector('.ar-mnew');

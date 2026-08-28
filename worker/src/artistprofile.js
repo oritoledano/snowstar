@@ -104,6 +104,23 @@ export async function listProfiles(env, user) {
     a.managers = a.pid.startsWith('m:') ? (mans[Number(a.pid.slice(2))] || []) : null;
   });
 
+  /* A ghost artist whose email matches a real account is somebody who has
+     signed up since you filed them. Deliberately NOT linked automatically:
+     typing an address is not proof of owning it, and linking would hand over
+     that artist's tracks, earnings and declarations. So the match is surfaced
+     and you approve it — which needs no table, because "unclaimed ghost whose
+     email matches an account" is the pending claim. */
+  const waiting = await env.DB.prepare(
+    `SELECT m.id, u.id AS user_id, u.email, u.name, u.created_at
+       FROM managed_artists m JOIN users u ON lower(u.email) = lower(m.email)
+      WHERE m.claimed_user_id IS NULL AND m.email IS NOT NULL AND m.email <> ''`
+  ).all().catch(() => ({ results: [] }));
+  const byArtist = {};
+  for (const w of waiting.results || []) byArtist[w.id] = w;
+  artists.forEach((a) => {
+    a.waiting = a.pid.startsWith('m:') ? (byArtist[Number(a.pid.slice(2))] || null) : null;
+  });
+
   // Members who could be given an artist, for the picker.
   const members = await env.DB.prepare(
     'SELECT id, email, name FROM users ORDER BY email LIMIT 400'
@@ -277,4 +294,59 @@ export async function deleteProfile(req, env, user, url) {
          Math.floor(Date.now() / 1000)).run().catch(() => null);
 
   return json({ ok: true, pid, name: (row && row.name) || '' });
+}
+
+
+/**
+ * POST /artists/claim — link a premade artist to the account that signed up.
+ *
+ * The one step that cannot be automatic. linkOnSignIn already does this for a
+ * Google sign-in, where the provider has verified the address; for a password
+ * account nothing has, and the code refuses on purpose. This is the owner
+ * saying "yes, that is them", which is the verification.
+ *
+ * Once linked, the artist sees their tracks and the countersigning flow that
+ * was already built for them starts working.
+ */
+export async function approveClaim(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const m = /^m:(\d+)$/.exec(clean(b.pid, 60));
+  if (!m) return json({ error: 'bad_pid' }, 400);
+  const id = Number(m[1]);
+
+  const row = await env.DB.prepare(
+    `SELECT m.id, m.name, m.email, u.id AS user_id, u.email AS user_email
+       FROM managed_artists m JOIN users u ON lower(u.email) = lower(m.email)
+      WHERE m.id = ? AND m.claimed_user_id IS NULL`
+  ).bind(id).first().catch(() => null);
+  if (!row) return json({ error: 'no_match',
+                          detail: 'No account signed up with that email, or it is already linked.' }, 404);
+
+  await env.DB.batch([
+    env.DB.prepare('UPDATE managed_artists SET claimed_user_id = ? WHERE id = ? AND claimed_user_id IS NULL')
+      .bind(row.user_id, id),
+    // artist_name only if they have not set one — their own wins over ours.
+    env.DB.prepare('UPDATE users SET artist = 1, artist_name = COALESCE(artist_name, ?) WHERE id = ?')
+      .bind(row.name, row.user_id),
+    env.DB.prepare(
+      'INSERT OR IGNORE INTO artist_managers (artist_id, user_id, added_at, added_by) VALUES (?, ?, ?, ?)'
+    ).bind(id, row.user_id, Math.floor(Date.now() / 1000), user.email || 'owner'),
+  ]);
+
+  await env.DB.prepare(
+    `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)`
+  ).bind(row.user_email, row.name || null, 'Your Mutra profile is ready',
+    `Hello${row.name ? ' ' + row.name : ''},\n\n`
+    + `Your artist profile on Mutra is now linked to this account. Sign in and you will see `
+    + `the tracks filed under your name, and anything waiting for your signature.\n\nSnowstar`,
+    row.name || '', Math.floor(Date.now() / 1000)).run().catch(() => null);
+
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'approve_artist_claim', 'm:' + id, row.user_email,
+         Math.floor(Date.now() / 1000)).run().catch(() => null);
+
+  return json({ ok: true, pid: 'm:' + id, linked: row.user_email });
 }
