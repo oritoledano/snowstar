@@ -13,7 +13,7 @@
      work they are: the people buying, the people supplying, and the machine.
      The order inside each group is the order you actually touch them. */
   const GROUPS = [
-    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'jobs']],
+    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'invoices', 'jobs']],
     ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
     ['Admin',  ['pricing', 'packs', 'characters', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
@@ -87,6 +87,7 @@
       if (tab === 'inbox') return await paintInbox();
       if (tab === 'jobs') return await paintJobs();
       if (tab === 'coupons') return await paintCoupons();
+      if (tab === 'invoices') return await paintInvoices();
       if (tab === 'packs') return await paintCollections('pack');
       if (tab === 'characters') return await paintCollections('character');
       if (tab === 'pricing') return await paintPricing();
@@ -1869,6 +1870,69 @@
     });
 
     fill();
+  }
+
+  /* ── invoices ─────────────────────────────────────────────────────────────
+     Every paid licence is listed with the document it WOULD produce, and
+     nothing is sent until you press the button. A tax invoice cannot be
+     deleted once issued — only cancelled with a credit note — so the one-click
+     gate is deliberate, not a stepping stone to automatic. */
+  async function paintInvoices() {
+    const d = await get('/invoices');
+    const ils = (n) => '₪' + (n / 100).toFixed(2);
+    const when = (t) => (t ? new Date(t * 1000).toLocaleDateString() : '—');
+
+    const setup = d.configured ? '' : `<div class="db-warn">
+      <b>Not connected yet.</b> Green Invoice needs two Worker secrets. In
+      <code>worker/</code> run <code>npx wrangler secret put GREENINVOICE_ID</code> and then
+      <code>npx wrangler secret put GREENINVOICE_SECRET</code>, pasting the key and secret from
+      morning → Settings → API. Regenerate the key first if it has ever been on screen.
+      Until then this page lists what is waiting but cannot send it.</div>`;
+
+    paint(`<div class="db-panel">
+      <h2>Invoices <span class="pill">${d.pending.length} to issue</span></h2>
+      <p class="db-empty" style="padding-top:0">Paid licences that have no tax document yet.
+        Check the name and the amount, then issue — it goes straight to your morning account as a
+        חשבונית מס/קבלה and the customer gets the PDF link.</p>
+      ${setup}
+
+      ${d.pending.length ? `<div class="inv-list">${d.pending.map((p) => `
+        <div class="inv-row">
+          <div class="inv-main">
+            <b>${esc(p.licensee_name || p.email || '—')}</b>
+            <span class="inv-sub">${esc(p.ref)} · ${esc(p.slug)}${p.project_name ? ' · ' + esc(p.project_name) : ''}</span>
+          </div>
+          <div class="inv-money">
+            <b>${ils(Math.round(p.amount * 1.18))}</b>
+            <span class="inv-sub">${ils(p.amount)} + VAT · ${when(p.granted_at)}</span>
+          </div>
+          <button class="rv-btn rv-ok" data-issue="${p.id}"${d.configured ? '' : ' disabled'}>Issue</button>
+        </div>`).join('')}</div>`
+        : '<p class="db-empty">Nothing waiting. Every paid licence has its document.</p>'}
+
+      ${d.issued.length ? `<h3 style="margin-top:26px">Issued</h3>
+        <div class="inv-list">${d.issued.map((i) => `
+          <div class="inv-row${i.status === 'failed' ? ' bad' : ''}">
+            <div class="inv-main">
+              <b>${esc(i.number || i.status)}</b>
+              <span class="inv-sub">${esc(i.licence_ref || '')}${i.last_error ? ' · ' + esc(i.last_error) : ''}</span>
+            </div>
+            <div class="inv-money"><b>${ils(i.amount || 0)}</b>
+              <span class="inv-sub">${when(i.issued_at || i.ts)}</span></div>
+            ${i.url ? `<a class="rv-btn" href="${esc(i.url)}" target="_blank" rel="noopener">PDF</a>`
+              : `<button class="rv-btn" data-retry="${i.licence_id}">Retry</button>`}
+          </div>`).join('')}</div>` : ''}
+    </div>`);
+
+    app.querySelectorAll('[data-issue]').forEach((b) => b.onclick = async () => {
+      b.disabled = true; b.textContent = 'Issuing…';
+      const r = await post('/invoices/issue', { licence_id: Number(b.dataset.issue) });
+      if (r.error) { b.textContent = 'Failed'; alert(r.detail || r.error); }
+      load();
+    });
+    app.querySelectorAll('[data-retry]').forEach((b) => b.onclick = async () => {
+      await post('/invoices/retry', { licence_id: Number(b.dataset.retry) }); load();
+    });
   }
 
   /* ── coupons ──────────────────────────────────────────────────────────────

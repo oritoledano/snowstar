@@ -189,6 +189,30 @@
     letter-spacing:.06em;color:var(--amber,#8fd8ff)}
   .cp-said{color:var(--muted);font-size:.84rem;min-height:1.2em;margin:8px 0 4px}
 
+  /* ── invoices ──
+     Three columns so the eye can run down one of them: who, how much, and the
+     single action. The amount is right-aligned against the button because that
+     is the pair being checked before pressing it. */
+  .inv-list{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+  .inv-row{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 16px}
+  .inv-row.bad{border-color:var(--bad,#c2564a)}
+  .inv-main{min-width:0}
+  .inv-main b{display:block;font-size:.94rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .inv-money{text-align:right;white-space:nowrap}
+  .inv-sub{display:block;color:var(--muted);font-size:.76rem;margin-top:2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .db-warn{background:var(--panel-2,rgba(128,128,128,.07));border:1px solid var(--line);
+    border-left:3px solid var(--amber,#8fd8ff);border-radius:12px;padding:12px 16px;
+    margin:14px 0;font-size:.86rem;line-height:1.6;color:var(--muted)}
+  .db-warn code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;
+    background:rgba(128,128,128,.14);border-radius:5px;padding:1px 6px;color:var(--text)}
+  @media(max-width:640px){
+    .inv-row{grid-template-columns:1fr auto}
+    .inv-row>button,.inv-row>a{grid-column:2}
+    .inv-money{grid-column:1;text-align:left}
+  }
+
   /* ── artist profile cards ── */
   .ar-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;
     padding:10px 16px;margin-bottom:8px}

@@ -1,7 +1,7 @@
 {
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
-  "2": "artists.js",
+  "2": "oauth.js",
   "3": "rights.js",
   "4": "licensing.js",
   "5": "main.js",
@@ -33,7 +33,7 @@
   "31": "artistreg.js",
   "32": "index.js",
   "33": "certificate.js",
-  "34": "oauth.js",
+  "34": "crypto.js",
   "35": "make-package-art.py",
   "36": "mutra-artist-panel.js",
   "37": "clearlist.js",
@@ -42,10 +42,14 @@
   "40": "stream.js",
   "41": "hyp.js",
   "42": "Portfolio years",
-  "43": "agent.js",
+  "43": "ownership.js",
   "44": "artistprofile.js",
-  "45": "site.js",
+  "45": "greeninvoice.js",
   "46": "Paying artists their cut",
   "47": "mutra-analyse.js",
-  "49": "stacks.js"
+  "48": "bulk.js",
+  "49": "stacks.js",
+  "50": "make-character-art.py",
+  "51": "agent.js",
+  "52": "profile.js"
 }
