@@ -15,7 +15,7 @@
   const GROUPS = [
     ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'jobs']],
     ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
-    ['Admin',  ['pricing', 'packs', 'notifications', 'alerts', 'storage', 'pipeline']],
+    ['Admin',  ['pricing', 'packs', 'characters', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
   const TABS = GROUPS.flatMap(([, t]) => t);
   let tab = (location.hash || '').replace('#', '');
@@ -87,7 +87,8 @@
       if (tab === 'inbox') return await paintInbox();
       if (tab === 'jobs') return await paintJobs();
       if (tab === 'coupons') return await paintCoupons();
-      if (tab === 'packs') return await paintPacks();
+      if (tab === 'packs') return await paintCollections('pack');
+      if (tab === 'characters') return await paintCollections('character');
       if (tab === 'pricing') return await paintPricing();
       if (tab === 'alerts') return await paintAlerts();
       if (tab === 'storage') return await paintStorage();
@@ -1952,24 +1953,32 @@
      race the visitor can lose. */
   let openPacks = new Set();
 
-  async function paintPacks() {
-    const d = await get('/collections?kind=pack');
-    const packs = d.collections || [];
-    const all = await get('/tracks').catch(() => ({ overrides: {} }));
-    void all;
+  const COLL = {
+    pack: { title: 'Packs', one: 'pack',
+      blurb: 'Named groups of tracks — the “Packs” dropdown on the catalogue.',
+      newPh: 'New pack name — e.g. Advertising Essentials' },
+    character: { title: 'Characters', one: 'character',
+      blurb: 'A character stands for a sound. A suited agent with a pistol says spy thriller before '
+           + 'a single tag is read; a fairy-tale creature says children’s film. Each one groups the '
+           + 'tracks that fit it, and gets its own package artwork.',
+      newPh: 'New character — e.g. The Secret Agent' },
+  };
 
+  async function paintCollections(kind) {
+    const W = COLL[kind];
+    const d = await get('/collections?kind=' + kind);
+    const packs = d.collections || [];
     paint(`<div class="db-panel">
-      <h2>Packs <span class="pill">${packs.length}</span></h2>
-      <p class="db-empty" style="padding-top:0">Named groups of tracks — the “Packs” dropdown on the
-        catalogue. Each one has its own show/hide, and the switch below hides the whole dropdown
-        while you are still building them.</p>
+      <h2>${W.title} <span class="pill">${packs.length}</span></h2>
+      <p class="db-empty" style="padding-top:0">${W.blurb} Each one has its own show/hide, and the
+        switch below hides the whole dropdown while you are still building them.</p>
 
       <label class="pk-shelf"><input type="checkbox" id="pk-shelf" ${d.shelfHidden ? 'checked' : ''}>
-        <span>Hide the entire Packs dropdown from visitors</span></label>
+        <span>Hide the entire ${W.title} dropdown from visitors</span></label>
 
       <div class="ar-row" style="grid-template-columns:1fr auto;margin:14px 0 18px">
-        <input id="pk-new" placeholder="New pack name — e.g. Advertising Essentials" maxlength="120">
-        <button class="rv-btn rv-ok" id="pk-add">Create pack</button>
+        <input id="pk-new" placeholder="${W.newPh}" maxlength="120">
+        <button class="rv-btn rv-ok" id="pk-add">Create ${W.one}</button>
       </div>
       <p class="cp-said" id="pk-said"></p>
 
@@ -1984,12 +1993,20 @@
           <div class="pk-body">
             <div class="ar-grid">
               <label class="ar-f"><span>Name</span><input class="pk-name" value="${esc(c.name)}" maxlength="120"></label>
-              <label class="ar-f"><span>Blurb</span><input class="pk-blurb" value="${esc(c.blurb)}" maxlength="400"
-                placeholder="One line, shown on the pack"></label>
+              ${kind === 'pack' ? `<label class="ar-f"><span>Blurb</span>
+                <input class="pk-blurb" value="${esc(c.blurb)}" maxlength="400"
+                  placeholder="One line, shown on the pack"></label>` : ''}
             </div>
             <label class="pk-vis"><input type="checkbox" class="pk-hide" ${c.hidden ? 'checked' : ''}>
               <span>Hidden from visitors</span></label>
-            <label class="ar-f"><span>Tracks in this pack</span>
+            ${kind === 'character' ? `
+            <label class="ar-f"><span>How they look — used to draw the package</span>
+              <textarea class="pk-look" rows="2" maxlength="400"
+                placeholder="A suited secret agent in a doorway, pistol low, neon behind him">${esc(c.blurb)}</textarea></label>
+            <div class="pk-art">${c.art
+              ? `<img src="${esc(c.art)}" alt=""><span>Package artwork</span>`
+              : '<span class="db-empty" style="padding:0">No artwork yet.</span>'}</div>` : ''}
+            <label class="ar-f"><span>Tracks in this ${W.one}</span>
               <textarea class="pk-slugs" rows="3" placeholder="One slug per line, or comma separated">${
                 esc((c.tracks || []).join(', '))}</textarea></label>
             <p class="db-empty" style="padding:4px 0 8px;font-size:.78rem">Paste slugs, or tick tracks
@@ -2005,7 +2022,7 @@
       : '<p class="db-empty">No packs yet.</p>'}</div>`);
 
     document.getElementById('pk-shelf').addEventListener('change', async (e) => {
-      await post('/collections', { kind: 'pack', shelf_hidden: e.target.checked });
+      await post('/collections', { kind, shelf_hidden: e.target.checked });
       document.getElementById('pk-said').textContent = e.target.checked
         ? 'The Packs dropdown is hidden from visitors.' : 'The Packs dropdown is visible.';
     });
@@ -2013,7 +2030,7 @@
     document.getElementById('pk-add').addEventListener('click', async () => {
       const name = document.getElementById('pk-new').value.trim();
       if (name.length < 2) return;
-      const r = await post('/collections', { kind: 'pack', name });
+      const r = await post('/collections', { kind, name });
       const said = document.getElementById('pk-said');
       if (r && r.ok) { said.textContent = `Created “${r.name}” — hidden until you show it.`; load(); }
       else said.textContent = r && r.error === 'name_taken' ? 'There is already a pack with that name.'
@@ -2036,9 +2053,10 @@
       const card = b.closest('.pk-card'), id = Number(card.dataset.id);
       const msg = card.querySelector('.pk-msg');
       msg.textContent = 'Saving…';
-      const r1 = await post('/collections', { id, kind: 'pack',
+      const look = card.querySelector('.pk-look');
+      const r1 = await post('/collections', { id, kind,
         name: card.querySelector('.pk-name').value,
-        blurb: card.querySelector('.pk-blurb').value,
+        blurb: look ? look.value : card.querySelector('.pk-blurb').value,
         hidden: card.querySelector('.pk-hide').checked });
       /* Membership is replaced, not merged: the box shows what is in the pack,
          so what it says after an edit has to be what the pack contains. */
@@ -2056,7 +2074,7 @@
     app.querySelectorAll('.pk-del').forEach((b) => b.addEventListener('click', async () => {
       const card = b.closest('.pk-card');
       const name = card.querySelector('b').textContent;
-      if (!confirm(`Delete the pack “${name}”?\n\nThe tracks stay in the catalogue — only the grouping goes.`)) return;
+      if (!confirm(`Delete the ${W.one} “${name}”?\n\nThe tracks stay in the catalogue — only the grouping goes.`)) return;
       const r = await post('/collections', { remove: Number(card.dataset.id) });
       if (r && r.ok) load();
     }));
