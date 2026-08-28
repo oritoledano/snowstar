@@ -141,8 +141,35 @@
     if (!audio.length) { say('Those aren’t audio files we accept.'); return; }
     for (const f of audio) {
       if (f.size > 95 * 1024 * 1024) { say(`“${f.name}” is over 95MB — export a smaller master.`); continue; }
-      const item = { _id: nextStagedId++, file: f, title: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim(), key: null, pct: 0, error: null, shared: false, collabs: [] };
+      const guessed = (window.mutraAnalyse && mutraAnalyse.titleFrom(f.name))
+        || f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+      const item = { _id: nextStagedId++, file: f, title: guessed, key: null, pct: 0,
+                     error: null, shared: false, collabs: [],
+                     // Everything measured off the audio. `meta` is what gets
+                     // sent; `found` records what was suggested, so a field the
+                     // uploader has corrected is never quietly overwritten by a
+                     // later re-analysis.
+                     meta: { bpm: null, key: null, scale: null, vocal: null, lyrics: '', tags: [], links: [] },
+                     found: null, analysing: false, analyseStep: '' };
       staged.push(item);
+
+      /* Analysis runs beside the upload rather than after it. Both want the
+         same file and neither needs the other, and a person who has just
+         dropped a 90MB master should not watch two progress bars in sequence. */
+      if (window.mutraAnalyse) {
+        item.analysing = true;
+        mutraAnalyse.analyse(f, (st) => { item.analyseStep = st; paintStaged(); })
+          .then((r) => {
+            item.analysing = false;
+            item.found = r;
+            item.meta.bpm = r.bpm; item.meta.key = r.key;
+            item.meta.scale = r.scale; item.meta.vocal = r.vocal;
+            if (r.title) item.title = r.title;
+            paintStaged();
+          })
+          .catch(() => { item.analysing = false; item.analyseStep = ''; paintStaged(); });
+      }
+
       put('/artist/upload?filename=' + encodeURIComponent(f.name), f, (pct) => { item.pct = pct; paintStaged(); })
         .then((d) => { item.key = d.key; paintStaged(); })
         .catch((e) => { item.error = e.message; paintStaged(); });
@@ -154,13 +181,90 @@
     const ul = $('#arStaged');
     ul.hidden = !staged.length;
     $('#arRights').hidden = !staged.length;
-    ul.innerHTML = staged.map((s, i) => `
-      <li><b>${esc(s.title)}</b>
-        <span style="color:var(--muted);font-size:.8rem">${
-          s.error ? '⚠ ' + esc(s.error) : s.key ? 'uploaded ✓' : 'uploading… ' + s.pct + '%'}</span>
-        <button type="button" data-i="${i}" class="ar-unstage" style="background:none;border:0;color:var(--muted);cursor:pointer">✕</button></li>`).join('');
+    const mins = (n) => n ? `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}` : '';
+    ul.innerHTML = staged.map((s, i) => {
+      const f = s.found || {};
+      const chip = (label, on, act, val) =>
+        `<button type="button" class="up-chip${on ? ' on' : ''}" data-i="${i}" data-act="${act}" data-v="${val}">${label}</button>`;
+      return `
+      <li class="up-item">
+        <div class="up-top">
+          <input class="up-title" data-i="${i}" value="${esc(s.title)}" placeholder="Track title" maxlength="140">
+          <span class="up-state">${s.error ? '⚠ ' + esc(s.error)
+            : s.key ? 'uploaded ✓' : 'uploading… ' + s.pct + '%'}</span>
+          <button type="button" data-i="${i}" class="ar-unstage">✕</button>
+        </div>
+        ${s.analysing ? `<p class="up-an">Listening to it… ${esc(s.analyseStep)}</p>` : ''}
+        ${s.found ? `<div class="up-fields">
+          <p class="up-note">Measured from the audio — correct anything that is wrong.</p>
+          <div class="up-grid">
+            <label>Duration<input value="${mins(f.duration)}" readonly></label>
+            <label>BPM<input class="up-bpm" data-i="${i}" type="number" min="20" max="300"
+              value="${s.meta.bpm || ''}"></label>
+            <label>Key<select class="up-key" data-i="${i}">
+              <option value="">—</option>
+              ${['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'].map((k) =>
+                `<option${s.meta.key === k ? ' selected' : ''}>${k}</option>`).join('')}
+            </select></label>
+            <label>Scale<select class="up-scale" data-i="${i}">
+              <option value="">—</option>
+              <option${s.meta.scale === 'major' ? ' selected' : ''}>major</option>
+              <option${s.meta.scale === 'minor' ? ' selected' : ''}>minor</option>
+            </select></label>
+          </div>
+          ${(f.bpmAlternatives || []).length > 1 ? `<p class="up-alt">Same groove counted differently:
+            ${f.bpmAlternatives.map((n) => chip(n + ' bpm', s.meta.bpm === n, 'bpm', n)).join(' ')}</p>` : ''}
+          <p class="up-alt">Voice:
+            ${chip('Has vocals', s.meta.vocal === 'Vocals', 'vocal', 'Vocals')}
+            ${chip('Instrumental', s.meta.vocal === 'Instrumental', 'vocal', 'Instrumental')}
+            ${f.vocalConfidence < 0.5 ? '<i class="up-unsure">not sure — please check</i>' : ''}</p>
+          ${s.meta.vocal === 'Vocals' ? `<label class="up-lyr">Lyrics
+            <textarea class="up-lyrics" data-i="${i}" rows="4"
+              placeholder="Paste the words — used for search and for the licence certificate">${esc(s.meta.lyrics)}</textarea></label>` : ''}
+          <label class="up-lyr">Tags
+            <input class="up-tags" data-i="${i}" value="${esc((s.meta.tags || []).join(', '))}"
+              list="dl-uptags" placeholder="Comma separated — mood, genre, instrument"></label>
+          <label class="up-lyr">Streaming links
+            <textarea class="up-links" data-i="${i}" rows="2"
+              placeholder="Paste Spotify / Apple / YouTube links and we will pick them out">${
+                esc((s.meta.links || []).map((l) => l.url).join('\n'))}</textarea></label>
+          ${(s.meta.links || []).length ? `<p class="up-alt">Found:
+            ${s.meta.links.map((l) => `<span class="up-chip on">${esc(l.platform)}</span>`).join(' ')}</p>` : ''}
+        </div>` : ''}
+      </li>`;
+    }).join('');
+
     ul.querySelectorAll('.ar-unstage').forEach((b) => b.addEventListener('click', () => {
       staged.splice(Number(b.dataset.i), 1); paintStaged();
+    }));
+    // Typed fields write straight into the item without repainting, or the
+    // caret would jump to the end of the box on every keystroke.
+    const bind = (sel, fn) => ul.querySelectorAll(sel).forEach((el) =>
+      el.addEventListener('input', () => fn(staged[Number(el.dataset.i)], el)));
+    bind('.up-title', (it, el) => { it.title = el.value; });
+    bind('.up-bpm', (it, el) => { it.meta.bpm = Number(el.value) || null; });
+    bind('.up-lyrics', (it, el) => { it.meta.lyrics = el.value; });
+    bind('.up-tags', (it, el) => {
+      it.meta.tags = el.value.split(',').map((x) => x.trim()).filter(Boolean).slice(0, 12);
+    });
+    bind('.up-links', (it, el) => {
+      it.meta.links = (window.mutraAnalyse ? mutraAnalyse.findLinks(el.value) : []);
+    });
+    ul.querySelectorAll('.up-key').forEach((el) => el.addEventListener('change', () => {
+      staged[Number(el.dataset.i)].meta.key = el.value || null;
+    }));
+    ul.querySelectorAll('.up-scale').forEach((el) => el.addEventListener('change', () => {
+      staged[Number(el.dataset.i)].meta.scale = el.value || null;
+    }));
+    ul.querySelectorAll('.up-chip').forEach((b) => b.addEventListener('click', () => {
+      const it = staged[Number(b.dataset.i)];
+      if (b.dataset.act === 'bpm') it.meta.bpm = Number(b.dataset.v);
+      if (b.dataset.act === 'vocal') {
+        // Clicking the one already chosen clears it — nobody should be forced
+        // to assert something they are not sure about.
+        it.meta.vocal = it.meta.vocal === b.dataset.v ? null : b.dataset.v;
+      }
+      paintStaged();
     }));
     renderTrackShares(); // diff-only — never rebuilds a block for a track that's still staged, so it never steals focus mid-type
     syncDecl();
@@ -411,6 +515,10 @@
       for (const s of staged.filter((x) => x.key && !x.submitted)) {
         await api('/artist/submissions', {
           title: s.title, key: s.key, note, declaration: declFor(s), lane: laneFor(s),
+          // What was measured and what the uploader corrected, travelling with
+          // the submission so nobody has to work it out a second time when the
+          // track is published.
+          meta: s.meta,
           managed_artist_id: managedId || undefined,
         });
         // mark immediately: a mid-batch failure + retry must never resubmit

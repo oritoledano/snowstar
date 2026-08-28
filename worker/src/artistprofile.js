@@ -43,6 +43,25 @@ const listOf = (v, keys, max = 12) =>
     .map((x) => Object.fromEntries(keys.map((k) => [k, clean(x && x[k], k === 'url' ? 400 : 80)])))
     .filter((x) => keys.every((k) => x[k]));
 
+/* Who manages an artist. A member can upload on behalf of somebody, and more
+   than one person can look after the same artist — a manager and a label, two
+   halves of a duo. So this is a join table rather than the single
+   claimed_user_id it replaces, and de-assigning is just deleting a row. */
+async function managersFor(env, ids) {
+  if (!ids.length) return {};
+  const q = ids.map(() => '?').join(',');
+  const r = await env.DB.prepare(
+    `SELECT am.artist_id, am.user_id, u.email, u.name
+       FROM artist_managers am LEFT JOIN users u ON u.id = am.user_id
+      WHERE am.artist_id IN (${q})`
+  ).bind(...ids).all().catch(() => ({ results: [] }));
+  const out = {};
+  for (const x of r.results || []) {
+    (out[x.artist_id] ||= []).push({ user_id: x.user_id, email: x.email || '(deleted account)', name: x.name || '' });
+  }
+  return out;
+}
+
 /** GET /artists/profiles — every artist, both kinds, with everything editable. */
 export async function listProfiles(env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
@@ -75,7 +94,22 @@ export async function listProfiles(env, user) {
   const artists = [...(accounts.results || []), ...(managed.results || [])]
     .map(shape)
     .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
-  return json({ artists });
+
+  // Managers apply to managed artists only — somebody with their own account
+  // manages themselves, and showing an empty list against them would imply
+  // otherwise.
+  const mIds = artists.filter((a) => a.pid.startsWith('m:')).map((a) => Number(a.pid.slice(2)));
+  const mans = await managersFor(env, mIds);
+  artists.forEach((a) => {
+    a.managers = a.pid.startsWith('m:') ? (mans[Number(a.pid.slice(2))] || []) : null;
+  });
+
+  // Members who could be given an artist, for the picker.
+  const members = await env.DB.prepare(
+    'SELECT id, email, name FROM users ORDER BY email LIMIT 400'
+  ).all().catch(() => ({ results: [] }));
+
+  return json({ artists, members: members.results || [] });
 }
 
 /**
@@ -157,4 +191,90 @@ export async function uploadArtistPhoto(req, env, user, url) {
     .bind(publicUrl, k === 'u' ? id : Number(id)).run();
 
   return json({ ok: true, url: publicUrl });
+}
+
+
+/**
+ * POST /artists/managers — { pid, email, remove? }
+ *
+ * Assign an artist to a member, or take them off. Both directions matter: an
+ * artist uploaded by the wrong person needs moving, and a manager who has
+ * parted ways needs removing without the artist or their tracks going anywhere.
+ */
+export async function setManager(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const pid = clean(b.pid, 60);
+  const m = /^m:(\d+)$/.exec(pid);
+  if (!m) return json({ error: 'managed_artists_only',
+                        detail: 'Somebody with their own account manages themselves.' }, 400);
+  const artistId = Number(m[1]);
+  const email = clean(b.email, 254).toLowerCase();
+  if (!email) return json({ error: 'no_email' }, 400);
+
+  const target = await env.DB.prepare('SELECT id, email FROM users WHERE lower(email) = ?')
+    .bind(email).first().catch(() => null);
+  if (!target) return json({ error: 'no_such_account',
+                             detail: 'That email has no account yet.' }, 404);
+
+  if (b.remove) {
+    await env.DB.prepare('DELETE FROM artist_managers WHERE artist_id = ? AND user_id = ?')
+      .bind(artistId, target.id).run();
+  } else {
+    await env.DB.prepare(
+      'INSERT OR IGNORE INTO artist_managers (artist_id, user_id, added_at, added_by) VALUES (?, ?, ?, ?)'
+    ).bind(artistId, target.id, Math.floor(Date.now() / 1000), user.email || 'owner').run();
+  }
+
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', b.remove ? 'unassign_artist' : 'assign_artist',
+         pid, target.email, Math.floor(Date.now() / 1000)).run().catch(() => null);
+
+  return json({ ok: true, pid, email: target.email, removed: !!b.remove });
+}
+
+/**
+ * DELETE /artists/profiles?pid= — remove a managed artist.
+ *
+ * Refused while they still have uploads. Deleting the artist row would leave
+ * those submissions pointing at nothing: the review queue would show tracks
+ * credited to a blank, and the rights declarations attached to them would name
+ * a person no longer in the database. Move or delete the uploads first, and
+ * the error says which.
+ *
+ * Only managed artists can be deleted. Somebody with an account is a member,
+ * and removing a member is a different act with different consequences.
+ */
+export async function deleteProfile(req, env, user, url) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const pid = clean(url.searchParams.get('pid'), 60);
+  const m = /^m:(\d+)$/.exec(pid);
+  if (!m) {
+    return json({ error: 'accounts_not_deletable',
+                  detail: 'This artist has their own account. Remove them from Members instead.' }, 400);
+  }
+  const id = Number(m[1]);
+
+  const n = await env.DB.prepare(
+    'SELECT COUNT(*) c FROM submissions WHERE managed_artist_id = ?'
+  ).bind(id).first().catch(() => ({ c: 0 }));
+  if (n && n.c > 0) {
+    return json({ error: 'has_uploads', uploads: n.c,
+                  detail: `This artist still has ${n.c} upload${n.c === 1 ? '' : 's'}. `
+                        + 'Reassign or delete those first — deleting the artist now would leave '
+                        + 'them credited to nobody.' }, 409);
+  }
+
+  const row = await env.DB.prepare('SELECT name FROM managed_artists WHERE id = ?')
+    .bind(id).first().catch(() => null);
+  await env.DB.prepare('DELETE FROM artist_managers WHERE artist_id = ?').bind(id).run().catch(() => null);
+  await env.DB.prepare('DELETE FROM managed_artists WHERE id = ?').bind(id).run();
+
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'delete_artist', pid, (row && row.name) || '',
+         Math.floor(Date.now() / 1000)).run().catch(() => null);
+
+  return json({ ok: true, pid, name: (row && row.name) || '' });
 }

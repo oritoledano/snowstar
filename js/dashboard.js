@@ -797,6 +797,7 @@
   async function paintArtists() {
     const d = await get('/artists/profiles');
     const artists = d.artists || [];
+    const members = d.members || [];
     const kindWord = { ghost: 'awaiting signup', claimed: 'claimed', account: 'has account' };
 
     const rowsHtml = artists.map((a) => `
@@ -835,7 +836,22 @@
                 <input placeholder="YouTube / Vimeo URL" value="${esc(v.url)}" data-k="url" maxlength="400">
                 <button class="ar-x" type="button" title="Remove">×</button></div>`).join('')}</div>
             <button class="rv-btn ar-add" data-for="videos" type="button">+ video</button></div>
+          ${a.managers ? `
+          <div class="ar-sub"><span>Managed by</span>
+            <p class="db-empty" style="padding:0 0 7px;font-size:.8rem">Members who upload for this
+              artist. More than one is fine — a manager and a label, or two halves of a duo.</p>
+            <div class="ar-mans">${a.managers.length ? a.managers.map((mn) => `
+              <span class="ar-man" data-email="${esc(mn.email)}">${esc(mn.name || mn.email)}
+                <button class="ar-mx" type="button" title="Take this member off">×</button></span>`).join('')
+              : '<i class="ar-nomans">Nobody yet — uploads for this artist are unattributed.</i>'}</div>
+            <div class="ar-row" style="grid-template-columns:1fr auto;margin-top:8px">
+              <input class="ar-mnew" list="dl-members" placeholder="member@email.com">
+              <button class="rv-btn ar-madd" type="button">Assign</button></div>
+          </div>` : ''}
           <div class="rv-acts"><button class="rv-btn rv-ok ar-save" type="button">Save profile</button>
+            ${a.managers ? `<button class="rv-btn rv-no ar-del" type="button"
+              ${a.uploads ? `disabled title="Still has ${a.uploads} upload${a.uploads === 1 ? '' : 's'} — reassign or delete those first"` : ''}
+              >Delete artist</button>` : ''}
             <span class="ar-said"></span></div>
         </div>
       </div>`).join('');
@@ -844,7 +860,10 @@
       <p class="db-empty" style="padding-top:0">Click a name to edit their profile. “Awaiting signup”
         artists are ones you upload for — they claim the profile, and countersign their declarations,
         when they create an account with that email. Everything here is what shows on their public page.</p>
-      ${rowsHtml || '<p class="db-empty">No artists yet.</p>'}</div>`);
+      ${rowsHtml || '<p class="db-empty">No artists yet.</p>'}
+      <datalist id="dl-members">${members.map((mm) =>
+        `<option value="${esc(mm.email)}">${esc(mm.name || '')}</option>`).join('')}</datalist>
+      </div>`);
 
     app.querySelectorAll('.ar-head').forEach((h) => {
       const card = h.closest('.ar-card'), pid = card.dataset.pid;
@@ -894,6 +913,37 @@
         if (av) { const img = document.createElement('img'); img.className = 'ar-av';
                   img.src = r.url; av.replaceWith(img); }
       }
+    }));
+
+    /* Assigning and de-assigning both reload, because a manager list that
+       disagrees with the server is worse than a moment's flicker — this is who
+       gets paid and who gets told. */
+    app.querySelectorAll('.ar-madd').forEach((b) => b.addEventListener('click', async () => {
+      const card = b.closest('.ar-card');
+      const inp = card.querySelector('.ar-mnew');
+      const said = card.querySelector('.ar-said');
+      const email = (inp.value || '').trim();
+      if (!email) return;
+      const r = await post('/artists/managers', { pid: card.dataset.pid, email });
+      if (r && r.ok) load();
+      else said.textContent = (r && r.detail) || (r && r.error) || 'Could not assign that member.';
+    }));
+    app.querySelectorAll('.ar-mx').forEach((b) => b.addEventListener('click', async () => {
+      const card = b.closest('.ar-card');
+      const email = b.closest('.ar-man').dataset.email;
+      if (!confirm(`Take ${email} off this artist?\n\nTheir uploads stay where they are — this only removes the link.`)) return;
+      const r = await post('/artists/managers', { pid: card.dataset.pid, email, remove: true });
+      if (r && r.ok) load();
+    }));
+
+    app.querySelectorAll('.ar-del').forEach((b) => b.addEventListener('click', async () => {
+      const card = b.closest('.ar-card');
+      const name = card.querySelector('b').textContent;
+      if (!confirm(`Delete ${name}?\n\nThis removes the artist and who manages them. It cannot be undone.`)) return;
+      const r = await fetch('/api/artists/profiles?pid=' + encodeURIComponent(card.dataset.pid),
+        { method: 'DELETE', credentials: 'same-origin' }).then((x) => x.json()).catch(() => null);
+      if (r && r.ok) load();
+      else card.querySelector('.ar-said').textContent = (r && r.detail) || 'Could not delete that artist.';
     }));
 
     app.querySelectorAll('.ar-save').forEach((b) => b.addEventListener('click', async () => {

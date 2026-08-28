@@ -95,13 +95,19 @@ export async function createSubmission(req, env, user, ctx) {
   if (!!managed !== (parsed.decl.kind === 'behalf')) return json({ error: 'declaration_kind_mismatch' }, 400);
 
   const r = await env.DB.prepare(
-    `INSERT INTO submissions (user_id, title, file_key, size, ext, artist_note, status, created_at, managed_artist_id, lane)
-     VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)`
+    `INSERT INTO submissions (user_id, title, file_key, size, ext, artist_note, status, created_at, managed_artist_id, lane, meta)
+     VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)`
   ).bind(user.id, title, key, head.size, key.split('.').pop(),
          String(b.note || '').trim().slice(0, 2000), now(), managed ? managed.id : null,
          // anything the uploader doesn't wholly own or control is bookable but
          // never self-serve; the server decides rather than trusting the client
-         (parsed.decl.kind === 'solo' && !(parsed.controllers || []).length) ? 'instant' : 'quote').run();
+         (parsed.decl.kind === 'solo' && !(parsed.controllers || []).length) ? 'instant' : 'quote',
+         /* Measured tempo, key, voice, lyrics, tags and links, as the uploader
+            left them. Stored as JSON rather than columns because it is a
+            suggestion sheet that will grow, and it is read once at publish
+            time — not something to query across. */
+         (() => { try { return b.meta ? JSON.stringify(b.meta).slice(0, 8000) : null; }
+                  catch { return null; } })()).run();
 
   const creditedName = managed ? managed.name : (user.artist_name || user.email);
   try {

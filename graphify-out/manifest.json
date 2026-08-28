@@ -24,15 +24,15 @@
     "semantic_hash": "5afa6527e21754bc6f7508f1521baaf3"
   },
   "js/artists-page.js": {
-    "mtime": 1787161332.1870334,
-    "seen": 1787572556.917322,
-    "ast_hash": "a50db8d3130369b6138a0ad2e9c7a72f",
-    "semantic_hash": "a50db8d3130369b6138a0ad2e9c7a72f"
+    "mtime": 1787926736.8006928,
+    "seen": 1787926742.838157,
+    "ast_hash": "9a0fb0b6a7f501326ddee321ad6bc21e",
+    "semantic_hash": ""
   },
   "js/dashboard.js": {
-    "mtime": 1787921509.6929154,
-    "seen": 1787921515.945635,
-    "ast_hash": "619e641303ec2bc3c8d08944450144aa",
+    "mtime": 1787926556.0174189,
+    "seen": 1787926562.040375,
+    "ast_hash": "0a29fc53a0a6f75ec2f7e956ab8850f0",
     "semantic_hash": ""
   },
   "js/data.js": {
@@ -174,9 +174,9 @@
     "semantic_hash": "8e0ec1d0d720563ddec281f0fe1233be"
   },
   "worker/src/artists.js": {
-    "mtime": 1787874646.6132,
-    "seen": 1787874653.3006961,
-    "ast_hash": "5e34f86e1c7a53008b7679abff55bf11",
+    "mtime": 1787926750.274244,
+    "seen": 1787926757.102089,
+    "ast_hash": "43a109ee8fb22997520b9f636e40faa8",
     "semantic_hash": ""
   },
   "worker/src/bulk.js": {
@@ -210,9 +210,9 @@
     "semantic_hash": ""
   },
   "worker/src/index.js": {
-    "mtime": 1787921398.8290482,
-    "seen": 1787921405.0158982,
-    "ast_hash": "d8c47242a39413b86191bd55382f98b1",
+    "mtime": 1787926505.1881878,
+    "seen": 1787926511.399235,
+    "ast_hash": "8ac1f9dd92f8f3686c9fa05f79a8769c",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1787921554.9208536,
-    "seen": 1787921561.50621,
-    "ast_hash": "834f3ba109641b217f50a74540e56faf",
+    "mtime": 1787926556.1109474,
+    "seen": 1787926562.0404532,
+    "ast_hash": "5c0414f68960c24ef8bb432f8a978864",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1787921554.921351,
-    "seen": 1787921561.506211,
-    "ast_hash": "84fae80a8dbf81ec306ab5b22acbdd1b",
+    "mtime": 1787926556.1113956,
+    "seen": 1787926562.040454,
+    "ast_hash": "643e2920b28c42d5e29c0328a32efff9",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -306,62 +306,62 @@
     "semantic_hash": ""
   },
   "contact.html": {
-    "mtime": 1787921554.9218102,
-    "seen": 1787921561.5062132,
+    "mtime": 1787926556.1117783,
+    "seen": 1787926562.0404558,
     "ast_hash": "eb69178853aed64f007971506d541745",
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787921554.9222295,
-    "seen": 1787921561.5062132,
-    "ast_hash": "00cd2528da30e57ab77bb988a7ad0fe7",
+    "mtime": 1787926556.1122596,
+    "seen": 1787926562.040457,
+    "ast_hash": "4e6ea6f304c90627d1be20916417f95b",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1787921554.9226136,
-    "seen": 1787921561.506214,
+    "mtime": 1787926556.11271,
+    "seen": 1787926562.040457,
     "ast_hash": "611427be272a866a35c1a85165872d0e",
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1787921554.9231186,
-    "seen": 1787921561.5062149,
-    "ast_hash": "546bb3fd0372d2bc0f2b41617c7d8c35",
+    "mtime": 1787926556.1130846,
+    "seen": 1787926562.040458,
+    "ast_hash": "70676888415e56ed4b499bfe52f17463",
     "semantic_hash": ""
   },
   "privacy.html": {
-    "mtime": 1787921554.9234247,
-    "seen": 1787921561.506216,
+    "mtime": 1787926556.113609,
+    "seen": 1787926562.040459,
     "ast_hash": "58923bfd7ce0f4527ade458e80250192",
     "semantic_hash": "58923bfd7ce0f4527ade458e80250192"
   },
   "refund.html": {
-    "mtime": 1787921554.9236755,
-    "seen": 1787921561.506216,
+    "mtime": 1787926556.1138966,
+    "seen": 1787926562.04046,
     "ast_hash": "13dc20051aa51d66572dec59d5f9d85e",
     "semantic_hash": "13dc20051aa51d66572dec59d5f9d85e"
   },
   "reset.html": {
-    "mtime": 1787921554.9239674,
-    "seen": 1787921561.506217,
+    "mtime": 1787926556.1142046,
+    "seen": 1787926562.040461,
     "ast_hash": "3f11ef32dcf0099f8e177d62d1841406",
     "semantic_hash": "3f11ef32dcf0099f8e177d62d1841406"
   },
   "review.html": {
-    "mtime": 1787921554.9243672,
-    "seen": 1787921561.506218,
+    "mtime": 1787926556.1144664,
+    "seen": 1787926562.040462,
     "ast_hash": "f29b5f16a29502c619b5c0396ccbbdf0",
     "semantic_hash": "f29b5f16a29502c619b5c0396ccbbdf0"
   },
   "stats.html": {
-    "mtime": 1787921554.9247794,
-    "seen": 1787921561.506219,
+    "mtime": 1787926556.114731,
+    "seen": 1787926562.0404632,
     "ast_hash": "f2c8e3a89e05226a5beedc749d4b0b93",
     "semantic_hash": "f2c8e3a89e05226a5beedc749d4b0b93"
   },
   "terms.html": {
-    "mtime": 1787921554.9250817,
-    "seen": 1787921561.506219,
+    "mtime": 1787926556.1150665,
+    "seen": 1787926562.040464,
     "ast_hash": "77c3d6211227a48ed95739951fe2f5e3",
     "semantic_hash": "77c3d6211227a48ed95739951fe2f5e3"
   },
@@ -1350,15 +1350,21 @@
     "semantic_hash": ""
   },
   "worker/src/artistprofile.js": {
-    "mtime": 1787921188.999579,
-    "seen": 1787921195.2281978,
-    "ast_hash": "912076853dc0a218d7cdd761f2e1b0b1",
+    "mtime": 1787926505.1546662,
+    "seen": 1787926511.399222,
+    "ast_hash": "fd174ff109d374bed702c1f530bc2aee",
     "semantic_hash": ""
   },
   "worker/src/coupons.js": {
     "mtime": 1787921385.0613537,
     "seen": 1787921390.994831,
     "ast_hash": "929b4a1d37abdb4223307f9a69fac3b4",
+    "semantic_hash": ""
+  },
+  "js/mutra-analyse.js": {
+    "mtime": 1787926671.9195223,
+    "seen": 1787926677.9765272,
+    "ast_hash": "2f15ef3d292160e31bc92fc4616baa9e",
     "semantic_hash": ""
   }
 }
