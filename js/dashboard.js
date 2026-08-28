@@ -1943,6 +1943,8 @@
             <b>${ils(Math.round(p.amount * 1.18))}</b>
             <span class="inv-sub">${ils(p.amount)} + VAT · ${when(p.granted_at)}</span>
           </div>
+          <button class="rv-btn" data-skip="${p.id}" data-ref="${esc(p.ref)}"
+            title="Never invoice this one">Skip</button>
           <button class="rv-btn" data-preview="${p.id}"${d.configured ? '' : ' disabled'}>Preview</button>
           <button class="rv-btn rv-ok" data-issue="${p.id}"${d.configured ? '' : ' disabled'}>Issue</button>
         </div>`).join('')}</div>`
@@ -1959,6 +1961,16 @@
               <span class="inv-sub">${when(i.issued_at || i.ts)}</span></div>
             ${i.url ? `<a class="rv-btn" href="${esc(i.url)}" target="_blank" rel="noopener">PDF</a>`
               : `<button class="rv-btn" data-retry="${i.licence_id}">Retry</button>`}
+          </div>`).join('')}</div>` : ''}
+
+      ${(d.skipped || []).length ? `<h3 style="margin-top:26px">Never invoice
+        <span class="pill">${d.skipped.length}</span></h3>
+        <div class="inv-list">${d.skipped.map((s) => `
+          <div class="inv-row" style="opacity:.6">
+            <div class="inv-main"><b>${esc(s.licence_ref)}</b>
+              <span class="inv-sub">${esc(s.reason || 'skipped')}</span></div>
+            <div class="inv-money"><b>${ils(s.amount || 0)}</b>
+              <span class="inv-sub">${when(s.ts)}</span></div>
           </div>`).join('')}</div>` : ''}
     </div>`);
 
@@ -1994,6 +2006,18 @@
     });
     app.querySelectorAll('[data-retry]').forEach((b) => b.onclick = async () => {
       await post('/invoices/retry', { licence_id: Number(b.dataset.retry) }); load();
+    });
+
+    /* Skipping is how a test payment leaves the queue for good. It is confirmed
+       because it is not undoable from this screen, and it takes the same unique
+       index as a real issue — so a skipped licence cannot later be invoiced by
+       accident. */
+    app.querySelectorAll('[data-skip]').forEach((b) => b.onclick = async () => {
+      if (!confirm(`Never invoice ${b.dataset.ref}?\n\nIt leaves the queue permanently. `
+        + 'Use this for test payments.')) return;
+      b.disabled = true;
+      await post('/invoices/skip', { licence_id: Number(b.dataset.skip), reason: 'test payment' });
+      load();
     });
   }
 

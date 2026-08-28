@@ -30,9 +30,9 @@
     "semantic_hash": ""
   },
   "js/dashboard.js": {
-    "mtime": 1787953912.9759433,
-    "seen": 1787953920.2334201,
-    "ast_hash": "a08ee72cc1593185a22c00d49e13d9c1",
+    "mtime": 1787955247.3620481,
+    "seen": 1787955248.715511,
+    "ast_hash": "40646620febd859dceafb9eb1ef28476",
     "semantic_hash": ""
   },
   "js/data.js": {
@@ -210,9 +210,9 @@
     "semantic_hash": ""
   },
   "worker/src/index.js": {
-    "mtime": 1787952011.111234,
-    "seen": 1787952013.541944,
-    "ast_hash": "5ef454d2d2165d1756bb148b034b522b",
+    "mtime": 1787955229.336561,
+    "seen": 1787955231.305129,
+    "ast_hash": "20ca607c9d16278e3f5248eda49a1a1a",
     "semantic_hash": ""
   },
   "worker/src/licensing.js": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787952051.917617,
-    "seen": 1787952053.338737,
-    "ast_hash": "ca8557eb3ba2a42abdfa3b73827b27c9",
+    "mtime": 1787953938.387323,
+    "seen": 1787955220.626543,
+    "ast_hash": "7c21bb73077bf0a594550975c4ae3b50",
     "semantic_hash": ""
   },
   "index.html": {
@@ -1386,9 +1386,9 @@
     "semantic_hash": ""
   },
   "worker/src/greeninvoice.js": {
-    "mtime": 1787952828.477393,
-    "seen": 1787952831.077951,
-    "ast_hash": "d6e7f82a2c665dc5a49e550f6b14f0d2",
+    "mtime": 1787955224.1170394,
+    "seen": 1787955231.305126,
+    "ast_hash": "ea852fedf234165c465af83ea3429433",
     "semantic_hash": ""
   }
 }

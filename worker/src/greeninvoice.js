@@ -393,14 +393,22 @@ export async function listInvoices(env, user) {
   ).all().catch(() => ({ results: [] }));
 
   const issued = await env.DB.prepare(
-    `SELECT id, licence_ref, number, url, amount, status, last_error, issued_at, ts
-       FROM invoices ORDER BY ts DESC LIMIT 100`
+    `SELECT id, licence_id, licence_ref, number, url, amount, status, last_error, issued_at, ts
+       FROM invoices WHERE status != 'skipped' ORDER BY ts DESC LIMIT 100`
+  ).all().catch(() => ({ results: [] }));
+
+  // Skipped rows are kept separate: they are a record of a decision not to invoice,
+  // not a document, and mixing them into the issued list would read as one.
+  const skipped = await env.DB.prepare(
+    `SELECT licence_id, licence_ref, amount, last_error AS reason, ts
+       FROM invoices WHERE status = 'skipped' ORDER BY ts DESC LIMIT 50`
   ).all().catch(() => ({ results: [] }));
 
   return json({
     configured: configured(env),
     pending: (pending.results || []).map((l) => ({ ...l, draft: draftFor(l) })),
     issued: issued.results || [],
+    skipped: skipped.results || [],
   });
 }
 
@@ -518,6 +526,40 @@ async function findByRef(env, ref) {
   const d = await r.json().catch(() => null);
   const items = (d && (d.items || d.documents)) || [];
   return items.find((x) => JSON.stringify(x).includes(ref)) || null;
+}
+
+/**
+ * POST /invoices/skip — { licence_id } take a licence out of the queue for good.
+ *
+ * Test payments are real rows in `licences` and would otherwise sit in the queue
+ * forever, one mis-click from becoming a tax document. Skipping writes an invoices
+ * row with status 'skipped', which uses the same UNIQUE index as a real issue: the
+ * licence leaves `pending`, and issuing it later fails on the claim rather than
+ * needing a second check somewhere else to remember.
+ */
+export async function skipInvoice(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const id = Number(b.licence_id);
+  if (!Number.isInteger(id)) return json({ error: 'bad_licence' }, 400);
+
+  const lic = await env.DB.prepare('SELECT id, ref, user_id, amount, currency FROM licences WHERE id = ?')
+    .bind(id).first().catch(() => null);
+  if (!lic) return json({ error: 'no_such_licence' }, 404);
+
+  const r = await env.DB.prepare(
+    `INSERT OR IGNORE INTO invoices (user_id, licence_id, licence_ref, provider,
+                                     amount, currency, status, last_error, ts)
+     VALUES (?, ?, ?, 'none', ?, ?, 'skipped', ?, ?)`
+  ).bind(lic.user_id, lic.id, lic.ref, Math.round((lic.amount || 0) * 1.18),
+         lic.currency || 'ILS', clean(b.reason, 200) || 'test payment', now()).run();
+  if (!r.meta.changes) return json({ error: 'already_recorded' }, 409);
+
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'skip_invoice', lic.ref, clean(b.reason, 120), now())
+    .run().catch(() => null);
+  return json({ ok: true, skipped: lic.ref });
 }
 
 /** POST /invoices/retry — clear a failed row so it can be issued again. */
