@@ -196,9 +196,18 @@ async function token(env) {
  */
 export function draftFor(lic, track, opts = {}) {
   const exVat = (lic.amount || 0) / 100;
+  /* The date the money actually arrived. morning rejects an empty or future
+     receipt date (error 2426), and a licence granted seconds ago can round to
+     tomorrow in a different timezone, so it is clamped to today rather than
+     trusted blindly. */
+  const iso = (t) => new Date(t * 1000).toISOString().slice(0, 10);
+  const today = iso(Math.floor(Date.now() / 1000));
+  const paidOn = lic.granted_at ? iso(lic.granted_at) : today;
+  const date = paidOn > today ? today : paidOn;
   return {
     type: DOC_INVOICE_RECEIPT,
     lang: 'he',
+    date,
     currency: lic.currency || 'ILS',
     // Document-level vatType 0 = "default for this business". NOT the same enum as
     // the income-row vatType below, where 1 would mean "price includes VAT" while
@@ -228,6 +237,7 @@ export function draftFor(lic, track, opts = {}) {
       // 3 = credit card. The money has already been taken by the time a
       // licence exists, so the document records a payment rather than a debt.
       type: 3,
+      date,
       price: Number((exVat * 1.18).toFixed(2)),
       currency: lic.currency || 'ILS',
     }],
@@ -253,6 +263,19 @@ export async function whoami(env, user) {
                   detail: 'GREENINVOICE_ID and GREENINVOICE_SECRET are not both set.' }, 503);
   }
 
+  /* Shape, not content. Length, equality and stray whitespace are enough to spot
+     every common paste mistake, and none of it is useful to anyone who saw it. */
+  const id = env.GREENINVOICE_ID || '', sec = env.GREENINVOICE_SECRET || '';
+  const shape = {
+    idLength: id.length,
+    secretLength: sec.length,
+    identical: id === sec,
+    idLooksLikeUuid: /^[0-9a-f-]{36}$/i.test(id),
+    secretLooksLikeUuid: /^[0-9a-f-]{36}$/i.test(sec),
+    idHasWhitespace: id !== id.trim(),
+    secretHasWhitespace: sec !== sec.trim(),
+  };
+
   const t = await getToken(env);
   if (!t.token) {
     /* Both flows refused, but they refuse differently and that difference is the
@@ -264,7 +287,7 @@ export async function whoami(env, user) {
     const code = oa && oa.body && oa.body.error;
     const plan = code === 'unauthorized_client' || code === 'invalid_grant';
     return json({
-      ok: false, stage: 'token', tried: t.tried, reason: plan ? 'plan' : 'credentials',
+      ok: false, stage: 'token', tried: t.tried, reason: plan ? 'plan' : 'credentials', shape,
       detail: plan
         ? 'The credentials were recognised but this morning account has no API entitlement. '
           + 'API access needs the Best plan or higher — check the subscription, then try again.'

@@ -1386,9 +1386,9 @@
     "semantic_hash": ""
   },
   "worker/src/greeninvoice.js": {
-    "mtime": 1787952006.518362,
-    "seen": 1787952013.5419421,
-    "ast_hash": "e2345568cc646cf1650bdf5ccdede423",
+    "mtime": 1787952828.477393,
+    "seen": 1787952831.077951,
+    "ast_hash": "d6e7f82a2c665dc5a49e550f6b14f0d2",
     "semantic_hash": ""
   }
 }

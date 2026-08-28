@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787951140.2769954,
-    "seen": 1787951142.227603,
-    "ast_hash": "c563555f43cad3d67a5f0f191245d870",
+    "mtime": 1787952051.917617,
+    "seen": 1787952053.338737,
+    "ast_hash": "ca8557eb3ba2a42abdfa3b73827b27c9",
     "semantic_hash": ""
   },
   "index.html": {
@@ -1386,9 +1386,9 @@
     "semantic_hash": ""
   },
   "worker/src/greeninvoice.js": {
-    "mtime": 1787952006.518362,
-    "seen": 1787952013.5419421,
-    "ast_hash": "e2345568cc646cf1650bdf5ccdede423",
+    "mtime": 1787952755.8964977,
+    "seen": 1787952758.504334,
+    "ast_hash": "e80fb5f137ab0d0ea0dbb13665fcf49f",
     "semantic_hash": ""
   }
 }
