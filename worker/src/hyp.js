@@ -282,6 +282,16 @@ export async function handleReturn(req, env, ctx) {
       await env.DB.prepare(
         `UPDATE hyp_checkouts SET status = 'charged_unverified', hyp_id = ? WHERE ref = ?`
       ).bind(String(q.Id || ''), ref).run().catch(() => {});
+      /* Log what HYP actually sent back. The first time this fired there was no
+         record of the redirect at all, so there was no way to tell whether the
+         Sign parameter had arrived — which is the one fact needed to fix it. */
+      await env.DB.prepare(
+        'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+      ).bind('system:hyp', 'hyp.charged_unverified', ref,
+             JSON.stringify({ verify: (v.raw || '').slice(0, 200),
+                              keys: raw.split('&').map((kv) => kv.split('=')[0]),
+                              sent: (v.sent || '').slice(0, 500) }).slice(0, 1800),
+             now()).run().catch(() => {});
       await env.DB.prepare(
         `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
          VALUES (?, ?, ?, ?, ?, ?)`
@@ -291,7 +301,7 @@ export async function handleReturn(req, env, ctx) {
         + `The card was charged. HYP's VERIFY call did not confirm it, so the licence has NOT been\n`
         + `granted automatically. Check the transaction at HYP and grant it from Licensing.\n\n`
         + `The customer has been told their payment went through and the licence is being confirmed.`,
-        ref, now()).run().catch(() => null);
+        now()).run().catch(() => null);
       return Response.redirect(
         `https://snowstar.company/mutra.html?pay=confirming&ref=${encodeURIComponent(ref)}`, 302);
     }

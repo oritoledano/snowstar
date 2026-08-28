@@ -1437,7 +1437,7 @@
       "file_type": "code",
       "norm_label": "paintclearlist()",
       "source_file": "js/account-ui.js",
-      "source_location": "L611"
+      "source_location": "L621"
     },
     {
       "id": "js_account_ui_paintlicences",
@@ -1461,7 +1461,7 @@
       "file_type": "code",
       "norm_label": "paintprofileform()",
       "source_file": "js/account-ui.js",
-      "source_location": "L668"
+      "source_location": "L678"
     },
     {
       "id": "js_account_ui_positionpanel",
@@ -2985,7 +2985,7 @@
       "file_type": "code",
       "norm_label": "resumepending()",
       "source_file": "js/mutra-license.js",
-      "source_location": "L831"
+      "source_location": "L842"
     },
     {
       "id": "js_mutra_license_screen1",
@@ -10699,7 +10699,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L612",
+      "source_location": "L622",
       "weight": 1.0
     },
     {
@@ -10711,7 +10711,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L620",
+      "source_location": "L630",
       "weight": 1.0
     },
     {
@@ -10723,7 +10723,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L654",
+      "source_location": "L664",
       "weight": 1.0
     },
     {
@@ -10747,7 +10747,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L569",
+      "source_location": "L575",
       "weight": 1.0
     },
     {
@@ -10759,7 +10759,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L582",
+      "source_location": "L588",
       "weight": 1.0
     },
     {
@@ -10771,7 +10771,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L669",
+      "source_location": "L679",
       "weight": 1.0
     },
     {
@@ -10783,7 +10783,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L717",
+      "source_location": "L727",
       "weight": 1.0
     },
     {
@@ -10795,7 +10795,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/account-ui.js",
-      "source_location": "L764",
+      "source_location": "L774",
       "weight": 1.0
     },
     {
@@ -12691,7 +12691,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-license.js",
-      "source_location": "L843",
+      "source_location": "L854",
       "weight": 1.0
     },
     {
@@ -24251,7 +24251,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/account-ui.js",
-      "source_location": "L611",
+      "source_location": "L621",
       "weight": 1.0
     },
     {
@@ -24262,7 +24262,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/account-ui.js",
-      "source_location": "L668",
+      "source_location": "L678",
       "weight": 1.0
     },
     {
@@ -26154,7 +26154,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-license.js",
-      "source_location": "L831",
+      "source_location": "L842",
       "weight": 1.0
     },
     {
@@ -34537,5 +34537,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "fb0418534be62325695e0fd22332f9ed3d7e6295"
+  "built_at_commit": "ccd3d3529248dab1d8618410174905ee2c2cd6bf"
 }

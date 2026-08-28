@@ -67,10 +67,10 @@ export async function notifyRename(env, slug, before, after) {
     `Snowstar`;
 
   await env.DB.prepare(
-    `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
-     VALUES (?, ?, ?, ?, ?, ?)`
+    `INSERT INTO mail_outbox (to_email, to_name, subject, body, kind, created_at)
+     VALUES (?, ?, ?, ?, 'artists', ?)`
   ).bind(to, o.user_name || o.artist_name || null,
-         'A track of yours was updated', body, clean(after && after.title) || slug, now())
+         'A track of yours was updated', body, now())
    .run().catch(() => null);
 
   return { to, changed };
@@ -130,9 +130,9 @@ export async function reassignOwner(req, env, user) {
   // Both sides are told. The new owner because they now have a track and a
   // payout attached to them, the old one because something left their account.
   const note = (to, name, msg) => env.DB.prepare(
-    `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
-     VALUES (?, ?, ?, ?, ?, ?)`
-  ).bind(to, name || null, 'A track was moved between accounts', msg, slug, now())
+    `INSERT INTO mail_outbox (to_email, to_name, subject, body, kind, created_at)
+     VALUES (?, ?, ?, ?, 'artists', ?)`
+  ).bind(to, name || null, 'A track was moved between accounts', msg, now())
    .run().catch(() => null);
 
   await note(target.email, target.name,

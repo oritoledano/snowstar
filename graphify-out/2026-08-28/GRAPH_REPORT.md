@@ -1,7 +1,7 @@
 # Graph Report - snowstar  (2026-08-28)
 
 ## Corpus Check
-- 71 files · ~380,732 words
+- 71 files · ~380,937 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fb041853`
+- Built from commit: `ccd3d352`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

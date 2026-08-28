@@ -94,8 +94,8 @@ export async function accrueEarnings(env, { slug, licence_id, amount_agorot, rea
 
     const ils = (n) => '₪' + (n / 100).toFixed(2);
     await env.DB.prepare(
-      `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
-       VALUES (?, ?, ?, ?, ?, ?)`
+      `INSERT INTO mail_outbox (to_email, to_name, subject, body, kind, created_at)
+       VALUES (?, ?, ?, ?, 'licensing', ?)`
     ).bind(to, r.name || r.account_name || null, 'Your track was licensed',
       `Hello${r.name ? ' ' + r.name : ''},\n\n`
       + `"${slug}" has just been licensed.\n\n`
@@ -105,7 +105,7 @@ export async function accrueEarnings(env, { slug, licence_id, amount_agorot, rea
       + `This is now on your balance. We settle balances on request once they pass ₪250 — `
       + `reply to this email when you would like to be paid and we will send the paperwork.\n\n`
       + `Snowstar`,
-      slug, now()).run().catch(() => null);
+      now()).run().catch(() => null);
 
     written.push({ to, amount });
   }

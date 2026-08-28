@@ -335,13 +335,13 @@ export async function approveClaim(req, env, user) {
   ]);
 
   await env.DB.prepare(
-    `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
-     VALUES (?, ?, ?, ?, ?, ?)`
+    `INSERT INTO mail_outbox (to_email, to_name, subject, body, kind, created_at)
+     VALUES (?, ?, ?, ?, 'artists', ?)`
   ).bind(row.user_email, row.name || null, 'Your Mutra profile is ready',
     `Hello${row.name ? ' ' + row.name : ''},\n\n`
     + `Your artist profile on Mutra is now linked to this account. Sign in and you will see `
     + `the tracks filed under your name, and anything waiting for your signature.\n\nSnowstar`,
-    row.name || '', Math.floor(Date.now() / 1000)).run().catch(() => null);
+    Math.floor(Date.now() / 1000)).run().catch(() => null);
 
   await env.DB.prepare(
     'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
