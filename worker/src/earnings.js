@@ -156,9 +156,9 @@ export async function settleEarnings(req, env, user) {
       WHERE lower(email)=? AND status='accrued'`).bind(now(), ref, email).run();
 
   await env.DB.prepare(
-    'INSERT INTO admin_log (actor, action, detail, created_at) VALUES (?, ?, ?, ?)'
-  ).bind(user.email || 'owner', 'settle_earnings',
-         `${email}: ${sum.t} agorot over ${sum.n} lines, ref ${ref}`, now()).run().catch(() => null);
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'settle_earnings', email,
+         `${sum.t} agorot over ${sum.n} lines, ref ${ref}`, now()).run().catch(() => null);
 
   return json({ ok: true, email, settled_agorot: sum.t, lines: sum.n, reference: ref });
 }

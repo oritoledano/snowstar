@@ -321,9 +321,9 @@ export async function deleteTrack(req, env, user, url) {
          (row && row.audio_key) || null).run();
 
   await env.DB.prepare(
-    'INSERT INTO admin_log (actor, action, detail, created_at) VALUES (?, ?, ?, ?)'
-  ).bind(user.email || 'owner', 'delete_track',
-         `${slug}${trashed && trashed.moved ? ' (audio binned)' : ''}`, now())
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'delete_track', slug,
+         trashed && trashed.moved ? 'audio binned' : 'no audio found', now())
    .run().catch(() => null);
 
   return json({ ok: true, slug, binned: !!(trashed && trashed.moved) });

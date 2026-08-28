@@ -104,8 +104,14 @@ export async function reassignOwner(req, env, user) {
                         + 'them a login they never asked for and cannot get into.' }, 404);
   }
 
-  const sub = await env.DB.prepare(
-    'SELECT id, user_id FROM submissions WHERE published_slug = ?').bind(slug).first().catch(() => null);
+  /* By slug for a published track, by submission id for one that was approved
+     but never made it into the catalogue — which is exactly the case where an
+     upload sat under the wrong address long enough for anyone to notice. */
+  const sub = /^\d+$/.test(slug)
+    ? await env.DB.prepare('SELECT id, user_id FROM submissions WHERE id = ?')
+        .bind(Number(slug)).first().catch(() => null)
+    : await env.DB.prepare('SELECT id, user_id FROM submissions WHERE published_slug = ?')
+        .bind(slug).first().catch(() => null);
   if (!sub) return json({ error: 'not_an_uploaded_track' }, 404);
   if (sub.user_id === target.id) return json({ ok: true, unchanged: true });
 
@@ -116,9 +122,9 @@ export async function reassignOwner(req, env, user) {
     .bind(target.id, sub.id).run();
 
   await env.DB.prepare(
-    `INSERT INTO admin_log (actor, action, detail, created_at) VALUES (?, ?, ?, ?)`
-  ).bind(user.email || 'owner', 'reassign_track',
-         `${slug}: ${(from && from.email) || sub.user_id} -> ${target.email}`, now())
+    `INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)`
+  ).bind(user.email || 'owner', 'reassign_track', slug,
+         `${(from && from.email) || sub.user_id} -> ${target.email}`, now())
    .run().catch(() => null);
 
   // Both sides are told. The new owner because they now have a track and a

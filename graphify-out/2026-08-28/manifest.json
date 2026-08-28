@@ -84,9 +84,9 @@
     "semantic_hash": "092ca0935da7bb46ee8a6d003ccc2ff7"
   },
   "js/mutra-license.js": {
-    "mtime": 1787784236.7516983,
-    "seen": 1787784243.086991,
-    "ast_hash": "33a962767e813a45e23132d6b1b2065d",
+    "mtime": 1787916658.9438968,
+    "seen": 1787916665.0015612,
+    "ast_hash": "2c1ec3759cc1e7fb370473bf941a48ea",
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
@@ -186,9 +186,9 @@
     "semantic_hash": ""
   },
   "worker/src/catalog.js": {
-    "mtime": 1787908234.077323,
-    "seen": 1787908241.1017191,
-    "ast_hash": "e5e2556c537298c618517330954d9265",
+    "mtime": 1787916560.0145848,
+    "seen": 1787916564.925463,
+    "ast_hash": "fe2bf2069d408bcad767159454e8c65c",
     "semantic_hash": ""
   },
   "worker/src/clearlist.js": {
@@ -288,14 +288,14 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1787908142.0131407,
-    "seen": 1787908147.5615501,
+    "mtime": 1787916659.0049736,
+    "seen": 1787916665.00161,
     "ast_hash": "07d9e1efb71111609690eb759c54d0ea",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1787902286.3575873,
-    "seen": 1787902295.978463,
+    "mtime": 1787916659.0055559,
+    "seen": 1787916665.001611,
     "ast_hash": "e4da4dbef19b5b393af0c11405405b7a",
     "semantic_hash": ""
   },
@@ -306,62 +306,62 @@
     "semantic_hash": ""
   },
   "contact.html": {
-    "mtime": 1787902286.358097,
-    "seen": 1787902295.9784682,
+    "mtime": 1787916659.0058734,
+    "seen": 1787916665.0016131,
     "ast_hash": "eb69178853aed64f007971506d541745",
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1787902286.3586597,
-    "seen": 1787902295.9784698,
+    "mtime": 1787916659.0061364,
+    "seen": 1787916665.0016131,
     "ast_hash": "33c119b93907d7fc626ac98c011a5ce7",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1787902286.359153,
-    "seen": 1787902295.978475,
+    "mtime": 1787916659.0064154,
+    "seen": 1787916665.001617,
     "ast_hash": "611427be272a866a35c1a85165872d0e",
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1787908142.0126243,
-    "seen": 1787908147.5615559,
-    "ast_hash": "de527ec0b0348a669161d2fe6f69f7bb",
+    "mtime": 1787916659.0070844,
+    "seen": 1787916665.001618,
+    "ast_hash": "6cc7d6a796bbcf492b95c6a7f9fa857f",
     "semantic_hash": ""
   },
   "privacy.html": {
-    "mtime": 1787902286.359912,
-    "seen": 1787902295.97848,
+    "mtime": 1787916659.0074089,
+    "seen": 1787916665.001618,
     "ast_hash": "58923bfd7ce0f4527ade458e80250192",
     "semantic_hash": "58923bfd7ce0f4527ade458e80250192"
   },
   "refund.html": {
-    "mtime": 1787902286.3601818,
-    "seen": 1787902295.978482,
+    "mtime": 1787916659.007651,
+    "seen": 1787916665.0016189,
     "ast_hash": "13dc20051aa51d66572dec59d5f9d85e",
     "semantic_hash": "13dc20051aa51d66572dec59d5f9d85e"
   },
   "reset.html": {
-    "mtime": 1787902286.3604527,
-    "seen": 1787902295.978484,
+    "mtime": 1787916659.007908,
+    "seen": 1787916665.00162,
     "ast_hash": "3f11ef32dcf0099f8e177d62d1841406",
     "semantic_hash": "3f11ef32dcf0099f8e177d62d1841406"
   },
   "review.html": {
-    "mtime": 1787902286.3606892,
-    "seen": 1787902295.978486,
+    "mtime": 1787916659.008281,
+    "seen": 1787916665.00162,
     "ast_hash": "f29b5f16a29502c619b5c0396ccbbdf0",
     "semantic_hash": "f29b5f16a29502c619b5c0396ccbbdf0"
   },
   "stats.html": {
-    "mtime": 1787902286.3609166,
-    "seen": 1787902295.978488,
+    "mtime": 1787916659.0084922,
+    "seen": 1787916665.001621,
     "ast_hash": "f2c8e3a89e05226a5beedc749d4b0b93",
     "semantic_hash": "f2c8e3a89e05226a5beedc749d4b0b93"
   },
   "terms.html": {
-    "mtime": 1787902286.361212,
-    "seen": 1787902295.97849,
+    "mtime": 1787916659.0087337,
+    "seen": 1787916665.001622,
     "ast_hash": "77c3d6211227a48ed95739951fe2f5e3",
     "semantic_hash": "77c3d6211227a48ed95739951fe2f5e3"
   },
@@ -1242,9 +1242,9 @@
     "semantic_hash": "7f430eddd1ba742bee066e3ea63454e5"
   },
   "worker/src/pricing.js": {
-    "mtime": 1787784236.7797036,
-    "seen": 1787784243.087019,
-    "ast_hash": "4a9e52671f10ba0b938235ac56b31144",
+    "mtime": 1787916607.6423376,
+    "seen": 1787916613.49517,
+    "ast_hash": "d4cb5240b666c66453e5b88fadbd1e72",
     "semantic_hash": ""
   },
   "js/mutra-artist-panel.js": {
@@ -1302,21 +1302,21 @@
     "semantic_hash": ""
   },
   "worker/src/ownership.js": {
-    "mtime": 1787874587.0924098,
-    "seen": 1787874593.418439,
-    "ast_hash": "88ead525d6290114bb80a2ce5f17b387",
+    "mtime": 1787916560.015079,
+    "seen": 1787916564.9254742,
+    "ast_hash": "18abde33501fe8eb92689aa0ce11af19",
     "semantic_hash": ""
   },
   "worker/src/trash.js": {
-    "mtime": 1787874630.774933,
-    "seen": 1787874637.830911,
-    "ast_hash": "e2eb5b22167d4144e041049a0ad9d15d",
+    "mtime": 1787916560.0148072,
+    "seen": 1787916564.925482,
+    "ast_hash": "051fa56550d5f881252e85cdd2733c94",
     "semantic_hash": ""
   },
   "worker/src/earnings.js": {
-    "mtime": 1787874793.989821,
-    "seen": 1787874800.331583,
-    "ast_hash": "5f6b3bd51ad58fd8fecd9939554af9e1",
+    "mtime": 1787916560.0149603,
+    "seen": 1787916564.925468,
+    "ast_hash": "a14dfb020a88884cb6e9c8863bfb21f2",
     "semantic_hash": ""
   },
   "PAYOUTS.md": {
@@ -1326,9 +1326,9 @@
     "semantic_hash": ""
   },
   "worker/src/share.js": {
-    "mtime": 1787908234.0777397,
-    "seen": 1787908241.1017401,
-    "ast_hash": "a4743b3da4976c0324db9675bfbff65f",
+    "mtime": 1787908386.7231457,
+    "seen": 1787908393.335382,
+    "ast_hash": "e9898aabeea25d3bb364ec3fb23b6dcf",
     "semantic_hash": ""
   },
   "assets/og-mutra.jpg": {
@@ -1341,6 +1341,12 @@
     "mtime": 1787908205.9914365,
     "seen": 1787908241.101804,
     "ast_hash": "6d82de0f5a2a1ab32a0e5df98176b6d7",
+    "semantic_hash": ""
+  },
+  "assets/bit-qr.png": {
+    "mtime": 1787916476.6284518,
+    "seen": 1787916481.851928,
+    "ast_hash": "33f192859b62002390b1feb1e80503f9",
     "semantic_hash": ""
   }
 }

@@ -102,7 +102,10 @@
     return Math.min(Math.max(legacy / LEGACY_DIGITAL, 0.2), 8);
   }
 
-  /** Four separate reasons a price becomes a conversation, and they are not
+  /** The class letter this track prices at, defaulting to C like the server. */
+  const gradeLetter = (track) => String((track && track.cls) || 'C').toUpperCase();
+
+  /** Five separate reasons a price becomes a conversation, and they are not
    *  the same thing: the track is co-owned, the buyer is too big, the use is
    *  broadcast, or they want exclusivity. */
   function priceFor(track, buyerId, coverageId, termId) {
@@ -113,6 +116,14 @@
     if (b.base == null) return { quote: true, reason: 'large_client' };
     if (t.mult == null) return { quote: true, reason: 'exclusive' };
     if (t.noPaid && pick.paid) return { quote: true, reason: 'perp_no_paid' };
+    /* Perpetual is self-serve on the cheap classes only. Selling "no end date"
+       on an A or a B hands over, for a card payment, the one thing that could
+       be worth a buyout later — and it is exactly the good tracks where that
+       happens. Mirrored from the server so the funnel never shows a price the
+       server would then refuse. */
+    if (t.noPaid && /^[AB]$/.test(gradeLetter(track))) {
+      return { quote: true, reason: 'perp_high_class' };
+    }
     // a per-band override on the track wins outright
     const over = track && track.prices && track.prices[buyerId];
     const base = Number.isFinite(over) && over > 0 ? over : b.base * trackFactor(track);
@@ -487,7 +498,8 @@
       large_client: 'For an end client over 250 people we price per campaign. Tell us the project and you’ll have a price the same day.',
       exclusive: 'Exclusive use — nobody else licences this track while you hold it. Priced per case.',
       big_account: 'Over 500k followers we price per campaign. Tell us where it runs and you’ll have a price the same day.',
-      perp_no_paid: 'A licence with no end date covers organic use only — a site, a social page, a channel. Paid promotion behind the project needs a dated term instead, so pick 12, 24 or 36 months, or tell us about the campaign and we’ll quote it.',
+      perp_high_class: 'This track is not sold with an open-ended licence over the counter. A licence with no end date is permanent, and on a track at this level that is a conversation rather than a checkout — tell us about the project and we will quote it, or pick 12, 24 or 36 months and buy it now.',
+    perp_no_paid: 'A licence with no end date covers organic use only — a site, a social page, a channel. Paid promotion behind the project needs a dated term instead, so pick 12, 24 or 36 months, or tell us about the campaign and we’ll quote it.',
       other: 'Tell us what you’re making and we’ll come back with the right licence.',
     }[reason] || 'Tell us about the project and we’ll come back with a price.';
 
@@ -511,7 +523,10 @@
       <p class="lic-err" hidden></p>
       <div class="lic-acts"><button class="lic-go lic-submit">Get a price</button></div>`;
 
-    if (reason === 'perp_no_paid') {
+    // Both perpetual refusals have the same escape hatch: a dated term is
+    // right there and buyable now, so offer it rather than leaving the quote
+    // form as the only way forward.
+    if (reason === 'perp_no_paid' || reason === 'perp_high_class') {
       const back = document.createElement('button');
       back.type = 'button'; back.className = 'lic-textlink';
       back.textContent = '← Pick a dated term instead';

@@ -9,7 +9,15 @@
   const fmtD = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtDur = (s) => { s = Math.round(s); return s < 60 ? `${s}s` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
 
-  const TABS = ['overview', 'stats', 'inbox', 'jobs', 'members', 'licensing', 'pricing', 'artists', 'upload', 'submissions', 'clearlist', 'notifications', 'alerts', 'storage', 'pipeline'];
+  /* Fifteen tabs in one row read as fifteen unrelated things. Grouped by WHOSE
+     work they are: the people buying, the people supplying, and the machine.
+     The order inside each group is the order you actually touch them. */
+  const GROUPS = [
+    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'jobs']],
+    ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
+    ['Admin',  ['pricing', 'notifications', 'alerts', 'storage', 'pipeline']],
+  ];
+  const TABS = GROUPS.flatMap(([, t]) => t);
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
@@ -43,8 +51,12 @@
   const shell = (inner) => `
     <div class="db-head">
       <h1>Dashboard</h1>
-      <div class="db-tabs">${TABS.map((t) =>
-        `<button class="db-tab ${t === tab ? 'active' : ''}" data-t="${t}">${t}</button>`).join('')}</div>
+      <div class="db-groups">${GROUPS.map(([name, tabs]) => `
+        <div class="db-group">
+          <span class="db-glabel">${name}</span>
+          <div class="db-tabs">${tabs.map((t) =>
+            `<button class="db-tab ${t === tab ? 'active' : ''}" data-t="${t}">${t}</button>`).join('')}</div>
+        </div>`).join('')}</div>
     </div>${inner}`;
 
   function paint(inner) {

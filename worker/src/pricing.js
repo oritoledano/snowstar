@@ -275,6 +275,19 @@ export function priceFor(track, buyerId, coverageId, termId, paidMedia, classes)
   // should not be able to produce the pair even by a crafted request.
   if (term.noPaid && paidMedia) return { amount: null, quote: true, reason: 'perp_no_paid' };
 
+  /* A perpetual licence is only ever self-serve on the cheap classes.
+   *
+   * Selling "no end date" on an A or a B means signing away, for a card
+   * payment, the one thing that could turn out to be worth a major buyout
+   * later — and it is precisely the good tracks where that happens. The
+   * cheaper the track, the less there is to lose and the more sense it makes
+   * to take the money now; so C and D can be bought outright and A and B get
+   * a conversation. This is a rights decision, not a pricing one, which is
+   * why it sits here rather than in a multiplier. */
+  if (term.noPaid && (grade.letter === 'A' || grade.letter === 'B')) {
+    return { amount: null, quote: true, reason: 'perp_high_class', grade: grade.letter };
+  }
+
   // A per-band override on the track wins outright — that is the owner saying
   // "this one is worth more to a business" and it must not be second-guessed
   // by the legacy digital-price factor.

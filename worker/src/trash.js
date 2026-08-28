@@ -104,8 +104,8 @@ export async function emptyTrash(req, env, user, url) {
   }
 
   await env.DB.prepare(
-    'INSERT INTO admin_log (actor, action, detail, created_at) VALUES (?, ?, ?, ?)'
-  ).bind(user.email || 'owner', 'empty_trash', `${deleted} objects`, Math.floor(Date.now() / 1000))
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'empty_trash', null, `${deleted} objects`, Math.floor(Date.now() / 1000))
    .run().catch(() => null);
 
   return json({ ok: true, deleted });
