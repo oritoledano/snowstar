@@ -6021,7 +6021,7 @@
       "file_type": "code",
       "norm_label": "findbyref()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L499"
+      "source_location": "L509"
     },
     {
       "id": "worker_src_greeninvoice_gettoken",
@@ -6057,7 +6057,7 @@
       "file_type": "code",
       "norm_label": "issueinvoice()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L405"
+      "source_location": "L415"
     },
     {
       "id": "worker_src_greeninvoice_json",
@@ -6081,7 +6081,7 @@
       "file_type": "code",
       "norm_label": "listinvoices()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L370"
+      "source_location": "L380"
     },
     {
       "id": "worker_src_greeninvoice_now",
@@ -6129,7 +6129,7 @@
       "file_type": "code",
       "norm_label": "previewinvoice()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L339"
+      "source_location": "L349"
     },
     {
       "id": "worker_src_greeninvoice_retryinvoice",
@@ -6141,7 +6141,7 @@
       "file_type": "code",
       "norm_label": "retryinvoice()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L514"
+      "source_location": "L524"
     },
     {
       "id": "worker_src_greeninvoice_token",
@@ -6165,7 +6165,7 @@
       "file_type": "code",
       "norm_label": "whoami()",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L249"
+      "source_location": "L259"
     },
     {
       "id": "js_mutra_analyse_analyse",
@@ -6981,7 +6981,7 @@
       "file_type": "code",
       "norm_label": "paintcollections()",
       "source_file": "js/dashboard.js",
-      "source_location": "L2098"
+      "source_location": "L2128"
     },
     {
       "id": "js_dashboard_paintcoupons",
@@ -6993,7 +6993,7 @@
       "file_type": "code",
       "norm_label": "paintcoupons()",
       "source_file": "js/dashboard.js",
-      "source_location": "L2009"
+      "source_location": "L2039"
     },
     {
       "id": "js_dashboard_paintinbox",
@@ -12075,7 +12075,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2102",
+      "source_location": "L2132",
       "weight": 1.0
     },
     {
@@ -12087,7 +12087,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2015",
+      "source_location": "L2045",
       "weight": 1.0
     },
     {
@@ -12099,7 +12099,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2040",
+      "source_location": "L2070",
       "weight": 1.0
     },
     {
@@ -12123,7 +12123,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1892",
+      "source_location": "L1923",
       "weight": 1.0
     },
     {
@@ -18087,7 +18087,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L209",
+      "source_location": "L218",
       "weight": 1.0
     },
     {
@@ -18099,7 +18099,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L500",
+      "source_location": "L510",
       "weight": 1.0
     },
     {
@@ -18111,7 +18111,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L508",
+      "source_location": "L518",
       "weight": 1.0
     },
     {
@@ -18159,7 +18159,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L406",
+      "source_location": "L416",
       "weight": 1.0
     },
     {
@@ -18171,7 +18171,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L407",
+      "source_location": "L417",
       "weight": 1.0
     },
     {
@@ -18183,7 +18183,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L424",
+      "source_location": "L434",
       "weight": 1.0
     },
     {
@@ -18195,7 +18195,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L426",
+      "source_location": "L436",
       "weight": 1.0
     },
     {
@@ -18207,7 +18207,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L434",
+      "source_location": "L444",
       "weight": 1.0
     },
     {
@@ -18219,7 +18219,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L443",
+      "source_location": "L453",
       "weight": 1.0
     },
     {
@@ -18231,7 +18231,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L459",
+      "source_location": "L469",
       "weight": 1.0
     },
     {
@@ -18243,7 +18243,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L465",
+      "source_location": "L475",
       "weight": 1.0
     },
     {
@@ -18255,7 +18255,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L371",
+      "source_location": "L381",
       "weight": 1.0
     },
     {
@@ -18267,7 +18267,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L391",
+      "source_location": "L401",
       "weight": 1.0
     },
     {
@@ -18279,7 +18279,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L392",
+      "source_location": "L402",
       "weight": 1.0
     },
     {
@@ -18327,7 +18327,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L340",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -18339,7 +18339,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L341",
+      "source_location": "L351",
       "weight": 1.0
     },
     {
@@ -18351,7 +18351,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L351",
+      "source_location": "L361",
       "weight": 1.0
     },
     {
@@ -18363,7 +18363,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L353",
+      "source_location": "L363",
       "weight": 1.0
     },
     {
@@ -18375,7 +18375,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L515",
+      "source_location": "L525",
       "weight": 1.0
     },
     {
@@ -18399,7 +18399,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L250",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -18411,7 +18411,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L251",
+      "source_location": "L261",
       "weight": 1.0
     },
     {
@@ -18423,7 +18423,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L269",
+      "source_location": "L279",
       "weight": 1.0
     },
     {
@@ -18435,7 +18435,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L310",
+      "source_location": "L320",
       "weight": 1.0
     },
     {
@@ -26217,7 +26217,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L2009",
+      "source_location": "L2039",
       "weight": 1.0
     },
     {
@@ -26228,7 +26228,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L2098",
+      "source_location": "L2128",
       "weight": 1.0
     },
     {
@@ -31310,18 +31310,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L249",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_greeninvoice",
-      "target": "worker_src_greeninvoice_previewinvoice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L339",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -31333,6 +31322,17 @@
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
       "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_greeninvoice",
+      "target": "worker_src_greeninvoice_previewinvoice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/greeninvoice.js",
+      "source_location": "L349",
       "weight": 1.0
     },
     {
@@ -31354,7 +31354,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L370",
+      "source_location": "L380",
       "weight": 1.0
     },
     {
@@ -31365,7 +31365,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L405",
+      "source_location": "L415",
       "weight": 1.0
     },
     {
@@ -31409,7 +31409,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L499",
+      "source_location": "L509",
       "weight": 1.0
     },
     {
@@ -31420,7 +31420,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/greeninvoice.js",
-      "source_location": "L514",
+      "source_location": "L524",
       "weight": 1.0
     },
     {
@@ -36712,5 +36712,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "77d454bb51ef4f4159387f67275f064fd3d28470"
+  "built_at_commit": "d0c1071dafb0fd5e7e1791846e009d69ee490343"
 }

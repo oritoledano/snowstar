@@ -6981,7 +6981,7 @@
       "file_type": "code",
       "norm_label": "paintcollections()",
       "source_file": "js/dashboard.js",
-      "source_location": "L2098"
+      "source_location": "L2093"
     },
     {
       "id": "js_dashboard_paintcoupons",
@@ -6993,7 +6993,7 @@
       "file_type": "code",
       "norm_label": "paintcoupons()",
       "source_file": "js/dashboard.js",
-      "source_location": "L2009"
+      "source_location": "L2004"
     },
     {
       "id": "js_dashboard_paintinbox",
@@ -12075,7 +12075,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2102",
+      "source_location": "L2097",
       "weight": 1.0
     },
     {
@@ -12087,7 +12087,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2015",
+      "source_location": "L2010",
       "weight": 1.0
     },
     {
@@ -12099,7 +12099,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L2040",
+      "source_location": "L2035",
       "weight": 1.0
     },
     {
@@ -12123,7 +12123,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/dashboard.js",
-      "source_location": "L1892",
+      "source_location": "L1923",
       "weight": 1.0
     },
     {
@@ -26217,7 +26217,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L2009",
+      "source_location": "L2004",
       "weight": 1.0
     },
     {
@@ -26228,7 +26228,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/dashboard.js",
-      "source_location": "L2098",
+      "source_location": "L2093",
       "weight": 1.0
     },
     {
@@ -36712,5 +36712,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "77d454bb51ef4f4159387f67275f064fd3d28470"
+  "built_at_commit": "d0c1071dafb0fd5e7e1791846e009d69ee490343"
 }

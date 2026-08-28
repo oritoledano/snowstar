@@ -194,7 +194,7 @@
      single action. The amount is right-aligned against the button because that
      is the pair being checked before pressing it. */
   .inv-list{display:flex;flex-direction:column;gap:6px;margin-top:12px}
-  .inv-row{display:grid;grid-template-columns:1fr auto auto;gap:14px;align-items:center;
+  .inv-row{display:grid;grid-template-columns:1fr auto auto auto;gap:14px;align-items:center;
     background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 16px}
   .inv-row.bad{border-color:var(--bad,#c2564a)}
   .inv-main{min-width:0}
@@ -208,13 +208,16 @@
   .inv-mail{display:flex;align-items:center;gap:8px;margin:14px 0 2px;font-size:.86rem;
     color:var(--text);cursor:pointer;flex-wrap:wrap}
   .inv-mail input{accent-color:var(--amber,#8fd8ff);width:16px;height:16px}
-  .inv-row>[data-preview]{white-space:nowrap}
-  @media(max-width:640px){.inv-row{grid-template-columns:1fr auto auto}}
+  .inv-row>button{white-space:nowrap}
+  /* Locks sit on their own line and wrap: two Hebrew business names plus a
+     re-check will not fit beside each other on a laptop. */
+  .inv-locks{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
   .db-warn code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;
     background:rgba(128,128,128,.14);border-radius:5px;padding:1px 6px;color:var(--text)}
+  .db-warn.good{border-left-color:#34d399}
+  .db-warn.warn{border-left-color:#eab308}
   @media(max-width:640px){
     .inv-row{grid-template-columns:1fr auto}
-    .inv-row>button,.inv-row>a{grid-column:2}
     .inv-money{grid-column:1;text-align:left}
   }
 
@@ -492,6 +495,6 @@
 
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=19"></script>
-<script src="js/dashboard.js?v=36"></script>
+<script src="js/dashboard.js?v=37"></script>
 </body>
 </html>

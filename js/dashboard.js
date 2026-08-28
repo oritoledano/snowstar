@@ -1878,7 +1878,13 @@
      deleted once issued — only cancelled with a credit note — so the one-click
      gate is deliberate, not a stepping stone to automatic. */
   async function paintInvoices() {
-    const d = await get('/invoices');
+    // The connection check runs on open rather than on a button. Which business
+    // your invoices come from is the first thing you need to know here, so it
+    // should not be something you have to think to ask for.
+    const [d, who] = await Promise.all([
+      get('/invoices'),
+      get('/invoices/whoami').catch((e) => ({ ok: false, detail: String(e) })),
+    ]);
     const ils = (n) => '₪' + (n / 100).toFixed(2);
     const when = (t) => (t ? new Date(t * 1000).toLocaleDateString() : '—');
 
@@ -1889,10 +1895,34 @@
       morning → Settings → API. Regenerate the key first if it has ever been on screen.
       Until then this page lists what is waiting but cannot send it.</div>`;
 
+    /* The business bar, always on screen. Locking is the safety catch that stops
+       a document going into the wrong company's books, so it lives here in the
+       open rather than behind a button somebody has to know to press. */
+    const b = who.business;
+    const list = who.businesses || (b ? [b] : []);
+    const bar = !who.ok
+      ? `<div class="db-warn"><b>Not connected.</b> ${esc(who.detail || who.error || '')}</div>`
+      : `<div class="db-warn${who.drifted || !who.pinned ? ' warn' : ' good'}">
+          ${who.drifted
+            ? '<b>The business changed since you locked it. Issuing is blocked.</b><br>'
+            : who.pinned ? '' : '<b>Nothing is locked yet — issuing is blocked until you pick one.</b><br>'}
+          Issuing from <b><bdi>${esc((b && (b.name || b.nameEn)) || '—')}</bdi></b>${
+            b && b.taxId ? ` · ${esc(b.taxId)}` : ''}.
+          ${list.length > 1 ? `This login owns ${list.length} businesses and morning always uses whichever
+            is default — a setting that can be changed on their website. Lock one so a change stops
+            issuing instead of quietly switching your books.` : ''}
+          <div class="inv-locks">${list.map((x) => `
+            <button class="rv-btn${x.id === who.pinned ? ' rv-ok' : ''}" data-pin="${esc(x.id)}"
+              data-pinname="${esc(x.name || x.id)}">${x.id === who.pinned ? '✓ Locked — ' : 'Lock to '}<bdi>${
+              esc(x.nameEn || x.name || x.id)}</bdi></button>`).join('')}
+            <button class="rv-btn" id="inv-who">Re-check</button></div>
+          <details style="margin-top:8px"><summary style="cursor:pointer">Raw reply</summary>
+            <pre style="white-space:pre-wrap;font-size:.72rem;margin-top:8px">${
+              esc(JSON.stringify(who.raw || who.tried, null, 1))}</pre></details></div>`;
+
     paint(`<div class="db-panel">
-      <h2>Invoices <span class="pill">${d.pending.length} to issue</span>
-        <button class="rv-btn" id="inv-who" style="float:right">Which business?</button></h2>
-      <div id="inv-whoout"></div>
+      <h2>Invoices <span class="pill">${d.pending.length} to issue</span></h2>
+      ${bar}
       <p class="db-empty" style="padding-top:0">Paid licences that have no tax document yet.
         Check the name and the amount, then issue — it goes straight to your morning account as a
         חשבונית מס/קבלה and the customer gets the PDF link.</p>
@@ -1932,50 +1962,15 @@
           </div>`).join('')}</div>` : ''}
     </div>`);
 
-    /* Two businesses live under one morning login, so "which one will this bill
-       from" is not answerable from the key alone. This asks Green Invoice, using
-       GETs only — it cannot create or issue anything, so it is safe to press. */
-    const who = app.querySelector('#inv-who');
-    const whoOut = app.querySelector('#inv-whoout');
-    if (who) who.onclick = async () => {
-      who.disabled = true; who.textContent = 'Checking…';
-      const r = await get('/invoices/whoami').catch((e) => ({ error: String(e) }));
-      who.disabled = false; who.textContent = 'Which business?';
-      if (!r.ok) {
-        whoOut.innerHTML = `<div class="db-warn"><b>Not connected.</b> ${esc(r.detail || r.error || '')}
-          <details style="margin-top:8px"><summary style="cursor:pointer">What morning replied</summary>
-            <pre style="white-space:pre-wrap;font-size:.72rem;margin-top:8px">${
-              esc(JSON.stringify(r.tried || r, null, 1))}</pre></details></div>`;
-        return;
-      }
-      const b = r.business;
-      const many = (r.businesses || []).length > 1;
-      whoOut.innerHTML = `<div class="db-warn">
-        ${r.drifted ? '<b style="color:var(--bad,#e0645a)">The business changed since you locked it.</b> '
-          + 'Issuing is blocked until you look at this.<br>' : ''}
-        <b>Connected${r.via === 'oauth' ? ' (OAuth)' : ''}.</b>
-        ${b ? `Documents will be written to <b>${esc(b.name || b.nameEn || b.id)}</b>${
-          b.taxId ? ` · ${esc(b.taxId)}` : ''}${
-          b.documentCount != null ? ` · ${b.documentCount} documents so far` : ''}.`
-           : 'Credentials work but the business could not be read — see below.'}
-        ${many ? `<br><b>This login owns ${r.businesses.length} businesses.</b> morning gives no way to
-          choose one per document — it always uses the default, and that default can be changed from
-          the morning website. Lock the right one in so a change stops issuing instead of silently
-          switching your books:` : ''}
-        ${b ? `<div style="margin-top:10px">${(r.businesses || [b]).map((x) => `
-            <button class="rv-btn${x.id === r.pinned ? ' rv-ok' : ''}" data-pin="${esc(x.id)}"
-              data-pinname="${esc(x.name || x.id)}">${x.id === r.pinned ? '✓ locked: ' : 'Lock to '}${
-              esc(x.name || x.nameEn || x.id)}${x.taxId ? ' · ' + esc(x.taxId) : ''}</button>`).join(' ')}
-          </div>` : ''}
-        <details style="margin-top:10px"><summary style="cursor:pointer">Raw reply</summary>
-          <pre style="white-space:pre-wrap;font-size:.72rem;margin-top:8px">${
-            esc(JSON.stringify(r.raw, null, 1))}</pre></details></div>`;
+    /* Locking, and re-checking. Both just reload the panel, which re-reads the
+       business — one render path, so the bar can never disagree with itself. */
+    app.querySelectorAll('[data-pin]').forEach((pb) => pb.onclick = async () => {
+      await post('/invoices/pin', { business_id: pb.dataset.pin, name: pb.dataset.pinname });
+      load();
+    });
+    const recheck = app.querySelector('#inv-who');
+    if (recheck) recheck.onclick = () => { recheck.textContent = 'Checking…'; load(); };
 
-      whoOut.querySelectorAll('[data-pin]').forEach((pb) => pb.onclick = async () => {
-        await post('/invoices/pin', { business_id: pb.dataset.pin, name: pb.dataset.pinname });
-        who.click();
-      });
-    };
 
     /* Preview renders the exact document morning would produce, without creating
        one. It is the closest thing to a draft the API has — there is no draft for
