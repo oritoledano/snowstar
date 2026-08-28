@@ -57,22 +57,25 @@
   }
 
   async function load() {
+    /* `return await`, not `return`. Returning the promise from inside the try
+       hands the rejection to nobody — a signed-out visitor got an uncaught
+       "forbidden" in the console instead of the sign-in gate below. */
     try {
-      if (tab === 'overview') return paintOverview();
-      if (tab === 'stats') return paintStats();
-      if (tab === 'members') return paintMembers();
-      if (tab === 'artists') return paintArtists();
-      if (tab === 'submissions') return paintSubmissions();
-      if (tab === 'notifications') return paintMail();
-      if (tab === 'licensing') return paintLicensing();
-      if (tab === 'inbox') return paintInbox();
-      if (tab === 'jobs') return paintJobs();
-      if (tab === 'pricing') return paintPricing();
-      if (tab === 'alerts') return paintAlerts();
-      if (tab === 'storage') return paintStorage();
-      if (tab === 'upload') return paintUpload();
-      if (tab === 'clearlist') return paintClearlistAdmin();
-      if (tab === 'pipeline') return paintPipeline();
+      if (tab === 'overview') return await paintOverview();
+      if (tab === 'stats') return await paintStats();
+      if (tab === 'members') return await paintMembers();
+      if (tab === 'artists') return await paintArtists();
+      if (tab === 'submissions') return await paintSubmissions();
+      if (tab === 'notifications') return await paintMail();
+      if (tab === 'licensing') return await paintLicensing();
+      if (tab === 'inbox') return await paintInbox();
+      if (tab === 'jobs') return await paintJobs();
+      if (tab === 'pricing') return await paintPricing();
+      if (tab === 'alerts') return await paintAlerts();
+      if (tab === 'storage') return await paintStorage();
+      if (tab === 'upload') return await paintUpload();
+      if (tab === 'clearlist') return await paintClearlistAdmin();
+      if (tab === 'pipeline') return await paintPipeline();
     } catch (e) {
       if (e.message === 'forbidden') gate();
       else paint(`<p class="db-empty">Couldn’t load that right now — try a refresh.</p>`);
