@@ -1199,7 +1199,6 @@
               data-name="${c.name}">
               <span class="cc-art">${c.art ? `<img src="${c.art}" alt="" loading="lazy">` : ''}</span>
               <b>${c.name}</b><i>${c.blurb || ''}</i>
-              <span class="cc-n">${(c.tracks || []).length}</span>
             </button>`).join('')}</div>` +
           (curateMode ? shelfAdminHtml(openCat) : '') +
           `<button class="fdrop-close" type="button">Close</button>`;
@@ -2811,9 +2810,13 @@
       });
   })();
 
-  const heroSignup = $('#heroSignup');
-  if (heroSignup) heroSignup.addEventListener('click', () => {
-    if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup');
+  /* "I have a brief" opens the Describe-it panel rather than a signup form.
+     Somebody who arrives with a brief wants to hand it over, not make an
+     account first — and the panel is the thing that can actually read it. */
+  const heroBrief = $('#heroBrief');
+  if (heroBrief) heroBrief.addEventListener('click', () => {
+    document.querySelector('#browse')?.scrollIntoView({ behavior: 'smooth' });
+    if (window.mutraAgent) mutraAgent.open();
   });
 
   addEventListener('resize', () => requestAnimationFrame(measureTitles), { passive: true });

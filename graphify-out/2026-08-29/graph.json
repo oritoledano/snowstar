@@ -285,7 +285,7 @@
       "file_type": "code",
       "norm_label": "cycle()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1132"
+      "source_location": "L1133"
     },
     {
       "id": "js_mutra_page_drawdrop",
@@ -297,7 +297,7 @@
       "file_type": "code",
       "norm_label": "drawdrop()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1138"
+      "source_location": "L1139"
     },
     {
       "id": "js_mutra_page_drawpills",
@@ -501,7 +501,7 @@
       "file_type": "code",
       "norm_label": "maybeinsertspotlight()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1048"
+      "source_location": "L1050"
     },
     {
       "id": "js_mutra_page_measuretitles",
@@ -14259,7 +14259,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1182",
+      "source_location": "L1183",
       "weight": 1.0
     },
     {
@@ -14271,7 +14271,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1182",
+      "source_location": "L1183",
       "weight": 1.0
     },
     {
@@ -14283,7 +14283,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1185",
+      "source_location": "L1186",
       "weight": 1.0
     },
     {
@@ -14667,7 +14667,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L1055",
+      "source_location": "L1057",
       "weight": 1.0
     },
     {
@@ -28183,7 +28183,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1048",
+      "source_location": "L1050",
       "weight": 1.0
     },
     {
@@ -28194,7 +28194,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1132",
+      "source_location": "L1133",
       "weight": 1.0
     },
     {
@@ -28205,7 +28205,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L1138",
+      "source_location": "L1139",
       "weight": 1.0
     },
     {
@@ -37126,5 +37126,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "b5f72e99c3fe79ce1c688a0c104f0b0b9f4bba9a"
+  "built_at_commit": "3e86b1a6ab55025479bfa40ea7abf4e01a4ee665"
 }

@@ -649,39 +649,44 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .te-cover .te-flabel{width:100%;margin-bottom:0}
 
 /* ── character cards ────────────────────────────────────────────────────────
-   The whole card is the button. A portrait invites a click, so the click target
-   is the portrait — not a label under it. Scrolls sideways rather than wrapping
-   to a second row, which would push the catalogue below the fold. */
-.charrow{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:thin}
-.charcard{flex:0 0 132px;background:none;border:1px solid var(--line);border-radius:14px;
-  padding:8px 8px 10px;cursor:pointer;color:var(--text);font:inherit;text-align:center;
-  transition:border-color .18s, transform .18s;position:relative}
-.charcard:hover{border-color:var(--amber,#8fd8ff);transform:translateY(-2px)}
-/* A small gesture on click. Not a generated video — the source crops are 140px
+   One frame around the whole row, none around each card — eight boxes inside a
+   box is a lot of borders for eight pictures. The cards divide the row evenly
+   (`flex:1`) and the artwork keeps its own aspect ratio, so the strip grows and
+   shrinks in height with the width instead of cropping the characters' heads
+   off, which is what a fixed-height box with object-fit:cover was doing. */
+.charrow{display:flex;gap:10px;align-items:flex-end;
+  border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:4px}
+.charcard{flex:1 1 0;min-width:0;background:none;border:0;padding:0;cursor:pointer;
+  color:var(--text);font:inherit;text-align:center;transition:transform .18s}
+.charcard:hover{transform:translateY(-3px)}
+/* A small gesture on click. Not a generated video — the source crops are ~110px
    from a screenshot, so a video model would invent a different face each time
-   and the set would stop looking like one set. A tilt-and-settle costs nothing,
-   never breaks consistency, and reads as the character reacting to you. */
-.charcard:active .cc-art img{animation:cc-nod .45s ease}
-.charcard.on .cc-art img{animation:cc-nod .45s ease}
+   and the set would stop looking like one set. */
+.charcard:active .cc-art img,.charcard.on .cc-art img{animation:cc-nod .45s ease}
 @keyframes cc-nod{
   0%{transform:scale(1) rotate(0)}
-  35%{transform:scale(1.06) rotate(-1.6deg)}
-  70%{transform:scale(1.03) rotate(1deg)}
+  35%{transform:scale(1.05) rotate(-1.5deg)}
+  70%{transform:scale(1.02) rotate(.9deg)}
   100%{transform:scale(1) rotate(0)}
 }
 @media (prefers-reduced-motion:reduce){
   .charcard:active .cc-art img,.charcard.on .cc-art img{animation:none}
 }
-.charcard.on{border-color:var(--amber,#8fd8ff);box-shadow:0 0 0 1px var(--amber,#8fd8ff) inset}
-.cc-art{display:block;aspect-ratio:39/41;border-radius:10px;overflow:hidden;
-  background:var(--panel-2,rgba(128,128,128,.08));margin-bottom:7px}
-.cc-art img{width:100%;height:100%;object-fit:cover;display:block}
-.charcard b{display:block;font-family:var(--font-display);font-size:.74rem;letter-spacing:.07em;
-  text-transform:uppercase;line-height:1.25}
-.charcard i{display:block;font-style:normal;font-size:.68rem;color:var(--muted);margin-top:2px}
-.cc-n{position:absolute;top:12px;right:12px;font-size:.62rem;padding:1px 6px;border-radius:99px;
-  background:rgba(0,0,0,.6);color:#fff;font-variant-numeric:tabular-nums}
-@media(max-width:560px){.charcard{flex-basis:112px}}
+.cc-art{display:block;border-radius:10px;overflow:hidden;margin-bottom:8px;
+  outline:1px solid transparent;transition:outline-color .18s}
+/* Height follows width, so nothing is ever cropped — the image sets the ratio. */
+.cc-art img{width:100%;height:auto;display:block}
+.charcard:hover .cc-art,.charcard.on .cc-art{outline-color:var(--amber,#8fd8ff)}
+.charcard b{display:block;font-family:var(--font-display);font-size:.76rem;letter-spacing:.06em;
+  text-transform:uppercase;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.charcard i{display:block;font-style:normal;font-size:.68rem;color:var(--muted);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.charcard.on b{color:var(--amber,#8fd8ff)}
+@media(max-width:720px){
+  /* Below this the cards get too narrow to read, so the row scrolls instead. */
+  .charrow{overflow-x:auto}
+  .charcard{flex:0 0 108px}
+}
 
 /* ── shelf admin: the Packs / Characters dropdown in edit mode ──────────────
    Two levels of switch. The shelf switch answers "is this whole idea ready to
