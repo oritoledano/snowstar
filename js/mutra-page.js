@@ -1029,12 +1029,18 @@
     const narrowed = !!q
       || ['genres', 'moods', 'characteristics', 'instruments', 'scales']
            .some((k) => state[k] && (state[k].inc.size || state[k].exc.size))
-      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
-      // Custom licence is a filter now, not an ordering, so it narrows too.
-      || state.sort === 'custom';
+      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly;
+    /* Packs and Characters are deliberately NOT in that list. A shelf is a way of
+       browsing, not a search — somebody who picked a character asked for a mood,
+       not for one specific track — so the row belongs inside one.
+       The Custom licence VIEW used to count as narrowing too, which meant the one
+       control on this page named "Custom license" hid the Custom License row: the
+       exact thing the visitor had just asked to see. */
     if (narrowed) return -1;
 
-    if (total < 8) return total;                       // after the last row
+    // Short list: sit after the second row rather than after the last one, where
+    // it reads as a footer instead of as part of the results.
+    if (total < 8) return Math.min(2, total);
     if (total < 24) return Math.max(3, Math.round(total / 3));
     return window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10;
   }
@@ -1050,7 +1056,6 @@
     const spot = window.mutraSpotlightMeta;
     const at = spotlightIndex(spot && spot.artist);
     if (at < 0) return;                    // narrowed list — stay out of the way
-    if (at < 0) return;
     const block = window.mutraSpotlightRow();
     if (!block) return;
 
