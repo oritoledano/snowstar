@@ -107,7 +107,7 @@
       }
       paintCredits(credits.credits || []);
       paintClaim(claim);
-      paintProfile();
+      paintProfile(!!d.artist);
     } catch { /* leave as-is */ }
   }
   M.onChange(render);
@@ -716,9 +716,12 @@
      only when the pid is your own. One implementation of the field rules means
      self-service and admin cannot drift apart. */
   let profile = null;
-  async function paintProfile() {
+  async function paintProfile(isArtist) {
     const card = $('#arProfile');
-    if (!M.user || !M.user.artist) { card.hidden = true; return; }
+    /* `artist` is not on the session object — /api/me never returns it. It comes
+       back from /artist/uploads, so the caller passes it in; reading
+       M.user.artist here left the card permanently hidden. */
+    if (!M.user || !isArtist) { card.hidden = true; return; }
     try { profile = await get('/artist/profile'); } catch { card.hidden = true; return; }
     card.hidden = false;
     $('#apName').value = profile.name || '';
