@@ -46,7 +46,7 @@ import { sharePage } from './share.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim,
-         myProfile } from './artistprofile.js';
+         myProfile, publicArtist } from './artistprofile.js';
 import { listCoupons, saveCoupon, checkCoupon } from './coupons.js';
 import { listInvoices, issueInvoice, retryInvoice, whoami, previewInvoice, pinBusiness, skipInvoice } from './greeninvoice.js';
 import { listCollections, saveCollection, setCollectionTracks, uploadCollectionArt } from './collections.js';
@@ -223,6 +223,7 @@ async function handle(req, env, ctx) {
   if (path === '/invoices/skip' && method === 'POST') return skipInvoice(req, env, await currentUser(req, env));
   if (path === '/invoices/retry' && method === 'POST') return retryInvoice(req, env, await currentUser(req, env));
   // artist profiles — one language for account artists and managed ones alike
+  if (path === '/artist/public' && method === 'GET') return publicArtist(env, url);
   if (path === '/artist/profile' && method === 'GET') return myProfile(env, await currentUser(req, env));
   if (path === '/artist/submissions/update' && method === 'POST') return updateSubmission(req, env, await currentUser(req, env));
   if (path === '/artists/profiles' && method === 'GET') return listProfiles(env, await currentUser(req, env));

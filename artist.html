@@ -12,7 +12,7 @@
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/mutra.css?v=96">
+<link rel="stylesheet" href="css/mutra.css?v=102">
 <link rel="stylesheet" href="css/artist.css?v=1">
 </head>
 <body>
@@ -50,10 +50,16 @@
 <script src="js/mutra-spotlight-data.js?v=8"></script>
 <script src="js/mutra-artist-data.js?v=1"></script>
 <script src="js/mutra-artist.js?v=1"></script>
+<!-- the catalogue, so a page can list the tracks credited to its artist -->
+<script src="js/mutra-data.js?v=21"></script>
+<script src="js/mutra-artist-page.js?v=1"></script>
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
   (function () {
     const params = new URLSearchParams(location.search);
+    // ?name= is the general artist page and is handled by mutra-artist-page.js.
+    // Only fall back to the spotlight when no name was asked for.
+    if (params.get('name')) return;
     const id = params.get('a') || (MUTRA_SPOTLIGHTS[0] && MUTRA_SPOTLIGHTS[0].id);
     const spot = MUTRA_SPOTLIGHTS.find(s => s.id === id);
     const mount = document.getElementById('apMount');

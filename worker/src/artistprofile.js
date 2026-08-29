@@ -378,3 +378,45 @@ export async function myProfile(env, user) {
     videos: parse(r.artist_videos),
   });
 }
+
+/**
+ * GET /artist/public?name=KAYMA — the public face of an artist.
+ *
+ * Public on purpose: this is what a visitor sees next to a track. It returns
+ * only what an artist chose to publish — name, bio, photo, links — and never
+ * the email, the account id, or anything about their submissions.
+ *
+ * Matched on the credited NAME rather than an id because that is what the
+ * catalogue carries: a track record says "KAYMA", not a uuid. Real accounts win
+ * over managed ghost profiles when both exist, since a claimed account is the
+ * one the artist actually maintains.
+ */
+export async function publicArtist(env, url) {
+  const name = clean(url.searchParams.get('name'), 120);
+  if (name.length < 1) return json({ error: 'name_required' }, 400);
+  const parse = (v) => { try { return JSON.parse(v || '[]') || []; } catch { return []; } };
+
+  const u = await env.DB.prepare(
+    `SELECT id, artist_name, artist_bio, avatar, artist_links, artist_videos
+       FROM users WHERE artist = 1 AND lower(artist_name) = lower(?) LIMIT 1`
+  ).bind(name).first().catch(() => null);
+
+  const row = u || await env.DB.prepare(
+    `SELECT id, name AS artist_name, bio AS artist_bio, avatar, links AS artist_links,
+            videos AS artist_videos
+       FROM managed_artists WHERE lower(name) = lower(?) LIMIT 1`
+  ).bind(name).first().catch(() => null);
+
+  if (!row) return json({ found: false, name });
+  return json({
+    found: true,
+    // The pid is returned so the owner's editor can open this profile directly;
+    // it identifies a profile to edit, and grants nothing on its own.
+    pid: u ? `u:${row.id}` : `m:${row.id}`,
+    name: row.artist_name || name,
+    bio: row.artist_bio || '',
+    avatar: row.avatar || '',
+    links: parse(row.artist_links),
+    videos: parse(row.artist_videos),
+  });
+}
