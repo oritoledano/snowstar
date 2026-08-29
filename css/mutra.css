@@ -657,6 +657,21 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
   padding:8px 8px 10px;cursor:pointer;color:var(--text);font:inherit;text-align:center;
   transition:border-color .18s, transform .18s;position:relative}
 .charcard:hover{border-color:var(--amber,#8fd8ff);transform:translateY(-2px)}
+/* A small gesture on click. Not a generated video — the source crops are 140px
+   from a screenshot, so a video model would invent a different face each time
+   and the set would stop looking like one set. A tilt-and-settle costs nothing,
+   never breaks consistency, and reads as the character reacting to you. */
+.charcard:active .cc-art img{animation:cc-nod .45s ease}
+.charcard.on .cc-art img{animation:cc-nod .45s ease}
+@keyframes cc-nod{
+  0%{transform:scale(1) rotate(0)}
+  35%{transform:scale(1.06) rotate(-1.6deg)}
+  70%{transform:scale(1.03) rotate(1deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .charcard:active .cc-art img,.charcard.on .cc-art img{animation:none}
+}
 .charcard.on{border-color:var(--amber,#8fd8ff);box-shadow:0 0 0 1px var(--amber,#8fd8ff) inset}
 .cc-art{display:block;aspect-ratio:39/41;border-radius:10px;overflow:hidden;
   background:var(--panel-2,rgba(128,128,128,.08));margin-bottom:7px}
