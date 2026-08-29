@@ -659,19 +659,15 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .charcard{flex:1 1 0;min-width:0;background:none;border:0;padding:0;cursor:pointer;
   color:var(--text);font:inherit;text-align:center;transition:transform .18s}
 .charcard:hover{transform:translateY(-3px)}
-/* A small gesture on click. Not a generated video — the source crops are ~110px
-   from a screenshot, so a video model would invent a different face each time
-   and the set would stop looking like one set. */
-.charcard:active .cc-art img,.charcard.on .cc-art img{animation:cc-nod .45s ease}
-@keyframes cc-nod{
-  0%{transform:scale(1) rotate(0)}
-  35%{transform:scale(1.05) rotate(-1.5deg)}
-  70%{transform:scale(1.02) rotate(.9deg)}
-  100%{transform:scale(1) rotate(0)}
-}
-@media (prefers-reduced-motion:reduce){
-  .charcard:active .cc-art img,.charcard.on .cc-art img{animation:none}
-}
+/* No gesture on click. A tilt-and-settle on a photographic character reads as
+   the picture wobbling, not as the character reacting — the earlier version was
+   worse than nothing. What is left is a quiet acknowledgement: the card lifts a
+   little and its artwork brightens, which is enough to say "registered" without
+   pretending the still is animated. */
+.charcard:active{transform:translateY(-1px)}
+.cc-art img{transition:filter .25s, transform .25s}
+.charcard:hover .cc-art img{filter:brightness(1.08)}
+.charcard.on .cc-art img{filter:brightness(1.12) saturate(1.05)}
 .cc-art{display:block;border-radius:10px;overflow:hidden;margin-bottom:8px;
   outline:1px solid transparent;transition:outline-color .18s}
 /* Height follows width, so nothing is ever cropped — the image sets the ratio. */

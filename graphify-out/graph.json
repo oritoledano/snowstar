@@ -1737,7 +1737,7 @@
       "file_type": "code",
       "norm_label": "paintclaim()",
       "source_file": "js/artists-page.js",
-      "source_location": "L806"
+      "source_location": "L809"
     },
     {
       "id": "js_artists_page_paintcredits",
@@ -1749,7 +1749,7 @@
       "file_type": "code",
       "norm_label": "paintcredits()",
       "source_file": "js/artists-page.js",
-      "source_location": "L779"
+      "source_location": "L782"
     },
     {
       "id": "js_artists_page_paintlist",
@@ -1797,7 +1797,7 @@
       "file_type": "code",
       "norm_label": "platformof()",
       "source_file": "js/artists-page.js",
-      "source_location": "L767"
+      "source_location": "L770"
     },
     {
       "id": "js_artists_page_put",
@@ -11738,7 +11738,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/artists-page.js",
-      "source_location": "L795",
+      "source_location": "L798",
       "weight": 1.0
     },
     {
@@ -26591,7 +26591,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/artists-page.js",
-      "source_location": "L767",
+      "source_location": "L770",
       "weight": 1.0
     },
     {
@@ -26602,7 +26602,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/artists-page.js",
-      "source_location": "L779",
+      "source_location": "L782",
       "weight": 1.0
     },
     {
@@ -26613,7 +26613,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/artists-page.js",
-      "source_location": "L806",
+      "source_location": "L809",
       "weight": 1.0
     },
     {
@@ -37371,5 +37371,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "5b4f40bd7a10173461927298a752589964bccd9d"
+  "built_at_commit": "3a0d4633b10ef7586a3c4e650df8d164f320997e"
 }

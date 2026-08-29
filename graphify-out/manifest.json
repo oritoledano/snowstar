@@ -24,9 +24,9 @@
     "semantic_hash": "5afa6527e21754bc6f7508f1521baaf3"
   },
   "js/artists-page.js": {
-    "mtime": 1788023424.848608,
-    "seen": 1788023431.365543,
-    "ast_hash": "e1269671a562a282d1032e14d326e437",
+    "mtime": 1788023611.1393585,
+    "seen": 1788023618.508224,
+    "ast_hash": "0412cb1ab8ba5f5565126f92dd61bc2e",
     "semantic_hash": ""
   },
   "js/dashboard.js": {
@@ -294,9 +294,9 @@
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1788023528.4720268,
-    "seen": 1788023534.36975,
-    "ast_hash": "f96c1139f15e3d8863b85afa5cbaaf20",
+    "mtime": 1788023611.181581,
+    "seen": 1788023618.5083048,
+    "ast_hash": "20bc695d2c53a0f8e80f8850eb61666c",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
