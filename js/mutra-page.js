@@ -1182,6 +1182,36 @@
     } else {
       const def = FACETS[openCat], vals = def.values(), f = state[openCat];
       const shelf = SHELF[openCat];                 // packs / characters only
+
+      /* A character with a face is a card, not a word in a list. The whole card
+         is the target — picture, name and blurb — because a portrait invites a
+         click and hitting a 14px label instead is a small, avoidable annoyance. */
+      if (shelf && shelf.list.some((c) => c.art)) {
+        fdrop.innerHTML =
+          `<p class="fhint">Click a character to see their tracks</p>` +
+          `<div class="charrow">${shelf.list.map((c) => `
+            <button type="button" class="charcard${modeOf(f, c.name) === 'inc' ? ' on' : ''}"
+              data-name="${c.name}">
+              <span class="cc-art">${c.art ? `<img src="${c.art}" alt="" loading="lazy">` : ''}</span>
+              <b>${c.name}</b><i>${c.blurb || ''}</i>
+              <span class="cc-n">${(c.tracks || []).length}</span>
+            </button>`).join('')}</div>` +
+          (curateMode ? shelfAdminHtml(openCat) : '') +
+          `<button class="fdrop-close" type="button">Close</button>`;
+        fdrop.querySelectorAll('.charcard').forEach((card) => card.addEventListener('click', () => {
+          const name = card.dataset.name;
+          // One character at a time: these are moods to browse, not filters to stack.
+          const already = modeOf(f, name) === 'inc';
+          f.inc.clear(); f.exc.clear();
+          if (!already) f.inc.add(name);
+          drawDrop(); drawPills(); render();
+          if (!already) closeDrawer();          // get out of the way of the list
+        }));
+        if (curateMode) wireShelfAdmin(openCat);
+        fdrop.querySelector('.fdrop-close').addEventListener('click', closeDrawer);
+        return;
+      }
+
       fdrop.innerHTML =
         `<p class="fhint">Click to include · click again to exclude</p>` +
         `<div class="fchips wide">${vals.map(v => triChip(v, modeOf(f, v))).join('')}</div>` +
