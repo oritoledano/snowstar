@@ -89,7 +89,8 @@
   async function render() {
     const u = M.user;
     gate.hidden = !!u;
-    if (!u) { reg.hidden = true; dash.hidden = true; $('#arCredits').hidden = true; $('#arClaim').hidden = true; lastUser = null; return; }
+    if (!u) { reg.hidden = true; dash.hidden = true; $('#arCredits').hidden = true;
+              $('#arClaim').hidden = true; $('#arProfile').hidden = true; lastUser = null; return; }
     if (u === lastUser && !dash.hidden) return;
     lastUser = u;
     try {
@@ -106,6 +107,7 @@
       }
       paintCredits(credits.credits || []);
       paintClaim(claim);
+      paintProfile();
     } catch { /* leave as-is */ }
   }
   M.onChange(render);
@@ -627,12 +629,150 @@
       return;
     }
     ul.innerHTML = items.map((s) => `
-      <li style="flex-wrap:wrap">
+      <li style="flex-wrap:wrap" data-sub="${s.id}">
         <b>${esc(s.title)}</b>
         <span style="color:var(--muted);font-size:.8rem">${fmtSize(s.size)} · ${fmtDate(s.created_at)}</span>
         <span class="ar-badge ${s.status}">${STATUS_WORD[s.status] || s.status}</span>
+        ${s.lane === 'quote' ? '<span class="ar-badge">custom quote</span>' : ''}
         ${s.review_note ? `<span class="ar-rnote">“${esc(s.review_note)}”</span>` : ''}
+        <button type="button" class="ar-addrow sub-edit" style="margin:0 0 0 auto">Edit details</button>
+        <div class="sub-form" hidden></div>
       </li>`).join('');
+
+    /* Editing after the fact. The declaration is signed and stays signed — this
+       only touches what the track IS, never who owns it or what was approved. */
+    ul.querySelectorAll('.sub-edit').forEach((b) => b.addEventListener('click', () => {
+      const li = b.closest('li'), box = li.querySelector('.sub-form');
+      const s = items.find((x) => x.id === Number(li.dataset.sub));
+      if (!box.hidden) { box.hidden = true; b.textContent = 'Edit details'; return; }
+      let m = {};
+      try { m = JSON.parse(s.meta || '{}') || {}; } catch {}
+      b.textContent = 'Close';
+      box.hidden = false;
+      box.innerHTML = `
+        <label class="ar-field"><span>Title</span>
+          <input class="se-title" maxlength="120" value="${esc(s.title)}"></label>
+        <div class="sub-grid">
+          <label class="ar-field"><span>BPM</span>
+            <input class="se-bpm" type="number" min="1" max="399" value="${m.bpm || ''}"></label>
+          <label class="ar-field"><span>Key</span>
+            <input class="se-key" maxlength="3" value="${esc(m.key || '')}"></label>
+          <label class="ar-field"><span>Scale</span>
+            <input class="se-scale" maxlength="8" value="${esc(m.scale || '')}"></label>
+          <label class="ar-field"><span>Voice</span>
+            <input class="se-vocal" maxlength="14" value="${esc(m.vocal || '')}"></label>
+        </div>
+        <label class="ar-field"><span>Tags</span>
+          <input class="se-tags" list="dl-uptags" value="${esc((m.tags || []).join(', '))}"></label>
+        <label class="ar-field"><span>Lyrics</span>
+          <textarea class="se-lyrics" rows="3">${esc(m.lyrics || '')}</textarea></label>
+        <label class="ar-field"><span>Streaming links</span>
+          <textarea class="se-links" rows="2">${(m.links || []).map((l) => l.url).join('\n')}</textarea></label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button type="button" class="mbtn mbtn-solid se-save">Save</button>
+          <button type="button" class="ar-addrow se-anal">Analyze the audio</button>
+          <span class="ar-status se-msg" style="margin:0"></span>
+        </div>`;
+
+      const msg = box.querySelector('.se-msg');
+      box.querySelector('.se-anal').onclick = async (e) => {
+        if (!window.mutraReanalyse) { msg.textContent = 'Analyser not loaded.'; return; }
+        e.target.disabled = true;
+        try {
+          const r = await mutraReanalyse.analyseSubmission(s.id, (st) => { msg.textContent = st; });
+          if (r.bpm) box.querySelector('.se-bpm').value = r.bpm;
+          if (r.key) box.querySelector('.se-key').value = r.key;
+          if (r.scale) box.querySelector('.se-scale').value = r.scale;
+          if (r.vocal) box.querySelector('.se-vocal').value = r.vocal;
+          msg.textContent = mutraReanalyse.describe(r) + ' — check it, then Save.';
+        } catch (err) { msg.textContent = 'Could not analyse: ' + (err.message || err); }
+        e.target.disabled = false;
+      };
+
+      box.querySelector('.se-save').onclick = async (e) => {
+        e.target.disabled = true;
+        const v = (sel) => box.querySelector(sel).value.trim();
+        const meta = {
+          bpm: Number(v('.se-bpm')) || null,
+          key: v('.se-key') || null,
+          scale: v('.se-scale') || null,
+          vocal: v('.se-vocal') || null,
+          lyrics: v('.se-lyrics'),
+          tags: v('.se-tags').split(',').map(canonTag).filter(Boolean).slice(0, 12),
+          links: window.mutraAnalyse ? mutraAnalyse.findLinks(v('.se-links')) : [],
+        };
+        try {
+          await api('/artist/submissions/update', { id: s.id, title: v('.se-title'), meta });
+          msg.textContent = 'Saved.';
+          const d = await get('/artist/uploads');
+          paintList(d.uploads || []);
+        } catch (err) { msg.textContent = 'Could not save — try again.'; e.target.disabled = false; }
+      };
+    }));
+  }
+
+  /* ── the artist's own public profile ──────────────────────────────────────
+     Posts to the same /artists/profiles the owner uses; the server allows it
+     only when the pid is your own. One implementation of the field rules means
+     self-service and admin cannot drift apart. */
+  let profile = null;
+  async function paintProfile() {
+    const card = $('#arProfile');
+    if (!M.user || !M.user.artist) { card.hidden = true; return; }
+    try { profile = await get('/artist/profile'); } catch { card.hidden = true; return; }
+    card.hidden = false;
+    $('#apName').value = profile.name || '';
+    $('#apBio').value = profile.bio || '';
+    $('#apLinks').value = (profile.links || []).map((l) => l.url).join('\n');
+    const img = $('#apPhoto'), hint = $('#apPhotoHint');
+    if (profile.avatar) { img.src = profile.avatar; img.hidden = false; hint.hidden = true; }
+    else { img.hidden = true; hint.hidden = false; }
+  }
+
+  $('#apPhotoWrap').addEventListener('click', () => $('#apPhotoFile').click());
+  $('#apPhotoFile').addEventListener('change', async (e) => {
+    const f = e.target.files[0];
+    if (!f || !profile) return;
+    const msg = $('#apMsg');
+    msg.textContent = 'Uploading…';
+    try {
+      const r = await fetch('/api/artists/photo?pid=' + encodeURIComponent(profile.pid), {
+        method: 'PUT', credentials: 'same-origin',
+        headers: { 'content-type': f.type }, body: f,
+      }).then((x) => x.json());
+      if (!r.url) throw new Error(r.error || 'failed');
+      $('#apPhoto').src = r.url; $('#apPhoto').hidden = false; $('#apPhotoHint').hidden = true;
+      msg.textContent = 'Photo saved.';
+    } catch { msg.textContent = 'Could not upload that image.'; }
+    e.target.value = '';
+  });
+
+  $('#apSave').addEventListener('click', async () => {
+    if (!profile) return;
+    const msg = $('#apMsg');
+    msg.textContent = 'Saving…';
+    const links = $('#apLinks').value.split('\n').map((l) => l.trim()).filter(Boolean)
+      .map((url) => ({ platform: platformOf(url), url })).slice(0, 12);
+    try {
+      await api('/artists/profiles', {
+        pid: profile.pid, name: $('#apName').value.trim(),
+        bio: $('#apBio').value.trim(), links,
+      });
+      msg.textContent = 'Saved.';
+      await paintProfile();
+    } catch { msg.textContent = 'Could not save — check the name is at least 2 characters.'; }
+  });
+
+  /** Name a link by its host, so the profile does not ask people to label them. */
+  function platformOf(url) {
+    const h = (url.match(/^https?:\/\/([^/]+)/i) || [,''])[1].toLowerCase();
+    if (h.includes('spotify')) return 'Spotify';
+    if (h.includes('apple')) return 'Apple Music';
+    if (h.includes('youtu')) return 'YouTube';
+    if (h.includes('soundcloud')) return 'SoundCloud';
+    if (h.includes('bandcamp')) return 'Bandcamp';
+    if (h.includes('instagram')) return 'Instagram';
+    return h.replace(/^www\./, '') || 'Link';
   }
 
   // ── credits (any signed-in user, artist or not) ──

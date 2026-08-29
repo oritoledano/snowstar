@@ -1078,7 +1078,9 @@
             ${subTab !== 'rejected' ? '<button class="rv-btn rv-no" data-a="rejected">Reject</button>' : ''}
             ${subTab !== 'pending' ? '<button class="rv-btn" data-a="pending">Back to pending</button>' : ''}
             <button class="rv-btn rv-edit" type="button">Edit details</button>
+            <button class="rv-btn rv-anal" type="button" data-id="${s.id}">Analyze</button>
           </div>
+          <div class="rv-anal-out" hidden></div>
           <div class="rv-review" hidden></div>
           <div class="rv-editor" hidden></div>
           </div></div>`).join('')
@@ -1108,6 +1110,50 @@
       b.addEventListener('click', () => { subTab = b.dataset.st; load(); }));
     app.querySelectorAll('.rv-edit').forEach((b) =>
       b.addEventListener('click', () => openDeclEditor(b.closest('.rv-item'), items)));
+
+    /* Analyse the audio that is already in R2, on any tab. What it measures it
+       measures honestly: tempo and key come back null when the detector is not
+       confident, and instruments, moods and genres are not detected at all
+       rather than guessed. Saving writes only the fields that came back. */
+    app.querySelectorAll('.rv-anal').forEach((b) => b.addEventListener('click', async () => {
+      const out = b.closest('.rv-item').querySelector('.rv-anal-out');
+      out.hidden = false;
+      if (!window.mutraReanalyse) { out.innerHTML = '<p class="rv-note">Analyser not loaded.</p>'; return; }
+      b.disabled = true;
+      const id = Number(b.dataset.id);
+      out.innerHTML = '<p class="rv-note">Starting…</p>';
+      try {
+        const r = await mutraReanalyse.analyseSubmission(id, (st) => {
+          out.innerHTML = `<p class="rv-note">${esc(st)}</p>`;
+        });
+        out.innerHTML = `<div class="rv-meta">
+          <div class="rv-facts">
+            <span>${esc(mutraReanalyse.fmt(r.duration || 0))}</span>
+            <span>${r.bpm ? r.bpm + ' BPM' : 'tempo unclear'}</span>
+            <span>${r.key ? esc(r.key + (r.scale ? ' ' + r.scale : '')) : 'key unclear'}</span>
+            <span>${r.vocal ? esc(r.vocal) + (r.vocalConfidence < 0.5 ? ' (unsure)' : '') : 'voice unclear'}</span>
+          </div>
+          <p class="rv-note" style="margin:0">Not detected: instruments, moods, genres —
+            these need a model this site does not have, so they are left for you rather
+            than guessed.${r.bpmAlternatives && r.bpmAlternatives.length > 1
+              ? ` Tempo could also be ${r.bpmAlternatives.filter((x) => x !== r.bpm).join(' or ')}.` : ''}</p>
+          <div><button class="rv-btn rv-ok rv-anal-save" type="button">Save to the track</button></div>
+        </div>`;
+        out.querySelector('.rv-anal-save').onclick = async (e) => {
+          e.target.disabled = true;
+          const meta = {};
+          for (const k of ['duration', 'bpm', 'key', 'scale', 'vocal']) {
+            if (r[k] !== null && r[k] !== undefined) meta[k] = r[k];
+          }
+          const res = await post('/artist/submissions/update', { id, meta });
+          e.target.textContent = res.ok ? 'Saved' : (res.error || 'Failed');
+          if (res.ok) load();
+        };
+      } catch (err) {
+        out.innerHTML = `<p class="rv-note">Could not analyse: ${esc(String(err.message || err))}</p>`;
+      }
+      b.disabled = false;
+    }));
     /* [data-a], not .rv-btn. "Edit details" also carries .rv-btn, so the old
        selector bound the status handler to it as well: one click opened the
        editor AND fired a native prompt, and whichever way you answered, the

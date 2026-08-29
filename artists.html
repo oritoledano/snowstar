@@ -88,6 +88,14 @@
   @media (max-width:560px){.ar-ctrl{grid-template-columns:1fr 1fr 26px}.ar-ctrl select:nth-of-type(1){grid-column:1/-1}}
   /* Why the submit button is off. Sits directly under it so the answer is where
      the question was asked. */
+  .ap-top{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+  .ap-photo{flex:0 0 132px;height:132px;border-radius:14px;border:1px dashed var(--line);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;
+    color:var(--muted);font-size:.78rem;text-align:center;position:relative}
+  .ap-photo:hover{border-color:var(--amber,#8fd8ff);color:var(--text)}
+  .ap-photo img{width:100%;height:100%;object-fit:cover}
+  .sub-form{flex-basis:100%;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+  .sub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
   .up-newtags{display:block;margin:5px 0 0;font-size:.76rem;color:#eab308}
   .ar-why{margin:9px 0 0;text-align:center;font-size:.82rem;color:#eab308}
   .ar-lane{margin:14px 0 4px;padding:11px 14px;border-radius:10px;font-size:.86rem;line-height:1.5}
@@ -139,6 +147,33 @@
   </div>
 
   <!-- credits: tracks where someone listed YOU as a co-owner -->
+  <!-- The artist's own public profile. Same fields the owner edits from the
+       dashboard, same endpoint — the server just checks the profile is yours. -->
+  <div class="ar-card" id="arProfile" hidden>
+    <h2>Your artist profile</h2>
+    <p class="ar-note" style="margin-top:0">This is what people see next to your tracks.</p>
+    <div class="ap-top">
+      <label class="ap-photo" id="apPhotoWrap">
+        <img id="apPhoto" alt="" hidden>
+        <span id="apPhotoHint">Add a photo</span>
+        <input type="file" id="apPhotoFile" accept="image/jpeg,image/png,image/webp" hidden>
+      </label>
+      <div style="flex:1;min-width:0">
+        <label class="ar-field"><span>Artist name</span>
+          <input id="apName" maxlength="120"></label>
+        <label class="ar-field"><span>Bio</span>
+          <textarea id="apBio" rows="4" maxlength="4000"
+            placeholder="A few lines about you and the music you make."></textarea></label>
+      </div>
+    </div>
+    <label class="ar-field"><span>Links — one per line (Spotify, Apple Music, YouTube, your site)</span>
+      <textarea id="apLinks" rows="3"></textarea></label>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button type="button" class="mbtn mbtn-solid" id="apSave">Save profile</button>
+      <span class="ar-status" id="apMsg" style="margin:0"></span>
+    </div>
+  </div>
+
   <div class="ar-card" id="arCredits" hidden>
     <h2>Your credits</h2>
     <p style="color:var(--muted);margin-bottom:10px;font-size:.86rem">Tracks where you're listed as a rights holder. Your share is held for you.</p>
@@ -242,7 +277,8 @@
      Same ?v= as mutra.html so the two pages share one cache entry. -->
 <script src="js/mutra-data.js?v=20"></script>
 <script src="js/mutra-analyse.js?v=3"></script>
-<script src="js/artists-page.js?v=8"></script>
+<script src="js/mutra-reanalyse.js?v=1"></script>
+<script src="js/artists-page.js?v=9"></script>
 <datalist id="dl-uptags"></datalist>
 </body>
 </html>

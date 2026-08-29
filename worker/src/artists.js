@@ -40,7 +40,10 @@ export async function myUploads(env, user) {
   if (!user) return json({ error: 'unauthorized' }, 401);
   // own uploads, plus anything uploaded on their behalf before they claimed
   const r = await env.DB.prepare(
-    `SELECT s.id, s.title, s.status, s.review_note, s.size, s.ext, s.created_at, s.reviewed_at
+    // meta and lane come back too: without them the artist's edit form has
+    // nothing to prefill and no way to show why a track is quote-only.
+    `SELECT s.id, s.title, s.status, s.review_note, s.size, s.ext, s.created_at,
+            s.reviewed_at, s.meta, s.lane, s.published_slug
        FROM submissions s
        LEFT JOIN managed_artists m ON m.id = s.managed_artist_id
       WHERE s.user_id = ? OR m.claimed_user_id = ?
@@ -128,6 +131,58 @@ export async function createSubmission(req, env, user, ctx) {
   }
 
   return json({ ok: true, id: r.meta.last_row_id }, 201);
+}
+
+/**
+ * PATCH a submission the artist already sent — title and the metadata sheet.
+ *
+ * Deliberately narrow. An artist can correct what a track IS: its name, tempo,
+ * key, voice, tags, lyrics, links. They cannot touch status, lane, file_key or
+ * the rights declaration — those are the record of a decision somebody else
+ * made, or of something they signed, and letting an edit form rewrite either
+ * would make the declaration worthless as evidence.
+ *
+ * The ownership test is the same one streamSubmission uses, including the
+ * claimed-managed-artist case: somebody who claimed a ghost profile owns the
+ * uploads that were made for them.
+ */
+export async function updateSubmission(req, env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const b = await req.json().catch(() => ({}));
+  const id = Number(b.id);
+  if (!Number.isInteger(id)) return json({ error: 'bad_id' }, 400);
+
+  const row = await env.DB.prepare(
+    `SELECT s.id, s.user_id, s.meta, m.claimed_user_id
+       FROM submissions s LEFT JOIN managed_artists m ON m.id = s.managed_artist_id
+      WHERE s.id = ?`).bind(id).first();
+  if (!row) return json({ error: 'not_found' }, 404);
+  if (row.user_id !== user.id && row.claimed_user_id !== user.id && !user.admin) {
+    return json({ error: 'forbidden' }, 403);
+  }
+
+  const sets = [], vals = [];
+  if (b.title !== undefined) {
+    const t = String(b.title).trim().slice(0, 120);
+    if (t.length < 1) return json({ error: 'title_required' }, 400);
+    sets.push('title = ?'); vals.push(t);
+  }
+  if (b.meta !== undefined) {
+    // Merged, not replaced: the form may only carry the fields it shows, and a
+    // partial save must not silently drop lyrics or links it never rendered.
+    let prev = {};
+    try { prev = JSON.parse(row.meta || '{}') || {}; } catch { /* older rows */ }
+    const merged = { ...prev, ...(b.meta && typeof b.meta === 'object' ? b.meta : {}) };
+    sets.push('meta = ?'); vals.push(JSON.stringify(merged).slice(0, 8000));
+  }
+  if (!sets.length) return json({ error: 'nothing_to_update' }, 400);
+
+  vals.push(id);
+  await env.DB.prepare(`UPDATE submissions SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
+
+  const back = await env.DB.prepare('SELECT id, title, meta FROM submissions WHERE id = ?')
+    .bind(id).first();
+  return json({ ok: true, submission: back });
 }
 
 /** Stream a submission's audio — only to its artist or the owner. */

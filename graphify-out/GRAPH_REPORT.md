@@ -1,16 +1,16 @@
 # Graph Report - snowstar  (2026-08-29)
 
 ## Corpus Check
-- 75 files · ~408,255 words
+- 76 files · ~410,445 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 929 nodes · 2226 edges · 53 communities (51 shown, 2 thin omitted)
+- 936 nodes · 2240 edges · 53 communities (51 shown, 2 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 87 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `90d866d7`
+- Built from commit: `e290270a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -18,7 +18,6 @@
 - mutra-agent.js
 - mutra-page.js
 - crypto.js
-- bulk.js
 - licensing.js
 - main.js
 - dashboard.js
@@ -46,7 +45,7 @@
 - schema-tracks.sql
 - mutra-license.js
 - analytics.js
-- ownership.js
+- stream.js
 - oauth.js
 - certificate.js
 - rights.js
@@ -55,7 +54,6 @@
 - clearlist.js
 - collections.js
 - jobs.js
-- stream.js
 - hyp.js
 - Portfolio years
 - handle
@@ -64,13 +62,14 @@
 - Paying artists their cut
 - mutra-analyse.js
 - stacks.js
-- index.js
+- ownership.js
 - make-character-art.py
 - artistreg.js
 - agent.js
+- index.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `handle()` - 147 edges
+1. `handle()` - 149 edges
 2. `Mutra royalty-free music catalogue page` - 33 edges
 3. `load()` - 24 edges
 4. `render()` - 24 edges
@@ -112,12 +111,8 @@ Cohesion: 0.06
 Nodes (79): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+71 more)
 
 ### Community 2 - "crypto.js"
-Cohesion: 0.24
-Nodes (13): b64(), enc, pbkdf2(), PBKDF2_ITERS, peppered(), randB64(), safeEqual(), sha256b64() (+5 more)
-
-### Community 3 - "bulk.js"
-Cohesion: 0.29
-Nodes (13): applyOps(), bulkArtist(), bulkEdit(), bulkUndo(), clean(), diffOf(), json(), keyOf() (+5 more)
+Cohesion: 0.28
+Nodes (11): b64(), enc, pbkdf2(), PBKDF2_ITERS, peppered(), safeEqual(), sha256b64(), verifyPassword() (+3 more)
 
 ### Community 4 - "licensing.js"
 Cohesion: 0.08
@@ -156,8 +151,8 @@ Cohesion: 0.21
 Nodes (20): calLink(), close(), closeAcctPanel(), countFor(), drawerFor(), loadDrawer(), offerSignIn(), open() (+12 more)
 
 ### Community 13 - "artists-page.js"
-Cohesion: 0.20
-Nodes (18): addCollabRow(), addControllerRow(), api(), collabData(), controllerData(), initBehalf(), paintClaim(), paintCredits() (+10 more)
+Cohesion: 0.18
+Nodes (19): addCollabRow(), addControllerRow(), api(), collabData(), controllerData(), initBehalf(), paintClaim(), paintCredits() (+11 more)
 
 ### Community 14 - "openPanel"
 Cohesion: 0.21
@@ -219,9 +214,9 @@ Nodes (26): build(), buyerId(), cards(), close(), crumbs(), go(), goToCard(), on
 Cohesion: 0.14
 Nodes (28): alert(), ALERT_KINDS, alertsMuted(), handleDownload(), handleJourney(), handleStats(), handleTrack(), json() (+20 more)
 
-### Community 31 - "ownership.js"
-Cohesion: 0.57
-Nodes (7): clean(), getOwner(), json(), notifyRename(), now(), ownerOf(), reassignOwner()
+### Community 31 - "stream.js"
+Cohesion: 0.46
+Nodes (7): breadthExceeded(), handleStream(), json(), looksLikePlayback(), now(), parseRange(), serve()
 
 ### Community 32 - "oauth.js"
 Cohesion: 0.14
@@ -232,8 +227,8 @@ Cohesion: 0.52
 Nodes (6): certificate(), certificateSvg(), esc(), fmtDate(), json(), wrap()
 
 ### Community 34 - "rights.js"
-Cohesion: 0.12
-Nodes (40): AUDIO_EXT, createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), queueReviewMail() (+32 more)
+Cohesion: 0.11
+Nodes (41): AUDIO_EXT, createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), queueReviewMail() (+33 more)
 
 ### Community 35 - "make-package-art.py"
 Cohesion: 0.24
@@ -255,10 +250,6 @@ Nodes (9): clean(), json(), KINDS, listCollections(), now(), saveCollection(), s
 Cohesion: 0.27
 Nodes (10): clean(), exportJobs(), FIELDS, json(), listJobs(), MEDIA, now(), saveJob() (+2 more)
 
-### Community 40 - "stream.js"
-Cohesion: 0.46
-Nodes (7): breadthExceeded(), handleStream(), json(), looksLikePlayback(), now(), parseRange(), serve()
-
 ### Community 41 - "hyp.js"
 Cohesion: 0.33
 Nodes (13): configured(), CP1255, decodeValue(), handleReturn(), hypStatus(), json(), listStale(), now() (+5 more)
@@ -268,16 +259,16 @@ Cohesion: 0.50
 Nodes (3): Not established — nothing found, Portfolio years, Worth a second look — medium confidence
 
 ### Community 43 - "handle"
-Cohesion: 0.20
-Nodes (17): clearThrottle(), favoritesFor(), handle(), now(), originOk(), product(), sessionCookie(), throttle() (+9 more)
+Cohesion: 0.17
+Nodes (20): randB64(), authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), originOk() (+12 more)
 
 ### Community 44 - "artistprofile.js"
-Cohesion: 0.39
-Nodes (11): approveClaim(), clean(), deleteProfile(), json(), listOf(), listProfiles(), managersFor(), parseJson() (+3 more)
+Cohesion: 0.36
+Nodes (12): approveClaim(), clean(), deleteProfile(), json(), listOf(), listProfiles(), managersFor(), myProfile() (+4 more)
 
 ### Community 45 - "greeninvoice.js"
-Cohesion: 0.27
-Nodes (19): clean(), configured(), DOC_INVOICE_RECEIPT, draftFor(), findByRef(), getToken(), guardBusiness(), issueInvoice() (+11 more)
+Cohesion: 0.14
+Nodes (32): applyOps(), bulkArtist(), bulkEdit(), bulkUndo(), clean(), diffOf(), json(), keyOf() (+24 more)
 
 ### Community 46 - "Paying artists their cut"
 Cohesion: 0.29
@@ -291,9 +282,9 @@ Nodes (7): analyse(), chroma(), correlate(), detectBpm(), detectKey(), detectVoc
 Cohesion: 0.70
 Nodes (4): clean(), json(), listStacks(), saveStack()
 
-### Community 49 - "index.js"
-Cohesion: 0.18
-Nodes (15): ALLOWED_ORIGINS, authed(), fetch(), json(), PRODUCTS, deleteMember(), json(), memberDetail() (+7 more)
+### Community 49 - "ownership.js"
+Cohesion: 0.57
+Nodes (7): clean(), getOwner(), json(), notifyRename(), now(), ownerOf(), reassignOwner()
 
 ### Community 50 - "make-character-art.py"
 Cohesion: 0.31
@@ -307,6 +298,10 @@ Nodes (6): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNam
 Cohesion: 0.48
 Nodes (6): clampBpm(), clampList(), extractJson(), interpretBrief(), json(), LIST_FIELDS
 
+### Community 53 - "index.js"
+Cohesion: 0.19
+Nodes (14): ALLOWED_ORIGINS, now(), PRODUCTS, throttle(), deleteMember(), json(), memberDetail(), updateMember() (+6 more)
+
 ## Knowledge Gaps
 - **101 isolated node(s):** `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS`, `nav`, `menuBtn` (+96 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -316,11 +311,11 @@ Nodes (6): clampBpm(), clampList(), extractJson(), interpretBrief(), json(), LIS
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Mutra royalty-free music catalogue page` connect `Mutra royalty-free music catalogue page` to `mutra-page.js`, `works-admin.js`, `site-edit.js`, `account-ui.js`, `openPanel`, `Licence terms`, `Snowstar agency homepage`, `account.js`, `mutra-artist.js`, `mutra-spotlight.js`, `Privacy policy`, `Track catalogue browse + search`, `mutra-license.js`?**
-  _High betweenness centrality (0.126) - this node is a cross-community bridge._
+  _High betweenness centrality (0.125) - this node is a cross-community bridge._
 - **Why does `Snowstar agency homepage` connect `Snowstar agency homepage` to `main.js`, `works-admin.js`, `Mutra royalty-free music catalogue page`, `site-edit.js`, `account-ui.js`, `Owner dashboard`, `account.js`, `Privacy policy`?**
   _High betweenness centrality (0.053) - this node is a cross-community bridge._
 - **Why does `Owner dashboard` connect `Owner dashboard` to `dashboard.js`, `Mutra royalty-free music catalogue page`, `account-ui.js`, `Snowstar agency homepage`, `account.js`, `Privacy policy`?**
-  _High betweenness centrality (0.047) - this node is a cross-community bridge._
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `render()` (e.g. with `matches()` and `wireBpmRange()`) actually correct?**
   _`render()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS` to the rest of the system?**

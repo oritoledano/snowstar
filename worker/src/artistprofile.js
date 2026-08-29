@@ -137,12 +137,19 @@ export async function listProfiles(env, user) {
  * holding a stale copy of.
  */
 export async function saveProfile(req, env, user) {
-  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  if (!user) return json({ error: 'unauthorized' }, 401);
   const b = await req.json().catch(() => ({}));
   const pid = clean(b.pid, 60);
   const m = /^([um]):(.+)$/.exec(pid);
   if (!m) return json({ error: 'bad_pid' }, 400);
   const [, kind, id] = m;
+  /* An artist may edit exactly one profile: their own. Everything else — other
+     members, ghost profiles, managed artists — stays the owner's. Checking the
+     pid rather than adding a second endpoint keeps one implementation of the
+     field rules, so self-service and admin can never drift apart. */
+  if (!user.admin && !(kind === 'u' && id === user.id)) {
+    return json({ error: 'forbidden' }, 403);
+  }
 
   // Same five fields either side; only the column names differ.
   const COLS = kind === 'u'
@@ -185,9 +192,11 @@ export async function saveProfile(req, env, user) {
  * anything in the bucket.
  */
 export async function uploadArtistPhoto(req, env, user, url) {
-  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  if (!user) return json({ error: 'unauthorized' }, 401);
   const pid = clean(url.searchParams.get('pid'), 60);
   if (!/^[um]:.+$/.test(pid)) return json({ error: 'bad_pid' }, 400);
+  // Same rule as saveProfile: your own picture, or you are the owner.
+  if (!user.admin && pid !== `u:${user.id}`) return json({ error: 'forbidden' }, 403);
 
   const type = req.headers.get('content-type') || '';
   if (!/^image\/(jpeg|png|webp|avif)$/.test(type)) return json({ error: 'bad_type' }, 415);
@@ -349,4 +358,23 @@ export async function approveClaim(req, env, user) {
          Math.floor(Date.now() / 1000)).run().catch(() => null);
 
   return json({ ok: true, pid: 'm:' + id, linked: row.user_email });
+}
+
+
+/** GET /artist/profile — the signed-in artist's own profile, for their editor. */
+export async function myProfile(env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const r = await env.DB.prepare(
+    `SELECT id, artist_name, artist_bio, avatar, artist_links, artist_videos
+       FROM users WHERE id = ?`).bind(user.id).first();
+  if (!r) return json({ error: 'not_found' }, 404);
+  const parse = (v) => { try { return JSON.parse(v || '[]') || []; } catch { return []; } };
+  return json({
+    pid: `u:${r.id}`,
+    name: r.artist_name || '',
+    bio: r.artist_bio || '',
+    avatar: r.avatar || '',
+    links: parse(r.artist_links),
+    videos: parse(r.artist_videos),
+  });
 }
