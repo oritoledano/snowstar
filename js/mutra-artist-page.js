@@ -84,7 +84,12 @@
         : '<p class="ap-empty">No tracks in the catalogue under this name yet.</p>'}`;
 
     const eb = mount.querySelector('.ap-edit');
-    if (eb) eb.onclick = () => openEditor(eb);
+    if (eb) {
+      eb.onclick = () => openEditor(eb);
+      // Arriving from the panel's "Edit this profile" link lands on the form,
+      // not on the page with a button still to find.
+      if (location.hash === '#edit' && mount.querySelector('.ap-editor').hidden) openEditor(eb);
+    }
   }
 
   function openEditor(btn) {

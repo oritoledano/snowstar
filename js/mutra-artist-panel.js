@@ -93,6 +93,15 @@
     addEventListener('keydown', (e) => { if (e.key === 'Escape' && openName) close(); });
   }
 
+  /* The owner may edit anyone; an artist may edit themselves. Cosmetic only —
+     the server re-checks on save, so a wrong answer here shows a link that
+     leads to a form that refuses, never to an edit that lands. */
+  function canEdit(rec) {
+    const me = window.SnowstarAccount && SnowstarAccount.user;
+    if (!me) return false;
+    return !!(me.admin || (rec && rec.member && rec.claimed_user_id === me.id));
+  }
+
   function paint(name, rec) {
     const panel = lb.querySelector('.apx-panel');
     const tracks = tracksBy(name);
@@ -126,7 +135,12 @@
           <span class="apx-meta">${t.bpm ? t.bpm + ' BPM' : ''}</span>
           <button type="button" class="apx-lic">License</button>
         </div>`).join('')
-        : '<p class="apx-empty">Nothing in the catalogue under this name yet.</p>'}</div>`;
+        : '<p class="apx-empty">Nothing in the catalogue under this name yet.</p>'}</div>
+      <div class="apx-foot">
+        <a class="apx-full" href="artist.html?name=${encodeURIComponent(name)}">Open full page →</a>
+        ${canEdit(rec) ? `<a class="apx-full apx-edit"
+           href="artist.html?name=${encodeURIComponent(name)}#edit">Edit this profile</a>` : ''}
+      </div>`;
 
     panel.querySelector('.apx-close').addEventListener('click', close);
 

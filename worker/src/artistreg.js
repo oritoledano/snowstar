@@ -28,11 +28,40 @@ export const splitNames = (s) =>
 
 /** Public: the roster, for the credit pickers. */
 export async function listArtists(env) {
-  const r = await env.DB.prepare(
-    `SELECT id, name, email, bio, avatar, links, claimed_user_id
-       FROM managed_artists ORDER BY name COLLATE NOCASE`
-  ).all();
-  return json({ artists: r.results || [] });
+  /* Both kinds of artist, in one roster.
+     `managed_artists` holds the ghost profiles the owner creates for names in
+     the catalogue; `users` holds people who signed up and made themselves an
+     artist. They were never merged, so the catalogue's artist panel — which
+     reads this — could not see a real member's bio or photo at all. Somebody
+     would edit their profile, save successfully, and watch the panel stay
+     empty, because the panel was reading a different table from the one the
+     editor writes to.
+     A real account wins on a name collision: it is the profile its owner
+     actually maintains. */
+  const [ghosts, members] = await Promise.all([
+    env.DB.prepare(
+      `SELECT id, name, email, bio, avatar, links, claimed_user_id
+         FROM managed_artists ORDER BY name COLLATE NOCASE`).all().catch(() => ({ results: [] })),
+    env.DB.prepare(
+      `SELECT id, artist_name AS name, artist_bio AS bio, avatar,
+              artist_links AS links
+         FROM users WHERE artist = 1 AND artist_name IS NOT NULL AND artist_name != ''`
+    ).all().catch(() => ({ results: [] })),
+  ]);
+
+  const byName = new Map();
+  for (const g of ghosts.results || []) byName.set(String(g.name || '').toLowerCase(), g);
+  for (const m of members.results || []) {
+    // Email is deliberately not carried over from a member account: the roster
+    // is public, and a ghost's email is a contact the owner typed, not a
+    // person's sign-in address.
+    byName.set(String(m.name || '').toLowerCase(),
+               { id: m.id, name: m.name, email: null, bio: m.bio, avatar: m.avatar,
+                 links: m.links, claimed_user_id: m.id, member: 1 });
+  }
+  const artists = [...byName.values()].sort((a, b) =>
+    String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));
+  return json({ artists });
 }
 
 /**

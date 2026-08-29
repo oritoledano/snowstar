@@ -168,10 +168,10 @@
     "semantic_hash": ""
   },
   "worker/src/artistreg.js": {
-    "mtime": 1787268870.021775,
-    "seen": 1787572556.917344,
-    "ast_hash": "8e0ec1d0d720563ddec281f0fe1233be",
-    "semantic_hash": "8e0ec1d0d720563ddec281f0fe1233be"
+    "mtime": 1788047850.3108444,
+    "seen": 1788047856.6895602,
+    "ast_hash": "2d60e5f6542453a57aad3bf7fbc89b53",
+    "semantic_hash": ""
   },
   "worker/src/artists.js": {
     "mtime": 1788023214.3507767,
@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1787944266.534939,
-    "seen": 1787944272.4397628,
-    "ast_hash": "4722678bf8b166ded87d77e793d667da",
+    "mtime": 1788047790.2328324,
+    "seen": 1788047856.689597,
+    "ast_hash": "e19b15d76f4447af65367861ebde9b02",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1788046949.5564847,
-    "seen": 1788047709.434376,
-    "ast_hash": "884a292b1001fe1a8cb8869ddc172c14",
+    "mtime": 1788047790.2372627,
+    "seen": 1788047856.6895978,
+    "ast_hash": "bd33ade087b21f66c70ba3d6fe7a5e3c",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1788046949.5579038,
-    "seen": 1788047709.434378,
-    "ast_hash": "3ddbc68adb783621f6bfc74240fea841",
+    "mtime": 1788047790.2380145,
+    "seen": 1788047856.6896,
+    "ast_hash": "3e03d80ad8f7bbad1743bd5cff931925",
     "semantic_hash": ""
   },
   "index.html": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1788046949.5553825,
-    "seen": 1788047709.43438,
-    "ast_hash": "3a0d0de7c2d3ae202da75c1761fef91a",
+    "mtime": 1788047790.2365718,
+    "seen": 1788047856.6896021,
+    "ast_hash": "051a7ac18e7294284d7e84c36e62be4d",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1395,6 +1395,12 @@
     "mtime": 1788023310.6032555,
     "seen": 1788023317.108945,
     "ast_hash": "de0c580cb7113c5daf8bcf23ebf60535",
+    "semantic_hash": ""
+  },
+  "js/mutra-artist-page.js": {
+    "mtime": 1788047760.4922562,
+    "seen": 1788047767.451864,
+    "ast_hash": "15ccdb8372580d9405cdbbef789754c5",
     "semantic_hash": ""
   }
 }
