@@ -1025,17 +1025,24 @@
 
     /* Once somebody has narrowed the list, they are looking for something, and
        an artist promo dropped into their results is an interruption rather than
-       a suggestion. Shown only while browsing everything. */
+       a suggestion. Shown only while browsing everything.
+
+       The row is a full-width block in a column of thin rows, so it reads as an
+       end-cap: in a ten-track character it looks like the list finished there and
+       the rest is an advert. That is fine at the top of an endless catalogue,
+       where nobody expects a bottom, and actively misleading in any result set
+       small enough to have one. So EVERY way of narrowing counts — including
+       packs and characters, which are short lists by definition, and the Custom
+       licence view, which is itself a filter.
+
+       Keeping it out of narrowed views also protects the row: seen once while
+       browsing it is a recommendation, seen on top of every filtered result it
+       is noise. */
     const narrowed = !!q
-      || ['genres', 'moods', 'characteristics', 'instruments', 'scales']
+      || ['genres', 'moods', 'characteristics', 'instruments', 'scales', 'packs', 'characters']
            .some((k) => state[k] && (state[k].inc.size || state[k].exc.size))
-      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly;
-    /* Packs and Characters are deliberately NOT in that list. A shelf is a way of
-       browsing, not a search — somebody who picked a character asked for a mood,
-       not for one specific track — so the row belongs inside one.
-       The Custom licence VIEW used to count as narrowing too, which meant the one
-       control on this page named "Custom license" hid the Custom License row: the
-       exact thing the visitor had just asked to see. */
+      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
+      || state.sort === 'custom';
     if (narrowed) return -1;
 
     // Short list: sit after the second row rather than after the last one, where

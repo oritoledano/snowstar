@@ -897,7 +897,7 @@
       "file_type": "code",
       "norm_label": "setmenu()",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2852"
+      "source_location": "L2856"
     },
     {
       "id": "js_mutra_page_setprogressui",
@@ -15051,7 +15051,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-page.js",
-      "source_location": "L2853",
+      "source_location": "L2857",
       "weight": 1.0
     },
     {
@@ -28733,7 +28733,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-page.js",
-      "source_location": "L2852",
+      "source_location": "L2856",
       "weight": 1.0
     },
     {
