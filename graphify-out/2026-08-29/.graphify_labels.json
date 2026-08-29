@@ -1,8 +1,7 @@
 {
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
-  "2": "profile.js",
-  "3": "bulk.js",
+  "2": "crypto.js",
   "4": "licensing.js",
   "5": "main.js",
   "6": "dashboard.js",
@@ -39,7 +38,6 @@
   "37": "clearlist.js",
   "38": "collections.js",
   "39": "jobs.js",
-  "40": "artists.js",
   "41": "hyp.js",
   "42": "Portfolio years",
   "43": "handle",
