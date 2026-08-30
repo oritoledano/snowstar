@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1788103041.197246,
-    "seen": 1788103047.5372958,
-    "ast_hash": "bab85fad39be7ad18a2ac4b9b0af17bd",
+    "mtime": 1788111893.5763998,
+    "seen": 1788111900.8226671,
+    "ast_hash": "b972311770d53862829ded99966174ca",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1788103650.0221152,
-    "seen": 1788111446.234827,
-    "ast_hash": "1b7f9343d054a622c62edfa66472116f",
+    "mtime": 1788111893.685098,
+    "seen": 1788111900.822732,
+    "ast_hash": "7d21c4fccf5188d260d400019672aead",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1788103650.0209239,
-    "seen": 1788111446.234828,
-    "ast_hash": "015ebc7a9f4672f6ebe91650162bdf27",
+    "mtime": 1788111893.6838584,
+    "seen": 1788111900.8227332,
+    "ast_hash": "760cc493bc6413c4e6ca0a2e7f99499b",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1788103650.0217507,
-    "seen": 1788111446.234831,
-    "ast_hash": "39b170a8a5f11b4d73984dc0085ab518",
+    "mtime": 1788111893.6847339,
+    "seen": 1788111900.8227358,
+    "ast_hash": "7b1b085097f3caee912136408ba1b2a7",
     "semantic_hash": ""
   },
   "index.html": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1788111439.2251823,
-    "seen": 1788111446.234833,
-    "ast_hash": "c3cfbbf9a344491feaf004bac1f2da49",
+    "mtime": 1788111893.6831706,
+    "seen": 1788111900.822738,
+    "ast_hash": "f71964e345bead61173235d09f849cc7",
     "semantic_hash": ""
   },
   "privacy.html": {

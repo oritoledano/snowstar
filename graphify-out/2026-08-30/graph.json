@@ -7065,7 +7065,7 @@
       "file_type": "code",
       "norm_label": "buildartiststrip()",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L133"
+      "source_location": "L134"
     },
     {
       "id": "js_mutra_promos_buildstrip",
@@ -7089,7 +7089,7 @@
       "file_type": "code",
       "norm_label": "fire()",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L171"
+      "source_location": "L172"
     },
     {
       "id": "js_mutra_promos_insertionpoint",
@@ -7101,7 +7101,7 @@
       "file_type": "code",
       "norm_label": "insertionpoint()",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L158"
+      "source_location": "L159"
     },
     {
       "id": "js_mutra_promos_openfilm",
@@ -7125,7 +7125,7 @@
       "file_type": "code",
       "norm_label": "place()",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L165"
+      "source_location": "L166"
     },
     {
       "id": "worker_src_stacks_clean",
@@ -15923,7 +15923,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L121",
+      "source_location": "L122",
       "weight": 1.0
     },
     {
@@ -15935,7 +15935,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L184",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -15947,7 +15947,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L190",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -15959,7 +15959,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L202",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -15971,7 +15971,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L212",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -15983,7 +15983,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-promos.js",
-      "source_location": "L166",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -29794,7 +29794,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-promos.js",
-      "source_location": "L133",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -29805,7 +29805,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-promos.js",
-      "source_location": "L158",
+      "source_location": "L159",
       "weight": 1.0
     },
     {
@@ -29816,7 +29816,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-promos.js",
-      "source_location": "L165",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -29827,7 +29827,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-promos.js",
-      "source_location": "L171",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -38035,5 +38035,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "449460496e25c79f379a90a0f8480294c624ba46"
+  "built_at_commit": "5c58bf2f958a7c9ff48bae0b647da1a94c898f67"
 }
