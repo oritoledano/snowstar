@@ -154,19 +154,42 @@
     return wrap;
   }
 
-  /** After the last row whose top is above the middle of the window — a natural
-      break near the reader, not the top of a list they have already left. */
-  function insertionPoint() {
+  /* Placement is a zigzag with breathing room: near the reader, but never
+     within GAP tracks of another strip. Ads that stack up read as a wall of
+     advertising; ads with real catalogue between them read as a catalogue
+     that occasionally says something. */
+  const GAP = 7;                     // minimum catalogue rows between strips
+
+  /** The slot a strip occupies = how many .trk rows sit before it. */
+  function slotOf(el) {
+    let n = 0;
+    for (const c of tracksEl.children) {
+      if (c === el) return n;
+      if (c.classList.contains('trk')) n++;
+    }
+    return n;
+  }
+
+  function targetSlot() {
     const rows = [...tracksEl.querySelectorAll(':scope > .trk')];
-    let after = null;
-    for (const r of rows) { if (r.getBoundingClientRect().top < innerHeight * 0.55) after = r; else break; }
-    return after;
+    // preferred: just under whatever the reader is looking at
+    let pref = 0;
+    for (const r of rows) { if (r.getBoundingClientRect().top < innerHeight * 0.55) pref++; else break; }
+    // pushed past any existing strip so GAP real tracks always separate them
+    let min = 0;
+    for (const el of tracksEl.querySelectorAll(':scope > .promo-strip, :scope > .spotlight-row')) {
+      min = Math.max(min, slotOf(el) + GAP);
+    }
+    return { slot: Math.max(pref, min), rows };
   }
 
   function place(node) {
-    const at = insertionPoint();
-    if (at) at.insertAdjacentElement('afterend', node);
-    else tracksEl.prepend(node);
+    const { slot, rows } = targetSlot();
+    if (!rows.length) { tracksEl.prepend(node); return; }
+    if (slot <= 0) { rows[0].insertAdjacentElement('beforebegin', node); return; }
+    // Past the end: sit after the last row — infinite scroll will keep adding
+    // rows beneath it, so the gap grows back on its own.
+    rows[Math.min(slot, rows.length) - 1].insertAdjacentElement('afterend', node);
   }
 
   function fire(kind) {
@@ -199,9 +222,7 @@
     if (next.spotlight) {
       // The custom-licence row: arm the catalogue's own machinery and let it
       // place and re-place the row it already owns.
-      const rows = [...tracksEl.querySelectorAll(':scope > .trk')];
-      const at = insertionPoint();
-      window.MUTRA_SPOTLIGHT_INSERT_AFTER = at ? rows.indexOf(at) + 1 : 2;
+      window.MUTRA_SPOTLIGHT_INSERT_AFTER = Math.max(2, targetSlot().slot);
       window.MUTRA_SPOTLIGHT_ARMED = true;
       if (window.mutraTrack) mutraTrack('promo_seen', 'custom-license');
       if (mutraCatalog.recheckSpotlight) mutraCatalog.recheckSpotlight();
