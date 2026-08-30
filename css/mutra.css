@@ -654,8 +654,11 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
    (`flex:1`) and the artwork keeps its own aspect ratio, so the strip grows and
    shrinks in height with the width instead of cropping the characters' heads
    off, which is what a fixed-height box with object-fit:cover was doing. */
-.charrow{display:flex;gap:10px;align-items:flex-end;
-  border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:4px}
+.charrow{display:flex;gap:8px;align-items:flex-end;
+  border:1px solid var(--line);border-radius:16px;padding:8px;margin-bottom:0}
+/* The drawer reserves 30px at the bottom for a Close button this shelf does not
+   have — the Characters button itself closes it. Reclaimed. */
+.fdrop:has(.charrow){padding:8px 4px 6px}
 .charcard{flex:1 1 0;min-width:0;background:none;border:0;padding:0;cursor:pointer;
   color:var(--text);font:inherit;text-align:center;transition:transform .18s}
 .charcard:hover{transform:translateY(-3px)}
@@ -668,14 +671,14 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .cc-art img{transition:filter .25s, transform .25s}
 .charcard:hover .cc-art img{filter:brightness(1.08)}
 .charcard.on .cc-art img{filter:brightness(1.12) saturate(1.05)}
-.cc-art{display:block;border-radius:10px;overflow:hidden;margin-bottom:8px;
+.cc-art{display:block;border-radius:10px;overflow:hidden;margin-bottom:6px;
   outline:1px solid transparent;transition:outline-color .18s}
 /* Height follows width, so nothing is ever cropped — the image sets the ratio. */
 .cc-art img{width:100%;height:auto;display:block}
 .charcard:hover .cc-art,.charcard.on .cc-art{outline-color:var(--amber,#8fd8ff)}
-.charcard b{display:block;font-family:var(--font-display);font-size:.76rem;letter-spacing:.06em;
-  text-transform:uppercase;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.charcard i{display:block;font-style:normal;font-size:.68rem;color:var(--muted);margin-top:2px;
+.charcard b{display:block;font-family:var(--font-display);font-size:.72rem;letter-spacing:.06em;
+  text-transform:uppercase;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.charcard i{display:block;font-style:normal;font-size:.66rem;color:var(--muted);margin-top:1px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .charcard.on b{color:var(--amber,#8fd8ff)}
 @media(max-width:720px){

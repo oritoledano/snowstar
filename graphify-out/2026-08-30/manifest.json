@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "worker/src/artistreg.js": {
-    "mtime": 1788047850.3108444,
-    "seen": 1788047856.6895602,
-    "ast_hash": "2d60e5f6542453a57aad3bf7fbc89b53",
+    "mtime": 1788047966.0983398,
+    "seen": 1788047972.117722,
+    "ast_hash": "896ba258c91a8fa3d93dccc34f76688d",
     "semantic_hash": ""
   },
   "worker/src/artists.js": {
@@ -1350,9 +1350,9 @@
     "semantic_hash": ""
   },
   "worker/src/artistprofile.js": {
-    "mtime": 1788047702.5284064,
-    "seen": 1788047709.434345,
-    "ast_hash": "35c7ca0e9a6308861bbb49a536649eaf",
+    "mtime": 1788047966.1253762,
+    "seen": 1788047972.117722,
+    "ast_hash": "1208a5febed480d650364fa9d99c129d",
     "semantic_hash": ""
   },
   "worker/src/coupons.js": {
