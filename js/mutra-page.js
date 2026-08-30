@@ -790,6 +790,37 @@
     // you looking at track 200.
     while (keepDepth > shown && shown < list.length) appendPage();
     if (sameSet && keepTop) sc.scrollTop = keepTop;
+    else if (!firstRender) revealListTop();
+    firstRender = false;
+  }
+
+  /* A new result set is a new list, and leaving somebody halfway down one while
+     the contents change under them is how you lose their place entirely: the
+     rows they were reading are gone and nothing says where they now are.
+     So a filter, a search, a tag or a character starts at the first track.
+
+     Not the top of the PAGE, which would throw them back past the hero and make
+     them scroll down again — the top of the LIST, just below whatever is stuck
+     to the top of the window. Never on the first paint: an arriving visitor
+     should meet the hero, not the catalogue. */
+  let firstRender = true;
+  function revealListTop() {
+    const sc = scroller();
+    if (sc !== (document.scrollingElement || document.documentElement)) { sc.scrollTop = 0; return; }
+    const nav = document.querySelector('.mnav');
+    const bar = document.querySelector('#fbar');
+    const stuck = (nav ? nav.getBoundingClientRect().height : 0)
+                + (bar ? bar.getBoundingClientRect().height : 0) + 12;
+    /* When the character row is open it is part of the answer, not a control
+       to scroll past: the picture says whose tracks these are and the other
+       seven are how you move between them. So the row is what goes to the top,
+       with the first tracks directly under it. */
+    const row = fdrop && !fdrop.hidden && fdrop.querySelector('.charrow') ? fdrop : tracksEl;
+    const y = row.getBoundingClientRect().top + window.pageYOffset - stuck;
+    // Only ever scroll UP to the list. If they are already above it — still in
+    // the hero, say — dragging them down to the results is not what they asked
+    // for by touching a filter.
+    if (window.pageYOffset > y) window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
   }
 
   /** Draw the next slice — called on render and again as the sentinel scrolls in. */
@@ -1214,7 +1245,10 @@
           f.inc.clear(); f.exc.clear();
           if (!already) f.inc.add(name);
           drawDrop(); drawPills(); render();
-          if (!already) closeDrawer();          // get out of the way of the list
+          /* The row STAYS open. It is the answer to two things at once: the
+             chosen character's picture is what tells you whose tracks these
+             are — a name in a pill does not — and the other seven are right
+             there to switch to. Closing it threw both away. */
         }));
         if (curateMode) wireShelfAdmin(openCat);
         return;
