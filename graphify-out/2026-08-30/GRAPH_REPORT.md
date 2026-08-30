@@ -1,16 +1,16 @@
 # Graph Report - snowstar  (2026-08-30)
 
 ## Corpus Check
-- 77 files · ~412,218 words
+- 77 files · ~412,480 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 944 nodes · 2257 edges · 54 communities (52 shown, 2 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 87 edges (avg confidence: 0.87)
+- 945 nodes · 2260 edges · 54 communities (52 shown, 2 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 88 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ab02570c`
+- Built from commit: `ff08bb37`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -72,8 +72,8 @@
 ## God Nodes (most connected - your core abstractions)
 1. `handle()` - 150 edges
 2. `Mutra royalty-free music catalogue page` - 33 edges
-3. `load()` - 24 edges
-4. `render()` - 24 edges
+3. `render()` - 25 edges
+4. `load()` - 24 edges
 5. `paint()` - 21 edges
 6. `Snowstar agency homepage` - 19 edges
 7. `buildRow()` - 18 edges
@@ -109,7 +109,7 @@ Nodes (9): build(), catalogueVocab(), chip(), close(), interpret(), open(), pain
 
 ### Community 1 - "mutra-page.js"
 Cohesion: 0.06
-Nodes (79): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+71 more)
+Nodes (80): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+72 more)
 
 ### Community 2 - "bulk.js"
 Cohesion: 0.29
@@ -326,6 +326,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS` to the rest of the system?**
   _101 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `mutra-page.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.060144346431435444 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05956112852664577 - nodes in this community are weakly interconnected._
 - **Should `oauth.js` be split into smaller, more focused modules?**
   _Cohesion score 0.10220673635307782 - nodes in this community are weakly interconnected._

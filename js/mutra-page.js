@@ -790,7 +790,11 @@
     // you looking at track 200.
     while (keepDepth > shown && shown < list.length) appendPage();
     if (sameSet && keepTop) sc.scrollTop = keepTop;
-    else if (!firstRender) revealListTop();
+    /* Two frames, not none: filtering 378 tracks down to 10 shortens the page
+       enormously, and the browser clamps the scroll to the new maximum. Measured
+       before that settles, the target is computed against a page that no longer
+       exists and the scroll silently does nothing. */
+    else if (!firstRender) requestAnimationFrame(() => requestAnimationFrame(revealListTop));
     firstRender = false;
   }
 
