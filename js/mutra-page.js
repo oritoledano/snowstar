@@ -811,16 +811,19 @@
   function revealListTop() {
     const sc = scroller();
     if (sc !== (document.scrollingElement || document.documentElement)) { sc.scrollTop = 0; return; }
+    /* Everything pinned to the top of the window, measured as one: the nav, and
+       the control bar that carries the filters AND the open character row.
+       .cbar is position:sticky, so its rect is where it is STUCK, not where it
+       lives in the document — adding pageYOffset to it gives a number that is
+       not any position at all, which is why the first attempt scrolled to the
+       wrong place. Its HEIGHT is still honest, and height is all that is needed:
+       the row stays on screen by itself precisely because it is sticky, so the
+       job here is only to put the first track directly beneath it. */
     const nav = document.querySelector('.mnav');
-    const bar = document.querySelector('#fbar');
+    const cbar = document.querySelector('.cbar');
     const stuck = (nav ? nav.getBoundingClientRect().height : 0)
-                + (bar ? bar.getBoundingClientRect().height : 0) + 12;
-    /* When the character row is open it is part of the answer, not a control
-       to scroll past: the picture says whose tracks these are and the other
-       seven are how you move between them. So the row is what goes to the top,
-       with the first tracks directly under it. */
-    const row = fdrop && !fdrop.hidden && fdrop.querySelector('.charrow') ? fdrop : tracksEl;
-    const y = row.getBoundingClientRect().top + window.pageYOffset - stuck;
+                + (cbar ? cbar.getBoundingClientRect().height : 0) + 12;
+    const y = tracksEl.getBoundingClientRect().top + window.pageYOffset - stuck;
     // Only ever scroll UP to the list. If they are already above it — still in
     // the hero, say — dragging them down to the results is not what they asked
     // for by touching a filter.
