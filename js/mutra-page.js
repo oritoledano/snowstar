@@ -1709,6 +1709,9 @@
   window.mutraCatalog = {
     filtered: () => list,
     all: () => MUTRA.tracks,
+    // Arming the spotlight mid-page must not wait for the next infinite-scroll
+    // batch — this lets the promo module ask for the re-check directly.
+    recheckSpotlight: () => maybeInsertSpotlight(),
     /* A REAL row — play, license, tags, wave — for the promo strips. Building a
        second row type there would drift from this one; calling the same builder
        cannot. */

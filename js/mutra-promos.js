@@ -202,7 +202,7 @@
       window.MUTRA_SPOTLIGHT_INSERT_AFTER = at ? rows.indexOf(at) + 1 : 2;
       window.MUTRA_SPOTLIGHT_ARMED = true;
       if (window.mutraTrack) mutraTrack('promo_seen', 'custom-license');
-      dispatchEvent(new Event('scroll'));   // nudge appendPage's re-check
+      if (mutraCatalog.recheckSpotlight) mutraCatalog.recheckSpotlight();
       // remember its row so the rotation can move it next time around
       setTimeout(() => { const r = tracksEl.querySelector('.spotlight-row');
                          if (r) nodes.set('custom-license', r); }, 1500);
