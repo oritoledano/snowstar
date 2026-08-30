@@ -73,8 +73,11 @@
       const pausedFor = 2000;               // the timer IS the pause
       S.pauses += 1; S.pauseMs += pausedFor;
       S.score += 1;
-      // and keep counting while they stay still
-      pauseTimer = setTimeout(() => { S.pauseMs += 2000; S.score += 1; maybeFire(); }, 2000);
+      // and keep counting while they stay still — re-armed every 2s, so a long
+      // read of one row accrues the whole time, not just the first tick
+      const still = () => { S.pauseMs += 2000; S.score += 1; maybeFire();
+                            pauseTimer = setTimeout(still, 2000); };
+      pauseTimer = setTimeout(still, 2000);
       movingSince = 0;
       maybeFire();
     }, 2000);
