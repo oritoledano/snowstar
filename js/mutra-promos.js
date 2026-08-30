@@ -23,18 +23,57 @@
   const tracksEl = document.querySelector('.tracks');
   if (!tracksEl) return;
 
+  /* The brand, not the filename: a visitor is sold by "Pepsi used this", never
+     by the project's internal title. Logos where the client-logo strip already
+     has one; Mitsubishi has no logo on file, so its wordmark carries it in the
+     display face rather than a redrawn trademark. Credits mirror the works
+     table on the Snowstar side, so the lightbox tells the same story there and
+     here. */
   const PROMOS = [
-    { id: 'mitsubishi', brand: 'MITSUBISHI — ASX', img: 'assets/thumbs/mitsubishi-asx.jpg',
-      text: 'Once used by Mitsubishi — license it today, starting at 99₪ for 6 months',
+    { id: 'mitsubishi', brand: 'Mitsubishi', title: 'MITSUBISHI — ASX',
+      img: 'assets/thumbs/mitsubishi-asx.jpg', mp4: 'https://cdn.snowstar.company/work/mitsubishi-asx.mp4',
+      credits: { work: 'Catalog music placement', agency: 'Gitam B.B.D.O' },
       slug: 'the-rise-and-fall-original-ver' },
-    { id: 'fiverr', brand: 'FIVERR — DIRECTOR’S CUT', img: 'assets/thumbs/fiverr-director-s-cut.jpg',
-      text: 'Once used by Fiverr — license it today, starting at 99₪ for 6 months',
+    { id: 'fiverr', brand: 'Fiverr', logo: 'assets/clients/logo12.png', title: 'FIVERR — DIRECTOR’S CUT',
+      img: 'assets/thumbs/fiverr-director-s-cut.jpg', mp4: 'https://cdn.snowstar.company/work/fiverr-director-s-cut.mp4',
+      credits: { work: 'Original music & sound design', production: 'Green Productions', director: 'Guy Bolandi' },
       slug: 'cyber-tunnel' },
-    { id: 'pepsi', brand: 'PEPSI — VIETNAM', img: 'assets/thumbs/pepsi-vietnam.jpg',
-      text: 'Once used by Pepsi — license it today, starting at 99₪ for 6 months',
+    { id: 'pepsi', brand: 'Pepsi', logo: 'assets/clients/logo10.png', title: 'PEPSI — VIETNAM',
+      img: 'assets/thumbs/pepsi-vietnam.jpg', mp4: 'https://cdn.snowstar.company/work/pepsi-vietnam.mp4',
+      credits: { work: 'Original Music', production: 'May Production', director: 'Guy Bolandi' },
       slug: 'do-it-major' },
     { id: 'custom-license', spotlight: true },
   ];
+
+  /* ── the commercial, full screen ──────────────────────────────────────────
+     The same move the Snowstar portfolio makes: the film with its credits, in
+     a lightbox, and nothing else competing with it. Built once, reused. */
+  let lb = null;
+  function openFilm(p) {
+    if (!lb) {
+      lb = document.createElement('div');
+      lb.className = 'promo-lb';
+      lb.innerHTML = '<div class="promo-lb-in"><button class="promo-lb-x" aria-label="Close">×</button>' +
+                     '<div class="promo-lb-body"></div><div class="promo-lb-title"></div></div>';
+      document.body.appendChild(lb);
+      const close = () => { lb.hidden = true; lb.querySelector('.promo-lb-body').innerHTML = '';
+                            document.body.style.overflow = ''; };
+      lb.querySelector('.promo-lb-x').addEventListener('click', close);
+      lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+      addEventListener('keydown', (e) => { if (e.key === 'Escape' && !lb.hidden) close(); });
+    }
+    lb.querySelector('.promo-lb-body').innerHTML =
+      `<video src="${p.mp4}" controls autoplay playsinline poster="${p.img}"></video>`;
+    const c = p.credits || {};
+    lb.querySelector('.promo-lb-title').innerHTML = `<strong>${p.title}</strong><span class="promo-lb-credits">${[
+      c.work && `<span><em>Snowstar</em>${c.work}</span>`,
+      c.director && `<span><em>Director</em>${c.director}</span>`,
+      c.production && `<span><em>Production</em>${c.production}</span>`,
+      c.agency && `<span><em>Agency</em>${c.agency}</span>`,
+    ].filter(Boolean).join('')}</span>`;
+    lb.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
 
   let shown;
   try { shown = new Set(JSON.parse(sessionStorage.getItem('mutra_promos') || '[]')); }
@@ -48,23 +87,28 @@
     wrap.className = 'promo-strip';
     wrap.innerHTML = `
       <div class="promo-banner">
-        <img src="${p.img}" alt="" loading="lazy">
+        <button type="button" class="promo-film" aria-label="Watch the ${p.brand} commercial">
+          <img src="${p.img}" alt="" loading="lazy">
+          <span class="promo-play">▶</span>
+        </button>
         <div class="promo-copy">
-          <span class="promo-kicker">From the Snowstar portfolio</span>
-          <b>${p.brand}</b>
-          <p>${p.text}</p>
+          ${p.logo ? `<img class="promo-logo" src="${p.logo}" alt="${p.brand}">`
+                   : `<span class="promo-wordmark">${p.brand}</span>`}
+          <b>Once used by ${p.brand} — license it today</b>
+          <p>Starting at 99₪ for 6 months · watch the commercial, then play the track below</p>
         </div>
       </div>`;
     // The claim, then the sound that earned it — the catalogue's own row, so it
     // plays, seeks, and licenses exactly like every other row on the page.
     const row = window.mutraCatalog && mutraCatalog.row(p.slug);
     if (row) { row.classList.add('promo-track'); wrap.appendChild(row); }
+    // The commercial IS the proof, so clicking anywhere on the banner opens the
+    // film — the same lightbox the Snowstar portfolio uses, credits and all.
     wrap.querySelector('.promo-banner').addEventListener('click', () => {
       if (window.mutraTrack) mutraTrack('promo_click', p.id);
-      // The banner brings up its track, the same move a spotlight cover makes.
+      openFilm(p);
       const r = wrap.querySelector('.promo-track');
-      if (r) { r.scrollIntoView({ behavior: 'smooth', block: 'center' });
-               r.classList.add('promo-flash');
+      if (r) { r.classList.add('promo-flash');
                setTimeout(() => r.classList.remove('promo-flash'), 1600); }
     });
     return wrap;

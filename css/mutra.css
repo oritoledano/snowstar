@@ -1526,24 +1526,55 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .apx-full:hover{text-decoration:underline}
 
 /* ── promo strips: portfolio proof, inserted at behaviour moments ───────────
-   A brand banner and, directly beneath it, the real catalogue row of the track
-   that scored the commercial. The row IS the pitch — "this exact sound sold a
-   car" only lands if the sound is one click from the claim. */
-.promo-strip{margin:14px 0;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+   The brand and the claim, sized to sell: a big film still with a play badge,
+   the client's logo, and "Once used by X — license it today" as the headline
+   rather than a caption. Clicking the film opens the commercial in a lightbox
+   with its credits — the same move the Snowstar portfolio makes — and the real
+   catalogue row beneath is the licensing path. */
+.promo-strip{margin:16px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;
   animation:promoIn .5s ease}
 @keyframes promoIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.promo-banner{display:flex;gap:18px;align-items:center;cursor:pointer;
-  background:var(--panel);padding:14px 18px;transition:background .2s}
+.promo-banner{display:flex;gap:26px;align-items:center;cursor:pointer;
+  background:var(--panel);padding:20px 24px;transition:background .2s}
 .promo-banner:hover{background:var(--panel-2,rgba(128,128,128,.06))}
-.promo-banner img{width:150px;aspect-ratio:16/9;object-fit:cover;border-radius:10px;flex:none}
-.promo-kicker{display:block;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--amber,#8fd8ff);margin-bottom:4px}
-.promo-copy b{font-family:var(--font-display);font-size:1.05rem;letter-spacing:.04em}
-.promo-copy p{color:var(--muted);font-size:.88rem;margin-top:4px;line-height:1.5}
+.promo-film{position:relative;flex:none;width:min(340px,42%);aspect-ratio:16/9;border:0;padding:0;
+  border-radius:12px;overflow:hidden;cursor:pointer;background:#000}
+.promo-film img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.promo-banner:hover .promo-film img{transform:scale(1.04)}
+.promo-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;color:#fff}
+.promo-play::before{content:'';position:absolute;width:58px;height:58px;border-radius:50%;
+  background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.85);transition:.25s}
+.promo-banner:hover .promo-play::before{background:var(--amber,#8fd8ff);border-color:transparent;
+  transform:scale(1.1)}
+.promo-play{text-indent:3px}
+.promo-copy{flex:1;min-width:0}
+.promo-logo{height:34px;width:auto;max-width:150px;object-fit:contain;display:block;margin-bottom:12px}
+.promo-wordmark{display:block;font-family:var(--font-display);font-size:1.5rem;letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:10px}
+.promo-copy b{display:block;font-family:var(--font-display);font-size:clamp(1.2rem,2.3vw,1.75rem);
+  line-height:1.15;letter-spacing:.02em}
+.promo-copy p{color:var(--muted);font-size:.92rem;margin-top:10px;line-height:1.5}
 .promo-strip .trk.promo-track{border-top:1px solid var(--line);margin:0}
 .promo-flash{animation:promoFlash 1.6s ease}
 @keyframes promoFlash{0%,60%{box-shadow:inset 0 0 0 2px var(--amber,#8fd8ff)}100%{box-shadow:none}}
 @media(max-width:640px){
-  .promo-banner{flex-direction:column;align-items:flex-start;gap:10px}
-  .promo-banner img{width:100%}
+  .promo-banner{flex-direction:column;align-items:stretch;gap:14px;padding:14px}
+  .promo-film{width:100%}
+}
+
+/* The commercial, full screen, credits under the title — mirrors the Snowstar
+   portfolio lightbox so a film opens the same way on either site. */
+.promo-lb{position:fixed;inset:0;z-index:200;background:rgba(4,5,10,.92);
+  display:flex;align-items:center;justify-content:center;padding:4vh 4vw}
+.promo-lb[hidden]{display:none}
+.promo-lb-in{position:relative;width:min(1100px,100%);max-height:92vh}
+.promo-lb-body video{width:100%;max-height:74vh;border-radius:12px;display:block;background:#000}
+.promo-lb-title{margin-top:14px;color:var(--text)}
+.promo-lb-title strong{font-family:var(--font-display);letter-spacing:.05em}
+.promo-lb-credits{display:flex;gap:22px;flex-wrap:wrap;margin-top:8px;font-size:.82rem;color:var(--muted)}
+.promo-lb-credits em{font-style:normal;color:var(--dim,var(--muted));text-transform:uppercase;
+  font-size:.64rem;letter-spacing:.1em;display:block;margin-bottom:2px}
+.promo-lb-x{position:absolute;top:-8px;right:-4px;transform:translateY(-100%);background:none;
+  border:0;color:#fff;font-size:1.9rem;cursor:pointer;line-height:1;padding:6px}
 }
