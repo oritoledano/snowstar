@@ -106,8 +106,9 @@
         <div class="promo-copy">
           ${p.logo ? `<img class="promo-logo${p.tall ? ' tall' : ''}" src="${p.logo}" alt="${p.brand}">`
                    : `<span class="promo-wordmark">${p.brand}</span>`}
-          <b>Once used by ${p.brand} — license it today</b>
-          <p>Starting at 99₪ for 6 months · watch the commercial, then play the track below</p>
+          <b><span>Once used by ${p.brand}.</span>
+             <span class="promo-l2">License it today.</span></b>
+          <p>Starting at 99₪ for 6 months</p>
         </div>
       </div>`;
     // The claim, then the sound that earned it — the catalogue's own row, so it

@@ -1534,25 +1534,22 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-strip{margin:16px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;
   animation:promoIn .5s ease}
 @keyframes promoIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-/* The backdrop is the site's own gradient dissolved into the dark panel: two
-   soft glows in the accent colours, a faint diagonal weave, and a couple of
-   outline rings — the register of a promo card, in the palette of the page.
-   Everything is CSS on the theme variables, so the light and dark skins each
-   get their own version for free. */
-.promo-banner{position:relative;display:flex;gap:26px;align-items:center;cursor:pointer;
-  padding:24px 26px;overflow:hidden;isolation:isolate;
+/* The backdrop: a quiet colour field, not a pattern. Two soft blooms of the
+   site's accents melt into the panel, a breath of grain keeps the gradient
+   from banding, and nothing else — the sample this follows sells with type on
+   a calm ground, so the ground stays calm. Theme variables throughout: the
+   dark skin repaints it in its own colours. */
+.promo-banner{position:relative;display:flex;gap:28px;align-items:center;cursor:pointer;
+  padding:30px 32px;overflow:hidden;isolation:isolate;
   background:
-    radial-gradient(46% 90% at 86% 12%, color-mix(in srgb, var(--pink,#ff3d8b) 42%, transparent), transparent 72%),
-    radial-gradient(52% 110% at 8% 88%, color-mix(in srgb, var(--amber,#ffc24b) 34%, transparent), transparent 74%),
-    repeating-linear-gradient(115deg, transparent 0 26px, color-mix(in srgb, var(--coral,#ff6a4d) 11%, transparent) 26px 28px),
+    radial-gradient(120% 160% at 100% 0%, color-mix(in srgb, var(--pink,#ff3d8b) 30%, transparent), transparent 55%),
+    radial-gradient(130% 170% at 0% 100%, color-mix(in srgb, var(--amber,#ffc24b) 24%, transparent), transparent 58%),
+    radial-gradient(60% 90% at 55% 50%, color-mix(in srgb, var(--coral,#ff6a4d) 12%, transparent), transparent 75%),
     var(--panel);
   transition:filter .25s}
-.promo-banner:hover{filter:brightness(1.07)}
-.promo-banner::before,.promo-banner::after{content:'';position:absolute;border-radius:50%;
-  border:2px solid color-mix(in srgb, var(--amber,#ffc24b) 45%, transparent);z-index:-1}
-.promo-banner::before{width:120px;height:120px;right:-34px;top:-44px}
-.promo-banner::after{width:22px;height:22px;left:44%;bottom:14px;
-  border-color:color-mix(in srgb, var(--pink,#ff3d8b) 55%, transparent)}
+.promo-banner::before{content:'';position:absolute;inset:0;z-index:-1;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+.promo-banner:hover{filter:brightness(1.06)}
 .promo-film{position:relative;flex:none;width:min(340px,42%);aspect-ratio:16/9;border:0;padding:0;
   border-radius:12px;overflow:hidden;cursor:pointer;background:#000}
 .promo-film img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
@@ -1569,15 +1566,17 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-logo.tall{height:84px;margin-bottom:10px}   /* mark-over-wordmark logos read taller */
 .promo-wordmark{display:block;font-family:var(--font-display);font-size:1.5rem;letter-spacing:.1em;
   text-transform:uppercase;margin-bottom:10px}
-/* Unbounded 800 — the extra-bold promo register, with the site's pink as a
-   hard offset shadow so the line pops off the backdrop instead of sitting in
-   it. Anton stays the page's display face; this row is ADVERTISING and gets
-   to shout in its own voice. */
-.promo-copy b{display:block;font-family:'Unbounded',var(--font-display),sans-serif;font-weight:800;
-  font-size:clamp(1.15rem,2.4vw,1.8rem);line-height:1.12;letter-spacing:.01em;
-  text-transform:uppercase;
-  text-shadow:3px 3px 0 color-mix(in srgb, var(--pink,#ff3d8b) 70%, transparent)}
-.promo-copy p{color:var(--muted);font-size:.92rem;margin-top:10px;line-height:1.5}
+/* Fraunces — the heavy editorial serif of the reference, sentence case, two
+   short lines. The claim in the page's ink; the call to action repainted in
+   the site's gradient, so the eye lands on the line that asks for something. */
+.promo-copy b{display:block;font-family:'Fraunces',Georgia,serif;font-weight:800;
+  font-size:clamp(1.5rem,3.1vw,2.5rem);line-height:1.06;letter-spacing:-.01em;
+  text-transform:none;font-variation-settings:'opsz' 100}
+.promo-copy b span{display:block}
+.promo-copy .promo-l2{background:var(--grad,linear-gradient(100deg,#ffc24b,#ff3d8b));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  padding-bottom:.08em}   /* clipped descenders otherwise */
+.promo-copy p{color:var(--muted);font-size:.95rem;margin-top:12px;line-height:1.5}
 .promo-strip .trk.promo-track{border-top:1px solid var(--line);margin:0}
 .promo-flash{animation:promoFlash 1.6s ease}
 @keyframes promoFlash{0%,60%{box-shadow:inset 0 0 0 2px var(--amber,#8fd8ff)}100%{box-shadow:none}}
