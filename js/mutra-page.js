@@ -335,8 +335,11 @@
     const t = i < 0 ? list[0] : list[(i + dir + list.length) % list.length];
     loadTrack(t, tracksEl.querySelector(`.trk[data-slug="${t.slug}"]`));
   }
-  const ICON_PREV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M6 5h2v14H6zM20 5l-10 7 10 7z"/></svg>';
-  const ICON_NEXT = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l10 7-10 7z"/></svg>';
+  // Skip-to-edge marks — a bar and a triangle leaning on it, rounded like the
+  // reference: no ring around them, so the circled play button stays the one
+  // circle in the cluster.
+  const ICON_PREV = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="5" y="5" width="2.6" height="14" rx="1.3"/><path d="M18.2 5.9a1.2 1.2 0 0 1 1.8 1v10.2a1.2 1.2 0 0 1-1.8 1l-8.1-5.1a1.2 1.2 0 0 1 0-2z"/></svg>';
+  const ICON_NEXT = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="16.4" y="5" width="2.6" height="14" rx="1.3"/><path d="M5.8 5.9a1.2 1.2 0 0 0-1.8 1v10.2a1.2 1.2 0 0 0 1.8 1l8.1-5.1a1.2 1.2 0 0 0 0-2z"/></svg>';
   const plPrev = document.createElement('button');
   plPrev.className = 'pl-skip'; plPrev.id = 'plPrev';
   plPrev.setAttribute('aria-label', 'Previous track');

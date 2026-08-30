@@ -1602,10 +1602,13 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 }
 
 /* Player prev/next — the same quiet circle language as the play button. */
-.pl-skip{background:none;border:1px solid var(--line);border-radius:50%;width:34px;height:34px;
+/* Bare marks beside the circled play — the reference keeps one circle in the
+   cluster, and it is the play button. */
+.pl-skip{background:none;border:0;width:34px;height:34px;
   display:inline-flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;
-  flex:none;transition:color .18s,border-color .18s}
-.pl-skip:hover{color:var(--text);border-color:var(--amber,#8fd8ff)}
+  flex:none;transition:color .18s,transform .12s}
+.pl-skip:hover{color:var(--text)}
+.pl-skip:active{transform:scale(.88)}
 @media(max-width:560px){#plPrev{display:none}}  /* keep the bar one row on phones */
 
 /* Custom-licence artist strip: a portrait where the film still was. */
