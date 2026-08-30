@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1788102947.5921607,
-    "seen": 1788103047.5373492,
-    "ast_hash": "62eb8d0a955ecc6e25ce076c39b0f3da",
+    "mtime": 1788103548.3039408,
+    "seen": 1788103554.6183622,
+    "ast_hash": "7eced3c57c74581ee4554a6d7b0d1dec",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1788102947.5904465,
-    "seen": 1788103047.53735,
-    "ast_hash": "bf7cdbb86a557246537578532e851faf",
+    "mtime": 1788103548.302833,
+    "seen": 1788103554.6183622,
+    "ast_hash": "0cb1fc346c130b45dcfaf09a949226fb",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1788102947.5914211,
-    "seen": 1788103047.537353,
-    "ast_hash": "d3789a145d206c084024cc7c4c27b291",
+    "mtime": 1788103548.3035338,
+    "seen": 1788103554.6183648,
+    "ast_hash": "c86fb7a38eb07bed6f66430c473cf197",
     "semantic_hash": ""
   },
   "index.html": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1788103041.2909567,
-    "seen": 1788103047.537354,
-    "ast_hash": "25e4e543f991cfa5293b1c1a965f8ec5",
+    "mtime": 1788103548.3076758,
+    "seen": 1788103554.618366,
+    "ast_hash": "7d13263ffa8467231578dd949ff8abe9",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1410,9 +1410,15 @@
     "semantic_hash": ""
   },
   "js/mutra-promos.js": {
-    "mtime": 1788103041.2237961,
-    "seen": 1788103047.537297,
-    "ast_hash": "3789dfe70fc8492236603065099d0bca",
+    "mtime": 1788103548.2345312,
+    "seen": 1788103554.618308,
+    "ast_hash": "1f1d39dbe56f133737cbc921a10a867e",
+    "semantic_hash": ""
+  },
+  "assets/clients/mitsubishi.png": {
+    "mtime": 1788103521.163291,
+    "seen": 1788103554.6184168,
+    "ast_hash": "d3ccf121d82ec2f17734f49c114782cb",
     "semantic_hash": ""
   }
 }

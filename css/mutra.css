@@ -1542,9 +1542,9 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-banner{position:relative;display:flex;gap:26px;align-items:center;cursor:pointer;
   padding:24px 26px;overflow:hidden;isolation:isolate;
   background:
-    radial-gradient(46% 90% at 86% 12%, color-mix(in srgb, var(--pink,#ff3d8b) 26%, transparent), transparent 70%),
-    radial-gradient(52% 110% at 8% 88%, color-mix(in srgb, var(--amber,#ffc24b) 22%, transparent), transparent 72%),
-    repeating-linear-gradient(115deg, transparent 0 26px, color-mix(in srgb, var(--coral,#ff6a4d) 7%, transparent) 26px 28px),
+    radial-gradient(46% 90% at 86% 12%, color-mix(in srgb, var(--pink,#ff3d8b) 42%, transparent), transparent 72%),
+    radial-gradient(52% 110% at 8% 88%, color-mix(in srgb, var(--amber,#ffc24b) 34%, transparent), transparent 74%),
+    repeating-linear-gradient(115deg, transparent 0 26px, color-mix(in srgb, var(--coral,#ff6a4d) 11%, transparent) 26px 28px),
     var(--panel);
   transition:filter .25s}
 .promo-banner:hover{filter:brightness(1.07)}
