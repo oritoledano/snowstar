@@ -1561,13 +1561,19 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-banner:hover .promo-play::before{background:var(--amber,#8fd8ff);border-color:transparent;
   transform:scale(1.1)}
 .promo-play{text-indent:3px}
-.promo-copy{flex:1;min-width:0}
+/* Centred and evenly distributed, the way an ad card is set: the copy column
+   centres itself against the film, logo over headline over price on one axis,
+   with the space around them balanced rather than everything hugging the
+   left edge. */
+.promo-copy{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:6px 18px 6px 0}
+.promo-brand{font-style:normal}
 /* One height for every brand, whatever shape its logo is — a stacked mark and
    a wide wordmark sit in the same 64px box and align to the same baseline. */
-.promo-logo{height:64px;width:auto;max-width:230px;object-fit:contain;object-position:left center;
-  display:block;margin-bottom:13px}
+.promo-logo{height:64px;width:auto;max-width:230px;object-fit:contain;object-position:center;
+  display:block;margin-bottom:14px}
 .promo-wordmark{display:block;font-family:var(--font-display);font-size:1.5rem;letter-spacing:.1em;
-  text-transform:uppercase;margin-bottom:10px}
+  text-transform:uppercase;margin-bottom:10px;text-align:center}
 /* Fraunces — the heavy editorial serif of the reference, sentence case, two
    short lines. The claim in the page's ink; the call to action repainted in
    the site's gradient, so the eye lands on the line that asks for something. */
@@ -1583,8 +1589,9 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-flash{animation:promoFlash 1.6s ease}
 @keyframes promoFlash{0%,60%{box-shadow:inset 0 0 0 2px var(--amber,#8fd8ff)}100%{box-shadow:none}}
 @media(max-width:640px){
-  .promo-banner{flex-direction:column;align-items:stretch;gap:14px;padding:14px}
+  .promo-banner{flex-direction:column;align-items:stretch;gap:16px;padding:16px}
   .promo-film{width:100%}
+  .promo-copy{padding:0 4px 6px}
 }
 
 /* The commercial, full screen, credits under the title — mirrors the Snowstar

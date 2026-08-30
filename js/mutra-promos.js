@@ -30,16 +30,16 @@
      table on the Snowstar side, so the lightbox tells the same story there and
      here. */
   const PROMOS = [
-    { id: 'mitsubishi', brand: 'Mitsubishi', logo: 'assets/clients/mitsubishi.png',
+    { id: 'mitsubishi', brand: 'Mitsubishi', color: '#ff2a3c', logo: 'assets/clients/mitsubishi.png',
       title: 'MITSUBISHI — ASX',
       img: 'assets/thumbs/mitsubishi-asx.jpg', mp4: 'https://cdn.snowstar.company/work/mitsubishi-asx.mp4',
       credits: { work: 'Catalog music placement', agency: 'Gitam B.B.D.O' },
       slug: 'the-rise-and-fall-original-ver' },
-    { id: 'fiverr', brand: 'Fiverr', logo: 'assets/clients/logo12.png', title: 'FIVERR — DIRECTOR’S CUT',
+    { id: 'fiverr', brand: 'Fiverr', color: '#1dbf73', logo: 'assets/clients/logo12.png', title: 'FIVERR — DIRECTOR’S CUT',
       img: 'assets/thumbs/fiverr-director-s-cut.jpg', mp4: 'https://cdn.snowstar.company/work/fiverr-director-s-cut.mp4',
       credits: { work: 'Original music & sound design', production: 'Green Productions', director: 'Guy Bolandi' },
       slug: 'cyber-tunnel' },
-    { id: 'pepsi', brand: 'Pepsi', logo: 'assets/clients/logo10.png', title: 'PEPSI — VIETNAM',
+    { id: 'pepsi', brand: 'Pepsi', color: '#2f9bff', logo: 'assets/clients/logo10.png', title: 'PEPSI — VIETNAM',
       img: 'assets/thumbs/pepsi-vietnam.jpg', mp4: 'https://cdn.snowstar.company/work/pepsi-vietnam.mp4',
       credits: { work: 'Original Music', production: 'May Production', director: 'Guy Bolandi' },
       slug: 'do-it-major' },
@@ -106,7 +106,8 @@
         <div class="promo-copy">
           ${p.logo ? `<img class="promo-logo" src="${p.logo}" alt="${p.brand}">`
                    : `<span class="promo-wordmark">${p.brand}</span>`}
-          <b><span>Once used by ${p.brand}.</span>
+          <b><span>Once used by <em class="promo-brand"
+               style="color:${p.color}">${p.brand}</em>.</span>
              <span class="promo-l2">License it today.</span></b>
           <p>Starting at 99₪ for 6 months</p>
         </div>
