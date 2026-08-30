@@ -398,7 +398,11 @@ export async function publicArtist(env, url) {
 
   const u = await env.DB.prepare(
     `SELECT id, artist_name, artist_bio, avatar, artist_links, artist_videos
-       FROM users WHERE artist = 1 AND lower(artist_name) = lower(?) LIMIT 1`
+       FROM users WHERE artist = 1 AND lower(artist_name) = lower(?)
+      ORDER BY (artist_bio IS NOT NULL AND artist_bio != '') DESC,
+               (artist_links IS NOT NULL AND artist_links != '' AND artist_links != '[]') DESC,
+               (avatar IS NOT NULL AND avatar != '') DESC
+      LIMIT 1`
   ).bind(name).first().catch(() => null);
 
   const row = u || await env.DB.prepare(

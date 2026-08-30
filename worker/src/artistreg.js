@@ -49,15 +49,28 @@ export async function listArtists(env) {
     ).all().catch(() => ({ results: [] })),
   ]);
 
+  /* Two accounts can carry the same artist name — someone signs up twice, or an
+     artist claims a profile they already had. Whichever is richer wins, because
+     an empty duplicate silently blanking a filled-in profile is exactly the bug
+     this merge was meant to end. */
+  const filled = (r) => (r.bio ? 4 : 0) + (r.links && r.links !== '[]' ? 2 : 0) + (r.avatar ? 1 : 0);
   const byName = new Map();
-  for (const g of ghosts.results || []) byName.set(String(g.name || '').toLowerCase(), g);
+  const put = (key, row) => {
+    const cur = byName.get(key);
+    if (!cur || filled(row) > filled(cur)) byName.set(key, row);
+  };
+  for (const g of ghosts.results || []) put(String(g.name || '').toLowerCase(), g);
   for (const m of members.results || []) {
     // Email is deliberately not carried over from a member account: the roster
     // is public, and a ghost's email is a contact the owner typed, not a
     // person's sign-in address.
-    byName.set(String(m.name || '').toLowerCase(),
-               { id: m.id, name: m.name, email: null, bio: m.bio, avatar: m.avatar,
-                 links: m.links, claimed_user_id: m.id, member: 1 });
+    const row = { id: m.id, name: m.name, email: null, bio: m.bio, avatar: m.avatar,
+                  links: m.links, claimed_user_id: m.id, member: 1 };
+    const key = String(m.name || '').toLowerCase();
+    // A real account still beats a ghost of the same name even when emptier —
+    // it is the one its owner can actually edit.
+    const cur = byName.get(key);
+    if (!cur || !cur.member || filled(row) > filled(cur)) byName.set(key, row);
   }
   const artists = [...byName.values()].sort((a, b) =>
     String(a.name || '').localeCompare(String(b.name || ''), undefined, { sensitivity: 'base' }));

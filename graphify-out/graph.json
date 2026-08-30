@@ -5601,7 +5601,7 @@
       "file_type": "code",
       "norm_label": "openeditor()",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L90"
+      "source_location": "L95"
     },
     {
       "id": "js_mutra_artist_page_paint",
@@ -5625,7 +5625,7 @@
       "file_type": "code",
       "norm_label": "platformof()",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L155"
+      "source_location": "L160"
     },
     {
       "id": "js_mutra_artist_page_tracksfor",
@@ -6861,7 +6861,7 @@
       "file_type": "code",
       "norm_label": "ensureartists()",
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L71"
+      "source_location": "L84"
     },
     {
       "id": "worker_src_artistreg_json",
@@ -6909,7 +6909,7 @@
       "file_type": "code",
       "norm_label": "saveartist()",
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L99"
+      "source_location": "L112"
     },
     {
       "id": "worker_src_artistreg_splitnames",
@@ -13117,7 +13117,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L124",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -13129,7 +13129,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L133",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -13141,7 +13141,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L147",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -17238,6 +17238,18 @@
     },
     {
       "source": "worker_src_artistreg_ensureartists",
+      "target": "worker_src_artistreg_now",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_artistreg_ensureartists",
       "target": "worker_src_artistreg_json",
       "relation": "calls",
       "_origin": "ast",
@@ -17245,7 +17257,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L72",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -17257,24 +17269,12 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L74",
+      "source_location": "L87",
       "weight": 1.0
     },
     {
       "source": "worker_src_artistreg_ensureartists",
       "target": "worker_src_artistreg_listartists",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L75",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_artistreg_ensureartists",
-      "target": "worker_src_artistreg_now",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17293,7 +17293,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L64",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -17305,7 +17305,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L100",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -17317,7 +17317,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L122",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -27917,7 +27917,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L155",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -27961,7 +27961,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L90",
+      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -30991,6 +30991,17 @@
     },
     {
       "source": "worker_src_artistreg",
+      "target": "worker_src_artistreg_saveartist",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "worker/src/artistreg.js",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "worker_src_artistreg",
       "target": "worker_src_artistreg_now",
       "relation": "contains",
       "_origin": "ast",
@@ -31041,18 +31052,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "worker/src/artistreg.js",
-      "source_location": "L71",
-      "weight": 1.0
-    },
-    {
-      "source": "worker_src_artistreg",
-      "target": "worker_src_artistreg_saveartist",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "worker/src/artistreg.js",
-      "source_location": "L99",
+      "source_location": "L84",
       "weight": 1.0
     },
     {
@@ -37663,5 +37663,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "6b67524ce48d8dfdb1681d2060f5325965c036f1"
+  "built_at_commit": "cdb1403957ac51ecb297858be4526ec4c0f16d9c"
 }

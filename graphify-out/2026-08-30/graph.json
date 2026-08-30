@@ -2292,136 +2292,148 @@
       "source_location": "L66"
     },
     {
-      "id": "worker_src_crypto_b64",
-      "label": "b64()",
+      "id": "worker_src_bulk_applyops",
+      "label": "applyOps()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "b64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L10"
+      "norm_label": "applyops()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L69"
     },
     {
-      "id": "worker_src_crypto_pbkdf2",
-      "label": "pbkdf2()",
+      "id": "worker_src_bulk_bulkartist",
+      "label": "bulkArtist()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "pbkdf2()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L29"
+      "norm_label": "bulkartist()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L366"
     },
     {
-      "id": "worker_src_crypto_peppered",
-      "label": "peppered()",
+      "id": "worker_src_bulk_bulkedit",
+      "label": "bulkEdit()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "peppered()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L22"
+      "norm_label": "bulkedit()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L203"
     },
     {
-      "id": "worker_src_crypto_randb64",
-      "label": "randB64()",
+      "id": "worker_src_bulk_bulkundo",
+      "label": "bulkUndo()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "randb64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L11"
+      "norm_label": "bulkundo()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L300"
     },
     {
-      "id": "worker_src_crypto_safeequal",
-      "label": "safeEqual()",
+      "id": "worker_src_bulk_clean",
+      "label": "clean()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "safeequal()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L38"
+      "norm_label": "clean()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L54"
     },
     {
-      "id": "worker_src_crypto_sha256b64",
-      "label": "sha256b64()",
+      "id": "worker_src_bulk_diffof",
+      "label": "diffOf()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "sha256b64()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L13"
+      "norm_label": "diffof()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L186"
     },
     {
-      "id": "worker_src_crypto_verifypassword",
-      "label": "verifyPassword()",
+      "id": "worker_src_bulk_hash",
+      "label": "hash()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "verifypassword()",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L46"
+      "norm_label": "hash()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L348"
     },
     {
-      "id": "worker_src_index_randtoken",
-      "label": "randToken()",
+      "id": "worker_src_bulk_json",
+      "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "randtoken()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L76"
+      "norm_label": "json()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L34"
     },
     {
-      "id": "worker_src_session_currentuser",
-      "label": "currentUser()",
+      "id": "worker_src_bulk_keyof",
+      "label": "keyOf()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "currentuser()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L18"
+      "norm_label": "keyof()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L61"
     },
     {
-      "id": "worker_src_session_now",
+      "id": "worker_src_bulk_listbatches",
+      "label": "listBatches()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "bulk.js",
+      "file_type": "code",
+      "norm_label": "listbatches()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L337"
+    },
+    {
+      "id": "worker_src_bulk_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L6"
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L33"
     },
     {
-      "id": "worker_src_session_readcookies",
-      "label": "readCookies()",
+      "id": "worker_src_bulk_taglist",
+      "label": "tagList()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "readcookies()",
-      "source_file": "worker/src/session.js",
-      "source_location": "L8"
+      "norm_label": "taglist()",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L55"
     },
     {
       "id": "js_mutra_artist_quotemailto",
@@ -3156,6 +3168,90 @@
       "source_location": "L97"
     },
     {
+      "id": "worker_src_crypto_b64",
+      "label": "b64()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "b64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L10"
+    },
+    {
+      "id": "worker_src_crypto_pbkdf2",
+      "label": "pbkdf2()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "pbkdf2()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "worker_src_crypto_peppered",
+      "label": "peppered()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "peppered()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "worker_src_crypto_randb64",
+      "label": "randB64()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "randb64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "worker_src_crypto_safeequal",
+      "label": "safeEqual()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "safeequal()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L38"
+    },
+    {
+      "id": "worker_src_crypto_verifypassword",
+      "label": "verifyPassword()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "verifypassword()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_index_randtoken",
+      "label": "randToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "randtoken()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L76"
+    },
+    {
       "id": "worker_src_oauth_b64url",
       "label": "b64url()",
       "_callable": true,
@@ -3624,6 +3720,102 @@
       "source_location": "L247"
     },
     {
+      "id": "worker_src_contact_clean",
+      "label": "clean()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "clean()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L28"
+    },
+    {
+      "id": "worker_src_contact_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "worker_src_contact_listmessages",
+      "label": "listMessages()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "listmessages()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L128"
+    },
+    {
+      "id": "worker_src_contact_makeref",
+      "label": "makeRef()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "makeref()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L46"
+    },
+    {
+      "id": "worker_src_contact_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "worker_src_contact_setmessagestatus",
+      "label": "setMessageStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "setmessagestatus()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L146"
+    },
+    {
+      "id": "worker_src_contact_submitcontact",
+      "label": "submitContact()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "submitcontact()",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L62"
+    },
+    {
+      "id": "worker_src_crypto_sha256b64",
+      "label": "sha256b64()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "sha256b64()",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L13"
+    },
+    {
       "id": "worker_src_licensing_haslivelicence",
       "label": "hasLiveLicence()",
       "_callable": true,
@@ -3634,6 +3826,42 @@
       "norm_label": "haslivelicence()",
       "source_file": "worker/src/licensing.js",
       "source_location": "L363"
+    },
+    {
+      "id": "worker_src_session_currentuser",
+      "label": "currentUser()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "currentuser()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "worker_src_session_now",
+      "label": "now()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "now()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "worker_src_session_readcookies",
+      "label": "readCookies()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "readcookies()",
+      "source_file": "worker/src/session.js",
+      "source_location": "L8"
     },
     {
       "id": "worker_src_stream_breadthexceeded",
@@ -3720,88 +3948,88 @@
       "source_location": "L158"
     },
     {
-      "id": "worker_src_contact_clean",
+      "id": "worker_src_ownership_clean",
       "label": "clean()",
       "_callable": true,
       "_origin": "ast",
       "community": 32,
-      "community_name": "contact.js",
+      "community_name": "ownership.js",
       "file_type": "code",
       "norm_label": "clean()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L28"
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L23"
     },
     {
-      "id": "worker_src_contact_json",
+      "id": "worker_src_ownership_getowner",
+      "label": "getOwner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 32,
+      "community_name": "ownership.js",
+      "file_type": "code",
+      "norm_label": "getowner()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L153"
+    },
+    {
+      "id": "worker_src_ownership_json",
       "label": "json()",
       "_callable": true,
       "_origin": "ast",
       "community": 32,
-      "community_name": "contact.js",
+      "community_name": "ownership.js",
       "file_type": "code",
       "norm_label": "json()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L22"
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L16"
     },
     {
-      "id": "worker_src_contact_listmessages",
-      "label": "listMessages()",
+      "id": "worker_src_ownership_notifyrename",
+      "label": "notifyRename()",
       "_callable": true,
       "_origin": "ast",
       "community": 32,
-      "community_name": "contact.js",
+      "community_name": "ownership.js",
       "file_type": "code",
-      "norm_label": "listmessages()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L128"
-    },
-    {
-      "id": "worker_src_contact_makeref",
-      "label": "makeRef()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "contact.js",
-      "file_type": "code",
-      "norm_label": "makeref()",
-      "source_file": "worker/src/contact.js",
+      "norm_label": "notifyrename()",
+      "source_file": "worker/src/ownership.js",
       "source_location": "L46"
     },
     {
-      "id": "worker_src_contact_now",
+      "id": "worker_src_ownership_now",
       "label": "now()",
       "_callable": true,
       "_origin": "ast",
       "community": 32,
-      "community_name": "contact.js",
+      "community_name": "ownership.js",
       "file_type": "code",
       "norm_label": "now()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L21"
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L22"
     },
     {
-      "id": "worker_src_contact_setmessagestatus",
-      "label": "setMessageStatus()",
+      "id": "worker_src_ownership_ownerof",
+      "label": "ownerOf()",
       "_callable": true,
       "_origin": "ast",
       "community": 32,
-      "community_name": "contact.js",
+      "community_name": "ownership.js",
       "file_type": "code",
-      "norm_label": "setmessagestatus()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L146"
+      "norm_label": "ownerof()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L26"
     },
     {
-      "id": "worker_src_contact_submitcontact",
-      "label": "submitContact()",
+      "id": "worker_src_ownership_reassignowner",
+      "label": "reassignOwner()",
       "_callable": true,
       "_origin": "ast",
       "community": 32,
-      "community_name": "contact.js",
+      "community_name": "ownership.js",
       "file_type": "code",
-      "norm_label": "submitcontact()",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L62"
+      "norm_label": "reassignowner()",
+      "source_file": "worker/src/ownership.js",
+      "source_location": "L91"
     },
     {
       "id": "worker_src_certificate_certificate",
@@ -4320,18 +4548,6 @@
       "source_location": "L28"
     },
     {
-      "id": "worker_src_trash_trashobject",
-      "label": "trashObject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 34,
-      "community_name": "rights.js",
-      "file_type": "code",
-      "norm_label": "trashobject()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L31"
-    },
-    {
       "id": "tools_make_package_art_coeffs",
       "label": "coeffs()",
       "_callable": true,
@@ -4428,6 +4644,18 @@
       "source_location": "L85"
     },
     {
+      "id": "js_mutra_artist_panel_canedit",
+      "label": "canEdit()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 36,
+      "community_name": "mutra-artist-panel.js",
+      "file_type": "code",
+      "norm_label": "canedit()",
+      "source_file": "js/mutra-artist-panel.js",
+      "source_location": "L99"
+    },
+    {
       "id": "js_mutra_artist_panel_close",
       "label": "close()",
       "_callable": true,
@@ -4437,7 +4665,7 @@
       "file_type": "code",
       "norm_label": "close()",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L170"
+      "source_location": "L184"
     },
     {
       "id": "js_mutra_artist_panel_loadroster",
@@ -4461,7 +4689,7 @@
       "file_type": "code",
       "norm_label": "open()",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L156"
+      "source_location": "L170"
     },
     {
       "id": "js_mutra_artist_panel_paint",
@@ -4473,7 +4701,7 @@
       "file_type": "code",
       "norm_label": "paint()",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L96"
+      "source_location": "L105"
     },
     {
       "id": "js_mutra_artist_panel_socialhtml",
@@ -5373,7 +5601,7 @@
       "file_type": "code",
       "norm_label": "openeditor()",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L90"
+      "source_location": "L95"
     },
     {
       "id": "js_mutra_artist_page_paint",
@@ -5397,7 +5625,7 @@
       "file_type": "code",
       "norm_label": "platformof()",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L155"
+      "source_location": "L160"
     },
     {
       "id": "js_mutra_artist_page_tracksfor",
@@ -5544,12 +5772,36 @@
       "source_location": "L226"
     },
     {
+      "id": "worker_src_artists_cleanuporphanuploads",
+      "label": "cleanupOrphanUploads()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "cleanuporphanuploads()",
+      "source_file": "worker/src/artists.js",
+      "source_location": "L226"
+    },
+    {
+      "id": "worker_src_index_authed",
+      "label": "authed()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "authed()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L135"
+    },
+    {
       "id": "worker_src_index_clearthrottle",
       "label": "clearThrottle()",
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "clearthrottle()",
       "source_file": "worker/src/index.js",
@@ -5561,11 +5813,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "favoritesfor()",
       "source_file": "worker/src/index.js",
       "source_location": "L85"
+    },
+    {
+      "id": "worker_src_index_fetch",
+      "label": "fetch()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "fetch()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L568"
     },
     {
       "id": "worker_src_index_handle",
@@ -5573,11 +5837,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "handle()",
       "source_file": "worker/src/index.js",
       "source_location": "L148"
+    },
+    {
+      "id": "worker_src_index_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L69"
     },
     {
       "id": "worker_src_index_now",
@@ -5585,7 +5861,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "now()",
       "source_file": "worker/src/index.js",
@@ -5597,7 +5873,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "originok()",
       "source_file": "worker/src/index.js",
@@ -5609,11 +5885,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "product()",
       "source_file": "worker/src/index.js",
       "source_location": "L83"
+    },
+    {
+      "id": "worker_src_index_scheduled",
+      "label": "scheduled()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "scheduled()",
+      "source_file": "worker/src/index.js",
+      "source_location": "L563"
     },
     {
       "id": "worker_src_index_sessioncookie",
@@ -5621,7 +5909,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "sessioncookie()",
       "source_file": "worker/src/index.js",
@@ -5633,7 +5921,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "throttle()",
       "source_file": "worker/src/index.js",
@@ -5645,11 +5933,35 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "validemail()",
       "source_file": "worker/src/index.js",
       "source_location": "L78"
+    },
+    {
+      "id": "worker_src_share_esc",
+      "label": "esc()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "esc()",
+      "source_file": "worker/src/share.js",
+      "source_location": "L15"
+    },
+    {
+      "id": "worker_src_share_sharepage",
+      "label": "sharePage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "sharepage()",
+      "source_file": "worker/src/share.js",
+      "source_location": "L23"
     },
     {
       "id": "worker_src_site_deletenote",
@@ -5657,7 +5969,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "deletenote()",
       "source_file": "worker/src/site.js",
@@ -5669,7 +5981,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "json()",
       "source_file": "worker/src/site.js",
@@ -5681,7 +5993,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "listnotes()",
       "source_file": "worker/src/site.js",
@@ -5693,7 +6005,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "listtexts()",
       "source_file": "worker/src/site.js",
@@ -5705,7 +6017,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "now()",
       "source_file": "worker/src/site.js",
@@ -5717,7 +6029,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "savenote()",
       "source_file": "worker/src/site.js",
@@ -5729,7 +6041,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "savetext()",
       "source_file": "worker/src/site.js",
@@ -5741,11 +6053,59 @@
       "_callable": true,
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "storagereport()",
       "source_file": "worker/src/site.js",
       "source_location": "L100"
+    },
+    {
+      "id": "worker_src_trash_emptytrash",
+      "label": "emptyTrash()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "emptytrash()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L77"
+    },
+    {
+      "id": "worker_src_trash_json",
+      "label": "json()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "json()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "worker_src_trash_listtrash",
+      "label": "listTrash()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "listtrash()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L50"
+    },
+    {
+      "id": "worker_src_trash_restorefromtrash",
+      "label": "restoreFromTrash()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "restorefromtrash()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L115"
     },
     {
       "id": "worker_src_artistprofile_approveclaim",
@@ -6624,96 +6984,12 @@
       "source_location": "L24"
     },
     {
-      "id": "worker_src_artists_cleanuporphanuploads",
-      "label": "cleanupOrphanUploads()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "cleanuporphanuploads()",
-      "source_file": "worker/src/artists.js",
-      "source_location": "L226"
-    },
-    {
-      "id": "worker_src_index_authed",
-      "label": "authed()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "authed()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L135"
-    },
-    {
-      "id": "worker_src_index_fetch",
-      "label": "fetch()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "fetch()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L568"
-    },
-    {
-      "id": "worker_src_index_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L69"
-    },
-    {
-      "id": "worker_src_index_scheduled",
-      "label": "scheduled()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "scheduled()",
-      "source_file": "worker/src/index.js",
-      "source_location": "L563"
-    },
-    {
-      "id": "worker_src_share_esc",
-      "label": "esc()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "esc()",
-      "source_file": "worker/src/share.js",
-      "source_location": "L15"
-    },
-    {
-      "id": "worker_src_share_sharepage",
-      "label": "sharePage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "sharepage()",
-      "source_file": "worker/src/share.js",
-      "source_location": "L23"
-    },
-    {
       "id": "worker_src_stacks_clean",
       "label": "clean()",
       "_callable": true,
       "_origin": "ast",
       "community": 53,
-      "community_name": "index.js",
+      "community_name": "stacks.js",
       "file_type": "code",
       "norm_label": "clean()",
       "source_file": "worker/src/stacks.js",
@@ -6725,7 +7001,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 53,
-      "community_name": "index.js",
+      "community_name": "stacks.js",
       "file_type": "code",
       "norm_label": "json()",
       "source_file": "worker/src/stacks.js",
@@ -6737,7 +7013,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 53,
-      "community_name": "index.js",
+      "community_name": "stacks.js",
       "file_type": "code",
       "norm_label": "liststacks()",
       "source_file": "worker/src/stacks.js",
@@ -6749,59 +7025,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 53,
-      "community_name": "index.js",
+      "community_name": "stacks.js",
       "file_type": "code",
       "norm_label": "savestack()",
       "source_file": "worker/src/stacks.js",
       "source_location": "L49"
-    },
-    {
-      "id": "worker_src_trash_emptytrash",
-      "label": "emptyTrash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "emptytrash()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L77"
-    },
-    {
-      "id": "worker_src_trash_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "worker_src_trash_listtrash",
-      "label": "listTrash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "listtrash()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L50"
-    },
-    {
-      "id": "worker_src_trash_restorefromtrash",
-      "label": "restoreFromTrash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "restorefromtrash()",
-      "source_file": "worker/src/trash.js",
-      "source_location": "L115"
     },
     {
       "id": "js_mutra_reanalyse_analysesubmission",
@@ -7572,150 +7800,6 @@
       "source_location": "L32"
     },
     {
-      "id": "worker_src_bulk_applyops",
-      "label": "applyOps()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "applyops()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L69"
-    },
-    {
-      "id": "worker_src_bulk_bulkartist",
-      "label": "bulkArtist()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "bulkartist()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L366"
-    },
-    {
-      "id": "worker_src_bulk_bulkedit",
-      "label": "bulkEdit()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "bulkedit()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L203"
-    },
-    {
-      "id": "worker_src_bulk_bulkundo",
-      "label": "bulkUndo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "bulkundo()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L300"
-    },
-    {
-      "id": "worker_src_bulk_clean",
-      "label": "clean()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L54"
-    },
-    {
-      "id": "worker_src_bulk_diffof",
-      "label": "diffOf()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "diffof()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L186"
-    },
-    {
-      "id": "worker_src_bulk_hash",
-      "label": "hash()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "hash()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L348"
-    },
-    {
-      "id": "worker_src_bulk_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L34"
-    },
-    {
-      "id": "worker_src_bulk_keyof",
-      "label": "keyOf()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "keyof()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L61"
-    },
-    {
-      "id": "worker_src_bulk_listbatches",
-      "label": "listBatches()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "listbatches()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L337"
-    },
-    {
-      "id": "worker_src_bulk_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L33"
-    },
-    {
-      "id": "worker_src_bulk_taglist",
-      "label": "tagList()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "taglist()",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L55"
-    },
-    {
       "id": "worker_src_catalog_clean",
       "label": "clean()",
       "_callable": true,
@@ -7872,88 +7956,16 @@
       "source_location": "L187"
     },
     {
-      "id": "worker_src_ownership_clean",
-      "label": "clean()",
+      "id": "worker_src_trash_trashobject",
+      "label": "trashObject()",
       "_callable": true,
       "_origin": "ast",
       "community": 8,
       "community_name": "catalog.js",
       "file_type": "code",
-      "norm_label": "clean()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L23"
-    },
-    {
-      "id": "worker_src_ownership_getowner",
-      "label": "getOwner()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "getowner()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L153"
-    },
-    {
-      "id": "worker_src_ownership_json",
-      "label": "json()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "json()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "worker_src_ownership_notifyrename",
-      "label": "notifyRename()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "notifyrename()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L46"
-    },
-    {
-      "id": "worker_src_ownership_now",
-      "label": "now()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "now()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L22"
-    },
-    {
-      "id": "worker_src_ownership_ownerof",
-      "label": "ownerOf()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "ownerof()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L26"
-    },
-    {
-      "id": "worker_src_ownership_reassignowner",
-      "label": "reassignOwner()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "reassignowner()",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L91"
+      "norm_label": "trashobject()",
+      "source_file": "worker/src/trash.js",
+      "source_location": "L31"
     },
     {
       "id": "js_mutra_skin_apply",
@@ -8331,48 +8343,37 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_crypto",
-      "label": "crypto.js",
+      "id": "worker_src_bulk",
+      "label": "bulk.js",
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "crypto.js",
-      "source_file": "worker/src/crypto.js",
+      "norm_label": "bulk.js",
+      "source_file": "worker/src/bulk.js",
       "source_location": "L1"
     },
     {
-      "id": "worker_src_crypto_enc",
-      "label": "enc",
+      "id": "worker_src_bulk_set_fields",
+      "label": "SET_FIELDS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "enc",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L7"
+      "norm_label": "set_fields",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L52"
     },
     {
-      "id": "worker_src_crypto_pbkdf2_iters",
-      "label": "PBKDF2_ITERS",
+      "id": "worker_src_bulk_tag_fields",
+      "label": "TAG_FIELDS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "crypto.js",
+      "community_name": "bulk.js",
       "file_type": "code",
-      "norm_label": "pbkdf2_iters",
-      "source_file": "worker/src/crypto.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "worker_src_session",
-      "label": "session.js",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "crypto.js",
-      "file_type": "code",
-      "norm_label": "session.js",
-      "source_file": "worker/src/session.js",
-      "source_location": "L1"
+      "norm_label": "tag_fields",
+      "source_file": "worker/src/bulk.js",
+      "source_location": "L47"
     },
     {
       "id": "js_mutra_artist",
@@ -8658,6 +8659,39 @@
       "source_location": "L1"
     },
     {
+      "id": "worker_src_crypto",
+      "label": "crypto.js",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "crypto.js",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_crypto_enc",
+      "label": "enc",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "enc",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "worker_src_crypto_pbkdf2_iters",
+      "label": "PBKDF2_ITERS",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "oauth.js",
+      "file_type": "code",
+      "norm_label": "pbkdf2_iters",
+      "source_file": "worker/src/crypto.js",
+      "source_location": "L8"
+    },
+    {
       "id": "worker_src_oauth",
       "label": "oauth.js",
       "_origin": "ast",
@@ -8779,6 +8813,39 @@
       "source_location": "L31"
     },
     {
+      "id": "worker_src_contact",
+      "label": "contact.js",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "contact.js",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_contact_routes",
+      "label": "ROUTES",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "routes",
+      "source_file": "worker/src/contact.js",
+      "source_location": "L34"
+    },
+    {
+      "id": "worker_src_session",
+      "label": "session.js",
+      "_origin": "ast",
+      "community": 30,
+      "community_name": "analytics.js",
+      "file_type": "code",
+      "norm_label": "session.js",
+      "source_file": "worker/src/session.js",
+      "source_location": "L1"
+    },
+    {
       "id": "worker_src_stream",
       "label": "stream.js",
       "_origin": "ast",
@@ -8790,26 +8857,15 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_contact",
-      "label": "contact.js",
+      "id": "worker_src_ownership",
+      "label": "ownership.js",
       "_origin": "ast",
       "community": 32,
-      "community_name": "contact.js",
+      "community_name": "ownership.js",
       "file_type": "code",
-      "norm_label": "contact.js",
-      "source_file": "worker/src/contact.js",
+      "norm_label": "ownership.js",
+      "source_file": "worker/src/ownership.js",
       "source_location": "L1"
-    },
-    {
-      "id": "worker_src_contact_routes",
-      "label": "ROUTES",
-      "_origin": "ast",
-      "community": 32,
-      "community_name": "contact.js",
-      "file_type": "code",
-      "norm_label": "routes",
-      "source_file": "worker/src/contact.js",
-      "source_location": "L34"
     },
     {
       "id": "worker_src_certificate",
@@ -9300,14 +9356,69 @@
       "source_location": "L7"
     },
     {
+      "id": "worker_src_index",
+      "label": "index.js",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "index.js",
+      "source_file": "worker/src/index.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_index_allowed_origins",
+      "label": "ALLOWED_ORIGINS",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "allowed_origins",
+      "source_file": "worker/src/index.js",
+      "source_location": "L65"
+    },
+    {
+      "id": "worker_src_index_products",
+      "label": "PRODUCTS",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "products",
+      "source_file": "worker/src/index.js",
+      "source_location": "L82"
+    },
+    {
+      "id": "worker_src_share",
+      "label": "share.js",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "share.js",
+      "source_file": "worker/src/share.js",
+      "source_location": "L1"
+    },
+    {
       "id": "worker_src_site",
       "label": "site.js",
       "_origin": "ast",
       "community": 43,
-      "community_name": "handle",
+      "community_name": "index.js",
       "file_type": "code",
       "norm_label": "site.js",
       "source_file": "worker/src/site.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "worker_src_trash",
+      "label": "trash.js",
+      "_origin": "ast",
+      "community": 43,
+      "community_name": "index.js",
+      "file_type": "code",
+      "norm_label": "trash.js",
+      "source_file": "worker/src/trash.js",
       "source_location": "L1"
     },
     {
@@ -9780,69 +9891,14 @@
       "source_location": "L42"
     },
     {
-      "id": "worker_src_index",
-      "label": "index.js",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "index.js",
-      "source_file": "worker/src/index.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_index_allowed_origins",
-      "label": "ALLOWED_ORIGINS",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "allowed_origins",
-      "source_file": "worker/src/index.js",
-      "source_location": "L65"
-    },
-    {
-      "id": "worker_src_index_products",
-      "label": "PRODUCTS",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "products",
-      "source_file": "worker/src/index.js",
-      "source_location": "L82"
-    },
-    {
-      "id": "worker_src_share",
-      "label": "share.js",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "share.js",
-      "source_file": "worker/src/share.js",
-      "source_location": "L1"
-    },
-    {
       "id": "worker_src_stacks",
       "label": "stacks.js",
       "_origin": "ast",
       "community": 53,
-      "community_name": "index.js",
+      "community_name": "stacks.js",
       "file_type": "code",
       "norm_label": "stacks.js",
       "source_file": "worker/src/stacks.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_trash",
-      "label": "trash.js",
-      "_origin": "ast",
-      "community": 53,
-      "community_name": "index.js",
-      "file_type": "code",
-      "norm_label": "trash.js",
-      "source_file": "worker/src/trash.js",
       "source_location": "L1"
     },
     {
@@ -9890,39 +9946,6 @@
       "source_location": "L1"
     },
     {
-      "id": "worker_src_bulk",
-      "label": "bulk.js",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "bulk.js",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "worker_src_bulk_set_fields",
-      "label": "SET_FIELDS",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "set_fields",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L52"
-    },
-    {
-      "id": "worker_src_bulk_tag_fields",
-      "label": "TAG_FIELDS",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "tag_fields",
-      "source_file": "worker/src/bulk.js",
-      "source_location": "L47"
-    },
-    {
       "id": "worker_src_catalog",
       "label": "catalog.js",
       "_origin": "ast",
@@ -9954,17 +9977,6 @@
       "norm_label": "string_fields",
       "source_file": "worker/src/catalog.js",
       "source_location": "L28"
-    },
-    {
-      "id": "worker_src_ownership",
-      "label": "ownership.js",
-      "_origin": "ast",
-      "community": 8,
-      "community_name": "catalog.js",
-      "file_type": "code",
-      "norm_label": "ownership.js",
-      "source_file": "worker/src/ownership.js",
-      "source_location": "L1"
     },
     {
       "id": "js_mutra_artist_data",
@@ -13105,7 +13117,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L124",
+      "source_location": "L129",
       "weight": 1.0
     },
     {
@@ -13117,7 +13129,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L133",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -13129,7 +13141,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L147",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -13153,7 +13165,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L158",
+      "source_location": "L172",
       "weight": 1.0
     },
     {
@@ -13165,7 +13177,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L163",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -13177,19 +13189,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L165",
-      "weight": 1.0
-    },
-    {
-      "source": "js_mutra_artist_panel_paint",
-      "target": "js_mutra_artist_panel_socialhtml",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L112",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -13201,7 +13201,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L98",
+      "source_location": "L107",
       "weight": 1.0
     },
     {
@@ -13213,7 +13213,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L99",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "js_mutra_artist_panel_paint",
+      "target": "js_mutra_artist_panel_socialhtml",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "js/mutra-artist-panel.js",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "js_mutra_artist_panel_paint",
+      "target": "js_mutra_artist_panel_canedit",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "js/mutra-artist-panel.js",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -27893,7 +27917,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L155",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -27937,7 +27961,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-artist-page.js",
-      "source_location": "L90",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "js_mutra_artist_panel",
+      "target": "js_mutra_artist_panel_paint",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "js/mutra-artist-panel.js",
+      "source_location": "L105",
       "weight": 1.0
     },
     {
@@ -27948,7 +27983,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L156",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -27959,7 +27994,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L170",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -28019,13 +28054,13 @@
     },
     {
       "source": "js_mutra_artist_panel",
-      "target": "js_mutra_artist_panel_paint",
+      "target": "js_mutra_artist_panel_canedit",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L96",
+      "source_location": "L99",
       "weight": 1.0
     },
     {
@@ -34952,7 +34987,7 @@
       "confidence_score": 0.85,
       "context": "argument",
       "source_file": "js/mutra-artist-panel.js",
-      "source_location": "L131",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -37628,5 +37663,5 @@
       "source_file": "index.html"
     }
   ],
-  "built_at_commit": "6b67524ce48d8dfdb1681d2060f5325965c036f1"
+  "built_at_commit": "cdb1403957ac51ecb297858be4526ec4c0f16d9c"
 }
