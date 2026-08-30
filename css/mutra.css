@@ -1562,8 +1562,10 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   transform:scale(1.1)}
 .promo-play{text-indent:3px}
 .promo-copy{flex:1;min-width:0}
-.promo-logo{height:58px;width:auto;max-width:220px;object-fit:contain;display:block;margin-bottom:14px}
-.promo-logo.tall{height:84px;margin-bottom:10px}   /* mark-over-wordmark logos read taller */
+/* One height for every brand, whatever shape its logo is — a stacked mark and
+   a wide wordmark sit in the same 64px box and align to the same baseline. */
+.promo-logo{height:64px;width:auto;max-width:230px;object-fit:contain;object-position:left center;
+  display:block;margin-bottom:13px}
 .promo-wordmark{display:block;font-family:var(--font-display);font-size:1.5rem;letter-spacing:.1em;
   text-transform:uppercase;margin-bottom:10px}
 /* Fraunces — the heavy editorial serif of the reference, sentence case, two

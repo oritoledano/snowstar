@@ -30,7 +30,7 @@
      table on the Snowstar side, so the lightbox tells the same story there and
      here. */
   const PROMOS = [
-    { id: 'mitsubishi', brand: 'Mitsubishi', logo: 'assets/clients/mitsubishi.png', tall: true,
+    { id: 'mitsubishi', brand: 'Mitsubishi', logo: 'assets/clients/mitsubishi.png',
       title: 'MITSUBISHI — ASX',
       img: 'assets/thumbs/mitsubishi-asx.jpg', mp4: 'https://cdn.snowstar.company/work/mitsubishi-asx.mp4',
       credits: { work: 'Catalog music placement', agency: 'Gitam B.B.D.O' },
@@ -104,7 +104,7 @@
           <span class="promo-play">▶</span>
         </button>
         <div class="promo-copy">
-          ${p.logo ? `<img class="promo-logo${p.tall ? ' tall' : ''}" src="${p.logo}" alt="${p.brand}">`
+          ${p.logo ? `<img class="promo-logo" src="${p.logo}" alt="${p.brand}">`
                    : `<span class="promo-wordmark">${p.brand}</span>`}
           <b><span>Once used by ${p.brand}.</span>
              <span class="promo-l2">License it today.</span></b>
