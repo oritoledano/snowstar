@@ -325,6 +325,31 @@
   addEventListener('pagehide', finalizeListen);
   document.addEventListener('visibilitychange', () => { if (document.hidden) finalizeListen(); });
 
+  /* Skip through the list AS FILTERED — prev/next follow what is on screen,
+     not catalogue order, because "next" means the next row the visitor can
+     see. A track that fell out of the current view (or a spotlight snippet,
+     which lives outside the list) starts from the top instead of guessing. */
+  function step(dir) {
+    if (!list.length) return;
+    const i = current ? list.indexOf(current.track) : -1;
+    const t = i < 0 ? list[0] : list[(i + dir + list.length) % list.length];
+    loadTrack(t, tracksEl.querySelector(`.trk[data-slug="${t.slug}"]`));
+  }
+  const ICON_PREV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M6 5h2v14H6zM20 5l-10 7 10 7z"/></svg>';
+  const ICON_NEXT = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l10 7-10 7z"/></svg>';
+  const plPrev = document.createElement('button');
+  plPrev.className = 'pl-skip'; plPrev.id = 'plPrev';
+  plPrev.setAttribute('aria-label', 'Previous track');
+  plPrev.innerHTML = ICON_PREV;
+  const plNext = document.createElement('button');
+  plNext.className = 'pl-skip'; plNext.id = 'plNext';
+  plNext.setAttribute('aria-label', 'Next track');
+  plNext.innerHTML = ICON_NEXT;
+  plPlay.before(plPrev);
+  plPlay.after(plNext);
+  plPrev.addEventListener('click', () => step(-1));
+  plNext.addEventListener('click', () => step(1));
+
   plPlay.innerHTML = ICON_PLAY;
   plPlay.addEventListener('click', toggle);
   plLic.addEventListener('click', e => {
@@ -837,6 +862,7 @@
   function buildRow(track, i) {
       const row = document.createElement('div');
       row.className = 'trk' + (current && current.track === track ? ' playing' : '');
+      row.dataset.slug = track.slug;   // lets prev/next find the row it lands on
       // Counted after the filter, so a "+2" can never open to reveal one.
       const kids = childrenOf(track.slug);
       // one of each kind up front, the rest still in the DOM and revealed by

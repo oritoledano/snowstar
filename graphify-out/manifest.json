@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1788100126.0632324,
-    "seen": 1788100132.6792161,
-    "ast_hash": "558e3938e85bad6357bab02c973cf2dc",
+    "mtime": 1788102899.9478784,
+    "seen": 1788102916.508959,
+    "ast_hash": "8abc28ffa773eb12e870db5f70ece9c3",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1788100143.986121,
-    "seen": 1788100286.053112,
-    "ast_hash": "4b1fb390bfbd69f7279a903f4279da4b",
+    "mtime": 1788101839.033162,
+    "seen": 1788102429.919168,
+    "ast_hash": "6eed986b860915fc30d07a4a920ede9c",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1788100143.9851377,
-    "seen": 1788100286.053113,
-    "ast_hash": "e0f1f65bd772b328bc8f3d9c7c31cb7a",
+    "mtime": 1788101839.031897,
+    "seen": 1788102429.919169,
+    "ast_hash": "dd363be6f50c39a5d4eb74f7c86808fd",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1788100143.9864042,
-    "seen": 1788100286.053117,
-    "ast_hash": "d2d2bd029b0bc0c6fa9142879cc6e993",
+    "mtime": 1788101839.0327992,
+    "seen": 1788102429.919172,
+    "ast_hash": "d063ebd829c5951966c317b5e7cc0858",
     "semantic_hash": ""
   },
   "index.html": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1788100279.0044034,
-    "seen": 1788100286.053119,
-    "ast_hash": "9f935867b21191b10d735d2a6fda5ba4",
+    "mtime": 1788102423.353764,
+    "seen": 1788102429.919174,
+    "ast_hash": "ac5f2255954118bbc18cb50b50883ca6",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1404,15 +1404,15 @@
     "semantic_hash": ""
   },
   "js/mutra-behavior.js": {
-    "mtime": 1788100278.963966,
-    "seen": 1788100286.053036,
-    "ast_hash": "87d580ea11ee72f7b3420a3d0dede70e",
+    "mtime": 1788102423.249869,
+    "seen": 1788102429.919085,
+    "ast_hash": "90203a16d1598f0f7191cdfa98d81a7b",
     "semantic_hash": ""
   },
   "js/mutra-promos.js": {
-    "mtime": 1788101808.6263227,
-    "seen": 1788101815.939332,
-    "ast_hash": "a196f7fe35bbd5ca236f7e2fe415b1d2",
+    "mtime": 1788102933.091275,
+    "seen": 1788102939.6074681,
+    "ast_hash": "ca411cc1dc6a69ef2669d7722e6f887b",
     "semantic_hash": ""
   }
 }

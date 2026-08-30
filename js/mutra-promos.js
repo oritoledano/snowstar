@@ -42,8 +42,18 @@
       img: 'assets/thumbs/pepsi-vietnam.jpg', mp4: 'https://cdn.snowstar.company/work/pepsi-vietnam.mp4',
       credits: { work: 'Original Music', production: 'May Production', director: 'Guy Bolandi' },
       slug: 'do-it-major' },
-    { id: 'custom-license', spotlight: true },
   ];
+
+  /* One commercial, one custom-licence artist, repeat — proof of work, then a
+     person to license, in strict alternation. TALMA's strip stays out of the
+     cycle until her songs and portrait exist (empty slugs = skipped), so the
+     rotation never shows a hollow card. */
+  const TALMA = { id: 'talma', custom: true, artist: 'TALMA',
+                  img: 'https://cdn.snowstar.company/mutra/artists/talma.jpg',
+                  blurb: 'Every licence goes through us — custom terms, cleared properly.',
+                  slugs: [] };
+  const CYCLE = [PROMOS[0], { id: 'custom-license', spotlight: true },
+                 PROMOS[1], TALMA, PROMOS[2]];
 
   /* ── the commercial, full screen ──────────────────────────────────────────
      The same move the Snowstar portfolio makes: the film with its credits, in
@@ -115,6 +125,33 @@
     return wrap;
   }
 
+  /* The custom-licence artist: portrait, the pitch, and their songs as real
+     catalogue rows — the same anatomy as a brand strip, with a person where
+     the commercial was. Quote-only artists are the product here, so the strip
+     sells the ARTIST and the rows carry the licensing. */
+  function buildArtistStrip(p) {
+    const wrap = document.createElement('div');
+    wrap.className = 'promo-strip';
+    wrap.innerHTML = `
+      <div class="promo-banner promo-artist">
+        <span class="promo-film"><img src="${p.img}" alt="${p.artist}"></span>
+        <div class="promo-copy">
+          <span class="promo-kicker">Custom License</span>
+          <b>${p.artist} — music chosen for campaigns</b>
+          <p>${p.blurb}</p>
+        </div>
+      </div>`;
+    for (const slug of p.slugs.slice(0, 3)) {
+      const row = window.mutraCatalog && mutraCatalog.row(slug);
+      if (row) { row.classList.add('promo-track'); wrap.appendChild(row); }
+    }
+    wrap.querySelector('.promo-banner').addEventListener('click', () => {
+      if (window.mutraTrack) mutraTrack('promo_click', p.id);
+      location.href = 'artist.html?name=' + encodeURIComponent(p.artist);
+    });
+    return wrap;
+  }
+
   /** After the last row whose top is above the middle of the window — a natural
       break near the reader, not the top of a list they have already left. */
   function insertionPoint() {
@@ -132,8 +169,10 @@
 
   function fire(kind) {
     if (kind === 'frustrated') return;      // help-not-sell; the agent dock is the answer there
-    let next = PROMOS.find((p) => !shown.has(p.id));
-    if (!next) { shown.clear(); next = PROMOS[0]; }   // rotation wraps
+    const ready = (p) => !p.custom || (p.slugs && p.slugs.length);
+    let next = CYCLE.find((p) => !shown.has(p.id) && ready(p));
+    if (!next) { shown.clear(); next = CYCLE.find(ready); }   // rotation wraps
+    if (!next) return;
     shown.add(next.id);
 
     // Around again: the strip already exists, so it travels to the visitor
@@ -142,6 +181,15 @@
     if (existing) {
       if (existing.isConnected) existing.remove();
       place(existing);
+      if (window.mutraTrack) mutraTrack('promo_seen', next.id);
+      return;
+    }
+
+    if (next.custom) {
+      const node = buildArtistStrip(next);
+      nodes.set(next.id, node);
+      live.push(node);
+      place(node);
       if (window.mutraTrack) mutraTrack('promo_seen', next.id);
       return;
     }

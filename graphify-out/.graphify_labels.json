@@ -1,7 +1,7 @@
 {
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
-  "2": "artists.js",
+  "2": "crypto.js",
   "3": "oauth.js",
   "4": "licensing.js",
   "5": "main.js",
@@ -40,7 +40,7 @@
   "38": "collections.js",
   "39": "jobs.js",
   "40": "mutra-artist-page.js",
-  "41": "hyp.js",
+  "41": "profile.js",
   "42": "Portfolio years",
   "43": "index.js",
   "44": "artistprofile.js",
@@ -52,7 +52,6 @@
   "50": "make-character-art.py",
   "51": "artistreg.js",
   "52": "agent.js",
-  "53": "trash.js",
   "54": "mutra-reanalyse.js",
   "55": "mutra-promos.js",
   "56": "stacks.js"

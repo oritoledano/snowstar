@@ -1578,3 +1578,14 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-lb-x{position:absolute;top:-8px;right:-4px;transform:translateY(-100%);background:none;
   border:0;color:#fff;font-size:1.9rem;cursor:pointer;line-height:1;padding:6px}
 }
+
+/* Player prev/next — the same quiet circle language as the play button. */
+.pl-skip{background:none;border:1px solid var(--line);border-radius:50%;width:34px;height:34px;
+  display:inline-flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;
+  flex:none;transition:color .18s,border-color .18s}
+.pl-skip:hover{color:var(--text);border-color:var(--amber,#8fd8ff)}
+@media(max-width:560px){#plPrev{display:none}}  /* keep the bar one row on phones */
+
+/* Custom-licence artist strip: a portrait where the film still was. */
+.promo-artist .promo-film{aspect-ratio:1;width:min(220px,32%)}
+.promo-artist .promo-film img{object-position:top}
