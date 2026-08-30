@@ -1534,9 +1534,25 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-strip{margin:16px 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;
   animation:promoIn .5s ease}
 @keyframes promoIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.promo-banner{display:flex;gap:26px;align-items:center;cursor:pointer;
-  background:var(--panel);padding:20px 24px;transition:background .2s}
-.promo-banner:hover{background:var(--panel-2,rgba(128,128,128,.06))}
+/* The backdrop is the site's own gradient dissolved into the dark panel: two
+   soft glows in the accent colours, a faint diagonal weave, and a couple of
+   outline rings — the register of a promo card, in the palette of the page.
+   Everything is CSS on the theme variables, so the light and dark skins each
+   get their own version for free. */
+.promo-banner{position:relative;display:flex;gap:26px;align-items:center;cursor:pointer;
+  padding:24px 26px;overflow:hidden;isolation:isolate;
+  background:
+    radial-gradient(46% 90% at 86% 12%, color-mix(in srgb, var(--pink,#ff3d8b) 26%, transparent), transparent 70%),
+    radial-gradient(52% 110% at 8% 88%, color-mix(in srgb, var(--amber,#ffc24b) 22%, transparent), transparent 72%),
+    repeating-linear-gradient(115deg, transparent 0 26px, color-mix(in srgb, var(--coral,#ff6a4d) 7%, transparent) 26px 28px),
+    var(--panel);
+  transition:filter .25s}
+.promo-banner:hover{filter:brightness(1.07)}
+.promo-banner::before,.promo-banner::after{content:'';position:absolute;border-radius:50%;
+  border:2px solid color-mix(in srgb, var(--amber,#ffc24b) 45%, transparent);z-index:-1}
+.promo-banner::before{width:120px;height:120px;right:-34px;top:-44px}
+.promo-banner::after{width:22px;height:22px;left:44%;bottom:14px;
+  border-color:color-mix(in srgb, var(--pink,#ff3d8b) 55%, transparent)}
 .promo-film{position:relative;flex:none;width:min(340px,42%);aspect-ratio:16/9;border:0;padding:0;
   border-radius:12px;overflow:hidden;cursor:pointer;background:#000}
 .promo-film img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
@@ -1549,11 +1565,18 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   transform:scale(1.1)}
 .promo-play{text-indent:3px}
 .promo-copy{flex:1;min-width:0}
-.promo-logo{height:34px;width:auto;max-width:150px;object-fit:contain;display:block;margin-bottom:12px}
+.promo-logo{height:58px;width:auto;max-width:220px;object-fit:contain;display:block;margin-bottom:14px}
+.promo-logo.tall{height:84px;margin-bottom:10px}   /* mark-over-wordmark logos read taller */
 .promo-wordmark{display:block;font-family:var(--font-display);font-size:1.5rem;letter-spacing:.1em;
   text-transform:uppercase;margin-bottom:10px}
-.promo-copy b{display:block;font-family:var(--font-display);font-size:clamp(1.2rem,2.3vw,1.75rem);
-  line-height:1.15;letter-spacing:.02em}
+/* Unbounded 800 — the extra-bold promo register, with the site's pink as a
+   hard offset shadow so the line pops off the backdrop instead of sitting in
+   it. Anton stays the page's display face; this row is ADVERTISING and gets
+   to shout in its own voice. */
+.promo-copy b{display:block;font-family:'Unbounded',var(--font-display),sans-serif;font-weight:800;
+  font-size:clamp(1.15rem,2.4vw,1.8rem);line-height:1.12;letter-spacing:.01em;
+  text-transform:uppercase;
+  text-shadow:3px 3px 0 color-mix(in srgb, var(--pink,#ff3d8b) 70%, transparent)}
 .promo-copy p{color:var(--muted);font-size:.92rem;margin-top:10px;line-height:1.5}
 .promo-strip .trk.promo-track{border-top:1px solid var(--line);margin:0}
 .promo-flash{animation:promoFlash 1.6s ease}

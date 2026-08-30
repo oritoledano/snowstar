@@ -30,7 +30,8 @@
      table on the Snowstar side, so the lightbox tells the same story there and
      here. */
   const PROMOS = [
-    { id: 'mitsubishi', brand: 'Mitsubishi', title: 'MITSUBISHI — ASX',
+    { id: 'mitsubishi', brand: 'Mitsubishi', logo: 'assets/clients/mitsubishi.png', tall: true,
+      title: 'MITSUBISHI — ASX',
       img: 'assets/thumbs/mitsubishi-asx.jpg', mp4: 'https://cdn.snowstar.company/work/mitsubishi-asx.mp4',
       credits: { work: 'Catalog music placement', agency: 'Gitam B.B.D.O' },
       slug: 'the-rise-and-fall-original-ver' },
@@ -103,7 +104,7 @@
           <span class="promo-play">▶</span>
         </button>
         <div class="promo-copy">
-          ${p.logo ? `<img class="promo-logo" src="${p.logo}" alt="${p.brand}">`
+          ${p.logo ? `<img class="promo-logo${p.tall ? ' tall' : ''}" src="${p.logo}" alt="${p.brand}">`
                    : `<span class="promo-wordmark">${p.brand}</span>`}
           <b>Once used by ${p.brand} — license it today</b>
           <p>Starting at 99₪ for 6 months · watch the commercial, then play the track below</p>

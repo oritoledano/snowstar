@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1788102899.9478784,
-    "seen": 1788102916.508959,
-    "ast_hash": "8abc28ffa773eb12e870db5f70ece9c3",
+    "mtime": 1788103041.197246,
+    "seen": 1788103047.5372958,
+    "ast_hash": "bab85fad39be7ad18a2ac4b9b0af17bd",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1788101839.033162,
-    "seen": 1788102429.919168,
-    "ast_hash": "6eed986b860915fc30d07a4a920ede9c",
+    "mtime": 1788102947.5921607,
+    "seen": 1788103047.5373492,
+    "ast_hash": "62eb8d0a955ecc6e25ce076c39b0f3da",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1788101839.031897,
-    "seen": 1788102429.919169,
-    "ast_hash": "dd363be6f50c39a5d4eb74f7c86808fd",
+    "mtime": 1788102947.5904465,
+    "seen": 1788103047.53735,
+    "ast_hash": "bf7cdbb86a557246537578532e851faf",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1788101839.0327992,
-    "seen": 1788102429.919172,
-    "ast_hash": "d063ebd829c5951966c317b5e7cc0858",
+    "mtime": 1788102947.5914211,
+    "seen": 1788103047.537353,
+    "ast_hash": "d3789a145d206c084024cc7c4c27b291",
     "semantic_hash": ""
   },
   "index.html": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1788102423.353764,
-    "seen": 1788102429.919174,
-    "ast_hash": "ac5f2255954118bbc18cb50b50883ca6",
+    "mtime": 1788103041.2909567,
+    "seen": 1788103047.537354,
+    "ast_hash": "25e4e543f991cfa5293b1c1a965f8ec5",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1410,9 +1410,9 @@
     "semantic_hash": ""
   },
   "js/mutra-promos.js": {
-    "mtime": 1788102933.091275,
-    "seen": 1788102939.6074681,
-    "ast_hash": "ca411cc1dc6a69ef2669d7722e6f887b",
+    "mtime": 1788103041.2237961,
+    "seen": 1788103047.537297,
+    "ast_hash": "3789dfe70fc8492236603065099d0bca",
     "semantic_hash": ""
   }
 }
