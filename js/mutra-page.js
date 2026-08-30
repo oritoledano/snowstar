@@ -1083,11 +1083,13 @@
       || state.sort === 'custom';
     if (narrowed) return -1;
 
-    // Short list: sit after the second row rather than after the last one, where
-    // it reads as a footer instead of as part of the results.
+    /* Fixed placement is gone. The row appears when the behaviour engine says
+       somebody is browsing and hesitating — a salesperson entering at the right
+       moment, not a poster on the wall. mutra-promos.js arms it and chooses the
+       insertion point (near where the visitor actually is). */
+    if (!window.MUTRA_SPOTLIGHT_ARMED) return -1;
     if (total < 8) return Math.min(2, total);
-    if (total < 24) return Math.max(3, Math.round(total / 3));
-    return window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10;
+    return Math.min(total, window.MUTRA_SPOTLIGHT_INSERT_AFTER || 10);
   }
 
   /** Re-checked on every appendPage() so the row reappears after a render()
@@ -1595,6 +1597,18 @@
     fetch('/api/collections?kind=pack').then(r => r.ok ? r.json() : null).catch(() => null),
     fetch('/api/collections?kind=character').then(r => r.ok ? r.json() : null).catch(() => null),
   ]).then(([tr, tx, st, pk, ch]) => {
+    /* Microsoft Clarity — session replays and heatmaps, on when the owner has
+       pasted a project id into Dashboard → Stats. Off for Do-Not-Track
+       visitors, same rule the home tracker follows: watching a recording of
+       somebody who asked not to be tracked is not a grey area. */
+    const clarityId = ((tx && tx.texts) || {})['config.clarity-id'];
+    const dnt = navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true;
+    if (clarityId && /^[a-z0-9]{6,20}$/i.test(clarityId) && !dnt) {
+      const cs = document.createElement('script');
+      cs.src = 'https://www.clarity.ms/tag/' + clarityId;
+      cs.async = true;
+      document.head.appendChild(cs);
+    }
     for (const [key, d2] of [['packs', pk], ['characters', ch]]) {
       if (!d2) continue;
       SHELF[key].list = d2.collections || [];
@@ -1669,6 +1683,21 @@
   window.mutraCatalog = {
     filtered: () => list,
     all: () => MUTRA.tracks,
+    /* A REAL row — play, license, tags, wave — for the promo strips. Building a
+       second row type there would drift from this one; calling the same builder
+       cannot. */
+    row: (slug) => {
+      const t = MUTRA.tracks.find((x) => x.slug === slug);
+      if (!t) return null;
+      const r = buildRow(t, MUTRA.tracks.indexOf(t));
+      paintRowWave(r, t);
+      return r;
+    },
+    narrowed: () => !!(state.q
+      || ['genres', 'moods', 'characteristics', 'instruments', 'scales', 'packs', 'characters']
+           .some((k) => state[k] && (state[k].inc.size || state[k].exc.size))
+      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
+      || state.sort === 'custom'),
     /* After a bulk write the local copy is stale in a way a re-render cannot
        fix — the patches changed server-side. Refetch, re-merge, redraw. */
     reload: async () => {
@@ -2860,6 +2889,11 @@
      account first — and the panel is the thing that can actually read it. */
   const heroBrief = $('#heroBrief');
   if (heroBrief) heroBrief.addEventListener('click', () => {
+    // A toggle, not a launcher: the second press closes what the first opened.
+    if (document.body.classList.contains('ag-open')) {
+      if (window.mutraAgent) mutraAgent.close();
+      return;
+    }
     document.querySelector('#browse')?.scrollIntoView({ behavior: 'smooth' });
     if (window.mutraAgent) mutraAgent.open();
   });

@@ -28,7 +28,14 @@ const json = (data, status = 200, headers = {}) =>
 // 'play' fires the moment a track is clicked (unchanged — every existing
 // "most played" count still means exactly what it always meant); 'play_end'
 // is new, fired once the listen actually stops, carrying how long it ran.
-const VALID_TYPES = new Set(['view', 'play', 'play_end', 'license', 'search', 'favorite', 'download']);
+/* The last five were being SENT by the site for months and rejected here with a
+   silent 400 — agent searches, licence opens, checkouts, contact opens. The
+   behaviour trio is new: `behavior` is the intent engine firing a moment,
+   `promo_seen`/`promo_click` are the strips reporting whether being shown at
+   that moment actually earns clicks. */
+const VALID_TYPES = new Set(['view', 'play', 'play_end', 'license', 'search', 'favorite', 'download',
+  'agent-search', 'license-open', 'checkout', 'contact-open', 'artist-open',
+  'behavior', 'promo_seen', 'promo_click']);
 
 /** Reduce a referrer to its host so we never store query strings. */
 function refHost(ref) {
@@ -291,7 +298,15 @@ export async function handleStats(req, env, user) {
   const days = Math.min(90, Math.max(1, parseInt(url.searchParams.get('days') || '30', 10)));
   const since = now() - days * 86400;
 
-  const [totals, topTracks, daily, recent, countries, referrers, licenses, members, engagement] = await Promise.all([
+  // Promo performance: seen vs clicked per strip, and what the intent engine
+  // observed. Reads the same events table as everything else here.
+  const promoQ = env.DB.prepare(
+    `SELECT type, detail, COUNT(*) AS n FROM events
+      WHERE ts > ? AND type IN ('behavior', 'promo_seen', 'promo_click', 'agent-search')
+      GROUP BY type, detail ORDER BY n DESC LIMIT 60`).bind(since).all();
+
+  const [totals, topTracks, daily, recent, countries, referrers, licenses, members, engagement,
+         promos] = await Promise.all([
     env.DB.prepare(
       `SELECT COUNT(DISTINCT session_id) AS visits,
               SUM(CASE WHEN type='view' THEN 1 ELSE 0 END)    AS views,
@@ -356,6 +371,7 @@ export async function handleStats(req, env, user) {
        SELECT p.slug, p.sessions, p.avg_position, d.listens, d.avg_duration
          FROM pos_agg p LEFT JOIN dur_agg d ON d.slug = p.slug
         ORDER BY p.sessions DESC LIMIT 25`).bind(since, since).all(),
+    promoQ,
   ]);
 
   return json({
@@ -369,6 +385,7 @@ export async function handleStats(req, env, user) {
     licenses: licenses.results || [],
     members: members.results || [],
     engagement: engagement.results || [],
+    promos: promos.results || [],
   });
 }
 

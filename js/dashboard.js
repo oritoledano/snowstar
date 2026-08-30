@@ -667,6 +667,24 @@
             { label: 'Listens (timed)', num: true, get: (r) => r.listens || '—' },
             { label: 'Avg. listened', num: true, get: (r) => r.avg_duration ? fmtDur(r.avg_duration) : '—' },
           ])}</div>
+        <div class="db-panel" style="grid-column:1/-1"><h2>Behavior <span class="pill">the intent engine</span></h2>
+          <p class="db-empty" style="padding-top:0">A <b>behavior</b> row is the intent engine deciding a visitor
+            was browsing and hesitating (with how deep they were and their score). <b>promo_seen</b> is a strip
+            shown at that moment; <b>promo_click</b> is the strip earning a click — seen without clicks means the
+            moment was right but the offer was not. Frustrated visitors are deliberately shown nothing.</p>
+          ${(d.promos || []).length ? table(d.promos, [
+            { label: 'Event', get: (r) => esc(r.type) },
+            { label: 'Detail', get: (r) => esc(r.detail || '—') },
+            { label: 'Count', num: true, bar: true, get: (r) => r.n },
+          ], { barKey: 'n' }) : '<p class="db-empty">Nothing yet — it fills in as visitors browse the catalogue.</p>'}
+          <p class="db-empty" style="margin-top:10px">Deeper session replays and heatmaps: create a free
+            <a href="https://clarity.microsoft.com" target="_blank" rel="noopener">Microsoft Clarity</a> project
+            yourself (I can't open accounts for you), then paste its Project ID —
+            <input id="clarity-id" placeholder="Clarity project id" style="font:inherit;font-size:.84rem;
+              background:var(--panel-2,rgba(0,0,0,.2));border:1px solid var(--line);border-radius:8px;
+              color:var(--text);padding:5px 9px;width:150px">
+            <button class="rv-btn" id="clarity-save">Save</button>
+            <span id="clarity-msg"></span></p></div>
         <div class="db-panel" style="grid-column:1/-1"><h2>Recent visits <span class="pill">click a row for the journey</span></h2>
           ${table(d.recent || [], [
             { label: 'When', get: (r) => fmt(r.last_ts) },
@@ -683,6 +701,18 @@
           { label: 'Plays', num: true, get: (r) => r.plays },
         ], { barKey: 'visits' })}</div>
       </div>`);
+    /* The Clarity id lives in site_texts so mutra.html (which already fetches
+       texts) can load the snippet without a new endpoint. Not a secret — it
+       ships in the page source of every site that uses Clarity. */
+    (async () => {
+      const inp = app.querySelector('#clarity-id');
+      if (!inp) return;
+      try { inp.value = ((await get('/texts')).texts || {})['config.clarity-id'] || ''; } catch {}
+      app.querySelector('#clarity-save').onclick = async () => {
+        const r = await post('/texts', { key: 'config.clarity-id', html: inp.value.trim() });
+        app.querySelector('#clarity-msg').textContent = r.ok ? 'Saved — live on next page load.' : (r.error || 'failed');
+      };
+    })();
     app.querySelectorAll('[data-days]').forEach((b) =>
       b.addEventListener('click', () => { days = +b.dataset.days; load(); }));
     app.querySelectorAll('tr.click').forEach((tr) =>
