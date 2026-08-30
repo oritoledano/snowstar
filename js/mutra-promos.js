@@ -222,7 +222,10 @@
     if (next.spotlight) {
       // The custom-licence row: arm the catalogue's own machinery and let it
       // place and re-place the row it already owns.
-      window.MUTRA_SPOTLIGHT_INSERT_AFTER = Math.max(2, targetSlot().slot);
+      // +1: the spotlight machinery counts its insert-after index one shy of the
+      // slot arithmetic used here, and the gap rule should mean the same thing
+      // for every strip.
+      window.MUTRA_SPOTLIGHT_INSERT_AFTER = Math.max(2, targetSlot().slot + 1);
       window.MUTRA_SPOTLIGHT_ARMED = true;
       if (window.mutraTrack) mutraTrack('promo_seen', 'custom-license');
       if (mutraCatalog.recheckSpotlight) mutraCatalog.recheckSpotlight();
