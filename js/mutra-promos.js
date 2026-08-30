@@ -75,11 +75,12 @@
     document.body.style.overflow = 'hidden';
   }
 
-  let shown;
-  try { shown = new Set(JSON.parse(sessionStorage.getItem('mutra_promos') || '[]')); }
-  catch { shown = new Set(); }
-  const remember = () => { try { sessionStorage.setItem('mutra_promos', JSON.stringify([...shown])); } catch {} };
-
+  /* Per page load, not per session — a browse long enough to earn several
+     moments deserves several strips, and yesterday's visit should not mute
+     today's. Each brand exists in the DOM once: when the rotation comes back
+     around, its strip MOVES to where the visitor is now instead of cloning. */
+  const shown = new Set();
+  const nodes = new Map();      // promo id -> its strip node
   const live = [];              // strips currently owed to the page, for re-insertion
 
   function buildStrip(p) {
@@ -131,9 +132,19 @@
 
   function fire(kind) {
     if (kind === 'frustrated') return;      // help-not-sell; the agent dock is the answer there
-    const next = PROMOS.find((p) => !shown.has(p.id));
-    if (!next) return;
-    shown.add(next.id); remember();
+    let next = PROMOS.find((p) => !shown.has(p.id));
+    if (!next) { shown.clear(); next = PROMOS[0]; }   // rotation wraps
+    shown.add(next.id);
+
+    // Around again: the strip already exists, so it travels to the visitor
+    // rather than duplicating above them.
+    const existing = nodes.get(next.id);
+    if (existing) {
+      if (existing.isConnected) existing.remove();
+      place(existing);
+      if (window.mutraTrack) mutraTrack('promo_seen', next.id);
+      return;
+    }
 
     if (next.spotlight) {
       // The custom-licence row: arm the catalogue's own machinery and let it
@@ -144,9 +155,13 @@
       window.MUTRA_SPOTLIGHT_ARMED = true;
       if (window.mutraTrack) mutraTrack('promo_seen', 'custom-license');
       dispatchEvent(new Event('scroll'));   // nudge appendPage's re-check
+      // remember its row so the rotation can move it next time around
+      setTimeout(() => { const r = tracksEl.querySelector('.spotlight-row');
+                         if (r) nodes.set('custom-license', r); }, 1500);
       return;
     }
     const node = buildStrip(next);
+    nodes.set(next.id, node);
     live.push(node);
     place(node);
     if (window.mutraTrack) mutraTrack('promo_seen', next.id);
