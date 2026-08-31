@@ -41,6 +41,8 @@ const MUTRA_SPOTLIGHTS = [
     id: 'kayma-nto',
     kicker: 'Custom License',
     artist: 'KAYMA',
+    color: '#ff3d8b',   // the artist's highlight in the ad-style headline — the site's own pink
+
     album: 'New Trying Outs',
     cdn: 'https://cdn.snowstar.company/mutra/spotlight/kayma-nto/',
     tracks: [

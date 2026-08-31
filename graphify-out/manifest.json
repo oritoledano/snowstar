@@ -108,15 +108,15 @@
     "semantic_hash": "248657357dea15f475320412ac8fb222"
   },
   "js/mutra-spotlight-data.js": {
-    "mtime": 1787318866.144399,
-    "seen": 1787572556.917333,
-    "ast_hash": "0836abbb4b49d13cd20ee73dc03dfe98",
-    "semantic_hash": "0836abbb4b49d13cd20ee73dc03dfe98"
+    "mtime": 1788182136.329624,
+    "seen": 1788182141.8459709,
+    "ast_hash": "39d98bf251f898d3ef49f09d62bb482e",
+    "semantic_hash": ""
   },
   "js/mutra-spotlight.js": {
-    "mtime": 1787589949.668841,
-    "seen": 1787589955.797201,
-    "ast_hash": "9e77065ee85fe784f96737d445626834",
+    "mtime": 1788182142.2444358,
+    "seen": 1788182147.856986,
+    "ast_hash": "ec8c08ec903658329b9f413d69904730",
     "semantic_hash": ""
   },
   "js/mutra-track.js": {
@@ -288,15 +288,15 @@
     "semantic_hash": "24422563acdd26f62592c6eeeddb62dc"
   },
   "artist.html": {
-    "mtime": 1788112375.914634,
-    "seen": 1788112381.983284,
-    "ast_hash": "bfb974adc45ae467d8bf935153ef5a74",
+    "mtime": 1788115971.9141662,
+    "seen": 1788115978.444593,
+    "ast_hash": "430e68b1a23a794e47ef36cb098b42a5",
     "semantic_hash": ""
   },
   "artists.html": {
-    "mtime": 1788112375.913427,
-    "seen": 1788112381.983285,
-    "ast_hash": "765d1aff0ccad482521b70d3f2a6840c",
+    "mtime": 1788115971.9129403,
+    "seen": 1788115978.444594,
+    "ast_hash": "a7b5b964aba4546d3fec08c3e724f759",
     "semantic_hash": ""
   },
   "assets/fonts/commit-mono-LICENSE.txt": {
@@ -312,9 +312,9 @@
     "semantic_hash": "eb69178853aed64f007971506d541745"
   },
   "dashboard.html": {
-    "mtime": 1788112375.914279,
-    "seen": 1788112381.983288,
-    "ast_hash": "d9401668fa5f3ea25128e8dd3e1535d6",
+    "mtime": 1788115971.9137764,
+    "seen": 1788115978.444598,
+    "ast_hash": "132d0fae58fcd7ce76cc2c65a094ab06",
     "semantic_hash": ""
   },
   "index.html": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1788112715.537621,
-    "seen": 1788112722.769357,
-    "ast_hash": "5e936c371635f730b2928a7aafda8089",
+    "mtime": 1788115971.9176962,
+    "seen": 1788115978.4446,
+    "ast_hash": "6109852d17092754a6825098b63b51f2",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1410,9 +1410,9 @@
     "semantic_hash": ""
   },
   "js/mutra-promos.js": {
-    "mtime": 1788112715.494755,
-    "seen": 1788112722.769286,
-    "ast_hash": "adffc8efddc6d0b7f2b98e47a31cf835",
+    "mtime": 1788182149.7185652,
+    "seen": 1788182155.937684,
+    "ast_hash": "84078cb1990f965f7106f3c778230eab",
     "semantic_hash": ""
   },
   "assets/clients/mitsubishi.png": {

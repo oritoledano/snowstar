@@ -12,13 +12,29 @@
    after us, so restore it explicitly */
 .spotlight-row + .trk { margin-top: 6px; }
 
+/* The head is set like the promo banners: eyebrow over an ad headline, one
+   centred axis above the card strip, the artist's name lit in their colour. */
 .spot-head {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; padding: 0 4px 12px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 4px 4px 16px;
 }
 .spot-kicker {
   font-family: var(--font-display); font-size: .74rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase; color: var(--coral, var(--text));
+  margin-bottom: 10px;
+}
+.spot-headline {
+  display: block; font-family: 'Fraunces', Georgia, serif; font-weight: 800;
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem); line-height: 1.06;
+  letter-spacing: -.01em; color: var(--text);
+  font-variation-settings: 'opsz' 100;
+}
+.spot-headline span { display: block; }
+.spot-name { font-style: normal; }
+.spot-l2 {
+  background: var(--grad, linear-gradient(100deg, #ffc24b, #ff3d8b));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-bottom: .08em;   /* clipped descenders otherwise */
 }
 .spot-quote { padding: 8px 18px; font-size: .78rem; flex: none; }
 

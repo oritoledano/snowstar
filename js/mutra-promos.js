@@ -49,7 +49,7 @@
      person to license, in strict alternation. TALMA's strip stays out of the
      cycle until her songs and portrait exist (empty slugs = skipped), so the
      rotation never shows a hollow card. */
-  const TALMA = { id: 'talma', custom: true, artist: 'TALMA',
+  const TALMA = { id: 'talma', custom: true, artist: 'TALMA', color: '#ffc24b',
                   img: 'https://cdn.snowstar.company/mutra/artists/talma.jpg',
                   blurb: 'Every licence goes through us — custom terms, cleared properly.',
                   slugs: [] };
@@ -140,7 +140,9 @@
         <span class="promo-film"><img src="${p.img}" alt="${p.artist}"></span>
         <div class="promo-copy">
           <span class="promo-kicker">Custom License</span>
-          <b>${p.artist} — music chosen for campaigns</b>
+          <b><span>Music by <em class="promo-brand"
+               style="color:${p.color}">${p.artist}</em>.</span>
+             <span class="promo-l2">Get a custom quote.</span></b>
           <p>${p.blurb}</p>
         </div>
       </div>`;

@@ -1619,6 +1619,11 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .pl-skip:active{transform:scale(.88)}
 @media(max-width:560px){#plPrev{display:none}}  /* keep the bar one row on phones */
 
-/* Custom-licence artist strip: a portrait where the film still was. */
+/* Custom-licence artist strip: a portrait where the film still was, and the
+   same ad anatomy as a brand — eyebrow, name lit in the artist's colour,
+   gradient call to action, one centred axis. */
 .promo-artist .promo-film{aspect-ratio:1;width:min(220px,32%)}
 .promo-artist .promo-film img{object-position:top}
+.promo-kicker{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim,var(--muted));margin-bottom:12px}
+.promo-copy p{max-width:46ch}   /* an ad measure, not a paragraph width */

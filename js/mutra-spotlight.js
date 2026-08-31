@@ -183,6 +183,9 @@
     row.innerHTML = `
       <div class="spot-head">
         <span class="spot-kicker">${spot.kicker}</span>
+        <b class="spot-headline"><span>Music by <em class="spot-name"
+             style="color:${spot.color || 'var(--pink,#ff3d8b)'}">${spot.artist}</em>.</span>
+           <span class="spot-l2">Get a custom quote.</span></b>
       </div>
       <div class="spot-strip-wrap">
         <button class="spot-nav spot-nav-prev" type="button" aria-label="Scroll left">${ICON_PREV}</button>
