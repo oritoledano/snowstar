@@ -52,7 +52,10 @@
   const TALMA = { id: 'talma', custom: true, artist: 'TALMA', color: '#ffc24b',
                   img: 'https://cdn.snowstar.company/mutra/artists/talma.jpg',
                   blurb: 'Every licence goes through us — custom terms, cleared properly.',
-                  slugs: [] };
+                  // her catalogue, staff-picks order; the strip shows the first three
+                  slugs: ['all-my-time', 'great-powers', 'man-is-gone', 'glida', 'isha',
+                          'latus', 'love-to-love-you', 'pashut', 'route-de-l-amour',
+                          'train-is-on'] };
   const CYCLE = [PROMOS[0], { id: 'custom-license', spotlight: true },
                  PROMOS[1], TALMA, PROMOS[2]];
 
@@ -186,13 +189,24 @@
     return { slot: Math.max(pref, min), rows };
   }
 
+  /** Versions render as consecutive `.trk-child` siblings right after their
+   *  parent row, and a strip between a song and its own mixes reads as the
+   *  list cutting the song in half. Never insert there: walk to the end of
+   *  the group first. */
+  function stackEnd(row) {
+    let n = row;
+    while (n.nextElementSibling && n.nextElementSibling.classList.contains('trk-child'))
+      n = n.nextElementSibling;
+    return n;
+  }
+
   function place(node) {
     const { slot, rows } = targetSlot();
     if (!rows.length) { tracksEl.prepend(node); return; }
     if (slot <= 0) { rows[0].insertAdjacentElement('beforebegin', node); return; }
     // Past the end: sit after the last row — infinite scroll will keep adding
     // rows beneath it, so the gap grows back on its own.
-    rows[Math.min(slot, rows.length) - 1].insertAdjacentElement('afterend', node);
+    stackEnd(rows[Math.min(slot, rows.length) - 1]).insertAdjacentElement('afterend', node);
   }
 
   function fire(kind) {

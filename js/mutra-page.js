@@ -1123,10 +1123,25 @@
 
   /** Re-checked on every appendPage() so the row reappears after a render()
    *  wipes the list, without ever being rebuilt from scratch. */
+  /** A parent row and its expanded versions are one unit: versions render as
+   *  consecutive `.trk-child` siblings right after their parent, and a strip
+   *  dropped between them reads as the list cutting a song off from its own
+   *  mixes. Given any row, the last element of its version group — the only
+   *  safe thing to insert after. */
+  function stackEnd(row) {
+    let n = row;
+    while (n.nextElementSibling && n.nextElementSibling.classList.contains('trk-child'))
+      n = n.nextElementSibling;
+    return n;
+  }
+
   function maybeInsertSpotlight() {
     if (!window.mutraSpotlightRow) return;
     if (tracksEl.querySelector('.spotlight-row')) return;
-    const rows = tracksEl.querySelectorAll('.trk');
+    // direct children only — a bare `.trk` match also catches the rows living
+    // INSIDE promo strips, and anchoring on one of those would drop the
+    // spotlight into the middle of another advert
+    const rows = tracksEl.querySelectorAll(':scope > .trk');
     if (!rows.length) return;
 
     const spot = window.mutraSpotlightMeta;
@@ -1142,10 +1157,10 @@
     // different place every time the page grows.
     if (at > rows.length) {
       if (shown < list.length) return;                 // more coming; try again
-      rows[rows.length - 1].insertAdjacentElement('afterend', block);
+      stackEnd(rows[rows.length - 1]).insertAdjacentElement('afterend', block);
       return;
     }
-    rows[at - 1].insertAdjacentElement('afterend', block);
+    stackEnd(rows[at - 1]).insertAdjacentElement('afterend', block);
   }
 
   // load the next page as the end of the list comes into view
@@ -2515,8 +2530,13 @@
       if (await saveTrack(track.slug, patch)) {
         Object.assign(track, patch);
         HL[track.slug] = draft.hl;
-        refreshVocab(); syncChips();
-        panel.remove(); render();
+        /* No syncChips() here: it clears every facet, which reset the admin's
+           filters and threw the view back to the top after every save. Editing
+           is a walk down a filtered list — keep the filters, keep the scroll
+           (render(true) forces the keep even though the row just changed), and
+           let the edited row update in place. */
+        refreshVocab();
+        panel.remove(); render(true);
       }
     });
     q('.te-reset').addEventListener('click', async () => {
@@ -2525,7 +2545,7 @@
     });
     q('.te-cancel').addEventListener('click', () => {
       if (overrides[track.slug] && overrides[track.slug].hl) HL[track.slug] = overrides[track.slug].hl;
-      panel.remove(); render();
+      panel.remove(); render(true);
     });
   }
 
