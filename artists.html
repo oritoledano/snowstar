@@ -25,8 +25,12 @@
       var(--panel)}
   .ar-hero::before{content:'';position:absolute;inset:0;z-index:-1;opacity:.5;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
-  .ar-hero h1{font-family:var(--font-display);font-size:clamp(2.4rem,6vw,4rem);line-height:1.03;
-    margin-bottom:16px;text-wrap:balance}
+  /* Fraunces, not var(--font-display): the skins remap the display face (bone
+     turns it into Sora), and this hero must speak the banner ads' voice on
+     every skin. */
+  .ar-hero h1{font-family:'Fraunces',Georgia,serif;font-weight:800;letter-spacing:-.015em;
+    font-size:clamp(2.3rem,5.6vw,3.7rem);line-height:1.04;margin-bottom:16px;text-wrap:balance;
+    text-transform:none;font-variation-settings:'opsz' 100}
   .ar-hero h1 .grad{background:var(--grad,linear-gradient(100deg,#ffc24b,#ff3d8b));
     -webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em;display:inline-block}
   .ar-hero p{color:var(--muted);max-width:52ch;margin:0 auto 26px}
