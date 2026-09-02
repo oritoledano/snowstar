@@ -22,6 +22,30 @@ const json = (data, status = 200) =>
 const now = () => Math.floor(Date.now() / 1000);
 const clean = (v, n = 200) => String(v == null ? '' : v).trim().slice(0, n);
 
+/** True where a signed declaration gives someone besides the signer a say:
+ *  shared ownership, or a named outside controller. Such a track sells by
+ *  quote only, whatever any lane toggle says — a legal fact, not a preference.
+ *  Reads the LATEST non-claim declaration, so an artist who re-declares after
+ *  a rights change is judged on what they last signed. */
+export async function rightsLocked(env, slug) {
+  const d = await env.DB.prepare(
+    `SELECT rd.kind, rd.controllers
+       FROM submissions s
+       JOIN rights_decls rd ON rd.id =
+         (SELECT id FROM rights_decls
+           WHERE submission_id = s.id AND kind != 'claim'
+           ORDER BY id DESC LIMIT 1)
+      WHERE s.published_slug = ?`
+  ).bind(slug).first().catch(() => null);
+  if (!d) return false;                     // catalogue track — nobody else declared
+  if (d.kind === 'shared') return true;
+  try {
+    const p = JSON.parse(d.controllers || '{}');
+    const ctrl = Array.isArray(p) ? p : (p.controllers || []);
+    return ctrl.length > 0;
+  } catch { return true; }                  // an unreadable declaration locks, never unlocks
+}
+
 /** The account behind a published slug, if the track came in through uploads. */
 export async function ownerOf(env, slug) {
   return env.DB.prepare(

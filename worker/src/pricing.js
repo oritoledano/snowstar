@@ -311,8 +311,12 @@ const json = (data, status = 200) =>
 
 /** GET /pricing/classes — the tuned multipliers, plus what they produce. */
 export async function getClasses(env, user) {
-  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const classes = await loadClasses(env);
+  /* The multipliers are public on purpose: the funnel prices with them in the
+     browser, so hiding them guaranteed that a tuned class showed one price and
+     charged another. A multiplier is not a secret — every displayed price
+     already reveals it. The shekel preview and band bases stay owner-only. */
+  if (!user || !user.admin) return json({ classes });
   // Show the owner the actual shekels, not just the ratio. A multiplier is not
   // a price and "1.8x" tells nobody whether the result is sane.
   const preview = {};

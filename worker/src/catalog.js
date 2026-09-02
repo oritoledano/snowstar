@@ -12,7 +12,7 @@
  */
 
 const now = () => Math.floor(Date.now() / 1000);
-import { notifyRename } from './ownership.js';
+import { notifyRename, rightsLocked } from './ownership.js';
 import { trashObject } from './trash.js';
 
 const json = (data, status = 200) =>
@@ -121,7 +121,7 @@ export async function listOverrides(env) {
   const locked = [];
   try {
     const d = await env.DB.prepare(
-      `SELECT s.published_slug AS slug, rd.controllers
+      `SELECT s.published_slug AS slug, rd.controllers, rd.kind
          FROM rights_decls rd
          JOIN submissions s ON s.id = rd.submission_id
         WHERE s.published_slug IS NOT NULL AND s.published_slug <> ''`
@@ -132,7 +132,9 @@ export async function listOverrides(env) {
         const parsed = JSON.parse(row.controllers || '{}');
         ctrl = Array.isArray(parsed) ? parsed : (parsed.controllers || []);
       } catch { /* a corrupt declaration must not lock or unlock anything */ }
-      if (ctrl.length) locked.push(row.slug);
+      // shared ownership locks exactly like an outside controller does —
+      // the same rule rightsLocked() enforces server-side at save and sale
+      if (ctrl.length || row.kind === 'shared') locked.push(row.slug);
     }
   } catch { /* pre-migration schema — nothing is locked rather than everything */ }
 
@@ -167,6 +169,18 @@ export async function saveOverride(req, env, user) {
   if (!before.title && prevRow) before.title = prevRow.base_title;
 
   const patch = sanitize(b.patch && typeof b.patch === 'object' ? b.patch : {});
+
+  /* A signed declaration outranks the toggle: where the submission behind this
+     slug declares shared ownership or an outside controller, the track sells
+     by quote only. Saving any other lane — or resetting the override, which
+     falls back to instant — is refused even for the owner. createRequest has
+     the same check at sale time; this one keeps the dashboard honest. */
+  if (await rightsLocked(env, slug)
+      && (!Object.keys(patch).length || patch.lane !== 'quote')) {
+    return json({ error: 'rights_locked',
+      hint: 'A signed declaration names co-owners or an outside controller — this track can only sell by quote.' }, 409);
+  }
+
   if (!Object.keys(patch).length) {
     await env.DB.prepare('DELETE FROM track_overrides WHERE slug = ?').bind(slug).run();
     return json({ ok: true, reset: true });

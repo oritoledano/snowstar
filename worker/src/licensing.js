@@ -20,6 +20,7 @@ import { alert } from './analytics.js';
 const now = () => Math.floor(Date.now() / 1000);
 import { accrueEarnings } from './earnings.js';
 import { findCoupon, couponProblem, couponAllowsClass, applyCoupon, burnCoupon } from './coupons.js';
+import { rightsLocked } from './ownership.js';
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -236,6 +237,11 @@ export async function createRequest(req, env, user) {
   const ov = await env.DB.prepare('SELECT patch FROM track_overrides WHERE slug = ?').bind(slug).first();
   let lane = 'instant', listAgorot = null;
   let couponCode = null, couponOff = 0;
+  /* A signed declaration outranks whatever the override says. Where the
+     submission behind this slug declares shared ownership or an outside
+     controller, the quote lane is forced HERE, at the moment of sale — so a
+     mis-toggled or reset lane can never self-serve a co-owned track. */
+  if (await rightsLocked(env, slug)) lane = 'quote';
   if (ov) {
     try {
       const p = JSON.parse(ov.patch);
@@ -252,11 +258,15 @@ export async function createRequest(req, env, user) {
     if (ov) {
       try {
         const p = JSON.parse(ov.patch);
-        tr = { lane, prices: p.prices || {}, fee: p.fee, cls: p.cls || 'C' };
+        // pct travels too — dropping it here priced tracks by class letter
+        // while the funnel priced them by percentage, and the two disagreed
+        tr = { lane, prices: p.prices || {}, fee: p.fee, cls: p.cls || 'C', pct: p.pct };
       } catch { /* corrupt override */ }
     }
     const classes = await loadClasses(env);
-    const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '12m', !!b.paid_media, classes);
+    // default '6m', because that is what the INSERT below stores and grants —
+    // pricing a duration-less request at 12m charged double for half the term
+    const pr = priceFor(tr, buyer, coverage, clean(b.duration, 8) || '6m', !!b.paid_media, classes);
     listAgorot = pr.quote ? null : pr.amount * 100;
     if (pr.quote) lane = 'quote';
 
@@ -279,6 +289,12 @@ export async function createRequest(req, env, user) {
     }
   }
 
+  /* The funnel says quote_only when the buyer picked '250+ people' or
+     'something else' — a price may exist for the band they clicked, but they
+     asked for a conversation. Snapshotting it instant would let the request
+     be paid at a rate nobody agreed to. */
+  if (b.quote_only === true) { lane = 'quote'; listAgorot = null; couponCode = null; couponOff = 0; }
+
   const t = now();
   const r = await env.DB.prepare(
     `INSERT INTO licence_requests
@@ -291,8 +307,12 @@ export async function createRequest(req, env, user) {
          clean(b.use_where, 500), clean(b.use_territory, 120),
          clean(b.use_duration, 120),
          // The code rides along in the note so "why was this cheaper" has an
-         // answer on the request itself, without a schema change.
-         (couponCode ? `[coupon ${couponCode} -₪${(couponOff / 100).toFixed(0)}] ` : '') + clean(b.note, 1000),
+         // answer on the request itself, without a schema change. The buyer's
+         // own text must not be able to IMPERSONATE that prefix — grant-time
+         // parses it to burn the coupon, and a forged "[coupon X" would spend
+         // somebody else's code.
+         (couponCode ? `[coupon ${couponCode} -₪${(couponOff / 100).toFixed(0)}] ` : '')
+           + clean(b.note, 1000).replace(/^\[coupon\b/i, '(coupon'),
          // The chosen term, bounded — it decides expires_at at grant time.
          // 'perp' is the one legitimate way to arrive with no months: it means
          // no end date, so it must pass through as NULL rather than be
@@ -524,6 +544,14 @@ export async function grantLicence(env, opts) {
     await env.DB.prepare(
       'INSERT OR IGNORE INTO licence_payments (licence_id, payment_id, applied) VALUES (?, ?, ?)'
     ).bind(id, payment_id, Math.round(amount || 0)).run().catch(() => {});
+  }
+
+  // The coupon burns only when a licence is truly minted — never at preview,
+  // and never on the already_licensed path, which returned above. The code
+  // rides in the request note (written by createRequest).
+  if (reqRow && reqRow.note) {
+    const m = /^\[coupon (\S+) /.exec(String(reqRow.note));
+    if (m) await burnCoupon(env, m[1]);
   }
   if (request_id) {
     await env.DB.prepare(
