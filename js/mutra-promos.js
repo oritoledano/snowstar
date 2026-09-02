@@ -95,25 +95,45 @@
      effect firing under the fold is an effect wasted, and one that re-fires
      on every pass is a nag. WeakSet + unobserve make it once per row per
      page load, even when the rotation moves a strip to a new position. */
-  const litOnce = new WeakSet();
-  /* threshold .98, not 1: at fractional zoom/DPR the browser reports 0.999x
+  /* The sweep replays every few seconds for as long as the row stays fully
+     in view — a neon sign, not a one-shot — and the first firing still waits
+     until the visitor has scrolled the whole row past the fold. Leaving the
+     view (or the DOM) stops the cycle; coming back restarts it.
+     threshold .98, not 1: at fractional zoom/DPR the browser reports 0.999x
      for a fully visible row and a strict ==1 gate would never open. */
+  const REIGNITE_MS = 4200;          // 1.7s sweep + a beat of dark
+  const cycles = new WeakMap();      // row -> its repeat timer
+  const wired = new WeakSet();       // rows that already clean up after a sweep
+  function ignite(row) {
+    if (!row.isConnected) return;
+    if (!wired.has(row)) {
+      wired.add(row);
+      row.addEventListener('animationend', (ev) => {
+        if (ev.animationName === 'promoSweep') row.classList.remove('promo-lit');
+      });
+    }
+    row.classList.remove('promo-lit');
+    void row.offsetWidth;            // restart cleanly even if a sweep is mid-flight
+    row.classList.add('promo-lit');
+  }
   const igniter = 'IntersectionObserver' in window
     ? new IntersectionObserver((ents) => {
         for (const en of ents) {
-          if (!en.isIntersecting) continue;
-          igniter.unobserve(en.target);
-          if (litOnce.has(en.target)) continue;
-          litOnce.add(en.target);
-          if (matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
-          en.target.classList.add('promo-lit');
-          en.target.addEventListener('animationend', function done(ev) {
-            if (ev.animationName !== 'promoSweep') return;
-            en.target.classList.remove('promo-lit');
-            en.target.removeEventListener('animationend', done);
-          });
+          const row = en.target;
+          const fullySeen = en.isIntersecting && en.intersectionRatio >= 0.98;
+          if (fullySeen && !cycles.has(row)
+              && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            ignite(row);
+            cycles.set(row, setInterval(() => {
+              if (!row.isConnected) { clearInterval(cycles.get(row)); cycles.delete(row); return; }
+              ignite(row);
+            }, REIGNITE_MS));
+          } else if (!fullySeen && cycles.has(row)) {
+            clearInterval(cycles.get(row));
+            cycles.delete(row);
+          }
         }
-      }, { threshold: 0.98 })
+      }, { threshold: [0, 0.98] })
     : null;
   const armGlow = (row) => { if (igniter && row) igniter.observe(row); };
 
@@ -124,6 +144,20 @@
   const shown = new Set();
   const nodes = new Map();      // promo id -> its strip node
   const live = [];              // strips currently owed to the page, for re-insertion
+
+  /* The banner's price is the funnel's price, not a slogan: the cheapest
+     self-serve entry for THIS track (own work, 6 months), computed by the
+     same priceFor the licence chooser uses, so the number on the ad and the
+     number at checkout can never disagree. Strips build at behaviour moments,
+     long after mutra-license.js has loaded. */
+  function entryPrice(slug) {
+    try {
+      const t = window.mutraCatalog && mutraCatalog.all().find((x) => x.slug === slug);
+      const f = t && window.mutraLicense && mutraLicense.priceFor(t, 'individual-own', 'standard', '6m');
+      if (f && !f.quote && f.amount > 0) return `Starting at ${f.amount}₪ for 6 months`;
+    } catch {}
+    return 'Licensed per project — get a quote';
+  }
 
   function buildStrip(p) {
     const wrap = document.createElement('div');
@@ -140,7 +174,7 @@
           <b><span>Once used by <em class="promo-brand"
                style="color:${p.color}">${p.brand}</em>.</span>
              <span class="promo-l2">License it today.</span></b>
-          <p>Starting at 99₪ for 6 months</p>
+          <p>${entryPrice(p.slug)}</p>
         </div>
       </div>`;
     // The claim, then the sound that earned it — the catalogue's own row, so it
