@@ -1601,13 +1601,17 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
    animates (registered below so it can). Browsers without @property keep the
    bloom and a static flare that fades — a soft version of the same event. */
 @property --ign { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+/* The ring sits just INSIDE the row (inset:2px) and the bloom is an inset
+   shadow: the strips clip everything outside themselves (overflow:hidden for
+   their radius), so an outside ring would lose its sides and bottom on every
+   row that touches a strip edge — which is all of them. */
 .promo-track.promo-lit{position:relative;animation:promoBloom 1.7s ease-out}
-.promo-track.promo-lit::after{content:'';position:absolute;inset:-2px;border-radius:16px;
+.promo-track.promo-lit::after{content:'';position:absolute;inset:2px;border-radius:12px;
   pointer-events:none;padding:2px;
   background:conic-gradient(from var(--ign),
     transparent 0 72%,
     color-mix(in srgb,var(--amber,#ffc24b) 85%,transparent) 86%,
-    #fff8ea 93%, transparent 100%);
+    color-mix(in srgb,var(--amber,#ffc24b) 40%,#fff) 93%, transparent 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;
   mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
@@ -1619,10 +1623,10 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   78%{opacity:1}
   100%{--ign:660deg;opacity:0}}
 @keyframes promoBloom{
-  0%{box-shadow:0 0 0 0 transparent}
-  30%{box-shadow:0 0 0 1px color-mix(in srgb,var(--amber,#ffc24b) 70%,transparent),
-      0 0 26px color-mix(in srgb,var(--amber,#ffc24b) 38%,transparent)}
-  100%{box-shadow:0 0 0 0 transparent}}
+  0%{box-shadow:inset 0 0 0 0 transparent}
+  30%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--amber,#ffc24b) 60%,transparent),
+      inset 0 0 30px color-mix(in srgb,var(--amber,#ffc24b) 26%,transparent)}
+  100%{box-shadow:inset 0 0 0 0 transparent}}
 @media (prefers-reduced-motion:reduce){
   .promo-track.promo-lit{animation:none}
   .promo-track.promo-lit::after{animation:none;display:none}}
@@ -1656,6 +1660,11 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .pl-skip:hover{color:var(--text)}
 .pl-skip:active{transform:scale(.88)}
 @media(max-width:560px){#plPrev{display:none}}  /* keep the bar one row on phones */
+
+/* Versions unfolded inside a strip keep the catalogue's own child anatomy —
+   indent and rail — so they read as mixes of the row above, not as more
+   promoted tracks; the last one just needs air before the strip's edge. */
+.promo-strip .trk.trk-child:last-child{margin-bottom:10px}
 
 /* Custom-licence artist strip: a portrait where the film still was, and the
    same ad anatomy as a brand — eyebrow, name lit in the artist's colour,

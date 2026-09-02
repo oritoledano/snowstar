@@ -96,13 +96,16 @@
      on every pass is a nag. WeakSet + unobserve make it once per row per
      page load, even when the rotation moves a strip to a new position. */
   const litOnce = new WeakSet();
+  /* threshold .98, not 1: at fractional zoom/DPR the browser reports 0.999x
+     for a fully visible row and a strict ==1 gate would never open. */
   const igniter = 'IntersectionObserver' in window
     ? new IntersectionObserver((ents) => {
         for (const en of ents) {
-          if (!en.isIntersecting || en.intersectionRatio < 1) continue;
+          if (!en.isIntersecting) continue;
           igniter.unobserve(en.target);
           if (litOnce.has(en.target)) continue;
           litOnce.add(en.target);
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
           en.target.classList.add('promo-lit');
           en.target.addEventListener('animationend', function done(ev) {
             if (ev.animationName !== 'promoSweep') return;
@@ -110,7 +113,7 @@
             en.target.removeEventListener('animationend', done);
           });
         }
-      }, { threshold: 1 })
+      }, { threshold: 0.98 })
     : null;
   const armGlow = (row) => { if (igniter && row) igniter.observe(row); };
 
@@ -226,6 +229,12 @@
   }
 
   function place(node) {
+    // A strip detached mid-sweep keeps promo-lit (its animationend never
+    // came); re-entering the DOM would replay the ignition wherever it lands.
+    if (node.classList) {
+      node.classList.remove('promo-lit');
+      node.querySelectorAll('.promo-lit').forEach((r) => r.classList.remove('promo-lit'));
+    }
     const { slot, rows } = targetSlot();
     if (!rows.length) { tracksEl.prepend(node); return; }
     if (slot <= 0) { rows[0].insertAdjacentElement('beforebegin', node); return; }

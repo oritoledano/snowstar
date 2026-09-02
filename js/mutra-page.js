@@ -1007,24 +1007,27 @@
            somewhere far away — and nudge the scroll, which reads as the button
            doing nothing. Unfold right here instead, under the row that was
            clicked, and leave the main list alone. */
-        const strip = row.closest('.promo-strip');
+        const strip = row.closest('.promo-strip, .spot-expand');
         if (strip) {
           const open = stackBtn.getAttribute('aria-expanded') === 'true';
+          // recomputed at click time — the closure's list was frozen when the
+          // guest row was built, and versions can be hidden/unstacked since
+          const fresh = childrenOf(track.slug);
           if (open) {
             while (row.nextElementSibling && row.nextElementSibling.classList.contains('trk-child'))
               row.nextElementSibling.remove();
           } else {
             let after = row;
-            childrenOf(track.slug).forEach((kid) => {
+            fresh.forEach((kid) => {
               const kr = buildRow(kid, MUTRA.tracks.indexOf(kid));
-              kr.classList.add('trk-child', 'promo-track');
+              kr.classList.add('trk-child');
               after.insertAdjacentElement('afterend', kr);
               paintRowWave(kr, kid);
               after = kr;
             });
           }
           stackBtn.setAttribute('aria-expanded', String(!open));
-          stackBtn.textContent = (open ? '+' : '−') + kids.length;
+          stackBtn.textContent = (open ? '+' : '−') + fresh.length;
           return;
         }
         if (openStacks.has(track.slug)) openStacks.delete(track.slug);
@@ -1709,6 +1712,17 @@
   /* The spotlight strip drops a real catalogue row in under the covers when a
      card is played. It calls THIS, rather than building its own markup, so the
      row it shows can never drift from every other row on the page. */
+  /** A guest row (promo strip, spotlight expand) starts life collapsed no
+   *  matter what openStacks says: its versions unfold INLINE, so seeding the
+   *  chip from the main list's expanded state makes it claim an unfold that
+   *  is not there and turns the first click into a phantom collapse. */
+  function resetGuestChip(row, track) {
+    const sb = row.querySelector('.trk-stack');
+    if (sb) { sb.setAttribute('aria-expanded', 'false');
+              sb.textContent = '+' + childrenOf(track.slug).length; }
+    return row;
+  }
+
   window.mutraRenderRow = function (track) {
     const i = MUTRA.tracks.indexOf(track);
     if (i < 0) return null;
@@ -1716,7 +1730,7 @@
     // the waveform needs the row in the document before it can measure, so
     // paint on the next frame rather than now
     requestAnimationFrame(() => paintRowWave(row, track));
-    return row;
+    return resetGuestChip(row, track);
   };
 
   /* Show an explicit set of slugs, in the order given. The agent search ranks
@@ -1763,7 +1777,7 @@
       if (!t) return null;
       const r = buildRow(t, MUTRA.tracks.indexOf(t));
       paintRowWave(r, t);
-      return r;
+      return resetGuestChip(r, t);
     },
     narrowed: () => !!(state.q
       || ['genres', 'moods', 'characteristics', 'instruments', 'scales', 'packs', 'characters']
