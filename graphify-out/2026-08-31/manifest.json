@@ -90,9 +90,9 @@
     "semantic_hash": ""
   },
   "js/mutra-page.js": {
-    "mtime": 1788111893.5763998,
-    "seen": 1788111900.8226671,
-    "ast_hash": "b972311770d53862829ded99966174ca",
+    "mtime": 1788199301.1425514,
+    "seen": 1788199333.645636,
+    "ast_hash": "cfa19c5ac8604eb115118e741f1ac277",
     "semantic_hash": ""
   },
   "js/mutra-similar.js": {
@@ -324,9 +324,9 @@
     "semantic_hash": ""
   },
   "mutra.html": {
-    "mtime": 1788115971.9176962,
-    "seen": 1788115978.4446,
-    "ast_hash": "6109852d17092754a6825098b63b51f2",
+    "mtime": 1788183104.1219635,
+    "seen": 1788188228.217942,
+    "ast_hash": "aa8b59f293690c52bab84db25054e18b",
     "semantic_hash": ""
   },
   "privacy.html": {
@@ -1410,9 +1410,9 @@
     "semantic_hash": ""
   },
   "js/mutra-promos.js": {
-    "mtime": 1788182147.6623635,
-    "seen": 1788182147.856982,
-    "ast_hash": "a38b751005c5265e560e172e891ae4d6",
+    "mtime": 1788188221.0335615,
+    "seen": 1788188228.217875,
+    "ast_hash": "542e83292c69da19ff5f899122f54f91",
     "semantic_hash": ""
   },
   "assets/clients/mitsubishi.png": {

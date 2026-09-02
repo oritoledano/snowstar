@@ -89,6 +89,31 @@
     document.body.style.overflow = 'hidden';
   }
 
+  /* ── the ignition ─────────────────────────────────────────────────────────
+     A promoted row lights up like a neon tube — once, and only after the
+     visitor has scrolled it FULLY into view. Half-seen rows stay dark: an
+     effect firing under the fold is an effect wasted, and one that re-fires
+     on every pass is a nag. WeakSet + unobserve make it once per row per
+     page load, even when the rotation moves a strip to a new position. */
+  const litOnce = new WeakSet();
+  const igniter = 'IntersectionObserver' in window
+    ? new IntersectionObserver((ents) => {
+        for (const en of ents) {
+          if (!en.isIntersecting || en.intersectionRatio < 1) continue;
+          igniter.unobserve(en.target);
+          if (litOnce.has(en.target)) continue;
+          litOnce.add(en.target);
+          en.target.classList.add('promo-lit');
+          en.target.addEventListener('animationend', function done(ev) {
+            if (ev.animationName !== 'promoSweep') return;
+            en.target.classList.remove('promo-lit');
+            en.target.removeEventListener('animationend', done);
+          });
+        }
+      }, { threshold: 1 })
+    : null;
+  const armGlow = (row) => { if (igniter && row) igniter.observe(row); };
+
   /* Per page load, not per session — a browse long enough to earn several
      moments deserves several strips, and yesterday's visit should not mute
      today's. Each brand exists in the DOM once: when the rotation comes back
@@ -118,7 +143,7 @@
     // The claim, then the sound that earned it — the catalogue's own row, so it
     // plays, seeks, and licenses exactly like every other row on the page.
     const row = window.mutraCatalog && mutraCatalog.row(p.slug);
-    if (row) { row.classList.add('promo-track'); wrap.appendChild(row); }
+    if (row) { row.classList.add('promo-track'); wrap.appendChild(row); armGlow(row); }
     // The commercial IS the proof, so clicking anywhere on the banner opens the
     // film — the same lightbox the Snowstar portfolio uses, credits and all.
     wrap.querySelector('.promo-banner').addEventListener('click', () => {
@@ -151,7 +176,7 @@
       </div>`;
     for (const slug of p.slugs.slice(0, 3)) {
       const row = window.mutraCatalog && mutraCatalog.row(slug);
-      if (row) { row.classList.add('promo-track'); wrap.appendChild(row); }
+      if (row) { row.classList.add('promo-track'); wrap.appendChild(row); armGlow(row); }
     }
     wrap.querySelector('.promo-banner').addEventListener('click', () => {
       if (window.mutraTrack) mutraTrack('promo_click', p.id);

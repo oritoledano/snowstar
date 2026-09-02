@@ -1002,6 +1002,31 @@
       const stackBtn = row.querySelector('.trk-stack');
       if (stackBtn) stackBtn.addEventListener('click', e => {
         e.stopPropagation();
+        /* Inside a promo strip this row is a guest copy: openStacks + render()
+           would unfold the versions at the track's own seat in the MAIN list —
+           somewhere far away — and nudge the scroll, which reads as the button
+           doing nothing. Unfold right here instead, under the row that was
+           clicked, and leave the main list alone. */
+        const strip = row.closest('.promo-strip');
+        if (strip) {
+          const open = stackBtn.getAttribute('aria-expanded') === 'true';
+          if (open) {
+            while (row.nextElementSibling && row.nextElementSibling.classList.contains('trk-child'))
+              row.nextElementSibling.remove();
+          } else {
+            let after = row;
+            childrenOf(track.slug).forEach((kid) => {
+              const kr = buildRow(kid, MUTRA.tracks.indexOf(kid));
+              kr.classList.add('trk-child', 'promo-track');
+              after.insertAdjacentElement('afterend', kr);
+              paintRowWave(kr, kid);
+              after = kr;
+            });
+          }
+          stackBtn.setAttribute('aria-expanded', String(!open));
+          stackBtn.textContent = (open ? '+' : '−') + kids.length;
+          return;
+        }
         if (openStacks.has(track.slug)) openStacks.delete(track.slug);
         else openStacks.add(track.slug);
         render();

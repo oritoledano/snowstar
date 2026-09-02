@@ -1592,6 +1592,40 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-strip .trk.promo-track{border-top:1px solid var(--line);margin:0}
 .promo-flash{animation:promoFlash 1.6s ease}
 @keyframes promoFlash{0%,60%{box-shadow:inset 0 0 0 2px var(--amber,#8fd8ff)}100%{box-shadow:none}}
+
+/* The ignition: a neon frame flicked on once, when a promoted row has been
+   fully scrolled into view (mutra-promos.js arms it). A hot comet runs the
+   border while the whole frame blooms and dies back down — bright, brief,
+   never repeated. The ring is the pseudo-element's own padding, masked so
+   only the 2px edge paints; the comet is a conic gradient whose start angle
+   animates (registered below so it can). Browsers without @property keep the
+   bloom and a static flare that fades — a soft version of the same event. */
+@property --ign { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.promo-track.promo-lit{position:relative;animation:promoBloom 1.7s ease-out}
+.promo-track.promo-lit::after{content:'';position:absolute;inset:-2px;border-radius:16px;
+  pointer-events:none;padding:2px;
+  background:conic-gradient(from var(--ign),
+    transparent 0 72%,
+    color-mix(in srgb,var(--amber,#ffc24b) 85%,transparent) 86%,
+    #fff8ea 93%, transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;
+  animation:promoSweep 1.7s cubic-bezier(.3,.1,.25,1) forwards}
+@keyframes promoSweep{
+  0%{--ign:0deg;opacity:0}
+  12%{opacity:1}
+  78%{opacity:1}
+  100%{--ign:660deg;opacity:0}}
+@keyframes promoBloom{
+  0%{box-shadow:0 0 0 0 transparent}
+  30%{box-shadow:0 0 0 1px color-mix(in srgb,var(--amber,#ffc24b) 70%,transparent),
+      0 0 26px color-mix(in srgb,var(--amber,#ffc24b) 38%,transparent)}
+  100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){
+  .promo-track.promo-lit{animation:none}
+  .promo-track.promo-lit::after{animation:none;display:none}}
 @media(max-width:640px){
   .promo-banner{flex-direction:column;align-items:stretch;gap:16px;padding:16px}
   .promo-film{width:100%}

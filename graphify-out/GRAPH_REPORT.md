@@ -1,16 +1,16 @@
 # Graph Report - snowstar  (2026-08-31)
 
 ## Corpus Check
-- 79 files · ~416,678 words
+- 79 files · ~416,934 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 957 nodes · 2279 edges · 56 communities (53 shown, 3 thin omitted)
+- 959 nodes · 2282 edges · 57 communities (54 shown, 3 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 89 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8cce386c`
+- Built from commit: `dc8673b1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -56,9 +56,9 @@
 - collections.js
 - jobs.js
 - mutra-artist-page.js
-- trash.js
-- Portfolio years
 - handle
+- Portfolio years
+- index.js
 - artistprofile.js
 - greeninvoice.js
 - Paying artists their cut
@@ -68,8 +68,9 @@
 - make-character-art.py
 - artistreg.js
 - agent.js
+- certificate.js
 - mutra-promos.js
-- index.js
+- stacks.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `handle()` - 150 edges
@@ -80,8 +81,8 @@
 6. `Snowstar agency homepage` - 19 edges
 7. `buildRow()` - 18 edges
 8. `toggle()` - 17 edges
-9. `openEditor()` - 16 edges
-10. `createRequest()` - 16 edges
+9. `createRequest()` - 16 edges
+10. `Owner dashboard` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Upward tier change credits the earlier payment` --semantically_similar_to--> `Use tiers (digital, corporate, paid, TV, film, radio, commercial)`  [INFERRED] [semantically similar]
@@ -103,7 +104,7 @@
 - **Rights clearance pipeline (artist declaration → owner review → licensable lane)** — artists_rights_declaration, artists_co_owner_shares, artists_controller_declaration, artists_countersign_claim, artists_instant_vs_quote_lane, dashboard_submissions_queue, dashboard_clearance_status, terms_quote_only_tracks [INFERRED 0.85]
 - **One Snowstar account across catalogue, portal, dashboard and reset** — js_account, js_account_ui, css_account, artists_account_gate, reset_page, dashboard_page, privacy_account_data [INFERRED 0.85]
 
-## Communities (56 total, 3 thin omitted)
+## Communities (57 total, 3 thin omitted)
 
 ### Community 0 - "mutra-agent.js"
 Cohesion: 0.44
@@ -111,11 +112,11 @@ Nodes (9): build(), catalogueVocab(), chip(), close(), interpret(), open(), pain
 
 ### Community 1 - "mutra-page.js"
 Cohesion: 0.06
-Nodes (81): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+73 more)
+Nodes (82): addCurateControls(), paintCls(), appendPage(), applyOverrides(), artistLinks(), buildRow(), clearFilters(), closeDrawer() (+74 more)
 
 ### Community 2 - "artists.js"
-Cohesion: 0.24
-Nodes (15): AUDIO_EXT, createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), queueReviewMail() (+7 more)
+Cohesion: 0.18
+Nodes (19): AUDIO_EXT, createSubmission(), json(), listArtistsAdmin(), listSubmissions(), myUploads(), now(), queueReviewMail() (+11 more)
 
 ### Community 3 - "oauth.js"
 Cohesion: 0.10
@@ -230,8 +231,8 @@ Cohesion: 0.33
 Nodes (13): configured(), CP1255, decodeValue(), handleReturn(), hypStatus(), json(), listStale(), now() (+5 more)
 
 ### Community 34 - "rights.js"
-Cohesion: 0.18
-Nodes (25): mailFrom(), mailLive(), resetEmail(), SENDERS, sendMail(), shell(), amendDeclaration(), claimStatus() (+17 more)
+Cohesion: 0.23
+Nodes (21): mailFrom(), mailLive(), amendDeclaration(), claimStatus(), cleanEmail(), countersignClaim(), createManagedArtist(), freezeText() (+13 more)
 
 ### Community 35 - "make-package-art.py"
 Cohesion: 0.24
@@ -257,17 +258,17 @@ Nodes (10): clean(), exportJobs(), FIELDS, json(), listJobs(), MEDIA, now(), sav
 Cohesion: 0.67
 Nodes (5): load(), openEditor(), paint(), platformOf(), tracksFor()
 
-### Community 41 - "trash.js"
-Cohesion: 0.70
-Nodes (4): emptyTrash(), json(), listTrash(), restoreFromTrash()
+### Community 41 - "handle"
+Cohesion: 0.16
+Nodes (16): authed(), clearThrottle(), favoritesFor(), fetch(), handle(), json(), now(), originOk() (+8 more)
 
 ### Community 42 - "Portfolio years"
 Cohesion: 0.50
 Nodes (3): Not established — nothing found, Portfolio years, Worth a second look — medium confidence
 
-### Community 43 - "handle"
-Cohesion: 0.20
-Nodes (17): clearThrottle(), favoritesFor(), handle(), now(), originOk(), product(), sessionCookie(), throttle() (+9 more)
+### Community 43 - "index.js"
+Cohesion: 0.19
+Nodes (18): cleanupOrphanUploads(), ALLOWED_ORIGINS, PRODUCTS, scheduled(), esc(), sharePage(), deleteNote(), json() (+10 more)
 
 ### Community 44 - "artistprofile.js"
 Cohesion: 0.34
@@ -290,8 +291,8 @@ Cohesion: 0.29
 Nodes (13): applyOps(), bulkArtist(), bulkEdit(), bulkUndo(), clean(), diffOf(), json(), keyOf() (+5 more)
 
 ### Community 49 - "ownership.js"
-Cohesion: 0.26
-Nodes (13): certificate(), certificateSvg(), esc(), fmtDate(), json(), wrap(), clean(), getOwner() (+5 more)
+Cohesion: 0.57
+Nodes (7): clean(), getOwner(), json(), notifyRename(), now(), ownerOf(), reassignOwner()
 
 ### Community 50 - "make-character-art.py"
 Cohesion: 0.31
@@ -305,13 +306,17 @@ Nodes (6): ensureArtists(), json(), listArtists(), now(), saveArtist(), splitNam
 Cohesion: 0.48
 Nodes (6): clampBpm(), clampList(), extractJson(), interpretBrief(), json(), LIST_FIELDS
 
-### Community 55 - "mutra-promos.js"
-Cohesion: 0.50
-Nodes (7): buildArtistStrip(), buildStrip(), fire(), openFilm(), place(), slotOf(), targetSlot()
+### Community 53 - "certificate.js"
+Cohesion: 0.52
+Nodes (6): certificate(), certificateSvg(), esc(), fmtDate(), json(), wrap()
 
-### Community 56 - "index.js"
-Cohesion: 0.16
-Nodes (17): cleanupOrphanUploads(), ALLOWED_ORIGINS, authed(), fetch(), json(), PRODUCTS, scheduled(), deleteMember() (+9 more)
+### Community 55 - "mutra-promos.js"
+Cohesion: 0.44
+Nodes (8): buildArtistStrip(), buildStrip(), fire(), openFilm(), place(), slotOf(), stackEnd(), targetSlot()
+
+### Community 57 - "stacks.js"
+Cohesion: 0.70
+Nodes (4): clean(), json(), listStacks(), saveStack()
 
 ## Knowledge Gaps
 - **101 isolated node(s):** `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS`, `nav`, `menuBtn` (+96 more)
@@ -332,6 +337,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **What connects `SHOWREEL`, `PROJECTS`, `CLIENT_LOGOS` to the rest of the system?**
   _101 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `mutra-page.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.05873340143003064 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05767790262172284 - nodes in this community are weakly interconnected._
 - **Should `oauth.js` be split into smaller, more focused modules?**
   _Cohesion score 0.10220673635307782 - nodes in this community are weakly interconnected._

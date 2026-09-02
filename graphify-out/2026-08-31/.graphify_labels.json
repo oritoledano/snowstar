@@ -1,7 +1,7 @@
 {
   "0": "mutra-agent.js",
   "1": "mutra-page.js",
-  "2": "artists.js",
+  "2": "earnings.js",
   "3": "oauth.js",
   "4": "licensing.js",
   "5": "main.js",
@@ -29,7 +29,7 @@
   "27": "make-stream-renditions.sh",
   "28": "schema-tracks.sql",
   "29": "mutra-license.js",
-  "30": "analytics.js",
+  "30": "crypto.js",
   "31": "stream.js",
   "32": "mutra-behavior.js",
   "33": "hyp.js",
@@ -40,9 +40,9 @@
   "38": "collections.js",
   "39": "jobs.js",
   "40": "mutra-artist-page.js",
-  "41": "trash.js",
+  "41": "handle",
   "42": "Portfolio years",
-  "43": "handle",
+  "43": "index.js",
   "44": "artistprofile.js",
   "45": "greeninvoice.js",
   "46": "Paying artists their cut",
@@ -52,7 +52,9 @@
   "50": "make-character-art.py",
   "51": "artistreg.js",
   "52": "agent.js",
+  "53": "certificate.js",
   "54": "mutra-reanalyse.js",
   "55": "mutra-promos.js",
-  "56": "index.js"
+  "56": "members.js",
+  "57": "stacks.js"
 }

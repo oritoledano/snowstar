@@ -40,9 +40,9 @@
   "38": "collections.js",
   "39": "jobs.js",
   "40": "mutra-artist-page.js",
-  "41": "trash.js",
+  "41": "handle",
   "42": "Portfolio years",
-  "43": "handle",
+  "43": "index.js",
   "44": "artistprofile.js",
   "45": "greeninvoice.js",
   "46": "Paying artists their cut",
@@ -52,7 +52,8 @@
   "50": "make-character-art.py",
   "51": "artistreg.js",
   "52": "agent.js",
+  "53": "certificate.js",
   "54": "mutra-reanalyse.js",
   "55": "mutra-promos.js",
-  "56": "index.js"
+  "57": "stacks.js"
 }
