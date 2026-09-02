@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Submit your music — Mutra by Snowstar</title>
-<meta name="description" content="Upload your original tracks to Mutra, Snowstar's licensing catalog. Music chosen by the biggest brands in the world.">
+<title>Join the roster — Mutra by Snowstar</title>
+<meta name="description" content="Join Mutra, Snowstar's hand-picked licensing catalog. Non-exclusive, you keep 100% of your rights, 50/50 on every licence — music chosen by the biggest brands in the world.">
 <link rel="icon" href="assets/ssc-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/mutra.css?v=114">
+<link rel="stylesheet" href="css/mutra.css?v=118">
 <style>
   .ar-wrap{max-width:860px;margin:0 auto;padding:110px clamp(18px,4vw,44px) 60px}
   .ar-hero h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin-bottom:14px}
@@ -102,6 +102,85 @@
   .ar-lane.instant{background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.35);color:#8ee9c0}
   .ar-lane.quote{background:var(--panel-2,rgba(0,0,0,.15));border:1px solid var(--line-2,var(--line));color:var(--muted)}
   [hidden]{display:none!important}
+
+  /* ═══ The pitch — why join, proof, how it works. The funnel below is untouched. ═══ */
+  .pj-ctas{display:flex;gap:12px;flex-wrap:wrap}
+  .pj-kicker{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim,var(--muted));
+    text-align:center;margin:0 0 18px}
+  .pj-sec{margin-top:64px}
+  /* placement proof — the same ad language the catalogue's banners speak */
+  .pj-films{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .pj-film{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    text-decoration:none;color:var(--text);display:block;transition:transform .2s}
+  .pj-film:hover{transform:translateY(-3px)}
+  .pj-film img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+  .pj-film figcaption{padding:12px 14px}
+  .pj-film b{display:block;font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.02rem;line-height:1.2}
+  .pj-film b em{font-style:normal}
+  .pj-film span{color:var(--muted);font-size:.78rem}
+  /* the three promises */
+  .pj-promises{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .pj-promise{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 22px 20px}
+  .pj-promise h3{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.22rem;line-height:1.2;
+    margin:0 0 10px;letter-spacing:-.01em}
+  .pj-promise h3 i{font-style:normal;background:var(--grad,linear-gradient(100deg,#ffc24b,#ff3d8b));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .pj-promise p{color:var(--muted);font-size:.9rem;margin:0;line-height:1.6}
+  /* walkthroughs — three looping mini-screens; with reduced motion (or no
+     animation support) every element rests in its FINISHED state, so the card
+     still tells the story as a still. */
+  .pj-how{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .pj-step h4{font-size:.95rem;margin:14px 0 4px}
+  .pj-step > p{color:var(--muted);font-size:.84rem;margin:0;line-height:1.55}
+  .pj-screen{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;
+    min-height:190px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+  .pj-chip{display:inline-flex;align-items:center;gap:8px;background:var(--panel-2,rgba(0,0,0,.18));
+    border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:.8rem;align-self:flex-start}
+  .pj-dropzone{border:2px dashed var(--line);border-radius:10px;padding:14px;text-align:center;
+    color:var(--dim,var(--muted));font-size:.76rem}
+  .pj-bar{height:6px;border-radius:99px;background:var(--panel-2,rgba(0,0,0,.18));overflow:hidden}
+  .pj-bar i{display:block;height:100%;width:100%;border-radius:99px;
+    background:var(--grad,linear-gradient(100deg,#ffc24b,#ff3d8b));
+    animation:pjBar 9s ease-in-out infinite}
+  .pj-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .pj-tag{font-size:.68rem;border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--muted)}
+  .pj-ok{color:#34d399;font-size:.8rem;font-weight:600}
+  .pj-file{animation:pjIn 9s ease infinite}
+  .pj-tag:nth-child(1){animation:pjTagA 9s ease infinite}
+  .pj-tag:nth-child(2){animation:pjTagB 9s ease infinite}
+  .pj-tag:nth-child(3){animation:pjTagC 9s ease infinite}
+  .pj-screen .pj-ok{animation:pjLate 9s ease infinite}
+  @keyframes pjIn{0%,6%{opacity:0;transform:translateY(6px)}13%,94%{opacity:1;transform:none}100%{opacity:0}}
+  @keyframes pjBar{0%,14%{width:0}36%,94%{width:100%}100%{width:100%}}
+  @keyframes pjTagA{0%,38%{opacity:0;transform:scale(.85)}45%,94%{opacity:1;transform:scale(1)}100%{opacity:0}}
+  @keyframes pjTagB{0%,44%{opacity:0;transform:scale(.85)}51%,94%{opacity:1;transform:scale(1)}100%{opacity:0}}
+  @keyframes pjTagC{0%,50%{opacity:0;transform:scale(.85)}57%,94%{opacity:1;transform:scale(1)}100%{opacity:0}}
+  @keyframes pjLate{0%,62%{opacity:0}70%,94%{opacity:1}100%{opacity:0}}
+  /* lane card: the ring hops between the two ways a track sells */
+  .pj-lane{border:1px solid var(--line);border-radius:10px;padding:10px 13px;font-size:.82rem;position:relative}
+  .pj-lane small{display:block;color:var(--muted);font-size:.72rem;margin-top:2px}
+  .pj-lane.a{animation:pjRingA 9s ease infinite}
+  .pj-lane.b{animation:pjRingB 9s ease infinite}
+  @keyframes pjRingA{0%,6%{box-shadow:none}10%,46%{box-shadow:0 0 0 2px var(--amber,#8fd8ff)}54%,100%{box-shadow:none}}
+  @keyframes pjRingB{0%,54%{box-shadow:none}60%,94%{box-shadow:0 0 0 2px var(--amber,#8fd8ff)}100%{box-shadow:none}}
+  /* splits card */
+  .pj-split{font-size:.8rem}
+  .pj-split .pj-bar{margin-top:4px}
+  .pj-split .pj-bar i{animation:none;width:60%}
+  .pj-split.b .pj-bar i{width:40%;opacity:.7}
+  .pj-sale{animation:pjLate 9s ease infinite}
+  @media (prefers-reduced-motion:reduce){
+    .pj-screen *,.pj-bar i,.pj-lane{animation:none!important;opacity:1;transform:none}
+  }
+  /* faq */
+  .pj-faq{max-width:640px;margin:0 auto}
+  .pj-faq details{border-bottom:1px solid var(--line);padding:4px 2px}
+  .pj-faq summary{cursor:pointer;font-size:.95rem;font-weight:600;padding:12px 0;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .pj-faq summary::after{content:'+';color:var(--amber,#8fd8ff);font-size:1.1rem;flex:none}
+  .pj-faq details[open] summary::after{content:'−'}
+  .pj-faq details p{color:var(--muted);font-size:.89rem;line-height:1.65;margin:0 0 14px}
+  .pj-note{color:var(--dim,var(--muted));font-size:.76rem;text-align:center;margin-top:14px}
 </style>
 </head>
 <body>
@@ -113,11 +192,129 @@
 
 <div class="ar-wrap">
   <div class="ar-hero">
-    <h1 data-txt="artists.hero.title">Your music, licensed<br>by real brands.</h1>
-    <p data-txt="artists.hero.sub">Mutra is Snowstar's curated licensing catalog — every track hand-picked,
-    properly cleared, and pitched to the brands we score for. Upload your original music;
-    we listen to everything and tell you what we take.</p>
+    <h1 data-txt="artists.hero.title">Mitsubishi. Pepsi. Fiverr.<br>Your track next.</h1>
+    <p data-txt="artists.hero.sub">Mutra is Snowstar's hand-picked licensing catalog — 378 tracks, one curator,
+    and the brands we score for listening. Non-exclusive. You keep everything.
+    50/50 on every licence.</p>
+    <div class="pj-ctas">
+      <a class="mbtn mbtn-solid" href="#submit">Submit your music</a>
+      <a class="mbtn mbtn-ghost" href="#how">How it works</a>
+    </div>
   </div>
+
+  <!-- ═══ THE PITCH — proof, promises, walkthroughs, FAQ. The funnel below is unchanged. ═══ -->
+  <section class="pj-sec" aria-label="Placements">
+    <p class="pj-kicker" data-txt="artists.pitch.proof">Placements, not promises</p>
+    <div class="pj-films">
+      <a class="pj-film" href="mutra.html">
+        <img src="assets/thumbs/mitsubishi-asx.jpg" alt="Mitsubishi ASX commercial still" loading="lazy">
+        <figcaption><b>Once used by <em style="color:#ff2a3c">Mitsubishi</em></b>
+        <span>THE RISE AND FALL — from this catalog</span></figcaption>
+      </a>
+      <a class="pj-film" href="mutra.html">
+        <img src="assets/thumbs/fiverr-director-s-cut.jpg" alt="Fiverr Director's Cut still" loading="lazy">
+        <figcaption><b>Once used by <em style="color:#1dbf73">Fiverr</em></b>
+        <span>CYBER TUNNEL — from this catalog</span></figcaption>
+      </a>
+      <a class="pj-film" href="mutra.html">
+        <img src="assets/thumbs/pepsi-vietnam.jpg" alt="Pepsi Vietnam commercial still" loading="lazy">
+        <figcaption><b>Once used by <em style="color:#2f9bff">Pepsi</em></b>
+        <span>DO IT MAJOR — from this catalog</span></figcaption>
+      </a>
+    </div>
+  </section>
+
+  <section class="pj-sec" aria-label="Why join">
+    <div class="pj-promises">
+      <div class="pj-promise">
+        <h3>The person who says <i>yes</i> is the person who pitches you.</h3>
+        <p>No A&amp;R queue, no tiers. The curator listens to every submission himself, replies within
+        two weeks, and personally puts accepted tracks in front of clients.</p>
+      </div>
+      <div class="pj-promise">
+        <h3>You will never be <i>filler</i>.</h3>
+        <p>378 tracks, not 900,000. Every accepted track is findable, every artist gets a real page
+        and a seat in the catalog's playlists and characters — ongoing attention, not intake.</p>
+      </div>
+      <div class="pj-promise">
+        <h3>Terms a human signs <i>without a lawyer</i>.</h3>
+        <p>Non-exclusive — license the same tracks anywhere else. You keep 100% of your masters,
+        publishing and PRO royalties. 50/50 on every licence fee. Leave whenever you like.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pj-sec" id="how" aria-label="How it works">
+    <p class="pj-kicker" data-txt="artists.pitch.how">How it works</p>
+    <div class="pj-how">
+      <div class="pj-step">
+        <div class="pj-screen" aria-hidden="true">
+          <div class="pj-dropzone">Drop your track</div>
+          <span class="pj-chip pj-file">🎵 night-drive.wav</span>
+          <div class="pj-bar"><i></i></div>
+          <div class="pj-tags"><span class="pj-tag">Synthwave</span><span class="pj-tag">Driving</span><span class="pj-tag">124 BPM</span></div>
+          <span class="pj-ok">✓ In review — you'll hear back within two weeks</span>
+        </div>
+        <h4>1 · Upload</h4>
+        <p>Drop the file, tag it (or let the analyzer do it), and sign a short rights declaration —
+        who made it, who owns it.</p>
+      </div>
+      <div class="pj-step">
+        <div class="pj-screen" aria-hidden="true">
+          <div class="pj-lane a">Instant licence<small>Buyers self-serve at curated prices — from 99₪ / 6 months</small></div>
+          <div class="pj-lane b">Custom quote<small>Every use goes through us — bigger campaigns, co-owned tracks</small></div>
+        </div>
+        <h4>2 · Choose how it licenses</h4>
+        <p>Fully-owned tracks can sell instantly; anything shared or controlled sells by quote only —
+        the system enforces it, not a promise.</p>
+      </div>
+      <div class="pj-step">
+        <div class="pj-screen" aria-hidden="true">
+          <div class="pj-split">You — 60%<div class="pj-bar"><i></i></div></div>
+          <div class="pj-split b">Omri — 40%<div class="pj-bar"><i></i></div></div>
+          <span class="pj-chip pj-sale">Licensed · 990₪ → you +297₪ · Omri +198₪</span>
+        </div>
+        <h4>3 · Splits &amp; getting paid</h4>
+        <p>Declare collaborators once; every sale writes each share to the ledger the day it happens.
+        Payouts go out monthly.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="pj-sec pj-faq" aria-label="Questions artists ask">
+    <p class="pj-kicker">The questions everyone asks</p>
+    <details>
+      <summary>Do I keep my rights?</summary>
+      <p>All of them. Masters, publishing, and your writer's share of PRO royalties stay 100% yours —
+      we never collect or touch them. You grant us a non-exclusive right to license your tracks to
+      our clients, nothing more.</p>
+    </details>
+    <details>
+      <summary>Is it exclusive?</summary>
+      <p>No. Release the same tracks on Spotify, license them through other libraries, sell them
+      yourself — all fine. If you leave, new sales stop; licences already sold stay valid and we
+      keep paying you your share of them.</p>
+    </details>
+    <details>
+      <summary>How do I get paid?</summary>
+      <p>You get 50% of every licence fee your track earns. The sale shows in your dashboard the day
+      it happens — named licence, real amount. Money goes out monthly; balances under ₪100 roll
+      forward to the next month.</p>
+    </details>
+    <details>
+      <summary>What about co-written tracks?</summary>
+      <p>Declare your collaborators and their shares when you upload. Co-owned tracks sell by custom
+      quote only, and every sale splits on the ledger exactly as declared.</p>
+    </details>
+    <details>
+      <summary>Who sets the prices?</summary>
+      <p>We do — every track is priced by the curator so the catalog stays coherent and nobody
+      undercuts anybody. You can always ask us to revisit yours.</p>
+    </details>
+    <p class="pj-note">Full plain-language agreement shown before you sign anything — one page, no traps.</p>
+  </section>
+
+  <div id="submit" style="height:24px" aria-hidden="true"></div>
 
   <!-- signed out -->
   <div class="ar-card ar-gate" id="arGate">
