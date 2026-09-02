@@ -413,6 +413,86 @@ export async function listInvoices(env, user) {
 }
 
 /**
+ * Auto-issue after a verified card sale — the buyer paid, so the tax document
+ * (חשבונית מס/קבלה, type 320) goes out without anyone opening the dashboard,
+ * and morning emails it to the buyer. Never throws into the caller: a licence
+ * whose money already moved must not fail because its paperwork did. Every
+ * failure is left behind as a 'failed' row the Invoices panel can Retry, so
+ * nothing goes silently uninvoiced — the silent gap is the one outcome this
+ * function exists to prevent.
+ */
+export async function autoIssueInvoice(env, licence_id) {
+  try {
+    if (!configured(env)) return { skipped: 'not_configured' };
+    const lic = await env.DB.prepare('SELECT * FROM licences WHERE id = ?')
+      .bind(Number(licence_id)).first().catch(() => null);
+    if (!lic || lic.grant_reason !== 'paid' || !lic.amount) return { skipped: 'not_paid' };
+
+    // Claim FIRST — the reverse of the manual order. In auto mode a refusal
+    // must leave a visible row behind, not a gap found at tax time.
+    const claim = await env.DB.prepare(
+      `INSERT OR IGNORE INTO invoices (user_id, licence_id, licence_ref, provider, doc_type,
+                                       amount, currency, vat_treatment, status, ts)
+       VALUES (?, ?, ?, 'morning', ?, ?, ?, 'standard', 'sending', ?)`
+    ).bind(lic.user_id, lic.id, lic.ref, DOC_INVOICE_RECEIPT,
+           Math.round(lic.amount * 1.18), lic.currency || 'ILS', now()).run();
+    if (!claim.meta.changes) return { skipped: 'already_claimed' };
+
+    const failRow = (msg) => env.DB.prepare(
+      `UPDATE invoices SET status = 'failed', last_error = ? WHERE licence_id = ?`
+    ).bind(String(msg).slice(0, 300), lic.id).run().catch(() => null);
+
+    const tk = await getToken(env);
+    if (!tk.token) { await failRow('auto: auth failed'); return { error: 'auth_failed' }; }
+    const wrong = await guardBusiness(env, tk.token);
+    if (wrong) { await failRow('auto: business not pinned or drifted — open Invoices and re-lock'); return { error: 'wrong_business' }; }
+
+    const track = await env.DB.prepare('SELECT title FROM tracks WHERE slug = ?')
+      .bind(lic.slug).first().catch(() => null);
+    const doc = draftFor(lic, track && track.title, { email: true });
+
+    let out;
+    try {
+      const r = await fetch(`${API}/documents`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${tk.token}` },
+        body: JSON.stringify(doc),
+      });
+      out = await r.json().catch(() => null);
+      if (!r.ok) throw new Error(`greeninvoice_${r.status}: ${JSON.stringify(out).slice(0, 200)}`);
+    } catch (e) {
+      // same timeout recovery as the manual path — morning has no idempotency key
+      const found = await findByRef(env, lic.ref).catch(() => null);
+      if (found) {
+        await env.DB.prepare(
+          `UPDATE invoices SET status = 'issued', doc_id = ?, number = ?, url = ?,
+                               issued_at = ?, last_error = 'recovered after a timeout'
+            WHERE licence_id = ?`
+        ).bind(clean(found.id, 60), clean(found.number, 40),
+               clean((found.url && (found.url.he || found.url.origin)) || '', 400), now(), lic.id).run();
+        return { ok: true, recovered: true, number: found.number };
+      }
+      await failRow('auto: ' + String((e && e.message) || e));
+      return { error: 'issue_failed' };
+    }
+
+    await env.DB.prepare(
+      `UPDATE invoices SET status = 'issued', doc_id = ?, number = ?, url = ?,
+                           allocation_no = ?, issued_at = ?, last_error = NULL
+        WHERE licence_id = ?`
+    ).bind(clean(out.id, 60), clean(out.number, 40),
+           clean((out.url && (out.url.he || out.url.origin)) || '', 400),
+           clean(out.allocationNumber, 40) || null, now(), lic.id).run();
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind('system:auto', 'issue_invoice', lic.ref, `doc ${out.number || out.id}`, now()).run().catch(() => null);
+    return { ok: true, number: out.number };
+  } catch (e) {
+    return { error: String((e && e.message) || e).slice(0, 200) };
+  }
+}
+
+/**
  * POST /invoices/issue — { licence_id }. One document, one licence, once.
  *
  * The row is claimed BEFORE the call goes out, so a second request for the same

@@ -370,6 +370,23 @@ export async function handleReturn(req, env, ctx) {
     `UPDATE hyp_checkouts SET status = ?, hyp_id = ?, settled_at = ? WHERE ref = ?`
   ).bind(out.ok ? 'granted' : 'grant_failed', String(q.Id || ''), now(), ref).run().catch(() => {});
 
+  /* The money has moved; everything from here is bookkeeping and must never
+     unwind the sale. The ledger writes each shareholder's cut (backfillable
+     if it fails), and the tax document (חשבונית מס/קבלה) goes out to the
+     buyer automatically — an invoice that fails lands as a 'failed' row in
+     the Invoices panel rather than as a silent gap. */
+  if (out.ok) {
+    try {
+      const { accrueEarnings } = await import('./earnings.js');
+      await accrueEarnings(env, { slug: r.slug, licence_id: out.id,
+                                  amount_agorot: r.list_amount, reason: 'paid' });
+    } catch { /* deliberately swallowed */ }
+    try {
+      const { autoIssueInvoice } = await import('./greeninvoice.js');
+      await autoIssueInvoice(env, out.id);
+    } catch { /* deliberately swallowed */ }
+  }
+
   return Response.redirect(
     `https://snowstar.company/mutra.html?pay=ok&ref=${encodeURIComponent(ref)}`, 302);
 }
