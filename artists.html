@@ -15,8 +15,21 @@
 <link rel="stylesheet" href="css/mutra.css?v=118">
 <style>
   .ar-wrap{max-width:860px;margin:0 auto;padding:110px clamp(18px,4vw,44px) 60px}
-  .ar-hero h1{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.2rem);line-height:1.05;margin-bottom:14px}
-  .ar-hero p{color:var(--muted);max-width:56ch;margin-bottom:26px}
+  /* The hero speaks the banner ads' language: the same calm colour field and
+     grain behind the site's own display face, everything on one centred axis. */
+  .ar-hero{position:relative;text-align:center;padding:52px 22px 44px;border-radius:22px;
+    overflow:hidden;isolation:isolate;
+    background:
+      radial-gradient(120% 160% at 100% 0%, color-mix(in srgb, var(--pink,#ff3d8b) 26%, transparent), transparent 55%),
+      radial-gradient(130% 170% at 0% 100%, color-mix(in srgb, var(--amber,#ffc24b) 20%, transparent), transparent 58%),
+      var(--panel)}
+  .ar-hero::before{content:'';position:absolute;inset:0;z-index:-1;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .ar-hero h1{font-family:var(--font-display);font-size:clamp(2.4rem,6vw,4rem);line-height:1.03;
+    margin-bottom:16px;text-wrap:balance}
+  .ar-hero h1 .grad{background:var(--grad,linear-gradient(100deg,#ffc24b,#ff3d8b));
+    -webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em;display:inline-block}
+  .ar-hero p{color:var(--muted);max-width:52ch;margin:0 auto 26px}
   .ar-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px 24px;margin-top:26px}
   .ar-card h2{font-size:1.1rem;margin-bottom:14px}
   .ar-field{display:block;margin-bottom:14px}
@@ -104,10 +117,18 @@
   [hidden]{display:none!important}
 
   /* ═══ The pitch — why join, proof, how it works. The funnel below is untouched. ═══ */
-  .pj-ctas{display:flex;gap:12px;flex-wrap:wrap}
+  .pj-ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
   .pj-kicker{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim,var(--muted));
     text-align:center;margin:0 0 18px}
-  .pj-sec{margin-top:64px}
+  .pj-sec{margin-top:70px}
+  /* section heads set like the ads: eyebrow, then Fraunces with a gradient accent */
+  .pj-head{text-align:center;margin:0 0 24px}
+  .pj-head .pj-kicker{margin-bottom:8px}
+  .pj-head h2{font-family:'Fraunces',Georgia,serif;font-weight:800;
+    font-size:clamp(1.55rem,3.4vw,2.25rem);letter-spacing:-.01em;line-height:1.1;
+    margin:0;text-wrap:balance}
+  .pj-head h2 em{font-style:normal;background:var(--grad,linear-gradient(100deg,#ffc24b,#ff3d8b));
+    -webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
   /* placement proof — the same ad language the catalogue's banners speak */
   .pj-films{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
   .pj-film{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;
@@ -120,7 +141,12 @@
   .pj-film span{color:var(--muted);font-size:.78rem}
   /* the three promises */
   .pj-promises{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-  .pj-promise{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 22px 20px}
+  .pj-promise{border:1px solid var(--line);border-radius:16px;padding:22px 22px 20px;
+    position:relative;overflow:hidden;isolation:isolate;
+    background:
+      radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--pink,#ff3d8b) 12%, transparent), transparent 55%),
+      radial-gradient(130% 150% at 0% 100%, color-mix(in srgb, var(--amber,#ffc24b) 10%, transparent), transparent 58%),
+      var(--panel)}
   .pj-promise h3{font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:1.22rem;line-height:1.2;
     margin:0 0 10px;letter-spacing:-.01em}
   .pj-promise h3 i{font-style:normal;background:var(--grad,linear-gradient(100deg,#ffc24b,#ff3d8b));
@@ -192,7 +218,7 @@
 
 <div class="ar-wrap">
   <div class="ar-hero">
-    <h1 data-txt="artists.hero.title">Mitsubishi. Pepsi. Fiverr.<br>Your track next.</h1>
+    <h1>Mitsubishi. Pepsi. Fiverr.<br><span class="grad">Your track next.</span></h1>
     <p data-txt="artists.hero.sub">Mutra is Snowstar's hand-picked licensing catalog — 378 tracks, one curator,
     and the brands we score for listening. Non-exclusive. You keep everything.
     50/50 on every licence.</p>
@@ -204,7 +230,10 @@
 
   <!-- ═══ THE PITCH — proof, promises, walkthroughs, FAQ. The funnel below is unchanged. ═══ -->
   <section class="pj-sec" aria-label="Placements">
-    <p class="pj-kicker" data-txt="artists.pitch.proof">Placements, not promises</p>
+    <div class="pj-head">
+      <p class="pj-kicker">The proof</p>
+      <h2>Placements, <em>not promises</em>.</h2>
+    </div>
     <div class="pj-films">
       <a class="pj-film" href="mutra.html">
         <img src="assets/thumbs/mitsubishi-asx.jpg" alt="Mitsubishi ASX commercial still" loading="lazy">
@@ -245,7 +274,10 @@
   </section>
 
   <section class="pj-sec" id="how" aria-label="How it works">
-    <p class="pj-kicker" data-txt="artists.pitch.how">How it works</p>
+    <div class="pj-head">
+      <p class="pj-kicker">How it works</p>
+      <h2>From upload to <em>getting paid</em>.</h2>
+    </div>
     <div class="pj-how">
       <div class="pj-step">
         <div class="pj-screen" aria-hidden="true">
@@ -282,7 +314,10 @@
   </section>
 
   <section class="pj-sec pj-faq" aria-label="Questions artists ask">
-    <p class="pj-kicker">The questions everyone asks</p>
+    <div class="pj-head">
+      <p class="pj-kicker">Before you ask</p>
+      <h2>The questions <em>everyone asks</em>.</h2>
+    </div>
     <details>
       <summary>Do I keep my rights?</summary>
       <p>All of them. Masters, publishing, and your writer's share of PRO royalties stay 100% yours —

@@ -43,6 +43,34 @@
       img: 'assets/thumbs/pepsi-vietnam.jpg', mp4: 'https://cdn.snowstar.company/work/pepsi-vietnam.mp4',
       credits: { work: 'Original Music', production: 'May Production', director: 'Guy Bolandi' },
       slug: 'do-it-major' },
+    /* The PLAYBACK sits first in this stack on purpose: the original's lyrics
+       are welded to the SodaStream brand, so the instrumental is the version
+       a licence actually fits. */
+    { id: 'sodastream', brand: 'SodaStream', color: '#00b4e0', logo: 'assets/clients/logo01.png',
+      title: 'SODASTREAM',
+      img: 'assets/thumbs/sodastream.jpg', mp4: 'https://cdn.snowstar.company/work/sodastream.mp4',
+      credits: { work: 'Original music, lyrics & vocal performance', production: 'Rabel',
+                 agency: 'Lemonade', director: 'Aviv Maaravi' },
+      slug: 'stream-of-love-playback' },
+    { id: 'ahava', brand: 'AHAVA', color: '#2fbfa7', logo: 'assets/clients/logo24.png',
+      title: 'AHAVA',
+      img: 'assets/thumbs/ahava.jpg', mp4: 'https://cdn.snowstar.company/work/ahava.mp4',
+      credits: { work: 'Original music & sound design', production: 'Mamash Productions',
+                 director: 'Amit Sides' },
+      slug: 'desert-desire' },
+    // no Plus500 logo in the client set — the wordmark carries it
+    { id: 'plus500', brand: 'Plus500', color: '#5468ff',
+      title: 'PLUS 500 — ATLETICO MADRID',
+      img: 'assets/thumbs/atletico-madrid.jpg', mp4: 'https://cdn.snowstar.company/work/atletico-madrid.mp4',
+      credits: { work: 'Original music & sound design', production: 'Mamash Productions',
+                 agency: 'PLUS 500', director: 'Amit Sides' },
+      slug: 'shorditch-14' },
+    { id: 'johnnie', brand: 'Johnnie Walker', color: '#d9a21b', logo: 'assets/clients/logo20.png',
+      title: 'JOHNNIE WALKER',
+      img: 'assets/thumbs/johnnie-walker.jpg', mp4: 'https://cdn.snowstar.company/work/johnnie-walker.mp4',
+      credits: { work: 'Original music', production: 'We do productions',
+                 agency: 'KDA', director: 'Uri Shizer' },
+      slug: 'epic-journey' },
   ];
 
   /* One commercial, one custom-licence artist, repeat — proof of work, then a
@@ -56,8 +84,31 @@
                   slugs: ['all-my-time', 'great-powers', 'man-is-gone', 'glida', 'isha',
                           'latus', 'love-to-love-you', 'pashut', 'route-de-l-amour',
                           'train-is-on'] };
-  const CYCLE = [PROMOS[0], { id: 'custom-license', spotlight: true },
-                 PROMOS[1], TALMA, PROMOS[2]];
+  const CUSTOMS = [{ id: 'custom-license', spotlight: true }, TALMA];
+
+  /* Every refresh opens the reel somewhere new: the first brand shown is a
+     rotating offset persisted per browser, so the same visitor meets a
+     different advert each visit instead of Mitsubishi forever. Storage
+     blocked? A random start does the same job for one visit. */
+  let bi = 0;
+  try {
+    bi = (parseInt(localStorage.getItem('mutra-promo-rot'), 10) || 0) % PROMOS.length;
+    localStorage.setItem('mutra-promo-rot', String(bi + 1));
+  } catch { bi = Math.floor(Math.random() * PROMOS.length); }
+  let ci = 0, wantBrand = true;
+  const ready = (p) => !p.custom || (p.slugs && p.slugs.length);
+  function nextStrip() {
+    if (!wantBrand) {
+      wantBrand = true;
+      for (let k = 0; k < CUSTOMS.length; k++) {
+        const c = CUSTOMS[ci++ % CUSTOMS.length];
+        if (ready(c)) return c;
+      }
+      // no custom is ready — show a brand rather than stall the moment
+    }
+    wantBrand = false;
+    return PROMOS[bi++ % PROMOS.length];
+  }
 
   /* ── the commercial, full screen ──────────────────────────────────────────
      The same move the Snowstar portfolio makes: the film with its credits, in
@@ -141,7 +192,6 @@
      moments deserves several strips, and yesterday's visit should not mute
      today's. Each brand exists in the DOM once: when the rotation comes back
      around, its strip MOVES to where the visitor is now instead of cloning. */
-  const shown = new Set();
   const nodes = new Map();      // promo id -> its strip node
   const live = [];              // strips currently owed to the page, for re-insertion
 
@@ -279,11 +329,8 @@
 
   function fire(kind) {
     if (kind === 'frustrated') return;      // help-not-sell; the agent dock is the answer there
-    const ready = (p) => !p.custom || (p.slugs && p.slugs.length);
-    let next = CYCLE.find((p) => !shown.has(p.id) && ready(p));
-    if (!next) { shown.clear(); next = CYCLE.find(ready); }   // rotation wraps
+    const next = nextStrip();
     if (!next) return;
-    shown.add(next.id);
 
     // Around again: the strip already exists, so it travels to the visitor
     // rather than duplicating above them.
