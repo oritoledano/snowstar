@@ -410,6 +410,16 @@
     </div>
   </div>
 
+  <!-- Earnings: every sale the day it happens, and where the balance stands.
+       Hidden until the first line exists — an empty money card is a taunt. -->
+  <div class="ar-card" id="arEarnings" hidden>
+    <h2>Your earnings</h2>
+    <p class="ar-note" style="margin:0 0 12px" id="arEarnSum"></p>
+    <ul class="ar-list" id="arEarnList"></ul>
+    <p class="ar-note">Balances are paid out monthly once they pass ₪100 — smaller balances roll
+      forward. Each payout is recorded with its transfer reference.</p>
+  </div>
+
   <div class="ar-card" id="arCredits" hidden>
     <h2>Your credits</h2>
     <p style="color:var(--muted);margin-bottom:10px;font-size:.86rem">Tracks where you're listed as a rights holder. Your share is held for you.</p>
@@ -514,7 +524,7 @@
 <script src="js/mutra-data.js?v=21"></script>
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/artists-page.js?v=10"></script>
+<script src="js/artists-page.js?v=11"></script>
 <datalist id="dl-uptags"></datalist>
 </body>
 </html>

@@ -90,12 +90,14 @@
     const u = M.user;
     gate.hidden = !!u;
     if (!u) { reg.hidden = true; dash.hidden = true; $('#arCredits').hidden = true;
-              $('#arClaim').hidden = true; $('#arProfile').hidden = true; lastUser = null; return; }
+              $('#arClaim').hidden = true; $('#arProfile').hidden = true;
+              $('#arEarnings').hidden = true; lastUser = null; return; }
     if (u === lastUser && !dash.hidden) return;
     lastUser = u;
     try {
-      const [d, credits, claim] = await Promise.all([
+      const [d, credits, claim, earn] = await Promise.all([
         get('/artist/uploads'), get('/credits'), get('/claim'),
+        get('/earnings/mine').catch(() => null),
       ]);
       reg.hidden = !!d.artist;
       dash.hidden = !d.artist;
@@ -108,6 +110,7 @@
       paintCredits(credits.credits || []);
       paintClaim(claim);
       paintProfile(!!d.artist);
+      paintEarnings(earn);
     } catch { /* leave as-is */ }
   }
   M.onChange(render);
@@ -776,6 +779,29 @@
     if (h.includes('bandcamp')) return 'Bandcamp';
     if (h.includes('instagram')) return 'Instagram';
     return h.replace(/^www\./, '') || 'Link';
+  }
+
+  // ── earnings: the ledger's answer to "what has my music made" ──
+  function paintEarnings(earn) {
+    const card = $('#arEarnings');
+    const lines = (earn && earn.lines) || [];
+    card.hidden = !lines.length;
+    if (!lines.length) return;
+    const ils = (n) => '₪' + ((n || 0) / 100).toFixed(2);
+    $('#arEarnSum').innerHTML =
+      `On your balance: <b style="color:var(--text)">${ils(earn.owed)}</b>`
+      + (earn.paid ? ` · paid out so far: <b style="color:var(--text)">${ils(earn.paid)}</b>` : '');
+    $('#arEarnList').innerHTML = lines.slice(0, 25).map((l) => `
+      <li>
+        <b>${esc(l.slug)}</b>
+        <span style="color:var(--muted);font-size:.78rem">${
+          new Date(l.created_at * 1000).toLocaleDateString()}${
+          l.licence_ref ? ' · ' + esc(l.licence_ref) : ''}</span>
+        <span style="font-variant-numeric:tabular-nums">${ils(l.amount_agorot)}</span>
+        ${l.status === 'paid'
+          ? `<span class="ar-badge approved" title="${esc(l.payout_ref || '')}">paid</span>`
+          : '<span class="ar-badge pending">on balance</span>'}
+      </li>`).join('');
   }
 
   // ── credits (any signed-in user, artist or not) ──

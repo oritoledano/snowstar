@@ -13,7 +13,7 @@
      work they are: the people buying, the people supplying, and the machine.
      The order inside each group is the order you actually touch them. */
   const GROUPS = [
-    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'invoices', 'jobs']],
+    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'invoices', 'payouts', 'jobs']],
     ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
     ['Admin',  ['pricing', 'packs', 'characters', 'notes', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
@@ -88,6 +88,7 @@
       if (tab === 'jobs') return await paintJobs();
       if (tab === 'coupons') return await paintCoupons();
       if (tab === 'invoices') return await paintInvoices();
+      if (tab === 'payouts') return await paintPayouts();
       if (tab === 'notes') return await paintNotes();
       if (tab === 'packs') return await paintCollections('pack');
       if (tab === 'characters') return await paintCollections('character');
@@ -2180,6 +2181,75 @@
      Codes are generated here and redeemed in the licence funnel. The discount
      itself is applied server-side at the moment the price is snapshotted — the
      browser never gets to decide what something costs. */
+  /* Who is owed what, per the ledger earnings.js keeps — and the deal each
+     artist is on. Money moves by hand (bank or Bit) and is RECORDED here with
+     a reference; ₪100 is the monthly payout threshold, so rows past it are
+     what this month's run must cover. */
+  async function paintPayouts() {
+    const d = await get('/earnings');
+    const ils = (n) => '₪' + ((n || 0) / 100).toFixed(2);
+    const termOf = {}; (d.terms || []).forEach((t) => { termOf[t.email.toLowerCase()] = t.share_bp; });
+    const people = d.people || [];
+    const due = people.filter((p) => p.owed >= 10000);
+
+    paint(`<div class="db-panel">
+      <h2>Payouts <span class="pill">${due.length} past ₪100</span></h2>
+      <p class="db-empty" style="padding-top:0">The ledger accrues every shareholder's cut the moment a
+        licence is paid. Money moves by hand — bank or Bit — and is recorded here with a reference.
+        Balances under ₪100 roll forward. Deals default to 50/50; a changed share applies to future
+        sales only, never to rows already accrued.</p>
+      ${people.length ? table(people, [
+        { label: 'Artist', get: (p) => `<b>${esc(p.name || '')}</b><br><span style="color:var(--muted);font-size:.78rem">${esc(p.email)}</span>` },
+        { label: 'Owed', num: true, get: (p) => p.owed >= 10000
+            ? `<b style="color:var(--amber,#ffc24b)">${ils(p.owed)}</b>` : ils(p.owed) },
+        { label: 'Paid to date', num: true, get: (p) => ils(p.paid) },
+        { label: 'Share', num: true, get: (p) => ((termOf[p.email.toLowerCase()] ?? d.default_share_bp) / 100) + '%' },
+        { label: 'Lines', num: true, get: (p) => String(p.lines) },
+        { label: '', get: (p) => `<button class="rv-btn po-share" data-e="${esc(p.email)}">Share…</button>
+            ${p.owed > 0 ? `<button class="rv-btn rv-ok po-pay" data-e="${esc(p.email)}" data-o="${p.owed}">Mark paid</button>` : ''}` },
+      ]) : '<p class="db-empty">No earnings yet — the first paid licence of an uploaded track starts the ledger.</p>'}
+
+      <h2 style="margin-top:26px">Payout log</h2>
+      ${(d.payouts || []).length ? table(d.payouts, [
+        { label: 'When', get: (p) => fmtD(p.paid_at) },
+        { label: 'Artist', get: (p) => esc(p.email) },
+        { label: 'Total', num: true, get: (p) => ils(p.total) },
+        { label: 'Lines', num: true, get: (p) => String(p.lines) },
+        { label: 'Reference', get: (p) => esc(p.payout_ref) },
+      ]) : '<p class="db-empty">No settlements recorded yet.</p>'}
+
+      <h2 style="margin-top:26px">Recent earnings</h2>
+      ${(d.recent || []).length ? table(d.recent, [
+        { label: 'When', get: (e) => fmt(e.created_at) },
+        { label: 'Track', get: (e) => esc(e.slug) },
+        { label: 'Artist', get: (e) => esc(e.email) },
+        { label: 'Licence', num: true, get: (e) => ils(e.gross_agorot) },
+        { label: 'Their cut', num: true, get: (e) => ils(e.amount_agorot) },
+        { label: 'Status', get: (e) => e.status === 'paid' ? '<span class="pill">paid</span>' : 'accrued' },
+      ]) : '<p class="db-empty">Nothing yet.</p>'}
+    </div>`);
+
+    app.querySelectorAll('.po-pay').forEach((b) => b.addEventListener('click', async () => {
+      const email = b.dataset.e;
+      const ref = prompt(`Mark ${ils(Number(b.dataset.o))} to ${email} as paid.\n\n`
+        + 'Reference (bank transfer / Bit / receipt no.) — required:');
+      if (!ref || !ref.trim()) return;
+      const r = await post('/earnings/settle', { email, reference: ref.trim() });
+      alert(r.ok ? `Recorded: ${ils(r.settled_agorot)} over ${r.lines} lines.` : (r.error || 'failed'));
+      load();
+    }));
+    app.querySelectorAll('.po-share').forEach((b) => b.addEventListener('click', async () => {
+      const email = b.dataset.e;
+      const cur = (termOf[email.toLowerCase()] ?? d.default_share_bp) / 100;
+      const v = prompt(`Artist share for ${email} — percent of each licence fee.\n`
+        + `Current: ${cur}%. Blank = back to the default 50.`, String(cur));
+      if (v === null) return;
+      const r = await post('/earnings/terms', { email, share_pct: v.trim() === '' ? null : Number(v) });
+      alert(r.ok ? `Share set: ${r.share_pct}% for future sales.` : (r.error || 'failed'));
+      load();
+    }));
+  }
+
   async function paintCoupons() {
     const d = await get('/coupons');
     const cs = d.coupons || [];

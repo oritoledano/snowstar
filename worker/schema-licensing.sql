@@ -152,3 +152,38 @@ CREATE TABLE IF NOT EXISTS admin_log (
   ts       INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_alog_ts ON admin_log (ts DESC);
+
+-- ── live-DB catch-up (2026-09-03): objects created in production that the ──
+-- ── schema file was missing. A rebuilt database must keep every guarantee. ──
+
+-- columns the invoicing system added to invoices in production:
+--   licence_id INTEGER, licence_ref TEXT, doc_type INTEGER, status TEXT,
+--   last_error TEXT, issued_at INTEGER
+-- and the double-issue guard (one tax document per licence, ever):
+CREATE UNIQUE INDEX IF NOT EXISTS idx_inv_licence ON invoices (licence_id);
+
+-- the earnings ledger: one row per shareholder per paid licence (earnings.js)
+CREATE TABLE IF NOT EXISTS earnings (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  licence_id    INTEGER,
+  slug          TEXT NOT NULL,
+  user_id       TEXT,
+  email         TEXT NOT NULL,
+  name          TEXT,
+  share_bp      INTEGER NOT NULL,           -- this person's slice of the artist pool
+  gross_agorot  INTEGER NOT NULL,           -- the whole licence fee
+  amount_agorot INTEGER NOT NULL,           -- what this person earned
+  status        TEXT NOT NULL DEFAULT 'accrued',   -- accrued|paid
+  payout_ref    TEXT,                        -- the evidence a settlement points at
+  created_at    INTEGER NOT NULL,
+  paid_at       INTEGER
+);
+
+-- per-artist deal: the artist-pool share for FUTURE sales (default 50% lives
+-- in code as ARTIST_SHARE_BP; a row here overrides it for one uploader)
+CREATE TABLE IF NOT EXISTS artist_terms (
+  email      TEXT PRIMARY KEY,
+  share_bp   INTEGER NOT NULL,
+  note       TEXT DEFAULT '',
+  updated_at INTEGER
+);

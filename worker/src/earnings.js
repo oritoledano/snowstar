@@ -63,16 +63,30 @@ export async function accrueEarnings(env, { slug, licence_id, amount_agorot, rea
 
   let shares = (rows.results || []).filter((r) => Number(r.share_bp) > 0);
 
+  const uploader = await env.DB.prepare('SELECT id, email, name FROM users WHERE id = ?')
+    .bind(sub.user_id).first().catch(() => null);
+
   // No declared split means the uploader holds all of it. That is the honest
   // default: they are the only person who has claimed the track.
   if (!shares.length) {
-    const u = await env.DB.prepare('SELECT id, email, name FROM users WHERE id = ?')
-      .bind(sub.user_id).first().catch(() => null);
-    if (!u || !u.email) return null;
-    shares = [{ name: u.name, email: u.email, account_email: u.email, share_bp: 10000, user_id: u.id }];
+    if (!uploader || !uploader.email) return null;
+    shares = [{ name: uploader.name, email: uploader.email, account_email: uploader.email,
+                share_bp: 10000, user_id: uploader.id }];
   }
 
-  const pool = Math.round((amount_agorot * ARTIST_SHARE_BP) / 10000);
+  /* The house share is 50/50 by default and a per-artist deal where one was
+     agreed — keyed to the UPLOADER, because the deal is with the artist who
+     brought the track, and their collaborators split the artist pool that
+     deal produces. Snapshot at accrual time: renegotiating later never
+     re-prices a sale that already happened. */
+  let shareBp = ARTIST_SHARE_BP;
+  if (uploader && uploader.email) {
+    const t = await env.DB.prepare('SELECT share_bp FROM artist_terms WHERE lower(email) = ?')
+      .bind(String(uploader.email).toLowerCase()).first().catch(() => null);
+    if (t && Number(t.share_bp) > 0 && Number(t.share_bp) <= 10000) shareBp = Number(t.share_bp);
+  }
+
+  const pool = Math.round((amount_agorot * shareBp) / 10000);
   const total = shares.reduce((s, r) => s + Number(r.share_bp), 0) || 10000;
 
   const written = [];
@@ -102,8 +116,8 @@ export async function accrueEarnings(env, { slug, licence_id, amount_agorot, rea
       + `  Licence value:   ${ils(amount_agorot)}\n`
       + `  Your share:      ${(Number(r.share_bp) / 100).toFixed(2)}% of the artist pool\n`
       + `  Earned:          ${ils(amount)}\n\n`
-      + `This is now on your balance. We settle balances on request once they pass ₪250 — `
-      + `reply to this email when you would like to be paid and we will send the paperwork.\n\n`
+      + `This is now on your balance. Balances are paid out monthly once they pass ₪100 — `
+      + `smaller balances simply roll forward, nothing to do on your side.\n\n`
       + `Snowstar`,
       now()).run().catch(() => null);
 
@@ -126,7 +140,48 @@ export async function listEarnings(env, user) {
     `SELECT id, slug, email, amount_agorot, gross_agorot, share_bp, status, created_at
        FROM earnings ORDER BY created_at DESC LIMIT 60`
   ).all().catch(() => ({ results: [] }));
-  return json({ people: r.results || [], recent: recent.results || [] });
+  // per-artist deals, so the payout screen shows the % each person is on
+  const terms = await env.DB.prepare(
+    'SELECT email, share_bp, note, updated_at FROM artist_terms'
+  ).all().catch(() => ({ results: [] }));
+  // the payout log: every settlement is one reference over N lines
+  const payouts = await env.DB.prepare(
+    `SELECT payout_ref, MIN(email) AS email, SUM(amount_agorot) AS total,
+            COUNT(*) AS lines, MAX(paid_at) AS paid_at
+       FROM earnings WHERE status = 'paid' AND payout_ref IS NOT NULL
+      GROUP BY payout_ref, email ORDER BY paid_at DESC LIMIT 30`
+  ).all().catch(() => ({ results: [] }));
+  return json({ people: r.results || [], recent: recent.results || [],
+                terms: terms.results || [], payouts: payouts.results || [],
+                default_share_bp: ARTIST_SHARE_BP });
+}
+
+/**
+ * POST /earnings/terms — the per-artist deal. {email, share_pct} sets the
+ * artist share for future sales (50 = the default 50/50); null/0 clears back
+ * to the default. Never rewrites accrued rows: a deal changes the future.
+ */
+export async function saveTerms(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const email = String(b.email || '').trim().toLowerCase();
+  if (!email || !email.includes('@')) return json({ error: 'bad_email' }, 400);
+  const pct = Number(b.share_pct);
+  if (!pct) {
+    await env.DB.prepare('DELETE FROM artist_terms WHERE lower(email) = ?').bind(email).run();
+    return json({ ok: true, email, share_pct: ARTIST_SHARE_BP / 100, reset: true });
+  }
+  if (!Number.isFinite(pct) || pct < 1 || pct > 100) return json({ error: 'bad_share' }, 400);
+  const bp = Math.round(pct * 100);
+  await env.DB.prepare(
+    `INSERT INTO artist_terms (email, share_bp, note, updated_at) VALUES (?, ?, ?, ?)
+     ON CONFLICT(email) DO UPDATE SET share_bp = excluded.share_bp,
+       note = excluded.note, updated_at = excluded.updated_at`
+  ).bind(email, bp, String(b.note || '').slice(0, 200), now()).run();
+  await env.DB.prepare(
+    'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(user.email || 'owner', 'artist_terms', email, `share ${pct}%`, now()).run().catch(() => null);
+  return json({ ok: true, email, share_pct: pct });
 }
 
 /**
@@ -167,8 +222,10 @@ export async function settleEarnings(req, env, user) {
 export async function myEarnings(env, user) {
   if (!user || !user.email) return json({ error: 'forbidden' }, 403);
   const r = await env.DB.prepare(
-    `SELECT slug, amount_agorot, share_bp, status, created_at, paid_at
-       FROM earnings WHERE lower(email) = ? ORDER BY created_at DESC LIMIT 200`
+    `SELECT e.slug, e.amount_agorot, e.share_bp, e.status, e.created_at, e.paid_at,
+            e.payout_ref, l.ref AS licence_ref
+       FROM earnings e LEFT JOIN licences l ON l.id = e.licence_id
+      WHERE lower(e.email) = ? ORDER BY e.created_at DESC LIMIT 200`
   ).bind(String(user.email).toLowerCase()).all().catch(() => ({ results: [] }));
   const lines = r.results || [];
   return json({

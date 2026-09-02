@@ -50,7 +50,7 @@ import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile
 import { listCoupons, saveCoupon, checkCoupon } from './coupons.js';
 import { listInvoices, issueInvoice, retryInvoice, whoami, previewInvoice, pinBusiness, skipInvoice } from './greeninvoice.js';
 import { listCollections, saveCollection, setCollectionTracks, uploadCollectionArt } from './collections.js';
-import { listEarnings, settleEarnings, myEarnings } from './earnings.js';
+import { listEarnings, settleEarnings, myEarnings, saveTerms } from './earnings.js';
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
@@ -199,6 +199,7 @@ async function handle(req, env, ctx) {
   // what a licence earned and who it is owed to. Records payouts; never makes them.
   if (path === '/earnings' && method === 'GET') return listEarnings(env, await currentUser(req, env));
   if (path === '/earnings/settle' && method === 'POST') return settleEarnings(req, env, await currentUser(req, env));
+  if (path === '/earnings/terms' && method === 'POST') return saveTerms(req, env, await currentUser(req, env));
   if (path === '/earnings/mine' && method === 'GET') return myEarnings(env, await currentUser(req, env));
   // removing a track: audio to trash, slug onto the deleted list, both reversible
   if (path === '/tracks' && method === 'DELETE') return deleteTrack(req, env, await currentUser(req, env), url);
