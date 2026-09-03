@@ -35,6 +35,7 @@ import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
 import { updateMember, deleteMember, memberDetail } from './members.js';
 import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
+import { streamdawCheckout, streamdawDownload, myStreamdaw } from './streamdaw.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { handleStream } from './stream.js';
@@ -312,6 +313,13 @@ async function handle(req, env, ctx) {
     const u = await currentUser(req, env);
     return (u && u.admin) ? hypStatus(env) : json({ error: 'forbidden' }, 403);
   }
+
+  // ── StreamDAW (software) — sold via HYP on the same terminal, delivered as a
+  //    downloadable installer tied to the buyer's Snowstar account. The verified
+  //    HYP return for an SD- order is dispatched from handleReturn above.
+  if (path === '/streamdaw/checkout' && method === 'POST') return streamdawCheckout(req, env);
+  if (path === '/streamdaw/download' && method === 'GET') return streamdawDownload(req, env);
+  if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));

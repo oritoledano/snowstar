@@ -223,7 +223,7 @@ export async function startCheckout(req, env, user) {
  * raw query string is forwarded byte-for-byte rather than rebuilt from a
  * URLSearchParams round-trip, which would reorder and re-encode it.
  */
-async function verifyReturn(env, rawQuery) {
+export async function verifyReturn(env, rawQuery) {
   // HYP's own params are appended AFTER ours. If the redirect carries its own
   // action= (it carries action=pay), a naive append gives the URL two action
   // values and most servers honour the LAST one — turning our VERIFY into a
@@ -261,6 +261,16 @@ export async function handleReturn(req, env, ctx) {
   const raw = qi < 0 ? '' : req.url.slice(qi + 1);
   const q = parseHyp(raw);
   const ref = String(q.Order || '');
+
+  // StreamDAW (software) sales ride the same terminal and return URL but are a
+  // different product with a different fulfilment — grant an app entitlement,
+  // not a music licence. Dispatch them out before any licence logic runs.
+  // Dynamic import avoids a static cycle: streamdaw.js imports from this file.
+  if (ref.startsWith('SD-')) {
+    const { streamdawReturn } = await import('./streamdaw.js');
+    return streamdawReturn(req, env, raw, q);
+  }
+
   const fail = (why) => Response.redirect(
     `https://snowstar.company/mutra.html?pay=failed&reason=${encodeURIComponent(why)}`, 302);
 

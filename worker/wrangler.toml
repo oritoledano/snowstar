@@ -35,6 +35,12 @@ bucket_name = "snowstar-mutra"
 binding = "MASTERS"
 bucket_name = "snowstar-masters"
 
+# StreamDAW installers (.pkg/.dmg). Private — served only through the
+# entitlement-gated /api/streamdaw/download route, never a public URL.
+[[r2_buckets]]
+binding = "APPS"
+bucket_name = "snowstar-apps"
+
 # lets the Worker email the owner; only verified destinations are allowed
 [[send_email]]
 name = "EMAIL"
