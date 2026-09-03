@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
+<link rel="stylesheet" href="../css/account.css?v=19">
 <style>
   :root{
     --paper:#efe9da; --paper-2:#e7e0cd; --card:#f6f1e6;
@@ -64,6 +66,21 @@
   .btn.ghost{background:var(--paper);color:var(--ink)}
   .btn.pink{background:var(--pink);color:#fff}
   .btn.sm{padding:8px 15px;font-size:.72rem;box-shadow:3px 3px 0 var(--ink)}
+  /* The shared account lightbox/chip is themed by CSS tokens. Scope a dark
+     umbrella palette to ITS elements only (they mount on <body>), so the real
+     Snowstar auth card renders correctly without touching this page's own tokens. */
+  .auth-modal,.acct-panel,.acct-toast,.mnav-auth{
+    --bg:#0c0c0d;--panel:#161617;--panel-2:#1d1d1f;
+    --text:#f2ede4;--muted:#a8a29a;--dim:#7d786f;
+    --line:rgba(235,225,210,.12);--line-2:rgba(235,225,210,.22);
+    --coral:#1c2be0;--amber:#ff2f6b;--ice:#eef4ff;--tint:rgba(28,43,224,.10);
+    --grad:linear-gradient(100deg,#1c2be0,#ff2f6b);
+    --font-body:"Inter",system-ui,sans-serif;--font-display:"Fraunces",Georgia,serif;
+    color:var(--text);  /* the modal mounts on <body>, so give it its own base ink, not the page's */
+  }
+  .auth-card h1,.auth-card h2,.auth-card h3{color:var(--text)}
+  .nav-acct{display:inline-flex;align-items:center}
+  .nav-acct .mnav-auth{font-family:var(--poster);text-transform:uppercase;letter-spacing:.08em;font-size:.76rem}
 
   /* ── hero ── */
   .hero{position:relative;padding:clamp(30px,6vw,64px) 0 clamp(40px,7vw,80px);overflow:hidden}
@@ -216,6 +233,7 @@
     <a class="link" href="#features">Features</a>
     <a class="link" href="#pricing">Pricing</a>
     <a class="link" href="../index.html">← Snowstar</a>
+    <span class="nav-acct" data-account-mount></span>
     <button class="btn sm" data-buy="lifetime">Get it</button>
   </nav>
 </div></header>
@@ -320,6 +338,9 @@
   </div></footer>
 </main>
 
+<!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=19"></script>
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -392,25 +413,40 @@
       +'<p style="margin-top:14px;color:var(--muted);font-size:.9rem">Signed in? It’s in your account under snowstar.company too — re-download anytime.</p>';
   }
 
-  async function buy(){
-    let email = (window.__ssUser && window.__ssUser.email) || '';
-    if(!email){
-      email = (prompt('Your email — your StreamDAW licence and download are tied to it (the same login as Mutra):')||'').trim();
-      if(!email) return;
-    }
+  // ── account: use the SAME sign-in lightbox as Mutra & the homepage ──
+  const acct = () => window.SnowstarAccount;
+  const signedIn = () => { const M=acct(); return !!(M && M.user); };
+  async function ready(){ const M=acct(); if(!M || M.ready) return; await new Promise(r=>{ const off=M.onChange(()=>{off();r();}); }); }
+
+  async function doCheckout(){
+    // Signed in → the server reads the email from the session; no prompt, no typing.
     const btns=document.querySelectorAll('[data-buy]'); btns.forEach(b=>{b.disabled=true;b.style.opacity=.6});
     try{
       const r=await fetch('/api/streamdaw/checkout',{method:'POST',headers:{'content-type':'application/json'},
-        credentials:'include',body:JSON.stringify({email,plan:'lifetime',coupon:coupon&&coupon.code})});
+        credentials:'include',body:JSON.stringify({plan:'lifetime',coupon:coupon&&coupon.code})});
       const d=await r.json();
       if(d && d.free){ success(d.download,true); return; }
-      if(d && d.url){ location.href=d.url; return; }
+      if(d && d.url){ location.href=d.url; return; }              // → HYP payment page
+      if(d && d.error==='email_required'){ openAuth(); return; }  // session lost — sign in again
       if(d && d.error==='coupon'){ showMsg(d.reason||'That coupon can’t be used.',false); return; }
       alert(d && d.error==='hyp_not_configured'
         ? 'Checkout isn’t switched on yet — the payment terminal still needs its keys.'
         : 'Could not start checkout'+(d&&d.error?': '+d.error:'')+'. Please try again.');
     }catch(err){ alert('Network error starting checkout. Please try again.'); }
     finally{ btns.forEach(b=>{b.disabled=false;b.style.opacity=1}); }
+  }
+
+  function openAuth(){
+    const open = window.SnowstarOpenAuth || window.MutraOpenAuth;
+    if(!open){ alert('Sign-in is loading — one moment, then try again.'); return; }
+    if(window.SnowstarAuthResume) window.SnowstarAuthResume(()=>doCheckout()); // resume the purchase after sign-in
+    open('signup','Create your Snowstar account to get StreamDAW — one login for Mutra and everything by Snowstar.');
+  }
+
+  async function buy(){
+    await ready();
+    if(signedIn()) return doCheckout();   // straight to HYP (or free grant)
+    openAuth();                            // the shared lightbox; resumes to checkout after
   }
   document.querySelectorAll('[data-buy]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();buy();}));
 
