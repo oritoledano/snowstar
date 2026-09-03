@@ -612,3 +612,43 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    identical to a remembered one is how a wrong date becomes permanent */
 .wed-yearsrc{display:block;font-style:normal;font-size:.7rem;color:var(--muted,#93a0b8);
   margin-top:4px;opacity:.8}
+
+/* ═══════════ StreamDAW teaser — editorial-collage poster ═══════════
+   Its own palette (cream + ink + electric blue + hot magenta), matching the
+   standalone app page, dropped onto the homepage like a torn-out flyer. The
+   rotate lives on .sdaw-card so the .reveal wrapper's translate can't cancel it. */
+.sdaw-teaser{position:relative;display:flex;justify-content:center;
+  padding:clamp(56px,9vw,120px) 24px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:radial-gradient(60% 80% at 50% 120%, rgba(28,43,224,.12), transparent 70%), var(--bg)}
+.sdaw-hold{width:100%;max-width:800px}
+.sdaw-card{position:relative;width:100%;background:#efe9da;color:#17140d;
+  border:2px solid #17140d;box-shadow:12px 12px 0 #ff2f6b;
+  padding:clamp(28px,5vw,54px);transform:rotate(-1.1deg);overflow:hidden}
+.sdaw-card .sdaw-halftone{position:absolute;right:-26px;bottom:-30px;width:240px;height:170px;
+  background-image:radial-gradient(#1c2be0 1.3px,transparent 1.7px);background-size:11px 11px;
+  opacity:.2;transform:rotate(-6deg);pointer-events:none}
+.sdaw-eb{font-family:"Anton",sans-serif;text-transform:uppercase;letter-spacing:.2em;
+  font-size:.72rem;color:#1c2be0;margin:0}
+.sdaw-h{font-family:"Fraunces",Georgia,serif;font-weight:900;line-height:.96;letter-spacing:-.02em;
+  font-size:clamp(2.2rem,5.4vw,3.7rem);margin:12px 0 0;color:#17140d;position:relative}
+.sdaw-h .hl{position:relative;white-space:nowrap}
+.sdaw-h .hl::after{content:"";position:absolute;left:-.04em;right:-.04em;bottom:.08em;height:.32em;
+  background:#ff2f6b;z-index:-1;transform:rotate(-1.2deg)}
+.sdaw-p{position:relative;color:#403a2c;max-width:54ch;margin:18px 0 28px;font-size:1.02rem;line-height:1.55}
+.sdaw-cta{display:inline-flex;align-items:center;gap:8px;font-family:"Anton",sans-serif;
+  text-transform:uppercase;letter-spacing:.06em;font-size:1rem;color:#fff;
+  border:2px solid #17140d;background:#1c2be0;padding:13px 24px;box-shadow:5px 5px 0 #17140d;
+  transition:transform .09s ease,box-shadow .09s ease}
+.sdaw-cta:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #17140d;color:#fff}
+.sdaw-cta:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #17140d}
+.sdaw-sticker{position:absolute;z-index:3;top:-24px;right:-14px;width:98px;height:98px;border-radius:50%;
+  background:#ff2f6b;color:#fff;border:2px solid #17140d;box-shadow:6px 6px 0 #17140d;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transform:rotate(9deg);text-align:center;font-family:"Anton",sans-serif}
+.sdaw-sticker .p{font-size:1.6rem;line-height:.85}
+.sdaw-sticker .s{font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+@media(max-width:560px){
+  .sdaw-card{transform:none;box-shadow:8px 8px 0 #ff2f6b}
+  .sdaw-sticker{top:-18px;right:6px;width:82px;height:82px}
+}
