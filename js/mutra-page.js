@@ -1605,6 +1605,9 @@
   function setCat(cat) {
     if (!cat) return;                      // never let a non-category open the drawer
     openCat = openCat === cat ? null : cat;
+    // leaving the hub — by toggling it shut or by opening another category —
+    // takes its mounted sections along, or a strip stack lingers headless
+    if (openCat !== 'packs') { hubSection = null; clearHubMount(); }
     fbar.querySelectorAll('.fcat[data-cat]').forEach(b => {
       const isOpen = b.dataset.cat === openCat;
       b.classList.toggle('open', isOpen);
