@@ -80,7 +80,9 @@
   const TALMA = { id: 'talma', custom: true, artist: 'TALMA', color: '#ffc24b',
                   img: 'https://cdn.snowstar.company/mutra/artists/talma.jpg',
                   blurb: 'Every licence goes through us — custom terms, cleared properly.',
-                  // her catalogue, staff-picks order; the strip shows the first three
+                  // her album as a vinyl strip — every card the origami photo
+                  spotId: 'talma-origami',
+                  // fallback if the spotlight module is absent: first three rows
                   slugs: ['all-my-time', 'great-powers', 'man-is-gone', 'glida', 'isha',
                           'latus', 'love-to-love-you', 'pashut', 'route-de-l-amour',
                           'train-is-on'] };
@@ -261,9 +263,16 @@
           <p>${p.blurb}</p>
         </div>
       </div>`;
-    for (const slug of p.slugs.slice(0, 3)) {
-      const row = window.mutraCatalog && mutraCatalog.row(slug);
-      if (row) { row.classList.add('promo-track'); wrap.appendChild(row); armGlow(row); }
+    // Her album under the banner as vinyl cards — one origami face, every
+    // track playable off the sleeve. Plain catalogue rows only as fallback.
+    const spotRow = p.spotId && window.mutraSpotlightRowById && mutraSpotlightRowById(p.spotId);
+    if (spotRow) {
+      wrap.appendChild(spotRow);
+    } else {
+      for (const slug of p.slugs.slice(0, 3)) {
+        const row = window.mutraCatalog && mutraCatalog.row(slug);
+        if (row) { row.classList.add('promo-track'); wrap.appendChild(row); armGlow(row); }
+      }
     }
     wrap.querySelector('.promo-banner').addEventListener('click', () => {
       if (window.mutraTrack) mutraTrack('promo_click', p.id);
@@ -384,4 +393,9 @@
     if (window.mutraBehavior) { mutraBehavior.onMoment(fire); return; }
     if (tries > 0) setTimeout(() => arm(tries - 1), 150);
   })(20);
+
+  /* The Packs hub's "Used by" section: every commercial one after another, as
+     FRESH strips — the rotation's single-instance nodes stay untouched in the
+     list, so opening the section never steals an advert mid-browse. */
+  window.mutraPromos = { strips: () => PROMOS.map((p) => buildStrip(p)) };
 })();

@@ -80,7 +80,10 @@
   /** Follow the player rather than keeping our own idea of what is playing —
    *  so starting a catalog track correctly stops the vinyl spinning here. */
   function syncFromPlayer() {
-    allCards.forEach((card) => {
+    // Every spot card on the page, wherever it lives — the catalogue rotation,
+    // the Packs hub's Artists section, a promo strip — not just the last row
+    // built. One player, every card honest about it.
+    document.querySelectorAll('.spot-card').forEach((card) => {
       const btn = card.querySelector('.spot-play');
       if (!btn) return;
       const slug = card.dataset.playSlug;
@@ -234,6 +237,17 @@
     if (!builtRow) builtRow = buildRow(MUTRA_SPOTLIGHTS[0]);
     return builtRow;
   };
+
+  /* Fresh builds for the Packs hub and the promo strips: a NEW node each call,
+     on purpose — the same artist's row can live in the rotation and in the
+     Artists section at once, and a shared node would be stolen from one home
+     the moment the other asked for it. syncFromPlayer reads the whole document,
+     so every copy stays truthful about what is playing. */
+  window.mutraSpotlightRowById = function (id) {
+    const s = MUTRA_SPOTLIGHTS.find((x) => x.id === id);
+    return s ? buildRow(s) : null;
+  };
+  window.mutraSpotlightRows = () => MUTRA_SPOTLIGHTS.map((s) => buildRow(s));
   window.MUTRA_SPOTLIGHT_INSERT_AFTER = INSERT_AFTER;
   /* The catalog page needs to know whose row this is, so that searching for
      the artist by name can put it first instead of burying it mid-list. The

@@ -72,4 +72,31 @@ const MUTRA_SPOTLIGHTS = [
       placeholder: t.placeholder !== undefined ? t.placeholder : false,
     })),
   },
+  /* TALMA — the origami portrait IS the album face: every card carries the
+     same photo, so the strip reads as one record turned over track by track.
+     All slugs are real catalogue entries, so cards play the masters. */
+  {
+    id: 'talma-origami',
+    kicker: 'Custom License',
+    artist: 'TALMA',
+    album: '',
+    tracks: [
+      { slug: 'all-my-time',      title: 'All My Time' },
+      { slug: 'great-powers',     title: 'Great Powers' },
+      { slug: 'man-is-gone',      title: 'Man Is Gone' },
+      { slug: 'glida',            title: 'Glida' },
+      { slug: 'isha',             title: 'Isha' },
+      { slug: 'latus',            title: 'Latus' },
+      { slug: 'love-to-love-you', title: 'Love To Love You' },
+      { slug: 'pashut',           title: 'Pashut' },
+      { slug: 'route-de-l-amour', title: 'Route De L\'Amour' },
+      { slug: 'train-is-on',      title: 'Train Is On' },
+    ].map((t) => ({
+      ...t,
+      cover: 'https://cdn.snowstar.company/mutra/artists/talma.jpg',
+      vinyl: MUTRA_SPOTLIGHT_VINYL,
+      snippetUrl: 'https://cdn.snowstar.company/mutra/spotlight/placeholder-snippet.m4a',
+      placeholder: false,
+    })),
+  },
 ];

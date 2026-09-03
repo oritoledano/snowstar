@@ -689,6 +689,9 @@
     for (const key of Object.keys(SHELF)) {
       const b = document.querySelector(`.fcat[data-cat="${key}"]`);
       if (!b) continue;
+      // Packs is the hub now — Characters, Covers, Used by and Artists all
+      // live behind it, so it never hides itself the way a plain shelf does.
+      if (key === 'packs') { b.hidden = false; b.classList.toggle('shelf-off', curateMode && !!SHELF[key].hidden); continue; }
       b.hidden = !curateMode && (SHELF[key].hidden || !SHELF[key].list.length);
       b.classList.toggle('shelf-off', curateMode && !!SHELF[key].hidden);
     }
@@ -859,6 +862,22 @@
   }
 
   /** Draw the next slice — called on render and again as the sentinel scrolls in. */
+  /* Covers carry someone else's song. The master is ours to license; the
+     COMPOSITION is not, and pretending otherwise is the one lie this catalogue
+     must never tell. The mark is the owner's triangle with the word through it
+     (sans exclamation, per the owner) and the text says exactly where the rest
+     of the clearance lives. */
+  const PUB_WARN_TEXT = '100% Master Clear by MUTRA. Publishing rights must be cleared '
+    + 'separately by the licensee via the original publishers / PROs.';
+  const PUB_ICON =
+    `<svg viewBox="0 0 120 68" aria-hidden="true" class="pubwarn-svg">
+       <path d="M60 8 L112 60 H8 Z" fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round"/>
+       <rect x="0" y="27" width="120" height="17" fill="var(--panel,#141414)"/>
+       <text x="60" y="41" text-anchor="middle" font-size="16" font-weight="800" letter-spacing="1.5"
+             fill="currentColor" font-family="Sora,Inter,system-ui,sans-serif">PUBLISHING</text>
+     </svg>`;
+  const isCoverTrack = (slug) => (SHELF.packs.of[slug] || []).includes('COVERS');
+
   /* Extracted from appendPage so the spotlight strip can drop a REAL catalogue
      row in under its covers. Building a second row type there would drift from
      this one the first time either changed; calling the same builder cannot. */
@@ -892,6 +911,10 @@
                  title="${kids.length} other version${
                  kids.length > 1 ? 's' : ''} of this track">${
                  openStacks.has(track.slug) ? '−' : '+'}${kids.length}</button>`
+            : ''}
+          ${isCoverTrack(track.slug)
+            ? `<button type="button" class="trk-pubwarn" aria-label="Publishing notice"
+                 title="${PUB_WARN_TEXT}">${PUB_ICON}</button>`
             : ''}
         </div>
         <div class="trk-wave" role="button" aria-label="Seek ${track.title}"><canvas></canvas></div>
@@ -1033,6 +1056,11 @@
         if (openStacks.has(track.slug)) openStacks.delete(track.slug);
         else openStacks.add(track.slug);
         render();
+      });
+      const pubBtn = row.querySelector('.trk-pubwarn');
+      if (pubBtn) pubBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toast(PUB_WARN_TEXT);
       });
       const unstackBtn = row.querySelector('.trk-unstack');
       if (unstackBtn) unstackBtn.addEventListener('click', async e => {
@@ -1303,6 +1331,9 @@
         }));
       });
       wireBpmRange();
+    } else if (openCat === 'packs') {
+      drawPackHub();
+      return;
     } else {
       const def = FACETS[openCat], vals = def.values(), f = state[openCat];
       const shelf = SHELF[openCat];                 // packs / characters only
@@ -1351,6 +1382,84 @@
       if (shelf && curateMode) wireShelfAdmin(openCat);
     }
     fdrop.querySelector('.fdrop-close').addEventListener('click', closeDrawer);
+  }
+
+  /* ── the Packs hub ─────────────────────────────────────────────────────────
+     Packs is a door to four rooms, not a list of chips: Characters (the faces
+     shelf), Covers (reworked classics — master cleared here, publishing not),
+     Used by (every commercial, strip after strip) and Artists (custom-licence
+     albums as vinyl rows). Characters and the Covers note live in the drawer;
+     Used by and Artists mount ABOVE the track list instead — the bar is
+     sticky, and a drawer taller than the screen would pin itself over
+     everything. */
+  let hubSection = null;
+  let hubMount = null;
+
+  function clearHubMount() {
+    if (hubMount) { hubMount.remove(); hubMount = null; }
+  }
+
+  function drawPackHub() {
+    const coversOn = state.packs.inc.has('COVERS');
+    const chars = SHELF.characters;
+    const charOn = hubSection === 'characters' || state.characters.inc.size > 0;
+    const tile = (k, on, name, sub) =>
+      `<button type="button" class="hub-tile${on ? ' on' : ''}" data-hub="${k}">
+         <b>${name}</b><i>${sub}</i></button>`;
+    fdrop.innerHTML =
+      `<div class="packhub">
+        ${tile('characters', charOn, 'Characters', 'Eight moods with faces — browse a sound by who it is')}
+        ${tile('covers', coversOn, 'Covers', 'Reworked classics — master cleared, publishing stays with the source')}
+        ${tile('usedby', hubSection === 'usedby', 'Used by', 'The commercials — hear the exact track each brand ran')}
+        ${tile('artists', hubSection === 'artists', 'Artists', 'Custom-licence catalogues, album by album')}
+      </div>`
+      + (coversOn ? `<div class="hub-note">${PUB_ICON}<span><b>100% Master Clear by MUTRA.</b>
+           Publishing rights must be cleared separately by the licensee via the original
+           publishers / PROs.</span></div>` : '')
+      + (hubSection === 'characters' && chars.list.length
+          ? `<div class="hub-charwrap"><div class="charrow">${chars.list.map((c) => `
+              <button type="button" class="charcard${modeOf(state.characters, c.name) === 'inc' ? ' on' : ''}"
+                data-name="${c.name}">
+                <span class="cc-art">${c.art ? `<img src="${c.art}" alt="" loading="lazy">` : ''}</span>
+                <b>${c.name}</b><i>${c.blurb || ''}</i>
+              </button>`).join('')}</div></div>`
+          : '')
+      + (curateMode ? shelfAdminHtml('packs') : '');
+
+    fdrop.querySelectorAll('.hub-tile').forEach((t) => t.addEventListener('click', () => {
+      const k = t.dataset.hub;
+      if (k === 'covers') {
+        const f = state.packs, on = f.inc.has('COVERS');
+        f.inc.clear(); f.exc.clear();
+        if (!on) f.inc.add('COVERS');
+        drawPackHub(); drawPills(); render();
+        return;
+      }
+      hubSection = hubSection === k ? null : k;
+      clearHubMount();
+      if (hubSection === 'usedby') {
+        hubMount = document.createElement('div');
+        hubMount.className = 'hub-mount';
+        tracksEl.parentElement.insertBefore(hubMount, tracksEl);
+        (window.mutraPromos ? mutraPromos.strips() : []).forEach((s) => hubMount.appendChild(s));
+      } else if (hubSection === 'artists') {
+        hubMount = document.createElement('div');
+        hubMount.className = 'hub-mount';
+        tracksEl.parentElement.insertBefore(hubMount, tracksEl);
+        (window.mutraSpotlightRows ? mutraSpotlightRows() : []).forEach((r) => hubMount.appendChild(r));
+      }
+      drawPackHub();
+    }));
+
+    fdrop.querySelectorAll('.charcard').forEach((card) => card.addEventListener('click', () => {
+      const name = card.dataset.name, f = state.characters;
+      const already = modeOf(f, name) === 'inc';
+      f.inc.clear(); f.exc.clear();
+      if (!already) f.inc.add(name);
+      drawPackHub(); drawPills(); render();
+    }));
+
+    if (curateMode) wireShelfAdmin('packs');
   }
 
   /* ── shelf admin, inside the Packs / Characters dropdown ──────────────────
@@ -1483,6 +1592,10 @@
 
   function closeDrawer() {
     openCat = null;
+    // the hub's mounted sections leave with their drawer — a strip stack with
+    // no visible control above it reads as the page having grown a wing
+    hubSection = null;
+    clearHubMount();
     fbar.querySelectorAll('.fcat[data-cat]').forEach(b => {
       b.classList.remove('open'); b.setAttribute('aria-expanded', 'false');
     });
@@ -3007,6 +3120,10 @@
          under them loses their place for no gain — the exemption is the shelf,
          not the drawer in general. */
       if (SHELF[openCat] && fdrop.querySelector('.charrow')) { openedAt = null; return; }
+      /* The hub is a place, not a filter list — and its Used by / Artists
+         sections mount BELOW the bar, where reading them IS scrolling. Closing
+         on scroll would rip the section out mid-listen. */
+      if (openCat === 'packs') { openedAt = null; return; }
       if (openedAt === null) { openedAt = window.pageYOffset; return; }
       if (Math.abs(window.pageYOffset - openedAt) > rowHeight() * 2) {
         openedAt = null;
