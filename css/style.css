@@ -652,3 +652,62 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .sdaw-card{transform:none;box-shadow:8px 8px 0 #ff2f6b}
   .sdaw-sticker{top:-18px;right:6px;width:82px;height:82px}
 }
+
+/* ————— SNOWSTASH teaser — night-radar identity (Oswald, monochrome ice) —————
+   Deliberately darker than the page itself: a cinematic cut-away, the way the
+   StreamDAW teaser cuts to paper. Fixed colors on purpose — this block stays
+   night in every site theme. */
+.stash-teaser{position:relative;overflow:hidden;background:#07080a;
+  border-top:1px solid rgba(184,230,255,.14);border-bottom:1px solid rgba(184,230,255,.14);
+  padding:clamp(64px,9vw,120px) clamp(20px,4vw,48px)}
+.stash-teaser::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background:
+    linear-gradient(rgba(184,230,255,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(184,230,255,.045) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(70% 90% at 50% 50%,#000 30%,transparent 100%);
+          mask-image:radial-gradient(70% 90% at 50% 50%,#000 30%,transparent 100%)}
+.stash-inner{position:relative;max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1.25fr .75fr;gap:clamp(28px,5vw,72px);align-items:center}
+.stash-eb{font-family:"Oswald",var(--font-display),sans-serif;font-weight:500;
+  text-transform:uppercase;letter-spacing:.34em;font-size:.7rem;color:#8fb8cf;margin-bottom:22px}
+.stash-h{font-family:"Oswald",sans-serif;font-weight:600;text-transform:uppercase;
+  letter-spacing:.005em;line-height:.94;font-size:clamp(2.6rem,6.2vw,4.6rem);color:#f2f7fb}
+.stash-h .ice{color:transparent;background:linear-gradient(100deg,#eaf6ff 0%,#b8e6ff 45%,#5d9fc7 110%);
+  -webkit-background-clip:text;background-clip:text}
+.stash-p{color:#93a0b8;max-width:46ch;margin:20px 0 34px;font-size:1.02rem;line-height:1.65}
+.stash-cta{display:inline-flex;align-items:center;gap:14px;
+  font-family:"Oswald",sans-serif;font-weight:500;text-transform:uppercase;letter-spacing:.22em;font-size:.8rem;
+  color:#eaf6ff;border:1px solid rgba(184,230,255,.35);padding:15px 30px;border-radius:2px;
+  transition:background .25s,border-color .25s,letter-spacing .25s}
+.stash-cta::after{content:"→";font-family:inherit;transition:transform .25s}
+.stash-cta:hover{background:rgba(184,230,255,.08);border-color:rgba(184,230,255,.7);letter-spacing:.26em}
+.stash-cta:hover::after{transform:translateX(5px)}
+
+/* radar */
+.stash-radar{position:relative;aspect-ratio:1;max-width:340px;width:100%;justify-self:center;border-radius:50%;
+  background:radial-gradient(circle,rgba(184,230,255,.05) 0%,rgba(184,230,255,.015) 55%,transparent 72%)}
+.stash-ring{position:absolute;border-radius:50%;border:1px solid rgba(184,230,255,.16)}
+.stash-ring.r1{inset:0}
+.stash-ring.r2{inset:17%}
+.stash-ring.r3{inset:34%}
+.stash-sweep{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(184,230,255,.24) 0deg,rgba(184,230,255,.05) 55deg,transparent 90deg);
+  -webkit-mask-image:radial-gradient(circle,#000 0 42%,transparent 72%);
+          mask-image:radial-gradient(circle,#000 0 42%,transparent 72%);
+  animation:stash-rotate 7s linear infinite}
+.stash-blip{position:absolute;width:7px;height:7px;border-radius:50%;background:#b8e6ff;
+  box-shadow:0 0 12px rgba(184,230,255,.9);animation:stash-blink 7s infinite}
+.stash-blip.b1{top:24%;left:60%}
+.stash-blip.b2{top:58%;left:30%;animation-delay:2.3s}
+.stash-blip.b3{top:70%;left:66%;animation-delay:4.6s}
+@keyframes stash-rotate{to{transform:rotate(360deg)}}
+@keyframes stash-blink{0%,12%{opacity:1}25%,88%{opacity:.18}100%{opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .stash-sweep{animation:none;opacity:.35}
+  .stash-blip{animation:none;opacity:.8}
+}
+@media (max-width:820px){
+  .stash-inner{grid-template-columns:1fr}
+  .stash-radar{max-width:230px;order:-1}
+}
