@@ -215,6 +215,7 @@
 </head>
 <body>
 <header class="mnav scrolled" id="mnav">
+  <button class="mnav-burger" id="mnavBurger" aria-label="Menu" aria-expanded="false" aria-controls="mmenu"><span></span><span></span><span></span></button>
   <a class="st-back" href="mutra.html" style="font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);z-index:2">← Catalog</a>
   <a class="mlogo" href="mutra.html" aria-label="Mutra"><img class="ml-img" src="assets/mutra-wordmark.png" alt="MUTRA"><span class="ml-by">artists</span></a>
   <div class="mnav-right" data-account-mount></div>
@@ -526,5 +527,31 @@
 <script src="js/mutra-reanalyse.js?v=1"></script>
 <script src="js/artists-page.js?v=11"></script>
 <datalist id="dl-uptags"></datalist>
+
+<!-- full-screen menu, same burger and behaviour as Mutra -->
+<div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <nav class="mmenu-nav" aria-label="Main">
+    <a href="mutra.html#catalog"><i>01</i><span class="lbl">Browse</span></a>
+    <a href="artists.html"><i>02</i><span class="lbl">Submit music</span></a>
+    <a href="index.html#contact"><i>03</i><span class="lbl">Get in touch</span></a>
+    <a href="apps/streamdaw.html"><i>04</i><span class="lbl">StreamDAW</span></a>
+    <a href="index.html"><i>05</i><span class="lbl">&larr; Snowstar</span></a>
+  </nav>
+  <div class="mmenu-foot">
+    <a class="mmenu-mail" href="mailto:hello@snowstar.company" target="_blank" rel="noopener">hello@snowstar.company</a>
+    <div class="mmenu-note">Mutra &mdash; by Snowstar.Company, Tel Aviv</div>
+  </div>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('mnavBurger'),m=document.getElementById('mmenu');
+  if(!b||!m)return;
+  function set(open){document.body.classList.toggle('menu-open',open);
+    b.setAttribute('aria-expanded',open?'true':'false');m.setAttribute('aria-hidden',open?'false':'true');}
+  b.addEventListener('click',function(){set(!document.body.classList.contains('menu-open'));});
+  m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
+})();
+</script>
 </body>
 </html>

@@ -62,9 +62,10 @@
   }
 
   /* ── nav ── */
-  .nav{position:fixed;inset:0 0 auto 0;z-index:60;height:64px;display:flex;align-items:center;
-    justify-content:space-between;padding:0 clamp(20px,4vw,48px);
+  .nav{position:fixed;inset:0 0 auto 0;z-index:60;height:70px;display:flex;align-items:center;
+    justify-content:flex-start;padding:0 clamp(20px,5vw,56px);gap:14px;
     transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+  body.menu-open .nav{background:transparent;border-color:transparent}
   .nav.scrolled{background:rgba(7,8,10,.85);backdrop-filter:blur(14px);border-color:var(--line)}
   .nav-back{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:500;
     text-transform:uppercase;letter-spacing:.2em;font-size:.72rem;color:var(--dim);transition:color .2s}
@@ -74,7 +75,26 @@
     font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.42em;
     font-size:.85rem;color:var(--text)}
   .nav-title b{color:var(--ice);font-weight:600}
-  .nav-acct{display:flex;align-items:center}
+  .nav-acct{display:flex;align-items:center;margin-left:auto}
+
+
+  /* burger — same 44px box and left offset as Mutra, on every page */
+  .st-burger{display:grid;place-content:center;gap:5px;width:44px;height:44px;flex:none;z-index:70;
+    background:none;border:0;cursor:pointer;padding:0}
+  .st-burger span{display:block;width:24px;height:2px;background:var(--text);transition:transform .3s,opacity .2s}
+  body.menu-open .st-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  body.menu-open .st-burger span:nth-child(2){opacity:0}
+  body.menu-open .st-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .st-menu{position:fixed;inset:0;min-height:100svh;z-index:55;background:#07080a;display:flex;flex-direction:column;
+    justify-content:center;padding:90px clamp(24px,7vw,120px) 40px;
+    clip-path:inset(0 0 100% 0);transition:clip-path .45s cubic-bezier(.7,0,.3,1)}
+  body.menu-open .st-menu{clip-path:inset(0 0 0 0)}
+  .st-menu a{display:flex;align-items:baseline;gap:16px;font-family:var(--display);font-weight:600;
+    text-transform:uppercase;font-size:clamp(1.8rem,5.5vw,3.2rem);color:var(--text);line-height:1.35;border:none}
+  .st-menu a i{font-family:var(--mono);font-style:normal;font-size:.7rem;color:var(--ice-deep)}
+  .st-menu a:hover{color:var(--ice)}
+  .st-menu a.now{color:var(--ice)}
+  .st-menu .st-menu-foot{margin-top:40px;color:var(--faint);font-size:.85rem}
 
   /* ── hero ── */
   .hero{min-height:100svh;display:grid;place-items:center;position:relative;overflow:hidden;
@@ -179,6 +199,7 @@
 <body>
 
 <header class="nav" id="nav">
+  <button class="st-burger" id="stBurger" aria-label="Menu" aria-expanded="false" aria-controls="stMenu"><span></span><span></span><span></span></button>
   <a class="nav-back" href="index.html">
     <img src="assets/ssc-logo.png" alt="">
     <span>Snowstar</span>
@@ -186,6 +207,18 @@
   <div class="nav-title">SNOW<b>STASH</b></div>
   <span class="nav-acct" data-account-mount></span>
 </header>
+
+
+<div class="st-menu" id="stMenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <nav aria-label="Main">
+    <a href="index.html"><i>01</i>Snowstar</a>
+    <a href="mutra.html"><i>02</i>Mutra</a>
+    <a href="apps/streamdaw.html"><i>03</i>StreamDAW</a>
+    <a href="snowstash.html" class="now"><i>04</i>Snowstash</a>
+    <a href="index.html#contact"><i>05</i>Contact</a>
+  </nav>
+  <div class="st-menu-foot">hello@snowstar.company &middot; Tel Aviv</div>
+</div>
 
 <main>
 
@@ -282,6 +315,15 @@
 <script>
 (function(){
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // burger menu
+  var stb=document.getElementById('stBurger'),stm=document.getElementById('stMenu');
+  function stSet(o){document.body.classList.toggle('menu-open',o);
+    stb.setAttribute('aria-expanded',o?'true':'false');stm.setAttribute('aria-hidden',o?'false':'true');}
+  stb.addEventListener('click',function(){stSet(!document.body.classList.contains('menu-open'));});
+  stm.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){stSet(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')stSet(false);});
+
 
   // nav background on scroll
   const nav = document.getElementById('nav');

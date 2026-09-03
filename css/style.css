@@ -11,7 +11,7 @@
   --grad: linear-gradient(96deg, #efe7d8 0%, #e0b48b 50%, #d9744a 112%);
   --font-display: "Sora", system-ui, sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
-  --nav-h: 72px;
+  --nav-h: 70px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -45,7 +45,7 @@ h2{font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
 .nav{
   position:fixed;inset:0 0 auto 0;z-index:50;height:var(--nav-h);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 clamp(20px,4vw,48px);
+  padding:0 clamp(20px,5vw,56px);
   transition:background .3s ease, border-color .3s ease;
   border-bottom:1px solid transparent;
 }

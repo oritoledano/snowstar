@@ -46,6 +46,26 @@
   .rule-2{border:0;border-top:2px solid var(--ink)}
   .em{font-family:var(--serif);font-style:italic;font-weight:500}
 
+
+  /* burger — same 44px box and viewport offset as Mutra */
+  .sd-burger{position:absolute;left:clamp(20px,5vw,56px);top:50%;transform:translateY(-50%);
+    display:grid;place-content:center;gap:5px;width:44px;height:44px;z-index:90;
+    background:none;border:0;cursor:pointer;padding:0}
+  .sd-burger span{display:block;width:24px;height:2px;background:var(--ink);transition:transform .3s,opacity .2s}
+  body.sd-menu-open .sd-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  body.sd-menu-open .sd-burger span:nth-child(2){opacity:0}
+  body.sd-menu-open .sd-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  @media(max-width:1330px){.nav .wrap.nav-in{padding-left:calc(clamp(20px,5vw,56px) + 44px)}}
+  .sd-menu{position:fixed;inset:0;min-height:100svh;z-index:75;background:var(--paper);display:flex;flex-direction:column;
+    justify-content:center;padding:90px clamp(24px,7vw,120px) 40px;border-top:6px solid var(--ink);
+    clip-path:inset(0 0 100% 0);transition:clip-path .45s cubic-bezier(.7,0,.3,1)}
+  body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
+  .sd-menu a{display:flex;align-items:baseline;gap:16px;font-family:var(--poster);
+    text-transform:uppercase;font-size:clamp(1.8rem,5.5vw,3.2rem);color:var(--ink);line-height:1.35}
+  .sd-menu a i{font-family:var(--sans);font-style:normal;font-weight:600;font-size:.7rem;color:var(--muted)}
+  .sd-menu a:hover{color:var(--blue)}
+  .sd-menu a.now{color:var(--blue)}
+
   /* ── masthead / nav ── */
   .masthead{border-bottom:1px solid var(--line);background:var(--paper)}
   .dateline{display:flex;justify-content:space-between;align-items:center;gap:12px;
@@ -229,6 +249,7 @@
 
 <!-- nav -->
 <header class="nav"><div class="wrap nav-in">
+  <button class="sd-burger" id="sdBurger" aria-label="Menu" aria-expanded="false" aria-controls="sdMenu"><span></span><span></span><span></span></button>
   <a class="brand" href="#top"><img class="brand-word" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW"></a>
   <nav class="nav-links">
     <a class="link" href="#features">Features</a>
@@ -456,6 +477,26 @@
     try{ document.getElementById('pricing').scrollIntoView(); }catch(e){}
     success(null,/[?&]free=1/.test(location.search));
   }
+</script>
+
+<div class="sd-menu" id="sdMenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <nav aria-label="Main">
+    <a href="../index.html"><i>01</i>Snowstar</a>
+    <a href="../mutra.html"><i>02</i>Mutra</a>
+    <a href="streamdaw.html" class="now"><i>03</i>StreamDAW</a>
+    <a href="../snowstash.html"><i>04</i>Snowstash</a>
+    <a href="../index.html#contact"><i>05</i>Contact</a>
+  </nav>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('sdBurger'),m=document.getElementById('sdMenu');
+  function set(o){document.body.classList.toggle('sd-menu-open',o);
+    b.setAttribute('aria-expanded',o?'true':'false');m.setAttribute('aria-hidden',o?'false':'true');}
+  b.addEventListener('click',function(){set(!document.body.classList.contains('sd-menu-open'));});
+  m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
+})();
 </script>
 </body>
 </html>
