@@ -152,6 +152,16 @@
   .ticket li{display:flex;gap:10px;font-size:.96rem}
   .ticket li::before{content:"■";color:var(--blue);font-size:.7em;line-height:1.6}
   .ticket .btn{width:100%;justify-content:center;margin-top:6px}
+  .coupon{display:flex;gap:8px;margin:4px 0 10px}
+  .coupon input{flex:1;min-width:0;font-family:var(--sans);font-size:.9rem;text-transform:uppercase;letter-spacing:.04em;
+    border:2px solid var(--ink);background:#fff;color:var(--ink);padding:10px 12px;outline:none}
+  .coupon input:focus{box-shadow:3px 3px 0 var(--blue)}
+  .coupon button{font-family:var(--poster);text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;
+    border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:10px 16px;cursor:pointer}
+  .coupon button:hover{background:var(--blue)}
+  .coupon-msg{font-size:.85rem;margin:-2px 0 12px;font-weight:600}
+  .coupon-msg.ok{color:var(--blue-ink)}
+  .coupon-msg.bad{color:#c01d4f}
   .compare{color:var(--paper)}
   .compare h4{font-family:var(--poster);text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;color:var(--lime);margin-bottom:14px}
   .compare-row{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.16);font-size:.98rem}
@@ -264,17 +274,22 @@
     <h2 class="sec-title">Buy it once.<br>Own it for good.</h2>
     <div class="price-wrap" style="margin-top:30px">
       <div class="ticket">
-        <div class="stamp">One payment</div>
+        <div class="stamp" id="stamp">One payment</div>
         <div class="pname">StreamDAW · Lifetime</div>
-        <div class="big">₪249<small> once (≈ $69)</small></div>
-        <div class="sub">Every future update included. No renewals.</div>
+        <div class="big" id="bigPrice">₪249<small> once (≈ $69)</small></div>
+        <div class="sub" id="priceSub">Every future update included. No renewals.</div>
         <ul>
           <li>Unlimited lossless streams &amp; listeners</li>
           <li>Rewind, QR, data-saver mode</li>
           <li>AU · VST3 · standalone</li>
           <li>Re-download anytime from your account</li>
         </ul>
-        <button class="btn pink" data-buy="lifetime">Get StreamDAW →</button>
+        <div class="coupon">
+          <input id="couponInput" type="text" placeholder="Coupon code" autocomplete="off" spellcheck="false" autocapitalize="characters">
+          <button type="button" id="couponApply">Apply</button>
+        </div>
+        <div class="coupon-msg" id="couponMsg" hidden></div>
+        <button class="btn pink" data-buy="lifetime" id="buyBtn">Get StreamDAW →</button>
       </div>
       <div class="compare">
         <h4>What the others cost</h4>
@@ -329,6 +344,54 @@
   })();
 
   // Checkout — asks the Worker to sign a HYP pay page, then sends the buyer to it.
+  // ── coupons ──
+  let coupon = null; // {code, free, amount, label}
+  const cIn=document.getElementById('couponInput'), cMsg=document.getElementById('couponMsg');
+  const bigPrice=document.getElementById('bigPrice'), priceSub=document.getElementById('priceSub'),
+        stamp=document.getElementById('stamp'), buyBtn=document.getElementById('buyBtn');
+  function showMsg(t,ok){ cMsg.textContent=t; cMsg.className='coupon-msg '+(ok?'ok':'bad'); cMsg.hidden=false; }
+  function ils(a){ return '₪'+(a/100).toFixed(0); }
+  async function applyCoupon(){
+    const code=(cIn.value||'').trim();
+    if(!code){ coupon=null; resetPrice(); cMsg.hidden=true; return; }
+    try{
+      const r=await fetch('/api/streamdaw/coupon/check',{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({code})});
+      const d=await r.json();
+      if(!d.ok){ coupon=null; resetPrice(); showMsg(d.reason||'That code can’t be used.',false); return; }
+      coupon={code:d.code, free:d.free, amount:d.amount, label:d.label};
+      if(d.free){
+        bigPrice.innerHTML='Free<small> with '+d.code+'</small>'; stamp.textContent='Coupon';
+        priceSub.textContent='No payment — download unlocks right away.';
+        buyBtn.textContent='Get StreamDAW free →';
+        showMsg('100% off applied — it’s on the house.',true);
+      }else{
+        bigPrice.innerHTML=ils(d.amount)+'<small> once · '+d.label+'</small>'; stamp.textContent=d.label;
+        priceSub.textContent='Discount applied at checkout.';
+        buyBtn.textContent='Get StreamDAW — '+ils(d.amount)+' →';
+        showMsg(d.label+' applied — you pay '+ils(d.amount)+'.',true);
+      }
+    }catch(e){ showMsg('Could not check that code. Try again.',false); }
+  }
+  function resetPrice(){
+    bigPrice.innerHTML='₪249<small> once (≈ $69)</small>'; stamp.textContent='One payment';
+    priceSub.textContent='Every future update included. No renewals.';
+    buyBtn.textContent='Get StreamDAW →';
+  }
+  document.getElementById('couponApply').addEventListener('click',applyCoupon);
+  cIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();applyCoupon();} });
+
+  // ── success takeover (free grant, or returning from a paid HYP checkout) ──
+  function success(downloadUrl,free){
+    const t=document.querySelector('.ticket');
+    t.innerHTML='<div class="stamp">You’re in</div>'
+      +'<div class="pname">StreamDAW · Lifetime</div>'
+      +'<div class="big" style="font-size:clamp(2.4rem,5.5vw,3.4rem)">Unlocked.</div>'
+      +'<div class="sub">'+(free?'No charge — enjoy.':'Payment received. Thank you.')+' We’ve emailed your private download link too.</div>'
+      +(downloadUrl?'<a class="btn pink" style="width:100%;justify-content:center;margin-top:14px" href="'+downloadUrl+'">Download StreamDAW →</a>':'')
+      +'<p style="margin-top:14px;color:var(--muted);font-size:.9rem">Signed in? It’s in your account under snowstar.company too — re-download anytime.</p>';
+  }
+
   async function buy(){
     let email = (window.__ssUser && window.__ssUser.email) || '';
     if(!email){
@@ -338,9 +401,11 @@
     const btns=document.querySelectorAll('[data-buy]'); btns.forEach(b=>{b.disabled=true;b.style.opacity=.6});
     try{
       const r=await fetch('/api/streamdaw/checkout',{method:'POST',headers:{'content-type':'application/json'},
-        credentials:'include',body:JSON.stringify({email,plan:'lifetime'})});
+        credentials:'include',body:JSON.stringify({email,plan:'lifetime',coupon:coupon&&coupon.code})});
       const d=await r.json();
+      if(d && d.free){ success(d.download,true); return; }
       if(d && d.url){ location.href=d.url; return; }
+      if(d && d.error==='coupon'){ showMsg(d.reason||'That coupon can’t be used.',false); return; }
       alert(d && d.error==='hyp_not_configured'
         ? 'Checkout isn’t switched on yet — the payment terminal still needs its keys.'
         : 'Could not start checkout'+(d&&d.error?': '+d.error:'')+'. Please try again.');
@@ -348,6 +413,12 @@
     finally{ btns.forEach(b=>{b.disabled=false;b.style.opacity=1}); }
   }
   document.querySelectorAll('[data-buy]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();buy();}));
+
+  // Returning from a successful HYP payment → show the success state.
+  if(/[?&]bought=1/.test(location.search)){
+    try{ document.getElementById('pricing').scrollIntoView(); }catch(e){}
+    success(null,/[?&]free=1/.test(location.search));
+  }
 </script>
 </body>
 </html>

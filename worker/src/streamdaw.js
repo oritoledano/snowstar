@@ -13,20 +13,18 @@
  * which hyp.js verifies against HYP's own servers and then dispatches here by
  * the SD- reference prefix. Nothing is granted on the redirect's word alone.
  *
- * Flow:
- *   buy page → POST /api/streamdaw/checkout  → { url } to HYP's signed pay page
- *   HYP      → GET  /api/hyp/return (SD-…)    → verified → grant + email link
- *   buyer    → GET  /api/streamdaw/download?t=… → stream the installer from R2
- *   member   → GET  /api/streamdaw/mine        → dashboard: owned? + re-download
- *
- * One-time ('lifetime') by default; `plan` + `expires_at` exist so a future
- * subscription needs no migration.
+ * COUPONS live in their OWN table (streamdaw_coupons), deliberately separate
+ * from Mutra's `coupons` so a software code can never free a music licence and
+ * vice-versa. Only the pure discount MATH is shared from coupons.js. A code that
+ * takes the price to zero is granted straight away — a card gateway refuses a
+ * zero authorisation, so there is nothing to send to HYP.
  */
 
 import { sendMail } from './mail.js';
 import { currentUser } from './session.js';
 import { sha256b64, randB64 } from './crypto.js';
 import { parseHyp, verifyReturn } from './hyp.js';
+import { applyCoupon, couponProblem, normCode } from './coupons.js';
 
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 const SITE = 'https://snowstar.company';
@@ -37,7 +35,6 @@ const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 day
 // Price in agorot INCL VAT — HYP charges shekels, so StreamDAW is priced in ₪.
 // ₪249 ≈ $69. Change here and on the buy page together.
 const PRICE_GROSS = 24900;
-const VAT = 1.18;
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200, headers = {}) =>
@@ -50,29 +47,106 @@ const validEmail = (e) => typeof e === 'string' && e.length <= 254 && /^[^\s@]+@
 const urlToken = (n = 32) => randB64(n).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const hypConfigured = (env) => !!(env.HYP_TERMINAL && env.HYP_API_KEY && env.HYP_PASSP);
 
-// ── 1. Checkout: create an order, hand back HYP's signed pay URL ────────────
-export async function streamdawCheckout(req, env) {
-  if (!hypConfigured(env)) return json({ error: 'hyp_not_configured' }, 503);
+// ── coupons (streamdaw_coupons table; math reused from coupons.js) ──────────
+function findSdawCoupon(env, code) {
+  const c = normCode(code);
+  if (!c) return Promise.resolve(null);
+  return env.DB.prepare(
+    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note
+       FROM streamdaw_coupons WHERE code = ?`
+  ).bind(c).first().catch(() => null);
+}
+function burnSdawCoupon(env, code) {
+  const c = normCode(code);
+  if (!c) return Promise.resolve();
+  return env.DB.prepare('UPDATE streamdaw_coupons SET used = used + 1 WHERE code = ?').bind(c).run().catch(() => null);
+}
 
+/** POST /streamdaw/coupon/check — { code } → what it does to the price. Public,
+ *  so the buy page can show the discounted total before anyone commits. */
+export async function streamdawCouponCheck(req, env) {
+  const b = await req.json().catch(() => ({}));
+  const c = await findSdawCoupon(env, b.code);
+  const problem = couponProblem(c, PRICE_GROSS);
+  if (problem) return json({ ok: false, reason: problem });
+  const { amount: after, off } = applyCoupon(PRICE_GROSS, c);
+  return json({
+    ok: true, code: c.code, kind: c.kind, value: c.value, off,
+    amount: after, free: after <= 0,
+    label: c.kind === 'percent' ? `${c.value}% off` : `₪${(c.value / 100).toFixed(0)} off`,
+  });
+}
+
+/** POST /streamdaw/coupon — owner creates a code. Admin only. */
+export async function streamdawCouponCreate(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  if (b.remove) { await env.DB.prepare('DELETE FROM streamdaw_coupons WHERE id = ?').bind(Number(b.remove)).run(); return json({ ok: true }); }
+  if (b.toggle) { await env.DB.prepare('UPDATE streamdaw_coupons SET active = 1 - active WHERE id = ?').bind(Number(b.toggle)).run(); return json({ ok: true }); }
+
+  const kind = b.kind === 'amount' ? 'amount' : 'percent';
+  let value = Math.round(Number(b.value));
+  if (!Number.isFinite(value) || value <= 0) return json({ error: 'bad_value' }, 400);
+  if (kind === 'percent' && value > 100) return json({ error: 'percent_over_100' }, 400);
+  if (kind === 'amount') value = value * 100;                 // shekels in, agorot stored
+
+  const code = normCode(b.code) || ('SDAW-' + urlToken(6).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6));
+  const exists = await env.DB.prepare('SELECT 1 FROM streamdaw_coupons WHERE code = ?').bind(code).first().catch(() => null);
+  if (exists) return json({ error: 'code_taken', code }, 409);
+  await env.DB.prepare(
+    `INSERT INTO streamdaw_coupons (code, kind, value, min_amount, max_uses, used, expires_at, active, note, created_at)
+     VALUES (?, ?, ?, 0, ?, 0, ?, 1, ?, ?)`
+  ).bind(code, kind, value, Math.max(0, Math.round(Number(b.max_uses) || 0)),
+         Number(b.expires_at) || null, String(b.note || '').slice(0, 200), now()).run();
+  return json({ ok: true, code, kind, value });
+}
+
+// ── 1. Checkout: apply any coupon, then free-grant or send to HYP ───────────
+export async function streamdawCheckout(req, env) {
   const user = await currentUser(req, env).catch(() => null);
   const body = await req.json().catch(() => ({}));
   const email = lc(user?.email || body.email);
   if (!validEmail(email)) return json({ error: 'email_required' }, 400);
 
-  // SD- + short id; matches HYP's Order regex and lets hyp.js dispatch by prefix.
-  const ref = 'SD-' + urlToken(9).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10).padEnd(6, 'X');
-  const gross = PRICE_GROSS;
-  const shekels = (gross / 100).toFixed(2);
+  // Coupon (optional). Invalid code entered → tell them, don't silently charge full.
+  let amount = PRICE_GROSS, couponCode = null;
+  if (body.coupon && String(body.coupon).trim()) {
+    const c = await findSdawCoupon(env, body.coupon);
+    const problem = couponProblem(c, PRICE_GROSS);
+    if (problem) return json({ error: 'coupon', reason: problem }, 400);
+    ({ amount } = applyCoupon(PRICE_GROSS, c));
+    couponCode = c.code;
+  }
 
+  const ref = 'SD-' + urlToken(9).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10).padEnd(6, 'X');
+
+  // ── free (a coupon covered the whole price): grant now, no HYP ──
+  if (amount <= 0) {
+    if (!hypConfigured(env)) { /* free path needs no gateway, continue */ }
+    await env.DB.prepare(
+      `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, created_at)
+       VALUES (?, ?, ?, 'lifetime', 0, 'ILS', 'granted', ?, ?)`
+    ).bind(ref, user?.id || null, email, couponCode, now()).run();
+    const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, plan: 'lifetime', source: 'coupon' });
+    if (couponCode) await burnSdawCoupon(env, couponCode);
+    const link = await mintDownloadLink(env, ent.id, email);
+    await emailReceipt(env, email, link).catch(() => {});
+    await env.DB.prepare('UPDATE streamdaw_orders SET entitlement_id = ?, settled_at = ? WHERE ref = ?')
+      .bind(ent.id, now(), ref).run().catch(() => {});
+    return json({ ok: true, free: true, ref, download: link, redirect: `${SITE}/apps/streamdaw.html?bought=1&free=1` });
+  }
+
+  // ── paid (full price, or partially discounted): send to HYP ──
+  if (!hypConfigured(env)) return json({ error: 'hyp_not_configured' }, 503);
+  const shekels = (amount / 100).toFixed(2);
   await env.DB.prepare(
-    `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, created_at)
-     VALUES (?, ?, ?, 'lifetime', ?, 'ILS', 'started', ?)`
-  ).bind(ref, user?.id || null, email, gross, now()).run();
+    `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, created_at)
+     VALUES (?, ?, ?, 'lifetime', ?, 'ILS', 'started', ?, ?)`
+  ).bind(ref, user?.id || null, email, amount, couponCode, now()).run();
 
   // APISign — mirrors the music checkout's signing, including the gotchas the
-  // comments in hyp.js were written in blood for: signMe=1 (or the return
-  // carries no Sign and every real payment reads as a failure), and using HYP's
-  // response VERBATIM as the pay URL (rebuilding it breaks the signature).
+  // comments in hyp.js were written in blood for: signMe=1, and using HYP's
+  // response VERBATIM as the pay URL.
   const p = new URLSearchParams({
     action: 'APISign', What: 'SIGN',
     Masof: env.HYP_TERMINAL, KEY: env.HYP_API_KEY, PassP: env.HYP_PASSP,
@@ -82,14 +156,12 @@ export async function streamdawCheckout(req, env) {
     PageLang: 'ENG', tmp: '1', ClientName: email, email,
     SendHesh: 'True', Postpone: 'False', J5: 'False',
   });
-
   const res = await fetch(`${BASE}?${p.toString()}`);
   const text = await res.text();
   if (/^\s*</.test(text)) return json({ error: 'hyp_system_error' }, 502);
   const d = parseHyp(text);
   if (!d.signature) return json({ error: 'hyp_sign_failed', ccode: d.CCode || null }, 502);
-
-  return json({ ok: true, url: `${BASE}?${text.trim()}`, ref, amount_gross: gross });
+  return json({ ok: true, url: `${BASE}?${text.trim()}`, ref, amount_gross: amount });
 }
 
 // ── 2. The verified return (dispatched from hyp.js by the SD- prefix) ───────
@@ -101,48 +173,34 @@ export async function streamdawReturn(req, env, raw, q) {
     await env.DB.prepare(`UPDATE streamdaw_orders SET status='declined' WHERE ref=?`).bind(ref).run().catch(() => {});
     return fail('declined');
   }
-
-  // HYP itself must confirm the parameter set — the redirect is unauthenticated.
   const v = await verifyReturn(env, raw);
   const order = await env.DB.prepare(`SELECT * FROM streamdaw_orders WHERE ref=?`).bind(ref).first();
   if (!order) return fail('unknown_ref');
   if (order.status === 'granted') return Response.redirect(`${SITE}/apps/streamdaw.html?bought=1&ref=${encodeURIComponent(ref)}`, 302);
 
   if (!v.ok) {
-    // The dangerous case: a redirect that asserts a real capture we couldn't
-    // verify means the card may have been charged. Don't grant on an unverified
-    // claim, but don't tell the buyer it failed either — flag it for the owner.
     const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
     const looksCharged = /^[0-9]{4,}$/.test(String(q.ACode || '')) && paid === order.amount;
     if (looksCharged) {
-      await env.DB.prepare(`UPDATE streamdaw_orders SET status='charged_unverified', hyp_id=? WHERE ref=?`)
-        .bind(String(q.Id || ''), ref).run().catch(() => {});
-      await sendMail(env, {
-        to: env.ALERT_TO || 'oritoledano@gmail.com', subject: 'StreamDAW: card charged but not verified',
-        text: `Order ${ref}: HYP Id ${q.Id || ''}, auth ${q.ACode || ''}, ${q.Amount || ''} ILS.\n`
-            + `Charged but VERIFY did not confirm — entitlement NOT granted automatically. Reconcile in HYP.`,
-      }).catch(() => {});
+      await env.DB.prepare(`UPDATE streamdaw_orders SET status='charged_unverified', hyp_id=? WHERE ref=?`).bind(String(q.Id || ''), ref).run().catch(() => {});
+      await sendMail(env, { to: env.ALERT_TO || 'oritoledano@gmail.com', subject: 'StreamDAW: card charged but not verified',
+        text: `Order ${ref}: HYP Id ${q.Id || ''}, auth ${q.ACode || ''}, ${q.Amount || ''} ILS.\nCharged but VERIFY did not confirm — entitlement NOT granted automatically. Reconcile in HYP.` }).catch(() => {});
       return Response.redirect(`${SITE}/apps/streamdaw.html?pay=confirming&ref=${encodeURIComponent(ref)}`, 302);
     }
-    await env.DB.prepare(`UPDATE streamdaw_orders SET status='verify_failed', hyp_id=? WHERE ref=?`)
-      .bind(String(q.Id || ''), ref).run().catch(() => {});
+    await env.DB.prepare(`UPDATE streamdaw_orders SET status='verify_failed', hyp_id=? WHERE ref=?`).bind(String(q.Id || ''), ref).run().catch(() => {});
     return fail('unverified');
   }
 
-  // Amount must equal what we priced (integers), shekels only.
   const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
   if (paid !== order.amount) return fail('amount_mismatch');
   if (q.Coin && q.Coin !== '1') return fail('bad_currency');
 
-  const ent = await grantEntitlement(env, {
-    email: order.email, ext_ref: ref, amount: paid, plan: order.plan || 'lifetime',
-  });
+  const ent = await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: paid, plan: order.plan || 'lifetime', source: 'hyp' });
+  if (order.coupon) await burnSdawCoupon(env, order.coupon);
   const link = await mintDownloadLink(env, ent.id, order.email);
   await emailReceipt(env, order.email, link).catch(() => {});
-
   await env.DB.prepare(`UPDATE streamdaw_orders SET status='granted', hyp_id=?, entitlement_id=?, settled_at=? WHERE ref=?`)
     .bind(String(q.Id || ''), ent.id, now(), ref).run().catch(() => {});
-
   return Response.redirect(`${SITE}/apps/streamdaw.html?bought=1&ref=${encodeURIComponent(ref)}`, 302);
 }
 
@@ -174,7 +232,6 @@ export async function streamdawDownload(req, env) {
     'SELECT * FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
   ).bind(ASSET).first();
   if (!rel) return json({ error: 'no_release' }, 404);
-
   const obj = await env.APPS.get(rel.r2_key);
   if (!obj) return json({ error: 'file_missing' }, 404);
 
@@ -202,14 +259,14 @@ export async function myStreamdaw(env, user) {
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
-async function grantEntitlement(env, { email, ext_ref, amount, plan }) {
+async function grantEntitlement(env, { email, ext_ref, amount, plan, source }) {
   const existing = await env.DB.prepare('SELECT * FROM entitlements WHERE ext_ref = ?').bind(ext_ref).first();
   if (existing) return existing;
   const u = await env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(lc(email)).first();
   const ins = await env.DB.prepare(
     `INSERT INTO entitlements (user_id, email, product, plan, status, source, ext_ref, amount, currency, created_at)
-     VALUES (?, ?, ?, ?, 'active', 'hyp', ?, ?, 'ILS', ?)`
-  ).bind(u?.id || null, lc(email), PRODUCT, plan, ext_ref, amount, now()).run();
+     VALUES (?, ?, ?, ?, 'active', ?, ?, ?, 'ILS', ?)`
+  ).bind(u?.id || null, lc(email), PRODUCT, plan, source || 'hyp', ext_ref, amount, now()).run();
   return { id: ins.meta.last_row_id, email: lc(email) };
 }
 
@@ -226,7 +283,7 @@ async function mintDownloadLink(env, entitlementId, email) {
 function emailReceipt(env, to, link) {
   const subject = 'Your StreamDAW download — by Snowstar';
   const text =
-`Thanks for buying StreamDAW.
+`Thanks for getting StreamDAW.
 
 Download it here (link is private to you, good for 7 days):
 ${link}
@@ -240,8 +297,8 @@ this email, the same login you use for Mutra and everything else by Snowstar.
   const html =
 `<div style="font-family:Inter,system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1a1a1a">
   <h2 style="font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em">Welcome to StreamDAW</h2>
-  <p>Thanks for your purchase. Your private download link (good for 7 days):</p>
-  <p><a href="${link}" style="display:inline-block;background:#d9744a;color:#1a0f08;font-weight:700;
+  <p>Your private download link (good for 7 days):</p>
+  <p><a href="${link}" style="display:inline-block;background:#1c2be0;color:#fff;font-weight:700;
      padding:12px 22px;border-radius:8px;text-decoration:none">Download StreamDAW</a></p>
   <p style="color:#666;font-size:14px">Install the .pkg, open your DAW, drop StreamDAW on the master bus,
      and press GO LIVE. Re-download anytime from your account at
