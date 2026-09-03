@@ -14,16 +14,40 @@
 (function () {
   const PAGE = location.pathname.replace(/^\/(index.html)?$/, '/') || '/';
 
+  /* A hidden section must also vanish from the menus: a numbered menu link to
+     a display:none anchor is a dead click. Any nav link pointing at a hidden
+     section's id is hidden with it, and the 01/02 numbering closes ranks so
+     the menu never counts ghosts. Runs at hydration and again on every save. */
+  function syncMenus(hiddenIds) {
+    document.querySelectorAll('nav a[href^="#"]').forEach((a) => {
+      const id = a.getAttribute('href').slice(1);
+      a.style.display = hiddenIds.includes(id) ? 'none' : '';
+    });
+    document.querySelectorAll('nav').forEach((nav) => {
+      let n = 0;
+      nav.querySelectorAll('a').forEach((a) => {
+        const num = a.querySelector('i');
+        if (!num || a.style.display === 'none') return;
+        n += 1;
+        num.textContent = String(n).padStart(2, '0');
+      });
+    });
+  }
+
   // ── 1. hydration — runs for everyone, fails silent ──
   const hydrate = fetch('/api/texts')
     .then((r) => (r.ok ? r.json() : { texts: {} }))
     .then(({ texts }) => {
       for (const [key, html] of Object.entries(texts)) {
         if (key === 'sections.hidden.' + PAGE) {
-          try { JSON.parse(html).forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) el.style.display = 'none';
-          }); } catch {}
+          try {
+            const ids = JSON.parse(html);
+            ids.forEach((id) => {
+              const el = document.getElementById(id);
+              if (el) el.style.display = 'none';
+            });
+            syncMenus(ids);
+          } catch {}
           continue;
         }
         const el = document.querySelector(`[data-txt="${key}"]`);
@@ -352,6 +376,7 @@
         try {
           await api('/texts', { key, html: off.length ? JSON.stringify(off) : '' });
           sections.forEach((s) => { s.style.display = off.includes(s.id) ? 'none' : ''; });
+          syncMenus(off);
           toast('Sections saved — live now');
           pop.remove();
         } catch (err) { toast('Couldn’t save: ' + err.message); }
