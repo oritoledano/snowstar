@@ -39,6 +39,12 @@
     .then((r) => (r.ok ? r.json() : { texts: {} }))
     .then(({ texts }) => {
       for (const [key, html] of Object.entries(texts)) {
+        if (key === 'rows.removed.' + PAGE) {
+          try { JSON.parse(html).forEach((sel) => {
+            document.querySelectorAll(sel).forEach((el) => el.remove());
+          }); } catch {}
+          continue;
+        }
         if (key === 'sections.hidden.' + PAGE) {
           try {
             const ids = JSON.parse(html);
@@ -90,6 +96,10 @@
 
   // ─────────── floating pill ───────────
   let pill, mode = null; // null | 'text' | 'draw'
+  hydrate.then((texts) => {
+    try { savedSels = JSON.parse((texts && texts['rows.removed.' + PAGE]) || '[]'); } catch {}
+  });
+
   function buildPill() {
     pill = document.createElement('div');
     pill.className = 'se-pill';
@@ -97,7 +107,8 @@
       <button data-m="text" title="Edit texts">✎ Texts</button>
       <button data-m="draw" title="Pencil + note pins">✏ Draw &amp; note</button>
       <button data-m="notes" title="Show/hide saved notes">◉ Notes</button>
-      <button data-m="sections" title="Show/hide sections">▤ Sections</button>`;
+      <button data-m="sections" title="Show/hide sections">▤ Sections</button>
+      <button data-m="rows" title="Remove any row from this page">⌫ Remove row</button>`;
     document.body.appendChild(pill);
     pill.addEventListener('click', (e) => {
       const b = e.target.closest('button'); if (!b) return;
@@ -106,6 +117,7 @@
       if (m === 'draw') mode === 'draw' ? exitDraw(true) : enterDraw();
       if (m === 'notes') toggleNotes();
       if (m === 'sections') sectionsPanel();
+      if (m === 'rows') mode === 'rows' ? exitRows() : enterRows();
     });
     loadPins();
   }
@@ -346,6 +358,135 @@
     if (!pinLayer) toast('No notes on this page yet — drag on the page to leave one');
   }
 
+
+  /* ─────────── remove a row ───────────────────────────────────────────────
+     Sections hides the blocks the page declares; this removes ANY row the
+     owner points at, whether or not anybody thought to give it an id. The
+     element is taken out of the document rather than hidden, so its space
+     goes with it — a hidden row still holds its parent's gap open.
+
+     Every removal is stored as a CSS path and replayed for visitors at
+     hydration. Undo pops the last path and puts the element back where it
+     was, which is why the node is kept rather than discarded. */
+  let rowsOn = false;
+  let removed = [];            // [{ sel, el, parent, next }]
+  let savedSels = [];          // what the server already knows about
+
+  /** A path specific enough to find this element again, and short enough to
+   *  survive small edits: an id wins outright, otherwise nth-of-type from the
+   *  nearest id'd ancestor. */
+  function pathOf(el) {
+    if (el.id) return '#' + CSS.escape(el.id);
+    const parts = [];
+    let n = el;
+    while (n && n !== document.body) {
+      if (n.id) { parts.unshift('#' + CSS.escape(n.id)); break; }
+      const tag = n.tagName.toLowerCase();
+      const sibs = [...n.parentElement.children].filter((c) => c.tagName === n.tagName);
+      parts.unshift(sibs.length > 1 ? `${tag}:nth-of-type(${sibs.indexOf(n) + 1})` : tag);
+      n = n.parentElement;
+    }
+    return parts.join('>');
+  }
+
+  /** The block the owner means: walk up from the hovered node to the biggest
+   *  ancestor that is still narrower than the page — a row, not the page. */
+  function rowUnder(target) {
+    let el = target;
+    while (el && el !== document.body) {
+      const r = el.getBoundingClientRect();
+      if (r.height > 24 && r.width > 60
+          && el.parentElement && el.parentElement !== document.body) return el;
+      el = el.parentElement;
+    }
+    return null;
+  }
+
+  let hoverEl = null;
+  const onOver = (e) => {
+    if (!rowsOn) return;
+    const el = rowUnder(e.target);
+    if (el === hoverEl) return;
+    if (hoverEl) hoverEl.classList.remove('se-rowpick');
+    hoverEl = el;
+    if (hoverEl) hoverEl.classList.add('se-rowpick');
+  };
+  const onPick = (e) => {
+    if (!rowsOn) return;
+    if (e.target.closest('.se-pill') || e.target.closest('.se-rowbar')) return;
+    e.preventDefault(); e.stopPropagation();
+    const el = rowUnder(e.target);
+    if (!el) return;
+    el.classList.remove('se-rowpick');
+    const sel = pathOf(el);
+    removed.push({ sel, el, parent: el.parentElement, next: el.nextElementSibling });
+    el.remove();
+    hoverEl = null;
+    drawRowBar();
+  };
+
+  function enterRows() {
+    if (mode === 'draw') exitDraw(false);
+    if (mode === 'text') exitText();
+    mode = 'rows'; rowsOn = true; lit('rows', true);
+    document.addEventListener('mouseover', onOver, true);
+    document.addEventListener('click', onPick, true);
+    drawRowBar();
+    toast('Click any row to remove it');
+  }
+
+  function exitRows() {
+    rowsOn = false; mode = null; lit('rows', false);
+    document.removeEventListener('mouseover', onOver, true);
+    document.removeEventListener('click', onPick, true);
+    if (hoverEl) hoverEl.classList.remove('se-rowpick');
+    hoverEl = null;
+    const bar = document.querySelector('.se-rowbar'); if (bar) bar.remove();
+  }
+
+  function undoRow() {
+    const last = removed.pop();
+    if (!last) return;
+    if (last.next && last.next.parentElement === last.parent) last.parent.insertBefore(last.el, last.next);
+    else last.parent.appendChild(last.el);
+    drawRowBar();
+  }
+
+  function drawRowBar() {
+    let bar = document.querySelector('.se-rowbar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.className = 'se-rowbar';
+      document.body.appendChild(bar);
+      bar.addEventListener('click', async (e) => {
+        const a = e.target.dataset && e.target.dataset.a;
+        if (a === 'undo') return undoRow();
+        if (a === 'close') { while (removed.length) undoRow(); return exitRows(); }
+        if (a === 'save') {
+          const sels = [...savedSels, ...removed.map((r) => r.sel)];
+          try {
+            await api('/texts', { key: 'rows.removed.' + PAGE, html: sels.length ? JSON.stringify(sels) : '' });
+            savedSels = sels; removed = [];
+            toast('Rows removed — live now');
+            exitRows();
+          } catch (err) { toast('Couldn’t save: ' + err.message); }
+        }
+        if (a === 'restore') {
+          try {
+            await api('/texts', { key: 'rows.removed.' + PAGE, html: '' });
+            savedSels = [];
+            toast('All removed rows restored — reload to see them');
+          } catch (err) { toast('Couldn’t restore: ' + err.message); }
+        }
+      });
+    }
+    bar.innerHTML = `<span>${removed.length} row${removed.length === 1 ? '' : 's'} removed</span>
+      <button data-a="undo"${removed.length ? '' : ' disabled'}>Undo</button>
+      <button class="se-primary" data-a="save"${removed.length ? '' : ' disabled'}>Save</button>
+      <button data-a="restore" title="Bring back every row removed on this page">Restore all</button>
+      <button data-a="close">Cancel</button>`;
+  }
+
   // ─────────── section visibility ───────────
   async function sectionsPanel() {
     document.querySelectorAll('.se-pop').forEach((p) => p.remove());
@@ -396,6 +537,16 @@
     .se-pill button.on{background:linear-gradient(100deg,#efe7d8,#e0b48b,#d9744a);color:#121110}
     .se-editable{outline:1.5px dashed rgba(224,180,139,.6)!important;outline-offset:3px;cursor:text;min-height:1em}
     .se-editable:hover,.se-editable:focus{outline-style:solid!important;outline-color:#e0b48b!important}
+    .se-rowpick{outline:2px solid #ff3d8b!important;outline-offset:-2px;
+      background:rgba(255,61,139,.10)!important;cursor:crosshair!important}
+    .se-rowbar{position:fixed;left:50%;bottom:74px;transform:translateX(-50%);z-index:95;
+      display:flex;gap:8px;align-items:center;padding:9px 12px;border-radius:12px;
+      background:#161617;border:1px solid rgba(235,225,210,.16);
+      box-shadow:0 12px 34px rgba(0,0,0,.5);font:600 .74rem/1 system-ui,sans-serif;color:#a8a29a}
+    .se-rowbar button{border:0;background:rgba(235,225,210,.08);color:#e7e0d5;
+      font:600 .72rem/1 system-ui,sans-serif;padding:7px 12px;border-radius:8px;cursor:pointer}
+    .se-rowbar button:disabled{opacity:.4;cursor:default}
+    .se-rowbar .se-primary{background:#ff3d8b;color:#fff}
     .se-savebar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:95;display:flex;
       gap:10px;align-items:center;padding:10px 16px;border-radius:14px;border:1px solid rgba(235,225,210,.25);
       background:rgba(8,11,20,.95);color:#a8a29a;font:500 .82rem system-ui,sans-serif;box-shadow:0 12px 34px rgba(0,0,0,.5)}
