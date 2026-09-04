@@ -15,7 +15,15 @@
 <link rel="stylesheet" href="css/mutra.css?v=114">
 <style>
   body{padding-bottom:60px}
-  .db-wrap{max-width:1180px;margin:0 auto;padding:96px clamp(16px,4vw,44px) 40px}
+  .db-wrap{max-width:1560px;margin:0 auto;padding:96px clamp(16px,3vw,40px) 40px}
+  /* headline numbers across the top of a panel — the answer before the table */
+  .db-kpis{display:grid;gap:12px;margin-top:16px;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .db-kpi{background:var(--bg-2,var(--panel));border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;display:flex;flex-direction:column;gap:3px}
+  .db-kpi b{font-family:var(--font-display);font-size:1.7rem;line-height:1;
+    font-variant-numeric:tabular-nums;color:var(--text)}
+  .db-kpi span{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
   .db-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:18px}
   .db-head h1{font-family:"Anton",var(--font-display),sans-serif;font-weight:400;text-transform:uppercase;
     font-size:clamp(1.7rem,3.4vw,2.4rem)}
@@ -516,7 +524,7 @@
 <!-- the analyser, so an already-uploaded submission can be measured from here -->
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/dashboard.js?v=43"></script>
+<script src="js/dashboard.js?v=44"></script>
 
 <!-- full-screen menu, same burger and behaviour as Mutra -->
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">

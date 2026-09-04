@@ -12,10 +12,16 @@
   /* Fifteen tabs in one row read as fifteen unrelated things. Grouped by WHOSE
      work they are: the people buying, the people supplying, and the machine.
      The order inside each group is the order you actually touch them. */
+  /* Grouped by WHOSE work a tab is, and now by which property it belongs to —
+     the verticals each have their own shelf, with the cross-property views
+     (what everyone asks for, who they are, what the machine is doing) sitting
+     above them rather than being filed under one product. */
   const GROUPS = [
-    ['User',   ['overview', 'stats', 'inbox', 'members', 'licensing', 'coupons', 'invoices', 'payouts', 'jobs']],
-    ['Artist', ['submissions', 'artists', 'clearlist', 'upload']],
-    ['Admin',  ['pricing', 'packs', 'characters', 'notes', 'notifications', 'alerts', 'storage', 'pipeline']],
+    ['All',       ['overview', 'demand', 'stats', 'inbox', 'members', 'notes']],
+    ['Mutra',     ['submissions', 'artists', 'clearlist', 'upload', 'packs', 'characters',
+                   'licensing', 'pricing', 'coupons']],
+    ['Money',     ['invoices', 'payouts']],
+    ['System',    ['jobs', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
   const TABS = GROUPS.flatMap(([, t]) => t);
   let tab = (location.hash || '').replace('#', '');
@@ -79,6 +85,7 @@
     try {
       if (tab === 'overview') return await paintOverview();
       if (tab === 'stats') return await paintStats();
+      if (tab === 'demand') return await paintDemand();
       if (tab === 'members') return await paintMembers();
       if (tab === 'artists') return await paintArtists();
       if (tab === 'submissions') return await paintSubmissions();
@@ -2248,6 +2255,84 @@
       alert(r.ok ? `Share set: ${r.share_pct}% for future sales.` : (r.error || 'failed'));
       load();
     }));
+  }
+
+
+  /* ── Demand: what people asked for, and from which property ───────────────
+     Two numbers the owner used to count by hand — REQUESTS (a person asking
+     for a licence, a quote or the app) and AI REQUESTS (the describe-it agent
+     and anything else spending model tokens for a visitor) — split by the page
+     they came from, because seven agent searches on Mutra and seven on
+     Snowstash are different businesses. */
+  const VERTICALS = [
+    { key: '/mutra.html',   name: 'Mutra' },
+    { key: '/artists.html', name: 'Mutra · artists' },
+    { key: '/artist.html',  name: 'Mutra · artist page' },
+    { key: '/snowstash.html', name: 'Snowstash' },
+    { key: '/apps/streamdaw.html', name: 'StreamDAW' },
+    { key: '/index.html',   name: 'Snowstar' },
+    { key: '/',             name: 'Snowstar' },
+  ];
+  const verticalOf = (page) => {
+    const hit = VERTICALS.find((v) => v.key === page);
+    return hit ? hit.name : (page || 'other');
+  };
+
+  async function paintDemand() {
+    const d = await get('/demand?days=' + days);
+    const rows = d.byPage || [];
+
+    // page × type -> one row per property
+    const by = {};
+    for (const r of rows) {
+      const name = verticalOf(r.page);
+      const o = (by[name] ||= { name, view: 0, 'agent-search': 0, 'license-open': 0,
+                                checkout: 0, 'contact-open': 0, promo_click: 0 });
+      o[r.type] = (o[r.type] || 0) + r.n;
+    }
+    const list = Object.values(by).sort((a, b) =>
+      (b['agent-search'] + b['license-open'] + b.checkout + b['contact-open'])
+      - (a['agent-search'] + a['license-open'] + a.checkout + a['contact-open']));
+
+    const lic = d.licenceRequests || [];
+    const sum = (f) => lic.filter(f).reduce((n, r) => n + r.n, 0);
+    const totalReq = sum(() => true);
+    const quoteReq = sum((r) => r.lane === 'quote');
+    const granted = sum((r) => r.status === 'granted');
+    const aiTotal = list.reduce((n, r) => n + (r['agent-search'] || 0), 0);
+
+    paint(`<div class="db-panel">
+      <h2>Demand <span class="pill">last ${d.days} days</span></h2>
+      <p class="db-empty" style="padding-top:0">Every ask that reached us, and where it came from.
+        A <b>request</b> is a person asking for something — a licence, a quote, the app.
+        An <b>AI request</b> is a describe-it search: a brief in their own words, answered by the model.</p>
+      <div class="db-kpis">
+        <div class="db-kpi"><b>${totalReq}</b><span>licence requests</span></div>
+        <div class="db-kpi"><b>${quoteReq}</b><span>needed a quote</span></div>
+        <div class="db-kpi"><b>${granted}</b><span>granted</span></div>
+        <div class="db-kpi"><b>${aiTotal}</b><span>AI requests</span></div>
+        <div class="db-kpi"><b>${d.streamdawOrders || 0}</b><span>StreamDAW orders</span></div>
+        <div class="db-kpi"><b>${d.messages || 0}</b><span>messages</span></div>
+      </div>
+
+      <h2 style="margin-top:26px">By property</h2>
+      ${list.length ? table(list, [
+        { label: 'Property', get: (r) => `<b>${esc(r.name)}</b>` },
+        { label: 'AI requests', num: true, get: (r) => String(r['agent-search'] || 0) },
+        { label: 'Licence opened', num: true, get: (r) => String(r['license-open'] || 0) },
+        { label: 'Checkout', num: true, get: (r) => String(r.checkout || 0) },
+        { label: 'Contact', num: true, get: (r) => String(r['contact-open'] || 0) },
+        { label: 'Ad clicks', num: true, get: (r) => String(r.promo_click || 0) },
+        { label: 'Views', num: true, get: (r) => String(r.view || 0) },
+      ]) : '<p class="db-empty">No activity in this window.</p>'}
+
+      <h2 style="margin-top:26px">What they asked the agent</h2>
+      ${(d.recentAi || []).length ? table(d.recentAi, [
+        { label: 'When', get: (r) => fmt(r.ts) },
+        { label: 'Property', get: (r) => esc(verticalOf(r.page)) },
+        { label: 'Their words', get: (r) => esc(r.detail) },
+      ]) : '<p class="db-empty">No describe-it searches yet in this window.</p>'}
+    </div>`);
   }
 
   async function paintCoupons() {

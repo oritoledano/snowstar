@@ -501,3 +501,55 @@ export async function handleDownload(req, env, user) {
   headers.set('cache-control', 'private, no-store');
   return new Response(obj.body, { headers });
 }
+
+/**
+ * GET /demand — who is asking us for what, and from which property.
+ *
+ * Two questions the owner kept answering by hand: how many REQUESTS came in
+ * (a person asking for a licence, a quote, an app), and how many AI REQUESTS
+ * (the describe-it agent, and anything else that spends model tokens on a
+ * visitor's behalf). Both are grouped by the page they came from, because
+ * "seven agent searches" means something different on Mutra than on Snowstash.
+ *
+ * Pages map to verticals here rather than in the browser: a page can be
+ * renamed, and a dashboard that silently drops a renamed page's numbers is
+ * worse than one that shows them under "other".
+ */
+export async function handleDemand(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const url = new URL(req.url);
+  const days = Math.min(365, Math.max(1, parseInt(url.searchParams.get('days') || '30', 10)));
+  const since = now() - days * 86400;
+
+  const [byPage, licReq, sdaw, recentAi, quotes] = await Promise.all([
+    // every intent-shaped event, per page
+    env.DB.prepare(
+      `SELECT page, type, COUNT(*) AS n FROM events
+        WHERE ts > ? AND type IN ('agent-search','license-open','checkout','contact-open','promo_click','view')
+        GROUP BY page, type`).bind(since).all().catch(() => ({ results: [] })),
+    // licence requests are the real asks — split by whether they need a human
+    env.DB.prepare(
+      `SELECT lane, status, COUNT(*) AS n FROM licence_requests
+        WHERE created_at > ? GROUP BY lane, status`).bind(since).all().catch(() => ({ results: [] })),
+    env.DB.prepare(
+      `SELECT COUNT(*) AS n FROM streamdaw_orders WHERE created_at > ?`)
+      .bind(since).first().catch(() => ({ n: 0 })),
+    // what people actually typed at the agent — the brief in their own words
+    env.DB.prepare(
+      `SELECT detail, page, ts FROM events
+        WHERE ts > ? AND type = 'agent-search' AND detail <> ''
+        ORDER BY ts DESC LIMIT 40`).bind(since).all().catch(() => ({ results: [] })),
+    env.DB.prepare(
+      `SELECT COUNT(*) AS n FROM messages WHERE created_at > ?`)
+      .bind(since).first().catch(() => ({ n: 0 })),
+  ]);
+
+  return json({
+    days,
+    byPage: byPage.results || [],
+    licenceRequests: licReq.results || [],
+    streamdawOrders: (sdaw && sdaw.n) || 0,
+    messages: (quotes && quotes.n) || 0,
+    recentAi: recentAi.results || [],
+  });
+}
