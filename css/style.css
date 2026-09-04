@@ -714,16 +714,34 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .stash-radar{max-width:230px;order:-1}
 }
 
-/* ————— Mutra teaser: live product shot (framed browser, amber glow) ————— */
-.mutra-shot{max-width:760px;margin:46px auto 0;border-radius:12px;overflow:hidden;
-  border:1px solid rgba(224,180,139,.28);background:#0a0a0b;
-  box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 70px rgba(224,180,139,.12)}
-.mutra-shot .shot-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;
-  background:#141415;border-bottom:1px solid rgba(235,225,210,.08)}
-.mutra-shot .shot-bar span{width:9px;height:9px;border-radius:50%;background:rgba(235,225,210,.16)}
-.mutra-shot .shot-bar i{margin-left:10px;font-style:normal;font-size:.66rem;letter-spacing:.14em;
-  text-transform:uppercase;color:#93a0b8;font-family:var(--font-display)}
-.mutra-shot img{width:100%;height:auto;display:block}
+/* ————— Mutra teaser: a fan of real screens on Mutra's own gradient —————
+   One screenshot shows one thing; the catalogue's pitch is BREADTH, so five
+   surfaces overlap like a dealt hand — dark product on hot gradient, the
+   contrast doing the work. Percentages against a fixed aspect box, so the
+   arrangement holds at every width instead of drifting apart. */
+.mutra-collage{position:relative;max-width:1080px;margin:46px auto 0;aspect-ratio:16/10;
+  border-radius:16px;overflow:hidden;isolation:isolate;
+  background:linear-gradient(118deg,#ffd08a 0%,#ff9d5c 34%,#ff6a4d 66%,#ff3d8b 100%);
+  box-shadow:0 34px 90px rgba(0,0,0,.5)}
+/* a breath of grain so the gradient never bands on wide screens */
+.mutra-collage::after{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+.mc{position:absolute;display:block;height:auto;border-radius:9px;
+  border:1px solid rgba(0,0,0,.3);box-shadow:0 26px 58px rgba(38,10,4,.44);
+  transform:rotate(-3deg)}
+.mc-rows{width:74%;left:-6%;top:3%;z-index:1}
+.mc-artists{width:40%;left:2%;top:52%;z-index:2}
+.mc-chars{width:70%;left:16%;top:33%;z-index:3}
+.mc-banner{width:76%;left:30%;top:62%;z-index:4}
+.mc-ai{width:23%;right:2%;top:5%;z-index:5;transform:rotate(3deg)}
+@media(max-width:820px){
+  /* three slabs read; five would be thumbnails of thumbnails */
+  .mutra-collage{aspect-ratio:4/3}
+  .mc-artists,.mc-ai{display:none}
+  .mc-rows{width:92%;left:-8%;top:6%}
+  .mc-chars{width:88%;left:10%;top:38%}
+  .mc-banner{width:94%;left:14%;top:62%}
+}
 
 /* ————— StreamDAW teaser: black wordmark + plugin shot (paper collage) ————— */
 .sdaw-logo{width:min(260px,60%);height:auto;margin:4px 0 10px;display:block}
