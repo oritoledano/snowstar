@@ -743,13 +743,11 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    edge — no inner frame, because the section IS the frame now. */
 .mutra-stage{position:relative;max-width:1240px;margin:46px auto 0;aspect-ratio:22/9;
   overflow:hidden}
-/* the display: a bezel with a lit inner edge, no chin — the band crops it */
-.ms-lap{position:absolute;left:4%;top:6%;width:92%;z-index:1;padding:11px;border-radius:16px;
-  background:linear-gradient(160deg,#3a302b,#141110 60%);
-  box-shadow:0 30px 70px rgba(38,10,4,.5),
-             inset 0 0 0 1px rgba(255,236,214,.22),
-             0 0 0 1px rgba(0,0,0,.35)}
-.ms-lap img{display:block;width:100%;height:auto;border-radius:8px}
+/* Just the screen — no bezel, no chin. The shadow alone lifts it off the
+   gradient; a drawn laptop around a screenshot of a website was a costume. */
+.ms-lap{position:absolute;left:4%;top:6%;width:92%;z-index:1;border-radius:12px;overflow:hidden;
+  box-shadow:0 30px 70px rgba(38,10,4,.45), 0 0 0 1px rgba(0,0,0,.28)}
+.ms-lap img{display:block;width:100%;height:auto}
 /* the windows over it, each at its own native width so nothing is upscaled */
 .ms-win{position:absolute;display:block;height:auto;border-radius:12px;
   border:1px solid rgba(0,0,0,.34);box-shadow:0 26px 58px rgba(38,10,4,.52)}
