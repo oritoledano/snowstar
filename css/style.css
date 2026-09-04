@@ -737,13 +737,15 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    deck starts a third of the way down and rises to the right. */
 .mw-cat{left:7%;top:30%;z-index:1}
 .mw-chr{left:31%;top:22%;z-index:2}
-.mw-art{left:55%;top:14%;z-index:3}
+/* the checkout modal is 520 CSS px wide, not 560 — its own width keeps it at
+   native scale beside the others rather than upscaled soft */
+.mw-lic{width:43%;left:55%;top:14%;z-index:3}
 .mw-ai{width:31%;left:81%;top:24%;z-index:4}
 @media(max-width:820px){
   /* two windows read at native size; four would be slivers */
   .mutra-windows{aspect-ratio:4/3}
   .mw{width:74%}
-  .mw-art{display:none}
+  .mw-lic{display:none}
   .mw-cat{left:4%;top:26%}
   .mw-chr{left:40%;top:16%}
   .mw-ai{width:46%;left:84%;top:28%}
