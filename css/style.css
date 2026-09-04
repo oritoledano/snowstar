@@ -271,17 +271,30 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 .stat strong{font-size:1.4em;color:var(--ice)}
 
 /* ————— mutra ————— */
+/* ————— Mutra teaser: the catalogue's own gradient, wall to wall —————
+   The whole block is Mutra-coloured, the way the Snowstash block is night and
+   the StreamDAW block is paper. Dark ink on hot gradient: the type has to be
+   the darkest thing here or it dissolves into the orange. Fixed colours on
+   purpose — this section stays warm in every site theme. */
 .mutra{
-  position:relative;text-align:center;
-  padding:clamp(90px,12vw,160px) 24px;
-  background:
-    radial-gradient(60% 80% at 50% 120%, rgba(217,116,74,.15) 0%, transparent 70%),
-    radial-gradient(50% 60% at 50% -20%, rgba(224,180,139,.12) 0%, transparent 70%),
-    var(--bg);
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  position:relative;text-align:center;overflow:hidden;isolation:isolate;
+  padding:clamp(72px,9vw,120px) 24px 0;
+  background:linear-gradient(118deg,#ffd08a 0%,#ff9d5c 34%,#ff6a4d 66%,#ff3d8b 100%);
+  border-top:1px solid rgba(0,0,0,.18);border-bottom:1px solid rgba(0,0,0,.18);
 }
-.mutra-inner{max-width:760px;margin:0 auto}
-.mutra .section-note{margin:20px auto 34px}
+/* grain, so a gradient this wide never bands */
+.mutra::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.3;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+.mutra-inner{position:relative;z-index:1;max-width:1240px;margin:0 auto}
+/* ink, not white — white on this gradient is a smudge */
+.mutra h2{color:#1c0c06;text-shadow:0 1px 0 rgba(255,255,255,.14)}
+.mutra h2 .grad{background:none;-webkit-background-clip:border-box;background-clip:border-box;
+  color:#fff8f2;text-shadow:0 2px 14px rgba(80,20,6,.32)}
+.mutra .section-note{margin:18px auto 30px;max-width:56ch;color:#40160c;font-size:1.02rem}
+.mutra .btn-solid{background:#1c0c06;color:#ffe9d8}
+.mutra .btn-solid:hover{box-shadow:0 12px 30px rgba(60,16,4,.32)}
+.mutra .btn-ghost{border-color:rgba(28,12,6,.42);color:#1c0c06;background:rgba(255,255,255,.16)}
+.mutra .btn-ghost:hover{border-color:#1c0c06;color:#1c0c06;background:rgba(255,255,255,.3)}
 
 /* MutrA filters */
 .mutra-filters{
@@ -718,21 +731,18 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    surfaces overlap like a dealt hand — dark product on hot gradient, the
    contrast doing the work. Percentages against a fixed aspect box, so the
    arrangement holds at every width instead of drifting apart. */
-.mutra-mark{width:min(190px,44vw);height:auto;margin:0 auto 22px;display:block;
-  filter:drop-shadow(0 0 18px rgba(224,180,139,.28))}
+.mutra-mark{width:min(190px,44vw);height:auto;margin:0 auto 20px;display:block;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.22))}
 .mutra-ctas{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap}
 .btn-sm{padding:11px 20px;font-size:.82rem}
 /* The catalogue fills a laptop display that spans nearly the whole band, and
    the other screens float over it — the product as one machine rather than
    four loose cards. The band is deliberately short: the display and every
    window run off the bottom edge instead of being shrunk to fit. */
-.mutra-stage{position:relative;max-width:1240px;margin:50px auto 0;aspect-ratio:22/10;
-  border-radius:18px;overflow:hidden;isolation:isolate;
-  background:linear-gradient(118deg,#ffd08a 0%,#ff9d5c 34%,#ff6a4d 66%,#ff3d8b 100%);
-  box-shadow:0 34px 90px rgba(0,0,0,.5)}
-/* a breath of grain so the gradient never bands on wide screens */
-.mutra-stage::after{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;opacity:.32;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* The screens sit straight on the section's gradient and run off its bottom
+   edge — no inner frame, because the section IS the frame now. */
+.mutra-stage{position:relative;max-width:1240px;margin:46px auto 0;aspect-ratio:22/9;
+  overflow:hidden}
 /* the display: a bezel with a lit inner edge, no chin — the band crops it */
 .ms-lap{position:absolute;left:4%;top:6%;width:92%;z-index:1;padding:11px;border-radius:16px;
   background:linear-gradient(160deg,#3a302b,#141110 60%);
