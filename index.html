@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/style.css?v=34">
+<link rel="stylesheet" href="css/style.css?v=35">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -35,10 +35,7 @@
 <body>
 
 <header class="nav" id="nav">
-  <button class="nav-menu" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="menuOverlay">
-    <img src="assets/menu-morph.gif" alt="" class="nav-morph">
-    <span class="nav-x" aria-hidden="true"></span>
-  </button>
+  <button class="nav-menu" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="menuOverlay"><span></span><span></span><span></span></button>
   <a class="nav-brand" href="#top" aria-label="Snowstar home">
     <img src="assets/wordmark.png?v=2" alt="SNOWSTAR.COMPANY" class="nav-word">
   </a>
@@ -155,21 +152,25 @@
   <!-- MUTRA teaser → standalone page -->
   <section class="mutra" id="mutra">
     <div class="mutra-inner reveal">
-      <p class="eyebrow" data-txt="home.mutra.eyebrow">Mutra — by Snowstar</p>
-      <h2 data-txt="home.mutra.title">The music we make,<br><span class="grad">ready to license.</span></h2>
-      <p class="section-note" data-txt="home.mutra.note">Mutra is our in-house catalog — original tracks from the same team behind
-      the work above, cleared for advertising, film, gaming and digital. Preview everything, license in minutes.</p>
-      <a class="btn btn-solid" href="mutra.html" data-txt="home.mutra.cta">Browse the Catalog →</a>
-      <!-- A fan of real screens rather than one flat shot: the catalogue, the
-           characters shelf, the artist funnel, a brand placement and the
-           describe-it search, stacked so the breadth reads at a glance. -->
-      <div class="mutra-collage" role="img"
-           aria-label="Mutra screens: the catalogue with waveforms, the characters shelf, the artist submission flow, a Mitsubishi placement banner, and the describe-it search">
-        <img class="mc mc-rows" src="assets/shot-rows.webp" alt="" loading="lazy" width="1500" height="445">
-        <img class="mc mc-artists" src="assets/shot-artists.webp" alt="" loading="lazy" width="1000" height="509">
-        <img class="mc mc-chars" src="assets/shot-chars.webp" alt="" loading="lazy" width="1500" height="244">
-        <img class="mc mc-banner" src="assets/shot-banner.webp" alt="" loading="lazy" width="1500" height="431">
-        <img class="mc mc-ai" src="assets/shot-ai.webp" alt="" loading="lazy" width="560" height="831">
+      <img class="mutra-mark" src="assets/mutra-wordmark.png" alt="Mutra" width="762" height="198" loading="lazy">
+      <h2 data-txt="home.mutra.title">Music chosen by brands.<br><span class="grad">Ready for yours.</span></h2>
+      <p class="section-note" data-txt="home.mutra.note">Our own catalog — original tracks from the team behind the work above,
+      properly cleared and priced per project.</p>
+      <!-- Two doors, not one: buyers browse, artists submit. The catalog is the
+           bigger door, so it carries the weight. -->
+      <div class="mutra-ctas">
+        <a class="btn btn-solid" href="mutra.html" data-txt="home.mutra.cta">Browse the catalog →</a>
+        <a class="btn btn-ghost btn-sm" href="artists.html" data-txt="home.mutra.cta2">Submit your music</a>
+      </div>
+      <!-- Real screens at their own size, dealt like a hand of cards: each one
+           shows its left edge and is cut by the next. Cropped, never shrunk —
+           a shrunken UI reads as a picture of software, not as software. -->
+      <div class="mutra-windows" role="img"
+           aria-label="Mutra screens: the catalogue with waveforms, the Packs hub with the characters shelf, the artist submission walkthrough, and the describe-it search">
+        <img class="mw mw-cat" src="assets/win-catalog.webp" alt="" loading="lazy" width="1120" height="1640">
+        <img class="mw mw-chr" src="assets/win-characters.webp" alt="" loading="lazy" width="1120" height="1640">
+        <img class="mw mw-art" src="assets/win-artists.webp" alt="" loading="lazy" width="1120" height="1640">
+        <img class="mw mw-ai" src="assets/win-ai.webp" alt="" loading="lazy" width="778" height="1156">
       </div>
     </div>
   </section>

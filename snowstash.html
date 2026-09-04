@@ -67,10 +67,6 @@
     transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
   body.menu-open .nav{background:transparent;border-color:transparent}
   .nav.scrolled{background:rgba(7,8,10,.85);backdrop-filter:blur(14px);border-color:var(--line)}
-  .nav-back{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:500;
-    text-transform:uppercase;letter-spacing:.2em;font-size:.72rem;color:var(--dim);transition:color .2s}
-  .nav-back:hover{color:var(--text)}
-  .nav-back img{width:18px;height:18px;opacity:.8}
   .nav-title{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
     font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.42em;
     font-size:.85rem;color:var(--text)}
@@ -200,10 +196,6 @@
 
 <header class="nav" id="nav">
   <button class="st-burger" id="stBurger" aria-label="Menu" aria-expanded="false" aria-controls="stMenu"><span></span><span></span><span></span></button>
-  <a class="nav-back" href="index.html">
-    <img src="assets/ssc-logo.png" alt="">
-    <span>Snowstar</span>
-  </a>
   <div class="nav-title">SNOW<b>STASH</b></div>
   <span class="nav-acct" data-account-mount></span>
 </header>
