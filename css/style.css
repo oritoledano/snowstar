@@ -739,28 +739,19 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    the other screens float over it — the product as one machine rather than
    four loose cards. The band is deliberately short: the display and every
    window run off the bottom edge instead of being shrunk to fit. */
-/* The screens sit straight on the section's gradient and run off its bottom
-   edge — no inner frame, because the section IS the frame now. */
-.mutra-stage{position:relative;max-width:1240px;margin:46px auto 0;aspect-ratio:22/9;
-  overflow:hidden}
-/* Just the screen — no bezel, no chin. The shadow alone lifts it off the
-   gradient; a drawn laptop around a screenshot of a website was a costume. */
-.ms-lap{position:absolute;left:4%;top:6%;width:92%;z-index:1;border-radius:12px;overflow:hidden;
-  box-shadow:0 30px 70px rgba(38,10,4,.45), 0 0 0 1px rgba(0,0,0,.28)}
-.ms-lap img{display:block;width:100%;height:auto}
-/* the windows over it, each at its own native width so nothing is upscaled */
-.ms-win{position:absolute;display:block;height:auto;border-radius:12px;
-  border:1px solid rgba(0,0,0,.34);box-shadow:0 26px 58px rgba(38,10,4,.52)}
-.ms-chr{width:45%;left:2%;top:40%;z-index:2}
-.ms-lic{width:42%;left:38%;top:32%;z-index:3}
-.ms-ai{width:31%;left:77%;top:40%;z-index:4}
+/* The screen, in a laptop bezel, sitting on the section's gradient and cropped
+   by its bottom edge. One screen instead of a stack: the film shows the depth
+   the stack was trying to imply. */
+.mutra-stage{position:relative;max-width:1240px;margin:44px auto 0;aspect-ratio:22/9;overflow:hidden}
+.ms-lap{position:absolute;left:4%;top:4%;width:92%;padding:11px 11px 13px;border-radius:16px;
+  background:linear-gradient(160deg,#3b312b,#151211 62%);
+  box-shadow:0 34px 74px rgba(38,10,4,.5),
+             inset 0 0 0 1px rgba(255,236,214,.2),
+             0 0 0 1px rgba(0,0,0,.34)}
+.ms-screen{display:block;width:100%;height:auto;border-radius:8px;background:#0b0b0c}
 @media(max-width:820px){
-  /* the display plus one window; three would bury the screen entirely */
-  .mutra-stage{aspect-ratio:16/10}
-  .ms-lap{left:2%;width:96%;top:8%}
-  .ms-lic{display:none}
-  .ms-chr{width:66%;left:2%;top:50%}
-  .ms-ai{width:44%;left:66%;top:44%}
+  .mutra-stage{aspect-ratio:16/10;margin-top:34px}
+  .ms-lap{left:2%;width:96%;top:6%;padding:7px 7px 9px;border-radius:12px}
 }
 
 /* ————— StreamDAW teaser: black wordmark + plugin shot (paper collage) ————— */

@@ -343,3 +343,15 @@ document.getElementById('newsletter').addEventListener('submit', e => {
 });
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+/* The catalogue tour loops on its own, but somebody who has asked their system
+   for less motion should get the poster and nothing moving. */
+(function () {
+  const v = document.getElementById('mutraTour');
+  if (!v) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    v.removeAttribute('autoplay');
+    v.pause();
+    v.currentTime = 0;
+  }
+})();

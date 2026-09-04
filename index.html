@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/style.css?v=41">
+<link rel="stylesheet" href="css/style.css?v=42">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -165,12 +165,19 @@
       <!-- Real screens at their own size, dealt like a hand of cards: each one
            shows its left edge and is cut by the next. Cropped, never shrunk —
            a shrunken UI reads as a picture of software, not as software. -->
-      <div class="mutra-stage" role="img"
-           aria-label="Mutra on screen: the catalogue with waveforms filling the display, with the characters shelf, the licence checkout and the describe-it search layered over it">
-        <div class="ms-lap"><img src="assets/lap-catalog.webp" alt="" loading="lazy" width="2880" height="1800"></div>
-        <img class="ms-win ms-chr" src="assets/win-characters.webp" alt="" loading="lazy" width="1120" height="1360">
-        <img class="ms-win ms-lic" src="assets/win-licence.webp" alt="" loading="lazy" width="1040" height="1686">
-        <img class="ms-win ms-ai" src="assets/win-ai.webp" alt="" loading="lazy" width="778" height="1156">
+      <!-- One screen, filmed: the catalogue scrolls, the characters shelf
+           opens, the frame pushes in on Describe-it and pulls back out, and
+           it lands exactly where it started so the loop is seamless. A poster
+           carries it before the video is ready, and reduced-motion visitors
+           keep the still. -->
+      <div class="mutra-stage">
+        <div class="ms-lap">
+          <video class="ms-screen" id="mutraTour" autoplay muted loop playsinline
+                 preload="metadata" poster="assets/mutra-tour.webp"
+                 aria-label="A tour of the Mutra catalogue: scrolling the track list, opening the characters shelf, and the describe-it search">
+            <source src="assets/mutra-tour.mp4" type="video/mp4">
+          </video>
+        </div>
       </div>
     </div>
   </section>
@@ -282,7 +289,7 @@
 </div>
 
 <script src="js/data.js?v=14"></script>
-<script src="js/main.js?v=23"></script>
+<script src="js/main.js?v=24"></script>
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "73a85d296d5c4ab9a337d3e1e841f34e"}'></script><!-- End Cloudflare Web Analytics -->
 <script src="js/mutra-track.js?v=1"></script>
 <script src="js/account.js?v=3"></script>
