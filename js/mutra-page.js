@@ -491,7 +491,7 @@
   const state = {
     genres: facet(), moods: facet(), characteristics: facet(), instruments: facet(), scales: facet(),
     packs: facet(), characters: facet(),
-    vocal: null, dur: null, bpm: null, q: '', favoritesOnly: false,
+    vocal: null, lang: null, dur: null, bpm: null, q: '', favoritesOnly: false,
     sort: 'picks', highlights: true, lyrics: false, keys: false, hiddenOnly: false,
   };
   const SORTS = [
@@ -541,6 +541,7 @@
       if (f.exc.size && vals.some(v => f.exc.has(v))) return false;
     }
     if (state.vocal && t.vocal !== state.vocal) return false;
+    if (state.lang && langOf(t) !== state.lang) return false;
     if (state.dur) {
       const d = DURATIONS.find(x => x.id === state.dur);
       if (d && !d.test(t.duration || 0)) return false;
@@ -670,6 +671,10 @@
   /* Two shelves, one shape. Packs and Characters differ only in what they
      mean, so they share the loader, the index and the filter — the alternative
      is the same four functions twice and a bug fixed in one of them. */
+  /* Sung languages. Two for now — the catalogue only has words in these, and a
+     dropdown of empty languages is a promise the tracks cannot keep. */
+  const LANGS = ['English', 'Hebrew'];
+
   const SHELF = {
     packs:      { kind: 'pack',      list: [], of: {}, hidden: false },
     characters: { kind: 'character', list: [], of: {}, hidden: false },
@@ -896,6 +901,7 @@
         ...tagSet(track.moods, 'mood', 'moods'),
         ...tagSet(track.characteristics, 'char', 'characteristics'),
         ...tagSet(track.instruments, 'inst', 'instruments'),
+        ...tagSet(langOf(track) ? [langOf(track)] : [], 'lang', 'lang'),
       ].join('');
       row.innerHTML = `
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
@@ -1164,7 +1170,7 @@
     const narrowed = !!q
       || ['genres', 'moods', 'characteristics', 'instruments', 'scales', 'packs', 'characters']
            .some((k) => state[k] && (state[k].inc.size || state[k].exc.size))
-      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
+      || state.vocal || state.lang || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
       || state.sort === 'custom';
     if (narrowed) return -1;
 
@@ -1260,6 +1266,10 @@
   const INSTRUMENTS = [...new Set(MUTRA.tracks.flatMap(t => t.instruments || []))].sort();
   const CHARACTERISTICS = [...new Set(MUTRA.tracks.flatMap(t => t.characteristics || []))].sort();
   const scaleOf = t => (t.key ? t.key + ' ' + t.scale : '');
+  /* A language belongs to a track that has words. An instrumental tagged
+     'Hebrew' is a mistake somebody made in the editor, not a fact, so it is
+     never shown or filtered on. */
+  const langOf = (t) => (t && t.vocal === 'Vocals' && LANGS.includes(t.lang) ? t.lang : '');
   // chromatic rather than alphabetical, so the list reads like a keyboard
   const SCALES = [...new Set(MUTRA.tracks.map(scaleOf).filter(Boolean))]
     .sort((a, b) => {
@@ -1294,6 +1304,11 @@
             <div class="fchips" data-group="vocal">
               ${['Vocals', 'Instrumental'].map(v => chip(v, state.vocal === v)).join('')}
             </div>
+            <!-- Language sits under the vocal switch because it only means
+                 anything once there are words to be in a language. -->
+            <div class="fchips" data-group="lang">
+              ${LANGS.map(v => chip(v, state.lang === v)).join('')}
+            </div>
           </div>
           <div class="fgroup">
             <h4>Duration</h4>
@@ -1325,7 +1340,8 @@
       fdrop.querySelectorAll('.fchips').forEach(box => {
         const group = box.dataset.group;
         [...box.children].forEach((btn, i) => btn.addEventListener('click', () => {
-          const val = group === 'vocal' ? ['Vocals', 'Instrumental'][i] : DURATIONS[i].id;
+          const val = group === 'vocal' ? ['Vocals', 'Instrumental'][i]
+                    : group === 'lang' ? LANGS[i] : DURATIONS[i].id;
           state[group] = state[group] === val ? null : val;   // click again to clear
           drawDrop(); drawPills(); render();
         }));
@@ -1626,6 +1642,7 @@
       state[k].exc.forEach(v => bits.push({ k, v, label: '− ' + v, mode: 'exc' }));
     });
     if (state.vocal) bits.push({ k: 'vocal', v: state.vocal, label: state.vocal });
+    if (state.lang) bits.push({ k: 'lang', v: state.lang, label: state.lang });
     if (state.dur) bits.push({ k: 'dur', v: state.dur, label: (DURATIONS.find(d => d.id === state.dur) || {}).label });
     if (state.bpm) bits.push({ k: 'bpm', v: state.bpm, label: state.bpm.min + '–' + state.bpm.max + ' BPM' });
     fpills.innerHTML = bits.map((b, i) =>
@@ -1643,7 +1660,7 @@
 
   function clearFilters() {
     Object.keys(FACETS).forEach(k => { state[k].inc.clear(); state[k].exc.clear(); });
-    state.vocal = state.dur = state.bpm = null;
+    state.vocal = state.lang = state.dur = state.bpm = null;
     state.favoritesOnly = false;
     const fav = $('#favToggle'); if (fav) fav.classList.remove('on');
     drawDrop(); drawPills(); render();
@@ -1898,7 +1915,7 @@
     narrowed: () => !!(state.q
       || ['genres', 'moods', 'characteristics', 'instruments', 'scales', 'packs', 'characters']
            .some((k) => state[k] && (state[k].inc.size || state[k].exc.size))
-      || state.vocal || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
+      || state.vocal || state.lang || state.dur || state.bpm || state.favoritesOnly || state.hiddenOnly
       || state.sort === 'custom'),
     /* After a bulk write the local copy is stale in a way a re-render cannot
        fix — the patches changed server-side. Refetch, re-merge, redraw. */
@@ -2279,6 +2296,7 @@
     const draft = {
       title: track.title, artist: track.artist, bpm: track.bpm || '',
       key: track.key || '', scale: track.scale || '', vocal: track.vocal || 'Instrumental',
+      lang: track.lang || '',
       cover: track.cover,
       genres: [...(track.genres || [])], moods: [...(track.moods || [])],
       instruments: [...(track.instruments || [])],
@@ -2304,6 +2322,8 @@
           <option>major</option><option>minor</option></select></label>
         <label class="te-f"><span>Lyrics</span><select data-f="vocal">
           <option>Instrumental</option><option>Vocals</option></select></label>
+        <label class="te-f"><span>Language</span><select data-f="lang"><option value="">\u2014</option>
+          <option>English</option><option>Hebrew</option></select></label>
       </div>
       ${EDIT_FACETS.map(([k, label]) => `
         <div class="te-facet" data-facet="${k}">
@@ -2388,7 +2408,7 @@
     row.insertAdjacentElement('afterend', panel);
 
     const q = sel => panel.querySelector(sel);
-    ['title', 'artist', 'bpm', 'key', 'scale', 'vocal'].forEach(f => {
+    ['title', 'artist', 'bpm', 'key', 'scale', 'vocal', 'lang'].forEach(f => {
       const el = panel.querySelector(`[data-f="${f}"]`);
       el.value = draft[f];
       el.addEventListener('input', () => { draft[f] = el.value; });
@@ -2667,6 +2687,8 @@
       const base = { title: track.title, artist: track.artist, cover: track.cover };
       ['title', 'artist', 'cover'].forEach(f => { if (draft[f] && draft[f] !== base[f]) patch[f] = draft[f]; });
       ['key', 'scale', 'vocal'].forEach(f => { if (draft[f]) patch[f] = draft[f]; });
+      // blank clears it, so a wrong language can be taken back off a track
+      if (draft.lang) patch.lang = draft.lang; else delete patch.lang;
       if (draft.bpm) patch.bpm = Number(draft.bpm);
       EDIT_FACETS.forEach(([k]) => { patch[k] = draft[k]; });
       patch.hl = draft.hl;

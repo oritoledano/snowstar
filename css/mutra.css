@@ -397,6 +397,12 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
   padding:3px 9px;border-radius:99px;border:1px solid var(--line-2);color:var(--muted);
   white-space:nowrap;background:none;cursor:pointer;transition:.18s}
 .tag:hover{background:var(--tint);border-color:var(--line-2);color:var(--text)}
+/* Language reads as a property of the words, not another mood — tinted so it
+   is findable at a glance in a row full of grey tags. */
+.tag.lang{color:var(--amber,var(--coral));
+  border-color:color-mix(in srgb,var(--amber,var(--coral)) 42%,transparent)}
+.tag.lang:hover{background:color-mix(in srgb,var(--amber,var(--coral)) 12%,transparent);
+  color:var(--text)}
 .trk-right{display:flex;align-items:center;gap:16px;flex:none}
 .trk-dur{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.86rem;min-width:38px;text-align:right}
 /* has-lyrics flag and musical key, both switchable from the bar */

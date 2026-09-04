@@ -25,7 +25,7 @@ const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,120}$/;
 
 /** Only these may be overridden — an unknown key is dropped rather than
  *  rejected, so a newer page can post fields an older worker doesn't know. */
-const STRING_FIELDS = ['title', 'artist', 'key', 'scale', 'vocal', 'cover'];
+const STRING_FIELDS = ['title', 'artist', 'key', 'scale', 'vocal', 'lang', 'cover'];
 const LIST_FIELDS = ['genres', 'moods', 'instruments', 'packages'];
 
 const clean = (v, max = 120) => String(v == null ? '' : v).trim().slice(0, max);
