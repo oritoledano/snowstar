@@ -616,7 +616,7 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 /* ═══════════ StreamDAW teaser — editorial-collage poster ═══════════
    Its own palette (cream + ink + electric blue + hot magenta), matching the
    standalone app page, dropped onto the homepage like a torn-out flyer. The
-   rotate lives on .sdaw-card so the .reveal wrapper's translate can't cancel it. */
+   rotate lives on .sdaw-shot so the .reveal wrapper’s translate can’t cancel it. */
 /* The whole section IS the paper now — StreamDAW's own bright theme runs edge
    to edge, the way Snowstash's night does one block up. Short by design:
    a cut-away, not a second hero. Plugin left, words right. */
