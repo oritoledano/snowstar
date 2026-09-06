@@ -614,8 +614,66 @@
     } catch { renderGroups(has); }
   }
 
+  /* ── the line between the roles ──────────────────────────────────────────
+     One person here can be four different customers: someone licensing music,
+     an artist selling it, an app owner, and someone scanning for royalties. A
+     single flat list made those read as one confusing job, so the panel is
+     built in GROUPS — one per vertical, labelled — and a group appears only
+     when the account actually has that side of the relationship.
+
+     Order follows the page you are standing on: on Mutra, licensing is on top;
+     on the StreamDAW page, your app is. The product you are using is nearly
+     always the product you opened the menu about. */
+  const GROUPS = [
+    { key: 'licensing', product: 'mutra', label: 'Licensing music', rows: [
+        ['licences',  'My licences'],
+        ['downloads', 'Downloads'],
+        ['favorites', 'Favourites'],
+        ['clearlist', 'Clear my channels'],
+      ] },
+    { key: 'artist', product: 'mutra', label: 'Selling my music', rows: [
+        ['artist',   'My artist profile'],
+        ['earnings', 'Earnings'],
+      ] },
+    { key: 'apps', product: 'streamdaw', label: 'My apps', rows: [
+        ['apps', 'StreamDAW'],
+      ] },
+    { key: 'stash', product: 'snowstash', label: 'Royalty checks', rows: [
+        ['snowstash', 'My reports'],
+      ] },
+  ];
+  const CHEV = '<svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+  function renderGroups(has) {
+    const host = panel.querySelector('.acct-groups');
+    if (!host) return;
+    const here = M.product || 'mutra';
+    const shown = GROUPS.filter((g) => has[g.key] || g.product === here)
+      .sort((x, y) => (y.product === here) - (x.product === here));
+    host.innerHTML = shown.map((g) => `
+      <div class="acct-section" data-group="${g.key}">
+        <p class="acct-label">${g.label}</p>
+        ${g.rows.map(([key, label]) => `
+          <div class="acct-acc" data-key="${key}">
+            <button class="acct-row" type="button">${label} <span class="acct-count"></span>${CHEV}</button>
+            <div class="acct-drawer" hidden></div>
+          </div>`).join('')}
+      </div>`).join('')
+      + `<div class="acct-section" data-group="account">
+           <p class="acct-label">Account</p>
+           <div class="acct-acc" data-key="profile">
+             <button class="acct-row" type="button">User info${CHEV}</button>
+             <div class="acct-drawer" hidden></div>
+           </div>
+         </div>`;
+    wireAccordion(host);
+  }
+
   function drawerFor(key) { return panel.querySelector(`.acct-acc[data-key="${key}"] .acct-drawer`); }
-  function countFor(key, n) { panel.querySelector(`.acct-acc[data-key="${key}"] .acct-count`).textContent = n ? `(${n})` : ''; }
+  function countFor(key, n) {
+    const el = panel.querySelector(`.acct-acc[data-key="${key}"] .acct-count`);
+    if (el) el.textContent = n ? `(${n})` : '';   // the row may not be rendered for this account
+  }
 
   const ICON_DL = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 19h16"/></svg>';
   const ICON_HEART = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 20.4l-1.4-1.3C5.6 14.6 2.7 12 2.7 8.7 2.7 6.1 4.7 4 7.3 4c1.5 0 2.9.7 3.8 1.8l.9 1.1.9-1.1C13.8 4.7 15.2 4 16.7 4c2.6 0 4.6 2.1 4.6 4.7 0 3.3-2.9 5.9-7.9 10.4L12 20.4z" fill="currentColor"/></svg>';
