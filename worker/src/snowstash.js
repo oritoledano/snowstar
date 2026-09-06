@@ -43,17 +43,33 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const shortId = () => crypto.randomUUID().replace(/-/g, '').slice(0, 10);
 const hypConfigured = (env) => !!(env.HYP_TERMINAL && env.HYP_API_KEY && env.HYP_PASSP);
 
-async function getJSON(url, { headers = {}, tries = 2 } = {}) {
+/* MusicBrainz rate-limits by IP and answers 503 when it does — and a Worker's
+   egress IP is shared with every other Cloudflare customer, so throttling is
+   routine rather than exceptional. Retry 429 AND 5xx with growing backoff, and
+   distinguish "the lookup failed" from "there are no results": returning an
+   empty list for a throttled request told people their artist did not exist. */
+class LookupFailed extends Error {}
+
+async function getJSON(url, { headers = {}, tries = 4, soft = false } = {}) {
+  let lastStatus = 0;
   for (let i = 0; i < tries; i++) {
     try {
       const r = await fetch(url, { headers: { accept: 'application/json', 'user-agent': UA, ...headers } });
-      if (r.status === 404) return null;
-      if (r.status === 429) { await sleep(1200 * (i + 1)); continue; }
-      if (!r.ok) return null;
+      if (r.status === 404) return null;                       // genuinely absent
+      lastStatus = r.status;
+      if (r.status === 429 || r.status >= 500) {
+        if (i < tries - 1) { await sleep(700 * (i + 1) + Math.floor(Math.random() * 300)); continue; }
+        break;
+      }
+      if (!r.ok) break;
       return await r.json();
-    } catch { if (i === tries - 1) return null; await sleep(400); }
+    } catch {
+      if (i === tries - 1) break;
+      await sleep(500 * (i + 1));
+    }
   }
-  return null;
+  if (soft) return null;                                        // caller treats absence as a finding
+  throw new LookupFailed(`lookup failed (${lastStatus || 'network'})`);
 }
 
 /* ── name matching ─────────────────────────────────────────────────────────
@@ -130,16 +146,16 @@ async function mbRecordings(mbid, maxPages = 4) {
 const CFM = 'https://credits.fm/api';
 
 async function cfmIsrc(isrc) {
-  return getJSON(`${CFM}/isrc/${encodeURIComponent(isrc)}`);
+  return getJSON(`${CFM}/isrc/${encodeURIComponent(isrc)}`, { soft: true });
 }
 
 async function cfmSearch(q) {
-  return getJSON(`${CFM}/search?q=${encodeURIComponent(q.toLowerCase()).replace(/%20/g, '+')}`);
+  return getJSON(`${CFM}/search?q=${encodeURIComponent(q.toLowerCase()).replace(/%20/g, '+')}`, { soft: true });
 }
 
 /* ── Deezer: ordering only, never money ──────────────────────────────────── */
 async function deezerRank(isrc) {
-  const d = await getJSON(`https://api.deezer.com/track/isrc:${encodeURIComponent(isrc)}`);
+  const d = await getJSON(`https://api.deezer.com/track/isrc:${encodeURIComponent(isrc)}`, { soft: true });
   return d && !d.error ? (d.rank || 0) : null;
 }
 
@@ -316,7 +332,11 @@ export async function stashArtists(req, env) {
   const b = await req.json().catch(() => ({}));
   const q = String(b.q || '').trim();
   if (!q) return json({ error: 'empty' }, 400);
-  return json({ candidates: await mbSearchArtists(q) });
+  try {
+    return json({ candidates: await mbSearchArtists(q) });
+  } catch {
+    return json({ error: 'lookup_unavailable' }, 503);
+  }
 }
 
 /** POST /snowstash/scan — { mbid, artist } → { scan_id }. Sign-in required, so

@@ -451,6 +451,10 @@
     $('cand').hidden = true; $('resultSec').hidden = true;
     $('scanNote').textContent = 'Searching…';
     post('/snowstash/artists', { q }).then((d) => {
+      if (d.error === 'lookup_unavailable') {
+        $('scanNote').textContent = 'The music database is busy right now — give it a few seconds and press the button again.';
+        return;
+      }
       const list = d.candidates || [];
       if (!list.length) { $('scanNote').textContent = 'No artist found with that name. Check the spelling.'; return; }
       $('scanNote').innerHTML = 'Which one is you? We never guess — the wrong pick scans the wrong catalogue.';
