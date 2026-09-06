@@ -155,6 +155,47 @@
     box-shadow:0 0 14px rgba(184,230,255,.8);animation:pulse 1.6s ease-out infinite;font-style:normal}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(184,230,255,.45)}100%{box-shadow:0 0 0 24px rgba(184,230,255,0)}}
 
+  /* ── the pipeline: how a scan actually thinks ── */
+  .pipe{margin-top:46px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+  .stage{background:var(--night-2);padding:clamp(22px,3vw,34px)}
+  .stage-h{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+  .stage-n{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;color:var(--ice-deep);flex:none}
+  .stage-t{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:1.15rem}
+  .stage-q{color:var(--dim);font-size:.95rem;margin-top:8px;max-width:60ch}
+  .stage-q em{color:var(--text);font-style:normal}
+  .orgs{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .org{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line-2);border-radius:2px;
+    padding:10px 14px;min-width:8.5rem;background:rgba(184,230,255,.03)}
+  .org b{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.09em;
+    font-size:.82rem;color:var(--text);line-height:1.2}
+  .org span{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .org.on{border-color:var(--ice);background:rgba(184,230,255,.09)}
+  .org.on b{color:var(--ice)}
+  .org.soon{opacity:.5}
+  .stage-note{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--faint);margin-top:16px}
+  .verdicts{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:10px;margin-top:18px}
+  .verdict{border:1px solid var(--line);border-left:3px solid var(--line-2);border-radius:2px;padding:12px 15px}
+  .verdict.c{border-left-color:#ff7350}
+  .verdict.a{border-left-color:var(--ice-deep)}
+  .verdict b{display:block;font-family:var(--display);font-weight:600;text-transform:uppercase;
+    letter-spacing:.07em;font-size:.8rem;margin-bottom:3px}
+  .verdict span{color:var(--dim);font-size:.86rem}
+
+  /* ── FAQ ── */
+  .faq{margin-top:36px;border-top:1px solid var(--line)}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{cursor:pointer;padding:19px 40px 19px 0;position:relative;list-style:none;
+    font-family:var(--display);font-weight:500;text-transform:uppercase;letter-spacing:.05em;font-size:1rem}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";position:absolute;right:6px;top:50%;transform:translateY(-50%);
+    color:var(--ice-deep);font-family:var(--mono);font-size:1.1rem;transition:transform .2s}
+  .faq details[open] summary::after{content:"–"}
+  .faq summary:hover{color:var(--ice)}
+  .faq .a{color:var(--dim);padding:0 0 20px;max-width:64ch}
+  .faq .a a{color:var(--ice);border-bottom:1px solid var(--line-2)}
+  .faq .a code{font-family:var(--mono);font-size:.85em;background:rgba(184,230,255,.08);padding:1px 6px;border-radius:2px}
+
   /* ── result ── */
   .board{display:flex;gap:28px;flex-wrap:wrap;align-items:stretch;margin-top:30px;
     border:1px solid var(--line);border-radius:2px;padding:26px 28px;
@@ -383,6 +424,154 @@
     </div>
   </section>
 
+  <!-- PIPELINE -->
+  <section class="blk" id="pipeline" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-eb rv"><span class="eb">How the radar thinks</span></div>
+      <h2 class="sec-h d rv">From your name<br><span class="ice-txt">to a claim.</span></h2>
+      <div class="pipe">
+
+        <div class="stage rv">
+          <div class="stage-h"><span class="stage-n">STEP 01</span><span class="stage-t">Which one are you?</span></div>
+          <p class="stage-q">Common names are the first way a royalty search goes wrong, so nothing runs until
+          <em>you</em> pick yourself from a list. Your identifiers travel with everything after this.</p>
+          <div class="orgs">
+            <div class="org on"><b>MusicBrainz</b><span>Artist · MBID</span></div>
+            <div class="org on"><b>ISNI</b><span>Name identity</span></div>
+            <div class="org on"><b>IPI / CAE</b><span>Writer identity</span></div>
+          </div>
+        </div>
+
+        <div class="stage rv">
+          <div class="stage-h"><span class="stage-n">STEP 02</span><span class="stage-t">What did you release?</span></div>
+          <p class="stage-q">Your own releases are separated from guest appearances, and checked first.
+          A feature on somebody else's record is <em>their</em> registration problem, never scored against you.</p>
+          <div class="orgs">
+            <div class="org on"><b>ISRC</b><span>The recording</span></div>
+            <div class="org on"><b>ISWC</b><span>The song</span></div>
+            <div class="org on"><b>Deezer</b><span>What's played now</span></div>
+          </div>
+        </div>
+
+        <div class="stage rv">
+          <div class="stage-h"><span class="stage-n">STEP 03</span><span class="stage-t">Who is registered to collect?</span></div>
+          <p class="stage-q">Each recording is looked up to see whether a writer, a publisher and a share
+          actually exist against it — and whether the work is <em>matched</em>, which is what decides if
+          money can move at all.</p>
+          <div class="orgs">
+            <div class="org on"><b>Credits.fm</b><span>Live</span></div>
+            <div class="org on"><b>The MLC</b><span>US mechanical</span></div>
+            <div class="org soon"><b>ACUM</b><span>Israel · pending</span></div>
+            <div class="org soon"><b>SoundExchange</b><span>Pending</span></div>
+          </div>
+        </div>
+
+        <div class="stage rv">
+          <div class="stage-h"><span class="stage-n">STEP 04</span><span class="stage-t">Whose problem is it?</span></div>
+          <p class="stage-q">Every finding gets a verdict. Only the first two count against your score —
+          an honest scan has to be willing to tell you nothing is wrong.</p>
+          <div class="verdicts">
+            <div class="verdict c"><b>Claimable</b><span>Unmatched, and you're the artist or a credited writer. Money is likely being held.</span></div>
+            <div class="verdict a"><b>Fix your data</b><span>Matched, but a missing ISWC, publisher or split can misroute what comes next.</span></div>
+            <div class="verdict"><b>FYI</b><span>A co-writer's gap or a guest spot. Shown, never scored.</span></div>
+          </div>
+          <p class="stage-note">Ordered by what's actually being played — fix the loud ones first</p>
+        </div>
+
+        <div class="stage rv">
+          <div class="stage-h"><span class="stage-n">STEP 05</span><span class="stage-t">Where do you go to collect?</span></div>
+          <p class="stage-q">A song earns through six separate pipes and most artists have opened one or two.
+          The report ends with <em>your</em> list — the societies that matter for where you live and what you own.</p>
+          <div class="orgs">
+            <div class="org"><b>The MLC</b><span>US mechanical</span></div>
+            <div class="org"><b>SoundExchange</b><span>US digital perf.</span></div>
+            <div class="org"><b>ACUM</b><span>Israel · CISAC</span></div>
+            <div class="org"><b>Eshkolot</b><span>IL performers</span></div>
+            <div class="org"><b>PPL</b><span>UK neighbouring</span></div>
+            <div class="org"><b>ASCAP / BMI</b><span>US performance</span></div>
+            <div class="org"><b>PRS</b><span>UK performance</span></div>
+            <div class="org"><b>Sub-publishers</b><span>Int'l mechanical</span></div>
+          </div>
+          <p class="stage-note">Named for reference only — Snowstash is not affiliated with any of them</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="blk" id="faq" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-eb rv"><span class="eb">Questions</span></div>
+      <h2 class="sec-h d rv">Before you scan.</h2>
+      <div class="faq rv">
+
+        <details>
+          <summary>What does it cost?</summary>
+          <div class="a">The scan is free and always will be — you see your score, how many findings there are,
+          and the first few in each category. The full report is a one-off <b>₪69</b>: every finding with its
+          ISRC, and the claiming guide. No subscription, and we never take a percentage of anything you recover.</div>
+        </details>
+
+        <details>
+          <summary>Will this conflict with my agent, label or society?</summary>
+          <div class="a">No — Snowstash only <em>reads</em> public databases and tells you what it found.
+          It never registers anything, signs anything, or claims anything on your behalf. That matters if you
+          already have an exclusive collection agent or a society mandate: reading is always safe, and the report
+          is written so you can hand it to whoever already represents you. If you're not sure who holds your
+          mandate, check that before acting on any finding.</div>
+        </details>
+
+        <details>
+          <summary>Do I need an account?</summary>
+          <div class="a">Yes, to scan — so your reports are still there tomorrow. It's the same
+          Snowstar account as Mutra and StreamDAW, so if you have one of those you're already in.
+          One email, all four.</div>
+        </details>
+
+        <details>
+          <summary>Why don't you tell me how much money I'm owed?</summary>
+          <div class="a">Because we can't know it, and a made-up number is worse than none. We tried:
+          the public popularity data that would drive such an estimate is weighted toward what's trending, not
+          toward lifetime plays — it ranks a brand-new album track above a career hit. Turning that into
+          "you're owed $840" would be confident nonsense. Instead findings are ordered by what's actually
+          being listened to now, so you fix the ones that matter first. A real figure needs your distributor
+          statements, which is a different feature.</div>
+        </details>
+
+        <details>
+          <summary>My catalogue barely showed up. Why?</summary>
+          <div class="a">The open databases are thin for independent artists — that's the whole problem
+          Snowstash exists to surface. If a recording isn't there, that itself is worth knowing, because a
+          registry that can't see your track can't pay you for it. Connecting your catalogue directly
+          (distributor export or streaming profile) gives a much fuller picture than a name search.</div>
+        </details>
+
+        <details>
+          <summary>What does a "claimable" finding actually mean?</summary>
+          <div class="a">That the recording shows as <b>unmatched</b> for US mechanical royalties and you
+          appear as the artist or a credited writer — so money is likely sitting with the collective, waiting
+          for someone to claim it. It's a lead to verify, not a promise. Everything Snowstash reports is
+          checkable by you at the source, and the report tells you where.</div>
+        </details>
+
+        <details>
+          <summary>I was given a code.</summary>
+          <div class="a">Enter it in the box next to the unlock button. A code worth the whole price makes
+          the report free — no card is asked for at all.</div>
+        </details>
+
+        <details>
+          <summary>Is this legal or financial advice?</summary>
+          <div class="a">No. Snowstash reads public music metadata and points at gaps. What you do about
+          them — and who is entitled to collect what — is between you, your representatives and the
+          societies involved.</div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ONE ACCOUNT -->
   <section class="acct-band">
     <div class="wrap">
@@ -597,10 +786,19 @@
 
   // returning from HYP, or opening a saved report
   const qs = new URLSearchParams(location.search);
-  const openReport = qs.get('report');
+  // The account menu links ?scan=, the HYP return sends ?report= — accept both
+  // rather than making either side chase the other's spelling.
+  const openReport = qs.get('report') || qs.get('scan');
   if (openReport) {
     scanId = openReport;
-    api('/snowstash/scan?id=' + encodeURIComponent(openReport)).then((d) => { if (d.status === 'complete') render(d); });
+    $('workingTxt').textContent = 'Opening your report…';
+    $('working').hidden = false;
+    api('/snowstash/scan?id=' + encodeURIComponent(openReport)).then((d) => {
+      $('working').hidden = true;
+      if (d.status === 'complete') render(d);
+      else if (d.status === 'running') { pollTimer = setInterval(poll, 4000); $('working').hidden = false; }
+      else $('scanNote').textContent = 'That report could not be opened.';
+    }).catch(() => { $('working').hidden = true; $('scanNote').textContent = 'That report could not be opened.'; });
   }
   if (qs.get('pay') === 'failed') alert('The payment did not go through. Nothing was charged.');
 })();
