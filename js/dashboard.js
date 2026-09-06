@@ -59,6 +59,10 @@
       }).join('')}</tr>`).join('')}</tbody></table>`;
   }
 
+  /* Every other tab slug reads fine as its own label; these two would show as
+     "stashscans" / "stashcodes", so they get a spoken name. */
+  const TAB_LABEL = { stashscans: 'scans', stashcodes: 'codes' };
+
   const shell = (inner) => `
     <div class="db-head">
       <h1>Dashboard</h1>
@@ -66,7 +70,7 @@
         <div class="db-group">
           <span class="db-glabel">${name}</span>
           <div class="db-tabs">${tabs.map((t) =>
-            `<button class="db-tab ${t === tab ? 'active' : ''}" data-t="${t}">${t}</button>`).join('')}</div>
+            `<button class="db-tab ${t === tab ? 'active' : ''}" data-t="${t}">${TAB_LABEL[t] || t}</button>`).join('')}</div>
         </div>`).join('')}</div>
     </div>${inner}`;
 
