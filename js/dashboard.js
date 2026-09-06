@@ -20,6 +20,7 @@
     ['All',       ['overview', 'demand', 'stats', 'inbox', 'members', 'notes']],
     ['Mutra',     ['submissions', 'artists', 'clearlist', 'upload', 'packs', 'characters',
                    'licensing', 'pricing', 'coupons']],
+    ['Snowstash', ['stashscans', 'stashcodes']],
     ['Money',     ['invoices', 'payouts']],
     ['System',    ['jobs', 'notifications', 'alerts', 'storage', 'pipeline']],
   ];
@@ -94,6 +95,8 @@
       if (tab === 'inbox') return await paintInbox();
       if (tab === 'jobs') return await paintJobs();
       if (tab === 'coupons') return await paintCoupons();
+      if (tab === 'stashscans') return await paintStashScans();
+      if (tab === 'stashcodes') return await paintStashCodes();
       if (tab === 'invoices') return await paintInvoices();
       if (tab === 'payouts') return await paintPayouts();
       if (tab === 'notes') return await paintNotes();
@@ -2333,6 +2336,96 @@
         { label: 'Their words', get: (r) => esc(r.detail) },
       ]) : '<p class="db-empty">No describe-it searches yet in this window.</p>'}
     </div>`);
+  }
+
+  /* ── Snowstash: what has been scanned, and what has been paid ───────────
+     Scans are cheap (three keyless APIs from the Worker), so the number that
+     matters here is not cost but conversion: how many scans turned into an
+     unlocked report, and how many of those were a free service grant rather
+     than a card. */
+  async function paintStashScans() {
+    const d = await get('/snowstash/admin');
+    const scans = d.scans || [], orders = d.orders || [];
+    const when = (t) => (t ? new Date(t * 1000).toLocaleString() : '—');
+    const ils = (n) => '₪' + (n / 100).toFixed(0);
+    const paid = orders.filter((o) => o.status === 'granted');
+    const free = paid.filter((o) => !o.amount);
+
+    paint(`<div class="db-panel">
+      <h2>Snowstash scans <span class="pill">${scans.length} total</span></h2>
+      <p class="db-note">${paid.length} report${paid.length === 1 ? '' : 's'} unlocked ·
+        ${free.length} on a service code · ${ils(paid.reduce((a, o) => a + (o.amount || 0), 0))} taken.
+        Scans run inside this Worker — no extra server, no per-scan cost.</p>
+      ${scans.length ? table(scans, [
+        { label: 'When', get: (r) => when(r.created_at) },
+        { label: 'Artist', get: (r) => esc(r.artist_name) },
+        { label: 'Who', get: (r) => esc(r.email || '—') },
+        { label: 'Health', get: (r) => (r.health == null ? '—' : r.health + '/100') },
+        { label: 'Claimable', get: (r) => (r.claimable == null ? '—' : String(r.claimable)) },
+        { label: 'To fix', get: (r) => (r.attention == null ? '—' : String(r.attention)) },
+        { label: 'Status', get: (r) => esc(r.status) },
+        { label: 'Report', get: (r) => (r.unlocked ? 'unlocked' : 'preview') },
+      ]) : '<p class="db-empty">No scans yet.</p>'}
+    </div>
+    <div class="db-panel">
+      <h2>Report orders</h2>
+      ${orders.length ? table(orders, [
+        { label: 'When', get: (r) => when(r.created_at) },
+        { label: 'Ref', get: (r) => esc(r.ref) },
+        { label: 'Who', get: (r) => esc(r.email) },
+        { label: 'Amount', get: (r) => (r.amount ? ils(r.amount) : 'free') },
+        { label: 'Code', get: (r) => esc(r.coupon || '—') },
+        { label: 'Status', get: (r) => esc(r.status) },
+      ]) : '<p class="db-empty">No orders yet.</p>'}
+    </div>`);
+  }
+
+  async function paintStashCodes() {
+    const d = await post('/snowstash/coupon', { list: 1 });
+    const cs = d.coupons || [];
+    const when = (t) => (t ? new Date(t * 1000).toLocaleDateString() : 'never');
+
+    paint(`<div class="db-panel">
+      <h2>Snowstash codes <span class="pill">${cs.filter((c) => c.active).length} live</span></h2>
+      <p class="db-note">A code that takes the price to zero is honoured as a free grant —
+        the checkout skips the card gateway entirely, because it refuses a zero authorisation.
+        These never redeem a Mutra licence or a StreamDAW licence.</p>
+      <div class="db-form" id="stashNew">
+        <input id="scCode" placeholder="CODE (blank = generated)">
+        <select id="scKind"><option value="percent">% off</option><option value="amount">₪ off</option></select>
+        <input id="scValue" type="number" min="1" placeholder="100" style="max-width:7rem">
+        <input id="scUses" type="number" min="0" placeholder="max uses (0 = ∞)" style="max-width:11rem">
+        <input id="scNote" placeholder="note">
+        <button class="db-btn" id="scAdd">Create</button>
+      </div>
+      ${cs.length ? table(cs, [
+        { label: 'Code', get: (r) => `<code>${esc(r.code)}</code>` },
+        { label: 'Worth', get: (r) => (r.kind === 'percent' ? r.value + '% off' : '₪' + (r.value / 100).toFixed(0) + ' off') },
+        { label: 'Used', get: (r) => r.used + (r.max_uses ? ' / ' + r.max_uses : '') },
+        { label: 'Expires', get: (r) => when(r.expires_at) },
+        { label: 'Live', get: (r) => (r.active ? 'yes' : 'no') },
+        { label: 'Note', get: (r) => esc(r.note || '—') },
+        { label: '', get: (r) => `<button class="db-btn ghost" data-sc-toggle="${r.id}">${r.active ? 'Pause' : 'Resume'}</button>` },
+      ]) : '<p class="db-empty">No codes yet.</p>'}
+    </div>`);
+
+    const add = document.getElementById('scAdd');
+    if (add) add.onclick = async () => {
+      const body = {
+        code: document.getElementById('scCode').value.trim(),
+        kind: document.getElementById('scKind').value,
+        value: Number(document.getElementById('scValue').value),
+        max_uses: Number(document.getElementById('scUses').value) || 0,
+        note: document.getElementById('scNote').value.trim(),
+      };
+      if (!body.value) return;
+      const r = await post('/snowstash/coupon', body);
+      if (r.error) { alert(r.error === 'code_taken' ? 'That code already exists.' : 'Could not create that code.'); return; }
+      paintStashCodes();
+    };
+    document.querySelectorAll('[data-sc-toggle]').forEach((b) => {
+      b.onclick = async () => { await post('/snowstash/coupon', { toggle: Number(b.dataset.scToggle) }); paintStashCodes(); };
+    });
   }
 
   async function paintCoupons() {

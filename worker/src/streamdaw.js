@@ -47,6 +47,48 @@ const validEmail = (e) => typeof e === 'string' && e.length <= 254 && /^[^\s@]+@
 const urlToken = (n = 32) => randB64(n).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const hypConfigured = (env) => !!(env.HYP_TERMINAL && env.HYP_API_KEY && env.HYP_PASSP);
 
+// ── presence tokens (listener identity for the relay) ───────────────────────
+// A signed-in listener exchanges their Snowstar session for a short-lived
+// HMAC-signed token {name, sub, exp}. The relay (a separate Node process) shares
+// PRESENCE_SECRET and verifies it, so it can trust the listener's name without
+// touching the account DB. The player is on stream.snowstar.company (a different
+// origin), so this endpoint is the ONLY one that needs CORS + credentials.
+const PRESENCE_ORIGINS = ['https://stream.snowstar.company', 'http://localhost:8787', 'http://127.0.0.1:8787'];
+function presenceCors(origin) {
+  const allow = PRESENCE_ORIGINS.includes(origin) ? origin : PRESENCE_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allow,
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'content-type',
+    'Vary': 'Origin',
+  };
+}
+function b64urlBytes(bytes) {
+  return btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function signPresence(secret, payload) {
+  const enc = new TextEncoder();
+  const body = b64urlBytes(enc.encode(JSON.stringify(payload)));
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(body));
+  return body + '.' + b64urlBytes(sig);
+}
+
+/** POST /streamdaw/presence-token — signed-in listener → short-lived HMAC token
+ *  the relay verifies to trust the listener's name. CORS + credentials for the
+ *  stream.snowstar.company player. */
+export async function streamdawPresenceToken(req, env) {
+  const cors = presenceCors(req.headers.get('origin') || '');
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+  if (!env.PRESENCE_SECRET) return json({ error: 'presence not configured' }, 501, cors);
+  const user = await currentUser(req, env);
+  if (!user) return json({ error: 'sign in required' }, 401, cors);
+  const name = ((user.name && user.name.trim()) || lc(user.email).split('@')[0] || 'Listener').slice(0, 40);
+  const token = await signPresence(env.PRESENCE_SECRET, { name, sub: String(user.id), exp: now() + 300 });
+  return json({ token, name }, 200, cors);
+}
+
 // ── coupons (streamdaw_coupons table; math reused from coupons.js) ──────────
 function findSdawCoupon(env, code) {
   const c = normCode(code);

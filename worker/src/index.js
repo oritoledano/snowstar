@@ -35,8 +35,10 @@ import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
 import { updateMember, deleteMember, memberDetail } from './members.js';
 import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
+import { stashArtists, stashScanStart, stashScanGet, stashMine,
+         stashCouponCheck, stashCouponCreate, stashCheckout, stashAdmin } from './snowstash.js';
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
-         streamdawCouponCheck, streamdawCouponCreate } from './streamdaw.js';
+         streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken } from './streamdaw.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { handleStream } from './stream.js';
@@ -81,7 +83,7 @@ const validEmail = (e) =>
   typeof e === 'string' && e.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
 
 /** Which Snowstar product a set of favorites belongs to. */
-const PRODUCTS = new Set(['mutra', 'snowstar']);
+const PRODUCTS = new Set(['mutra', 'snowstar', 'snowstash', 'streamdaw']);
 const product = (v) => (PRODUCTS.has(v) ? v : 'mutra');
 
 const favoritesFor = async (env, userId, prod) => {
@@ -154,7 +156,11 @@ async function handle(req, env, ctx) {
   const method = req.method.toUpperCase();
   const ip = req.headers.get('cf-connecting-ip') || 'unknown';
 
-  if (method !== 'GET' && !originOk(req)) return json({ error: 'bad_origin' }, 403);
+  // The presence-token endpoint is cross-origin by design (the stream.snowstar.company
+  // player calls it) and does its own CORS + origin allowlist; exempt it from the
+  // same-origin CSRF guard. It's a read (returns a token for the signed-in user).
+  if (method !== 'GET' && path !== '/streamdaw/presence-token' && !originOk(req))
+    return json({ error: 'bad_origin' }, 403);
 
   // ── social sign-in ──
   const oauth = path.match(/^\/auth\/(google|facebook)(\/callback)?$/);
@@ -319,11 +325,22 @@ async function handle(req, env, ctx) {
   // ── StreamDAW (software) — sold via HYP on the same terminal, delivered as a
   //    downloadable installer tied to the buyer's Snowstar account. The verified
   //    HYP return for an SD- order is dispatched from handleReturn above.
+  // ── Snowstash: scan is gated on sign-in, report is gated on payment ──
+  if (path === '/snowstash/artists' && method === 'POST') return stashArtists(req, env);
+  if (path === '/snowstash/scan' && method === 'POST') return stashScanStart(req, env, ctx, await currentUser(req, env));
+  if (path === '/snowstash/scan' && method === 'GET') return stashScanGet(req, env, await currentUser(req, env));
+  if (path === '/snowstash/mine' && method === 'GET') return stashMine(env, await currentUser(req, env));
+  if (path === '/snowstash/admin' && method === 'GET') return stashAdmin(env, await currentUser(req, env));
+  if (path === '/snowstash/coupon/check' && method === 'POST') return stashCouponCheck(req, env);
+  if (path === '/snowstash/coupon' && method === 'POST') return stashCouponCreate(req, env, await currentUser(req, env));
+  if (path === '/snowstash/checkout' && method === 'POST') return stashCheckout(req, env, await currentUser(req, env));
+
   if (path === '/streamdaw/checkout' && method === 'POST') return streamdawCheckout(req, env);
   if (path === '/streamdaw/download' && method === 'GET') return streamdawDownload(req, env);
   if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
   if (path === '/streamdaw/coupon/check' && method === 'POST') return streamdawCouponCheck(req, env);
   if (path === '/streamdaw/coupon' && method === 'POST') return streamdawCouponCreate(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/presence-token' && (method === 'POST' || method === 'OPTIONS')) return streamdawPresenceToken(req, env);
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));

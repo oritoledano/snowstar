@@ -266,6 +266,10 @@ export async function handleReturn(req, env, ctx) {
   // different product with a different fulfilment — grant an app entitlement,
   // not a music licence. Dispatch them out before any licence logic runs.
   // Dynamic import avoids a static cycle: streamdaw.js imports from this file.
+  if (ref.startsWith('ST-')) {
+    const { stashReturn } = await import('./snowstash.js');
+    return stashReturn(req, env, raw, q);
+  }
   if (ref.startsWith('SD-')) {
     const { streamdawReturn } = await import('./streamdaw.js');
     return streamdawReturn(req, env, raw, q);
