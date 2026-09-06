@@ -367,7 +367,10 @@
 
   const esc = (s) => String(s == null ? '' : s).replace(/</g, '&lt;');
   const fmtDate = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-  const trackLink = (slug) => 'mutra.html?track=' + encodeURIComponent(slug);
+  /* Root-absolute, always. The account panel is mounted on every page —
+     including /apps/streamdaw.html — and a bare "mutra.html" there resolves to
+     /apps/mutra.html, which is a 404. */
+  const trackLink = (slug) => '/mutra.html?track=' + encodeURIComponent(slug);
 
   const panel = document.createElement('div');
   panel.className = 'acct-panel';
@@ -421,7 +424,7 @@
       </div>
     </div>
     <div class="acct-section acct-foot">
-      <a class="acct-row acct-dashlink" href="dashboard.html" hidden>Dashboard</a>
+      <a class="acct-row acct-dashlink" href="/dashboard.html" hidden>Dashboard</a>
       <button class="acct-row acct-signout" type="button">Sign out</button>
     </div>`;
   document.body.appendChild(panel);
@@ -522,8 +525,8 @@
       const live = ups.filter((u) => u.published_slug);
       el.innerHTML = `
         ${name ? `<div class="acct-artist-head"><b>${esc(name)}</b>
-            <a class="acct-mini" href="artist.html?name=${encodeURIComponent(name)}">View page</a>
-            <a class="acct-mini" href="artist.html?name=${encodeURIComponent(name)}#edit">Edit</a></div>` : ''}
+            <a class="acct-mini" href="/artist.html?name=${encodeURIComponent(name)}">View page</a>
+            <a class="acct-mini" href="/artist.html?name=${encodeURIComponent(name)}#edit">Edit</a></div>` : ''}
         <div class="acct-statline">
           <span><b>${ups.length}</b> uploaded</span>
           <span><b>${live.length}</b> in the catalogue</span>
@@ -535,7 +538,7 @@
             <span class="acct-item-date">${esc(u.published_slug ? 'live' : (u.status || 'in review'))}</span>
           </li>`).join('')}</ul>`
           : '<p class="acct-empty">Nothing uploaded yet.</p>'}
-        <a class="acct-mini acct-mini-block" href="artists.html">Upload more music →</a>`;
+        <a class="acct-mini acct-mini-block" href="/artists.html">Upload more music →</a>`;
     });
   }
 
@@ -547,7 +550,7 @@
       .then((d) => {
         if (!d || !d.owned) {
           el.innerHTML = `<p class="acct-empty">No apps yet.</p>
-            <a class="acct-mini acct-mini-block" href="apps/streamdaw.html">See StreamDAW →</a>`;
+            <a class="acct-mini acct-mini-block" href="/apps/streamdaw.html">See StreamDAW →</a>`;
           return;
         }
         const rel = d.release || {};
@@ -571,16 +574,16 @@
         const scans = (d && d.scans) || [];
         if (!scans.length) {
           el.innerHTML = `<p class="acct-empty">No reports yet.</p>
-            <a class="acct-mini acct-mini-block" href="snowstash.html">Run a check →</a>`;
+            <a class="acct-mini acct-mini-block" href="/snowstash.html">Run a check →</a>`;
           return;
         }
         el.innerHTML = `<ul class="acct-items">${scans.slice(0, 10).map((sc) => `
           <li class="acct-item">
-            <a class="acct-item-name" href="snowstash.html?scan=${encodeURIComponent(sc.id)}">${esc(sc.artist_name || 'Report')}</a>
+            <a class="acct-item-name" href="/snowstash.html?scan=${encodeURIComponent(sc.id)}">${esc(sc.artist_name || 'Report')}</a>
             <span class="acct-item-date">${sc.created_at ? fmtDate(sc.created_at) : ''}${
               sc.unlocked ? ' · full' : (sc.status ? ' · ' + esc(sc.status) : '')}</span>
           </li>`).join('')}</ul>
-          <a class="acct-mini acct-mini-block" href="snowstash.html">Run another check →</a>`;
+          <a class="acct-mini acct-mini-block" href="/snowstash.html">Run another check →</a>`;
       });
   }
 
