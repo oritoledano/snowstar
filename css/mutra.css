@@ -1708,3 +1708,38 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .promo-kicker{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
   color:var(--dim,var(--muted));margin-bottom:12px}
 .promo-copy p{max-width:46ch}   /* an ad measure, not a paragraph width */
+
+/* ───────── buyer Q&A ─────────
+   The questions that arrive by email before anybody buys — licence scope,
+   term, clearance, invoices. They belong above the CTA rather than on a
+   separate page: the person asking them is already looking at a track, and a
+   second page loses them. <details> so the section costs one screen when
+   nobody is reading it, and so it still opens with JS off. */
+.mfaq{padding:78px 0 20px;position:relative}
+.mfaq-head{text-align:center;margin-bottom:34px}
+.mfaq-head h2{font-size:clamp(1.6rem,3.6vw,2.9rem)}
+.mfaq-head .eyebrow{display:block;margin-bottom:12px}
+.mfaq-list{max-width:760px;margin:0 auto}
+.mfaq-list details{border-bottom:1px solid var(--line)}
+.mfaq-list details:first-child{border-top:1px solid var(--line)}
+.mfaq-list summary{cursor:pointer;list-style:none;padding:18px 2px;gap:16px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--font-display);font-weight:600;font-size:1rem;color:var(--text)}
+.mfaq-list summary::-webkit-details-marker{display:none}
+.mfaq-list summary:hover{color:var(--amber)}
+.mfaq-list summary::after{content:"";flex:none;width:11px;height:11px;
+  border-right:2px solid var(--amber);border-bottom:2px solid var(--amber);
+  transform:rotate(45deg) translateY(-3px);transition:transform .22s ease}
+.mfaq-list details[open] summary::after{transform:rotate(225deg) translateY(-3px)}
+.mfaq-list details p{color:var(--muted);font-size:.93rem;line-height:1.7;
+  margin:0 0 18px;padding-right:28px;max-width:64ch}
+.mfaq-list details p + p{margin-top:-6px}
+.mfaq-list a{color:var(--amber);text-decoration:underline;text-underline-offset:3px}
+.mfaq-foot{text-align:center;margin-top:28px;color:var(--dim);font-size:.85rem}
+.mfaq-foot a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.mfaq-foot a:hover{color:var(--amber)}
+@media (max-width:560px){
+  .mfaq{padding-top:58px}
+  .mfaq-list summary{font-size:.94rem;padding:16px 2px}
+  .mfaq-list details p{padding-right:0}
+}

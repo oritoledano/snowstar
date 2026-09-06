@@ -16,13 +16,16 @@
 <link rel="preload" href="assets/fonts/commit-mono.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/skins.css?v=10">
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/mutra.css?v=120">
+<link rel="stylesheet" href="css/mutra.css?v=121">
 <link rel="stylesheet" href="css/spotlight.css?v=15">
 <link rel="stylesheet" href="css/artist.css?v=1">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"MusicPlaylist","name":"Mutra — music by Snowstar",
 "description":"Original, truly-cleared music tracks for advertising, film, gaming and digital.",
 "numTracks":359,"author":{"@type":"Organization","name":"Snowstar.Company"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What am I actually buying?","acceptedAnswer":{"@type":"Answer","text":"A licence to use one track in one project, for a set length of time. Snowstar keeps the master and the publishing; for the term of your licence the right to use the track in your video is yours, in writing, with a certificate naming you, the track and the project."}},{"@type":"Question","name":"How is the price worked out?","acceptedAnswer":{"@type":"Answer","text":"Three questions, in order: who is buying, where it runs, and for how long. The price appears on the track page before you commit — no quote form and no per-second maths."}},{"@type":"Question","name":"Is it royalty-free?","acceptedAnswer":{"@type":"Answer","text":"You pay one fee and nothing else: no per-play or per-view charge later. The composer's performing-rights share is still collected by the PRO from broadcasters, which costs you nothing and changes nothing about your licence."}},{"@type":"Question","name":"Can I use it in a TV commercial or in cinema?","acceptedAnswer":{"@type":"Answer","text":"Web, social, podcast, internal and industrial video are Standard coverage and can be licensed self-serve. TV, cinema, VOD and OTT, festivals, radio and commercials are Extended coverage and are quoted per campaign."}},{"@type":"Question","name":"How long does a licence last?","acceptedAnswer":{"@type":"Answer","text":"Six, twelve, twenty-four or thirty-six months, with longer terms costing less per month, plus a no-end-date option limited to organic distribution. Renew and the video simply continues."}},{"@type":"Question","name":"One licence per video, or per track?","acceptedAnswer":{"@type":"Answer","text":"Per track, per project. One licence covers every cut and length of that campaign; a second campaign needs a second licence."}},{"@type":"Question","name":"Is the music cleared? Who wrote it?","acceptedAnswer":{"@type":"Answer","text":"It was written in-house at Snowstar, most of it originally scored to picture for advertising. One owner, no sample-clearance chain and no label. Co-writers are declared on the track and the fee splits as declared."}},{"@type":"Question","name":"Do I get a tax invoice?","acceptedAnswer":{"@type":"Answer","text":"Yes — an Israeli tax invoice issued to the company details given at checkout, emailed with the licence certificate. Prices shown are before VAT."}},{"@type":"Question","name":"Can Snowstar write something original instead?","acceptedAnswer":{"@type":"Answer","text":"Yes. Scoring to picture is Snowstar's main work; the catalogue is what that work leaves behind."}},{"@type":"Question","name":"What if I buy the wrong licence?","acceptedAnswer":{"@type":"Answer","text":"Write before you publish and it can be fixed — coverage upgraded, term changed or track swapped. Full terms are in the licence agreement and refund policy."}}]}
 </script>
 <meta property="og:url" content="https://snowstar.company/mutra.html">
 <meta property="og:site_name" content="Snowstar">
@@ -66,11 +69,12 @@
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <nav class="mmenu-nav" aria-label="Main">
     <a href="#catalog"><i>01</i><span class="lbl">Browse</span></a>
-    <a href="artists.html"><i>02</i><span class="lbl">Submit music</span></a>
-    <a href="#contact" data-contact><i>03</i><span class="lbl">Get in touch</span></a>
-    <a href="apps/streamdaw.html"><i>04</i><span class="lbl">StreamDAW</span></a>
-    <a href="snowstash.html"><i>05</i><span class="lbl">Snowstash</span></a>
-    <a href="index.html"><i>06</i><span class="lbl">← Snowstar</span></a>
+    <a href="#faq"><i>02</i><span class="lbl">How licensing works</span></a>
+    <a href="artists.html"><i>03</i><span class="lbl">Submit music</span></a>
+    <a href="#contact" data-contact><i>04</i><span class="lbl">Get in touch</span></a>
+    <a href="apps/streamdaw.html"><i>05</i><span class="lbl">StreamDAW</span></a>
+    <a href="snowstash.html"><i>06</i><span class="lbl">Snowstash</span></a>
+    <a href="index.html"><i>07</i><span class="lbl">← Snowstar</span></a>
   </nav>
   <div class="mmenu-foot">
     <a class="mmenu-mail" href="mailto:hello@snowstar.company" target="_blank" rel="noopener">hello@snowstar.company</a>
@@ -153,6 +157,115 @@
     <div class="fpills" id="fpills"></div>
     </div>
     <div class="tracks" id="tracks" aria-label="Track list"></div>
+  </section>
+
+  <!-- ═══ Q&A ═══
+       Every question below arrived by email before somebody bought. Keeping
+       them on the page rather than in a reply removes a round trip from the
+       funnel, and each answer is written to be true of what the system
+       actually does today — if the licence logic changes, these change with
+       it. All copy is data-txt keyed, so it is editable from the site editor
+       without a deploy. -->
+  <section class="mfaq" id="faq" aria-labelledby="faqTitle">
+    <div class="wrap">
+      <div class="mfaq-head">
+        <span class="eyebrow" data-txt="mutra.faq.kicker">Before you license</span>
+        <h2 id="faqTitle" data-txt="mutra.faq.title">Questions <em class="grad-text">worth asking</em></h2>
+      </div>
+
+      <div class="mfaq-list">
+        <details>
+          <summary data-txt="mutra.faq.q1">What am I actually buying?</summary>
+          <p data-txt="mutra.faq.a1">A licence to use one track in one project, for a set length of time.
+          You are not buying the music itself — Snowstar keeps the master and the publishing — but for the
+          term of your licence the right to use it in your video is yours, in writing, with a certificate
+          naming you, the track and the project.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q2">How is the price worked out?</summary>
+          <p data-txt="mutra.faq.a2">Three questions, in this order: who is buying, where it runs, and for how
+          long. A filmmaker cutting their own reel and an insurer running a brand campaign are not the same
+          buyer and do not pay the same fee for the same track. Pick your answers on the track page and the
+          price appears before you commit to anything — no quote form, no waiting, no per-second maths.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q3">Is it royalty-free?</summary>
+          <p data-txt="mutra.faq.a3">You pay one fee and nothing else — we never invoice you again for the same
+          use, and there is no per-play or per-view charge coming later. What we do not do is pretend the
+          composer's performing-rights share vanishes: if your film is broadcast, the broadcaster's blanket
+          PRO payment still reaches the writer, exactly as it does for every other piece of music on air.
+          That costs you nothing and changes nothing about your licence.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q4">Can I use it in a TV commercial or in cinema?</summary>
+          <p data-txt="mutra.faq.a4">Yes, but not through the card checkout. Web, social, podcast, internal and
+          industrial video are Standard coverage and you can buy them yourself in a couple of minutes.
+          TV, cinema, VOD and OTT, festivals, radio and commercials are Extended coverage — the terms are
+          negotiated per campaign, so those go through us. Ask, and you get a number back the same day.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q5">How long does a licence last, and what happens at the end?</summary>
+          <p data-txt="mutra.faq.a5">Six, twelve, twenty-four or thirty-six months — longer terms cost less per
+          month. There is also a no-end-date option, limited to organic distribution, because a licence with
+          no expiry and no ceiling on paid media is an unlimited ad buy sold once at a website price.</p>
+          <p data-txt="mutra.faq.a5b">When a term ends, the video does not have to come down: renew and it
+          simply continues. We write to you before the date, not after it.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q6">One licence per video, or per track?</summary>
+          <p data-txt="mutra.faq.a6">Per track, per project. One track in one campaign is one licence, and it
+          covers every cut and every length of that campaign — the 30, the 15, the 6, the vertical. A second
+          campaign is a second licence, even if it is the same track.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q7">Is the music really cleared? Who wrote it?</summary>
+          <p data-txt="mutra.faq.a7">It was written in-house at Snowstar, most of it originally scored to
+          picture for Israeli and international campaigns. That is the whole point of this catalogue: one
+          owner, one signature, no sample-clearance chain, no label to chase, nobody who can appear a year
+          later with a claim. Where a track has co-writers, they are declared on the track and the fee splits
+          on our ledger exactly as declared.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q8">I need an invoice for accounting.</summary>
+          <p data-txt="mutra.faq.a8">Every purchase produces a proper Israeli tax invoice (חשבונית מס) issued to
+          the company details you give at checkout, emailed with the licence certificate. Prices shown are
+          before VAT. Buying from outside Israel? Say so and we will issue accordingly.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q9">I have a brief and no time to listen to 300 tracks.</summary>
+          <p data-txt="mutra.faq.a9">Then don't. Use <b>I have a brief</b> at the top of the page: describe the
+          film in a sentence — the mood, the length, what happens on screen — and the catalogue reorders
+          itself around it. If the shortlist still isn't right, <a href="#contact" data-contact>write to us</a>
+          and a human sends back five tracks with reasons.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q10">Can you write something original instead?</summary>
+          <p data-txt="mutra.faq.a10">That is Snowstar's day job and has been for over twenty years — scoring
+          to picture, arrangement, recording, mix. The catalogue is what that work leaves behind. If nothing
+          here fits, <a href="#contact" data-contact>tell us about the film</a>.</p>
+        </details>
+
+        <details>
+          <summary data-txt="mutra.faq.q11">What if I buy the wrong licence?</summary>
+          <p data-txt="mutra.faq.a11">Write to us before you publish and we will fix it — upgrade the coverage,
+          change the term, swap the track. The full terms are in the
+          <a href="terms.html">licence agreement</a> and the
+          <a href="refund.html">refund policy</a>, both in plain language and both short.</p>
+        </details>
+      </div>
+
+      <p class="mfaq-foot" data-txt="mutra.faq.foot">Still unsure? <a href="#contact" data-contact>Ask us directly</a> —
+      questions about licensing are answered by the person who wrote the music.</p>
+    </div>
   </section>
 
   <!-- CTA -->
