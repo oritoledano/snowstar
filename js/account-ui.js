@@ -399,6 +399,21 @@
           <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="acct-drawer" hidden></div>
       </div>
+      <div class="acct-acc" data-key="artist" hidden>
+        <button class="acct-row" type="button">My artist profile <span class="acct-count"></span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
+      <div class="acct-acc" data-key="apps" hidden>
+        <button class="acct-row" type="button">My apps <span class="acct-count"></span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
+      <div class="acct-acc" data-key="snowstash" hidden>
+        <button class="acct-row" type="button">Snowstash <span class="acct-count"></span>
+          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="acct-drawer" hidden></div>
+      </div>
       <div class="acct-acc" data-key="profile">
         <button class="acct-row" type="button">User info
           <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
@@ -445,6 +460,7 @@
     e.stopPropagation();
     if (!panel.hidden) { closeAcctPanel(); return; }
     paintAcctHead();
+    revealSections();
     positionPanel();
     panel.hidden = false;
     document.getElementById('authAccount').setAttribute('aria-expanded', 'true');
@@ -486,6 +502,112 @@
     });
   });
 
+
+  /* ── the three cross-product rows ────────────────────────────────────────
+     Each appears only for an account that actually has that thing: a menu
+     offering "My apps" to somebody who owns none is a dead end, and a menu
+     hiding "Snowstash" from somebody with three reports is a bug. Presence is
+     decided once at open (revealSections) so the row never flickers in. */
+
+  function paintArtistRow() {
+    const el = drawerFor('artist');
+    el.innerHTML = '<p class="acct-empty">Loading…</p>';
+    Promise.all([
+      fetch('/api/artist/uploads', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/credits', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
+    ]).then(([d, c]) => {
+      const ups = (d && d.uploads) || [];
+      const credits = (c && c.credits) || [];
+      const name = (d && d.artist_name) || '';
+      const live = ups.filter((u) => u.published_slug);
+      el.innerHTML = `
+        ${name ? `<div class="acct-artist-head"><b>${esc(name)}</b>
+            <a class="acct-mini" href="artist.html?name=${encodeURIComponent(name)}">View page</a>
+            <a class="acct-mini" href="artist.html?name=${encodeURIComponent(name)}#edit">Edit</a></div>` : ''}
+        <div class="acct-statline">
+          <span><b>${ups.length}</b> uploaded</span>
+          <span><b>${live.length}</b> in the catalogue</span>
+          ${credits.length ? `<span><b>${credits.length}</b> credited</span>` : ''}
+        </div>
+        ${ups.length ? `<ul class="acct-items">${ups.slice(0, 8).map((u) => `
+          <li class="acct-item">
+            <span class="acct-item-name">${esc(u.title || u.orig_name || 'Untitled')}</span>
+            <span class="acct-item-date">${esc(u.published_slug ? 'live' : (u.status || 'in review'))}</span>
+          </li>`).join('')}</ul>`
+          : '<p class="acct-empty">Nothing uploaded yet.</p>'}
+        <a class="acct-mini acct-mini-block" href="artists.html">Upload more music →</a>`;
+    });
+  }
+
+  function paintApps() {
+    const el = drawerFor('apps');
+    el.innerHTML = '<p class="acct-empty">Loading…</p>';
+    fetch('/api/streamdaw/mine', { credentials: 'same-origin' })
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      .then((d) => {
+        if (!d || !d.owned) {
+          el.innerHTML = `<p class="acct-empty">No apps yet.</p>
+            <a class="acct-mini acct-mini-block" href="apps/streamdaw.html">See StreamDAW →</a>`;
+          return;
+        }
+        const rel = d.release || {};
+        el.innerHTML = `
+          <ul class="acct-items"><li class="acct-item">
+            <span class="acct-item-name">StreamDAW${rel.version ? ` <i>${esc(rel.version)}</i>` : ''}</span>
+            <span class="acct-item-date">${d.since ? fmtDate(d.since) : ''}</span>
+          </li></ul>
+          <p class="acct-note">Your licence follows this account — sign in on a new machine and
+          download again.</p>
+          <a class="acct-mini acct-mini-block" href="/api/streamdaw/download">Download the installer →</a>`;
+      });
+  }
+
+  function paintStash() {
+    const el = drawerFor('snowstash');
+    el.innerHTML = '<p class="acct-empty">Loading…</p>';
+    fetch('/api/snowstash/mine', { credentials: 'same-origin' })
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      .then((d) => {
+        const scans = (d && d.scans) || [];
+        if (!scans.length) {
+          el.innerHTML = `<p class="acct-empty">No reports yet.</p>
+            <a class="acct-mini acct-mini-block" href="snowstash.html">Run a check →</a>`;
+          return;
+        }
+        el.innerHTML = `<ul class="acct-items">${scans.slice(0, 10).map((sc) => `
+          <li class="acct-item">
+            <a class="acct-item-name" href="snowstash.html?scan=${encodeURIComponent(sc.id)}">${esc(sc.artist_name || 'Report')}</a>
+            <span class="acct-item-date">${sc.created_at ? fmtDate(sc.created_at) : ''}${
+              sc.unlocked ? ' · full' : (sc.status ? ' · ' + esc(sc.status) : '')}</span>
+          </li>`).join('')}</ul>
+          <a class="acct-mini acct-mini-block" href="snowstash.html">Run another check →</a>`;
+      });
+  }
+
+  /* Which of the three rows this account should even see. One pass at open,
+     failing silent: a row that cannot be decided stays hidden rather than
+     showing an empty drawer. */
+  async function revealSections() {
+    const show = (key, on, n) => {
+      const row = panel.querySelector(`.acct-acc[data-key="${key}"]`);
+      if (!row) return;
+      row.hidden = !on;
+      if (on && n) countFor(key, n);
+    };
+    try {
+      const [up, app, st] = await Promise.all([
+        fetch('/api/artist/uploads', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/streamdaw/mine', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/snowstash/mine', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]);
+      const ups = (up && up.uploads) || [];
+      show('artist', !!(up && (up.artist || ups.length)), ups.length);
+      show('apps', !!(app && app.owned), 1);
+      const scans = (st && st.scans) || [];
+      show('snowstash', scans.length > 0, scans.length);
+    } catch { /* leave them hidden */ }
+  }
+
   function drawerFor(key) { return panel.querySelector(`.acct-acc[data-key="${key}"] .acct-drawer`); }
   function countFor(key, n) { panel.querySelector(`.acct-acc[data-key="${key}"] .acct-count`).textContent = n ? `(${n})` : ''; }
 
@@ -497,6 +619,9 @@
     if (key === 'licences') return paintLicences();
     if (key === 'profile') return paintProfileForm();
     if (key === 'clearlist') return paintClearlist();
+    if (key === 'artist') return paintArtistRow();
+    if (key === 'apps') return paintApps();
+    if (key === 'snowstash') return paintStash();
     const el = drawerFor(key);
     el.innerHTML = '<p class="acct-empty">Loading…</p>';
     try {

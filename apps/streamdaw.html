@@ -239,6 +239,9 @@
     .price-sticker{top:-18px;right:8px}
   }
 </style>
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What exactly does StreamDAW do?", "acceptedAnswer": {"@type": "Answer", "text": "It puts your DAW's output on a link. Drop the plugin on your master bus — or on individual tracks — press GO LIVE, and anyone you send the link to hears exactly what you hear, lossless and in real time, in a browser. No upload, no bounce, no render."}}, {"@type": "Question", "name": "Which DAWs and formats does it run in?", "acceptedAnswer": {"@type": "Answer", "text": "Any host that loads AU or VST3 on macOS — Logic, Ableton Live, Cubase, Pro Tools, Studio One, Reaper, Bitwig. It sits on a bus like any other plugin."}}, {"@type": "Question", "name": "How many people can listen at once?", "acceptedAnswer": {"@type": "Answer", "text": "Up to 50 listeners on a session. They need nothing installed and no account — a browser and the link is the whole requirement."}}, {"@type": "Question", "name": "How good is the audio, really?", "acceptedAnswer": {"@type": "Answer", "text": "Lossless 16-bit PCM at 44.1 kHz, around 1.4 Mbit/s — the same samples leaving your master bus, not a re-encode. Latency lands near 200 ms end to end, and the listener can trade a little buffer for a little delay if their connection is rough."}}, {"@type": "Question", "name": "Can I share my screen and camera too?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Audio always; screen and camera are toggles on the plugin. Talkback opens your mic so the conversation runs alongside the mix instead of on a second app."}}, {"@type": "Question", "name": "Can I keep a session private?", "acceptedAnswer": {"@type": "Answer", "text": "Turn on Require sign-in and only people with a Snowstar account can open the link, with their name shown to you as they join. Leave it off and it is a plain link anyone can play."}}, {"@type": "Question", "name": "What is per-track mode?", "acceptedAnswer": {"@type": "Answer", "text": "Instead of one stereo master, send several tracks and let the listener move between them — useful for a producer checking a stem or a client following a vocal. Mute-aware, so what you silence in the session stays silent on the stream."}}, {"@type": "Question", "name": "Is it really one payment?", "acceptedAnswer": {"@type": "Answer", "text": "₪249 once. No renewal, no subscription, every future update included. Compare that with the yearly alternatives on the pricing table above."}}, {"@type": "Question", "name": "What if I change computers?", "acceptedAnswer": {"@type": "Answer", "text": "Your licence follows your Snowstar account, not the machine. Sign in, download again, carry on."}}, {"@type": "Question", "name": "Something is not working.", "acceptedAnswer": {"@type": "Answer", "text": "Write to hello@snowstar.company — it reaches the person who wrote the plugin."}}]}
+</script>
 </head>
 <body>
 
@@ -254,6 +257,7 @@
   <nav class="nav-links">
     <a class="link" href="#features">Features</a>
     <a class="link" href="#pricing">Pricing</a>
+    <a class="link" href="#faq">FAQ</a>
     <a class="link" href="../index.html">← Snowstar</a>
     <span class="nav-acct" data-account-mount></span>
     <button class="btn sm" data-buy="lifetime">Get it</button>
@@ -354,6 +358,70 @@
     </div>
   </div></section>
 
+
+  <!-- FAQ — the questions that arrive by email before anyone buys. <details>
+       so it costs one screen when nobody is reading, and still opens with JS
+       off. Mirrored into FAQPage schema in <head>. -->
+  <section id="faq"><div class="wrap">
+    <div class="sec-kicker">Before you buy</div>
+    <h2 class="sec-title">Questions,<br>answered straight.</h2>
+    <div class="sd-faq">
+      <details>
+        <summary>What exactly does StreamDAW do?</summary>
+        <p>It puts your DAW's output on a link. Drop the plugin on your master bus — or on
+        individual tracks — press GO LIVE, and anyone you send the link to hears exactly what you
+        hear, lossless and in real time, in a browser. No upload, no bounce, no render.</p>
+      </details>
+      <details>
+        <summary>Which DAWs and formats does it run in?</summary>
+        <p>Any host that loads AU or VST3 on macOS — Logic, Ableton Live, Cubase, Pro Tools,
+        Studio One, Reaper, Bitwig. It sits on a bus like any other plugin.</p>
+      </details>
+      <details>
+        <summary>How many people can listen at once?</summary>
+        <p>Up to 50 listeners on a session. They need nothing installed and no account —
+        a browser and the link is the whole requirement.</p>
+      </details>
+      <details>
+        <summary>How good is the audio, really?</summary>
+        <p>Lossless 16-bit PCM at 44.1&nbsp;kHz, around 1.4&nbsp;Mbit/s — the same samples leaving
+        your master bus, not a re-encode. Latency lands near 200&nbsp;ms end to end, and the
+        listener can trade a little buffer for a little delay if their connection is rough.</p>
+      </details>
+      <details>
+        <summary>Can I share my screen and camera too?</summary>
+        <p>Yes. Audio always; screen and camera are toggles on the plugin. Talkback opens your mic
+        so the conversation runs alongside the mix instead of on a second app.</p>
+      </details>
+      <details>
+        <summary>Can I keep a session private?</summary>
+        <p>Turn on Require sign-in and only people with a Snowstar account can open the link, with
+        their name shown to you as they join. Leave it off and it is a plain link anyone can play.</p>
+      </details>
+      <details>
+        <summary>What is per-track mode?</summary>
+        <p>Instead of one stereo master, send several tracks and let the listener move between them —
+        useful for a producer checking a stem or a client following a vocal. Mute-aware, so what you
+        silence in the session stays silent on the stream.</p>
+      </details>
+      <details>
+        <summary>Is it really one payment?</summary>
+        <p>₪249 once. No renewal, no subscription, every future update included. Compare that with
+        the yearly alternatives on the pricing table above.</p>
+      </details>
+      <details>
+        <summary>What if I change computers?</summary>
+        <p>Your licence follows your Snowstar account, not the machine. Sign in, download again,
+        carry on.</p>
+      </details>
+      <details>
+        <summary>Something is not working.</summary>
+        <p>Write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a> — it reaches
+        the person who wrote the plugin.</p>
+      </details>
+    </div>
+  </div></section>
+
   <footer><div class="wrap foot-in">
     <div class="colophon">© <span id="yr"></span> Snowstar.Company — Tel Aviv</div>
     <a class="powered" href="../index.html"><img src="streamdaw-mark.png" alt="">Powered by <b>snowstar.company</b></a>
@@ -362,7 +430,7 @@
 
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
 <script src="../js/account.js?v=3"></script>
-<script src="../js/account-ui.js?v=19"></script>
+<script src="../js/account-ui.js?v=20"></script>
 <script src="../js/site-edit.js?v=5"></script>
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
@@ -485,8 +553,9 @@
     <a href="../index.html"><i>01</i>Snowstar</a>
     <a href="../mutra.html"><i>02</i>Mutra</a>
     <a href="streamdaw.html" class="now"><i>03</i>StreamDAW</a>
-    <a href="../snowstash.html"><i>04</i>Snowstash</a>
-    <a href="../index.html#contact"><i>05</i>Contact</a>
+    <a href="#faq"><i>04</i>FAQ</a>
+    <a href="../snowstash.html"><i>05</i>Snowstash</a>
+    <a href="../index.html#contact"><i>06</i>Contact</a>
   </nav>
 </div>
 <script>
