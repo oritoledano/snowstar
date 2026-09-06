@@ -801,3 +801,10 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 .sdaw-price{font-family:"Sora",system-ui,sans-serif;font-weight:600;font-size:.95rem;color:#dfe5f8}
 .sdaw-price i{font-style:normal;color:#7c86a3;font-size:.76rem;letter-spacing:.08em;
   text-transform:uppercase;margin-left:5px}
+/* The menus answer two questions, and the divider is where one ends and the
+   other begins: numbered items are THIS PAGE, the block under "Products" is
+   the switcher. Every property repeats the same two blocks, in its own skin. */
+.menu-div{display:block;font-family:var(--font-body);font-size:.62rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);opacity:.75;
+  margin:clamp(14px,2.4vh,26px) 0 clamp(4px,1vh,10px)}
+.menu-nav a.now,.mmenu-nav a.now{opacity:.55;pointer-events:none}

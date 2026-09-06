@@ -1743,3 +1743,9 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   .mfaq-list summary{font-size:.94rem;padding:16px 2px}
   .mfaq-list details p{padding-right:0}
 }
+
+/* The product switcher block inside Mutra's own menu — see style.css for why. */
+.mmenu-nav .menu-div{display:block;font-family:var(--font-body);font-size:.62rem;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--muted);opacity:.75;
+  margin:clamp(14px,2.4vh,26px) 0 clamp(4px,1vh,10px)}
+.mmenu-nav a.now{opacity:.55;pointer-events:none}
