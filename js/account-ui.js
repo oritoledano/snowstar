@@ -600,7 +600,7 @@
         fetch('/api/artist/uploads', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch('/api/streamdaw/mine', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch('/api/snowstash/mine', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch('/api/licences', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/licence/mine', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
       ]);
       const ups = (up && up.uploads) || [];
       has.artist = !!(up && (up.artist || ups.length));
