@@ -296,6 +296,18 @@
   window.SnowstarOpenAuth = open;
   window.MutraOpenAuth = open;
 
+  /* Deep-link to the sign-in / sign-up modal: ?signin=1 (login) or ?signup=1.
+     Used by the StreamDAW receiver so tapping "Sign in" lands straight on the form.
+     Only opens if the visitor isn't already signed in. */
+  (function autoOpenAuth() {
+    const p = new URLSearchParams(location.search);
+    const mode = p.has('signup') ? 'signup' : (p.has('signin') ? 'login' : null);
+    if (!mode) return;
+    const run = () => { if (!M.user) open(mode, 'link'); };
+    if (M.ready) run();
+    else { const off = M.onChange(() => { off(); run(); }); }
+  })();
+
   /* Coming back from Google or Facebook, the page just reloads — say what
      happened, and if the cookie somehow didn't stick, say that too. */
   (function reportOAuth() {
@@ -380,49 +392,7 @@
       <b class="acct-name"></b>
       <span class="acct-subline"></span>
     </div>
-    <div class="acct-section">
-      <p class="acct-label">My account</p>
-      <div class="acct-acc" data-key="licences">
-        <button class="acct-row" type="button">My licences <span class="acct-count"></span>
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-      <div class="acct-acc" data-key="downloads">
-        <button class="acct-row" type="button">Downloads <span class="acct-count"></span>
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-      <div class="acct-acc" data-key="favorites">
-        <button class="acct-row" type="button">Favorites <span class="acct-count"></span>
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-      <div class="acct-acc" data-key="clearlist">
-        <button class="acct-row" type="button">Clear my channels <span class="acct-count"></span>
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-      <div class="acct-acc" data-key="artist" hidden>
-        <button class="acct-row" type="button">My artist profile <span class="acct-count"></span>
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-      <div class="acct-acc" data-key="apps" hidden>
-        <button class="acct-row" type="button">My apps <span class="acct-count"></span>
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-      <div class="acct-acc" data-key="snowstash" hidden>
-        <button class="acct-row" type="button">Snowstash <span class="acct-count"></span>
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-      <div class="acct-acc" data-key="profile">
-        <button class="acct-row" type="button">User info
-          <svg class="acct-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="acct-drawer" hidden></div>
-      </div>
-    </div>
+    <div class="acct-groups"></div>
     <div class="acct-section acct-foot">
       <a class="acct-row acct-dashlink" href="/dashboard.html" hidden>Dashboard</a>
       <button class="acct-row acct-signout" type="button">Sign out</button>
@@ -480,30 +450,34 @@
 
   // ── accordion: one drawer open at a time, content fetched on first open ──
 
-  panel.querySelectorAll('.acct-acc > .acct-row').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const acc = btn.closest('.acct-acc');
-      const key = acc.dataset.key;
-      const opening = !acc.classList.contains('open');
-      // [hidden] carries !important site-wide (account.css) specifically so a
-      // stray class can never leave a panel stuck open — so drawer visibility
-      // must be driven by the hidden PROPERTY, not just the .open class
-      panel.querySelectorAll('.acct-acc.open').forEach(a => {
-        a.classList.remove('open');
-        a.querySelector('.acct-drawer').hidden = true;
+  /* The groups are rebuilt whenever the panel opens, so the accordion is wired
+     per render rather than once at boot — a listener bound to a node that has
+     since been replaced does nothing at all. */
+  function wireAccordion(scope) {
+    scope.querySelectorAll('.acct-acc > .acct-row').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const acc = btn.closest('.acct-acc');
+        const key = acc.dataset.key;
+        const opening = !acc.classList.contains('open');
+        // [hidden] carries !important site-wide (account.css) specifically so a
+        // stray class can never leave a panel stuck open — so drawer visibility
+        // must be driven by the hidden PROPERTY, not just the .open class
+        panel.querySelectorAll('.acct-acc.open').forEach(a => {
+          a.classList.remove('open');
+          a.querySelector('.acct-drawer').hidden = true;
+        });
+        if (opening) {
+          acc.classList.add('open');
+          acc.querySelector('.acct-drawer').hidden = false;
+          positionPanel();
+          // Always re-fetch. Loading once and caching meant a download or a
+          // favourite made in the same session left the drawer showing what was
+          // true when you first opened it, and only a page reload fixed it.
+          loadDrawer(key);
+        }
       });
-      if (opening) {
-        acc.classList.add('open');
-        acc.querySelector('.acct-drawer').hidden = false;
-        positionPanel();
-        // Always re-fetch. Loading once and caching meant a download or a
-        // favourite made in the same session left the drawer showing what was
-        // true when you first opened it, and only a page reload fixed it.
-        // These lists are tens of rows; the fetch is cheaper than the confusion.
-        loadDrawer(key);
-      }
     });
-  });
+  }
 
 
   /* ── the three cross-product rows ────────────────────────────────────────
@@ -540,6 +514,35 @@
           : '<p class="acct-empty">Nothing uploaded yet.</p>'}
         <a class="acct-mini acct-mini-block" href="/artists.html">Upload more music →</a>`;
     });
+  }
+
+
+  function paintEarnings() {
+    const el = drawerFor('earnings');
+    el.innerHTML = '<p class="acct-empty">Loading…</p>';
+    fetch('/api/earnings/mine', { credentials: 'same-origin' })
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      .then((d) => {
+        const lines = (d && d.lines) || [];
+        const ils = (n) => '₪' + ((n || 0) / 100).toFixed(2);
+        if (!lines.length) {
+          el.innerHTML = `<p class="acct-empty">Nothing earned yet — the first licence of your
+            music starts the ledger.</p>`;
+          return;
+        }
+        el.innerHTML = `
+          <div class="acct-statline">
+            <span><b>${ils(d.owed)}</b> on your balance</span>
+            ${d.paid ? `<span><b>${ils(d.paid)}</b> paid out</span>` : ''}
+          </div>
+          <ul class="acct-items">${lines.slice(0, 10).map((l) => `
+            <li class="acct-item">
+              <span class="acct-item-name">${esc(l.slug)}</span>
+              <span class="acct-item-date">${l.created_at ? fmtDate(l.created_at) : ''} · ${ils(l.amount_agorot)}${
+                l.status === 'paid' ? ' · paid' : ''}</span>
+            </li>`).join('')}</ul>
+          <p class="acct-note">Balances are paid monthly once they pass ₪100.</p>`;
+      });
   }
 
   function paintApps() {
@@ -587,28 +590,28 @@
       });
   }
 
-  /* Which of the three rows this account should even see. One pass at open,
-     failing silent: a row that cannot be decided stays hidden rather than
-     showing an empty drawer. */
+  /* What this account actually is — which of the four relationships it has.
+     One pass when the panel opens, failing silent: a vertical we cannot decide
+     stays hidden rather than showing an empty room. */
   async function revealSections() {
-    const show = (key, on, n) => {
-      const row = panel.querySelector(`.acct-acc[data-key="${key}"]`);
-      if (!row) return;
-      row.hidden = !on;
-      if (on && n) countFor(key, n);
-    };
+    const has = { licensing: false, artist: false, apps: false, stash: false };
     try {
-      const [up, app, st] = await Promise.all([
+      const [up, app, st, lic] = await Promise.all([
         fetch('/api/artist/uploads', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch('/api/streamdaw/mine', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch('/api/snowstash/mine', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/licences', { credentials: 'same-origin' }).then(r => r.ok ? r.json() : null).catch(() => null),
       ]);
       const ups = (up && up.uploads) || [];
-      show('artist', !!(up && (up.artist || ups.length)), ups.length);
-      show('apps', !!(app && app.owned), 1);
-      const scans = (st && st.scans) || [];
-      show('snowstash', scans.length > 0, scans.length);
-    } catch { /* leave them hidden */ }
+      has.artist = !!(up && (up.artist || ups.length));
+      has.apps = !!(app && app.owned);
+      has.stash = (((st && st.scans) || []).length) > 0;
+      has.licensing = (((lic && lic.licences) || []).length) > 0;
+      renderGroups(has);
+      if (has.artist && ups.length) countFor('artist', ups.length);
+      const scans = ((st && st.scans) || []).length;
+      if (scans) countFor('snowstash', scans);
+    } catch { renderGroups(has); }
   }
 
   function drawerFor(key) { return panel.querySelector(`.acct-acc[data-key="${key}"] .acct-drawer`); }
@@ -624,6 +627,7 @@
     if (key === 'clearlist') return paintClearlist();
     if (key === 'artist') return paintArtistRow();
     if (key === 'apps') return paintApps();
+    if (key === 'earnings') return paintEarnings();
     if (key === 'snowstash') return paintStash();
     const el = drawerFor(key);
     el.innerHTML = '<p class="acct-empty">Loading…</p>';
