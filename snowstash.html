@@ -566,7 +566,10 @@
     $('payBtn').disabled = true;
     post('/snowstash/checkout', { scan_id: scanId, coupon }).then((d) => {
       $('payBtn').disabled = false;
-      if (d.free) { msg.className = 'msg good'; msg.textContent = 'Unlocked.'; poll(); return; }
+      // D1 is read-after-write eventual across regions, so the unlock row can
+      // be a beat behind this response — poll again shortly so the paywall
+      // actually disappears without asking anyone to reload.
+      if (d.free) { msg.className = 'msg good'; msg.textContent = 'Unlocked.'; poll(); setTimeout(poll, 1500); return; }
       if (d.url) { location.href = d.url; return; }
       msg.className = 'msg bad';
       msg.textContent = d.error === 'hyp_not_configured' ? 'Card checkout is not switched on yet.'
