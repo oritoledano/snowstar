@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/style.css?v=43">
+<link rel="stylesheet" href="css/style.css?v=44">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -204,39 +204,43 @@
     </div>
   </section>
 
-  <!-- STREAMDAW teaser → app page: the plugin running in a real session on a
-       laptop, and the listener open on a phone that overlaps it — one signal,
-       two ends of the link. Paper ground, dark screens: the contrast does the
-       work, the way the Mutra block puts dark screens on hot gradient. -->
+  <!-- STREAMDAW teaser → app page. Its own world: near-black, aurora light,
+       glass. The paper collage belonged to a poster; this is a piece of studio
+       hardware and it should read like one. Fixed colours — the block stays
+       night in every site theme. -->
   <section class="sdaw-teaser" id="streamdaw">
+    <div class="sdaw-aura" aria-hidden="true"></div>
     <div class="sdaw-inner reveal">
       <div class="sd-rig" role="img"
-           aria-label="StreamDAW running on the master bus of an Ableton session, and the same stream open in a listener's phone browser">
+           aria-label="StreamDAW on the master bus of an Ableton session, and the same live stream open in a listener's phone browser">
         <div class="sd-lap">
           <div class="sd-lap-screen">
-            <img src="assets/sdaw-ableton.webp" alt="" loading="lazy" width="1700" height="1037">
+            <img src="assets/sdaw-ableton.webp" alt="" loading="lazy" width="1700" height="1038">
+            <span class="sd-glare" aria-hidden="true"></span>
           </div>
           <div class="sd-lap-base" aria-hidden="true"><i></i></div>
         </div>
         <div class="sd-phone">
           <span class="sd-island" aria-hidden="true"></span>
           <img src="assets/sdaw-remote.webp" alt="" loading="lazy" width="560" height="1016">
+          <span class="sd-glare" aria-hidden="true"></span>
         </div>
       </div>
       <div class="sdaw-copy">
-        <div class="sdaw-sticker"><span class="p">₪249</span><span class="s">One time</span></div>
-        <p class="sdaw-eb">The first Snowstar app</p>
-        <img class="sdaw-logo" src="assets/streamdaw-wordmark-black.png" alt="StreamDAW" loading="lazy">
-        <h2 class="sdaw-h">Your master bus,<br><span class="hl">in their pocket.</span></h2>
-        <p class="sdaw-p">Drop StreamDAW on the master in Logic, Ableton, Cubase or Pro Tools and send
-        the room a link. They press play and hear exactly what you hear — lossless, in real time, on any
-        phone or laptop. No upload, no bounce, no account for them.</p>
+        <img class="sdaw-logo" src="assets/streamdaw-wordmark-white.png" alt="StreamDAW" loading="lazy">
+        <h2 class="sdaw-h">The only DAW stream<br><span class="hl">you&rsquo;ll ever need.</span></h2>
+        <p class="sdaw-p">Stream lossless audio, any screen and your camera, live to anyone anywhere —
+        up to 50 people at once. Force sign-in when the session is private, hand out multitrack control,
+        and keep talking while it runs. One secure login, in real time.</p>
         <ul class="sdaw-pts">
-          <li>Lossless PCM, ~200&nbsp;ms behind the fader</li>
-          <li>Master bus or per-track, mute-aware</li>
-          <li>One payment. Yours forever.</li>
+          <li><b>Lossless PCM</b> straight off the master bus</li>
+          <li><b>Audio, screen and camera</b> on one link</li>
+          <li><b>Talkback &amp; multitrack control</b> for the room</li>
         </ul>
-        <a class="sdaw-cta" href="apps/streamdaw.html">Get StreamDAW →</a>
+        <div class="sdaw-actions">
+          <a class="sdaw-cta" href="apps/streamdaw.html">Get StreamDAW</a>
+          <span class="sdaw-price">₪249 <i>one time</i></span>
+        </div>
       </div>
     </div>
   </section>

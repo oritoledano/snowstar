@@ -632,41 +632,43 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 /* The whole section IS the paper now — StreamDAW's own bright theme runs edge
    to edge, the way Snowstash's night does one block up. Short by design:
    a cut-away, not a second hero. Plugin left, words right. */
-.sdaw-teaser{position:relative;overflow:hidden;background:#efe9da;color:#17140d;
-  border-top:2px solid #17140d;border-bottom:2px solid #17140d;
-  padding:clamp(40px,6vw,72px) clamp(20px,4vw,48px)}
-.sdaw-teaser::before{content:"";position:absolute;right:-30px;bottom:-34px;width:280px;height:190px;
-  background-image:radial-gradient(#1c2be0 1.3px,transparent 1.7px);background-size:11px 11px;
-  opacity:.18;transform:rotate(-6deg);pointer-events:none}
-.sdaw-inner{position:relative;max-width:1100px;margin:0 auto;
-  display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(26px,5vw,64px);align-items:center}
+/* The block is the product's world: near-black, one aurora bloom, glass.
+   Fixed colours on purpose — StreamDAW stays night in every site theme. */
+.sdaw-teaser{position:relative;overflow:hidden;background:#07080c;color:#eef2ff;
+  border-top:1px solid rgba(150,170,255,.14);border-bottom:1px solid rgba(150,170,255,.14);
+  padding:clamp(52px,7vw,96px) clamp(20px,4vw,48px)}
+/* the light behind the glass — one source, off to the left, like the reference */
+.sdaw-aura{position:absolute;inset:-30% -10% auto -20%;height:150%;pointer-events:none;
+  background:
+    radial-gradient(38% 46% at 26% 34%, rgba(92,72,255,.5), transparent 68%),
+    radial-gradient(34% 40% at 46% 62%, rgba(255,47,107,.28), transparent 70%),
+    radial-gradient(30% 36% at 12% 74%, rgba(0,196,255,.22), transparent 72%);
+  filter:blur(46px)}
+.sdaw-inner{position:relative;z-index:1;max-width:1180px;margin:0 auto;
+  display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(26px,5vw,64px);align-items:center}
 .sdaw-copy{position:relative}
-.sdaw-eb{font-family:"Anton",sans-serif;text-transform:uppercase;letter-spacing:.2em;
-  font-size:.72rem;color:#1c2be0;margin:0}
-.sdaw-h{font-family:"Fraunces",Georgia,serif;font-weight:900;line-height:.96;letter-spacing:-.02em;
-  font-size:clamp(1.9rem,3.8vw,2.9rem);margin:12px 0 0;color:#17140d;position:relative}
-.sdaw-h .hl{position:relative;white-space:nowrap}
-.sdaw-h .hl::after{content:"";position:absolute;left:-.04em;right:-.04em;bottom:.08em;height:.32em;
-  background:#ff2f6b;z-index:-1;transform:rotate(-1.2deg)}
-.sdaw-p{position:relative;color:#403a2c;max-width:54ch;margin:14px 0 22px;font-size:.98rem;line-height:1.55}
-.sdaw-cta{display:inline-flex;align-items:center;gap:8px;font-family:"Anton",sans-serif;
-  text-transform:uppercase;letter-spacing:.06em;font-size:1rem;color:#fff;
-  border:2px solid #17140d;background:#1c2be0;padding:13px 24px;box-shadow:5px 5px 0 #17140d;
-  transition:transform .09s ease,box-shadow .09s ease}
-.sdaw-cta:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #17140d;color:#fff}
-.sdaw-cta:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #17140d}
-.sdaw-sticker{position:absolute;z-index:3;top:-30px;right:0;width:92px;height:92px;border-radius:50%;
-  background:#ff2f6b;color:#fff;border:2px solid #17140d;box-shadow:6px 6px 0 #17140d;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transform:rotate(9deg);text-align:center;font-family:"Anton",sans-serif}
-.sdaw-sticker .p{font-size:1.6rem;line-height:.85}
-.sdaw-sticker .s{font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+/* Sora — the logo's own geometry, so the words look like they came with it.
+   Capped BELOW the wordmark's rendered width so the mark always leads. */
+.sdaw-h{font-family:"Sora",system-ui,sans-serif;font-weight:700;line-height:1.04;
+  letter-spacing:-.022em;font-size:clamp(1.45rem,2.5vw,2.05rem);margin:14px 0 0;
+  color:#eef2ff;text-transform:none;position:relative}
+
+.sdaw-h .hl{background:linear-gradient(96deg,#8f7bff 0%,#5ad1ff 52%,#ff5c9d 110%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sdaw-p{position:relative;color:#a9b2cc;max-width:52ch;margin:14px 0 18px;
+  font-size:.95rem;line-height:1.6}
+.sdaw-cta{display:inline-flex;align-items:center;gap:9px;font-family:"Sora",system-ui,sans-serif;
+  font-weight:600;font-size:.9rem;letter-spacing:.01em;color:#0a0b10;
+  background:linear-gradient(96deg,#9d8cff,#5ad1ff);
+  border:0;border-radius:99px;padding:13px 26px;
+  box-shadow:0 10px 30px rgba(120,110,255,.34);transition:transform .16s,box-shadow .16s}
+.sdaw-cta:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(120,110,255,.46);color:#0a0b10}
+
 @media(max-width:820px){
   .sdaw-inner{grid-template-columns:1fr}
   .sd-rig{padding-bottom:15%;max-width:520px}
   .sd-phone{width:26%;left:-3%}
-  .sdaw-sticker{top:-16px;right:6px;width:80px;height:80px}
-}
+  }
 
 /* ————— SNOWSTASH teaser — night-radar identity (Oswald, monochrome ice) —————
    Deliberately darker than the page itself: a cinematic cut-away, the way the
@@ -755,32 +757,47 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .ms-lap{left:2%;width:96%;top:6%;padding:7px 7px 9px;border-radius:12px}
 }
 
-/* ————— StreamDAW teaser: the rig — laptop running the session, phone
-   listening to it ————————————————————————————————————————————————————————
-   Drawn frames rather than photographed mockups: they stay sharp at any width,
-   theme with the page and weigh nothing. The phone overlaps the laptop's lower
-   corner because that IS the product's claim — the thing on the desk and the
-   thing in someone's hand are the same signal. */
-.sdaw-logo{width:min(260px,60%);height:auto;margin:4px 0 10px;display:block}
-.sd-rig{position:relative;padding-bottom:11%}
-.sd-lap-screen{border:2px solid #17140d;border-radius:12px 12px 3px 3px;overflow:hidden;
-  background:#0b0d10;box-shadow:8px 8px 0 #ff2f6b}
+/* ————— StreamDAW teaser: the rig, in glass ————————————————————————————
+   Frames drawn in CSS rather than photographed: sharp at any width, themeable,
+   weightless. Each device gets a hairline rim, an inner light and one raking
+   glare — the cues that read as glass on a dark ground. */
+.sdaw-logo{width:min(230px,54%);height:auto;margin:0 0 2px;display:block;
+  filter:drop-shadow(0 2px 18px rgba(140,130,255,.35))}
+.sd-rig{position:relative;padding-bottom:9%}
+.sd-lap-screen{position:relative;border-radius:14px;overflow:hidden;background:#05060a;
+  box-shadow:0 30px 70px rgba(0,0,0,.6),
+             0 0 0 1px rgba(160,180,255,.22),
+             inset 0 1px 0 rgba(255,255,255,.14),
+             0 0 60px rgba(110,90,255,.18)}
 .sd-lap-screen img{display:block;width:100%;height:auto}
-/* the deck: a thin lip wider than the screen, with a notch for the opening —
-   enough to read as a laptop without pretending to be a photograph */
-.sd-lap-base{position:relative;left:50%;transform:translateX(-50%);width:110%;height:13px;
-  margin-top:-1px;border:2px solid #17140d;border-top:0;border-radius:0 0 12px 12px;
-  background:linear-gradient(#dcd5c3,#bab2a1);display:flex;justify-content:center}
-.sd-lap-base i{display:block;width:13%;height:5px;border-radius:0 0 6px 6px;
-  background:#17140d;opacity:.45}
-.sd-phone{position:absolute;left:-2%;bottom:0;width:22%;z-index:3;
-  padding:6px 6px 8px;border-radius:22px;background:#17140d;
-  box-shadow:6px 6px 0 #1c2be0, 0 18px 34px rgba(23,20,13,.28);
-  transform:rotate(-4deg)}
-.sd-phone img{display:block;width:100%;height:auto;border-radius:16px}
-.sd-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);z-index:2;
-  width:30%;height:7px;border-radius:99px;background:#0b0a07}
-.sdaw-pts{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:7px}
-.sdaw-pts li{position:relative;padding-left:18px;color:#403a2c;font-size:.9rem;line-height:1.5}
-.sdaw-pts li::before{content:"";position:absolute;left:0;top:.5em;width:8px;height:8px;
-  background:#ff2f6b;border:1.5px solid #17140d}
+/* the deck: a lip of brushed dark metal with a notch for the opening */
+.sd-lap-base{position:relative;left:50%;transform:translateX(-50%);width:107%;height:14px;
+  border-radius:0 0 14px 14px;
+  background:linear-gradient(#2b2f3d 0%,#171a24 55%,#0d0f16 100%);
+  box-shadow:0 14px 26px rgba(0,0,0,.55), inset 0 1px 0 rgba(200,215,255,.22);
+  display:flex;justify-content:center}
+.sd-lap-base i{display:block;width:12%;height:5px;border-radius:0 0 6px 6px;background:rgba(0,0,0,.55)}
+.sd-phone{position:absolute;left:-3%;bottom:0;width:21%;z-index:3;
+  padding:5px;border-radius:26px;
+  background:linear-gradient(150deg,#3a4055,#12141c 62%);
+  box-shadow:0 26px 46px rgba(0,0,0,.62),
+             0 0 0 1px rgba(170,190,255,.24),
+             inset 0 1px 0 rgba(255,255,255,.2),
+             0 0 46px rgba(90,150,255,.16);
+  transform:rotate(-5deg)}
+.sd-phone img{display:block;width:100%;height:auto;border-radius:21px}
+.sd-island{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:2;
+  width:28%;height:7px;border-radius:99px;background:#05060a}
+.sd-glare{position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(118deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 22%,
+             transparent 46%,transparent 100%)}
+.sdaw-pts{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:8px}
+.sdaw-pts li{position:relative;padding-left:20px;color:#98a2bd;font-size:.88rem;line-height:1.5}
+.sdaw-pts li b{color:#dfe5f8;font-weight:600}
+.sdaw-pts li::before{content:"";position:absolute;left:0;top:.5em;width:7px;height:7px;
+  border-radius:50%;background:linear-gradient(#9d8cff,#5ad1ff);
+  box-shadow:0 0 10px rgba(140,150,255,.7)}
+.sdaw-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sdaw-price{font-family:"Sora",system-ui,sans-serif;font-weight:600;font-size:.95rem;color:#dfe5f8}
+.sdaw-price i{font-style:normal;color:#7c86a3;font-size:.76rem;letter-spacing:.08em;
+  text-transform:uppercase;margin-left:5px}
