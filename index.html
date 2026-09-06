@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/account.css?v=11">
-<link rel="stylesheet" href="css/style.css?v=42">
+<link rel="stylesheet" href="css/style.css?v=43">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -204,22 +204,38 @@
     </div>
   </section>
 
-  <!-- STREAMDAW teaser → app page: a short paper cut-away, plugin left, words
-       right — the same split the Snowstash block makes, mirrored and in
-       daylight. The animation returns once the app's new design lands; until
-       then the plugin's own face carries it. -->
+  <!-- STREAMDAW teaser → app page: the plugin running in a real session on a
+       laptop, and the listener open on a phone that overlaps it — one signal,
+       two ends of the link. Paper ground, dark screens: the contrast does the
+       work, the way the Mutra block puts dark screens on hot gradient. -->
   <section class="sdaw-teaser" id="streamdaw">
     <div class="sdaw-inner reveal">
-      <div class="sdaw-shot"><img src="assets/streamdaw-plugin.png"
-        alt="The StreamDAW plugin — session link, quality picker, GO LIVE"
-        loading="lazy" width="640" height="436"></div>
+      <div class="sd-rig" role="img"
+           aria-label="StreamDAW running on the master bus of an Ableton session, and the same stream open in a listener's phone browser">
+        <div class="sd-lap">
+          <div class="sd-lap-screen">
+            <img src="assets/sdaw-ableton.webp" alt="" loading="lazy" width="1700" height="1037">
+          </div>
+          <div class="sd-lap-base" aria-hidden="true"><i></i></div>
+        </div>
+        <div class="sd-phone">
+          <span class="sd-island" aria-hidden="true"></span>
+          <img src="assets/sdaw-remote.webp" alt="" loading="lazy" width="560" height="1016">
+        </div>
+      </div>
       <div class="sdaw-copy">
         <div class="sdaw-sticker"><span class="p">₪249</span><span class="s">One time</span></div>
         <p class="sdaw-eb">The first Snowstar app</p>
         <img class="sdaw-logo" src="assets/streamdaw-wordmark-black.png" alt="StreamDAW" loading="lazy">
-        <h2 class="sdaw-h">Stream your studio.<br><span class="hl">Live &amp; lossless.</span></h2>
-        <p class="sdaw-p">Put StreamDAW on your master bus and send bit-perfect audio from Logic,
-        Ableton, Cubase or Pro Tools to anyone with a link — real time, any device. One payment, yours forever.</p>
+        <h2 class="sdaw-h">Your master bus,<br><span class="hl">in their pocket.</span></h2>
+        <p class="sdaw-p">Drop StreamDAW on the master in Logic, Ableton, Cubase or Pro Tools and send
+        the room a link. They press play and hear exactly what you hear — lossless, in real time, on any
+        phone or laptop. No upload, no bounce, no account for them.</p>
+        <ul class="sdaw-pts">
+          <li>Lossless PCM, ~200&nbsp;ms behind the fader</li>
+          <li>Master bus or per-track, mute-aware</li>
+          <li>One payment. Yours forever.</li>
+        </ul>
         <a class="sdaw-cta" href="apps/streamdaw.html">Get StreamDAW →</a>
       </div>
     </div>

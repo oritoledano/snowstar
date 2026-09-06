@@ -663,7 +663,8 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 .sdaw-sticker .s{font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
 @media(max-width:820px){
   .sdaw-inner{grid-template-columns:1fr}
-  .sdaw-shot{transform:none;max-width:520px}
+  .sd-rig{padding-bottom:15%;max-width:520px}
+  .sd-phone{width:26%;left:-3%}
   .sdaw-sticker{top:-16px;right:6px;width:80px;height:80px}
 }
 
@@ -754,8 +755,32 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .ms-lap{left:2%;width:96%;top:6%;padding:7px 7px 9px;border-radius:12px}
 }
 
-/* ————— StreamDAW teaser: black wordmark + plugin shot (paper collage) ————— */
+/* ————— StreamDAW teaser: the rig — laptop running the session, phone
+   listening to it ————————————————————————————————————————————————————————
+   Drawn frames rather than photographed mockups: they stay sharp at any width,
+   theme with the page and weigh nothing. The phone overlaps the laptop's lower
+   corner because that IS the product's claim — the thing on the desk and the
+   thing in someone's hand are the same signal. */
 .sdaw-logo{width:min(260px,60%);height:auto;margin:4px 0 10px;display:block}
-.sdaw-shot{border:2px solid #17140d;box-shadow:8px 8px 0 #ff2f6b;
-  transform:rotate(-1deg);overflow:hidden;background:#0b0d10}
-.sdaw-shot img{width:100%;height:auto;display:block}
+.sd-rig{position:relative;padding-bottom:11%}
+.sd-lap-screen{border:2px solid #17140d;border-radius:12px 12px 3px 3px;overflow:hidden;
+  background:#0b0d10;box-shadow:8px 8px 0 #ff2f6b}
+.sd-lap-screen img{display:block;width:100%;height:auto}
+/* the deck: a thin lip wider than the screen, with a notch for the opening —
+   enough to read as a laptop without pretending to be a photograph */
+.sd-lap-base{position:relative;left:50%;transform:translateX(-50%);width:110%;height:13px;
+  margin-top:-1px;border:2px solid #17140d;border-top:0;border-radius:0 0 12px 12px;
+  background:linear-gradient(#dcd5c3,#bab2a1);display:flex;justify-content:center}
+.sd-lap-base i{display:block;width:13%;height:5px;border-radius:0 0 6px 6px;
+  background:#17140d;opacity:.45}
+.sd-phone{position:absolute;left:-2%;bottom:0;width:22%;z-index:3;
+  padding:6px 6px 8px;border-radius:22px;background:#17140d;
+  box-shadow:6px 6px 0 #1c2be0, 0 18px 34px rgba(23,20,13,.28);
+  transform:rotate(-4deg)}
+.sd-phone img{display:block;width:100%;height:auto;border-radius:16px}
+.sd-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);z-index:2;
+  width:30%;height:7px;border-radius:99px;background:#0b0a07}
+.sdaw-pts{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:7px}
+.sdaw-pts li{position:relative;padding-left:18px;color:#403a2c;font-size:.9rem;line-height:1.5}
+.sdaw-pts li::before{content:"";position:absolute;left:0;top:.5em;width:8px;height:8px;
+  background:#ff2f6b;border:1.5px solid #17140d}
