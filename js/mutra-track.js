@@ -26,6 +26,10 @@
   const seen = new Set();   // one event per track per visit keeps counts honest
 
   function send(type, detail, opts = {}) {
+    /* Nothing is measured until the visitor has said yes. Before a choice is
+       made snowConsent.analytics() is false, so the pipeline is simply mute —
+       no queue, no catch-up send afterwards. */
+    if (window.snowConsent && !snowConsent.analytics()) return;
     if (opts.once) {
       const key = type + ':' + (detail || '');
       if (seen.has(key)) return;

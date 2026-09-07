@@ -91,6 +91,16 @@ async function note(env, step, detail) {
 const redirectUri = (req, provider) =>
   new URL(`/api/auth/${provider}/callback`, new URL(req.url).origin).toString();
 
+/** Which vertical a return path belongs to — the welcome mail is addressed to
+ *  the door they actually came through, not to the company in the abstract. */
+function productFromPath(path) {
+  const p = String(path || '');
+  if (p.includes('streamdaw')) return 'streamdaw';
+  if (p.includes('snowstash')) return 'snowstash';
+  if (p.includes('mutra') || p.includes('artist')) return 'mutra';
+  return 'snowstar';
+}
+
 /** Only ever bounce back to our own pages. */
 function safeReturn(raw) {
   if (!raw) return '/mutra.html';
@@ -235,6 +245,16 @@ async function linkAndSignIn(env, provider, profile) {
       ).bind(userId, profile.email || `${provider}_${profile.id}@users.snowstar.company`,
              profile.name || null, profile.verified ? 1 : 0, profile.avatar || null,
              provider, t, t).run();
+      /* Brand-new account: welcome them to the property they signed up ON,
+         which the return path already tells us. Swallowed on failure — a
+         sign-in must never break because an email did. */
+      if (profile.email) {
+        try {
+          const { welcomeEmail, sendMail } = await import('./mail.js');
+          const w = welcomeEmail({ name: profile.name, product: productFromPath(back) });
+          await sendMail(env, { to: profile.email, subject: w.subject, text: w.text, html: w.html });
+        } catch { /* deliberately silent */ }
+      }
     }
     await env.DB.prepare(
       'INSERT OR IGNORE INTO identities (provider, provider_id, user_id, email, created_at) VALUES (?, ?, ?, ?, ?)'

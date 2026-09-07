@@ -17,7 +17,7 @@
 
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload,
          listAlerts, setAlertsMuted, handleDemand } from './analytics.js';
-import { sendMail, resetEmail } from './mail.js';
+import { sendMail, resetEmail, welcomeEmail } from './mail.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
@@ -406,6 +406,15 @@ async function handle(req, env, ctx) {
     // link waiting collaborator credits; NOT verified — a password signup
     // must never claim a managed-artist profile just by typing its email
     ctx.waitUntil(linkOnSignIn(env, id, email, false));
+    /* Welcome them to the door they came in through. After the session, in the
+       background, and swallowed on failure: a signup must never fail because
+       an email did. */
+    ctx.waitUntil((async () => {
+      try {
+        const w = welcomeEmail({ name, product: source });
+        await sendMail(env, { to: email, subject: w.subject, text: w.text, html: w.html });
+      } catch { /* deliberately silent */ }
+    })());
 
     return authed({ user: publicUser({ email, name, newsletter, pw_hash: hash, signup_source: source }), favorites: [] },
       201, sessionCookie(token, maxAge));

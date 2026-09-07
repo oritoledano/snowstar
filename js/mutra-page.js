@@ -1810,7 +1810,8 @@
        somebody who asked not to be tracked is not a grey area. */
     const clarityId = ((tx && tx.texts) || {})['config.clarity-id'];
     const dnt = navigator.doNotTrack === '1' || navigator.globalPrivacyControl === true;
-    if (clarityId && /^[a-z0-9]{6,20}$/i.test(clarityId) && !dnt) {
+    const consented = !window.snowConsent || snowConsent.analytics();
+    if (clarityId && /^[a-z0-9]{6,20}$/i.test(clarityId) && !dnt && consented) {
       const cs = document.createElement('script');
       cs.src = 'https://www.clarity.ms/tag/' + clarityId;
       cs.async = true;

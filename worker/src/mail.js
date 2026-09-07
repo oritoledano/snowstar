@@ -123,3 +123,120 @@ export function resetEmail(link, minutes) {
     </p>`);
   return { subject, text, html };
 }
+
+/* ═══════════ Welcome ═══════════════════════════════════════════════════════
+   One template, four front doors. Somebody who signs up on Mutra is welcomed
+   to MUTRA — not to a company they have never heard of — and the family is
+   introduced underneath, briefly, as the reason the one account works
+   everywhere. Sent from every signup path (password and OAuth), never allowed
+   to fail the signup itself.
+
+   Table markup and inline styles on purpose: email clients are not browsers,
+   and a stylesheet here would arrive as plain text in half of them. */
+const SITE = 'https://snowstar.company';
+const PRODUCTS = {
+  mutra: {
+    name: 'Mutra',
+    line: 'Music chosen by brands, licensed in minutes.',
+    blurb: 'Your account keeps your licences, your downloads and anything you favourite. '
+         + 'Every track is written in-house and cleared, so what you licence is what you get.',
+    cta: ['Browse the catalogue', '/mutra.html'],
+  },
+  streamdaw: {
+    name: 'StreamDAW',
+    line: 'Your master bus, in their pocket.',
+    blurb: 'Your licence lives on this account, so a new machine only ever needs a sign-in '
+         + 'and a re-download.',
+    cta: ['Open StreamDAW', '/apps/streamdaw.html'],
+  },
+  snowstash: {
+    name: 'Snowstash',
+    line: 'Find the royalties nobody paid you.',
+    blurb: 'Your reports stay on this account — run a check now, come back to the findings later.',
+    cta: ['Run a check', '/snowstash.html'],
+  },
+  snowstar: {
+    name: 'Snowstar',
+    line: 'Original music, sound design and audio branding.',
+    blurb: 'One account covers everything we make.',
+    cta: ['See the work', '/'],
+  },
+};
+const ORDER = ['mutra', 'streamdaw', 'snowstash'];
+
+export function welcomeEmail({ name, product }) {
+  const key = PRODUCTS[product] ? product : 'snowstar';
+  const p = PRODUCTS[key];
+  const hi = name ? `Hi ${name},` : 'Hi,';
+  const others = ORDER.filter((k) => k !== key).map((k) => PRODUCTS[k]);
+
+  const subject = `Welcome to ${p.name} — powered by Snowstar`;
+
+  const text = `${hi}
+
+Welcome to ${p.name}. ${p.line}
+
+${p.blurb}
+
+${p.cta[0]}: ${SITE}${p.cta[1]}
+
+— — —
+
+The same login also opens:
+${others.map((o) => `· ${o.name} — ${o.line}  ${SITE}${o.cta[1]}`).join('\n')}
+
+Anything at all, just reply — this reaches a person.
+
+Snowstar.Company, Tel Aviv
+${SITE}`;
+
+  const card = (o) => `
+    <tr>
+      <td style="padding:10px 0;border-top:1px solid #e6dfd5">
+        <a href="${SITE}${o.cta[1]}" style="color:#17140d;text-decoration:none;font-weight:600;font-size:15px">${o.name}</a>
+        <div style="color:#6f6862;font-size:13px;line-height:1.5;margin-top:2px">${o.line}</div>
+      </td>
+    </tr>`;
+
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#faf7f2">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf7f2;padding:28px 16px">
+   <tr><td align="center">
+    <table role="presentation" width="560" cellpadding="0" cellspacing="0"
+           style="width:100%;max-width:560px;background:#ffffff;border:1px solid #e6dfd5;border-radius:14px">
+      <tr><td style="padding:30px 32px 8px">
+        <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#b97e1e">Powered by Snowstar</div>
+        <h1 style="margin:10px 0 6px;font:700 26px/1.2 Georgia,'Times New Roman',serif;color:#231f1c">
+          Welcome to ${p.name}.</h1>
+        <p style="margin:0;color:#6f6862;font:400 15px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+          ${p.line}</p>
+      </td></tr>
+      <tr><td style="padding:14px 32px 0">
+        <p style="margin:0 0 18px;color:#231f1c;font:400 15px/1.65 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+          ${hi} ${p.blurb}</p>
+        <a href="${SITE}${p.cta[1]}"
+           style="display:inline-block;background:#17140d;color:#ffe9d8;text-decoration:none;
+                  font:600 14px/1 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+                  padding:13px 22px;border-radius:99px">${p.cta[0]} &rarr;</a>
+      </td></tr>
+      <tr><td style="padding:26px 32px 6px">
+        <div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8b8378;
+                    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+          The same login also opens</div>
+      </td></tr>
+      <tr><td style="padding:0 32px 8px">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+               style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+          ${others.map(card).join('')}
+        </table>
+      </td></tr>
+      <tr><td style="padding:18px 32px 30px">
+        <p style="margin:0;color:#8b8378;font:400 13px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+          Anything at all, just reply — this reaches a person.<br>
+          Snowstar.Company · Tel Aviv</p>
+      </td></tr>
+    </table>
+   </td></tr>
+  </table></body></html>`;
+
+  return { subject, text, html };
+}
