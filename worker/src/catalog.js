@@ -65,6 +65,16 @@ export function sanitize(raw) {
     const n = Math.round(Number(raw.fee));
     if (Number.isFinite(n) && n >= 0 && n < 1e7) p.fee = n;
   }
+  /* Extra pictures for a track. The cover stays the one image the row and the
+     share card use; these are the rest of the shoot — stills, alternates,
+     artwork variants — shown in the track's own panel. URLs only: they are
+     uploaded through /tracks/cover, which is the one place bytes enter. */
+  if (Array.isArray(raw.gallery)) {
+    p.gallery = raw.gallery
+      .map((u) => clean(u, 400))
+      .filter((u) => /^https:\/\//.test(u))
+      .slice(0, 8);
+  }
   if (raw.lyrics !== undefined) {
     const v = String(raw.lyrics).trim().slice(0, 8000);
     if (v) p.lyrics = v;
@@ -214,13 +224,14 @@ export async function uploadCover(req, env, user, url) {
   // override carries the new URL, so the old object can stay put harmlessly
   const key = `mutra/covers/${slug}-${now()}.${ext}`;
   await env.MEDIA.put(key, body, { httpMetadata: { contentType: type } });
-  return json({ ok: true, url: `https://cdn.snowstar.company/${key}` });
 
   /* The share card is baked from the cover, so a new cover makes the old card
      a lie. Dropping it lets sharePage fall back to the cover itself until the
      card is regenerated — a plain cover is right, a card showing the previous
-     artwork is wrong. */
+     artwork is wrong. This sat AFTER the return and so had never once run. */
   try { await env.MEDIA.delete('og/' + slug + '.jpg'); } catch { /* nothing to drop */ }
+
+  return json({ ok: true, url: `https://cdn.snowstar.company/${key}` });
 }
 
 

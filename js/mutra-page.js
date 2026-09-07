@@ -2306,6 +2306,7 @@
       hl: [hl[0], hl[1]],
       credits: (track.credits || []).map(c => ({ ...c })),
       lane: ['quote', 'demo'].includes(track.lane) ? track.lane : 'instant',
+      gallery: [...(track.gallery || [])],
       prices: { ...(track.prices || {}) },
       fee: Number.isFinite(track.fee) ? track.fee : '',
       lyrics: track.lyrics || '',
@@ -2402,6 +2403,13 @@
         <img class="te-cimg" alt="">
         <label class="te-cbtn">Replace\u2026<input type="file" accept="image/jpeg,image/png,image/webp" hidden></label>
         <span class="te-cstat"></span>
+      </div>
+      <div class="te-gal">
+        <div class="te-flabel">More pictures \u2014 stills, alternates, artwork variants</div>
+        <div class="te-galstrip"></div>
+        <label class="te-cbtn te-galadd">Add a picture\u2026<input type="file" class="te-galfile"
+          accept="image/jpeg,image/png,image/webp" hidden></label>
+        <span class="te-galstat"></span>
       </div>
       <div class="te-foot">
         <button type="button" class="te-save">Save</button>
@@ -2687,6 +2695,40 @@
       fileInp.value = '';
     });
 
+    /* More pictures. Same upload route as the cover — one place where bytes
+       enter — and the same rule: uploaded now, applied on Save. */
+    const galStrip = q('.te-galstrip'), galStat = q('.te-galstat');
+    function paintGallery() {
+      galStrip.innerHTML = draft.gallery.map((u, i) => `
+        <span class="te-galitem">
+          <img src="${u}" alt="">
+          <button type="button" class="te-galdel" data-i="${i}" aria-label="Remove picture">&times;</button>
+        </span>`).join('') || '<span class="te-galnone">No extra pictures yet.</span>';
+      galStrip.querySelectorAll('.te-galdel').forEach((b) => b.addEventListener('click', () => {
+        draft.gallery.splice(Number(b.dataset.i), 1);
+        paintGallery();
+      }));
+    }
+    paintGallery();
+    q('.te-galfile').addEventListener('change', async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      if (draft.gallery.length >= 8) { galStat.textContent = 'Eight is the limit'; return; }
+      galStat.textContent = 'Uploading\u2026';
+      try {
+        const r = await fetch('/api/tracks/cover?slug=' + encodeURIComponent(track.slug), {
+          method: 'PUT', credentials: 'same-origin',
+          headers: { 'content-type': f.type }, body: f,
+        });
+        if (!r.ok) throw new Error('upload_failed');
+        const d = await r.json();
+        draft.gallery.push(d.url);
+        paintGallery();
+        galStat.textContent = 'Uploaded \u2014 Save to apply';
+      } catch { galStat.textContent = 'Upload failed'; }
+      e.target.value = '';
+    });
+
     // ── save / reset ──
     q('.te-save').addEventListener('click', async () => {
       const patch = { ...(overrides[track.slug] || {}) };
@@ -2699,6 +2741,7 @@
       EDIT_FACETS.forEach(([k]) => { patch[k] = draft[k]; });
       patch.hl = draft.hl;
       patch.credits = draft.credits.filter(c => c.role && c.name.trim());
+      patch.gallery = draft.gallery;
       patch.prices = draft.prices;
       patch.lane = draft.lane;
       if (String(draft.fee).trim() !== '') patch.fee = Number(draft.fee);
@@ -2955,6 +2998,9 @@
       <div class="cr-body">
         <div class="cr-artists">${artists.map(a => `<span class="cr-artist">${esc(a)}</span>`).join('')}</div>
         ${body}
+        ${(track.gallery || []).length ? `<div class="cr-gal">${
+          track.gallery.slice(0, 8).map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener">
+            <img src="${esc(u)}" alt="" loading="lazy"></a>`).join('')}</div>` : ''}
       </div>`);
   }
 

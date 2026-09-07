@@ -1758,3 +1758,19 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   border:1px dashed var(--line-2,var(--line));color:var(--dim,var(--muted));
   font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;cursor:default;
   white-space:nowrap}
+
+/* Extra pictures: the editor's strip, and the visitor-facing row in the
+   credits panel. Thumbnails only — the full image opens in its own tab. */
+.te-gal{margin-top:14px}
+.te-galstrip{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px;min-height:22px}
+.te-galitem{position:relative;display:block;width:64px;height:64px;border-radius:9px;
+  overflow:hidden;border:1px solid var(--line)}
+.te-galitem img{width:100%;height:100%;object-fit:cover;display:block}
+.te-galdel{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;
+  border:0;background:rgba(8,6,10,.78);color:#fff;font-size:12px;line-height:1;cursor:pointer}
+.te-galnone{color:var(--dim,var(--muted));font-size:.76rem}
+.te-galstat{color:var(--muted);font-size:.76rem;margin-left:8px}
+.cr-gal{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.cr-gal img{width:84px;height:84px;object-fit:cover;border-radius:10px;display:block;
+  border:1px solid var(--line);transition:transform .18s}
+.cr-gal a:hover img{transform:translateY(-2px);border-color:var(--amber,var(--coral))}
