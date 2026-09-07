@@ -1749,3 +1749,12 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   letter-spacing:.22em;text-transform:uppercase;color:var(--muted);opacity:.75;
   margin:clamp(14px,2.4vh,26px) 0 clamp(4px,1vh,10px)}
 .mmenu-nav a.now{opacity:.55;pointer-events:none}
+
+/* Play-only tracks: presented as portfolio work, never for sale. The row keeps
+   its shape so the list does not go ragged, but where the button was there is
+   a flat label — nothing to click, nothing to misread as a price. */
+.trk-demo{display:inline-flex;align-items:center;justify-content:center;
+  min-width:82px;padding:7px 14px;border-radius:99px;
+  border:1px dashed var(--line-2,var(--line));color:var(--dim,var(--muted));
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;cursor:default;
+  white-space:nowrap}

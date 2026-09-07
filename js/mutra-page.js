@@ -936,8 +936,10 @@
           <span class="trk-key" title="${track.key ? track.key + ' ' + track.scale : ''}">${keyLabel(track)}</span>
           ${track.bpm ? `<button class="trk-bpm" title="${track.bpm} BPM — filter by this tempo">${track.bpm}<i>bpm</i></button>` : '<span class="trk-bpm empty" aria-hidden="true"></span>'}
           <span class="trk-dur">${fmt(track.duration)}</span>
-          <button class="trk-lic${track.lane === 'quote' ? ' trk-lic-q' : ''}" type="button">${
-            track.lane === 'quote' ? 'Get a quote' : 'License'}</button>
+          ${track.lane === 'demo'
+            ? `<span class="trk-demo" title="Presented as a demo — this one is not for licence">Demo</span>`
+            : `<button class="trk-lic${track.lane === 'quote' ? ' trk-lic-q' : ''}" type="button">${
+              track.lane === 'quote' ? 'Get a quote' : 'License'}</button>`}
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
       row.querySelector('.trk-lic').addEventListener('click', () => {
@@ -2302,7 +2304,7 @@
       instruments: [...(track.instruments || [])],
       hl: [hl[0], hl[1]],
       credits: (track.credits || []).map(c => ({ ...c })),
-      lane: track.lane === 'quote' ? 'quote' : 'instant',
+      lane: ['quote', 'demo'].includes(track.lane) ? track.lane : 'instant',
       prices: { ...(track.prices || {}) },
       fee: Number.isFinite(track.fee) ? track.fee : '',
       lyrics: track.lyrics || '',
@@ -2386,6 +2388,7 @@
         <div class="te-lane">
           <button type="button" class="te-lanebtn" data-lane="instant">License \u2014 shows a price</button>
           <button type="button" class="te-lanebtn" data-lane="quote">Get a quote \u2014 no price shown</button>
+          <button type="button" class="te-lanebtn" data-lane="demo">Play only \u2014 not for licence</button>
         </div>
         <p class="te-lanenote"></p>
         <div class="te-flabel">Licence prices \u2014 \u20aa per use, blank = catalogue default</div>
@@ -2621,10 +2624,12 @@
     function paintLane() {
       panel.querySelectorAll('.te-lanebtn').forEach(b =>
         b.classList.toggle('on', b.dataset.lane === draft.lane));
-      laneNote.textContent = draft.lane === 'quote'
-        ? 'Every enquiry reaches you first. Prices below are kept but never shown — ready for when the rights are resolved.'
-        : 'Priced and self-serve. Only for tracks owned and controlled outright.';
-      panel.querySelector('.te-pgrid').classList.toggle('muted', draft.lane === 'quote');
+      laneNote.textContent = draft.lane === 'demo'
+        ? 'Playable on the site as portfolio work, with no way to buy it — no price, no quote button. For music you can show but cannot sell.'
+        : draft.lane === 'quote'
+          ? 'Every enquiry reaches you first. Prices below are kept but never shown — ready for when the rights are resolved.'
+          : 'Priced and self-serve. Only for tracks owned and controlled outright.';
+      panel.querySelector('.te-pgrid').classList.toggle('muted', draft.lane !== 'instant');
     }
     panel.querySelectorAll('.te-lanebtn').forEach(b => b.addEventListener('click', () => {
       draft.lane = b.dataset.lane;

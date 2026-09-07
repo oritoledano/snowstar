@@ -76,7 +76,9 @@ export function sanitize(raw) {
       name: clean(c.name, 120),
     })).filter((c) => c.role && c.name);
   }
-  if (raw.lane === 'instant' || raw.lane === 'quote') p.lane = raw.lane;
+  // 'demo' is a third lane: playable on the site, never purchasable. It is a
+  // rights position, not a price — see the gates in licensing.js and hyp.js.
+  if (['instant', 'quote', 'demo'].includes(raw.lane)) p.lane = raw.lane;
   // Price class: A / B / C. C is the baseline and the same as absent, so it is
   // stored rather than dropped — an explicit C is the owner saying "I looked at
   // this one", which is different from never having graded it.

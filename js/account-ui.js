@@ -629,7 +629,10 @@
         ['licences',  'My licences'],
         ['downloads', 'Downloads'],
         ['favorites', 'Favourites'],
-        ['clearlist', 'Clear my channels'],
+        // 'Clear my channels' is built and tested but not in use yet — it
+        // stays out of the menu until the clearing service actually runs,
+        // rather than offering a door that opens onto nothing.
+        // ['clearlist', 'Clear my channels'],
       ] },
     { key: 'artist', product: 'mutra', label: 'Selling my music', rows: [
         ['artist',   'My artist profile'],

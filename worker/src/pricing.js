@@ -267,6 +267,7 @@ export function priceFor(track, buyerId, coverageId, termId, paidMedia, classes)
   if (!buyer || !cov) return { amount: null, quote: true, reason: 'unknown_selection' };
   // The LANE is the only thing that makes a track quote-only. The class never
   // does — every class is self-serve, however dear.
+  if (track && track.lane === 'demo') return { amount: null, quote: true, reason: 'demo' };
   if (track && track.lane === 'quote') return { amount: null, quote: true, reason: 'co_owned' };
   if (cov.quote) return { amount: null, quote: true, reason: 'extended_coverage' };
   if (buyer.base == null) return { amount: null, quote: true, reason: 'large_client' };

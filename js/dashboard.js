@@ -18,7 +18,9 @@
      above them rather than being filed under one product. */
   const GROUPS = [
     ['All',       ['overview', 'demand', 'stats', 'inbox', 'members', 'notes']],
-    ['Mutra',     ['submissions', 'artists', 'clearlist', 'upload', 'packs', 'characters',
+    // 'clearlist' is parked until the channel-clearing service is live — the
+    // panel still exists and the route still works, it just isn't offered.
+    ['Mutra',     ['submissions', 'artists', 'upload', 'packs', 'characters',
                    'licensing', 'pricing', 'coupons']],
     ['Snowstash', ['stashscans', 'stashcodes']],
     ['Money',     ['invoices', 'payouts']],

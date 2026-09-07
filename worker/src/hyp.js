@@ -121,6 +121,7 @@ export async function startCheckout(req, env, user) {
   // must never reach a self-serve card page — that is the whole point of the
   // lane, and enforcing it here as well as at grant time is not redundant.
   if (r.lane === 'quote') return json({ error: 'quote_lane_not_self_serve' }, 409);
+  if (r.lane === 'demo') return json({ error: 'demo_not_for_licence' }, 409);
   // NULL means there is no self-serve price at all; zero means a code took it
   // to nothing. Only the first is a refusal — `!r.list_amount` caught both and
   // turned a fully-discounted licence into "no_price".
@@ -363,6 +364,7 @@ export async function handleReturn(req, env, ctx) {
 
   // 7. a quote-lane track is never granted by machine
   if (r.lane === 'quote') return fail('quote_lane');
+  if (r.lane === 'demo') return fail('demo_lane');
 
   const { grantLicence } = await import('./licensing.js');
   const pay = await env.DB.prepare(

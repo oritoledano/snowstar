@@ -242,6 +242,17 @@ export async function createRequest(req, env, user) {
      controller, the quote lane is forced HERE, at the moment of sale — so a
      mis-toggled or reset lane can never self-serve a co-owned track. */
   if (await rightsLocked(env, slug)) lane = 'quote';
+  /* A demo is presented, not sold. Refuse before anything is written: no
+     request row, no reference, nothing for a later step to mistake for a
+     pending sale. */
+  if (ov) {
+    try {
+      if (JSON.parse(ov.patch).lane === 'demo') {
+        return json({ error: 'demo_not_for_licence',
+          detail: 'This track is shown as a demo and is not available to licence.' }, 409);
+      }
+    } catch { /* a corrupt override must not open the gate */ }
+  }
   if (ov) {
     try {
       const p = JSON.parse(ov.patch);
