@@ -156,6 +156,43 @@
     box-shadow:0 0 14px rgba(184,230,255,.8);animation:pulse 1.6s ease-out infinite;font-style:normal}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(184,230,255,.45)}100%{box-shadow:0 0 0 24px rgba(184,230,255,0)}}
 
+  /* ── connected catalogue ── */
+  .cat{margin-top:40px;display:grid;grid-template-columns:1.35fr .95fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+  @media(max-width:900px){.cat{grid-template-columns:1fr}}
+  .cat-box{background:var(--night-2);padding:clamp(20px,2.6vw,30px)}
+  .cat-box h3{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.07em;font-size:1rem;margin-bottom:6px}
+  .cat-box p.h{color:var(--faint);font-size:.88rem;margin-bottom:14px}
+  .cat-box form{display:flex;gap:8px;flex-wrap:wrap}
+  .cat-box input,.cat-box textarea{font:inherit;padding:10px 12px;border:1px solid var(--line-2);border-radius:2px;
+    background:var(--night);color:var(--text);flex:1 1 11rem}
+  .cat-box textarea{width:100%;flex-basis:100%;min-height:110px;font-family:var(--mono);font-size:.78rem}
+  .cat-box input:focus,.cat-box textarea:focus{outline:none;border-color:var(--ice)}
+  .cat-msg{color:var(--dim);font-size:.86rem;margin-top:10px;min-height:1.2em}
+  .cat-msg.good{color:var(--ok,#5fbd8a)}.cat-msg.bad{color:#ff7350}
+  .cat-stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .cat-list{max-height:260px;overflow:auto;margin-top:14px;border-top:1px solid var(--line)}
+  .cat-row{display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+  .cat-row .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cat-row .c{font-family:var(--mono);font-size:.68rem;color:var(--faint);white-space:nowrap}
+  .cat-row .x{background:none;border:0;color:var(--faint);cursor:pointer;font-size:1rem;padding:0 2px}
+  .cat-row .x:hover{color:#ff7350}
+  .checks{margin-top:1px;background:var(--night-2);padding:clamp(20px,2.6vw,30px);border:1px solid var(--line);border-top:0}
+  .check{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
+  .check:last-child{border-bottom:0}
+  .check.done{opacity:.5}
+  .check.done .co{text-decoration:line-through}
+  .cbox{width:20px;height:20px;flex:none;margin-top:2px;border:1px solid var(--line-2);border-radius:2px;
+    background:transparent;cursor:pointer;position:relative}
+  .cbox:hover{border-color:var(--ice)}
+  .check.done .cbox{background:var(--ice);border-color:var(--ice)}
+  .check.done .cbox::after{content:"";position:absolute;inset:4px 5px 7px 5px;border-left:2px solid var(--night);
+    border-bottom:2px solid var(--night);transform:rotate(-45deg)}
+  .co{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.07em;font-size:.85rem}
+  .cs{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ice-deep);margin-left:8px}
+  .check p{color:var(--dim);font-size:.86rem;margin:4px 0 3px}
+  .check p.sig{color:var(--ok,#5fbd8a);font-size:.82rem}
+  .check a{font-family:var(--mono);font-size:.72rem;color:var(--ice);border-bottom:1px solid var(--line-2)}
+
   /* ── the pipeline: how a scan actually thinks ── */
   .pipe{margin-top:46px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
   .stage{background:var(--night-2);padding:clamp(22px,3vw,34px)}
@@ -436,6 +473,54 @@
         <div class="stream"><span class="i">04</span><span class="t">Digital performance</span><span class="w">Pandora, SiriusXM, webcasts — SoundExchange, free to register</span><span class="tag">Coming</span></div>
         <div class="stream"><span class="i">05</span><span class="t">Int'l mechanicals</span><span class="w">Per-country societies, reachable through publishing admin</span><span class="tag">Coming</span></div>
         <div class="stream"><span class="i">06</span><span class="t">YouTube &amp; UGC</span><span class="w">Content ID claims on your masters and compositions</span><span class="tag">Coming</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOGUE -->
+  <section class="blk" id="catalogue" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-eb rv"><span class="eb">Your catalogue</span></div>
+      <h2 class="sec-h d rv">Stop guessing.<br><span class="ice-txt">Scan what you released.</span></h2>
+      <p class="deck rv" style="font-size:1.02rem">A name search reaches only as far as the open databases —
+      for most independent artists that is two or three recordings. Attach what you actually put out and the
+      radar scans that instead, with your writer credits already on it.</p>
+
+      <div class="cat rv">
+        <div class="cat-box">
+          <h3>From streaming</h3>
+          <p class="h">Type your artist name, pick yourself, and every release with an ISRC comes across. No login, no keys.</p>
+          <form id="dzForm">
+            <input id="dzQ" type="text" placeholder="Your artist name…" autocomplete="off" required>
+            <button class="cta" type="submit" style="padding:10px 20px">Find me</button>
+          </form>
+          <div class="cand" id="dzCand" hidden style="margin-top:12px"></div>
+          <p class="cat-msg" id="dzMsg"></p>
+
+          <h3 style="margin-top:26px">From an export</h3>
+          <p class="h">Paste a CSV or TSV from your distributor — or from your society. ACUM's works export
+          works here too: it brings ISWCs, which is how a song with no recording behind it shows up.</p>
+          <form id="impForm">
+            <textarea id="impText" placeholder="Paste the export here, header row included…"></textarea>
+            <button class="cta" type="submit" style="padding:10px 20px">Import</button>
+          </form>
+          <p class="cat-msg" id="impMsg"></p>
+        </div>
+
+        <div class="cat-box">
+          <h3>What's connected</h3>
+          <div class="cat-stats" id="catStats"><span class="pill">loading…</span></div>
+          <button class="cta" id="catScan" type="button" style="padding:11px 22px">Scan my catalogue</button>
+          <p class="cat-msg" id="catMsg"></p>
+          <div class="cat-list" id="catList"></div>
+        </div>
+      </div>
+
+      <div class="checks rv" id="checksBox" hidden>
+        <h3 style="font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.07em;font-size:1rem;margin-bottom:4px">Your six streams</h3>
+        <p style="color:var(--faint);font-size:.88rem;margin-bottom:10px">Every one is a separate pipe your songs
+        earn through. Tick what's done — it saves to your account.</p>
+        <div id="checksList"></div>
       </div>
     </div>
   </section>
@@ -799,6 +884,118 @@
       : '';
   }
   if (window.SnowstarAccount) { window.SnowstarAccount.onChange(acctState); acctState(); }
+
+  // ── connected catalogue ───────────────────────────────────────────────
+  function catMsg(id, text, kind) {
+    const el = $(id); el.className = 'cat-msg' + (kind ? ' ' + kind : ''); el.textContent = text;
+  }
+
+  function loadCatalogue() {
+    if (!signedIn()) { $('catStats').innerHTML = '<span class="pill">sign in to connect your catalogue</span>'; return; }
+    api('/snowstash/catalog').then((d) => {
+      const t = d.tracks || [];
+      $('catStats').innerHTML =
+        '<span class="pill"><b>' + t.length + '</b> tracks</span>' +
+        '<span class="pill"><b>' + (d.with_isrc || 0) + '</b> with ISRC</span>' +
+        (d.iswc_only ? '<span class="pill claim"><b>' + d.iswc_only + '</b> work, no recording</span>' : '');
+      $('catList').innerHTML = t.slice(0, 60).map((r) =>
+        '<div class="cat-row"><span class="t">' + esc(r.title) + '</span>'
+        + '<span class="c">' + esc(r.isrc || r.iswc || '—') + '</span>'
+        + '<span class="c">' + esc(r.source) + '</span>'
+        + '<button class="x" data-del="' + esc(r.id) + '" aria-label="Remove">&times;</button></div>').join('');
+      $('catList').querySelectorAll('[data-del]').forEach((b) => {
+        b.onclick = () => fetch('/api/snowstash/catalog?id=' + encodeURIComponent(b.dataset.del),
+          { method: 'DELETE', credentials: 'same-origin' }).then(loadCatalogue);
+      });
+    }).catch(() => {});
+  }
+
+  $('dzForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    $('dzCand').hidden = true;
+    catMsg('dzMsg', 'Searching…');
+    post('/snowstash/catalog/deezer/search', { q: $('dzQ').value.trim() }).then((d) => {
+      const list = d.candidates || [];
+      if (!list.length) { catMsg('dzMsg', 'No artist found with that name.', 'bad'); return; }
+      catMsg('dzMsg', 'Which one is you?');
+      $('dzCand').innerHTML = '';
+      list.forEach((c) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.innerHTML = '<span class="cn">' + esc(c.name) + '</span><span class="cm">'
+          + esc(c.albums + ' releases · ' + c.fans + ' fans') + '</span>';
+        b.onclick = () => {
+          if (!signedIn()) { openAuth(() => b.click()); return; }
+          $('dzCand').hidden = true;
+          catMsg('dzMsg', 'Importing ' + c.name + "'s releases… this can take a minute.");
+          post('/snowstash/catalog/deezer', { artist_id: c.id }).then((r) => {
+            if (r.error) { catMsg('dzMsg', 'Import failed.', 'bad'); return; }
+            catMsg('dzMsg', 'Added ' + r.added + ' of ' + r.found + ' recordings.', 'good');
+            loadCatalogue();
+          });
+        };
+        $('dzCand').appendChild(b);
+      });
+      $('dzCand').hidden = false;
+    });
+  });
+
+  $('impForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!signedIn()) { openAuth(() => $('impForm').requestSubmit()); return; }
+    const text = $('impText').value.trim();
+    if (!text) return;
+    catMsg('impMsg', 'Reading…');
+    post('/snowstash/catalog/import', { text }).then((d) => {
+      if (d.error === 'no_title_column') { catMsg('impMsg', 'No title column found. Columns seen: ' + (d.headers || []).join(', '), 'bad'); return; }
+      if (d.error) { catMsg('impMsg', 'Could not read that export.', 'bad'); return; }
+      catMsg('impMsg', 'Added ' + d.added + ' of ' + d.rows + ' rows (' + (d.mapped || []).join(', ') + ').', 'good');
+      $('impText').value = '';
+      loadCatalogue();
+    });
+  });
+
+  $('catScan').addEventListener('click', () => {
+    if (!signedIn()) { openAuth(() => $('catScan').click()); return; }
+    catMsg('catMsg', 'Scanning your catalogue…');
+    post('/snowstash/scan/catalog', {}).then((d) => {
+      if (d.error === 'no_isrcs') { catMsg('catMsg', 'Connect some recordings first — a work with no ISRC cannot be checked against a registry.', 'bad'); return; }
+      if (!d.scan_id) { catMsg('catMsg', 'Could not start the scan.', 'bad'); return; }
+      scanId = d.scan_id;
+      catMsg('catMsg', 'Running — the result appears above when it lands.', 'good');
+      clearInterval(pollTimer);
+      pollTimer = setInterval(poll, 4000);
+    });
+  });
+
+  function loadChecks() {
+    if (!signedIn()) return;
+    api('/snowstash/registrations').then((d) => {
+      const items = d.items || [];
+      if (!items.length) return;
+      $('checksBox').hidden = false;
+      $('checksList').innerHTML = items.map((i) =>
+        '<div class="check' + (i.status === 'done' ? ' done' : '') + '" data-item="' + esc(i.id) + '">'
+        + '<button class="cbox" aria-label="Mark ' + esc(i.org) + ' done"></button><div>'
+        + '<span class="co">' + esc(i.org) + '<span class="cs">' + esc(i.stream) + '</span></span>'
+        + '<p>' + esc(i.why) + '</p>'
+        + (i.signal_note ? '<p class="sig">' + esc(i.signal_note) + '</p>' : '')
+        + '<a href="' + esc(i.url) + '" target="_blank" rel="noopener">' + esc(i.url.replace('https://', '')) + '</a>'
+        + '</div></div>').join('');
+      $('checksList').querySelectorAll('.check').forEach((row) => {
+        row.querySelector('.cbox').onclick = () => {
+          const done = !row.classList.contains('done');
+          row.classList.toggle('done', done);
+          post('/snowstash/registrations', { item_id: row.dataset.item, status: done ? 'done' : null });
+        };
+      });
+    }).catch(() => {});
+  }
+
+  if (window.SnowstarAccount) {
+    window.SnowstarAccount.onChange(() => { loadCatalogue(); loadChecks(); });
+  }
+  loadCatalogue(); loadChecks();
 
   // returning from HYP, or opening a saved report
   const qs = new URLSearchParams(location.search);

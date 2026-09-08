@@ -36,7 +36,10 @@ import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar 
 import { updateMember, deleteMember, memberDetail } from './members.js';
 import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
 import { stashArtists, stashScanStart, stashScanGet, stashMine,
-         stashCouponCheck, stashCouponCreate, stashCheckout, stashAdmin } from './snowstash.js';
+         stashCouponCheck, stashCouponCreate, stashCheckout, stashAdmin,
+         stashCatalog, stashCatalogDelete, stashCatalogManual, stashCatalogImport,
+         stashDeezerSearch, stashDeezerImport, stashCatalogScan,
+         stashRegistrations, stashRegistrationSet } from './snowstash.js';
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken } from './streamdaw.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -331,6 +334,15 @@ async function handle(req, env, ctx) {
   if (path === '/snowstash/scan' && method === 'GET') return stashScanGet(req, env, await currentUser(req, env));
   if (path === '/snowstash/mine' && method === 'GET') return stashMine(env, await currentUser(req, env));
   if (path === '/snowstash/admin' && method === 'GET') return stashAdmin(env, await currentUser(req, env));
+  if (path === '/snowstash/catalog' && method === 'GET') return stashCatalog(env, await currentUser(req, env));
+  if (path === '/snowstash/catalog' && method === 'DELETE') return stashCatalogDelete(req, env, await currentUser(req, env));
+  if (path === '/snowstash/catalog/manual' && method === 'POST') return stashCatalogManual(req, env, await currentUser(req, env));
+  if (path === '/snowstash/catalog/import' && method === 'POST') return stashCatalogImport(req, env, await currentUser(req, env));
+  if (path === '/snowstash/catalog/deezer/search' && method === 'POST') return stashDeezerSearch(req, env);
+  if (path === '/snowstash/catalog/deezer' && method === 'POST') return stashDeezerImport(req, env, await currentUser(req, env));
+  if (path === '/snowstash/scan/catalog' && method === 'POST') return stashCatalogScan(req, env, ctx, await currentUser(req, env));
+  if (path === '/snowstash/registrations' && method === 'GET') return stashRegistrations(env, await currentUser(req, env));
+  if (path === '/snowstash/registrations' && method === 'POST') return stashRegistrationSet(req, env, await currentUser(req, env));
   if (path === '/snowstash/coupon/check' && method === 'POST') return stashCouponCheck(req, env);
   if (path === '/snowstash/coupon' && method === 'POST') return stashCouponCreate(req, env, await currentUser(req, env));
   if (path === '/snowstash/checkout' && method === 'POST') return stashCheckout(req, env, await currentUser(req, env));

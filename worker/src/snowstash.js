@@ -573,3 +573,384 @@ export async function stashReturn(req, env, raw, q) {
   if (order.coupon) await burnCoupon(env, order.coupon);
   return back(`report=${order.scan_id}&bought=1`);
 }
+
+/* ═══════════ Connected catalogue ═══════════
+   A name search reaches only as far as the open databases, which for an
+   independent artist is often two or three recordings — Ori's own scan found
+   two. The catalogue is the answer: attach what you actually released and the
+   radar scans that, with your writer credits already attached.
+
+   Sources deliberately differ in what they know. A distributor or streaming
+   profile knows ISRCs (recordings). A society export knows ISWCs (works).
+   Both are kept, because the GAP between them is itself a finding: an ACUM
+   work with no ISRC is a composition no registry can tie to a recording, which
+   is exactly how a song ends up unmatched and unpaid. */
+
+const catId = () => crypto.randomUUID().replace(/-/g, '').slice(0, 12);
+const upper = (v) => String(v == null ? '' : v).trim().toUpperCase().replace(/[\s-]/g, '');
+
+function splitWriters(raw) {
+  if (Array.isArray(raw)) return raw.map((w) => String(w).trim()).filter(Boolean);
+  const s = String(raw || '').trim();
+  if (!s) return [];
+  for (const sep of [';', '|', '/']) if (s.includes(sep)) return s.split(sep).map((w) => w.trim()).filter(Boolean);
+  return s.split(',').map((w) => w.trim()).filter(Boolean);
+}
+
+async function addTrack(env, userId, t) {
+  const isrc = upper(t.isrc) || null;
+  const iswc = upper(t.iswc) || null;
+  const title = String(t.title || '').trim().slice(0, 200);
+  if (!title) return 0;
+  if (isrc) {
+    const seen = await env.DB.prepare('SELECT id FROM snowstash_catalog WHERE user_id=? AND isrc=?')
+      .bind(userId, isrc).first().catch(() => null);
+    if (seen) {
+      await env.DB.prepare(
+        `UPDATE snowstash_catalog SET title=?, artist_name=?, iswc=COALESCE(?, iswc),
+           writers=?, source=?, rank=COALESCE(?, rank) WHERE id=?`
+      ).bind(title, t.artist_name || null, iswc, JSON.stringify(splitWriters(t.writers)),
+             t.source, t.rank ?? null, seen.id).run();
+      return 0;
+    }
+  }
+  await env.DB.prepare(
+    `INSERT INTO snowstash_catalog (id, user_id, title, artist_name, isrc, iswc, writers, source, rank, added_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(catId(), userId, title, t.artist_name || null, isrc, iswc,
+         JSON.stringify(splitWriters(t.writers)), t.source, t.rank ?? null, now()).run();
+  return 1;
+}
+
+/** GET /snowstash/catalog */
+export async function stashCatalog(env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const { results } = await env.DB.prepare(
+    `SELECT id, title, artist_name, isrc, iswc, writers, source, rank, added_at
+       FROM snowstash_catalog WHERE user_id=? ORDER BY added_at DESC LIMIT 500`).bind(user.id).all();
+  const tracks = (results || []).map((r) => ({ ...r, writers: JSON.parse(r.writers || '[]') }));
+  return json({
+    tracks,
+    with_isrc: tracks.filter((t) => t.isrc).length,
+    iswc_only: tracks.filter((t) => t.iswc && !t.isrc).length,
+  });
+}
+
+/** DELETE /snowstash/catalog?id= */
+export async function stashCatalogDelete(req, env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const id = new URL(req.url).searchParams.get('id') || '';
+  await env.DB.prepare('DELETE FROM snowstash_catalog WHERE user_id=? AND id=?').bind(user.id, id).run();
+  return json({ ok: true });
+}
+
+/** POST /snowstash/catalog/manual — { tracks:[{title,isrc,iswc,writers}] } */
+export async function stashCatalogManual(req, env, user) {
+  if (!user) return json({ error: 'sign_in_required' }, 401);
+  const b = await req.json().catch(() => ({}));
+  let added = 0;
+  for (const t of (b.tracks || []).slice(0, 500)) added += await addTrack(env, user.id, { ...t, source: 'manual' });
+  return json({ added });
+}
+
+/* ── Deezer: keyless, and it carries ISRC and popularity in one call ─────── */
+const DZ = 'https://api.deezer.com';
+
+/** POST /snowstash/catalog/deezer/search — { q } → candidates */
+export async function stashDeezerSearch(req, env) {
+  const b = await req.json().catch(() => ({}));
+  const q = String(b.q || '').trim();
+  if (!q) return json({ error: 'empty' }, 400);
+  const m = q.match(/deezer\.com\/(?:[a-z]{2}\/)?artist\/(\d+)/) || (/^\d+$/.test(q) ? [null, q] : null);
+  try {
+    if (m) {
+      const a = await getJSON(`${DZ}/artist/${m[1]}`);
+      return json({ candidates: a && !a.error ? [{ id: String(a.id), name: a.name, fans: a.nb_fan || 0, albums: a.nb_album || 0 }] : [] });
+    }
+    const d = await getJSON(`${DZ}/search/artist?q=${encodeURIComponent(q)}&limit=5`);
+    return json({ candidates: ((d && d.data) || []).map((a) => ({ id: String(a.id), name: a.name, fans: a.nb_fan || 0, albums: a.nb_album || 0 })) });
+  } catch { return json({ error: 'lookup_unavailable' }, 503); }
+}
+
+/** POST /snowstash/catalog/deezer — { artist_id } → import every own release */
+export async function stashDeezerImport(req, env, user) {
+  if (!user) return json({ error: 'sign_in_required' }, 401);
+  const b = await req.json().catch(() => ({}));
+  const artistId = String(b.artist_id || '').trim();
+  if (!/^\d+$/.test(artistId)) return json({ error: 'pick_an_artist' }, 400);
+
+  let albums = [], index = 0;
+  try {
+    while (albums.length < 60) {
+      const page = await getJSON(`${DZ}/artist/${artistId}/albums?limit=50&index=${index}`);
+      const items = (page && page.data) || [];
+      albums = albums.concat(items);
+      if (!items.length || !(page && page.next)) break;
+      index += 50;
+    }
+  } catch { return json({ error: 'lookup_unavailable' }, 503); }
+
+  let added = 0, found = 0;
+  for (const al of albums.slice(0, 60)) {
+    const page = await getJSON(`${DZ}/album/${al.id}/tracks?limit=100`, { soft: true });
+    for (const t of ((page && page.data) || [])) {
+      if (!t.isrc) continue;
+      found++;
+      added += await addTrack(env, user.id, {
+        title: t.title, artist_name: (t.artist || {}).name,
+        isrc: t.isrc, rank: t.rank || null, source: 'deezer',
+      });
+    }
+  }
+  return json({ added, found });
+}
+
+/** POST /snowstash/catalog/import — a pasted export (CSV/TSV) from a
+ *  distributor or a society. Header names vary wildly, so map generously. */
+const COLS = {
+  title: ['title', 'track', 'track title', 'track_title', 'song', 'song title', 'track name', 'work title', 'שם יצירה', 'שם היצירה'],
+  isrc: ['isrc', 'isrc code', 'קוד isrc'],
+  iswc: ['iswc', 'iswc code', 'קוד iswc'],
+  artist_name: ['artist', 'artist name', 'artist_name', 'primary artist', 'performer'],
+  writers: ['writers', 'songwriters', 'composers', 'writer', 'composer', 'songwriter', 'יוצרים'],
+};
+
+function parseDelimited(text) {
+  const lines = text.replace(/\r/g, '').split('\n').filter((l) => l.trim());
+  if (!lines.length) return { rows: [], headers: [] };
+  const delim = (lines[0].match(/\t/g) || []).length > (lines[0].match(/,/g) || []).length ? '\t' : ',';
+  const cut = (line) => {
+    const out = []; let cur = '', q = false;
+    for (const ch of line) {
+      if (ch === '"') q = !q;
+      else if (ch === delim && !q) { out.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    out.push(cur);
+    return out.map((c) => c.trim().replace(/^"|"$/g, ''));
+  };
+  const headers = cut(lines[0]).map((h) => h.toLowerCase().trim());
+  const rows = lines.slice(1).map((l) => {
+    const cells = cut(l); const o = {};
+    headers.forEach((h, i) => { o[h] = cells[i] || ''; });
+    return o;
+  });
+  return { rows, headers };
+}
+
+export async function stashCatalogImport(req, env, user) {
+  if (!user) return json({ error: 'sign_in_required' }, 401);
+  const b = await req.json().catch(() => ({}));
+  const { rows, headers } = parseDelimited(String(b.text || ''));
+  if (!rows.length) return json({ error: 'nothing_parsed' }, 400);
+
+  const map = {};
+  for (const [ours, aliases] of Object.entries(COLS)) {
+    const hit = headers.find((h) => aliases.includes(h));
+    if (hit) map[ours] = hit;
+  }
+  if (!map.title) return json({ error: 'no_title_column', headers }, 400);
+
+  const source = ['acum', 'csv'].includes(b.source) ? b.source : 'csv';
+  let added = 0;
+  for (const r of rows.slice(0, 1000)) {
+    added += await addTrack(env, user.id, {
+      title: r[map.title],
+      artist_name: map.artist_name ? r[map.artist_name] : null,
+      isrc: map.isrc ? r[map.isrc] : null,
+      iswc: map.iswc ? r[map.iswc] : null,
+      writers: map.writers ? r[map.writers] : [],
+      source,
+    });
+  }
+  return json({ added, rows: rows.length, mapped: Object.keys(map) });
+}
+
+/** POST /snowstash/scan/catalog — scan what you actually released. */
+export async function stashCatalogScan(req, env, ctx, user) {
+  if (!user) return json({ error: 'sign_in_required' }, 401);
+  const { results } = await env.DB.prepare(
+    `SELECT title, artist_name, isrc, iswc, writers, rank FROM snowstash_catalog
+      WHERE user_id=? ORDER BY rank DESC NULLS LAST, added_at DESC LIMIT 400`).bind(user.id).all();
+  const tracks = results || [];
+  if (!tracks.some((t) => t.isrc)) return json({ error: 'no_isrcs' }, 400);
+
+  const b = await req.json().catch(() => ({}));
+  const artistName = String(b.artist || '').trim() || (tracks.find((t) => t.artist_name) || {}).artist_name || (user.name || user.email.split('@')[0]);
+  const id = shortId();
+  await env.DB.prepare(
+    `INSERT INTO snowstash_scans (id, user_id, artist_name, kind, status, created_at)
+     VALUES (?, ?, ?, 'catalog', 'running', ?)`).bind(id, user.id, artistName, now()).run();
+  ctx.waitUntil(runCatalogScan(env, id, tracks, artistName));
+  return json({ scan_id: id, status: 'running' });
+}
+
+/** Every row here is the artist's own by definition, and the writer credits
+ *  they supplied sharpen the match — the most accurate scan we can run. */
+export async function runCatalogScan(env, scanId, tracks, artistName) {
+  try {
+    const withIsrc = tracks.filter((t) => t.isrc);
+    const iswcOnly = tracks.filter((t) => !t.isrc && t.iswc);
+    const tiers = { claimable: [], attention: [], info: [], ok: [] };
+
+    for (const t of withIsrc.slice(0, MAX_ISRC_CHECKS)) {
+      const writers = JSON.parse(t.writers || '[]');
+      const data = await cfmIsrc(t.isrc);
+      const c = classify(data, { title: t.title, artistName, ipis: [], isPrimary: true });
+      if (!c.reasons.length && c.matchStatus === 'not_found') {
+        c.reasons.push('Not in the identifier databases we can check — for a release you know exists, that is itself the finding: a registry that cannot see the recording cannot pay for it.');
+      }
+      // a writer the artist told us about counts, even if the registry disagrees
+      if (writers.length && data && (data.songwriters || []).length) {
+        const known = (data.songwriters || []).map((s) => s.name || '');
+        const missing = writers.filter((w) => !known.some((k) => namesSimilar(w, k)));
+        if (missing.length) {
+          c.tier = c.tier === OK ? ATTENTION : c.tier;
+          c.reasons.push(`You listed ${missing.join(', ')} as a writer, but the registry does not — an uncredited writer is an unpaid writer.`);
+        }
+      }
+      tiers[c.tier].push({
+        isrc: t.isrc, title: t.title, iswc: t.iswc || (data && data.iswc) || null,
+        is_primary: true, writer_match: c.writerMatch, match_status: c.matchStatus,
+        reasons: c.reasons, rank: t.rank ?? null,
+      });
+      await sleep(350);
+    }
+
+    // An ISWC with no recording behind it is a real, separate failure.
+    for (const t of iswcOnly.slice(0, 40)) {
+      tiers.attention.push({
+        isrc: null, title: t.title, iswc: t.iswc, is_primary: true,
+        match_status: 'no_recording', rank: null,
+        reasons: ['Registered as a work, but with no recording linked to it. A society knows the song exists; no registry can tie it to anything anyone played, so it cannot be paid.'],
+      });
+    }
+
+    let ranked = 0, high = 0;
+    for (const key of [CLAIMABLE, ATTENTION]) {
+      const own = tiers[key].filter((i) => i.isrc);
+      for (const i of own.slice(0, 15)) if (i.rank == null) i.rank = await deezerRank(i.isrc);
+      const p = prioritise(own);
+      ranked += p.ranked; high += p.high;
+      tiers[key] = [...own, ...tiers[key].filter((i) => !i.isrc)];
+    }
+
+    const nClaim = tiers.claimable.length, nAtt = tiers.attention.length;
+    const health = Math.max(0, Math.min(100, 100 - 12 * nClaim - Math.min(40, 4 * nAtt)));
+    const result = {
+      artist_name: artistName, artist_country: '', artist_ipis: [],
+      isrcs_checked: Math.min(withIsrc.length, MAX_ISRC_CHECKS),
+      total_isrcs: withIsrc.length,
+      primary_isrc_count: withIsrc.length, guest_isrc_count: 0,
+      works_without_recording: iswcOnly.length,
+      health,
+      health_status: nClaim ? 'Money on the table — you likely have claimable royalties'
+                   : nAtt ? 'Fixable gaps — metadata issues on your own tracks'
+                   : 'Looking clean — checked recordings are properly matched',
+      sources: ['Your catalogue', 'Credits.fm', 'Deezer'],
+      priority_ranked: ranked, priority_high: high,
+      claimable_count: nClaim, attention_count: nAtt,
+      info_count: tiers.info.length, ok_count: tiers.ok.length,
+      tiers,
+    };
+    await env.DB.prepare(
+      `UPDATE snowstash_scans SET status='complete', result_json=?, health=?, claimable=?, attention=? WHERE id=?`
+    ).bind(JSON.stringify(result), health, nClaim, nAtt, scanId).run();
+  } catch (e) {
+    await env.DB.prepare(`UPDATE snowstash_scans SET status='error', error=? WHERE id=?`)
+      .bind(String((e && e.message) || e).slice(0, 300), scanId).run().catch(() => {});
+  }
+}
+
+/* ═══════════ The six streams ═══════════
+   Societies publish no membership lookup, so the honest signal is what the
+   artist's identifiers imply plus what they tick off themselves. An IPI only
+   exists because SOME society issued it — that is a hint, not a fact, and the
+   copy says so. */
+const SX = { id: 'soundexchange', org: 'SoundExchange', stream: 'US digital performance',
+  why: 'Pandora, SiriusXM and webcast royalties for the recording. Register as BOTH featured artist and rights owner if you own your masters — registering one role and not the other is the most common way half this money goes uncollected.',
+  url: 'https://www.soundexchange.com' };
+const MLC_ITEM = { id: 'mlc', org: 'The MLC', stream: 'US mechanical',
+  why: 'US streaming mechanicals for songs you wrote. Free to join as a self-administered writer, and their Matching Tool holds the back-pay nobody has claimed.',
+  url: 'https://portal.themlc.com' };
+
+const BY_COUNTRY = {
+  IL: [
+    { id: 'acum', org: 'ACUM', stream: 'Performance + mechanical', pro: true,
+      why: 'The Israeli authors’ society. CISAC reciprocals bring foreign performance money home, and registration pays retroactively for recent broadcasts. Declaring a work is a separate step from ACUM knowing about it — undeclared works are simply not paid.',
+      url: 'https://www.acum.org.il' },
+    { id: 'eshkolot', org: 'Eshkolot', stream: 'Neighbouring rights (performers)',
+      why: 'Israeli performers’ royalties for your recordings on radio and TV. Separate money from ACUM’s, and a separate registration.',
+      url: 'https://eshkolot.co.il' },
+    MLC_ITEM, SX,
+  ],
+  US: [
+    { id: 'pro-us', org: 'ASCAP or BMI', stream: 'Performance', pro: true,
+      why: 'Radio, TV, venues and streaming’s performance share. Pick one — you cannot be in both.', url: 'https://www.ascap.com' },
+    MLC_ITEM, SX,
+  ],
+  GB: [
+    { id: 'prs', org: 'PRS for Music', stream: 'Performance + mechanical', pro: true,
+      why: 'UK performance and mechanical royalties, with reciprocal collection worldwide.', url: 'https://www.prsformusic.com' },
+    { id: 'ppl', org: 'PPL', stream: 'Neighbouring rights',
+      why: 'Your recordings played in public in the UK and 50+ countries. Register as performer AND, if you own the masters, as recording rightsholder — they are different entitlements and an agent may hold only one of them.',
+      url: 'https://www.ppluk.com' },
+    MLC_ITEM, SX,
+  ],
+};
+const DEFAULT_ITEMS = [
+  { id: 'pro-home', org: 'Your home PRO', stream: 'Performance', pro: true,
+    why: 'Join the authors’ society where you live — CISAC lists them all. Reciprocal agreements route worldwide performance money to it.',
+    url: 'https://www.cisac.org/services/members-directory' },
+  { id: 'nr-home', org: 'Your neighbouring-rights society', stream: 'Neighbouring rights',
+    why: 'Performer royalties for recordings played in public — a different society from your PRO in most countries.', url: 'https://www.ppluk.com' },
+  MLC_ITEM, SX,
+];
+const PUBADMIN = { id: 'pubadmin', org: 'Publishing admin', stream: "International mechanical",
+  why: 'Per-country mechanical societies are only reachable through an administrator (Songtrust-style, 15–20%). Worth it once streaming income is real — not on day one.',
+  url: 'https://www.songtrust.com' };
+
+/** GET /snowstash/registrations */
+export async function stashRegistrations(env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const last = await env.DB.prepare(
+    `SELECT result_json FROM snowstash_scans WHERE user_id=? AND status='complete'
+      ORDER BY created_at DESC LIMIT 5`).bind(user.id).all();
+  let country = '', hasIpi = false;
+  for (const row of (last.results || [])) {
+    try {
+      const r = JSON.parse(row.result_json);
+      country = country || r.artist_country || '';
+      hasIpi = hasIpi || !!(r.artist_ipis || []).length;
+    } catch {}
+  }
+  const items = (BY_COUNTRY[country.toUpperCase()] || DEFAULT_ITEMS).concat([PUBADMIN]).map((i) => ({ ...i }));
+  const { results } = await env.DB.prepare('SELECT item_id, status FROM snowstash_registrations WHERE user_id=?').bind(user.id).all();
+  const state = Object.fromEntries((results || []).map((r) => [r.item_id, r.status]));
+  for (const i of items) {
+    i.status = state[i.id] || null;
+    if (i.pro && hasIpi) {
+      i.signal = 'likely-registered';
+      i.signal_note = 'You have an IPI number, and only a society issues one — so you are almost certainly a member somewhere. Worth checking every work is actually declared there.';
+    }
+  }
+  return json({ items, country });
+}
+
+/** POST /snowstash/registrations — { item_id, status } */
+export async function stashRegistrationSet(req, env, user) {
+  if (!user) return json({ error: 'sign_in_required' }, 401);
+  const b = await req.json().catch(() => ({}));
+  const itemId = String(b.item_id || '').slice(0, 40);
+  if (!itemId) return json({ error: 'bad_item' }, 400);
+  if (b.status === null || b.status === undefined || b.status === '') {
+    await env.DB.prepare('DELETE FROM snowstash_registrations WHERE user_id=? AND item_id=?').bind(user.id, itemId).run();
+    return json({ ok: true });
+  }
+  if (!['done', 'dismissed'].includes(b.status)) return json({ error: 'bad_status' }, 400);
+  await env.DB.prepare(
+    `INSERT INTO snowstash_registrations (user_id, item_id, status, updated_at) VALUES (?, ?, ?, ?)
+     ON CONFLICT(user_id, item_id) DO UPDATE SET status=excluded.status, updated_at=excluded.updated_at`
+  ).bind(user.id, itemId, b.status, now()).run();
+  return json({ ok: true });
+}
