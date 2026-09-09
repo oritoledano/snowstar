@@ -18,6 +18,7 @@
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload,
          listAlerts, setAlertsMuted, handleDemand } from './analytics.js';
 import { sendMail, resetEmail, welcomeEmail } from './mail.js';
+import { transcribeSubmission, suggestVersions } from './intake.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
@@ -29,7 +30,7 @@ import { listArtists, ensureArtists, saveArtist } from './artistreg.js';
 import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
-         listArtistsAdmin, updateSubmission } from './artists.js';
+         listArtistsAdmin, updateSubmission, bulkReview, bulkEditSubmissions } from './artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration } from './rights.js';
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
@@ -250,6 +251,10 @@ async function handle(req, env, ctx) {
   if (path === '/tracks/owner' && method === 'POST') return reassignOwner(req, env, await currentUser(req, env));
   if (path === '/submissions' && method === 'GET') return listSubmissions(env, await currentUser(req, env), url);
   if (path === '/submissions/review' && method === 'POST') return reviewSubmission(req, env, await currentUser(req, env));
+  if (path === '/submissions/bulk-review' && method === 'POST') return bulkReview(req, env, await currentUser(req, env));
+  if (path === '/submissions/bulk-edit' && method === 'POST') return bulkEditSubmissions(req, env, await currentUser(req, env));
+  if (path === '/intake/transcribe' && method === 'POST') return transcribeSubmission(req, env, await currentUser(req, env));
+  if (path === '/intake/versions' && method === 'GET') return suggestVersions(env, await currentUser(req, env), url);
 
   // ── rights layer: credits, claims, managed artists, owner-gated mail ──
   if (path === '/credits' && method === 'GET') return myCredits(env, await currentUser(req, env));

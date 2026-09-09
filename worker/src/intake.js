@@ -1,0 +1,195 @@
+/**
+ * Artist intake — the machine work on a pile of new uploads.
+ *
+ * Two jobs a person should not be doing by hand when thirty tracks land at
+ * once:
+ *
+ *   1. LYRICS. Whisper on the audio, through the Workers AI binding, so a
+ *      vocal track arrives with its words already searchable instead of
+ *      waiting for somebody to type them.
+ *
+ *   2. VERSIONS. Deciding which of thirty files are really one song — an edit,
+ *      an instrumental, a playback, a long cut — and which are separate
+ *      creations. This is done with arithmetic and titles rather than a model,
+ *      on purpose: the rule is inspectable, it explains itself in the UI, and
+ *      it cannot hallucinate a relationship between two tracks that share
+ *      nothing. Where it is unsure it says so and the owner decides.
+ */
+
+const now = () => Math.floor(Date.now() / 1000);
+const json = (data, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+  });
+
+/* ── 1. lyrics ─────────────────────────────────────────────────────────────
+   Whisper wants raw bytes. Submissions live in MEDIA under their file_key, so
+   the audio never leaves Cloudflare — no third party, no upload step. */
+export async function transcribeSubmission(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  if (!env.AI) return json({ error: 'no_ai_binding' }, 503);
+  const b = await req.json().catch(() => ({}));
+  const id = Number(b.id);
+  if (!Number.isInteger(id)) return json({ error: 'bad_id' }, 400);
+
+  const row = await env.DB.prepare('SELECT id, title, file_key, meta FROM submissions WHERE id = ?')
+    .bind(id).first();
+  if (!row || !row.file_key) return json({ error: 'not_found' }, 404);
+
+  const obj = await env.MEDIA.get(row.file_key);
+  if (!obj) return json({ error: 'file_missing' }, 404);
+  const buf = await obj.arrayBuffer();
+  /* Whisper's practical ceiling here is a few minutes of audio; a long master
+     is truncated rather than refused, because the first minutes carry the
+     verse and chorus that make lyrics searchable. */
+  const MAX = 24 * 1024 * 1024;
+  const bytes = [...new Uint8Array(buf.byteLength > MAX ? buf.slice(0, MAX) : buf)];
+
+  let out;
+  try {
+    out = await env.AI.run('@cf/openai/whisper', { audio: bytes });
+  } catch (e) {
+    return json({ error: 'transcribe_failed', detail: String((e && e.message) || e).slice(0, 200) }, 502);
+  }
+  const text = String((out && out.text) || '').trim();
+  const truncated = buf.byteLength > MAX;
+
+  /* An instrumental transcribes to noise — a few stray words, or nothing.
+     Below a real word count we report "no lyrics found" rather than saving
+     hallucinated fragments onto a track. */
+  const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+  const looksVocal = words >= 12;
+
+  let meta = {};
+  try { meta = row.meta ? JSON.parse(row.meta) : {}; } catch { meta = {}; }
+  if (looksVocal) {
+    meta.lyrics = text.slice(0, 8000);
+    meta.lyrics_source = 'whisper';
+    meta.lyrics_at = now();
+    if (truncated) meta.lyrics_partial = true;
+    await env.DB.prepare('UPDATE submissions SET meta = ? WHERE id = ?')
+      .bind(JSON.stringify(meta).slice(0, 20000), id).run();
+  }
+  return json({ ok: true, words, saved: looksVocal, truncated,
+                lyrics: looksVocal ? meta.lyrics : '', text: looksVocal ? '' : text.slice(0, 400) });
+}
+
+/* ── 2. versions of the same song ──────────────────────────────────────────
+   What actually distinguishes a version from a different track:
+
+     · the titles agree once the version words are stripped
+       ("X", "X (Long Ver)", "X - INSTRUMENTAL", "X PLAYBACK" are one song)
+     · or the titles are near-identical by edit distance (typos, spacing)
+
+   Duration is deliberately NOT a requirement — an edit and its long cut differ
+   by minutes — but a large BPM gap is treated as evidence against, because two
+   tracks at 92 and 147 sharing a name are usually a coincidence of words. */
+
+const VERSION_WORDS = [
+  'instrumental', 'inst', 'playback', 'pb', 'radio edit', 'radio', 'edit', 'short', 'shortened',
+  'long', 'long ver', 'long version', 'full', 'extended', 'loop', 'sting', 'bed', 'underscore',
+  'alt', 'alternate', 'alternative', 'version', 'ver', 'mix', 'remix', 'remaster', 'remastered',
+  'no vocals', 'novox', 'no vox', 'vocal', 'vocals', 'acapella', 'a capella', 'stem', 'stems',
+  'clean', 'dry', 'wet', 'demo', 'draft', 'rough', 'final', 'master', 'mastered', 'cut',
+  'seconds', 'sec', 'secs', 'minute', 'min', 'aggressive', 'organic', 'tamed', 'original',
+];
+
+/** The song under the version: lowercase, no bracketed suffixes, no version
+ *  words, no punctuation, no trailing numbers. */
+export function songKey(title) {
+  let t = String(title || '').toLowerCase();
+  t = t.replace(/\.[a-z0-9]{2,4}$/, '');            // a stray file extension
+  t = t.replace(/[\(\[\{][^\)\]\}]*[\)\]\}]/g, ' '); // (long ver), [instrumental]
+  t = t.replace(/[-–—_|/]+/g, ' ');
+  t = t.replace(/[^a-z0-9֐-׿ ]+/g, ' ');   // keep Hebrew
+  let words = t.split(/\s+/).filter(Boolean);
+  // strip version words and bare numbers from the END only: "take 2" is a
+  // version, but "25 booms" is a title that starts with a number
+  const isVersionWord = (w) => VERSION_WORDS.includes(w) || /^\d{1,3}$/.test(w) || /^v\d+$/.test(w);
+  while (words.length > 1 && isVersionWord(words[words.length - 1])) words.pop();
+  return words.join(' ').trim();
+}
+
+/** Levenshtein, capped — only ever run on short titles. */
+function editDistance(a, b) {
+  if (a === b) return 0;
+  const m = a.length, n = b.length;
+  if (!m || !n) return Math.max(m, n);
+  let prev = Array.from({ length: n + 1 }, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+
+/**
+ * GET /intake/versions?user_id=… — group a person's uploads into likely songs.
+ * Returns groups of two or more, each with the reason it was grouped, so the
+ * owner is agreeing with an argument rather than trusting a verdict.
+ */
+export async function suggestVersions(env, user, url) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const uid = String(url.searchParams.get('user_id') || '').trim();
+  const status = String(url.searchParams.get('status') || '').trim();
+
+  let q = `SELECT id, title, meta, status, published_slug FROM submissions`;
+  const where = [], vals = [];
+  if (uid) { where.push('user_id = ?'); vals.push(uid); }
+  if (status) { where.push('status = ?'); vals.push(status); }
+  if (where.length) q += ' WHERE ' + where.join(' AND ');
+  q += ' ORDER BY id';
+  const r = await env.DB.prepare(q).bind(...vals).all().catch(() => ({ results: [] }));
+  const rows = (r.results || []).map((x) => {
+    let m = {};
+    try { m = x.meta ? JSON.parse(x.meta) : {}; } catch { m = {}; }
+    return { id: x.id, title: x.title || '', status: x.status, slug: x.published_slug,
+             bpm: Number(m.bpm) || null, dur: Number(m.duration) || null, key: songKey(x.title) };
+  });
+
+  // exact key first, then fold in near-identical keys
+  const byKey = new Map();
+  for (const t of rows) {
+    if (!t.key) continue;
+    if (!byKey.has(t.key)) byKey.set(t.key, []);
+    byKey.get(t.key).push(t);
+  }
+  const keys = [...byKey.keys()];
+  const merged = new Set();
+  for (let i = 0; i < keys.length; i++) {
+    for (let j = i + 1; j < keys.length; j++) {
+      const a = keys[i], b = keys[j];
+      if (merged.has(b) || a.length < 5 || b.length < 5) continue;
+      const d = editDistance(a, b);
+      if (d <= Math.max(1, Math.floor(Math.min(a.length, b.length) * 0.12))) {
+        byKey.get(a).push(...byKey.get(b));
+        merged.add(b);
+      }
+    }
+  }
+  for (const k of merged) byKey.delete(k);
+
+  const groups = [];
+  for (const [key, items] of byKey) {
+    if (items.length < 2) continue;
+    const bpms = items.map((t) => t.bpm).filter(Boolean);
+    const spread = bpms.length > 1 ? Math.max(...bpms) - Math.min(...bpms) : 0;
+    // wildly different tempos under one name is usually coincidence, not a mix
+    const confidence = spread > 25 ? 'low' : (items.length > 5 ? 'medium' : 'high');
+    const why = [`titles reduce to “${key}”`];
+    if (bpms.length > 1) why.push(spread <= 4 ? 'same tempo' : `tempo spread ${spread} BPM`);
+    groups.push({
+      key,
+      confidence,
+      why: why.join(' · '),
+      // the longest cut is the natural parent: versions hang off the full track
+      parent: items.slice().sort((a, b) => (b.dur || 0) - (a.dur || 0))[0],
+      items,
+    });
+  }
+  groups.sort((a, b) => b.items.length - a.items.length);
+  return json({ groups, scanned: rows.length });
+}

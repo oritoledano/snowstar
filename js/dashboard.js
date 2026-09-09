@@ -30,6 +30,11 @@
   let tab = (location.hash || '').replace('#', '');
   if (!TABS.includes(tab)) tab = 'overview';
   let days = 30, subTab = 'pending';
+  /* Which submissions are ticked, and whose. Module-level because every review
+     action ends in load(), which rebuilds the list — kept anywhere more local
+     and a batch would lose its selection the moment one row was decided. */
+  const subPicked = new Set();
+  let subArtist = '';
   /* Which submission rows are open. Module-level because every review action
      ends in load(), which rebuilds the list from scratch — kept anywhere more
      local and a row would slam shut the moment you approved the track in it. */
@@ -1039,7 +1044,8 @@
 /* ── submissions (ported from review.html) ── */
   async function paintSubmissions() {
     const d = await get('/submissions?status=' + subTab);
-    const items = d.submissions || [];
+    let items = d.submissions || [];
+    if (subArtist) items = items.filter((s) => s.email === subArtist);
     const declBlock = (s) => {
       if (!s.decl_kind) return '';
       let splits = [];
@@ -1102,13 +1108,37 @@
           esc(m.lyrics)}</pre></details>` : ''}
       </div>`;
     };
+    /* One artist arrives with thirty tracks; deciding them one dialog at a
+       time is how a backlog becomes a month old. The bar acts on the ticked
+       rows and nothing else. */
+    const uploaders = [...new Map(items.map((s) =>
+      [s.email || s.artist_name, { who: s.artist_name || s.email, email: s.email, uid: s.user_id }])).values()];
     paint(`
-      <div style="display:flex;gap:8px;margin-bottom:16px">${['pending', 'approved', 'rejected'].map((t) =>
-        `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${t}</button>`).join('')}</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">${['pending', 'approved', 'rejected'].map((t) =>
+        `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${t}</button>`).join('')}
+        ${uploaders.length > 1 ? `<select class="rv-byart" aria-label="Filter by uploader">
+          <option value="">Everyone</option>${uploaders.map((u) =>
+            `<option value="${esc(u.email || '')}"${subArtist === u.email ? ' selected' : ''}>${esc(u.who)}</option>`).join('')}
+        </select>` : ''}
+      </div>
+      <div class="rv-bulkbar">
+        <label><input type="checkbox" class="rv-all"> Select all shown</label>
+        <span class="rv-count">${subPicked.size} selected</span>
+        <span class="rv-bulkacts">
+          <button class="rv-btn rv-ok" data-bulk="approved">Approve selected</button>
+          <button class="rv-btn rv-no" data-bulk="rejected">Reject selected</button>
+          <button class="rv-btn" data-bulk="pending">Back to pending</button>
+          <button class="rv-btn" data-grid="1">Edit titles…</button>
+          <button class="rv-btn" data-versions="1">Find versions…</button>
+        </span>
+      </div>
       ${items.length ? items.map((s) => `
         <div class="rv-item${openSubs.has(s.id) ? ' open' : ''}" data-id="${s.id}">
           <div class="rv-top rv-head" role="button" tabindex="0"
-               aria-expanded="${openSubs.has(s.id)}"><span class="rv-caret">▸</span><b>${esc(s.title)}</b>
+               aria-expanded="${openSubs.has(s.id)}"><span class="rv-caret">▸</span>
+            <input type="checkbox" class="rv-pick" data-id="${s.id}"
+                   aria-label="Select ${esc(s.title)}" ${subPicked.has(s.id) ? 'checked' : ''}>
+            <b>${esc(s.title)}</b>
             <span class="who">${esc(s.artist_name || s.email)}</span>
             <span class="meta">${(s.size / 1048576).toFixed(1)}MB · ${esc(s.ext)} · ${fmt(s.created_at)}</span>
             ${laneChip(s)}${s.status === 'approved' ? (s.published_slug
@@ -1154,7 +1184,132 @@
     });
 
     app.querySelectorAll('[data-st]').forEach((b) =>
-      b.addEventListener('click', () => { subTab = b.dataset.st; load(); }));
+      b.addEventListener('click', () => { subTab = b.dataset.st; subPicked.clear(); load(); }));
+    const byArt = app.querySelector('.rv-byart');
+    if (byArt) byArt.addEventListener('change', () => { subArtist = byArt.value; subPicked.clear(); load(); });
+
+    /* ── selection ── */
+    const countEl = app.querySelector('.rv-count');
+    const syncCount = () => { if (countEl) countEl.textContent = `${subPicked.size} selected`; };
+    app.querySelectorAll('.rv-pick').forEach((c) => {
+      c.addEventListener('click', (e) => e.stopPropagation());   // ticking must not open the row
+      c.addEventListener('change', () => {
+        const id = Number(c.dataset.id);
+        if (c.checked) subPicked.add(id); else subPicked.delete(id);
+        syncCount();
+      });
+    });
+    const allBox = app.querySelector('.rv-all');
+    if (allBox) allBox.addEventListener('change', () => {
+      app.querySelectorAll('.rv-pick').forEach((c) => {
+        c.checked = allBox.checked;
+        const id = Number(c.dataset.id);
+        if (allBox.checked) subPicked.add(id); else subPicked.delete(id);
+      });
+      syncCount();
+    });
+
+    /* ── bulk decisions ── */
+    app.querySelectorAll('[data-bulk]').forEach((b) => b.addEventListener('click', async () => {
+      const ids = [...subPicked];
+      if (!ids.length) return alert('Tick some rows first.');
+      const status = b.dataset.bulk;
+      let note = '';
+      if (status === 'rejected') {
+        note = prompt(`Rejecting ${ids.length} track${ids.length === 1 ? '' : 's'}.\n\n`
+          + 'Reason (sent to the artist, one message per track):') || '';
+        if (!note.trim()) return;
+      } else if (!confirm(`${status === 'approved' ? 'Approve' : 'Move back to pending'} ${ids.length} track${ids.length === 1 ? '' : 's'}?`)) {
+        return;
+      }
+      b.disabled = true; b.textContent = 'Working…';
+      const r = await post('/submissions/bulk-review', { ids, status, note });
+      alert(r.ok ? `${r.done.length} done${r.failed.length ? `, ${r.failed.length} failed` : ''}.`
+                 : (r.error || 'failed'));
+      subPicked.clear();
+      load();
+    }));
+
+    /* ── the title grid ──────────────────────────────────────────────────
+       Thirty files named after their bounce settings is the normal state of a
+       first delivery. This is one text field per track, all on screen, saved in
+       one request — the fastest possible path from "Untitled_04_final_v2" to a
+       catalogue name. */
+    const gridBtn = app.querySelector('[data-grid]');
+    if (gridBtn) gridBtn.addEventListener('click', () => {
+      const rows = items.filter((x) => !subPicked.size || subPicked.has(x.id));
+      if (!rows.length) return;
+      const box = document.createElement('div');
+      box.className = 'rv-gridwrap';
+      box.innerHTML = `<div class="rv-grid">
+        <div class="rv-gridhead"><b>Rename ${rows.length} track${rows.length === 1 ? '' : 's'}</b>
+          <span>Title, and how it licenses. Blank titles are left alone.</span></div>
+        ${rows.map((x) => `
+          <label class="rv-gridrow" data-id="${x.id}">
+            <input class="rv-gt" value="${esc(x.title || '')}" maxlength="200">
+            <select class="rv-gl">
+              <option value="">— lane —</option>
+              <option value="instant"${x.lane === 'instant' ? ' selected' : ''}>Instant licence</option>
+              <option value="quote"${x.lane === 'quote' ? ' selected' : ''}>Custom quote</option>
+              <option value="demo"${x.lane === 'demo' ? ' selected' : ''}>Play only</option>
+            </select>
+          </label>`).join('')}
+        <div class="rv-gridfoot">
+          <button class="rv-btn rv-ok" data-g="save">Save all</button>
+          <button class="rv-btn" data-g="close">Cancel</button>
+          <span class="rv-gridmsg"></span>
+        </div></div>`;
+      app.prepend(box);
+      box.querySelector('[data-g="close"]').addEventListener('click', () => box.remove());
+      box.querySelector('[data-g="save"]').addEventListener('click', async (ev) => {
+        const edits = [...box.querySelectorAll('.rv-gridrow')].map((r) => {
+          const e = { id: Number(r.dataset.id) };
+          const t = r.querySelector('.rv-gt').value.trim();
+          const l = r.querySelector('.rv-gl').value;
+          if (t) e.title = t;
+          if (l) e.lane = l;
+          return e;
+        });
+        ev.target.disabled = true; ev.target.textContent = 'Saving…';
+        const r = await post('/submissions/bulk-edit', { edits });
+        box.querySelector('.rv-gridmsg').textContent = r.ok ? `Saved ${r.saved.length}.` : (r.error || 'failed');
+        if (r.ok) { box.remove(); load(); }
+      });
+    });
+
+    /* ── versions of the same song ───────────────────────────────────────
+       Grouped by arithmetic, not by a model: the reason is printed next to
+       every group so this is agreeing with an argument, not trusting a
+       verdict. Accepting a group stacks the versions under the longest cut. */
+    const verBtn = app.querySelector('[data-versions]');
+    if (verBtn) verBtn.addEventListener('click', async () => {
+      verBtn.disabled = true; verBtn.textContent = 'Looking…';
+      const uid = (items.find((x) => subPicked.has(x.id)) || items[0] || {}).user_id || '';
+      const d2 = await get('/intake/versions?status=' + subTab + (uid ? '&user_id=' + encodeURIComponent(uid) : ''));
+      verBtn.disabled = false; verBtn.textContent = 'Find versions…';
+      const groups = (d2 && d2.groups) || [];
+      const box = document.createElement('div');
+      box.className = 'rv-gridwrap';
+      box.innerHTML = `<div class="rv-grid">
+        <div class="rv-gridhead"><b>${groups.length} possible song${groups.length === 1 ? '' : 's'} with more than one version</b>
+          <span>Scanned ${d2.scanned || 0} uploads. Each group shows why it was grouped.</span></div>
+        ${groups.length ? groups.map((g, i) => `
+          <div class="rv-vgroup" data-i="${i}">
+            <div class="rv-vhead"><b>${esc(g.key)}</b>
+              <span class="rv-vconf ${g.confidence}">${g.confidence} confidence</span>
+              <span class="rv-vwhy">${esc(g.why)}</span></div>
+            <ul class="rv-vlist">${g.items.map((t) => `
+              <li>${t.id === g.parent.id ? '<b>parent</b> ' : ''}${esc(t.title)}
+                <span>${t.bpm ? t.bpm + ' BPM' : ''}${t.dur ? ' · ' + fmtDur(t.dur) : ''}</span></li>`).join('')}
+            </ul>
+          </div>`).join('')
+          : '<p class="db-empty">Nothing looks like a version of anything else.</p>'}
+        <div class="rv-gridfoot"><button class="rv-btn" data-g="close">Close</button>
+          <span class="rv-gridmsg">Stacking is done from the catalogue once tracks are published.</span></div></div>`;
+      app.prepend(box);
+      box.querySelector('[data-g="close"]').addEventListener('click', () => box.remove());
+    });
+
     app.querySelectorAll('.rv-edit').forEach((b) =>
       b.addEventListener('click', () => openDeclEditor(b.closest('.rv-item'), items)));
 

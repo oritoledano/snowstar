@@ -383,3 +383,91 @@ snowstar.company/mutra.html`;
          approved ? 'submission-approved' : 'submission-rejected',
          submissionId, Math.floor(Date.now() / 1000)).run();
 }
+
+/* ═══════════ Bulk review ═══════════════════════════════════════════════════
+   One artist arriving with thirty tracks is the normal case, not the edge, and
+   deciding them one dialog at a time is how a backlog becomes a month old.
+
+   This is deliberately a LOOP over the same reviewSubmission logic rather than
+   a clever single UPDATE: every decision must still queue its own mail and move
+   its own rejected audio to trash, and a bulk path that skipped either would
+   quietly break the two things the single path exists to guarantee. */
+export async function bulkReview(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const ids = Array.isArray(b.ids) ? b.ids.map(Number).filter(Number.isInteger).slice(0, 200) : [];
+  if (!ids.length) return json({ error: 'no_ids' }, 400);
+  if (!['approved', 'rejected', 'pending'].includes(b.status)) return json({ error: 'bad_status' }, 400);
+  const note = String(b.note || '').trim().slice(0, 2000);
+
+  const done = [], failed = [];
+  for (const id of ids) {
+    try {
+      const row = await env.DB.prepare('SELECT id, file_key, status FROM submissions WHERE id = ?')
+        .bind(id).first();
+      if (!row) { failed.push({ id, why: 'not_found' }); continue; }
+      await env.DB.prepare(
+        'UPDATE submissions SET status = ?, review_note = ?, reviewed_at = ? WHERE id = ?'
+      ).bind(b.status, note, now(), id).run();
+      if (b.status !== 'pending') {
+        try { await queueReviewMail(env, id, b.status, note); } catch { /* decision stands */ }
+      }
+      if (b.status === 'rejected' && row.file_key && row.status !== 'rejected') {
+        try { await trashObject(env, row.file_key); } catch { /* decision stands */ }
+      }
+      done.push(id);
+    } catch (e) {
+      failed.push({ id, why: String((e && e.message) || e).slice(0, 120) });
+    }
+  }
+  try {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind(user.email || 'owner', 'bulk_review', b.status,
+           `${done.length} of ${ids.length}`, now()).run();
+  } catch { /* logging must not fail the batch */ }
+  return json({ ok: true, done, failed });
+}
+
+/* ═══════════ Bulk edit of submissions ══════════════════════════════════════
+   The catalogue already has a bulk editor (bulk.js) but it writes
+   track_overrides, which only exist AFTER a track is published. Everything an
+   artist sends arrives before that, so titles and notes have to be fixable
+   while the rows are still submissions — which is exactly when a batch of
+   thirty needs the most work. */
+export async function bulkEditSubmissions(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const edits = Array.isArray(b.edits) ? b.edits.slice(0, 200) : [];
+  if (!edits.length) return json({ error: 'no_edits' }, 400);
+
+  const saved = [];
+  for (const e of edits) {
+    const id = Number(e.id);
+    if (!Number.isInteger(id)) continue;
+    const sets = [], vals = [];
+    if (typeof e.title === 'string' && e.title.trim()) {
+      sets.push('title = ?'); vals.push(e.title.trim().slice(0, 200));
+    }
+    if (e.lane === 'instant' || e.lane === 'quote' || e.lane === 'demo') {
+      sets.push('lane = ?'); vals.push(e.lane);
+    }
+    /* meta is the free-form bag the review screen already reads (tags, bpm,
+       key, lyrics). Merged, never replaced: a bulk pass that set only titles
+       must not wipe the analysis somebody ran this morning. */
+    if (e.meta && typeof e.meta === 'object') {
+      const cur = await env.DB.prepare('SELECT meta FROM submissions WHERE id = ?').bind(id).first();
+      let merged = {};
+      try { merged = cur && cur.meta ? JSON.parse(cur.meta) : {}; } catch { merged = {}; }
+      Object.assign(merged, e.meta);
+      sets.push('meta = ?'); vals.push(JSON.stringify(merged).slice(0, 20000));
+    }
+    if (!sets.length) continue;
+    vals.push(id);
+    try {
+      await env.DB.prepare(`UPDATE submissions SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
+      saved.push(id);
+    } catch { /* skip the row, keep the batch */ }
+  }
+  return json({ ok: true, saved });
+}
