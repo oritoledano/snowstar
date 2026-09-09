@@ -1156,6 +1156,7 @@
             ${subTab !== 'pending' ? '<button class="rv-btn" data-a="pending">Back to pending</button>' : ''}
             <button class="rv-btn rv-edit" type="button">Edit details</button>
             <button class="rv-btn rv-anal" type="button" data-id="${s.id}">Analyze</button>
+            <button class="rv-btn rv-lyr" type="button" data-id="${s.id}">Get lyrics</button>
           </div>
           <div class="rv-anal-out" hidden></div>
           <div class="rv-review" hidden></div>
@@ -1227,6 +1228,23 @@
       alert(r.ok ? `${r.done.length} done${r.failed.length ? `, ${r.failed.length} failed` : ''}.`
                  : (r.error || 'failed'));
       subPicked.clear();
+      load();
+    }));
+
+    /* Lyrics straight off the file, through Whisper on the Workers AI binding.
+       An instrumental transcribes to noise, so the server only saves a result
+       that has enough real words to be lyrics — and says so when it does not. */
+    app.querySelectorAll('.rv-lyr').forEach((b) => b.addEventListener('click', async () => {
+      const id = Number(b.dataset.id);
+      b.disabled = true; b.textContent = 'Listening…';
+      const r = await post('/intake/transcribe', { id });
+      b.disabled = false; b.textContent = 'Get lyrics';
+      if (!r || r.error) { alert((r && r.error) || 'failed'); return; }
+      if (!r.saved) {
+        alert(`No lyrics found — ${r.words} word${r.words === 1 ? '' : 's'} came back, which reads as an instrumental.`);
+        return;
+      }
+      alert(`Saved ${r.words} words${r.truncated ? ' (from the first minutes of the file)' : ''}.`);
       load();
     }));
 
