@@ -1296,6 +1296,7 @@
         ${groups.length ? groups.map((g, i) => `
           <div class="rv-vgroup" data-i="${i}">
             <div class="rv-vhead"><b>${esc(g.key)}</b>
+              <span class="rv-vkind ${g.kind}">${g.kind === 'stems' ? 'parts of one track' : 'versions of one song'}</span>
               <span class="rv-vconf ${g.confidence}">${g.confidence} confidence</span>
               <span class="rv-vwhy">${esc(g.why)}</span></div>
             <ul class="rv-vlist">${g.items.map((t) => `
@@ -1305,7 +1306,8 @@
           </div>`).join('')
           : '<p class="db-empty">Nothing looks like a version of anything else.</p>'}
         <div class="rv-gridfoot"><button class="rv-btn" data-g="close">Close</button>
-          <span class="rv-gridmsg">Stacking is done from the catalogue once tracks are published.</span></div></div>`;
+          <span class="rv-gridmsg">Parts of one track are stems — publish the full mix and keep the rest
+            out of the catalogue. Versions get stacked under the parent once published.</span></div></div>`;
       app.prepend(box);
       box.querySelector('[data-g="close"]').addEventListener('click', () => box.remove());
     });

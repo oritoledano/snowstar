@@ -89,6 +89,10 @@
   .rv-vgroup{border-top:1px solid var(--line);padding:12px 0}
   .rv-vhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
   .rv-vhead b{font-size:.94rem}
+  .rv-vkind{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;
+    padding:2px 9px;border:1px solid var(--line);color:var(--muted)}
+  .rv-vkind.stems{color:#8fb8ff;border-color:rgba(143,184,255,.45)}
+  .rv-vkind.versions{color:#e0b48b;border-color:rgba(224,180,139,.45)}
   .rv-vconf{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;
     padding:2px 9px;border:1px solid var(--line);color:var(--muted)}
   .rv-vconf.high{color:#34d399;border-color:rgba(52,211,153,.45)}
@@ -559,7 +563,7 @@
 <!-- the analyser, so an already-uploaded submission can be measured from here -->
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/dashboard.js?v=46"></script>
+<script src="js/dashboard.js?v=47"></script>
 
 <!-- full-screen menu, same burger and behaviour as Mutra -->
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">

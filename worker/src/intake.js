@@ -85,6 +85,18 @@ export async function transcribeSubmission(req, env, user) {
    by minutes — but a large BPM gap is treated as evidence against, because two
    tracks at 92 and 147 sharing a name are usually a coincidence of words. */
 
+/* Parts of one creation — a stem is not a version. "GENTLE - BELLS" is not a
+   different edit of GENTLE, it is one instrument out of it, and calling those
+   versions of each other would publish nine half-tracks. */
+const STEM_WORDS = [
+  'bells', 'bell', 'gtr', 'gtrs', 'guitar', 'guitars', 'piano', 'keys', 'key', 'strings',
+  'string', 'bass', 'drums', 'drum', 'perc', 'percussion', 'synth', 'synths', 'pad', 'pads',
+  'vox', 'vocal', 'vocals', 'lead', 'rythm', 'rhythm', 'arp', 'fx', 'mando', 'mandolin',
+  'brass', 'horns', 'flute', 'cello', 'violin', 'organ', 'rhodes', 'sub', 'kick', 'snare',
+  'hats', 'hat', 'shaker', 'tops', 'claps', 'clap', 'swar', 'reversw', 'reverse', 'x',
+];
+const FULL_WORDS = ['full', 'mix', 'mixx', 'fullmix', 'master', 'main'];
+
 const VERSION_WORDS = [
   'instrumental', 'inst', 'playback', 'pb', 'radio edit', 'radio', 'edit', 'short', 'shortened',
   'long', 'long ver', 'long version', 'full', 'extended', 'loop', 'sting', 'bed', 'underscore',
@@ -103,11 +115,25 @@ export function songKey(title) {
   t = t.replace(/[-–—_|/]+/g, ' ');
   t = t.replace(/[^a-z0-9֐-׿ ]+/g, ' ');   // keep Hebrew
   let words = t.split(/\s+/).filter(Boolean);
-  // strip version words and bare numbers from the END only: "take 2" is a
+  /* Dates in a filename are a session stamp, never part of the song:
+     "GENTLE - 25.6.26 - BELLS" is GENTLE. Dropped anywhere in the string,
+     because they sit in the middle as often as at the end. */
+  words = words.filter((w, i) => !(/^\d{1,4}$/.test(w) && i > 0 && looksDateRun(words, i)));
+  // strip version, stem and full-mix words from the END only: "take 2" is a
   // version, but "25 booms" is a title that starts with a number
-  const isVersionWord = (w) => VERSION_WORDS.includes(w) || /^\d{1,3}$/.test(w) || /^v\d+$/.test(w);
-  while (words.length > 1 && isVersionWord(words[words.length - 1])) words.pop();
+  const isTail = (w) => VERSION_WORDS.includes(w) || STEM_WORDS.includes(w)
+    || FULL_WORDS.includes(w) || /^\d{1,3}$/.test(w) || /^v\d+$/.test(w);
+  while (words.length > 1 && isTail(words[words.length - 1])) words.pop();
   return words.join(' ').trim();
+}
+
+/** True when the number at i belongs to a run of 2–3 small numbers — a date
+ *  like 25 6 26 once the dots became spaces. */
+function looksDateRun(words, i) {
+  let run = 0;
+  for (let k = i; k < words.length && /^\d{1,4}$/.test(words[k]); k++) run++;
+  for (let k = i - 1; k >= 0 && /^\d{1,4}$/.test(words[k]); k--) run++;
+  return run >= 2;
 }
 
 /** Levenshtein, capped — only ever run on short titles. */
@@ -164,7 +190,18 @@ export async function suggestVersions(env, user, url) {
       const a = keys[i], b = keys[j];
       if (merged.has(b) || a.length < 5 || b.length < 5) continue;
       const d = editDistance(a, b);
-      if (d <= Math.max(1, Math.floor(Math.min(a.length, b.length) * 0.12))) {
+      /* Two ways one key belongs under another:
+         · near-identical (typos, spacing)
+         · one is a PREFIX of the other — "spliting between us" under
+           "spliting between us olgal". A trailing name or take word we do not
+           know is still a suffix on the same song, and refusing to merge it
+           was leaving obvious pairs apart. Bounded to a short tail so
+           "gentle" never swallows "gentle giant orchestra". */
+      const short = a.length <= b.length ? a : b;
+      const long = a.length <= b.length ? b : a;
+      const isPrefix = long.startsWith(short + ' ') && short.length >= 8
+        && long.slice(short.length + 1).split(' ').length <= 2;
+      if (d <= Math.max(1, Math.floor(Math.min(a.length, b.length) * 0.12)) || isPrefix) {
         byKey.get(a).push(...byKey.get(b));
         merged.add(b);
       }
@@ -178,15 +215,40 @@ export async function suggestVersions(env, user, url) {
     const bpms = items.map((t) => t.bpm).filter(Boolean);
     const spread = bpms.length > 1 ? Math.max(...bpms) - Math.min(...bpms) : 0;
     // wildly different tempos under one name is usually coincidence, not a mix
-    const confidence = spread > 25 ? 'low' : (items.length > 5 ? 'medium' : 'high');
-    const why = [`titles reduce to “${key}”`];
-    if (bpms.length > 1) why.push(spread <= 4 ? 'same tempo' : `tempo spread ${spread} BPM`);
+    /* Two different relationships, and they must not be confused:
+       STEMS  — one full mix plus parts of it (bells, gtr, vox). Not sellable
+                on their own; the full mix is the track.
+       VERSIONS — edits of one finished song (instrumental, long, playback).
+       The tail word of each title is what separates them. */
+    const tailOf = (t) => {
+      const w = String(t.title || '').toLowerCase()
+        .replace(/[\(\)\[\]]/g, ' ').replace(/[-–—_|/.]+/g, ' ')
+        .split(/\s+/).filter(Boolean);
+      return w[w.length - 1] || '';
+    };
+    const stemish = items.filter((t) => STEM_WORDS.includes(tailOf(t)));
+    const fullish = items.filter((t) => FULL_WORDS.includes(tailOf(t)));
+    const kind = (stemish.length >= 2 && fullish.length >= 1) ? 'stems' : 'versions';
+
+    const confidence = kind === 'stems'
+      ? 'high'
+      : (spread > 25 ? 'low' : (items.length > 5 ? 'medium' : 'high'));
+    const why = kind === 'stems'
+      ? [`one full mix plus ${stemish.length} instrument parts`]
+      : [`titles reduce to “${key}”`];
+    if (kind !== 'stems' && bpms.length > 1) {
+      why.push(spread <= 4 ? 'same tempo' : `tempo spread ${spread} BPM`);
+    }
     groups.push({
       key,
+      kind,
       confidence,
       why: why.join(' · '),
-      // the longest cut is the natural parent: versions hang off the full track
-      parent: items.slice().sort((a, b) => (b.dur || 0) - (a.dur || 0))[0],
+      /* Stems hang off the full mix; versions hang off the longest cut. */
+      parent: kind === 'stems'
+        ? fullish[0]
+        : items.slice().sort((a, b) => (b.dur || 0) - (a.dur || 0))[0],
+      stems: kind === 'stems' ? stemish.map((t) => t.id) : [],
       items,
     });
   }
