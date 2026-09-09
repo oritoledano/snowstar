@@ -1066,8 +1066,11 @@
       try { c = JSON.parse(s.controllers || '{}'); } catch {}
       const list = c.controllers || [];
       const bits = [];
-      if (list.length) bits.push('Controlled by: ' + list.map((x) =>
-        `${esc(x.name)} (${esc(x.scope)}${x.territory ? ', ' + esc(x.territory) : ''})`).join(' · '));
+      if (list.length) bits.push('Controlled by: ' + list.map((x) => {
+        const contact = [x.email, x.phone].filter(Boolean).map(esc).join(' / ');
+        return `${esc(x.name)} (${esc(x.scope)}${x.territory ? ', ' + esc(x.territory) : ''})`
+             + (contact ? ` — ${contact}` : ' — <i>no contact given</i>');
+      }).join(' · '));
       if (c.approval) bits.push(c.approval === 'all' ? 'all co-owners must agree' : 'any co-owner can approve');
       return bits.length ? '<br>' + bits.join(' — ') : '';
     };
@@ -1523,7 +1526,9 @@
     const pending = (mail.outbox || []).filter((m) => !m.sent_at);
     const sent = (mail.outbox || []).filter((m) => m.sent_at).slice(0, 12);
     paint(`
-      <p class="db-empty" style="padding-top:0">Nothing is emailed without you. ${mail.mail_live
+      <p class="db-empty" style="padding-top:0"><b>Only co-owner and control messages wait here.</b>
+        Approvals, rejections, renames and earnings notices now send themselves the moment they are
+        made — this queue is for the mail that carries legal weight. ${mail.mail_live
         ? 'Sending goes straight to the recipient.'
         : 'Until the send domain is verified, “Approve &amp; send” delivers the email to YOUR inbox with a forward-to banner — you forward it yourself.'}</p>
       ${pending.length ? pending.map((m) => `
@@ -1531,13 +1536,25 @@
           <summary><b>${esc(m.to_name || m.to_email)}</b>
             <span style="color:var(--muted)">${esc(m.to_email)}${m.title ? ' · re “' + esc(m.title) + '”' : ''}</span>
             ${m.last_error ? `<span class="rv-err">last try failed: ${esc(m.last_error)}</span>` : ''}
-            <button class="rv-btn rv-ok rv-send" style="margin-left:auto">Approve &amp; send</button></summary>
+            <button class="rv-btn rv-ok rv-send" style="margin-left:auto">Approve &amp; send</button>
+            <button class="rv-btn rv-mdel">Delete</button></summary>
           <pre>${esc(m.body)}</pre></details>`).join('')
       : '<p class="db-empty">No notifications waiting.</p>'}
       ${sent.length ? '<p class="db-empty">Recently sent:</p>' + sent.map((m) => `
         <div class="rv-mrow"><b>${esc(m.to_email)}</b>
           ${m.sent_at ? `<span class="rv-sent">${m.sent_how === 'direct' ? 'sent' : 'delivered to you for forwarding'} · ${fmt(m.sent_at)}</span>`
             : `<span class="rv-err">failed: ${esc(m.last_error)}</span>`}</div>`).join('') : ''}`);
+    app.querySelectorAll('.rv-mdel').forEach((b) =>
+      b.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const id = Number(b.closest('.rv-mrow').dataset.id);
+        if (!confirm('Delete this message without sending it?\n\nOnly unsent mail can be deleted.')) return;
+        b.disabled = true; b.textContent = 'Deleting…';
+        const r = await post('/mailbox/delete', { ids: [id] });
+        if (!r.ok) { b.disabled = false; b.textContent = 'Delete'; alert(r.error || 'failed'); return; }
+        load();
+      }));
+
     app.querySelectorAll('.rv-send').forEach((b) =>
       b.addEventListener('click', async (e) => {
         e.preventDefault();

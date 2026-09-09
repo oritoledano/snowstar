@@ -361,11 +361,15 @@
         <option value="both">both</option>
       </select>
       <input placeholder="Territory (or worldwide)" maxlength="120" data-f="territory">
+      <input placeholder="their@email.com" type="email" maxlength="254" data-f="email">
+      <input placeholder="Phone (with country code)" type="tel" maxlength="40" data-f="phone">
       <button type="button" title="Remove">✕</button>`;
     if (pre) {
       row.querySelector('[data-f="name"]').value = pre.name || '';
       row.querySelector('[data-f="scope"]').value = pre.scope || 'recording';
       row.querySelector('[data-f="territory"]').value = pre.territory || '';
+      row.querySelector('[data-f="email"]').value = pre.email || '';
+      row.querySelector('[data-f="phone"]').value = pre.phone || '';
     }
     row.querySelector('button').addEventListener('click', () => { row.remove(); syncDecl(); });
     row.querySelectorAll('input,select').forEach((i) => i.addEventListener('input', syncDecl));
@@ -378,6 +382,8 @@
       name: row.querySelector('[data-f="name"]').value.trim(),
       scope: row.querySelector('[data-f="scope"]').value,
       territory: row.querySelector('[data-f="territory"]').value.trim(),
+      email: row.querySelector('[data-f="email"]').value.trim(),
+      phone: row.querySelector('[data-f="phone"]').value.trim(),
     })).filter((c) => c.name);
   }
 
@@ -388,11 +394,13 @@
     row.className = 'ar-crow';
     row.innerHTML = `<input placeholder="Full name" maxlength="120" data-f="name">
       <input placeholder="their@email.com" type="email" maxlength="254" data-f="email">
+      <input placeholder="Phone (optional)" type="tel" maxlength="40" data-f="phone">
       <input placeholder="%" inputmode="decimal" data-f="pct">
       <button type="button" title="Remove">✕</button>`;
     if (pre) {
       row.querySelector('[data-f="name"]').value = pre.name || '';
       row.querySelector('[data-f="email"]').value = pre.email || '';
+      row.querySelector('[data-f="phone"]').value = pre.phone || '';
       row.querySelector('[data-f="pct"]').value = pre.share_pct || '';
     }
     row.querySelector('button').addEventListener('click', () => { row.remove(); onChange(); });
@@ -405,6 +413,7 @@
     return [...container.querySelectorAll('.ar-crow')].map((row) => ({
       name: row.querySelector('[data-f="name"]').value.trim(),
       email: row.querySelector('[data-f="email"]').value.trim(),
+      phone: row.querySelector('[data-f="phone"]').value.trim(),
       share_pct: parseFloat(row.querySelector('[data-f="pct"]').value) || 0,
     })).filter((c) => c.name || c.email || c.share_pct);
   }
@@ -524,7 +533,10 @@
     // a say in commercial use — is bookable but never self-serve. The counterparty
     // only gets contacted once a deal is real, which is the whole point of the lane.
     const controllers = controllerData();
-    const controllersOk = !controlled || controllers.length > 0;
+    /* Name alone is not a contact. A controller has to be reachable by email
+       or phone, or clearing a licence later has nowhere to start. */
+    const controllersOk = !controlled
+      || (controllers.length > 0 && controllers.every((c) => c.email || c.phone));
     const lane = (shared || controlled || (behalf && collabData($('#arCollabRows')).length)) ? 'quote' : 'instant';
     const laneEl = $('#arLane');
     laneEl.className = 'ar-lane ' + lane;

@@ -75,6 +75,9 @@ export function parseDeclaration(b, user, managedArtist) {
       name: String(c.name || '').trim().slice(0, 120),
       scope: ['recording', 'song', 'both'].includes(c.scope) ? c.scope : 'recording',
       territory: String(c.territory || '').trim().slice(0, 120),
+      // how to reach them — the form asks for one of these
+      email: String(c.email || '').trim().slice(0, 254),
+      phone: String(c.phone || '').trim().slice(0, 40),
     }))
     .filter((c) => c.name);
   const approval = ['any', 'all'].includes(d.approval) ? d.approval : null;
@@ -102,7 +105,11 @@ export function parseDeclaration(b, user, managedArtist) {
       const bp = Math.round(pct * 100);
       if (bp < 1 || bp >= 10000) throw new Error('share_out_of_range');
       sumBp += bp;
-      collabs.push({ name, email, share_bp: bp });
+      /* Phone rides in the signed snapshot rather than the collaborators
+         table, which has no column for it — the snapshot is the record of what
+         was declared, and a co-owner whose email bounces is worth chasing. */
+      const phone = String(c.phone || '').trim().slice(0, 40);
+      collabs.push(phone ? { name, email, phone, share_bp: bp } : { name, email, share_bp: bp });
     }
     // the credited artist keeps the remainder — it must be a real share
     if (sumBp >= 10000) throw new Error('shares_leave_nothing_for_artist');
@@ -418,6 +425,10 @@ export async function amendDeclaration(req, env, user) {
       name: String(c.name || '').trim().slice(0, 120),
       scope: ['recording', 'song', 'both'].includes(c.scope) ? c.scope : 'recording',
       territory: String(c.territory || '').trim().slice(0, 120),
+      /* A controller nobody can reach is not a usable declaration — clearing a
+         licence later has to start somewhere. Either contact will do. */
+      email: String(c.email || '').trim().slice(0, 254),
+      phone: String(c.phone || '').trim().slice(0, 40),
     })).filter((c) => c.name);
     let existing = {};
     try { existing = JSON.parse(decl.controllers || '{}'); } catch {}
@@ -466,4 +477,77 @@ export async function amendDeclaration(req, env, user) {
   if (!stmts.length) return json({ error: 'nothing_to_update' }, 400);
   await env.DB.batch(stmts);
   return json({ ok: true });
+}
+
+/* ═══════════ Which mail waits, and which just goes ═════════════════════════
+   The outbox was built as a gate on EVERYTHING, from the days when the only
+   queued mail was contacting somebody's co-owner. That is still the one kind
+   worth reading before it leaves — a message to a rights holder about shares
+   and control has legal weight and a wrong name in it is expensive.
+
+   Everything else is routine: an approval, a rejection with the reason you
+   already typed, a rename notice, an earnings line. Holding thirty approvals
+   behind a click after a bulk review is friction with no safety in it, so they
+   send themselves and the row stays as the record that they did. */
+const REVIEW_KINDS = new Set(['collab-invite']);
+
+/** Send every unsent, non-review-kind message. Safe to call repeatedly: rows
+ *  are claimed before sending, exactly like sendOutbox. */
+export async function flushAutoMail(env, limit = 40) {
+  const rows = await env.DB.prepare(
+    `SELECT * FROM mail_outbox WHERE sent_at IS NULL ORDER BY id LIMIT ?`
+  ).bind(Math.min(200, limit)).all().catch(() => ({ results: [] }));
+  const live = mailLive(env);
+  let sent = 0, held = 0;
+  for (const row of rows.results || []) {
+    if (REVIEW_KINDS.has(row.kind)) { held++; continue; }
+    const claim = await env.DB.prepare(
+      `UPDATE mail_outbox SET sent_at = ?, sent_how = ?, last_error = '' WHERE id = ? AND sent_at IS NULL`
+    ).bind(now(), live ? 'auto' : 'auto-forwarded', row.id).run();
+    if (!claim.meta.changes) continue;
+    try {
+      const toArtist = row.kind === 'artists' || String(row.kind || '').startsWith('submission-');
+      if (live) {
+        await sendMail(env, {
+          to: row.to_email, subject: row.subject, text: row.body,
+          from: mailFrom(env, toArtist ? 'artists' : 'legal'),
+          replyTo: toArtist ? 'artists@snowstar.company' : 'legal@snowstar.company',
+        });
+      } else {
+        await sendMail(env, {
+          to: env.ALERT_TO,
+          subject: `[FORWARD TO: ${row.to_email}] ${row.subject}`,
+          text: `─── Forward the text below to ${row.to_name} <${row.to_email}> ───\n\n${row.body}`,
+        });
+      }
+      sent++;
+    } catch (e) {
+      // hand the row back so a later flush retries it
+      await env.DB.prepare(
+        `UPDATE mail_outbox SET sent_at = NULL, sent_how = NULL, last_error = ? WHERE id = ?`
+      ).bind(String((e && e.message) || e).slice(0, 300), row.id).run().catch(() => null);
+    }
+  }
+  return { sent, held };
+}
+
+/** POST /mailbox/delete — drop queued messages that should never go out.
+ *  Only ever unsent rows: a sent message is a record of something that
+ *  happened and deleting it would make the log lie. */
+export async function deleteOutbox(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const ids = (Array.isArray(b.ids) ? b.ids : []).map(Number).filter(Number.isInteger).slice(0, 100);
+  if (!ids.length) return json({ error: 'no_ids' }, 400);
+  const marks = ids.map(() => '?').join(',');
+  const r = await env.DB.prepare(
+    `DELETE FROM mail_outbox WHERE sent_at IS NULL AND id IN (${marks})`
+  ).bind(...ids).run();
+  try {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind(user.email || 'owner', 'outbox_delete', String(ids.length),
+           `deleted ${r.meta.changes}`, now()).run();
+  } catch { /* logging must not fail the delete */ }
+  return json({ ok: true, deleted: r.meta.changes });
 }

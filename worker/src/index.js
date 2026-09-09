@@ -32,7 +32,7 @@ import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
          listArtistsAdmin, updateSubmission, bulkReview, bulkEditSubmissions } from './artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
-         listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration } from './rights.js';
+         listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration, deleteOutbox, flushAutoMail } from './rights.js';
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
 import { updateMember, deleteMember, memberDetail } from './members.js';
 import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
@@ -250,8 +250,16 @@ async function handle(req, env, ctx) {
   if (path === '/tracks/owner' && method === 'GET') return getOwner(req, env, await currentUser(req, env), url);
   if (path === '/tracks/owner' && method === 'POST') return reassignOwner(req, env, await currentUser(req, env));
   if (path === '/submissions' && method === 'GET') return listSubmissions(env, await currentUser(req, env), url);
-  if (path === '/submissions/review' && method === 'POST') return reviewSubmission(req, env, await currentUser(req, env));
-  if (path === '/submissions/bulk-review' && method === 'POST') return bulkReview(req, env, await currentUser(req, env));
+  if (path === '/submissions/review' && method === 'POST') {
+    const r = await reviewSubmission(req, env, await currentUser(req, env));
+    ctx.waitUntil(flushAutoMail(env));      // approvals and rejections go on their own
+    return r;
+  }
+  if (path === '/submissions/bulk-review' && method === 'POST') {
+    const r = await bulkReview(req, env, await currentUser(req, env));
+    ctx.waitUntil(flushAutoMail(env, 200)); // a bulk decision must not leave 30 mails waiting
+    return r;
+  }
   if (path === '/submissions/bulk-edit' && method === 'POST') return bulkEditSubmissions(req, env, await currentUser(req, env));
   if (path === '/intake/transcribe' && method === 'POST') return transcribeSubmission(req, env, await currentUser(req, env));
   if (path === '/intake/versions' && method === 'GET') return suggestVersions(env, await currentUser(req, env), url);
@@ -265,6 +273,7 @@ async function handle(req, env, ctx) {
   if (path === '/managed-artists' && method === 'POST') return createManagedArtist(req, env, await currentUser(req, env));
   if (path === '/mailbox' && method === 'GET') return listOutbox(env, await currentUser(req, env));
   if (path === '/mailbox/send' && method === 'POST') return sendOutbox(req, env, await currentUser(req, env));
+  if (path === '/mailbox/delete' && method === 'POST') return deleteOutbox(req, env, await currentUser(req, env));
 
   // ── site editor: text overrides (public read) + owner markup notes ──
   if (path === '/submissions/amend' && method === 'POST') return amendDeclaration(req, env, await currentUser(req, env));
@@ -619,6 +628,10 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(sendDigest(env));
     ctx.waitUntil(cleanupOrphanUploads(env));
+    /* A safety net, not the mechanism: routine mail sends itself the moment it
+       is queued. This catches anything queued by a path that had no chance to
+       flush — and it never touches the kinds that wait for review. */
+    ctx.waitUntil(flushAutoMail(env, 200));
   },
 
   async fetch(req, env, ctx) {
