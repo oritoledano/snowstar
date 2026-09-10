@@ -230,13 +230,19 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   background:linear-gradient(180deg,transparent 45%,rgba(4,6,12,.88) 100%);
   transition:opacity .3s;
 }
+/* Text that sits ON IMAGERY is not page text. The thumbnail behind it is dark
+   whatever the skin does, so the colour cannot come from --text — in the light
+   skins that token is near-black, which put black titles on dark stills and
+   made them unreadable. Pinned light, with a shadow for the bright frames. */
 .work-card .wc-meta{
   position:absolute;left:18px;right:18px;bottom:14px;z-index:2;
   display:flex;align-items:center;justify-content:space-between;gap:10px;
+  color:#f4f1ea;
 }
 .work-card h3{
   font-size:.92rem;font-weight:600;letter-spacing:.06em;
-  text-transform:uppercase;
+  text-transform:uppercase;color:#f4f1ea;
+  text-shadow:0 1px 14px rgba(0,0,0,.6);
 }
 .wc-play{
   flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
@@ -448,9 +454,11 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 .lightbox-body img{width:100%;max-height:76vh;object-fit:contain;border-radius:12px}
 .lightbox-title{
   margin-top:18px;font-family:var(--font-display);letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted);text-align:center;font-size:.9rem;
+  /* the lightbox ground is rgba(3,5,10,.92) in every theme — same reasoning as
+     the card titles above, so the same fixed values rather than tokens */
+  color:#aab4c8;text-align:center;font-size:.9rem;
 }
-.lightbox-title strong{color:var(--text);font-weight:600}
+.lightbox-title strong{color:#f4f8ff;font-weight:600}
 .lb-credits{
   display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin-top:12px;
   font-family:var(--font-body);letter-spacing:.04em;text-transform:none;font-size:.85rem;
