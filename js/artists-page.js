@@ -14,7 +14,8 @@
   const gate = $('#arGate'), reg = $('#arRegister'), dash = $('#arDash');
   const fmtDate = (ts) => new Date(ts * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const fmtSize = (b) => (b / 1048576).toFixed(1) + 'MB';
-  const STATUS_WORD = { pending: 'In review', approved: 'Accepted', rejected: 'Not this one' };
+  const STATUS_WORD = { pending: 'In review', approved: 'Accepted',
+                        rejected: 'Not this one', info: 'Needs your answer' };
   const esc = (s) => String(s || '').replace(/</g, '&lt;');
 
   const DECL = {
@@ -36,6 +37,11 @@
     return d;
   }
   const get = (path) => fetch('/api' + path, { credentials: 'same-origin' }).then((r) => r.json());
+  const post = (path, body) => fetch('/api' + path, {
+    method: 'POST', credentials: 'same-origin',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  }).then((r) => r.json()).catch(() => null);
 
   /* ── the tag vocabulary ──────────────────────────────────────────────────
      Derived, never listed. The shipped catalogue is merged with the owner's
@@ -637,6 +643,26 @@
 
   function say(msg) { upStatus.textContent = msg; upStatus.hidden = false; }
 
+  /* An open question from us, and the box to answer it. Drawn from the same
+     thread the dashboard writes, so there is one record of what was asked. */
+  function askBlock(s) {
+    let m = {};
+    try { m = JSON.parse(s.meta || '{}') || {}; } catch {}
+    const thread = Array.isArray(m.questions) ? m.questions : [];
+    const open = [...thread].reverse().find((q) => !q.a);
+    const answered = thread.filter((q) => q.a);
+    return `
+      ${answered.map((q) => `<div class="qa-done"><b>We asked:</b> ${esc(q.q)}
+        <br><b>You said:</b> ${esc(q.a)}</div>`).join('')}
+      ${open ? `<div class="qa-open">
+        <p class="qa-q"><b>We need one thing before this can go further:</b><br>${esc(open.q)}</p>
+        <textarea class="qa-text" rows="3" placeholder="Your answer"></textarea>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+          <button type="button" class="mbtn mbtn-solid qa-send" data-qid="${esc(open.qid || '')}">Send answer</button>
+          <span class="ar-status qa-msg" style="margin:0"></span>
+        </div></div>` : ''}`;
+  }
+
   function paintList(items) {
     const ul = $('#arList');
     if (!items.length) {
@@ -649,10 +675,31 @@
         <span style="color:var(--muted);font-size:.8rem">${fmtSize(s.size)} · ${fmtDate(s.created_at)}</span>
         <span class="ar-badge ${s.status}">${STATUS_WORD[s.status] || s.status}</span>
         ${s.lane === 'quote' ? '<span class="ar-badge">custom quote</span>' : ''}
-        ${s.review_note ? `<span class="ar-rnote">“${esc(s.review_note)}”</span>` : ''}
+        ${s.status !== 'info' && s.review_note ? `<span class="ar-rnote">“${esc(s.review_note)}”</span>` : ''}
         <button type="button" class="ar-addrow sub-edit" style="margin:0 0 0 auto">Edit details</button>
+        ${askBlock(s)}
         <div class="sub-form" hidden></div>
       </li>`).join('');
+
+    /* Answering in place. The alternative was "reply to the email", which
+       works until they reply from a different address, or answer half of it,
+       or the mail lands in spam — and then the track just sits there. */
+    ul.querySelectorAll('.qa-send').forEach((b) => b.addEventListener('click', async () => {
+      const li = b.closest('li');
+      const ta = li.querySelector('.qa-text');
+      const msg = li.querySelector('.qa-msg');
+      const answer = ta.value.trim();
+      if (!answer) { ta.focus(); return; }
+      b.disabled = true; msg.textContent = 'Sending…';
+      const r = await post('/artist/answer', {
+        id: Number(li.dataset.sub), qid: b.dataset.qid, answer,
+      });
+      if (r && r.ok) {
+        msg.textContent = 'Thank you — back with us now.';
+        const d = await get('/artist/uploads');
+        paintList(d.uploads || []);
+      } else { b.disabled = false; msg.textContent = 'Did not go through. Try again?'; }
+    }));
 
     /* Editing after the fact. The declaration is signed and stays signed — this
        only touches what the track IS, never who owns it or what was approved. */

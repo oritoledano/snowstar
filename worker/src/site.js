@@ -99,17 +99,54 @@ export async function saveNote(req, env, user) {
  */
 export async function storageReport(env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
-  const prefixes = {};
-  let total = 0, count = 0, cursor;
-  do {
-    const page = await env.MEDIA.list({ cursor, limit: 1000 });
-    for (const o of page.objects) {
-      const p = o.key.includes('/') ? o.key.split('/')[0] : '(root)';
-      prefixes[p] = (prefixes[p] || 0) + (o.size || 0);
-      total += o.size || 0; count++;
-    }
-    cursor = page.truncated ? page.cursor : null;
-  } while (cursor);
+
+  /* Every bucket, not just MEDIA. The free allowance is 10 GB across the
+     ACCOUNT, so a report that counted one bucket could say "fine" while the
+     bill said otherwise — which is exactly what it was doing. */
+  const buckets = [
+    ['media', env.MEDIA], ['masters', env.MASTERS], ['apps', env.APPS],
+  ].filter(([, b]) => b);
+
+  const out = {}, prefixes = {};
+  let total = 0, count = 0;
+  /* Reclaimable, counted while we are already walking the keys:
+       trash/…            rejected uploads, kept in case a rejection is reversed
+       superseded covers  every cover upload writes a NEW versioned key and the
+                          old object was left behind on purpose — harmless once,
+                          a slow leak over a year of re-artworking. */
+  const trash = { bytes: 0, count: 0 };
+  const covers = new Map();               // slug -> [{key, size, ts}]
+
+  for (const [name, bucket] of buckets) {
+    let bTotal = 0, bCount = 0, cursor;
+    do {
+      const page = await bucket.list({ cursor, limit: 1000 });
+      for (const o of page.objects) {
+        const size = o.size || 0;
+        bTotal += size; bCount++;
+        if (name === 'media') {
+          const p = o.key.includes('/') ? o.key.split('/')[0] : '(root)';
+          prefixes[p] = (prefixes[p] || 0) + size;
+          if (o.key.startsWith('trash/')) { trash.bytes += size; trash.count++; }
+          const m = /^mutra\/covers\/(.+)-(\d{9,})\.(jpg|png|webp)$/.exec(o.key);
+          if (m) {
+            if (!covers.has(m[1])) covers.set(m[1], []);
+            covers.get(m[1]).push({ key: o.key, size, ts: Number(m[2]) });
+          }
+        }
+      }
+      cursor = page.truncated ? page.cursor : null;
+    } while (cursor);
+    out[name] = { bytes: bTotal, count: bCount };
+    total += bTotal; count += bCount;
+  }
+
+  let staleCovers = { bytes: 0, count: 0 };
+  for (const versions of covers.values()) {
+    if (versions.length < 2) continue;
+    versions.sort((a, b) => b.ts - a.ts);
+    for (const v of versions.slice(1)) { staleCovers.bytes += v.size; staleCovers.count++; }
+  }
 
   // D1 refuses size pragmas (SQLITE_AUTH), so report row counts per table —
   // more readable anyway, and `events` is the only one that really grows
@@ -123,10 +160,103 @@ export async function storageReport(env, user) {
     }
   } catch { /* leave empty */ }
 
+  const LIMIT = 10 * 1024 * 1024 * 1024;
   return json({
-    r2: { total, count, prefixes, limit: 10 * 1024 * 1024 * 1024 },   // free tier: 10GB
+    r2: {
+      total, count, prefixes, buckets: out, limit: LIMIT,
+      over: Math.max(0, total - LIMIT),
+      /* R2 bills storage per GB-month beyond the allowance. Reported so the
+         number in the dashboard is a cost, not a scare. */
+      overage_usd_month: Math.round(Math.max(0, total - LIMIT) / (1024 ** 3) * 0.015 * 1000) / 1000,
+      reclaimable: { trash, staleCovers,
+                     bytes: trash.bytes + staleCovers.bytes,
+                     count: trash.count + staleCovers.count },
+    },
     d1: { tables, limit_note: '500MB per database on the free tier' },
   });
+}
+
+/**
+ * POST /storage/reclaim — delete what is provably dead weight.
+ *
+ * Two kinds only, and neither is a judgement call:
+ *   trash/…            rejected audio, older than the grace window
+ *   superseded covers  a cover whose slug has a newer version on disk
+ *
+ * Nothing else is touched. Deleting from R2 is not reversible, so the rule has
+ * to be one that cannot be wrong about what it is deleting.
+ */
+export async function storageReclaim(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const doTrash = b.trash !== false;
+  const doCovers = b.covers !== false;
+  const graceDays = Number.isFinite(Number(b.grace_days)) ? Number(b.grace_days) : 30;
+  const cutoff = Date.now() / 1000 - graceDays * 86400;
+
+  /* Every cover key anything still points at. A versioned key is only an
+     orphan if NOTHING references it — and "newest wins" is not good enough on
+     its own: uploading a cover writes the file immediately but the pointer is
+     only saved when the owner presses save, so a later orphan can sit on disk
+     while the live artwork is an earlier one. Deleting by timestamp alone would
+     take the live cover and keep the abandoned upload. */
+  const inUse = new Set();
+  try {
+    const rows = await env.DB.prepare('SELECT patch FROM track_overrides').all();
+    for (const r of rows.results || []) {
+      const hay = String(r.patch || '');
+      for (const m of hay.matchAll(/mutra\/covers\/[A-Za-z0-9._~\-]+/g)) inUse.add(m[0]);
+    }
+  } catch { /* if the table cannot be read, the guard below refuses to delete */ }
+  const guardReadable = inUse.size > 0;
+
+  const covers = new Map();
+  const trashKeys = [];
+  let cursor;
+  do {
+    const page = await env.MEDIA.list({ cursor, limit: 1000, include: ['httpMetadata'] });
+    for (const o of page.objects) {
+      if (doTrash && o.key.startsWith('trash/')) {
+        const uploaded = o.uploaded ? new Date(o.uploaded).getTime() / 1000 : 0;
+        if (uploaded && uploaded < cutoff) trashKeys.push({ key: o.key, size: o.size || 0 });
+      }
+      const m = /^mutra\/covers\/(.+)-(\d{9,})\.(jpg|png|webp)$/.exec(o.key);
+      if (doCovers && m) {
+        if (!covers.has(m[1])) covers.set(m[1], []);
+        covers.get(m[1]).push({ key: o.key, size: o.size || 0, ts: Number(m[2]) });
+      }
+    }
+    cursor = page.truncated ? page.cursor : null;
+  } while (cursor);
+
+  const doomed = [...trashKeys];
+  let spared = 0;
+  if (doCovers && !guardReadable) {
+    // No references readable means no way to tell an orphan from the live file.
+    // Refusing is the only safe answer; the trash sweep still runs.
+    return json({ ok: true, deleted: 0, freed: 0, skipped_covers: 'no_references_readable' });
+  }
+  for (const versions of covers.values()) {
+    if (versions.length < 2) continue;
+    versions.sort((a, b2) => b2.ts - a.ts);
+    for (const v of versions.slice(1)) {        // keep the newest…
+      if (inUse.has(v.key)) { spared++; continue; }   // …and anything still pointed at
+      doomed.push(v);
+    }
+  }
+
+  let freed = 0, deleted = 0;
+  for (const d of doomed) {
+    try { await env.MEDIA.delete(d.key); freed += d.size; deleted++; }
+    catch { /* skip, keep going */ }
+  }
+  try {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind(user.email || 'owner', 'storage_reclaim', String(deleted),
+           `${Math.round(freed / 1048576)}MB freed`, Math.floor(Date.now() / 1000)).run();
+  } catch { /* logging must not fail the sweep */ }
+  return json({ ok: true, deleted, freed, spared });
 }
 
 export async function deleteNote(req, env, user) {

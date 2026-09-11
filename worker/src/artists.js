@@ -307,7 +307,13 @@ export async function reviewSubmission(req, env, user) {
   // through mail_outbox rather than straight out, because that queue is the
   // owner's "nothing is sent without me" gate and a status email is exactly the
   // kind of thing worth reading before it leaves.
-  if (b.status !== 'pending') {
+  /* …unless the owner says not to. Sorting a backlog is not the same act as
+     answering an artist: re-filing a stem, fixing a mis-tag, or approving the
+     twelve tracks already discussed in a meeting should not fire twelve emails.
+     `notify:false` records the decision and sends nothing. The default stays
+     ON, so silence is always a choice someone made. */
+  const notify = b.notify !== false;
+  if (b.status !== 'pending' && notify) {
     try { await queueReviewMail(env, id, b.status, note); }
     catch { /* the decision is recorded either way */ }
   }
@@ -319,7 +325,8 @@ export async function reviewSubmission(req, env, user) {
   if (b.status === 'rejected' && row.file_key && row.status !== 'rejected') {
     try { trashed = await trashObject(env, row.file_key); } catch { /* keep the decision */ }
   }
-  return json({ ok: true, trashed: trashed && trashed.moved ? trashed.to : null });
+  return json({ ok: true, notified: notify && b.status !== 'pending',
+                trashed: trashed && trashed.moved ? trashed.to : null });
 }
 
 async function queueReviewMail(env, submissionId, status, note) {
@@ -410,7 +417,9 @@ export async function bulkReview(req, env, user) {
         'UPDATE submissions SET status = ?, review_note = ?, reviewed_at = ? WHERE id = ?'
       ).bind(b.status, note, now(), id).run();
       if (b.status !== 'pending') {
-        try { await queueReviewMail(env, id, b.status, note); } catch { /* decision stands */ }
+        if (b.notify !== false) {
+          try { await queueReviewMail(env, id, b.status, note); } catch { /* decision stands */ }
+        }
       }
       if (b.status === 'rejected' && row.file_key && row.status !== 'rejected') {
         try { await trashObject(env, row.file_key); } catch { /* decision stands */ }
@@ -470,4 +479,115 @@ export async function bulkEditSubmissions(req, env, user) {
     } catch { /* skip the row, keep the batch */ }
   }
   return json({ ok: true, saved });
+}
+
+
+/* ═══════════ Ask the artist a question ════════════════════════════════════
+   Between "approve" and "reject" sits the real answer most of the time: I need
+   to know something first. Who actually sings on this? Is any of it AI? Is the
+   sample cleared? Without this the only ways to ask were to reject the track or
+   to leave the dashboard and write an email by hand — so the question got
+   skipped and the track sat in the queue.
+
+   The question is stored ON the submission, not just mailed, so that:
+     • the artist sees it on their uploads page and can answer in place,
+     • the answer lands back in the dashboard next to the track,
+     • and the thread survives whoever forgot they had asked.                  */
+export async function askSubmission(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const id = Number(b.id);
+  const question = String(b.question || '').trim().slice(0, 1200);
+  if (!question) return json({ error: 'no_question' }, 400);
+
+  const s = await env.DB.prepare(
+    `SELECT sub.id, sub.title, sub.meta,
+            u.email  AS user_email,  u.name AS user_name,
+            ma.email AS artist_email, ma.name AS artist_name
+       FROM submissions sub
+       LEFT JOIN users u            ON u.id  = sub.user_id
+       LEFT JOIN managed_artists ma ON ma.id = sub.managed_artist_id
+      WHERE sub.id = ?`).bind(id).first();
+  if (!s) return json({ error: 'not_found' }, 404);
+
+  let meta = {};
+  try { meta = JSON.parse(s.meta || '{}') || {}; } catch { meta = {}; }
+  const thread = Array.isArray(meta.questions) ? meta.questions : [];
+  const qid = `q${Date.now().toString(36)}`;
+  thread.push({ qid, q: question, asked_at: now(), asked_by: user.email || 'owner', a: null });
+  meta.questions = thread.slice(-20);
+
+  // Asking moves the track OUT of the undecided pile and into "waiting on them",
+  // otherwise the queue count lies about how much is actually yours to do.
+  await env.DB.prepare(
+    "UPDATE submissions SET meta = ?, status = 'info', review_note = ? WHERE id = ?"
+  ).bind(JSON.stringify(meta), question, id).run();
+
+  const to = s.user_email || s.artist_email;
+  const who = s.user_name || s.artist_name || '';
+  let mailed = false;
+  if (to && b.notify !== false) {
+    const title = s.title || 'your track';
+    await env.DB.prepare(
+      `INSERT INTO mail_outbox (to_email, to_name, subject, body, kind, submission_id, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).bind(to, who,
+      `A question about \u201c${title}\u201d`,
+      `Hi${who ? ' ' + who : ''},
+
+Before we can take \u201c${title}\u201d further, one thing to check:
+
+${question}
+
+Reply to this email, or answer it on your uploads page:
+snowstar.company/artists.html#uploads
+
+Nothing is rejected \u2014 the track is just on hold until we have this.
+
+\u2014 Snowstar
+snowstar.company/mutra.html`,
+      'submission-question', id, Math.floor(Date.now() / 1000)).run();
+    mailed = true;
+  }
+  return json({ ok: true, qid, mailed, questions: meta.questions });
+}
+
+/** POST /artist/answer — the artist's side of the same thread. */
+export async function answerSubmission(req, env, user) {
+  if (!user) return json({ error: 'auth' }, 401);
+  const b = await req.json().catch(() => ({}));
+  const id = Number(b.id);
+  const answer = String(b.answer || '').trim().slice(0, 2000);
+  if (!answer) return json({ error: 'no_answer' }, 400);
+
+  /* Their own upload only — a submission id is a guessable integer, and the
+     question thread would otherwise be writable by any logged-in account. */
+  const row = await env.DB.prepare(
+    `SELECT sub.id, sub.meta, sub.title, sub.user_id
+       FROM submissions sub WHERE sub.id = ? AND sub.user_id = ?`
+  ).bind(id, user.id).first();
+  if (!row) return json({ error: 'not_found' }, 404);
+
+  let meta = {};
+  try { meta = JSON.parse(row.meta || '{}') || {}; } catch { meta = {}; }
+  const thread = Array.isArray(meta.questions) ? meta.questions : [];
+  const open = b.qid ? thread.find(q => q.qid === b.qid) : [...thread].reverse().find(q => !q.a);
+  if (!open) return json({ error: 'nothing_asked' }, 400);
+  open.a = answer; open.answered_at = now();
+  meta.questions = thread;
+
+  await env.DB.prepare(
+    "UPDATE submissions SET meta = ?, status = 'pending' WHERE id = ?"
+  ).bind(JSON.stringify(meta), id).run();
+
+  /* Back to me, not to them: an answer is only useful if it reaches the queue.
+     The thread itself lives on the submission (the dashboard reads it there and
+     badges the row) — this is just the audit trail. */
+  try {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind(user.email || String(user.id), 'submission_answer', String(id),
+           answer.slice(0, 400), Math.floor(Date.now() / 1000)).run();
+  } catch { /* the answer is saved on the submission regardless */ }
+  return json({ ok: true });
 }

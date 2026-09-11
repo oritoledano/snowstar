@@ -145,35 +145,46 @@
         <textarea class="rv-rnote" rows="2" placeholder="${approving
           ? 'Anything you want them to know'
           : 'The reason, in your words'}"></textarea></label>
+      <label class="rv-quiet"><input type="checkbox" class="rv-notify" checked>
+        <span>Email the artist</span></label>
       <div class="rv-racts">
         <button type="button" class="rv-btn ${approving ? 'rv-ok' : 'rv-no'} rv-rgo">${
-          approving ? 'Approve and notify' : 'Reject and notify'}</button>
+          approving ? 'Approve' : 'Reject'}</button>
         <button type="button" class="rv-btn rv-rcancel">Cancel</button>
       </div>
-      <p class="rv-hint">The artist is emailed either way — the notification is
-        queued in Notifications, and nothing leaves without you approving it there.</p>`;
+      <p class="rv-hint">Untick to decide without telling them — for re-filing a
+        stem, fixing a mis-tag, or tracks already agreed face to face.</p>`;
     const ta = box.querySelector('.rv-rnote');
     ta.focus();
+    const notifyBox = box.querySelector('.rv-notify');
+    const goBtn = box.querySelector('.rv-rgo');
+    const syncLabel = () => {
+      goBtn.textContent = (approving ? 'Approve' : 'Reject')
+        + (notifyBox.checked ? ' and notify' : ' quietly');
+    };
+    notifyBox.addEventListener('change', syncLabel); syncLabel();
     box.querySelector('.rv-rcancel').addEventListener('click', () => {
       box.hidden = true; box.innerHTML = '';
     });
     box.querySelector('.rv-rgo').addEventListener('click', () => {
-      if (!approving && !ta.value.trim()) {
+      const notify = box.querySelector('.rv-notify').checked;
+      if (!approving && notify && !ta.value.trim()) {
         // A rejection with no reason is the one case worth blocking: the artist
         // gets an email that tells them nothing and they will just ask.
+        // Only when it is actually being sent — a silent reject needs no speech.
         ta.focus();
         box.querySelector('.rv-hint').textContent = 'A reason, please — they only get this once.';
         return;
       }
-      commitReview(item, status, ta.value.trim());
+      commitReview(item, status, ta.value.trim(), notify);
     });
   }
 
-  async function commitReview(item, status, note) {
+  async function commitReview(item, status, note, notify = true) {
     const id = Number(item.dataset.id);
     const go = item.querySelector('.rv-rgo');
     if (go) { go.disabled = true; go.textContent = 'Saving…'; }
-    const r = await post('/submissions/review', { id, status, note });
+    const r = await post('/submissions/review', { id, status, note, notify });
     if (r && r.error) {
       if (go) { go.disabled = false; go.textContent = 'Try again'; }
       return;
@@ -1111,14 +1122,31 @@
           esc(m.lyrics)}</pre></details>` : ''}
       </div>`;
     };
+    /* The question thread. Shown on the row rather than hidden behind a click,
+       because the whole point is that the next person to open this track sees
+       that something was already asked — and whether it came back. */
+    const qaBlock = (s) => {
+      let m = {};
+      try { m = JSON.parse(s.meta || '{}') || {}; } catch {}
+      const thread = Array.isArray(m.questions) ? m.questions : [];
+      if (!thread.length) return '';
+      return `<div class="rv-qa">${thread.map((q) => `
+        <div class="rv-q"><b>Asked:</b> ${esc(q.q)}
+          <span class="rv-qwhen">${q.asked_at ? fmt(q.asked_at) : ''}</span></div>
+        ${q.a ? `<div class="rv-a"><b>They said:</b> ${esc(q.a)}
+          <span class="rv-qwhen">${q.answered_at ? fmt(q.answered_at) : ''}</span></div>`
+          : '<div class="rv-a waiting">Waiting for an answer</div>'}`).join('')}</div>`;
+    };
+
     /* One artist arrives with thirty tracks; deciding them one dialog at a
        time is how a backlog becomes a month old. The bar acts on the ticked
        rows and nothing else. */
     const uploaders = [...new Map(items.map((s) =>
       [s.email || s.artist_name, { who: s.artist_name || s.email, email: s.email, uid: s.user_id }])).values()];
     paint(`
-      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">${['pending', 'approved', 'rejected'].map((t) =>
-        `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${t}</button>`).join('')}
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">${
+        [['pending', 'pending'], ['info', 'waiting on them'], ['approved', 'approved'], ['rejected', 'rejected']].map(([t, label]) =>
+          `<button class="chip ${t === subTab ? 'active' : ''}" data-st="${t}">${label}</button>`).join('')}
         ${uploaders.length > 1 ? `<select class="rv-byart" aria-label="Filter by uploader">
           <option value="">Everyone</option>${uploaders.map((u) =>
             `<option value="${esc(u.email || '')}"${subArtist === u.email ? ' selected' : ''}>${esc(u.who)}</option>`).join('')}
@@ -1127,6 +1155,8 @@
       <div class="rv-bulkbar">
         <label><input type="checkbox" class="rv-all"> Select all shown</label>
         <span class="rv-count">${subPicked.size} selected</span>
+        <label class="rv-quiet"><input type="checkbox" class="rv-bnotify" checked>
+          <span>Email them</span></label>
         <span class="rv-bulkacts">
           <button class="rv-btn rv-ok" data-bulk="approved">Approve selected</button>
           <button class="rv-btn rv-no" data-bulk="rejected">Reject selected</button>
@@ -1152,6 +1182,7 @@
           ${declBlock(s)}
           ${s.artist_note ? `<p class="rv-note">Artist: “${esc(s.artist_note)}”</p>` : ''}
           ${s.review_note ? `<p class="rv-note">You: “${esc(s.review_note)}”</p>` : ''}
+          ${qaBlock(s)}
           <audio controls preload="none" src="/api/artist/file?id=${s.id}"></audio>
           <div class="rv-acts">
             ${subTab !== 'approved' ? '<button class="rv-btn rv-ok" data-a="approved">Approve</button>' : ''}
@@ -1160,7 +1191,9 @@
             <button class="rv-btn rv-edit" type="button">Edit details</button>
             <button class="rv-btn rv-anal" type="button" data-id="${s.id}">Analyze</button>
             <button class="rv-btn rv-lyr" type="button" data-id="${s.id}">Get lyrics</button>
+            <button class="rv-btn rv-ask" type="button" data-id="${s.id}">Ask the artist…</button>
           </div>
+          <div class="rv-askbox" hidden></div>
           <div class="rv-anal-out" hidden></div>
           <div class="rv-review" hidden></div>
           <div class="rv-editor" hidden></div>
@@ -1218,20 +1251,76 @@
       const ids = [...subPicked];
       if (!ids.length) return alert('Tick some rows first.');
       const status = b.dataset.bulk;
+      const nb = app.querySelector('.rv-bnotify');
+      const notify = !nb || nb.checked;
       let note = '';
-      if (status === 'rejected') {
+      if (status === 'rejected' && notify) {
         note = prompt(`Rejecting ${ids.length} track${ids.length === 1 ? '' : 's'}.\n\n`
           + 'Reason (sent to the artist, one message per track):') || '';
         if (!note.trim()) return;
-      } else if (!confirm(`${status === 'approved' ? 'Approve' : 'Move back to pending'} ${ids.length} track${ids.length === 1 ? '' : 's'}?`)) {
+      } else if (!confirm(`${status === 'approved' ? 'Approve' : status === 'rejected' ? 'Reject' : 'Move back to pending'} ${ids.length} track${ids.length === 1 ? '' : 's'}`
+          + `${notify ? '' : ' — no email, they will not be told'}?`)) {
         return;
       }
       b.disabled = true; b.textContent = 'Working…';
-      const r = await post('/submissions/bulk-review', { ids, status, note });
+      const r = await post('/submissions/bulk-review', { ids, status, note, notify });
       alert(r.ok ? `${r.done.length} done${r.failed.length ? `, ${r.failed.length} failed` : ''}.`
                  : (r.error || 'failed'));
       subPicked.clear();
       load();
+    }));
+
+    /* ── ask for more detail ──────────────────────────────────────────────
+       The third answer to "approve or reject?". Presets because the same four
+       questions come up every time, free text because the fifth one never is. */
+    const ASK_PRESETS = [
+      'Who sings on this? Full name, and are they credited or a session vocalist?',
+      'Is any part of this AI-generated — vocals, instruments, or the whole track?',
+      'Does it contain any sample, loop pack or interpolation? If so, from where?',
+      'Is this registered with ACUM or another society, and under whose name?',
+      'Is this a version or a stem of another track you sent?',
+    ];
+    app.querySelectorAll('.rv-ask').forEach((b) => b.addEventListener('click', () => {
+      const item = b.closest('.rv-item');
+      const box = item.querySelector('.rv-askbox');
+      if (!box.hidden) { box.hidden = true; box.innerHTML = ''; return; }
+      box.hidden = false;
+      box.innerHTML = `
+        <label class="rv-fld"><span>What do you need to know?</span>
+          <textarea class="rv-qtext" rows="3"
+            placeholder="Who is the singer? Is it AI made?"></textarea></label>
+        <div class="rv-qpre">${ASK_PRESETS.map((q, i) =>
+          `<button type="button" class="chip" data-pre="${i}">${esc(q.split('?')[0])}?</button>`).join('')}</div>
+        <label class="rv-quiet"><input type="checkbox" class="rv-qnotify" checked>
+          <span>Email the question</span></label>
+        <div class="rv-racts">
+          <button type="button" class="rv-btn rv-ok rv-qgo">Send question</button>
+          <button type="button" class="rv-btn rv-qcancel">Cancel</button>
+        </div>
+        <p class="rv-hint">The track moves to <b>waiting on them</b> and stays out of
+          the pending pile. They can answer by reply or on their uploads page.</p>`;
+      const ta = box.querySelector('.rv-qtext');
+      ta.focus();
+      box.querySelectorAll('[data-pre]').forEach((c) => c.addEventListener('click', () => {
+        const q = ASK_PRESETS[Number(c.dataset.pre)];
+        ta.value = ta.value.trim() ? ta.value.trim() + '\n' + q : q;   // stack them
+        ta.focus();
+      }));
+      box.querySelector('.rv-qcancel').addEventListener('click', () => {
+        box.hidden = true; box.innerHTML = '';
+      });
+      box.querySelector('.rv-qgo').addEventListener('click', async () => {
+        const question = ta.value.trim();
+        if (!question) { ta.focus(); return; }
+        const go = box.querySelector('.rv-qgo');
+        go.disabled = true; go.textContent = 'Sending…';
+        const r = await post('/submissions/ask', {
+          id: Number(b.dataset.id), question,
+          notify: box.querySelector('.rv-qnotify').checked,
+        });
+        if (!r || r.error) { go.disabled = false; go.textContent = 'Try again'; return; }
+        load();
+      });
     }));
 
     /* Lyrics straight off the file, through Whisper on the Workers AI binding.
@@ -1902,6 +1991,11 @@
   /* ── storage: R2 + D1 (worker) and the Pages repo (GitHub public API) ── */
   const GB = 1024 ** 3, MB = 1024 ** 2;
   const human = (b) => b == null ? '—' : b >= GB ? (b / GB).toFixed(2) + ' GB' : b >= MB ? (b / MB).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB';
+  const BUCKET_NAMES = {
+    media:   'snowstar-mutra — catalogue audio, art, video',
+    masters: 'snowstar-masters — delivered masters and submissions',
+    apps:    'snowstar-apps — installers',
+  };
   const PREFIX_NAMES = { audio: 'Mutra — audio', covers: 'Mutra — cover art', waves: 'Mutra — waveforms',
     work: 'Snowstar — work films', 'work-thumbs': 'Snowstar — work thumbs', clients: 'Client logos',
     submissions: 'Artist submissions', '(root)': 'Other' };
@@ -1929,12 +2023,36 @@
     const rows = Object.entries(s.r2.prefixes || {}).sort((a, b) => b[1] - a[1]);
     paint(`
       <div class="db-panel"><h2>Cloudflare R2 <span class="pill">${s.r2.count} files</span></h2>
-        ${gauge('Bucket total', s.r2.total, s.r2.limit, 'Free tier: 10 GB storage, zero egress fees.')}
+        ${gauge('All buckets', s.r2.total, s.r2.limit,
+          s.r2.over > 0
+            ? `Over the 10 GB free allowance by ${human(s.r2.over)} — about $${
+                (s.r2.overage_usd_month || 0).toFixed(3)} a month at $0.015/GB. Egress stays free.`
+            : 'Free tier: 10 GB storage, zero egress fees.')}
+        ${s.r2.over > 0 ? `<p class="db-warn">Billed, but for cents: R2 charges per GB-month
+          beyond the allowance, so ${human(s.r2.over)} over costs roughly $${
+            (s.r2.overage_usd_month || 0).toFixed(3)}/month — not the kind of overage that
+          surprises you. It only matters as a trend: every master and every cover adds to it.</p>` : ''}
+        ${table(Object.entries(s.r2.buckets || {}), [
+          { label: 'Bucket', get: (r) => BUCKET_NAMES[r[0]] || esc(r[0]) },
+          { label: 'Files', num: true, get: (r) => r[1].count },
+          { label: 'Size', num: true, bar: true, get: (r) => human(r[1].bytes) },
+        ], { barKey: 2 })}
+        ${s.r2.reclaimable && s.r2.reclaimable.staleCovers.count
+          ? `<div class="rv-reclaim">
+              <b>${human(s.r2.reclaimable.staleCovers.bytes)} is dead weight.</b>
+              Every artwork upload writes a new file and the one it replaced stays on disk.
+              ${s.r2.reclaimable.staleCovers.count} superseded cover${
+                s.r2.reclaimable.staleCovers.count === 1 ? '' : 's'} — nothing on the site
+              points at them.
+              <button class="rv-btn" id="st-reclaim">Delete the old covers</button>
+            </div>`
+          : ''}
+        <details class="rv-lyrics"><summary>What is inside the media bucket</summary>
         ${table(rows, [
           { label: 'What', get: (r) => PREFIX_NAMES[r[0]] || esc(r[0]) },
           { label: 'Size', num: true, get: (r) => human(r[1]) },
           { label: 'Share', num: true, bar: true, get: (r) => (r[1] / s.r2.total * 100).toFixed(1) + '%' },
-        ], { barKey: 1 })}</div>
+        ], { barKey: 1 })}</details></div>
       <div class="db-panel"><h2>Trash <span class="pill">${trash.count || 0} file${
           trash.count === 1 ? '' : 's'}</span></h2>
         <p class="db-empty" style="padding-top:0">A rejected upload used to stay in the live
@@ -1967,6 +2085,20 @@
             ? gauge('Pages repository', gh, GB, 'GitHub Pages soft limit is 1 GB. The big videos moved to R2, so this stays lean.')
             : '<p class="db-empty">Couldn’t reach the GitHub API just now (rate limit) — try again in a minute.</p>'}</div>
       </div>`);
+
+    const reclaimBtn = document.getElementById('st-reclaim');
+    if (reclaimBtn) reclaimBtn.addEventListener('click', async () => {
+      const rc = s.r2.reclaimable.staleCovers;
+      if (!confirm(`Delete ${rc.count} superseded cover file${rc.count === 1 ? '' : 's'}?\n\n`
+        + `Frees ${human(rc.bytes)}. The newest artwork for every track is kept — only the `
+        + `versions it replaced go. This cannot be undone.`)) return;
+      reclaimBtn.disabled = true; reclaimBtn.textContent = 'Deleting…';
+      // trash:false — the trash panel below owns that, with its own count guard.
+      const r = await post('/storage/reclaim', { covers: true, trash: false });
+      if (r && r.ok) alert(`Deleted ${r.deleted} file${r.deleted === 1 ? '' : 's'}, freed ${human(r.freed)}.`);
+      else alert('Could not reclaim.');
+      load();
+    });
 
     const emptyBtn = document.getElementById('tr-empty');
     if (emptyBtn) emptyBtn.addEventListener('click', async () => {

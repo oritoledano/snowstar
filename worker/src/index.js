@@ -22,7 +22,7 @@ import { transcribeSubmission, suggestVersions } from './intake.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
-import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport } from './site.js';
+import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim } from './site.js';
 import {listOverrides, saveOverride, uploadCover, listUses, saveUse,
          setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack } from './catalog.js';
 import { bulkEdit, bulkUndo, listBatches, bulkArtist } from './bulk.js';
@@ -30,7 +30,8 @@ import { listArtists, ensureArtists, saveArtist } from './artistreg.js';
 import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
-         listArtistsAdmin, updateSubmission, bulkReview, bulkEditSubmissions } from './artists.js';
+         listArtistsAdmin, updateSubmission, bulkReview, bulkEditSubmissions,
+         askSubmission, answerSubmission } from './artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration, deleteOutbox, flushAutoMail } from './rights.js';
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
@@ -205,6 +206,7 @@ async function handle(req, env, ctx) {
   if (path === '/artist/file' && method === 'GET') return streamSubmission(req, env, await currentUser(req, env), url);
   if (path === '/artists' && method === 'GET') return listArtistsAdmin(env, await currentUser(req, env));
   if (path === '/storage' && method === 'GET') return storageReport(env, await currentUser(req, env));
+  if (path === '/storage/reclaim' && method === 'POST') return storageReclaim(req, env, await currentUser(req, env));
   // rejected uploads land in trash/ and are emptied deliberately, never silently
   if (path === '/storage/trash' && method === 'GET') return listTrash(env, await currentUser(req, env));
   if (path === '/storage/trash' && method === 'DELETE') return emptyTrash(req, env, await currentUser(req, env), url);
@@ -260,6 +262,14 @@ async function handle(req, env, ctx) {
     ctx.waitUntil(flushAutoMail(env, 200)); // a bulk decision must not leave 30 mails waiting
     return r;
   }
+  // A question is the third answer to "approve or reject?", and it is the one
+  // that keeps a track moving instead of killing it.
+  if (path === '/submissions/ask' && method === 'POST') {
+    const r = await askSubmission(req, env, await currentUser(req, env));
+    ctx.waitUntil(flushAutoMail(env));
+    return r;
+  }
+  if (path === '/artist/answer' && method === 'POST') return answerSubmission(req, env, await currentUser(req, env));
   if (path === '/submissions/bulk-edit' && method === 'POST') return bulkEditSubmissions(req, env, await currentUser(req, env));
   if (path === '/intake/transcribe' && method === 'POST') return transcribeSubmission(req, env, await currentUser(req, env));
   if (path === '/intake/versions' && method === 'GET') return suggestVersions(env, await currentUser(req, env), url);
