@@ -566,6 +566,12 @@
   border:1px solid var(--line,rgba(255,255,255,.1))}
 .rv-reclaim b{color:var(--text,#eef3fb)}
 .rv-reclaim button{margin-top:9px;display:block}
+.up-split{margin:9px 0 0;border-collapse:collapse;font-size:.77rem;line-height:1.5}
+.up-split td:first-child{padding:2px 12px 2px 0;white-space:nowrap;font-variant-numeric:tabular-nums;
+  color:var(--text,#eef3fb);font-weight:600;text-align:right}
+.up-split td:last-child{padding:2px 0;color:var(--muted,#93a0b8)}
+.up-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.up-acts button{margin:0}
 
 /* granted licences */
 .mem-row.is-off{opacity:.55}
@@ -627,7 +633,7 @@
 <!-- the analyser, so an already-uploaded submission can be measured from here -->
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/dashboard.js?v=52"></script>
+<script src="js/dashboard.js?v=53"></script>
 
 <!-- full-screen menu, same burger and behaviour as Mutra -->
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">

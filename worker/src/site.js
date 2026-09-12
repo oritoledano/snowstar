@@ -141,6 +141,29 @@ export async function storageReport(env, user) {
     total += bTotal; count += bCount;
   }
 
+  /* Raw uploads are the largest class in the bucket and the least obvious —
+     nothing on the site serves them, they are the artist's original file kept
+     in case it is needed again. Split by what the upload turned into, because
+     the answer to "can this go?" is completely different for each. */
+  let uploads = { total: 0, stems: 0, fulls: 0, rejected: 0, pending: 0,
+                  stem_files: 0, rejected_files: 0 };
+  try {
+    const r = await env.DB.prepare(
+      `SELECT s.size AS size, s.status AS status, s.published_slug AS slug,
+              (SELECT COUNT(*) FROM track_stacks ts WHERE ts.child_slug = s.published_slug) AS is_child
+         FROM submissions s
+        WHERE s.file_key IS NOT NULL AND s.file_key <> ''
+          AND COALESCE(json_extract(s.meta, '$.raw_pruned'), 0) = 0`).all();
+    for (const row of r.results || []) {
+      const size = row.size || 0;
+      uploads.total += size;
+      if (row.status === 'rejected') { uploads.rejected += size; uploads.rejected_files++; }
+      else if (!row.slug) uploads.pending += size;
+      else if (row.is_child) { uploads.stems += size; uploads.stem_files++; }
+      else uploads.fulls += size;
+    }
+  } catch { /* pre-migration: report nothing rather than a wrong number */ }
+
   let staleCovers = { bytes: 0, count: 0 };
   for (const versions of covers.values()) {
     if (versions.length < 2) continue;
@@ -168,6 +191,7 @@ export async function storageReport(env, user) {
       /* R2 bills storage per GB-month beyond the allowance. Reported so the
          number in the dashboard is a cost, not a scare. */
       overage_usd_month: Math.round(Math.max(0, total - LIMIT) / (1024 ** 3) * 0.015 * 1000) / 1000,
+      uploads,
       reclaimable: { trash, staleCovers,
                      bytes: trash.bytes + staleCovers.bytes,
                      count: trash.count + staleCovers.count },
@@ -191,6 +215,16 @@ export async function storageReclaim(req, env, user) {
   const b = await req.json().catch(() => ({}));
   const doTrash = b.trash !== false;
   const doCovers = b.covers !== false;
+  /* Two more classes, both opt-IN because both destroy an artist's original
+     file rather than a derivative:
+       stems      the raw upload behind a stem or an alternate cut. The published
+                  master, stream copy and watermarked preview all survive, so the
+                  track stays licensable — what goes is the ability to re-render
+                  it from source one day.
+       rejected   the upload behind a decision of "no", once it is old enough
+                  that the decision is unlikely to be revisited. */
+  const doStems = b.stems === true;
+  const doRejected = b.rejected === true;
   const graceDays = Number.isFinite(Number(b.grace_days)) ? Number(b.grace_days) : 30;
   const cutoff = Date.now() / 1000 - graceDays * 86400;
 
@@ -230,13 +264,14 @@ export async function storageReclaim(req, env, user) {
   } while (cursor);
 
   const doomed = [...trashKeys];
-  let spared = 0;
-  if (doCovers && !guardReadable) {
-    // No references readable means no way to tell an orphan from the live file.
-    // Refusing is the only safe answer; the trash sweep still runs.
-    return json({ ok: true, deleted: 0, freed: 0, skipped_covers: 'no_references_readable' });
-  }
-  for (const versions of covers.values()) {
+  let spared = 0, skippedCovers = null;
+  /* No references readable means no way to tell an orphan cover from the live
+     one, so the cover sweep is abandoned — but ONLY the cover sweep. Returning
+     here, as this did at first, silently cancelled the trash and upload sweeps
+     too and reported "0 freed" as if there had been nothing to free. */
+  const sweepCovers = doCovers && guardReadable;
+  if (doCovers && !guardReadable) skippedCovers = 'no_references_readable';
+  for (const versions of sweepCovers ? covers.values() : []) {
     if (versions.length < 2) continue;
     versions.sort((a, b2) => b2.ts - a.ts);
     for (const v of versions.slice(1)) {        // keep the newest…
@@ -245,10 +280,44 @@ export async function storageReclaim(req, env, user) {
     }
   }
 
+  if (doStems || doRejected) {
+    const graceCut = Math.floor(Date.now() / 1000) - graceDays * 86400;
+    const rows = await env.DB.prepare(
+      `SELECT s.id, s.file_key, s.size, s.status, s.published_slug AS slug, s.reviewed_at,
+              (SELECT COUNT(*) FROM track_stacks ts WHERE ts.child_slug = s.published_slug) AS is_child
+         FROM submissions s
+        WHERE s.file_key IS NOT NULL AND s.file_key <> ''
+          AND COALESCE(json_extract(s.meta, '$.raw_pruned'), 0) = 0`).all();
+    for (const r of rows.results || []) {
+      const stem = doStems && r.status === 'approved' && r.slug && r.is_child;
+      // A rejection made this week is still being argued about. Only sweep the
+      // ones old enough that nobody is coming back to them.
+      const rej = doRejected && r.status === 'rejected'
+                  && r.reviewed_at && r.reviewed_at < graceCut;
+      if (!stem && !rej) continue;
+      doomed.push({ key: r.file_key, size: r.size || 0, sub_id: r.id });
+    }
+  }
+
   let freed = 0, deleted = 0;
+  const pruned = [];
   for (const d of doomed) {
-    try { await env.MEDIA.delete(d.key); freed += d.size; deleted++; }
-    catch { /* skip, keep going */ }
+    try {
+      await env.MEDIA.delete(d.key);
+      freed += d.size; deleted++;
+      if (d.sub_id) pruned.push(d.sub_id);
+    } catch { /* skip, keep going */ }
+  }
+  /* Flag the row, or the dashboard shows a player for a file that is gone and
+     the tidying looks like breakage. */
+  for (const id of pruned) {
+    try {
+      await env.DB.prepare(
+        `UPDATE submissions SET meta = json_patch(COALESCE(NULLIF(meta,''),'{}'),
+           json_object('raw_pruned', 1, 'raw_pruned_why',
+             'Original upload deleted to free storage. The published master, stream copy and watermarked preview are intact.'))
+         WHERE id = ?`).bind(id).run();
+    } catch { /* the file is gone either way */ }
   }
   try {
     await env.DB.prepare(
@@ -256,7 +325,8 @@ export async function storageReclaim(req, env, user) {
     ).bind(user.email || 'owner', 'storage_reclaim', String(deleted),
            `${Math.round(freed / 1048576)}MB freed`, Math.floor(Date.now() / 1000)).run();
   } catch { /* logging must not fail the sweep */ }
-  return json({ ok: true, deleted, freed, spared });
+  return json({ ok: true, deleted, freed, spared, pruned: pruned.length,
+                ...(skippedCovers ? { skipped_covers: skippedCovers } : {}) });
 }
 
 export async function deleteNote(req, env, user) {

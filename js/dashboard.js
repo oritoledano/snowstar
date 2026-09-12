@@ -2224,6 +2224,24 @@
           { label: 'Files', num: true, get: (r) => r[1].count },
           { label: 'Size', num: true, bar: true, get: (r) => human(r[1].bytes) },
         ], { barKey: 2 })}
+        ${s.r2.uploads && s.r2.uploads.total ? `
+          <div class="rv-reclaim">
+            <b>${human(s.r2.uploads.total)} of that is raw uploads.</b>
+            Nothing on the site serves these — they are the artist's original file,
+            kept in case it is ever needed again. What they became decides whether
+            they can go:
+            <table class="up-split">
+              <tr><td>${human(s.r2.uploads.fulls)}</td><td>full versions — the originals worth keeping</td></tr>
+              <tr><td>${human(s.r2.uploads.stems)}</td><td>stems and alternate cuts (${s.r2.uploads.stem_files} files)
+                — the master, stream and preview survive without them</td></tr>
+              <tr><td>${human(s.r2.uploads.rejected)}</td><td>behind a rejection (${s.r2.uploads.rejected_files} files)</td></tr>
+              <tr><td>${human(s.r2.uploads.pending)}</td><td>still waiting for a decision — leave alone</td></tr>
+            </table>
+            <div class="up-acts">
+              ${s.r2.uploads.stems ? `<button class="rv-btn" id="st-stems">Drop stem originals — ${human(s.r2.uploads.stems)}</button>` : ''}
+              ${s.r2.uploads.rejected ? `<button class="rv-btn" id="st-rej">Drop rejected originals over 30 days old</button>` : ''}
+            </div>
+          </div>` : ''}
         ${s.r2.reclaimable && s.r2.reclaimable.staleCovers.count
           ? `<div class="rv-reclaim">
               <b>${human(s.r2.reclaimable.staleCovers.bytes)} is dead weight.</b>
@@ -2272,6 +2290,32 @@
             ? gauge('Pages repository', gh, GB, 'GitHub Pages soft limit is 1 GB. The big videos moved to R2, so this stays lean.')
             : '<p class="db-empty">Couldn’t reach the GitHub API just now (rate limit) — try again in a minute.</p>'}</div>
       </div>`);
+
+    /* Both of these destroy an artist's ORIGINAL file, not a derivative, so
+       each states exactly what survives and what does not before it runs. */
+    const sweep = (id, body, ask) => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener('click', async () => {
+        if (!confirm(ask)) return;
+        btn.disabled = true; btn.textContent = 'Working…';
+        const r = await post('/storage/reclaim', { trash: false, covers: false, ...body });
+        alert(r && r.ok
+          ? `Deleted ${r.deleted} file${r.deleted === 1 ? '' : 's'}, freed ${human(r.freed)}.`
+          : 'Could not run that.');
+        load();
+      });
+    };
+    sweep('st-stems', { stems: true },
+      'Delete the original uploads behind every stem and alternate cut?\n\n'
+      + 'The published 192k master, the stream copy and the watermarked preview all stay, '
+      + 'so every one of these tracks remains playable and licensable. What goes is the '
+      + 'ability to re-render them from the source file one day.\n\nThis cannot be undone.');
+    sweep('st-rej', { rejected: true, grace_days: 30 },
+      'Delete the original uploads behind rejections older than 30 days?\n\n'
+      + 'Recent rejections are left alone — a decision made this month may still be '
+      + 'argued about. Older ones are gone for good, and there is no derivative to '
+      + 'fall back on: a rejected track was never published.\n\nThis cannot be undone.');
 
     const reclaimBtn = document.getElementById('st-reclaim');
     if (reclaimBtn) reclaimBtn.addEventListener('click', async () => {
