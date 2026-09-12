@@ -255,3 +255,165 @@ export async function suggestVersions(env, user, url) {
   groups.sort((a, b) => b.items.length - a.items.length);
   return json({ groups, scanned: rows.length });
 }
+
+/* ═══════════ Genres and moods ══════════════════════════════════════════════
+   Every track published from a submission arrived with none. That was the
+   honest default — a genre is a claim about the music, and the rule here is not
+   to fill in what we are not sure about — but an untagged track is invisible to
+   every filter on the catalogue, so "honest" quietly meant "unfindable".
+
+   This is the middle path: the model proposes, from the catalogue's OWN
+   vocabulary, using only what we actually know about the track, and the owner
+   sees it before it is saved. Nothing is invented outside the list, because a
+   tag the filter does not offer is a tag no buyer can search for — the exact
+   failure that made 'Mandolin' and 'Keys' useless on Gal Lev's stems.
+
+   Stems inherit rather than being classified. A stem of GENTLE is GENTLE: the
+   same song, the same genre, the same mood. Asking a model to classify a lone
+   bell track produces a confident answer about nothing.                        */
+
+export const VOCAB = {
+  genres: ['Electronic', 'Dance', 'Cinematic', 'House & Techno', 'Ambient', 'Rock',
+    'Indie', 'Classical', 'Chill / Lo-Fi', 'Pop', 'Funk & Soul', 'World', 'Hip Hop',
+    'SFX', 'Jazz & Blues', 'Folk & Acoustic', 'Trap', 'Latin', 'Metal', 'Holiday',
+    'Retro 8-Bit'],
+  moods: ['Reflective', 'Fun', 'Playful', 'Suspenseful', 'Hopeful', 'Tense',
+    'Uplifting', 'Calm', 'Chill', 'Quirky', 'Happy', 'Romantic', 'Sad', 'Inspiring',
+    'Angry', 'Scary'],
+  characteristics: ['Building', 'Minimal', 'Dancey', 'Dark', 'Upbeat', 'Mellow',
+    'Intense', 'Dynamic', 'Atmospheric', 'Chaotic', 'Droning', 'Cruising', 'Dreamy',
+    'Retro', 'Beautiful', 'Rebellious', 'Aggressive', 'Soaring', 'Epic', 'Soulful',
+    'Sophisticated', 'Childlike', 'Warm'],
+  instruments: ['Drums', 'Synth', 'Bass', 'Percussion', 'Guitar', 'Ambient Tones',
+    'Piano', 'Strings', 'Samples', 'Rhodes', 'Horns', 'Whistling', 'Choir',
+    'Woodwinds', 'Accordion', 'Flute'],
+};
+
+const TAG_MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
+
+const TAG_SYSTEM = `You tag production music for a licensing catalogue.
+
+Choose ONLY from the lists you are given. Never invent a tag, never return one
+that is not in the list character for character. If a list offers nothing that
+fits, return fewer tags — an empty list is correct and useful, a wrong tag is
+not, because a buyer filters by these and a mis-tag wastes their time.
+
+Return between 1 and 3 genres, 1 and 3 moods, and 2 and 4 characteristics.
+Reply with ONLY a JSON object: {"genres":[],"moods":[],"characteristics":[]}
+No prose, no code fence, no explanation.`;
+
+/** Everything we legitimately know about a track, as a prompt. */
+function tagFacts(t) {
+  const f = [];
+  if (t.title) f.push(`Title: ${t.title}`);
+  if (t.artist) f.push(`Artist: ${t.artist}`);
+  if (t.bpm) f.push(`Tempo: ${t.bpm} BPM`);
+  if (t.key) f.push(`Key: ${t.key}${t.scale ? ' ' + t.scale : ''}`);
+  if (t.vocal) f.push(`${t.vocal === 'Vocals' ? 'Has sung vocals' : 'Instrumental — no vocals'}`);
+  if (t.duration) f.push(`Length: ${Math.floor(t.duration / 60)}m${t.duration % 60}s`);
+  if (t.instruments && t.instruments.length) f.push(`Instruments heard: ${t.instruments.join(', ')}`);
+  if (t.tags && t.tags.length) f.push(`The artist's own words for it: ${t.tags.join(', ')}`);
+  if (t.stems && t.stems.length) f.push(`Delivered with stems: ${t.stems.join(', ')}`);
+  if (t.lyrics) f.push(`Lyrics:\n${String(t.lyrics).slice(0, 1400)}`);
+  return f.join('\n');
+}
+
+const inVocab = (list, allowed, max) => {
+  const ok = [];
+  for (const v of Array.isArray(list) ? list : []) {
+    const hit = allowed.find((a) => a.toLowerCase() === String(v).trim().toLowerCase());
+    if (hit && !ok.includes(hit)) ok.push(hit);
+  }
+  return ok.slice(0, max);
+};
+
+/**
+ * POST /intake/tags — { id } a submission, or { slug } a published track,
+ * or { ids: [] } for a batch. Returns suggestions; saves nothing.
+ *
+ * Suggesting and saving are deliberately separate calls. These are guesses
+ * about somebody's music, and the owner reading them before they go live is
+ * the whole reason it is safe to guess at all.
+ */
+export async function suggestTags(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const ids = Array.isArray(b.ids) ? b.ids.map(Number).filter(Boolean).slice(0, 40)
+            : (b.id ? [Number(b.id)] : []);
+  if (!ids.length && !b.slug) return json({ error: 'nothing_to_tag' }, 400);
+
+  /* A submission carries the artist's own metadata; a published slug carries
+     the catalogue's. Both end up in the same shape so the prompt does not care
+     which door the track came through. */
+  let rows = [];
+  if (ids.length) {
+    const qs = ids.map(() => '?').join(',');
+    const r = await env.DB.prepare(
+      `SELECT s.id, s.title, s.meta, s.published_slug, u.artist_name, u.name
+         FROM submissions s LEFT JOIN users u ON u.id = s.user_id
+        WHERE s.id IN (${qs})`).bind(...ids).all();
+    rows = (r.results || []).map((x) => {
+      let m = {};
+      try { m = JSON.parse(x.meta || '{}') || {}; } catch { /* none */ }
+      return { id: x.id, slug: x.published_slug, title: x.title,
+               artist: x.artist_name || x.name || '', bpm: m.bpm, key: m.key,
+               scale: m.scale, vocal: m.vocal, duration: m.duration,
+               instruments: m.instruments || [], tags: m.tags || [], lyrics: m.lyrics || '' };
+    });
+  } else {
+    const t = await env.DB.prepare('SELECT slug, title FROM tracks WHERE slug = ?')
+      .bind(String(b.slug)).first();
+    if (!t) return json({ error: 'not_found' }, 404);
+    rows = [{ slug: t.slug, title: t.title }];
+  }
+
+  const out = [];
+  for (const t of rows) {
+    let res;
+    try {
+      res = await Promise.race([
+        env.AI.run(TAG_MODEL, {
+          messages: [
+            { role: 'system', content: TAG_SYSTEM },
+            { role: 'user', content:
+              `Genres available: ${VOCAB.genres.join(' | ')}\n`
+              + `Moods available: ${VOCAB.moods.join(' | ')}\n`
+              + `Characteristics available: ${VOCAB.characteristics.join(' | ')}\n\n`
+              + `The track:\n${tagFacts(t)}` },
+          ],
+          max_tokens: 200, temperature: 0.1,
+        }),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 20000)),
+      ]);
+    } catch (e) {
+      out.push({ id: t.id, slug: t.slug, title: t.title, error: 'ai_failed' });
+      continue;
+    }
+    // Workers AI moves this field around between model families.
+    let text = '';
+    const pick = (o) => {
+      if (typeof o === 'string') return o;
+      if (!o || typeof o !== 'object') return '';
+      for (const k of ['response', 'result', 'output_text', 'text', 'content']) {
+        if (typeof o[k] === 'string') return o[k];
+        if (o[k] && typeof o[k] === 'object') { const s = pick(o[k]); if (s) return s; }
+      }
+      return '';
+    };
+    text = pick(res);
+    let parsed = null;
+    const m = text && text.match(/\{[\s\S]*\}/);
+    if (m) { try { parsed = JSON.parse(m[0]); } catch { parsed = null; } }
+    if (!parsed) {
+      out.push({ id: t.id, slug: t.slug, title: t.title, error: 'unparsable' });
+      continue;
+    }
+    out.push({
+      id: t.id, slug: t.slug, title: t.title,
+      genres: inVocab(parsed.genres, VOCAB.genres, 3),
+      moods: inVocab(parsed.moods, VOCAB.moods, 3),
+      characteristics: inVocab(parsed.characteristics, VOCAB.characteristics, 4),
+    });
+  }
+  return json({ ok: true, suggestions: out, vocab: VOCAB });
+}

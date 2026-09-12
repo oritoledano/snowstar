@@ -51,13 +51,18 @@ if (!EMAIL) { console.error('need --email'); process.exit(1); }
    Taken from the intake analyser so the dashboard's "Find versions" and this
    publisher agree about what a stem is. Disagreeing would be worse than either
    rule being wrong. */
+/* The value MUST be one of the catalogue's 16 instrument names. Anything else
+   is a tag no filter offers, so no buyer can search for it — 'Bells', 'Keys'
+   and 'Mandolin' were all invisible on their first pass. A vocal stem maps to
+   nothing at all: the voice belongs in the `vocal` field, and 'Choir' would be
+   a lie about a lead take. */
 const STEM_WORDS = {
-  bells: 'Bells', gtr: 'Guitar', guitar: 'Guitar', piano: 'Piano', keys: 'Keys',
-  strings: 'Strings', bass: 'Bass', drums: 'Drums', perc: 'Percussion',
-  percussion: 'Percussion', synth: 'Synth', pad: 'Synth', vox: 'Vocals',
-  vocal: 'Vocals', vocals: 'Vocals', lead: 'Synth', rythm: 'Drums', rhythm: 'Drums',
-  arp: 'Synth', fx: 'Samples', mando: 'Mandolin', swar: 'Strings',
-  reversw: 'Synth', x: 'Synth', instrumental: null,
+  bells: 'Percussion', gtr: 'Guitar', guitar: 'Guitar', piano: 'Piano',
+  keys: 'Piano', strings: 'Strings', bass: 'Bass', drums: 'Drums',
+  perc: 'Percussion', percussion: 'Percussion', synth: 'Synth', pad: 'Synth',
+  lead: 'Synth', rythm: 'Drums', rhythm: 'Drums', arp: 'Synth', fx: 'Samples',
+  mando: 'Guitar', swar: 'Strings', reversw: 'Synth', x: 'Synth',
+  vox: null, vocal: null, vocals: null, instrumental: null,
 };
 const FULL_WORDS = new Set(['full', 'mix', 'mixx', 'fullmix', 'master', 'main']);
 const DATE_RE = /\b\d{1,2}[.\-/]\d{1,2}[.\-/]\d{2,4}\b/g;
