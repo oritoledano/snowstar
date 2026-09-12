@@ -1223,6 +1223,7 @@
           <button class="rv-btn" data-bulk="pending">Back to pending</button>
           <button class="rv-btn" data-grid="1">Edit titles…</button>
           <button class="rv-btn" data-versions="1">Find versions…</button>
+          <button class="rv-btn" data-tags="1">Genres &amp; moods…</button>
         </span>
       </div>
       ${items.length ? items.map((s) => `
@@ -1252,10 +1253,13 @@
             <button class="rv-btn rv-anal" type="button" data-id="${s.id}">Analyze</button>
             <button class="rv-btn rv-lyr" type="button" data-id="${s.id}">Get lyrics</button>
             <button class="rv-btn rv-ask" type="button" data-id="${s.id}">Ask the artist…</button>
+            <button class="rv-btn rv-tag" type="button" data-id="${s.id}"
+              data-slug="${esc(s.published_slug || '')}">Genres &amp; moods…</button>
             <button class="rv-btn rv-no rv-del" type="button" data-id="${s.id}"
               style="margin-left:auto">Delete</button>
           </div>
           <div class="rv-askbox" hidden></div>
+          <div class="rv-tagbox" hidden></div>
           <div class="rv-anal-out" hidden></div>
           <div class="rv-review" hidden></div>
           <div class="rv-editor" hidden></div>
@@ -1331,6 +1335,111 @@
       subPicked.clear();
       load();
     }));
+
+    /* ── genres and moods ────────────────────────────────────────────────
+       Every track published from a submission arrived untagged, which is
+       invisible to every filter on the catalogue — so "we don't guess about
+       your music" quietly meant "nobody can find your music". The model
+       proposes from the catalogue's own vocabulary and this is where you
+       disagree with it: the chips are all editable, and nothing is written
+       until Save. A tag outside the vocabulary is not offered at all, because
+       one the filter does not list is one no buyer can search for. */
+    function tagEditor(box, rows, vocab) {
+      const state = new Map(rows.map((r) => [r.id || r.slug, {
+        genres: [...(r.genres || [])], moods: [...(r.moods || [])],
+        characteristics: [...(r.characteristics || [])],
+        slug: r.slug, id: r.id, title: r.title, error: r.error,
+      }]));
+      const chips = (key, field, opts) => {
+        const on = state.get(key)[field];
+        return opts.map((o) => `<button type="button" class="chip tg${
+          on.includes(o) ? ' active' : ''}" data-k="${esc(String(key))}"
+          data-f="${field}" data-v="${esc(o)}">${esc(o)}</button>`).join('');
+      };
+      const draw = () => {
+        box.innerHTML = `
+          ${[...state.entries()].map(([key, t]) => `
+            <div class="tg-track">
+              <b>${esc(t.title || t.slug || '')}</b>
+              ${t.error ? `<span class="rv-note">— the model did not answer (${esc(t.error)}); pick by hand</span>` : ''}
+              ${!t.slug ? '<span class="rv-note">— not in the catalogue yet, saved to the upload</span>' : ''}
+              <div class="tg-row"><span>Genres</span><div>${chips(key, 'genres', vocab.genres)}</div></div>
+              <div class="tg-row"><span>Moods</span><div>${chips(key, 'moods', vocab.moods)}</div></div>
+              <div class="tg-row"><span>Feel</span><div>${chips(key, 'characteristics', vocab.characteristics)}</div></div>
+            </div>`).join('')}
+          <div class="rv-racts">
+            <button type="button" class="rv-btn rv-ok tg-save">Save ${state.size === 1 ? '' : state.size + ' tracks'}</button>
+            <button type="button" class="rv-btn tg-cancel">Cancel</button>
+            <span class="tg-said"></span>
+          </div>`;
+        box.querySelectorAll('.tg').forEach((c) => c.addEventListener('click', () => {
+          const t = state.get(c.dataset.k) || state.get(Number(c.dataset.k));
+          const list = t[c.dataset.f];
+          const i = list.indexOf(c.dataset.v);
+          if (i === -1) list.push(c.dataset.v); else list.splice(i, 1);
+          c.classList.toggle('active', i === -1);
+        }));
+        box.querySelector('.tg-cancel').addEventListener('click', () => {
+          box.hidden = true; box.innerHTML = '';
+        });
+        box.querySelector('.tg-save').addEventListener('click', async () => {
+          const said = box.querySelector('.tg-said');
+          const btn = box.querySelector('.tg-save');
+          btn.disabled = true; said.textContent = 'Saving…';
+          const live = [...state.values()].filter((t) => t.slug);
+          const draft = [...state.values()].filter((t) => !t.slug && t.id);
+          let okCount = 0;
+          if (live.length) {
+            const r = await post('/catalog/tag', { items: live.map((t) => ({
+              slug: t.slug, genres: t.genres, moods: t.moods, characteristics: t.characteristics })) });
+            okCount += (r && r.done ? r.done.length : 0);
+          }
+          /* Not published yet: the tags ride along in the upload's own metadata
+             so they are already there when it is published, instead of being
+             typed twice. */
+          for (const t of draft) {
+            const r = await post('/submissions/bulk-edit', { edits: [{ id: t.id, meta: {
+              genres: t.genres, moods: t.moods, characteristics: t.characteristics } }] });
+            if (r && r.ok) okCount++;
+          }
+          said.textContent = `${okCount} saved.`;
+          setTimeout(() => { box.hidden = true; box.innerHTML = ''; load(); }, 700);
+        });
+      };
+      draw();
+    }
+
+    async function askForTags(box, ids) {
+      box.hidden = false;
+      box.innerHTML = '<p class="rv-note">Listening to what we know about '
+        + `${ids.length === 1 ? 'it' : 'them'}…</p>`;
+      const r = await post('/intake/tags', ids.length === 1 ? { id: ids[0] } : { ids });
+      if (!r || !r.ok) {
+        box.innerHTML = `<p class="rv-note">Could not get suggestions${
+          r && r.error ? ' — ' + esc(r.error) : ''}.</p>`;
+        return;
+      }
+      tagEditor(box, r.suggestions, r.vocab);
+    }
+
+    app.querySelectorAll('.rv-tag').forEach((b) => b.addEventListener('click', () => {
+      const box = b.closest('.rv-item').querySelector('.rv-tagbox');
+      if (!box.hidden) { box.hidden = true; box.innerHTML = ''; return; }
+      askForTags(box, [Number(b.dataset.id)]);
+    }));
+
+    const tagsBtn = app.querySelector('[data-tags]');
+    if (tagsBtn) tagsBtn.addEventListener('click', () => {
+      const ids = [...subPicked];
+      if (!ids.length) return alert('Tick some rows first.');
+      let box = app.querySelector('.rv-bulktag');
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'rv-tagbox rv-bulktag';
+        app.querySelector('.rv-bulkbar').after(box);
+      }
+      askForTags(box, ids);
+    });
 
     /* Deleting an upload, as opposed to rejecting it. Rejecting says "not for
        the catalogue" and keeps the record; this is for the ones that should

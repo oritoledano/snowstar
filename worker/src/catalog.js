@@ -26,7 +26,7 @@ const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,120}$/;
 /** Only these may be overridden — an unknown key is dropped rather than
  *  rejected, so a newer page can post fields an older worker doesn't know. */
 const STRING_FIELDS = ['title', 'artist', 'key', 'scale', 'vocal', 'lang', 'cover'];
-const LIST_FIELDS = ['genres', 'moods', 'instruments', 'packages'];
+const LIST_FIELDS = ['genres', 'moods', 'instruments', 'packages', 'characteristics'];
 
 const clean = (v, max = 120) => String(v == null ? '' : v).trim().slice(0, max);
 
@@ -364,4 +364,48 @@ export async function undeleteTrack(req, env, user) {
   if (!SLUG_RE.test(slug)) return json({ error: 'bad_slug' }, 400);
   await env.DB.prepare('DELETE FROM deleted_tracks WHERE slug = ?').bind(slug).run();
   return json({ ok: true, slug, note: 'Audio may still be in the trash — restore it there too.' });
+}
+
+
+/* ═══════════ Tagging, without rewriting everything else ═══════════════════
+   saveOverride stores the patch WHOLE, so using it to add two genres means the
+   caller has to send back every other field it does not want to lose — and a
+   caller that forgets one silently erases it. Tagging happens in batches of
+   twenty-four, so that risk is not hypothetical.
+
+   This merges instead: it touches the tag lists it is given and nothing else.
+   It also does not run the rights lock, on purpose — that guard exists to stop
+   a locked track being moved off the quote lane, and a genre has nothing to do
+   with who controls the rights. Refusing to tag a co-owned track would be the
+   guard misfiring.                                                            */
+export async function tagTracks(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const items = Array.isArray(b.items) ? b.items.slice(0, 100)
+              : (b.slug ? [b] : []);
+  if (!items.length) return json({ error: 'nothing_to_tag' }, 400);
+
+  const done = [], missed = [];
+  for (const it of items) {
+    const slug = String(it.slug || '');
+    if (!SLUG_RE.test(slug)) { missed.push(slug); continue; }
+    const row = await env.DB.prepare(
+      'SELECT patch FROM track_overrides WHERE slug = ?').bind(slug).first().catch(() => null);
+    let patch = {};
+    try { patch = row && row.patch ? JSON.parse(row.patch) : {}; } catch { patch = {}; }
+
+    const merged = { ...patch };
+    for (const f of ['genres', 'moods', 'characteristics', 'instruments']) {
+      if (it[f] === undefined) continue;
+      merged[f] = it[f];
+    }
+    const clean2 = sanitize(merged);
+    if (!Object.keys(clean2).length) { missed.push(slug); continue; }
+    await env.DB.prepare(
+      `INSERT INTO track_overrides (slug, patch, updated_at) VALUES (?, ?, ?)
+       ON CONFLICT(slug) DO UPDATE SET patch = excluded.patch, updated_at = excluded.updated_at`
+    ).bind(slug, JSON.stringify(clean2), Math.floor(Date.now() / 1000)).run();
+    done.push(slug);
+  }
+  return json({ ok: true, done, missed });
 }

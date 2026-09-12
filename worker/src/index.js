@@ -18,13 +18,13 @@
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload,
          listAlerts, setAlertsMuted, handleDemand } from './analytics.js';
 import { sendMail, resetEmail, welcomeEmail } from './mail.js';
-import { transcribeSubmission, suggestVersions } from './intake.js';
+import { transcribeSubmission, suggestVersions, suggestTags } from './intake.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim } from './site.js';
 import {listOverrides, saveOverride, uploadCover, listUses, saveUse,
-         setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack } from './catalog.js';
+         setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack, tagTracks } from './catalog.js';
 import { bulkEdit, bulkUndo, listBatches, bulkArtist } from './bulk.js';
 import { listArtists, ensureArtists, saveArtist } from './artistreg.js';
 import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
@@ -274,6 +274,8 @@ async function handle(req, env, ctx) {
   if (path === '/artists/delete' && method === 'POST') return deleteArtist(req, env, await currentUser(req, env));
   if (path === '/submissions/bulk-edit' && method === 'POST') return bulkEditSubmissions(req, env, await currentUser(req, env));
   if (path === '/intake/transcribe' && method === 'POST') return transcribeSubmission(req, env, await currentUser(req, env));
+  if (path === '/catalog/tag' && method === 'POST') return tagTracks(req, env, await currentUser(req, env));
+  if (path === '/intake/tags' && method === 'POST') return suggestTags(req, env, await currentUser(req, env));
   if (path === '/intake/versions' && method === 'GET') return suggestVersions(env, await currentUser(req, env), url);
 
   // ── rights layer: credits, claims, managed artists, owner-gated mail ──
