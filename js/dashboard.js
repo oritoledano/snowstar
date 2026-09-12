@@ -180,6 +180,44 @@
     });
   }
 
+  /* Deleting an artist takes their uploads, their declarations and their
+     account with it, so it asks the server what that means BEFORE asking the
+     human anything. The confirm number is the server's own count: a dashboard
+     left open since three more uploads arrived cannot delete files it never
+     listed. Sold tracks refuse outright — that record is owed to a buyer. */
+  async function deleteArtistFlow(who, body, say) {
+    const dry = await post('/artists/delete', body);
+    if (!dry || dry.error) {
+      say((dry && dry.hint) || 'Could not read what that would delete.');
+      return false;
+    }
+    const bits = [`${dry.subs} upload${dry.subs === 1 ? '' : 's'}`];
+    if (dry.decls) bits.push(`${dry.decls} signed declaration${dry.decls === 1 ? '' : 's'}`);
+    if (dry.collabs) bits.push(`${dry.collabs} credit${dry.collabs === 1 ? '' : 's'}`);
+    let warn = '';
+    if (dry.sold && dry.sold.length) {
+      say(`${who} has tracks that have been licensed (${dry.sold.join(', ')}). `
+        + 'That record has to stand — revoke those licences first if it really must go.');
+      return false;
+    }
+    if (dry.published && dry.published.length) {
+      warn = `\n\n${dry.published.length} of their tracks are LIVE in the catalogue `
+        + `(${dry.published.slice(0, 4).join(', ')}${dry.published.length > 4 ? '…' : ''}). `
+        + 'Deleting leaves those rows in the catalogue with no owner behind them.';
+    }
+    if (!confirm(`Delete ${who}?\n\nThis takes ${bits.join(', ')}.`
+      + `${warn}\n\nAudio moves to trash rather than being destroyed. Nothing else can be undone.`)) return false;
+    const r = await post('/artists/delete',
+      { ...body, confirm: dry.subs, force: !!(dry.published && dry.published.length) });
+    if (!r || !r.ok) {
+      say(r && r.error === 'confirm_mismatch'
+        ? 'Their uploads changed while you were reading. Reloading.'
+        : (r && r.hint) || 'Could not delete that.');
+      return false;
+    }
+    return true;
+  }
+
   async function commitReview(item, status, note, notify = true) {
     const id = Number(item.dataset.id);
     const go = item.querySelector('.rv-rgo');
@@ -841,10 +879,18 @@
       try {
         const r = await post('/members/delete', { id });
         if (r.error) {
-          const msg = { has_rights_history: `${member.email} has submissions or signed rights records and can’t be deleted — edit them instead.`,
-            cannot_delete_self: 'You can’t remove your own account.' }[r.error]
-            || 'Couldn’t remove that — try again.';
-          showErr(msg); btn.disabled = false;
+          /* An artist always trips has_rights_history — they uploaded, which is
+             the whole point of them. Rather than dead-ending there, offer the
+             delete that knows how to take the uploads too. */
+          if (r.error === 'has_rights_history') {
+            btn.disabled = false;
+            const ok = await deleteArtistFlow(member.email, { user_id: id }, showErr);
+            if (ok) await paintMembers();
+            return;
+          }
+          showErr(r.error === 'cannot_delete_self'
+            ? 'You can’t remove your own account.' : 'Couldn’t remove that — try again.');
+          btn.disabled = false;
           return;
         }
         await paintMembers();
@@ -926,8 +972,8 @@
           </div>` : ''}
           <div class="rv-acts"><button class="rv-btn rv-ok ar-save" type="button">Save profile</button>
             ${a.managers ? `<button class="rv-btn rv-no ar-del" type="button"
-              ${a.uploads ? `disabled title="Still has ${a.uploads} upload${a.uploads === 1 ? '' : 's'} — reassign or delete those first"` : ''}
-              >Delete artist</button>` : ''}
+              data-uploads="${a.uploads || 0}"
+              >Delete artist${a.uploads ? ` and ${a.uploads} upload${a.uploads === 1 ? '' : 's'}` : ''}</button>` : ''}
             <span class="ar-said"></span></div>
         </div>
       </div>`).join('');
@@ -1022,11 +1068,25 @@
     app.querySelectorAll('.ar-del').forEach((b) => b.addEventListener('click', async () => {
       const card = b.closest('.ar-card');
       const name = card.querySelector('b').textContent;
+      const said = card.querySelector('.ar-said');
+      const say = (m) => { said.textContent = m; };
+      // With uploads behind them, the delete has to take those too; without
+      // any, the old profile-only endpoint is still the lighter, right call.
+      if (Number(b.dataset.uploads) > 0) {
+        // pid is 'u:<user id>' for an account and 'm:<row id>' for a managed
+        // profile — the delete needs to know which, they are different objects.
+        const pid = String(card.dataset.pid || '');
+        const body = pid.startsWith('m:') ? { managed_id: Number(pid.slice(2)) }
+                                          : { user_id: pid.slice(2) };
+        const ok = await deleteArtistFlow(name, body, say);
+        if (ok) load();
+        return;
+      }
       if (!confirm(`Delete ${name}?\n\nThis removes the artist and who manages them. It cannot be undone.`)) return;
       const r = await fetch('/api/artists/profiles?pid=' + encodeURIComponent(card.dataset.pid),
         { method: 'DELETE', credentials: 'same-origin' }).then((x) => x.json()).catch(() => null);
       if (r && r.ok) load();
-      else card.querySelector('.ar-said').textContent = (r && r.detail) || 'Could not delete that artist.';
+      else say((r && r.detail) || 'Could not delete that artist.');
     }));
 
     app.querySelectorAll('.ar-save').forEach((b) => b.addEventListener('click', async () => {
@@ -1192,6 +1252,8 @@
             <button class="rv-btn rv-anal" type="button" data-id="${s.id}">Analyze</button>
             <button class="rv-btn rv-lyr" type="button" data-id="${s.id}">Get lyrics</button>
             <button class="rv-btn rv-ask" type="button" data-id="${s.id}">Ask the artist…</button>
+            <button class="rv-btn rv-no rv-del" type="button" data-id="${s.id}"
+              style="margin-left:auto">Delete</button>
           </div>
           <div class="rv-askbox" hidden></div>
           <div class="rv-anal-out" hidden></div>
@@ -1268,6 +1330,22 @@
                  : (r.error || 'failed'));
       subPicked.clear();
       load();
+    }));
+
+    /* Deleting an upload, as opposed to rejecting it. Rejecting says "not for
+       the catalogue" and keeps the record; this is for the ones that should
+       never have been a row — a duplicate, a test, a file sent twice. */
+    app.querySelectorAll('.rv-del').forEach((b) => b.addEventListener('click', async () => {
+      const item = b.closest('.rv-item');
+      const title = item.querySelector('b').textContent;
+      if (!confirm(`Delete “${title}” entirely?\n\nThe row, its rights declaration and its `
+        + 'credits go. The audio moves to trash rather than being destroyed. '
+        + 'Rejecting is the gentler option if you only mean "not this one".')) return;
+      b.disabled = true; b.textContent = 'Deleting…';
+      const r = await post('/submissions/delete', { id: Number(b.dataset.id) });
+      if (r && r.ok) { subPicked.delete(Number(b.dataset.id)); load(); return; }
+      b.disabled = false; b.textContent = 'Delete';
+      alert((r && r.hint) || (r && r.error) || 'Could not delete that.');
     }));
 
     /* ── ask for more detail ──────────────────────────────────────────────

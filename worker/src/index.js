@@ -31,7 +31,7 @@ import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus 
 import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
          listArtistsAdmin, updateSubmission, bulkReview, bulkEditSubmissions,
-         askSubmission, answerSubmission } from './artists.js';
+         askSubmission, answerSubmission, deleteSubmission, deleteArtist } from './artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
          listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration, deleteOutbox, flushAutoMail } from './rights.js';
 import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
@@ -270,6 +270,8 @@ async function handle(req, env, ctx) {
     return r;
   }
   if (path === '/artist/answer' && method === 'POST') return answerSubmission(req, env, await currentUser(req, env));
+  if (path === '/submissions/delete' && method === 'POST') return deleteSubmission(req, env, await currentUser(req, env));
+  if (path === '/artists/delete' && method === 'POST') return deleteArtist(req, env, await currentUser(req, env));
   if (path === '/submissions/bulk-edit' && method === 'POST') return bulkEditSubmissions(req, env, await currentUser(req, env));
   if (path === '/intake/transcribe' && method === 'POST') return transcribeSubmission(req, env, await currentUser(req, env));
   if (path === '/intake/versions' && method === 'GET') return suggestVersions(env, await currentUser(req, env), url);

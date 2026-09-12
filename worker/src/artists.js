@@ -591,3 +591,164 @@ export async function answerSubmission(req, env, user) {
   } catch { /* the answer is saved on the submission regardless */ }
   return json({ ok: true });
 }
+
+/* ═══════════ Deleting a submission, and deleting an artist ════════════════
+   deleteMember refuses outright the moment somebody has any rights history —
+   which is every artist who ever uploaded, so in practice an artist could be
+   created and never removed. That was the right instinct (a signed declaration
+   is a legal artefact, not a row) applied too bluntly.
+
+   The line this draws instead: what must NEVER be deleted is a record that
+   something was SOLD. A licence is a promise to a buyer and a payout owed to a
+   person; the declaration behind it is the evidence that the promise could be
+   made. Everything else — an upload nobody bought, a declaration on a track
+   that never went live — is just data, and the owner may bin it.
+
+   So: published tracks and sold tracks block the delete and say why. Audio goes
+   to trash/ rather than being destroyed, because "delete the artist" is said in
+   frustration more often than it is meant.                                     */
+
+/** What a delete would take with it, and what stands in its way. */
+async function deleteFootprint(env, ids) {
+  if (!ids.length) return { subs: 0, published: [], sold: [], decls: 0, collabs: 0 };
+  const qs = ids.map(() => '?').join(',');
+  const subs = await env.DB.prepare(
+    `SELECT id, title, published_slug, file_key FROM submissions WHERE id IN (${qs})`).bind(...ids).all();
+  const rows = subs.results || [];
+  const slugs = rows.map((r) => r.published_slug).filter(Boolean);
+
+  let sold = [];
+  if (slugs.length) {
+    const sq = slugs.map(() => '?').join(',');
+    const l = await env.DB.prepare(
+      `SELECT DISTINCT slug FROM licences WHERE slug IN (${sq}) AND revoked_at IS NULL`).bind(...slugs).all();
+    sold = (l.results || []).map((x) => x.slug);
+  }
+  const d = await env.DB.prepare(
+    `SELECT COUNT(*) n FROM rights_decls WHERE submission_id IN (${qs})`).bind(...ids).first();
+  const c = await env.DB.prepare(
+    `SELECT COUNT(*) n FROM collaborators WHERE submission_id IN (${qs})`).bind(...ids).first();
+  return {
+    subs: rows.length, rows,
+    published: rows.filter((r) => r.published_slug).map((r) => r.published_slug),
+    sold, decls: d ? d.n : 0, collabs: c ? c.n : 0,
+  };
+}
+
+async function purgeSubmissions(env, rows) {
+  const ids = rows.map((r) => r.id);
+  if (!ids.length) return { deleted: 0, trashed: 0 };
+  let trashed = 0;
+  for (const r of rows) {
+    if (!r.file_key) continue;
+    try { const t = await trashObject(env, r.file_key); if (t && t.moved) trashed++; }
+    catch { /* a file we cannot move must not strand the row */ }
+  }
+  const qs = ids.map(() => '?').join(',');
+  await env.DB.batch([
+    env.DB.prepare(`DELETE FROM rights_decls  WHERE submission_id IN (${qs})`).bind(...ids),
+    env.DB.prepare(`DELETE FROM collaborators WHERE submission_id IN (${qs})`).bind(...ids),
+    env.DB.prepare(`DELETE FROM mail_outbox   WHERE submission_id IN (${qs}) AND sent_at IS NULL`).bind(...ids),
+    env.DB.prepare(`DELETE FROM submissions   WHERE id IN (${qs})`).bind(...ids),
+  ]);
+  return { deleted: ids.length, trashed };
+}
+
+/** POST /submissions/delete — { id } for one upload. */
+export async function deleteSubmission(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const id = Number(b.id);
+  if (!id) return json({ error: 'id_required' }, 400);
+  const fp = await deleteFootprint(env, [id]);
+  if (!fp.subs) return json({ error: 'not_found' }, 404);
+  if (fp.sold.length) {
+    return json({ error: 'licence_sold', slugs: fp.sold,
+      hint: 'A licence was granted on this track. The record has to stand — revoke the licence first if it really must go.' }, 409);
+  }
+  if (fp.published.length && b.force !== true) {
+    return json({ error: 'published', slugs: fp.published,
+      hint: 'This is live in the catalogue. Remove it there first, or repeat with force to delete the submission and leave the catalogue row orphaned.' }, 409);
+  }
+  const r = await purgeSubmissions(env, fp.rows);
+  try {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind(user.email || 'owner', 'submission_delete', String(id),
+           (fp.rows[0] && fp.rows[0].title) || '', Math.floor(Date.now() / 1000)).run();
+  } catch { /* the delete happened either way */ }
+  return json({ ok: true, ...r });
+}
+
+/**
+ * POST /artists/delete — an artist and everything they sent.
+ *
+ * GET-shaped dry run first: with no `confirm`, it reports exactly what would go
+ * and deletes nothing. `confirm` must equal the submission count it reported,
+ * so a dashboard left open since before three more uploads cannot delete files
+ * it never showed.
+ */
+export async function deleteArtist(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const uid = b.user_id ? String(b.user_id) : null;
+  const mid = b.managed_id ? Number(b.managed_id) : null;
+  if (!uid && !mid) return json({ error: 'who' }, 400);
+  if (uid && uid === user.id) return json({ error: 'cannot_delete_self' }, 400);
+
+  const who = uid
+    ? await env.DB.prepare('SELECT id, email, name, artist_name FROM users WHERE id = ?').bind(uid).first()
+    : await env.DB.prepare('SELECT id, email, name FROM managed_artists WHERE id = ?').bind(mid).first();
+  if (!who) return json({ error: 'not_found' }, 404);
+
+  const owned = await env.DB.prepare(
+    uid ? 'SELECT id FROM submissions WHERE user_id = ?'
+        : 'SELECT id FROM submissions WHERE managed_artist_id = ?'
+  ).bind(uid || mid).all();
+  const ids = (owned.results || []).map((r) => r.id);
+  const fp = await deleteFootprint(env, ids);
+
+  // Dry run: say what would happen, touch nothing.
+  if (b.confirm == null) {
+    return json({ ok: true, dry_run: true, who: who.name || who.email,
+      subs: fp.subs, published: fp.published, sold: fp.sold,
+      decls: fp.decls, collabs: fp.collabs });
+  }
+  if (Number(b.confirm) !== fp.subs) {
+    return json({ error: 'confirm_mismatch', subs: fp.subs }, 409);
+  }
+  if (fp.sold.length) {
+    return json({ error: 'licence_sold', slugs: fp.sold,
+      hint: 'Tracks by this artist have been licensed. Those records, and the payouts behind them, have to stand.' }, 409);
+  }
+  if (fp.published.length && b.force !== true) {
+    return json({ error: 'published', slugs: fp.published,
+      hint: 'Some of their tracks are live in the catalogue. Take those down first.' }, 409);
+  }
+
+  const r = await purgeSubmissions(env, fp.rows);
+  const stmts = [];
+  if (uid) {
+    stmts.push(
+      env.DB.prepare('DELETE FROM sessions        WHERE user_id = ?').bind(uid),
+      env.DB.prepare('DELETE FROM favorites       WHERE user_id = ?').bind(uid),
+      env.DB.prepare('DELETE FROM identities      WHERE user_id = ?').bind(uid),
+      env.DB.prepare('DELETE FROM downloads       WHERE user_id = ?').bind(uid),
+      env.DB.prepare('DELETE FROM password_resets WHERE user_id = ?').bind(uid),
+      env.DB.prepare('DELETE FROM collaborators   WHERE user_id = ?').bind(uid),
+      env.DB.prepare('UPDATE managed_artists SET claimed_user_id = NULL WHERE claimed_user_id = ?').bind(uid),
+      env.DB.prepare('DELETE FROM users WHERE id = ?').bind(uid),
+    );
+    if (who.email) stmts.push(env.DB.prepare('DELETE FROM artist_terms WHERE email = ?').bind(who.email));
+  } else {
+    stmts.push(env.DB.prepare('DELETE FROM managed_artists WHERE id = ?').bind(mid));
+  }
+  await env.DB.batch(stmts);
+  try {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind(user.email || 'owner', 'artist_delete', String(who.email || who.id),
+           `${r.deleted} uploads, ${fp.decls} declarations`, Math.floor(Date.now() / 1000)).run();
+  } catch { /* the delete happened either way */ }
+  return json({ ok: true, who: who.name || who.email, ...r, decls: fp.decls });
+}
