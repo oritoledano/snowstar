@@ -2,11 +2,13 @@
 User-agent: *
 Allow: /
 
-# Nothing here is secret, but none of it is worth indexing either: the API
-# answers JSON, /t/ pages are share-card redirects, and the dashboard is
-# owner-only behind auth.
+# The API answers JSON and the dashboard and account pages are one person's own
+# records. /t/ USED to be a share-card redirect and was blocked here for that
+# reason — it is now the only indexable page each of the 400 tracks has, and
+# the sitemap lists every one of them, so blocking it here would have quietly
+# forbidden exactly the work the sitemap was pointing at.
 Disallow: /api/
 Disallow: /dashboard.html
-Disallow: /t/
+Disallow: /account.html
 
 Sitemap: https://snowstar.company/sitemap.xml
