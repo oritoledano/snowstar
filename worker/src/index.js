@@ -17,7 +17,7 @@
 
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload,
          listAlerts, setAlertsMuted, handleDemand } from './analytics.js';
-import { sendMail, resetEmail, welcomeEmail } from './mail.js';
+import { sendMail, resetEmail, welcomeEmail , myMessages, markMessageRead} from './mail.js';
 import { transcribeSubmission, suggestVersions, suggestTags } from './intake.js';
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
@@ -402,6 +402,9 @@ async function handle(req, env, ctx) {
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
+  /* Their own inbox. Every message we have sent them, by department. */
+  if (path === '/messages/mine' && method === 'GET') return myMessages(env, await currentUser(req, env));
+  if (path === '/messages/read' && method === 'POST') return markMessageRead(req, env, await currentUser(req, env));
   if (path === '/licence/mine' && method === 'GET') return myLicences(env, await currentUser(req, env));
   if (path === '/licence/certificate' && method === 'GET') return certificate(req, env, await currentUser(req, env));
   // Public and unauthenticated on purpose: someone whose video just got claimed,

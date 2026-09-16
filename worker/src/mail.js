@@ -8,6 +8,12 @@
 
 const RESEND = 'https://api.resend.com/emails';
 
+const json = (data, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+  });
+
 /**
  * Per-purpose sender identities. These only come into play once our OWN
  * domain is verified with Resend — until then MAIL_FROM is still the
@@ -95,7 +101,51 @@ export async function sendMail(env, { to, subject, text, html, from, replyTo, at
     const detail = await res.text().catch(() => '');
     throw new Error(`mail_failed ${res.status} ${detail.slice(0, 200)}`);
   }
-  return res.json();
+  const out = await res.json();
+
+  /* Keep a copy. Fifteen call sites across eight files send mail, and none of
+     them recorded anything — mail_outbox is a send QUEUE that only ever held
+     co-owner invites, so the welcome, the password reset, the licence and its
+     audio, the quote receipt and every StreamDAW delivery left no trace at all.
+     Wrapping the send is the one change that catches all of them.
+
+     Deliberately after the send and deliberately swallowed: a person who got
+     their licence must never be told it failed because we could not file a copy. */
+  try { await recordMessage(env, to, subject, text || html, from, out && out.id); }
+  catch { /* the mail went; the filing is secondary */ }
+  return out;
+}
+
+/* Which desk it came from. Derived from the sending address, which already
+   varies by kind (submissions@, artists@, legal@), so no caller has to change
+   and no caller can forget. */
+const DEPARTMENTS = [
+  [/legal@/i, 'legal'],
+  [/submissions@/i, 'submissions'],
+  [/artists@/i, 'artist'],
+  [/licensing@/i, 'licensing'],
+  [/alerts@/i, 'system'],
+];
+export function departmentOf(from) {
+  const f = String(from || '');
+  for (const [re, name] of DEPARTMENTS) if (re.test(f)) return name;
+  return 'system';
+}
+
+async function recordMessage(env, to, subject, body, from, providerId) {
+  if (!env.DB || !to) return;
+  const email = String(to).trim().toLowerCase();
+  /* Owner alerts are not messages TO a customer — they would put our own
+     internal warnings in somebody's inbox if the addresses ever collided. */
+  if (email === String(env.ALERT_TO || '').toLowerCase() && /alerts@/i.test(String(from || ''))) return;
+  const uid = await env.DB.prepare('SELECT id FROM users WHERE lower(email) = ?')
+    .bind(email).first().then((r) => (r ? r.id : null)).catch(() => null);
+  await env.DB.prepare(
+    `INSERT INTO user_messages (email, user_id, department, subject, body, sent_at, provider_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).bind(email, uid, departmentOf(from), String(subject || '').slice(0, 300),
+         String(body || '').slice(0, 20000), Math.floor(Date.now() / 1000),
+         String(providerId || '').slice(0, 80) || null).run();
 }
 
 export function resetEmail(link, minutes) {
@@ -239,4 +289,49 @@ ${SITE}`;
   </table></body></html>`;
 
   return { subject, text, html };
+}
+
+/**
+ * GET /messages/mine — the person's own inbox.
+ *
+ * Matched on email OR id, the same rule myLicences uses: somebody can be sent
+ * mail before they have an account, and the account should pick it up when it
+ * arrives rather than starting them at zero.
+ */
+export async function myMessages(env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const email = String(user.email || '').toLowerCase();
+  let rows = [];
+  try {
+    rows = (await env.DB.prepare(
+      `SELECT id, department, subject, body, sent_at, read_at
+         FROM user_messages
+        WHERE lower(email) = ? OR (user_id IS NOT NULL AND user_id = ?)
+        ORDER BY sent_at DESC LIMIT 100`).bind(email, user.id).all()).results || [];
+  } catch { rows = []; }
+  return json({ messages: rows, unread: rows.filter((m) => !m.read_at).length });
+}
+
+/** POST /messages/read — { id } or { all: true }. */
+export async function markMessageRead(req, env, user) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const b = await req.json().catch(() => ({}));
+  const email = String(user.email || '').toLowerCase();
+  const t = Math.floor(Date.now() / 1000);
+  try {
+    if (b.all) {
+      await env.DB.prepare(
+        `UPDATE user_messages SET read_at = ?
+          WHERE read_at IS NULL AND (lower(email) = ? OR user_id = ?)`).bind(t, email, user.id).run();
+    } else {
+      /* Scoped to them in the WHERE, not checked beforehand — an id is a
+         guessable integer and this is the only thing standing between one
+         person's inbox and another's. */
+      await env.DB.prepare(
+        `UPDATE user_messages SET read_at = ?
+          WHERE id = ? AND (lower(email) = ? OR user_id = ?)`)
+        .bind(t, Number(b.id), email, user.id).run();
+    }
+  } catch { /* nothing to do */ }
+  return json({ ok: true });
 }

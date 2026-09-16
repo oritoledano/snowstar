@@ -679,6 +679,9 @@
       </div>`).join('')
       + `<div class="acct-section" data-group="account">
            <p class="acct-label">Account</p>
+           <!-- The popover is for a glance. Licence terms, a message thread and
+                an expiry date want a page, so there is now one to go to. -->
+           <a class="acct-row acct-page" href="/account.html">Open my account${CHEV}</a>
            <div class="acct-acc" data-key="profile">
              <button class="acct-row" type="button">User info${CHEV}</button>
              <div class="acct-drawer" hidden></div>

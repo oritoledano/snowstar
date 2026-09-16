@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-product="mutra">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your account — Mutra by Snowstar</title>
+<meta name="description" content="Your licences, messages, downloads and artist profile.">
+<!-- Nothing here should be indexed: it is one person's own records. -->
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script src="js/mutra-skin.js?v=4"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/skins.css?v=10">
+<link rel="stylesheet" href="css/account.css?v=12">
+<link rel="stylesheet" href="css/mutra.css?v=134">
+<style>
+  /* The page is one column of panels with a tab row above — the account popover
+     is a 360px accordion and was never the right home for a licence you might
+     need to read terms off, or a message thread. */
+  .ac-wrap{max-width:900px;margin:0 auto;padding:26px 18px 90px}
+  .ac-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 4px}
+  .ac-head h1{font-family:var(--font-display);font-size:1.7rem;margin:0;letter-spacing:.01em}
+  .ac-sub{color:var(--muted);font-size:.86rem;margin:0 0 20px}
+  .ac-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 20px;
+    border-bottom:1px solid var(--line);padding-bottom:12px}
+  .ac-tab{background:none;border:1px solid transparent;border-radius:99px;cursor:pointer;
+    padding:6px 13px;font:inherit;font-size:.83rem;color:var(--muted);position:relative}
+  .ac-tab:hover{color:var(--text)}
+  .ac-tab.on{background:var(--grad);color:var(--on-accent);font-weight:600}
+  .ac-tab .ac-dot{display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--coral);margin-left:6px;vertical-align:middle}
+  .ac-panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;
+    padding:20px 22px;margin:0 0 14px}
+  .ac-panel h2{font-family:var(--font-display);font-size:1rem;margin:0 0 4px;letter-spacing:.02em}
+  .ac-note{color:var(--muted);font-size:.82rem;line-height:1.6;margin:0 0 14px}
+  .ac-empty{color:var(--dim,var(--muted));font-size:.86rem;padding:8px 0}
+  .ac-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start;
+    padding:13px 0;border-top:1px solid var(--line)}
+  .ac-row:first-of-type{border-top:0}
+  .ac-row b{font-size:.94rem}
+  .ac-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;font-size:.76rem;color:var(--muted)}
+  .ac-acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+  .ac-chip{display:inline-block;font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;
+    padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+  .ac-chip.live{color:#7fe0a8;border-color:rgba(127,224,168,.42)}
+  .ac-chip.soon{color:#ffb86b;border-color:rgba(255,184,107,.45)}
+  .ac-chip.off{opacity:.6}
+  /* messages: unread is a weight change, not a colour change, so it still reads
+     in the light skins */
+  .ac-msg{padding:13px 0;border-top:1px solid var(--line);cursor:pointer}
+  .ac-msg:first-of-type{border-top:0}
+  .ac-msg.unread b{font-weight:700}
+  .ac-msg.unread::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:var(--coral);margin-right:8px;vertical-align:middle}
+  .ac-msgbody{display:none;margin-top:9px;padding:12px 14px;border-radius:10px;
+    background:var(--bg);border:1px solid var(--line);white-space:pre-wrap;
+    font-size:.84rem;line-height:1.6;color:var(--text)}
+  .ac-msg.open .ac-msgbody{display:block}
+  .ac-gate{text-align:center;padding:60px 20px}
+  @media (max-width:620px){ .ac-row{grid-template-columns:1fr} .ac-acts{justify-content:flex-start} }
+</style>
+</head>
+<body>
+<header class="mnav scrolled">
+  <div class="wrap mnav-in">
+    <a class="mnav-back" href="mutra.html">← Catalogue</a>
+    <a class="mnav-brand" href="mutra.html"><img src="assets/mutra-wordmark-white.png" alt="Mutra" height="18"></a>
+    <div data-account-mount></div>
+  </div>
+</header>
+
+<main class="ac-wrap" id="ac">
+  <p class="ac-empty">Loading…</p>
+</main>
+
+<script src="js/account.js?v=3"></script>
+<script src="js/account-ui.js?v=26"></script>
+<script src="js/account-page.js?v=1"></script>
+<script src="js/consent.js?v=1"></script>
+</body>
+</html>
