@@ -13,7 +13,9 @@
  * the master rather than from the existing stream copy, so there is one lossy
  * generation, not two.
  *
- * ONE GAIN PER FAMILY. A stem is not normalised to the target on its own: a
+ * Default is ONE GAIN PER FAMILY; --per-file normalises each file on its own,
+ * capped by --max-boost. Family mode reasons that a stem is not normalised to
+ * the target on its own: a
  * bell part raised to the level of a full mix is no longer a bell part, and the
  * balance between a session's stems is a musical fact, not an accident. The
  * parent decides the gain and every stem under it moves by the same amount.
@@ -41,12 +43,33 @@ const EMAIL = flag('email');
 const SLUGS = flag('slugs');
 const TARGET = Number(flag('target', -14));
 const CEILING = Number(flag('ceiling', -1));      // dBTP
+/* Per-file mode. The family rule below is right about MUSIC and wrong about this
+   catalogue: the player auditions one row at a time, so nobody ever hears a stem
+   against its parent, and a bell part sitting 27 dB under everything else reads
+   as a broken file rather than as a bell part. MAX_BOOST is the concession — a
+   near-silent stem lifted the whole way would bring its noise floor with it, so
+   no single file rises more than this and the log says which ones were capped. */
+const PER_FILE = args.includes('--per-file');
+const MAX_BOOST = Number(flag('max-boost', 12));
 const GO = args.includes('--go');
 
+/* Retried, like r2() already was. A single attempt died on a transient
+   "account is not authorized [code: 7403]" from the Cloudflare API and took the
+   whole run with it before a single file was touched — the same flakiness that
+   cost the stream-rendition script 170 of 374 tracks. */
 async function d1(sql) {
-  const { stdout } = await exec('npx', ['wrangler', 'd1', 'execute', 'snowstar-members',
-    '--remote', '--command', sql, '--json'], { cwd: WORKER, maxBuffer: 64 * 1024 * 1024 });
-  return JSON.parse(stdout.slice(stdout.indexOf('[')));
+  let last;
+  for (let t = 1; t <= 3; t++) {
+    try {
+      const { stdout } = await exec('npx', ['wrangler', 'd1', 'execute', 'snowstar-members',
+        '--remote', '--command', sql, '--json'], { cwd: WORKER, maxBuffer: 64 * 1024 * 1024 });
+      const at = stdout.indexOf('[');
+      if (at !== -1) return JSON.parse(stdout.slice(at));
+      last = new Error(stdout.slice(0, 300));
+    } catch (e) { last = e; }
+    await new Promise((r) => setTimeout(r, t * 3000));
+  }
+  throw last;
 }
 const q = (s) => `'${String(s).replace(/'/g, "''")}'`;
 
@@ -116,7 +139,7 @@ for (const fam of families) {
   console.log(`  ${fam.parent}  ${before} LUFS  →  ${gain >= 0 ? '+' : ''}${gain} dB`
     + `   (${fam.members.length} file${fam.members.length === 1 ? '' : 's'} move together)`);
   if (!GO) continue;
-  if (Math.abs(gain) < 0.3) { console.log('     already there, skipped'); continue; }
+  if (!PER_FILE && Math.abs(gain) < 0.3) { console.log('     already there, skipped'); continue; }
 
   for (const slug of fam.members) {
     const s = join(WORK, 'src.mp3');
@@ -127,13 +150,29 @@ for (const fam of families) {
     }
     if (slug === fam.parent) execFileSync('cp', [src, s]);
 
+    /* Per file: measure this one and aim it at the target itself, capped.
+       Otherwise it moves by exactly its parent's gain. */
+    let g = gain, capped = false;
+    if (PER_FILE) {
+      const own = lufs(s);
+      if (own == null) { console.log(`     ${slug} — could not measure`); failed++; continue; }
+      g = Math.round((TARGET - own) * 10) / 10;
+      if (g > MAX_BOOST) { g = MAX_BOOST; capped = true; }
+      if (Math.abs(g) < 0.3) { console.log(`     ${slug.padEnd(34)} ${own} LUFS — already there`); continue; }
+    }
+
     /* Plain gain plus a true-peak limiter, NOT loudnorm's dynamic mode. A stem
        raised by its parent's gain must move by exactly that much or the family
        balance drifts; loudnorm would re-judge each file on its own. The limiter
        only catches the peaks that boosting pushes past the ceiling. */
     try {
       execFileSync('ffmpeg', ['-nostdin', '-v', 'error', '-y', '-i', s,
-        '-af', `volume=${gain}dB,alimiter=level_in=1:level_out=1:limit=${
+        /* level=false is load-bearing. alimiter's `level` option defaults to
+           TRUE — it auto-levels the output up to the ceiling, which silently
+           undid the gain: a track cut by 4.1 dB came back 0.9 dB louder than
+           the target instead of landing on it. The limiter is here to catch
+           peaks, not to set loudness. */
+        '-af', `volume=${g}dB,alimiter=level=false:level_in=1:level_out=1:limit=${
           Math.pow(10, CEILING / 20).toFixed(4)}:attack=5:release=50`,
         '-c:a', 'aac', '-b:a', '128k', '-ar', '44100', '-ac', '2',
         '-movflags', '+faststart', out], { stdio: 'ignore' });
@@ -144,7 +183,8 @@ for (const fam of families) {
       console.log(`     ${slug} — UPLOAD FAILED`); failed++; continue;
     }
     changed++;
-    console.log(`     ${slug.padEnd(34)} ${after} LUFS`);
+    console.log(`     ${slug.padEnd(34)} ${after} LUFS`
+      + (capped ? `   (capped at +${MAX_BOOST} dB — wanted more)` : ''));
   }
 }
 console.log(`\n${GO ? `${changed} stream copies rewritten` : 'plan only — add --go'}`

@@ -454,6 +454,16 @@ async function handle(req, env, ctx) {
         const w = welcomeEmail({ name, product: source });
         await sendMail(env, { to: email, subject: w.subject, text: w.text, html: w.html });
       } catch { /* deliberately silent */ }
+      /* And tell the owner. The welcome mail goes to THEM; without this line
+         nobody on our side learns that a person arrived until they email. */
+      try {
+        const { notifyOwner } = await import('./analytics.js');
+        await notifyOwner(env, 'signup', `New sign-up: ${name || email}`,
+          `${name || '(no name)'} <${email}> just created an account.\n\n`
+          + `Came in through: ${source || 'unknown'}\nMethod: email and password\n\n`
+          + `They are not verified and have uploaded nothing yet. If music arrives you\n`
+          + `will get a separate note.\n\nMembers: https://snowstar.company/dashboard.html#members`);
+      } catch { /* a notification must never break a signup */ }
     })());
 
     return authed({ user: publicUser({ email, name, newsletter, pw_hash: hash, signup_source: source }), favorites: [] },

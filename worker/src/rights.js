@@ -551,3 +551,45 @@ export async function deleteOutbox(req, env, user) {
   } catch { /* logging must not fail the delete */ }
   return json({ ok: true, deleted: r.meta.changes });
 }
+
+
+/* ═══════════ A declaration that contradicts its own title ═════════════════
+   Eleven tracks arrived declared "I own 100%, no co-owners" — on the instant,
+   self-serve lane — with titles like "Creepzz X Nes Mburu Feat Kosi Sia". The
+   funnel accepted it without a murmur, because it only ever asked the uploader
+   and never looked at what they had typed two fields earlier.
+
+   This is not a lie detector and must not pretend to be. A title naming other
+   people is a QUESTION, not a verdict: plenty of acts have "X" in their name,
+   and a feature can be fully bought out. So the flag never rejects. It moves
+   the track off the self-serve lane — where a buyer could licence unverified
+   rights with nobody looking — and puts the contradiction in front of a human.  */
+
+const COLLAB_RE = /(?:^|[\s\-–—([])(?:feat\.?|ft\.?|featuring|w\/|vs\.?|versus)(?:[\s.]|$)/i;
+const AMP_RE = /\s(?:&|x|X)\s/;          // "A & B", "A x B" — spaced, so "Xylo" is safe
+
+export function rightsFlags(title, decl) {
+  const t = String(title || '');
+  const flags = [];
+  const names = COLLAB_RE.test(t) ? 'feature' : (AMP_RE.test(t) ? 'joint' : null);
+  if (!names) return flags;
+
+  const kind = decl && decl.kind;
+  const splits = Array.isArray(decl && decl.splits) ? decl.splits : [];
+  const controllers = Array.isArray(decl && decl.controllers) ? decl.controllers : [];
+
+  // Only a contradiction is worth raising. A shared declaration on a titled
+  // collaboration is exactly right and should pass in silence.
+  if (kind === 'solo' && !splits.length && !controllers.length) {
+    flags.push({
+      code: 'title_names_others',
+      why: names === 'feature'
+        ? 'The title names a featured artist, but the declaration says one owner and no co-owners.'
+        : 'The title reads as a collaboration, but the declaration says one owner and no co-owners.',
+      ask: 'Your title names someone else. Who else played on, wrote, or owns part of this — '
+         + 'and has each of them agreed it can be licensed? Name them with an email or phone '
+         + 'for each, or tell us they were paid off and hold no rights.',
+    });
+  }
+  return flags;
+}

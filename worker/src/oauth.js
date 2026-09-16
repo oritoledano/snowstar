@@ -254,6 +254,14 @@ async function linkAndSignIn(env, provider, profile) {
           const w = welcomeEmail({ name: profile.name, product: productFromPath(back) });
           await sendMail(env, { to: profile.email, subject: w.subject, text: w.text, html: w.html });
         } catch { /* deliberately silent */ }
+        // ...and the owner, who otherwise never learns anyone arrived.
+        try {
+          const { notifyOwner } = await import('./analytics.js');
+          await notifyOwner(env, 'signup', `New sign-up: ${profile.name || profile.email}`,
+            `${profile.name || '(no name)'} <${profile.email}> just created an account.\n\n`
+            + `Came in through: ${productFromPath(back) || 'unknown'}\nMethod: ${provider}\n\n`
+            + `Members: https://snowstar.company/dashboard.html#members`);
+        } catch { /* never break a sign-in */ }
       }
     }
     await env.DB.prepare(

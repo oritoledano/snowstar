@@ -1793,3 +1793,12 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   border:1px solid var(--line,rgba(255,255,255,.1))}
 .ar-badge.info{background:color-mix(in srgb,var(--coral,#e8b98a) 18%,transparent);
   border-color:color-mix(in srgb,var(--coral,#e8b98a) 40%,transparent);color:var(--text,#eef3fb)}
+
+
+/* The number the bank will actually ask for, on the screen before the bank. */
+.lic-gross{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin:10px 0 0;padding:10px 13px;border-radius:11px;
+  background:var(--tint,rgba(255,255,255,.04));
+  border:1px solid var(--line,rgba(255,255,255,.1))}
+.lic-gross > span{font-size:.78rem;color:var(--muted,#93a0b8)}
+.lic-gross > b{font-family:var(--font-display);font-size:1.12rem;color:var(--text,#eef3fb)}

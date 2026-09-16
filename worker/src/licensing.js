@@ -545,8 +545,10 @@ export async function grantLicence(env, opts) {
       });
     } catch { /* a licence that was granted must not fail because mail did */ }
   } catch (e) {
-    // idx_lic_live: one live licence per (member, track, tier). A double-click,
-    // or a webhook delivered twice, lands here rather than granting twice.
+    // idx_lic_live_project: one live licence per (member, track, tier, PROJECT).
+    // A double-click, or a webhook delivered twice, lands here rather than
+    // granting twice — but a second campaign on the same track does not, which
+    // is the whole product: one track, one project.
     if (String(e.message || e).includes('UNIQUE')) return { ok: false, error: 'already_licensed' };
     return { ok: false, error: 'insert_failed', detail: String(e.message || e).slice(0, 200) };
   }

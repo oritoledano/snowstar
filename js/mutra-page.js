@@ -942,7 +942,13 @@
               track.lane === 'quote' ? 'Get a quote' : 'License'}</button>`}
         </div>`;
       row.querySelector('.trk-play').addEventListener('click', () => loadTrack(track, row));
-      row.querySelector('.trk-lic').addEventListener('click', () => {
+      /* A demo-lane row renders .trk-demo INSTEAD of .trk-lic, so this was
+         binding a listener to null — a TypeError thrown inside appendPage's bare
+         forEach, which killed that page of forty rows, every page after it, and
+         infinite scroll along with them. One demo toggle in the dashboard took
+         the public catalogue down. */
+      const licBtn = row.querySelector('.trk-lic');
+      if (licBtn) licBtn.addEventListener('click', () => {
         // the chooser handles both cases: a quote-lane track shows "on request"
         // and asks for terms, a normal one shows the price for the chosen use
         if (window.mutraLicense) return mutraLicense.open(track);

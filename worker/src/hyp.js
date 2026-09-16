@@ -403,6 +403,39 @@ export async function handleReturn(req, env, ctx) {
     } catch { /* deliberately swallowed */ }
   }
 
+  /* The grant can fail after the money has moved — a duplicate, a race, a bad
+     row — and this used to redirect to ?pay=ok regardless, telling somebody
+     whose licence does NOT exist that their licence is live. The charge is
+     real, so the honest state is the one the unverified branch already uses:
+     we have your money, a person is finishing it. And the owner has to hear
+     about it, or the only trace is a row in the unapplied-payments queue that
+     nobody is watching. */
+  if (!out.ok) {
+    await env.DB.prepare(
+      'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+    ).bind('system:hyp', 'hyp.grant_failed', ref,
+           JSON.stringify({ error: out.error || null, detail: out.detail || null,
+                            slug: r.slug, amount: r.list_amount }).slice(0, 1800),
+           now()).run().catch(() => {});
+    await env.DB.prepare(
+      `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
+       VALUES (?, ?, ?, ?, ?, ?)`
+    ).bind(env.ALERT_TO || 'oritoledano@gmail.com', 'Snowstar',
+      'A card was charged but the licence was not granted',
+      `Reference ${ref}\nTrack ${r.slug}\n${(r.list_amount || 0) / 100} ILS before VAT\n\n`
+      + `The payment verified and the money has moved. Granting the licence then failed`
+      + `${out.error ? ' with: ' + out.error : ''}.\n\n`
+      + `${out.error === 'already_licensed'
+          ? 'This buyer already holds a live licence for this track and tier. If it is for a\n'
+            + 'different project, grant it manually from Licensing — that is a real second sale.\n\n'
+          : ''}`
+      + `Grant it by hand from Licensing, or refund at HYP. The buyer has been told we have\n`
+      + `their payment and a person is confirming it — so they are expecting to hear from us.`,
+      now()).run().catch(() => null);
+    return Response.redirect(
+      `https://snowstar.company/mutra.html?pay=confirming&ref=${encodeURIComponent(ref)}`, 302);
+  }
+
   return Response.redirect(
     `https://snowstar.company/mutra.html?pay=ok&ref=${encodeURIComponent(ref)}`, 302);
 }

@@ -230,6 +230,36 @@ export async function alert(env, kind, subject, text, opts) {
   void day;
 }
 
+/**
+ * Tell the owner something happened.
+ *
+ * This did not exist, and its absence is how a stranger signed up, uploaded
+ * eleven tracks and got eleven approval emails without anybody being told a
+ * person had arrived. The welcome mail goes to the ARTIST; the daily digest
+ * counted visits and plays and never mentioned people. So the first anyone knew
+ * was an email from the artist himself.
+ *
+ * Goes through the same mute switch and the same alerts log as every other
+ * owner alert, so it can be turned off per kind like the rest.
+ */
+export async function notifyOwner(env, kind, subject, text) {
+  if (await alertsMuted(env, kind)) {
+    await logAlert(env, kind, subject, text, 'suppressed', 'alerts muted');
+    return;
+  }
+  try {
+    await env.EMAIL.send({
+      to: env.ALERT_TO || 'oritoledano@gmail.com',
+      from: 'alerts@snowstar.company',
+      subject, text,
+    });
+    await logAlert(env, kind, subject, text, 'sent');
+  } catch (e) {
+    // Never let a notification failure break the thing it was reporting on.
+    await logAlert(env, kind, subject, text, 'failed', String(e && e.message || e));
+  }
+}
+
 async function logAlert(env, kind, subject, body, status, note = '') {
   try {
     await env.DB.prepare(
@@ -419,7 +449,17 @@ export async function sendDigest(env) {
             SUM(CASE WHEN type='play' THEN 1 ELSE 0 END)    AS plays,
             SUM(CASE WHEN type='license' THEN 1 ELSE 0 END) AS licenses
        FROM events WHERE ts >= ?`).bind(since).first();
-  if (!t || !t.visits) return; // quiet day: say nothing
+  /* People and music, not just traffic. A day with no visits can still be the
+     day three artists signed up, and the digest used to return before saying so. */
+  const people = await env.DB.prepare(
+    `SELECT (SELECT COUNT(*) FROM users WHERE created_at >= ?)                        AS members,
+            (SELECT COUNT(*) FROM users WHERE created_at >= ? AND artist = 1)         AS artists,
+            (SELECT COUNT(*) FROM submissions WHERE created_at >= ?)                  AS uploads,
+            (SELECT COUNT(*) FROM submissions WHERE status = 'pending')               AS waiting,
+            (SELECT COUNT(*) FROM submissions WHERE status = 'info')                  AS asked`
+  ).bind(since, since, since).first().catch(() => null);
+  const newsToday = people && (people.members || people.uploads);
+  if ((!t || !t.visits) && !newsToday) return; // genuinely quiet: say nothing
 
   const top = await env.DB.prepare(
     `SELECT detail AS slug, COUNT(*) AS plays FROM events
@@ -428,13 +468,28 @@ export async function sendDigest(env) {
 
   const text =
     `Mutra — last 24 hours\n\n` +
-    `Visits: ${t.visits}\nTrack plays: ${t.plays || 0}\nLicense clicks: ${t.licenses || 0}\n\n` +
+    `Visits: ${(t && t.visits) || 0}\nTrack plays: ${(t && t.plays) || 0}\nLicense clicks: ${(t && t.licenses) || 0}\n\n` +
+    (people
+      ? `New members: ${people.members || 0}${people.artists ? ` (${people.artists} of them artists)` : ''}\n`
+        + `Tracks uploaded: ${people.uploads || 0}\n`
+        + `Waiting for you: ${people.waiting || 0} to review`
+        + `${people.asked ? `, ${people.asked} waiting on the artist` : ''}\n`
+        + `${people.waiting ? 'Review them: https://snowstar.company/dashboard.html#submissions\n' : ''}\n`
+      : '') +
     `Most played:\n` +
     (top.results || []).map((r, i) => `  ${i + 1}. ${r.slug} — ${r.plays}`).join('\n') +
     `\n\nFull stats: https://snowstar.company/stats.html\n`;
 
-  const subject = `Mutra daily: ${t.visits} visits, ${t.plays || 0} plays`;
-  if (await alertsMuted(env)) {
+  // The subject leads with people when there are any — that is the line worth
+  // seeing on a phone without opening it.
+  const subject = people && people.uploads
+    ? `Mutra daily: ${people.uploads} new track${people.uploads === 1 ? '' : 's'}`
+      + `${people.members ? `, ${people.members} new member${people.members === 1 ? '' : 's'}` : ''}`
+      + `, ${(t && t.visits) || 0} visits`
+    : `Mutra daily: ${(t && t.visits) || 0} visits, ${(t && t.plays) || 0} plays`;
+  // ...with its KIND. Called bare, this only ever checked the global switch, so
+  // `alerts:off:digest` was set and the digest kept arriving anyway.
+  if (await alertsMuted(env, 'digest')) {
     await logAlert(env, 'digest', subject, text, 'suppressed', 'alerts muted');
     return;
   }

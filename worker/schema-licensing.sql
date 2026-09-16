@@ -73,8 +73,15 @@ CREATE TABLE IF NOT EXISTS licences (
 -- The fat-finger guard, enforced by SQLite rather than by the UI: one LIVE
 -- licence per (member, track, tier). Also gives a future payment webhook
 -- idempotency for free — a duplicate delivery hits this and stops.
-CREATE UNIQUE INDEX IF NOT EXISTS idx_lic_live
-  ON licences (user_id, slug, tier) WHERE revoked_at IS NULL AND user_id IS NOT NULL;
+-- ...PER PROJECT. Without project_name in here, a customer coming back for a
+-- second campaign on a track they already licensed hit this index, the grant
+-- failed, and the card had already been charged — the single highest-value
+-- repeat sale, broken by its own idempotency guard. COALESCE because NULLs do
+-- not collide in a SQLite unique index, which would have lost the idempotency.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_lic_live_project
+  ON licences (user_id, slug, tier, COALESCE(project_name, ''))
+  WHERE revoked_at IS NULL AND user_id IS NOT NULL;
+DROP INDEX IF EXISTS idx_lic_live;
 CREATE INDEX IF NOT EXISTS idx_lic_user ON licences (user_id, revoked_at);
 CREATE INDEX IF NOT EXISTS idx_lic_slug ON licences (slug);
 

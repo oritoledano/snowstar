@@ -9,7 +9,7 @@
  */
 
 import { sendMail, mailFrom, mailTo } from './mail.js';
-import { parseDeclaration, recordDeclaration } from './rights.js';
+import { parseDeclaration, recordDeclaration, rightsFlags } from './rights.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
@@ -97,20 +97,37 @@ export async function createSubmission(req, env, user, ctx) {
   // on-behalf uploads must use the behalf declaration, and vice versa
   if (!!managed !== (parsed.decl.kind === 'behalf')) return json({ error: 'declaration_kind_mismatch' }, 400);
 
+  /* Does the title contradict the declaration? Computed before the insert
+     because it decides the lane, and stored on the row because the reviewer
+     needs to see WHY a solo-declared track is sitting in the quote lane. */
+  const flags = rightsFlags(title, {
+    kind: parsed.decl.kind,
+    splits: parsed.collabs || [],
+    controllers: parsed.controllers || [],
+  });
+
   const r = await env.DB.prepare(
     `INSERT INTO submissions (user_id, title, file_key, size, ext, artist_note, status, created_at, managed_artist_id, lane, meta)
      VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)`
   ).bind(user.id, title, key, head.size, key.split('.').pop(),
          String(b.note || '').trim().slice(0, 2000), now(), managed ? managed.id : null,
          // anything the uploader doesn't wholly own or control is bookable but
-         // never self-serve; the server decides rather than trusting the client
-         (parsed.decl.kind === 'solo' && !(parsed.controllers || []).length) ? 'instant' : 'quote',
+         // never self-serve; the server decides rather than trusting the client.
+         // A title that names other people counts as "doesn't wholly own" until
+         // a human says otherwise — see rightsFlags.
+         (parsed.decl.kind === 'solo' && !(parsed.controllers || []).length && !flags.length)
+           ? 'instant' : 'quote',
          /* Measured tempo, key, voice, lyrics, tags and links, as the uploader
             left them. Stored as JSON rather than columns because it is a
             suggestion sheet that will grow, and it is read once at publish
             time — not something to query across. */
-         (() => { try { return b.meta ? JSON.stringify(b.meta).slice(0, 8000) : null; }
-                  catch { return null; } })()).run();
+         (() => {
+           try {
+             const m = (b.meta && typeof b.meta === 'object') ? { ...b.meta } : {};
+             if (flags.length) m.rights_flags = flags;
+             return Object.keys(m).length ? JSON.stringify(m).slice(0, 8000) : null;
+           } catch { return flags.length ? JSON.stringify({ rights_flags: flags }) : null; }
+         })()).run();
 
   const creditedName = managed ? managed.name : (user.artist_name || user.email);
   try {
@@ -128,6 +145,28 @@ export async function createSubmission(req, env, user, ctx) {
       subject: `Mutra submission: “${title}” by ${creditedName}`,
       text: `${creditedName} uploaded “${title}”.\n\nReview it: https://snowstar.company/dashboard.html#submissions`,
     }).catch(() => {}));
+    /* ...and to the address we KNOW reaches a person. The line above goes to
+       submissions@snowstar.company, which only arrives if Email Routing is
+       forwarding that alias — and when eleven tracks arrived from a stranger,
+       nothing reached anybody. ALERT_TO is a real inbox, and notifyOwner also
+       leaves a row in the alerts log, so "was I told?" has an answer. */
+    ctx.waitUntil((async () => {
+      try {
+        const { notifyOwner } = await import('./analytics.js');
+        await notifyOwner(env, 'submission',
+          `${flags.length ? '⚠ ' : ''}Mutra submission: “${title}” by ${creditedName}`,
+          `${creditedName} <${user.email}> uploaded “${title}”.\n\n`
+          + `Declared: ${parsed.decl.kind}${(parsed.collabs || []).length
+              ? ` with ${parsed.collabs.length} co-owner(s)` : ', no co-owners'}\n`
+          + `Lane: ${flags.length ? 'quote (held back)' : (parsed.decl.kind === 'solo'
+              && !(parsed.controllers || []).length ? 'instant' : 'quote')}\n`
+          + (flags.length
+              ? `\nHELD BACK: ${flags.map((f) => f.why).join(' ')}\n`
+                + `It cannot self-serve until you have looked at it.\n`
+              : '')
+          + `\nReview it: https://snowstar.company/dashboard.html#submissions`);
+      } catch { /* a notification must never break an upload */ }
+    })());
   }
 
   return json({ ok: true, id: r.meta.last_row_id }, 201);

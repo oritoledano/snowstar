@@ -461,6 +461,13 @@
         <span class="lic-price">${CUR}${p.amount.toLocaleString()}</span>
         <span class="lic-per">+ VAT 18%</span>
       </div>
+      <!-- The number the card page will actually ask for. Showing ₪179 on the
+           button and ₪211.22 on the bank's screen is how a sale turns into a
+           chargeback; the gross was computed only on the fallback receipt. -->
+      <div class="lic-gross">
+        <span>Total charged today</span>
+        <b class="lic-grossnum">${CUR}${Math.round(p.amount * 1.18).toLocaleString()}</b>
+      </div>
       <p class="lic-err" hidden></p>
       <div class="lic-acts">
         <button class="lic-go lic-submit">Pay by Card <span class="lic-cards" aria-hidden="true"><i class="cb-visa">VISA</i><i class="cb-mc"></i><i class="cb-amex">AMEX</i></span></button>
@@ -480,6 +487,14 @@
       const alt = body().querySelector('.lic-alt');
       if (!el2) return;
       el2.textContent = amount == null ? 'On request' : CUR + amount.toLocaleString();
+      /* The gross lives here too, or a coupon silently leaves it showing the
+         pre-discount total — worse than not showing it at all. */
+      const gross = body().querySelector('.lic-gross');
+      const grossNum = body().querySelector('.lic-grossnum');
+      if (gross && grossNum) {
+        gross.hidden = amount == null || amount === 0;
+        if (amount != null) grossNum.textContent = CUR + Math.round(amount * 1.18).toLocaleString();
+      }
       if (was) {
         was.hidden = !(wasAmount != null && wasAmount !== amount);
         was.textContent = wasAmount != null ? CUR + wasAmount.toLocaleString() : '';
