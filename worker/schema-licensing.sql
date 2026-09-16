@@ -37,7 +37,13 @@ CREATE TABLE IF NOT EXISTS licence_requests (
   created_at     INTEGER NOT NULL,
   decided_by     TEXT,
   decided_at     INTEGER,
-  decline_note   TEXT
+  decline_note   TEXT,
+  -- The term the buyer chose, written by createRequest. `months` is NULL for a
+  -- perpetual licence — meaningful, not missing — and grantLicence reads it to
+  -- decide expires_at.
+  months         INTEGER,
+  duration_id    TEXT,
+  project_name   TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_lr_status ON licence_requests (status, id);
 CREATE INDEX IF NOT EXISTS idx_lr_user   ON licence_requests (user_id);
@@ -68,7 +74,11 @@ CREATE TABLE IF NOT EXISTS licences (
   starts_at      INTEGER NOT NULL,
   expires_at     INTEGER,                   -- NULL = perpetual
   revoked_at     INTEGER,
-  revoke_reason  TEXT
+  revoke_reason  TEXT,
+  -- What the licence covers. Load-bearing rather than decorative: the unique
+  -- index below keys on it, so a rebuild from this file without this column
+  -- fails on the index — which is exactly the state this file was in.
+  project_name   TEXT
 );
 -- The fat-finger guard, enforced by SQLite rather than by the UI: one LIVE
 -- licence per (member, track, tier). Also gives a future payment webhook
@@ -138,7 +148,16 @@ CREATE TABLE IF NOT EXISTS invoices (
   currency      TEXT NOT NULL DEFAULT 'ILS',
   vat_treatment TEXT,                       -- standard|zero_rated
   allocation_no TEXT,                       -- ITA number, only above ₪5,000 ex-VAT
-  ts            INTEGER NOT NULL
+  ts            INTEGER NOT NULL,
+  -- Added live when invoicing went automatic, and never written back here — so
+  -- idx_inv_licence below referenced a column this file did not declare, and a
+  -- rebuild stopped dead on it.
+  licence_id    INTEGER,
+  licence_ref   TEXT,
+  doc_type      INTEGER,                    -- Green Invoice type; 320 = חשבונית מס/קבלה
+  status        TEXT,                       -- pending|issued|failed|skipped
+  last_error    TEXT,
+  issued_at     INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_inv_user ON invoices (user_id);
 CREATE TABLE IF NOT EXISTS invoice_licences (

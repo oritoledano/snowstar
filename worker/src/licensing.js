@@ -653,16 +653,24 @@ export async function grantFromDashboard(req, env, user) {
 export async function revokeLicence(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const b = await req.json().catch(() => ({}));
+  /* id OR ref. The dashboard has always sent the ref — it is what the row
+     displays and what a person can read back over the phone — while this read
+     only `id`, so Number(undefined) gave NaN, every revoke answered 400, and
+     the caller did not check the response. The licence simply reappeared. */
   const id = Number(b.id);
-  if (!Number.isInteger(id)) return json({ error: 'bad_id' }, 400);
+  const ref = clean(b.ref, 80);
+  if (!Number.isInteger(id) && !ref) return json({ error: 'bad_id' }, 400);
   const reason = clean(b.reason, 300);
-  const row = await env.DB.prepare('SELECT ref, granted_at FROM licences WHERE id = ? AND revoked_at IS NULL')
-    .bind(id).first();
+  const row = Number.isInteger(id)
+    ? await env.DB.prepare(
+        'SELECT id, ref, granted_at FROM licences WHERE id = ? AND revoked_at IS NULL').bind(id).first()
+    : await env.DB.prepare(
+        'SELECT id, ref, granted_at FROM licences WHERE ref = ? AND revoked_at IS NULL').bind(ref).first();
   if (!row) return json({ error: 'not_found' }, 404);
   // an undo within half an hour needs no explanation; after that, say why
   if (now() - row.granted_at > 1800 && !reason) return json({ error: 'reason_required' }, 400);
   await env.DB.prepare('UPDATE licences SET revoked_at = ?, revoke_reason = ? WHERE id = ?')
-    .bind(now(), reason, id).run();
+    .bind(now(), reason, row.id).run();
   await logAdmin(env, user.id, 'licence.revoke', row.ref, reason);
   return json({ ok: true });
 }

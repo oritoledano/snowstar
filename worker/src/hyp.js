@@ -42,6 +42,25 @@
    without a signature obtained from the SIGN call is rejected outright. */
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 
+/* Imported lazily, the way artists.js and index.js do it: analytics.js pulls in
+   the mail layer, and a static import here would tie the payment return path to
+   that graph for the sake of two alerts. */
+async function notifyOwner(env, kind, subject, text) {
+  try {
+    const m = await import('./analytics.js');
+    await m.notifyOwner(env, kind, subject, text);
+  } catch (e) {
+    /* An alert that cannot be delivered must still leave a trace — this is the
+       exact failure the `title` column bug hid for months. */
+    try {
+      await env.DB.prepare(
+        'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+      ).bind('system:hyp', 'alert_failed', String(subject).slice(0, 200),
+             String(e && e.message || e).slice(0, 400), now()).run();
+    } catch { /* nothing more we can do from here */ }
+  }
+}
+
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -320,16 +339,21 @@ export async function handleReturn(req, env, ctx) {
                               keys: raw.split('&').map((kv) => kv.split('=')[0]),
                               sent: (v.sent || '').slice(0, 500) }).slice(0, 1800),
              now()).run().catch(() => {});
-      await env.DB.prepare(
-        `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
-         VALUES (?, ?, ?, ?, ?, ?)`
-      ).bind(env.ALERT_TO || 'oritoledano@gmail.com', 'Snowstar',
+      /* Straight to the owner, not into mail_outbox.
+         This used to INSERT with a `title` column that mail_outbox does not have
+         — the table is (id, to_email, to_name, subject, body, kind,
+         submission_id, sent_at, sent_how, last_error, created_at) — inside a
+         .catch(() => null). So the single most urgent alert in the system threw
+         "no such column" and vanished, every time, while the buyer was told
+         their payment went through. notifyOwner reaches ALERT_TO directly and
+         leaves a row in `alerts`, so there is a record either way. */
+      await notifyOwner(env, 'payment',
         'A card was charged but the payment could not be verified',
         `Reference ${ref}\nHYP id ${q.Id || ''}, auth code ${q.ACode || ''}, ${q.Amount || ''} ILS\n\n`
         + `The card was charged. HYP's VERIFY call did not confirm it, so the licence has NOT been\n`
         + `granted automatically. Check the transaction at HYP and grant it from Licensing.\n\n`
-        + `The customer has been told their payment went through and the licence is being confirmed.`,
-        now()).run().catch(() => null);
+        + `The customer has been told their payment went through and the licence is being confirmed.\n\n`
+        + `https://snowstar.company/dashboard.html#licensing`);
       return Response.redirect(
         `https://snowstar.company/mutra.html?pay=confirming&ref=${encodeURIComponent(ref)}`, 302);
     }
@@ -417,10 +441,7 @@ export async function handleReturn(req, env, ctx) {
            JSON.stringify({ error: out.error || null, detail: out.detail || null,
                             slug: r.slug, amount: r.list_amount }).slice(0, 1800),
            now()).run().catch(() => {});
-    await env.DB.prepare(
-      `INSERT INTO mail_outbox (to_email, to_name, subject, body, title, created_at)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    ).bind(env.ALERT_TO || 'oritoledano@gmail.com', 'Snowstar',
+    await notifyOwner(env, 'payment',
       'A card was charged but the licence was not granted',
       `Reference ${ref}\nTrack ${r.slug}\n${(r.list_amount || 0) / 100} ILS before VAT\n\n`
       + `The payment verified and the money has moved. Granting the licence then failed`
@@ -430,8 +451,8 @@ export async function handleReturn(req, env, ctx) {
             + 'different project, grant it manually from Licensing — that is a real second sale.\n\n'
           : ''}`
       + `Grant it by hand from Licensing, or refund at HYP. The buyer has been told we have\n`
-      + `their payment and a person is confirming it — so they are expecting to hear from us.`,
-      now()).run().catch(() => null);
+      + `their payment and a person is confirming it — so they are expecting to hear from us.\n\n`
+      + `https://snowstar.company/dashboard.html#licensing`);
     return Response.redirect(
       `https://snowstar.company/mutra.html?pay=confirming&ref=${encodeURIComponent(ref)}`, 302);
   }

@@ -1893,7 +1893,7 @@
               <span class="mem-when">${esc(l.ref)}</span>
               <a class="chip" href="/api/licence/certificate?ref=${encodeURIComponent(l.ref)}"
                  target="_blank" rel="noopener">Certificate</a>
-              ${gone ? '' : `<button class="chip lc-revoke" data-ref="${esc(l.ref)}">Revoke</button>`}
+              ${gone ? '' : `<button class="chip lc-revoke" data-id="${l.id}" data-ref="${esc(l.ref)}">Revoke</button>`}
             </div>`; }).join('')}</div>`
           : '<p class="db-empty">Nothing granted yet.</p>')
         : reqs.length ? reqs.map((r) => `
@@ -1938,7 +1938,19 @@
       inp.focus();
       wrap.querySelector('.lc-rvgo').addEventListener('click', async () => {
         if (!inp.value.trim()) { inp.focus(); return; }
-        await post('/licence/revoke', { ref: b.dataset.ref, reason: inp.value.trim() });
+        const go = wrap.querySelector('.lc-rvgo');
+        go.disabled = true; go.textContent = 'Revoking…';
+        const r = await post('/licence/revoke',
+          { id: Number(b.dataset.id) || undefined, ref: b.dataset.ref, reason: inp.value.trim() });
+        /* Checking the answer, which this never did — so a revoke that failed
+           looked exactly like one that worked until the row came back. */
+        if (!r || !r.ok) {
+          go.disabled = false; go.textContent = 'Try again';
+          alert({ reason_required: 'This one is older than half an hour — give a reason.',
+                  not_found: 'That licence is already revoked, or gone.',
+                }[r && r.error] || 'Could not revoke that.');
+          return;
+        }
         load();
       });
     }));
