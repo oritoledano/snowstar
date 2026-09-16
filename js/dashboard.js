@@ -16,19 +16,84 @@
      the verticals each have their own shelf, with the cross-property views
      (what everyone asks for, who they are, what the machine is doing) sitting
      above them rather than being filed under one product. */
-  const GROUPS = [
-    ['All',       ['overview', 'demand', 'stats', 'inbox', 'members', 'notes']],
-    // 'clearlist' is parked until the channel-clearing service is live — the
-    // panel still exists and the route still works, it just isn't offered.
-    ['Mutra',     ['submissions', 'artists', 'upload', 'packs', 'characters',
-                   'licensing', 'pricing', 'coupons']],
-    ['Snowstash', ['stashscans', 'stashcodes']],
-    ['Money',     ['invoices', 'payouts']],
-    ['System',    ['jobs', 'notifications', 'alerts', 'storage', 'pipeline']],
+  /* ── the shape of the place ────────────────────────────────────────────
+     Twenty-three screens in one flat row, grouped by how they were built
+     rather than by what they are about. Two levels now: a property, then a
+     page, then tabs within it. The rules that decided where things went:
+
+       · A vertical owns a page when the page is only about that vertical.
+         Invoices and Payouts both iterate LICENCES, so they are Mutra, not
+         a "Money" department that exists nowhere in the business.
+       · People stay global. Somebody who signed up to try StreamDAW is not a
+         Mutra user, and their email is worth keeping either way — one page
+         with a filter beats the same person split across four screens.
+       · Jobs is the agency price-offer archive. It has nothing to do with the
+         catalogue and belongs to Snowstar.
+       · Inbox is one screen for all four verticals because it is one job.
+         Four inboxes would be four places to check for the same thing.
+
+     `tabs` are the sub-pages within a page. Where a screen already had its own
+     chip row (submissions, licensing, inbox, stats) the chips move up here, so
+     they live in the URL and survive a refresh. */
+  const NAV = [
+    { key: 'general', label: 'General', pages: [
+      { key: 'overview',  label: 'Overview',  tabs: ['today', 'traffic', 'demand'] },
+      { key: 'inbox',     label: 'Inbox',     tabs: ['new', 'open', 'done'] },
+      { key: 'people',    label: 'People' },
+      { key: 'editor',    label: 'Editor',    tabs: ['notes', 'coupons'] },
+    ] },
+    { key: 'mutra', label: 'Mutra', pages: [
+      { key: 'artists',   label: 'Artists',   tabs: ['roster', 'submissions', 'upload'] },
+      { key: 'licensing', label: 'Licensing', tabs: ['requests', 'granted', 'invoices', 'payouts'] },
+      { key: 'catalogue', label: 'Catalogue', tabs: ['packs', 'characters', 'pricing'] },
+      { key: 'msystem',   label: 'System',    tabs: ['storage', 'notifications'] },
+    ] },
+    { key: 'snowstash', label: 'Snowstash', pages: [
+      { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
+    ] },
+    { key: 'snowstar', label: 'Snowstar', pages: [
+      { key: 'jobs',      label: 'Jobs' },
+    ] },
+    { key: 'system', label: 'System', pages: [
+      { key: 'alerts',    label: 'Alerts' },
+      { key: 'pipeline',  label: 'Pipeline' },
+    ] },
   ];
-  const TABS = GROUPS.flatMap(([, t]) => t);
-  let tab = (location.hash || '').replace('#', '');
-  if (!TABS.includes(tab)) tab = 'overview';
+
+  /* Old single-word hashes still work. Every bookmark, every `data-go` card on
+     the overview, and every link in a sent email keeps resolving. */
+  const LEGACY = {
+    overview: 'general/overview/today', stats: 'general/overview/traffic',
+    demand: 'general/overview/demand', inbox: 'general/inbox/new',
+    members: 'general/people', notes: 'general/editor/notes',
+    coupons: 'general/editor/coupons',
+    submissions: 'mutra/artists/submissions', artists: 'mutra/artists/roster',
+    upload: 'mutra/artists/upload', licensing: 'mutra/licensing/requests',
+    invoices: 'mutra/licensing/invoices', payouts: 'mutra/licensing/payouts',
+    packs: 'mutra/catalogue/packs', characters: 'mutra/catalogue/characters',
+    pricing: 'mutra/catalogue/pricing', storage: 'mutra/msystem/storage',
+    notifications: 'mutra/msystem/notifications',
+    stashscans: 'snowstash/stash/scans', stashcodes: 'snowstash/stash/codes',
+    jobs: 'snowstar/jobs', alerts: 'system/alerts', pipeline: 'system/pipeline',
+    // parked, but still reachable by hash for the same reason it always was
+    clearlist: 'general/people',
+  };
+
+  const pageOf = (g, p) => (NAV.find((x) => x.key === g) || { pages: [] })
+    .pages.find((x) => x.key === p);
+
+  let group = 'general', page = 'overview', tab = 'today';
+  function readHash() {
+    let h = (location.hash || '').replace('#', '');
+    if (LEGACY[h]) h = LEGACY[h];
+    const [g, p, t] = h.split('/');
+    const pg = pageOf(g, p);
+    if (!pg) { group = 'general'; page = 'overview'; tab = 'today'; return; }
+    group = g; page = p;
+    tab = (pg.tabs && pg.tabs.includes(t)) ? t : (pg.tabs ? pg.tabs[0] : '');
+  }
+  readHash();
+  const href = () => group + '/' + page + (tab ? '/' + tab : '');
   let days = 30, subTab = 'pending';
   /* Which submissions are ticked, and whose. Module-level because every review
      action ends in load(), which rebuilds the list — kept anywhere more local
@@ -70,55 +135,128 @@
      "stashscans" / "stashcodes", so they get a spoken name. */
   const TAB_LABEL = { stashscans: 'scans', stashcodes: 'codes' };
 
-  const shell = (inner) => `
-    <div class="db-head">
-      <h1>Dashboard</h1>
-      <div class="db-groups">${GROUPS.map(([name, tabs]) => `
-        <div class="db-group">
-          <span class="db-glabel">${name}</span>
-          <div class="db-tabs">${tabs.map((t) =>
-            `<button class="db-tab ${t === tab ? 'active' : ''}" data-t="${t}">${TAB_LABEL[t] || t}</button>`).join('')}</div>
-        </div>`).join('')}</div>
-    </div>${inner}`;
+  /* Money and dates, once. These existed five times each, and the copies were
+     NOT identical — some rounded to whole shekels, some showed agora, some said
+     '—' for an empty date and one said 'never'. Collapsing them to a single
+     shape would have silently changed what several screens display, and on a
+     catalogue where a 99% coupon turns ₪449 into ₪4.49 the difference between
+     toFixed(0) and toFixed(2) is the difference between right and wrong. So the
+     differences are parameters, and every call site keeps exactly what it showed. */
+  const money = (agorot, dp = 2) => '₪' + (Number(agorot || 0) / 100).toFixed(dp);
+  const when = (t, { time = false, empty = '—' } = {}) => (t
+    ? new Date(t * 1000)[time ? 'toLocaleString' : 'toLocaleDateString']()
+    : empty);
+
+  /* A rail down the side, the pages of the current property beside it, and the
+     page's own tabs above the content. The rail is the only thing that survives
+     a repaint unchanged, which is the point: you always know where you are. */
+  const shell = (inner) => {
+    const g = NAV.find((x) => x.key === group) || NAV[0];
+    const pg = pageOf(group, page) || g.pages[0];
+    return `
+    <div class="db-shell">
+      <nav class="db-rail">
+        <h1>Dashboard</h1>
+        ${NAV.map((n) => `
+          <div class="db-railgroup${n.key === group ? ' on' : ''}">
+            <button class="db-railhead" data-g="${n.key}">${n.label}</button>
+            <div class="db-railpages">${n.pages.map((p) => `
+              <button class="db-railpage${p.key === page && n.key === group ? ' on' : ''}"
+                      data-g="${n.key}" data-p="${p.key}">${p.label}</button>`).join('')}</div>
+          </div>`).join('')}
+      </nav>
+      <div class="db-main">
+        <div class="db-crumb">
+          <span>${g.label}</span><b>${pg ? pg.label : ''}</b>
+        </div>
+        ${pg && pg.tabs ? `<div class="db-subtabs">${pg.tabs.map((t) =>
+          `<button class="db-subtab${t === tab ? ' on' : ''}" data-t="${t}">${t}</button>`).join('')}</div>` : ''}
+        ${inner}
+      </div>
+    </div>`;
+  };
 
   function paint(inner) {
     app.innerHTML = shell(inner);
-    app.querySelectorAll('.db-tab').forEach((b) => b.addEventListener('click', () => {
+    /* A property is not itself a destination — clicking it goes to its first
+       page, because landing on a heading that shows nothing is a dead end. */
+    app.querySelectorAll('.db-railhead').forEach((b) => b.addEventListener('click', () => {
+      const n = NAV.find((x) => x.key === b.dataset.g);
+      if (!n || !n.pages.length) return;
+      go(n.key, n.pages[0].key);
+    }));
+    app.querySelectorAll('.db-railpage').forEach((b) =>
+      b.addEventListener('click', () => go(b.dataset.g, b.dataset.p)));
+    /* Sub-tabs replace rather than push: flicking between a page's tabs is
+       looking around, not navigating, and it should not fill the back button. */
+    app.querySelectorAll('.db-subtab').forEach((b) => b.addEventListener('click', () => {
       tab = b.dataset.t;
-      history.replaceState(null, '', '#' + tab);
+      history.replaceState(null, '', '#' + href());
       load();
     }));
   }
+
+  function go(g, p, t) {
+    const pg = pageOf(g, p);
+    if (!pg) return;
+    group = g; page = p;
+    tab = (pg.tabs && pg.tabs.includes(t)) ? t : (pg.tabs ? pg.tabs[0] : '');
+    history.pushState(null, '', '#' + href());
+    load();
+  }
+  // The overview's KPI cards deep-link by old single-word name; keep that working.
+  window.dbGo = (slug) => {
+    const target = LEGACY[slug] || slug;
+    const [g, p, t] = target.split('/');
+    go(g, p, t);
+  };
+
+  /* One painter per page/tab. This was a twenty-four branch if-ladder testing a
+     single variable; as a table it is the same information, except the nav can
+     now be checked against it rather than drifting away from it — see the
+     coverage assertion at the bottom of this file. */
+  const ROUTES = {
+    'general/overview/today':      () => paintOverview(),
+    'general/overview/traffic':    () => paintStats(),
+    'general/overview/demand':     () => paintDemand(),
+    'general/inbox':               () => paintInbox(),
+    'general/people':              () => paintMembers(),
+    'general/editor/notes':        () => paintNotes(),
+    'general/editor/coupons':      () => paintCoupons(),
+    'mutra/artists/roster':        () => paintArtists(),
+    'mutra/artists/submissions':   () => paintSubmissions(),
+    'mutra/artists/upload':        () => paintUpload(),
+    'mutra/licensing/requests':    () => paintLicensing(),
+    'mutra/licensing/granted':     () => paintLicensing(),
+    'mutra/licensing/invoices':    () => paintInvoices(),
+    'mutra/licensing/payouts':     () => paintPayouts(),
+    'mutra/catalogue/packs':       () => paintCollections('pack'),
+    'mutra/catalogue/characters':  () => paintCollections('character'),
+    'mutra/catalogue/pricing':     () => paintPricing(),
+    'mutra/msystem/storage':       () => paintStorage(),
+    'mutra/msystem/notifications': () => paintMail(),
+    'snowstash/stash/scans':       () => paintStashScans(),
+    'snowstash/stash/codes':       () => paintStashCodes(),
+    'snowstar/jobs':               () => paintJobs(),
+    'system/alerts':               () => paintAlerts(),
+    'system/pipeline':             () => paintPipeline(),
+  };
 
   async function load() {
     /* `return await`, not `return`. Returning the promise from inside the try
        hands the rejection to nobody — a signed-out visitor got an uncaught
        "forbidden" in the console instead of the sign-in gate below. */
     try {
-      if (tab === 'overview') return await paintOverview();
-      if (tab === 'stats') return await paintStats();
-      if (tab === 'demand') return await paintDemand();
-      if (tab === 'members') return await paintMembers();
-      if (tab === 'artists') return await paintArtists();
-      if (tab === 'submissions') return await paintSubmissions();
-      if (tab === 'notifications') return await paintMail();
-      if (tab === 'licensing') return await paintLicensing();
-      if (tab === 'inbox') return await paintInbox();
-      if (tab === 'jobs') return await paintJobs();
-      if (tab === 'coupons') return await paintCoupons();
-      if (tab === 'stashscans') return await paintStashScans();
-      if (tab === 'stashcodes') return await paintStashCodes();
-      if (tab === 'invoices') return await paintInvoices();
-      if (tab === 'payouts') return await paintPayouts();
-      if (tab === 'notes') return await paintNotes();
-      if (tab === 'packs') return await paintCollections('pack');
-      if (tab === 'characters') return await paintCollections('character');
-      if (tab === 'pricing') return await paintPricing();
-      if (tab === 'alerts') return await paintAlerts();
-      if (tab === 'storage') return await paintStorage();
-      if (tab === 'upload') return await paintUpload();
-      if (tab === 'clearlist') return await paintClearlistAdmin();
-      if (tab === 'pipeline') return await paintPipeline();
+      /* Inbox and Licensing keep their own chip state, so their tabs address
+         one painter; everything else is a page per tab. */
+      if (page === 'inbox') { inboxTab = tab; return await paintInbox(); }
+      if (page === 'licensing' && (tab === 'requests' || tab === 'granted')) {
+        licTab = tab === 'requests' ? 'new' : 'granted';
+        return await paintLicensing();
+      }
+      const fn = ROUTES[href()] || ROUTES[group + '/' + page];
+      if (fn) return await fn();
+      paint('<p class="db-empty">That page has moved. Pick one from the left.</p>');
     } catch (e) {
       if (e.message === 'forbidden') gate();
       else paint(`<p class="db-empty">Couldn’t load that right now — try a refresh.</p>`);
@@ -692,9 +830,9 @@
             <a href="mutra.html" style="text-decoration:underline">Open the catalog</a></p>
           <p class="db-empty">Site texts, sections and note pins are edited on the pages themselves — sign in and use the floating pill.</p></div>
       </div>`);
-    app.querySelectorAll('[data-go]').forEach((c) => c.addEventListener('click', () => {
-      tab = c.dataset.go; history.replaceState(null, '', '#' + tab); load();
-    }));
+    // The cards name their destination the old way; dbGo maps it to the new nav.
+    app.querySelectorAll('[data-go]').forEach((c) =>
+      c.addEventListener('click', () => window.dbGo(c.dataset.go)));
   }
 
   /* ── stats (ported from stats.html) ── */
@@ -2683,8 +2821,7 @@
       get('/invoices'),
       get('/invoices/whoami').catch((e) => ({ ok: false, detail: String(e) })),
     ]);
-    const ils = (n) => '₪' + (n / 100).toFixed(2);
-    const when = (t) => (t ? new Date(t * 1000).toLocaleDateString() : '—');
+    const ils = (n) => money(n);
 
     const setup = d.configured ? '' : `<div class="db-warn">
       <b>Not connected yet.</b> Green Invoice needs two Worker secrets. In
@@ -2829,7 +2966,7 @@
      what this month's run must cover. */
   async function paintPayouts() {
     const d = await get('/earnings');
-    const ils = (n) => '₪' + ((n || 0) / 100).toFixed(2);
+    const ils = (n) => money(n);
     const termOf = {}; (d.terms || []).forEach((t) => { termOf[t.email.toLowerCase()] = t.share_bp; });
     const people = d.people || [];
     const due = people.filter((p) => p.owed >= 10000);
@@ -2978,8 +3115,7 @@
   async function paintStashScans() {
     const d = await get('/snowstash/admin');
     const scans = d.scans || [], orders = d.orders || [];
-    const when = (t) => (t ? new Date(t * 1000).toLocaleString() : '—');
-    const ils = (n) => '₪' + (n / 100).toFixed(0);
+    const ils = (n) => money(n, 0);
     const paid = orders.filter((o) => o.status === 'granted');
     const free = paid.filter((o) => !o.amount);
 
@@ -2989,7 +3125,7 @@
         ${free.length} on a service code · ${ils(paid.reduce((a, o) => a + (o.amount || 0), 0))} taken.
         Scans run inside this Worker — no extra server, no per-scan cost.</p>
       ${scans.length ? table(scans, [
-        { label: 'When', get: (r) => when(r.created_at) },
+        { label: 'When', get: (r) => when(r.created_at, { time: true }) },
         { label: 'Artist', get: (r) => esc(r.artist_name) },
         { label: 'Who', get: (r) => esc(r.email || '—') },
         { label: 'Health', get: (r) => (r.health == null ? '—' : r.health + '/100') },
@@ -3002,7 +3138,7 @@
     <div class="db-panel">
       <h2>Report orders</h2>
       ${orders.length ? table(orders, [
-        { label: 'When', get: (r) => when(r.created_at) },
+        { label: 'When', get: (r) => when(r.created_at, { time: true }) },
         { label: 'Ref', get: (r) => esc(r.ref) },
         { label: 'Who', get: (r) => esc(r.email) },
         { label: 'Amount', get: (r) => (r.amount ? ils(r.amount) : 'free') },
@@ -3015,7 +3151,6 @@
   async function paintStashCodes() {
     const d = await post('/snowstash/coupon', { list: 1 });
     const cs = d.coupons || [];
-    const when = (t) => (t ? new Date(t * 1000).toLocaleDateString() : 'never');
 
     paint(`<div class="db-panel">
       <h2>Snowstash codes <span class="pill">${cs.filter((c) => c.active).length} live</span></h2>
@@ -3034,7 +3169,7 @@
         { label: 'Code', get: (r) => `<code>${esc(r.code)}</code>` },
         { label: 'Worth', get: (r) => (r.kind === 'percent' ? r.value + '% off' : '₪' + (r.value / 100).toFixed(0) + ' off') },
         { label: 'Used', get: (r) => r.used + (r.max_uses ? ' / ' + r.max_uses : '') },
-        { label: 'Expires', get: (r) => when(r.expires_at) },
+        { label: 'Expires', get: (r) => when(r.expires_at, { empty: 'never' }) },
         { label: 'Live', get: (r) => (r.active ? 'yes' : 'no') },
         { label: 'Note', get: (r) => esc(r.note || '—') },
         { label: '', get: (r) => `<button class="db-btn ghost" data-sc-toggle="${r.id}">${r.active ? 'Pause' : 'Resume'}</button>` },
@@ -3063,8 +3198,7 @@
   async function paintCoupons() {
     const d = await get('/coupons');
     const cs = d.coupons || [];
-    const ils = (n) => '₪' + (n / 100).toFixed(0);
-    const when = (t) => (t ? new Date(t * 1000).toLocaleDateString() : '—');
+    const ils = (n) => money(n, 0);
 
     paint(`<div class="db-panel">
       <h2>Discount codes <span class="pill">${cs.filter((c) => c.active).length} live</span></h2>
@@ -3286,9 +3420,28 @@
   }
 
   addEventListener('hashchange', () => {
-    const h = (location.hash || '').replace('#', '');
-    if (TABS.includes(h) && h !== tab) { tab = h; load(); }
+    const before = href();
+    readHash();
+    if (href() !== before) load();
   });
+
+  /* Every page in the nav must have a painter, and every painter must be
+     reachable from the nav. A route table and a menu that drift apart give you
+     a button that does nothing, which is the failure this catches at load
+     rather than when somebody clicks it. */
+  (function checkNav() {
+    const wanted = [];
+    for (const g of NAV) for (const p of g.pages) {
+      if (p.tabs) p.tabs.forEach((t) => wanted.push(`${g.key}/${p.key}/${t}`));
+      else wanted.push(`${g.key}/${p.key}`);
+    }
+    const missing = wanted.filter((w) =>
+      !ROUTES[w] && !ROUTES[w.split('/').slice(0, 2).join('/')]);
+    const orphan = Object.keys(ROUTES).filter((r) =>
+      !wanted.includes(r) && !wanted.some((w) => w.startsWith(r + '/')));
+    if (missing.length) console.warn('dashboard: nav entries with no painter →', missing);
+    if (orphan.length) console.warn('dashboard: painters not in the nav →', orphan);
+  })();
 
   (function boot(n) {
     if (window.SnowstarAccount && SnowstarAccount.ready) return load();

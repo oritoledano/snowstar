@@ -28,27 +28,40 @@
   .db-kpi b{font-family:var(--font-display);font-size:1.7rem;line-height:1;
     font-variant-numeric:tabular-nums;color:var(--text)}
   .db-kpi span{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-  .db-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:18px}
-  .db-head h1{font-family:"Anton",var(--font-display),sans-serif;font-weight:400;text-transform:uppercase;
-    font-size:clamp(1.7rem,3.4vw,2.4rem)}
-  .db-tabs{display:flex;gap:8px;flex-wrap:wrap}
-  /* Three groups, each labelled, so a tab's name is read in the context of
-     whose work it is rather than as one of fifteen equal options. */
-  .db-groups{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
-  .db-group{display:flex;flex-direction:column;gap:7px}
-  .db-glabel{font-family:var(--font-display);font-size:.62rem;font-weight:700;
-    letter-spacing:.16em;text-transform:uppercase;color:var(--dim,var(--muted));
-    padding-left:4px}
-  .db-group + .db-group{padding-left:26px;border-left:1px solid var(--line)}
-  @media (max-width:860px){
-    .db-groups{gap:14px}
-    .db-group + .db-group{padding-left:0;border-left:0}
-  }
-  .db-tab{font-family:var(--font-display);font-size:.76rem;font-weight:600;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--muted);cursor:pointer;padding:9px 16px;border-radius:99px;
-    border:1px solid var(--line);background:none;transition:.2s}
-  .db-tab:hover{color:var(--text)}
-  .db-tab.active{color:var(--on-accent,#04121d);background:var(--grad);border-color:transparent}
+  /* ── the shell: a rail, the pages beside it, the page's tabs above ───────── */
+.db-shell{display:grid;grid-template-columns:186px minmax(0,1fr);gap:26px;align-items:start}
+.db-rail{position:sticky;top:78px;display:flex;flex-direction:column;gap:2px}
+.db-rail h1{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim,var(--muted));margin:0 0 12px 10px;font-weight:600}
+.db-railgroup{margin-bottom:6px}
+.db-railhead{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
+  padding:6px 10px;font-family:var(--font-display);font-size:.7rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--dim,var(--muted))}
+.db-railgroup.on .db-railhead{color:var(--coral,#e8b98a)}
+.db-railpages{display:flex;flex-direction:column;gap:1px}
+.db-railpage{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
+  padding:7px 10px;border-radius:8px;font:inherit;font-size:.86rem;
+  color:var(--muted,#93a0b8);transition:background .15s,color .15s}
+.db-railpage:hover{background:var(--tint,rgba(255,255,255,.05));color:var(--text,#eef3fb)}
+.db-railpage.on{background:var(--panel-2,rgba(255,255,255,.07));color:var(--text,#eef3fb);font-weight:600}
+.db-crumb{display:flex;align-items:baseline;gap:8px;margin:0 0 14px}
+.db-crumb span{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim,var(--muted))}
+.db-crumb b{font-family:var(--font-display);font-size:1.25rem}
+.db-subtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;
+  border-bottom:1px solid var(--line,rgba(255,255,255,.09));padding-bottom:10px}
+.db-subtab{background:none;border:1px solid transparent;border-radius:99px;cursor:pointer;
+  padding:5px 12px;font:inherit;font-size:.78rem;color:var(--muted,#93a0b8);text-transform:capitalize}
+.db-subtab:hover{color:var(--text,#eef3fb)}
+.db-subtab.on{background:var(--grad);color:var(--on-accent,#1b1020);font-weight:600}
+@media (max-width:900px){
+  /* The rail lies down above the content rather than squeezing it. */
+  .db-shell{grid-template-columns:1fr;gap:16px}
+  .db-rail{position:static;flex-direction:row;flex-wrap:wrap;gap:10px}
+  .db-rail h1{display:none}
+  .db-railgroup{margin:0}
+  .db-railpages{flex-direction:row;flex-wrap:wrap;gap:4px}
+  .db-railpage{padding:5px 10px;font-size:.8rem}
+}
   .db-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0 26px}
   .db-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;cursor:pointer;transition:border-color .2s}
   .db-card:hover{border-color:var(--line-2,var(--line))}
@@ -644,7 +657,7 @@
 <!-- the analyser, so an already-uploaded submission can be measured from here -->
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/dashboard.js?v=54"></script>
+<script src="js/dashboard.js?v=55"></script>
 
 <!-- full-screen menu, same burger and behaviour as Mutra -->
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
