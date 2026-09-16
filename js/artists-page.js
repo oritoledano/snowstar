@@ -121,11 +121,28 @@
       ]);
       reg.hidden = !!d.artist;
       dash.hidden = !d.artist;
+      /* An artist gets the workspace; anyone else keeps the pitch. The pitch is
+         what persuaded them to sign up — it is just not what they came back for. */
+      STUDIO.uploads = d.uploads || [];
+      STUDIO.earn = earn || null;
       if (d.artist) {
+        buildStudio();
+        const st = $('#arStudio');
+        if (st) st.hidden = false;
+        document.querySelectorAll('.pj-sec').forEach((el) => { el.hidden = true; });
+        const hero = document.querySelector('.ar-hero');
+        if (hero) hero.hidden = true;
         $('#arWho').textContent = d.artist_name || '';
         $('#arName').value = d.artist_name || '';
         paintList(d.uploads || []);
         if (u.admin) initBehalf();
+        paintHome();
+      } else {
+        const st = $('#arStudio');
+        if (st) st.hidden = true;
+        document.querySelectorAll('.pj-sec').forEach((el) => { el.hidden = false; });
+        const hero = document.querySelector('.ar-hero');
+        if (hero) hero.hidden = false;
       }
       paintCredits(credits.credits || []);
       paintClaim(claim);
@@ -662,6 +679,127 @@
     }
     syncDecl();
   });
+
+  /* ── the studio shell ──────────────────────────────────────────────────
+     A signed-in artist used to scroll past a hero, a placements reel, a
+     why-join section, a how-it-works walkthrough and an eight-question FAQ
+     before reaching anything of their own — then met a vertical stack of every
+     card at once: upload, rights, profile, earnings, credits, submissions.
+     That page is a good pitch and a bad workspace, and it was being asked to
+     be both.
+
+     So: the pitch stays for anyone who has not joined, and an artist gets a
+     rail and one pane at a time. The existing cards are MOVED rather than
+     rebuilt — a node keeps its listeners when it is re-parented, and every
+     painter here writes by id, so nothing below this needs to know it happened. */
+  const PANES = [
+    { key: 'home',   label: 'Overview', ids: [] },
+    { key: 'tracks', label: 'My tracks', ids: ['arListCard'] },
+    { key: 'upload', label: 'Upload',   ids: ['arUploadCard'] },
+    { key: 'money',  label: 'Earnings', ids: ['arEarnings', 'arCredits'] },
+    { key: 'you',    label: 'Profile',  ids: ['arProfile', 'arClaim', 'arRegister'] },
+  ];
+  let pane = (location.hash || '').replace('#', '') || 'home';
+  let studioBuilt = false;
+
+  function buildStudio() {
+    if (studioBuilt) return;
+    const dash = $('#arDash');
+    if (!dash) return;
+
+    /* The two cards inside #arDash have no ids of their own — the upload card
+       and the submissions card — so they are labelled here on the way past
+       rather than by editing the markup underneath them. */
+    const cards = dash.querySelectorAll(':scope > .ar-card');
+    if (cards[0] && !cards[0].id) cards[0].id = 'arUploadCard';
+    if (cards[1] && !cards[1].id) cards[1].id = 'arListCard';
+
+    const shell = document.createElement('div');
+    shell.className = 'st-shell';
+    shell.id = 'arStudio';
+    shell.innerHTML = `
+      <nav class="st-rail">
+        <span class="st-railhead">Studio</span>
+        ${PANES.map((p) => `<button class="st-railbtn" data-pane="${p.key}">${p.label}</button>`).join('')}
+        <a class="st-railbtn st-railout" href="/mutra.html">← Catalogue</a>
+      </nav>
+      <div class="st-main">
+        <div class="st-kpis" id="stKpis"></div>
+        ${PANES.map((p) => `<div class="st-pane" data-pane="${p.key}"></div>`).join('')}
+      </div>`;
+    dash.parentElement.insertBefore(shell, dash);
+
+    for (const p of PANES) {
+      const host = shell.querySelector(`.st-pane[data-pane="${p.key}"]`);
+      for (const id of p.ids) {
+        const el = document.getElementById(id);
+        if (el) host.appendChild(el);          // listeners survive re-parenting
+      }
+    }
+    /* #arDash stays in the DOM, emptied. render() reads `dash.hidden` as its
+       "already painted" guard, so removing the node would make that guard read
+       a detached element and repaint on every change. */
+
+    shell.querySelectorAll('.st-railbtn[data-pane]').forEach((b) =>
+      b.addEventListener('click', () => setPane(b.dataset.pane)));
+    studioBuilt = true;
+    setPane(pane);
+  }
+
+  function setPane(next) {
+    pane = PANES.some((p) => p.key === next) ? next : 'home';
+    const shell = $('#arStudio');
+    if (!shell) return;
+    shell.querySelectorAll('.st-railbtn[data-pane]').forEach((b) =>
+      b.classList.toggle('on', b.dataset.pane === pane));
+    shell.querySelectorAll('.st-pane').forEach((el) => {
+      el.hidden = el.dataset.pane !== pane;
+    });
+    history.replaceState(null, '', '#' + pane);
+    if (pane === 'home') paintHome();
+  }
+
+  /* Overview: the four numbers an artist actually wants, and the one thing
+     waiting on them. Everything here is already loaded — this is a different
+     arrangement of it, not another fetch. */
+  function paintHome() {
+    const host = document.querySelector('.st-pane[data-pane="home"]');
+    if (!host) return;
+    const ups = STUDIO.uploads || [];
+    const by = (st) => ups.filter((u) => u.status === st).length;
+    const live = ups.filter((u) => u.published_slug).length;
+    const asked = ups.filter((u) => u.status === 'info');
+    const owed = STUDIO.earn && STUDIO.earn.owed ? STUDIO.earn.owed : 0;
+
+    const kpis = $('#stKpis');
+    if (kpis) kpis.innerHTML = [
+      [live, 'live in the catalogue'],
+      [by('pending') + by('info'), 'with us'],
+      [ups.length, 'sent in total'],
+      ['₪' + (owed / 100).toFixed(2), 'owed to you'],
+    ].map(([n, l]) => `<div class="st-kpi"><b>${n}</b><span>${l}</span></div>`).join('');
+
+    host.innerHTML = `
+      ${asked.length ? `<div class="st-card st-urgent">
+        <h3>${asked.length} track${asked.length === 1 ? '' : 's'} waiting on you</h3>
+        <p>We asked a question before ${asked.length === 1 ? 'it' : 'they'} can go further.</p>
+        <button class="mbtn mbtn-solid" data-goto="tracks">Answer ${asked.length === 1 ? 'it' : 'them'}</button>
+      </div>` : ''}
+      <div class="st-card">
+        <h3>${ups.length ? 'Your last few' : 'Nothing sent yet'}</h3>
+        ${ups.length ? `<ul class="st-recent">${ups.slice(0, 5).map((u) => `
+          <li><b>${esc(u.title)}</b>
+            <span class="ar-badge ${u.status}">${STATUS_WORD[u.status] || u.status}</span>
+            ${u.published_slug ? '<span class="ar-badge">live</span>' : ''}</li>`).join('')}</ul>`
+          : `<p>Send us music and it appears here. We listen to everything.</p>
+             <button class="mbtn mbtn-solid" data-goto="upload">Upload a track</button>`}
+      </div>`;
+    host.querySelectorAll('[data-goto]').forEach((b) =>
+      b.addEventListener('click', () => setPane(b.dataset.goto)));
+  }
+
+  /* What the overview reads. Filled by render(), which already fetches it. */
+  const STUDIO = { uploads: [], earn: null };
 
   const PLAY_SVG = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">'
     + '<path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
