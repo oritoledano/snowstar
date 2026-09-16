@@ -171,6 +171,15 @@
   .feat h3{font-size:1.34rem;line-height:1.04;margin-bottom:8px}
   .feat p{color:var(--ink-2);font-size:.96rem}
 
+  /* screens — product snapshots */
+  .shots{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;margin-top:10px}
+  .shot{margin:0;border:2px solid var(--ink);background:#0b0b12;box-shadow:var(--shadow-sm)}
+  .shot:first-child{grid-column:1/-1}
+  .shot img{display:block;width:100%;height:auto}
+  .shot figcaption{padding:12px 16px;font-size:.92rem;color:var(--ink-2);background:var(--paper);border-top:2px solid var(--ink)}
+  .shot figcaption b{color:var(--ink)}
+  @media(max-width:760px){.shots{grid-template-columns:1fr}}
+
   /* pricing — die-cut ticket */
   .pricing{background:var(--ink);color:var(--paper);--dot:rgba(255,255,255,.14);position:relative}
   .pricing::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.14) 1.1px,transparent 1.5px);
@@ -241,7 +250,7 @@
   }
 </style>
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What exactly does StreamDAW do?", "acceptedAnswer": {"@type": "Answer", "text": "It puts your DAW's output on a link. Drop the plugin on your master bus — or on individual tracks — press GO LIVE, and anyone you send the link to hears exactly what you hear, lossless and in real time, in a browser. No upload, no bounce, no render."}}, {"@type": "Question", "name": "Which DAWs and formats does it run in?", "acceptedAnswer": {"@type": "Answer", "text": "Any host that loads AU or VST3 on macOS — Logic, Ableton Live, Cubase, Pro Tools, Studio One, Reaper, Bitwig. It sits on a bus like any other plugin."}}, {"@type": "Question", "name": "How many people can listen at once?", "acceptedAnswer": {"@type": "Answer", "text": "Up to 50 listeners on a session. They need nothing installed and no account — a browser and the link is the whole requirement."}}, {"@type": "Question", "name": "How good is the audio, really?", "acceptedAnswer": {"@type": "Answer", "text": "Lossless 16-bit PCM at 44.1 kHz, around 1.4 Mbit/s — the same samples leaving your master bus, not a re-encode. Latency lands near 200 ms end to end, and the listener can trade a little buffer for a little delay if their connection is rough."}}, {"@type": "Question", "name": "Can I share my screen and camera too?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Audio always; screen and camera are toggles on the plugin. Talkback opens your mic so the conversation runs alongside the mix instead of on a second app."}}, {"@type": "Question", "name": "Can I keep a session private?", "acceptedAnswer": {"@type": "Answer", "text": "Turn on Require sign-in and only people with a Snowstar account can open the link, with their name shown to you as they join. Leave it off and it is a plain link anyone can play."}}, {"@type": "Question", "name": "What is per-track mode?", "acceptedAnswer": {"@type": "Answer", "text": "Instead of one stereo master, send several tracks and let the listener move between them — useful for a producer checking a stem or a client following a vocal. Mute-aware, so what you silence in the session stays silent on the stream."}}, {"@type": "Question", "name": "Is it really one payment?", "acceptedAnswer": {"@type": "Answer", "text": "₪249 once. No renewal, no subscription, every future update included. Compare that with the yearly alternatives on the pricing table above."}}, {"@type": "Question", "name": "What if I change computers?", "acceptedAnswer": {"@type": "Answer", "text": "Your licence follows your Snowstar account, not the machine. Sign in, download again, carry on."}}, {"@type": "Question", "name": "Something is not working.", "acceptedAnswer": {"@type": "Answer", "text": "Write to hello@snowstar.company — it reaches the person who wrote the plugin."}}]}
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What exactly does StreamDAW do?", "acceptedAnswer": {"@type": "Answer", "text": "It puts your DAW's output on a link. Drop the plugin on your master bus — or on individual tracks — press GO LIVE, and anyone you send the link to hears exactly what you hear, lossless and in real time, in a browser. No upload, no bounce, no render."}}, {"@type": "Question", "name": "Which DAWs and formats does it run in?", "acceptedAnswer": {"@type": "Answer", "text": "Any host that loads AU or VST3 on macOS — Logic, Ableton Live, Cubase, Pro Tools, Studio One, Reaper, Bitwig. It sits on a bus like any other plugin."}}, {"@type": "Question", "name": "How many people can listen at once?", "acceptedAnswer": {"@type": "Answer", "text": "Up to 50 listeners on a session. They need nothing installed and no account — a browser and the link is the whole requirement."}}, {"@type": "Question", "name": "How good is the audio, really?", "acceptedAnswer": {"@type": "Answer", "text": "Lossless 16-bit PCM at 44.1 kHz, around 1.4 Mbit/s — the same samples leaving your master bus, not a re-encode. Latency lands near 200 ms end to end, and buffering is automatic: it grows through a rough patch and never interrupts the music to catch up."}}, {"@type": "Question", "name": "Can I share my screen and camera too?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Audio always; screen and camera are switches on the plugin. Talkback opens your mic — and it works both ways: listeners can talk back and even share their own camera, so the conversation runs alongside the mix instead of on a second app."}}, {"@type": "Question", "name": "Can I keep a session private?", "acceptedAnswer": {"@type": "Answer", "text": "Turn on Require sign-in and only people with a Snowstar account can open the link, with their name shown to you as they join. Leave it off and it is a plain link anyone can play."}}, {"@type": "Question", "name": "What is per-track mode?", "acceptedAnswer": {"@type": "Answer", "text": "Drop an instance on each track and they all join one session automatically. The listener gets a real stem mixer — solo, mute and a volume fader per track, sample-locked so every stem starts together — or one tap back to your full master mix with its effects."}}, {"@type": "Question", "name": "Is it really one payment?", "acceptedAnswer": {"@type": "Answer", "text": "₪249 once. No renewal, no subscription, every future update included. Compare that with the yearly alternatives on the pricing table above."}}, {"@type": "Question", "name": "What if I change computers?", "acceptedAnswer": {"@type": "Answer", "text": "Your licence follows your Snowstar account, not the machine. Sign in, download again, carry on."}}, {"@type": "Question", "name": "Something is not working.", "acceptedAnswer": {"@type": "Answer", "text": "Write to hello@snowstar.company — it reaches the person who wrote the plugin."}}]}
 </script>
 
 <link rel="canonical" href="https://snowstar.company/apps/streamdaw.html">
@@ -324,10 +333,33 @@
     <div class="feats" style="margin-top:8px">
       <article class="feat"><div class="no">No. 01</div><div class="ic">♫</div><h3>True lossless</h3><p>16-bit or 32-bit float PCM at your session's own sample rate. What leaves your master bus is exactly what they hear.</p></article>
       <article class="feat"><div class="no">No. 02</div><div class="ic">↗</div><h3>One link, any device</h3><p>Share a link or a QR code. Clients listen in a browser — iPhone, Android, laptop. Nothing to install on their end.</p></article>
-      <article class="feat"><div class="no">No. 03</div><div class="ic">⚡</div><h3>Real-time, low latency</h3><p>Sub-100 ms glass-to-glass on a good line, with an adjustable buffer and a live latency read-out you can trust.</p></article>
-      <article class="feat"><div class="no">No. 04</div><div class="ic">⤺</div><h3>Rewind the live stream</h3><p>Listeners scrub back to catch the part they missed while you keep playing — then snap forward to the live edge.</p></article>
-      <article class="feat"><div class="no">No. 05</div><div class="ic">◐</div><h3>Data-saver mode</h3><p>A lossless line for the studio and a light Opus stream for whoever's on cellular. Their choice, per listener.</p></article>
-      <article class="feat"><div class="no">No. 06</div><div class="ic">✦</div><h3>One Snowstar account</h3><p>The same login as Mutra and everything we ship next. Buy once — it follows you onto every device you sign in on.</p></article>
+      <article class="feat"><div class="no">No. 03</div><div class="ic">⚡</div><h3>Never asks for a refresh</h3><p>One clock drives every track: buffering is automatic and self-healing, playback survives dropouts, mode switches and reconnects — and picks up exactly where it left.</p></article>
+      <article class="feat"><div class="no">No. 04</div><div class="ic">☰</div><h3>Per-track stem mixer</h3><p>Drop an instance on each track and listeners get the stems, sample-locked to start together — with solo, mute and a volume fader per track, or one tap back to your full master mix.</p></article>
+      <article class="feat"><div class="no">No. 05</div><div class="ic">▣</div><h3>Camera, screen &amp; talkback</h3><p>Flip a switch on the plugin and your camera, screen share and voice ride alongside the lossless mix. The browser console mirrors the plugin — one source of truth.</p></article>
+      <article class="feat"><div class="no">No. 06</div><div class="ic">⇄</div><h3>They talk back — on camera</h3><p>Listeners can open their mic to the studio and share their own camera, so notes happen in the session, not on a second app.</p></article>
+      <article class="feat"><div class="no">No. 07</div><div class="ic">⤺</div><h3>Rewind the live stream</h3><p>Listeners scrub back to catch the part they missed while you keep playing — then snap forward to the live edge.</p></article>
+      <article class="feat"><div class="no">No. 08</div><div class="ic">◐</div><h3>Data-saver mode</h3><p>A lossless line for the studio and a light Opus stream for whoever's on cellular — switched automatically when a connection can't keep up, or by choice.</p></article>
+      <article class="feat"><div class="no">No. 09</div><div class="ic">✦</div><h3>Private, named sessions</h3><p>Require sign-in and only Snowstar accounts get through — their names appear in the plugin as they join. One account, every device, yours for good.</p></article>
+    </div>
+  </div></section>
+
+  <!-- SCREENS -->
+  <section id="screens" style="padding-top:0"><div class="wrap">
+    <div class="sec-kicker">See it</div>
+    <h2 class="sec-title">The plugin. The link.<br>The console.</h2>
+    <div class="shots">
+      <figure class="shot">
+        <img src="streamdaw-shot-plugin.png" alt="The StreamDAW plugin: GO LIVE button, talkback/camera/screen switches, quality and monitor knobs, master and per-track modes" loading="lazy">
+        <figcaption><b>In your DAW.</b> One GO LIVE, media switches, quality &amp; monitor — master bus or per-track.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="streamdaw-shot-player.png" alt="The listener page playing live: stem mixer with solo, mute and per-track volume, quality selector, buffer and latency stats" loading="lazy">
+        <figcaption><b>What they open.</b> Live lossless in the browser, with a real stem mixer — solo, mute, per-track volume.</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="streamdaw-shot-console.png" alt="The broadcaster console: camera and screen stages, device pickers, talkback control and a live listener list" loading="lazy">
+        <figcaption><b>Your video console.</b> Camera, screen &amp; talkback follow the plugin; listeners appear — and can talk back — right here.</figcaption>
+      </figure>
     </div>
   </div></section>
 
@@ -404,13 +436,14 @@
       <details>
         <summary>How good is the audio, really?</summary>
         <p>Lossless 16-bit PCM at 44.1&nbsp;kHz, around 1.4&nbsp;Mbit/s — the same samples leaving
-        your master bus, not a re-encode. Latency lands near 200&nbsp;ms end to end, and the
-        listener can trade a little buffer for a little delay if their connection is rough.</p>
+        your master bus, not a re-encode. Latency lands near 200&nbsp;ms end to end, and buffering
+        is automatic: it grows through a rough patch and never interrupts the music to catch up.</p>
       </details>
       <details>
         <summary>Can I share my screen and camera too?</summary>
-        <p>Yes. Audio always; screen and camera are toggles on the plugin. Talkback opens your mic
-        so the conversation runs alongside the mix instead of on a second app.</p>
+        <p>Yes. Audio always; screen and camera are switches on the plugin. Talkback opens your mic —
+        and it works both ways: listeners can talk back and even share their own camera, so the
+        conversation runs alongside the mix instead of on a second app.</p>
       </details>
       <details>
         <summary>Can I keep a session private?</summary>
@@ -419,9 +452,9 @@
       </details>
       <details>
         <summary>What is per-track mode?</summary>
-        <p>Instead of one stereo master, send several tracks and let the listener move between them —
-        useful for a producer checking a stem or a client following a vocal. Mute-aware, so what you
-        silence in the session stays silent on the stream.</p>
+        <p>Drop an instance on each track and they all join one session automatically. The listener
+        gets a real stem mixer — solo, mute and a volume fader per track, sample-locked so every stem
+        starts together — or one tap back to your full master mix with its effects.</p>
       </details>
       <details>
         <summary>Is it really one payment?</summary>
