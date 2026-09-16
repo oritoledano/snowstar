@@ -40,6 +40,7 @@
       { key: 'overview',  label: 'Overview',  tabs: ['today', 'traffic', 'demand'] },
       { key: 'inbox',     label: 'Inbox',     tabs: ['new', 'open', 'done'] },
       { key: 'people',    label: 'People' },
+      { key: 'reset',     label: 'Clear tests' },
       { key: 'editor',    label: 'Editor',    tabs: ['notes', 'coupons'] },
     ] },
     { key: 'mutra', label: 'Mutra', pages: [
@@ -224,6 +225,7 @@
     'general/overview/demand':     () => paintDemand(),
     'general/inbox':               () => paintInbox(),
     'general/people':              () => paintMembers(),
+    'general/reset':               () => paintReset(),
     'general/editor/notes':        () => paintNotes(),
     'general/editor/coupons':      () => paintCoupons(),
     'mutra/artists/roster':        () => paintArtists(),
@@ -840,6 +842,98 @@
     // The cards name their destination the old way; dbGo maps it to the new nav.
     app.querySelectorAll('[data-go]').forEach((c) =>
       c.addEventListener('click', () => window.dbGo(c.dataset.go)));
+  }
+
+  /* ── clearing test data ───────────────────────────────────────────────
+     The platform gets demonstrated, and demonstrating it leaves rows. This is
+     the screen for taking them back out, built so it can be used in a hurry
+     without that being dangerous: nothing happens until you have read what
+     would go, and the confirm number comes from the server rather than from
+     this page, so a tab left open while three more uploads arrived cannot
+     clear rows it never showed you. */
+  let resetEmail = '';
+  async function paintReset() {
+    const members = (await get('/stats?days=30')).members || [];
+    const archive = (await get('/reset/archive')).people || [];
+    const pre = resetEmail
+      ? await get('/reset/preview?email=' + encodeURIComponent(resetEmail)).catch(() => null)
+      : null;
+
+    const rows = pre && pre.counts ? Object.entries(pre.counts).sort((a, b) => b[1] - a[1]) : [];
+    paint(`
+      <div class="db-panel"><h2>Clear test data</h2>
+        <p class="db-empty" style="padding-top:0">Three depths, each including the one before it.
+          <b>Activity</b> takes what they did — requests, messages, tracked events — and leaves the
+          account and its music alone. <b>Uploads</b> adds their tracks, with the audio moved to
+          trash rather than destroyed. <b>Account</b> adds the login itself.
+          <b>An email is never lost</b>: every account is written to the archive below before it goes.
+          Payments are marked as tests and hidden, never deleted — the card was charged at HYP
+          whether or not we keep a row for it.</p>
+        <div class="sd-new">
+          <input id="rs-email" list="dl-reset" placeholder="Which account?" value="${esc(resetEmail)}" style="flex:2 1 260px">
+          <button class="rv-btn" id="rs-look">Show me what would go</button>
+        </div>
+        ${dl('dl-reset', members.map((m) => m.email))}
+        ${!pre ? '' : pre.error ? `<p class="rv-note">${esc(pre.error)}</p>` : `
+          <div class="rs-box">
+            <b>${esc((pre.account && (pre.account.artist_name || pre.account.name)) || resetEmail)}</b>
+            ${pre.account ? `<span class="rv-note">joined ${when(pre.account.created_at)} via ${
+              esc(pre.account.signup_source || 'unknown')}</span>` : '<span class="rv-note">no account — loose rows only</span>'}
+            ${pre.blocked ? `<div class="db-warn warn" style="margin-top:10px">${esc(pre.blocked)}</div>` : ''}
+            ${rows.length ? `<table style="margin-top:10px"><tbody>${rows.map(([t, n]) =>
+              `<tr><td>${esc(t.replace(/_/g, ' '))}</td><td class="num">${n}</td></tr>`).join('')}</tbody></table>`
+              : '<p class="db-empty">Nothing to clear.</p>'}
+            ${pre.money && pre.money.rows ? `<p class="rv-note">${pre.money.rows} payment${
+              pre.money.rows === 1 ? '' : 's'} totalling ${money(pre.money.agorot, 2)} will be marked
+              as tests and hidden, not deleted.</p>` : ''}
+            ${pre.published && pre.published.length ? `<p class="rv-note">Live in the catalogue:
+              ${pre.published.map((x) => esc(x)).join(', ')} — these come out too.</p>` : ''}
+            ${rows.length && !pre.blocked ? `<div class="rs-acts">
+              ${[['activity', 'Clear activity'], ['uploads', 'Clear activity + uploads'],
+                 ['account', 'Clear everything, archive the email']].map(([t, label]) =>
+                `<button class="rv-btn ${t === 'account' ? 'rv-no' : ''} rs-go" data-tier="${t}"
+                         data-confirm="${pre.confirm}">${label}</button>`).join('')}
+            </div>` : ''}
+          </div>`}
+      </div>
+
+      <div class="db-panel"><h2>Archived people <span class="pill">${archive.length}</span></h2>
+        <p class="db-empty" style="padding-top:0">Accounts that were cleared. The address stays here
+          so a demo tidied up in a hurry never costs you a contact.</p>
+        ${table(archive, [
+          { label: 'Email', get: (p) => esc(p.email) },
+          { label: 'Name', get: (p) => esc(p.artist_name || p.name || '') },
+          { label: 'Came from', get: (p) => esc(p.source || '') },
+          { label: 'Why', get: (p) => esc(p.reason || '') },
+          { label: 'Cleared', num: true, get: (p) => when(p.archived_at) },
+        ])}</div>`);
+
+    const look = document.getElementById('rs-look');
+    if (look) look.addEventListener('click', () => {
+      resetEmail = (document.getElementById('rs-email').value || '').trim();
+      load();
+    });
+    document.querySelectorAll('.rs-go').forEach((b) => b.addEventListener('click', async () => {
+      const tier = b.dataset.tier;
+      const label = { activity: 'their activity', uploads: 'their activity and uploads',
+                      account: 'EVERYTHING, including the account' }[tier];
+      if (!confirm(`Clear ${label} for ${resetEmail}?\n\n`
+        + (tier === 'account' ? 'The email is archived first, so you keep the contact. ' : '')
+        + 'Payments are hidden, not deleted. Audio goes to trash. This cannot be undone.')) return;
+      b.disabled = true; b.textContent = 'Clearing…';
+      const r = await post('/reset/apply',
+        { email: resetEmail, tier, confirm: Number(b.dataset.confirm) });
+      if (!r || !r.ok) {
+        alert(r && r.error === 'confirm_mismatch'
+          ? 'Their data changed while this was open. Reloading so you can look again.'
+          : (r && r.hint) || 'Could not clear that.');
+        load();
+        return;
+      }
+      alert('Cleared: ' + (r.done || []).join(', ') + (r.archived ? '. Email archived.' : '.'));
+      resetEmail = '';
+      load();
+    }));
   }
 
   /* ── StreamDAW ────────────────────────────────────────────────────────

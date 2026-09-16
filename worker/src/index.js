@@ -22,6 +22,7 @@ import { transcribeSubmission, suggestVersions, suggestTags } from './intake.js'
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
+import { resetPreview, resetApply, listArchive } from './reset.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim , evaluateStorageGate, joinWaitlist} from './site.js';
 import {listOverrides, saveOverride, uploadCover, listUses, saveUse,
          setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack, tagTracks } from './catalog.js';
@@ -208,6 +209,11 @@ async function handle(req, env, ctx) {
   if (path === '/artist/file' && method === 'GET') return streamSubmission(req, env, await currentUser(req, env), url);
   if (path === '/artists' && method === 'GET') return listArtistsAdmin(env, await currentUser(req, env));
   if (path === '/waitlist' && method === 'POST') return joinWaitlist(req, env);
+  /* Clearing test data. Preview is a GET and changes nothing; apply needs the
+     count preview returned, so a stale screen cannot clear what it never saw. */
+  if (path === '/reset/preview' && method === 'GET') return resetPreview(env, await currentUser(req, env), url);
+  if (path === '/reset/apply' && method === 'POST') return resetApply(req, env, await currentUser(req, env));
+  if (path === '/reset/archive' && method === 'GET') return listArchive(env, await currentUser(req, env));
   if (path === '/storage' && method === 'GET') return storageReport(env, await currentUser(req, env));
   if (path === '/storage/reclaim' && method === 'POST') return storageReclaim(req, env, await currentUser(req, env));
   // rejected uploads land in trash/ and are emptied deliberately, never silently
