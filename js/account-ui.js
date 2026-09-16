@@ -81,7 +81,7 @@
             <li>Cleared for commercial use, worldwide</li>
             <li>Your channels whitelisted \u2014 no Content ID claims</li>
           </ul>
-          <p class="auth-sell-price">Licences from <b>\u20aa149</b> per track</p>
+          <p class="auth-sell-price">Licences from <b>\u20aa99</b> per track</p>
         </div>
       </aside>
       <div class="auth-body">
@@ -651,7 +651,14 @@
     const host = panel.querySelector('.acct-groups');
     if (!host) return;
     const here = M.product || 'mutra';
-    const shown = GROUPS.filter((g) => has[g.key] || g.product === here)
+    /* Show a group because the person HAS something in it, or because it is
+       what this property is for. 'Selling my music' is the exception: it is a
+       Mutra group, so `product === here` was putting "My artist profile" and
+       "Earnings" in front of every licence buyer on the catalogue — a whole
+       second identity they never asked for. It appears once they are actually
+       an artist. */
+    const shown = GROUPS.filter((g) =>
+        has[g.key] || (g.product === here && g.key !== 'artist'))
       .sort((x, y) => (y.product === here) - (x.product === here));
     host.innerHTML = shown.map((g) => `
       <div class="acct-section" data-group="${g.key}">

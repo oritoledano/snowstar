@@ -369,6 +369,28 @@ export async function createRequest(req, env, user) {
       + `\nQueue: https://snowstar.company/dashboard.html\n`);
   } catch { /* the request is saved either way */ }
 
+  /* And the buyer. A quote request used to alert us and tell THEM nothing —
+     the on-screen receipt was the only acknowledgement, so anyone who closed
+     the tab had no record that they had asked, no reference to quote back, and
+     no idea whether it arrived. The page promises a price the same day; the
+     least it can do is confirm the question was heard. */
+  if (lane === 'quote' && email) {
+    try {
+      await sendMail(env, {
+        to: email,
+        subject: `We have your request — ${ref}`,
+        text: `Thanks for asking about “${slug}”.\n\n`
+          + `Your reference is ${ref}. We are putting a price together and will come\n`
+          + `back to you with it — usually the same day, and always in writing before\n`
+          + `anything is charged.\n\n`
+          + (clean(b.project_name, 200) ? `Project: ${clean(b.project_name, 200)}\n` : '')
+          + `Coverage: ${coverage}\nTerm: ${clean(b.duration, 8) || '6m'}\n\n`
+          + `If anything has changed, reply to this email and it reaches a person.\n\n`
+          + `— Snowstar\nsnowstar.company/mutra.html`,
+      });
+    } catch { /* never fail a request because its receipt did */ }
+  }
+
   return json({
     ok: true, ref, id, lane,
     amount_ex_vat: listAgorot,

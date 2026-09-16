@@ -1,0 +1,12 @@
+# snowstar.company
+User-agent: *
+Allow: /
+
+# Nothing here is secret, but none of it is worth indexing either: the API
+# answers JSON, /t/ pages are share-card redirects, and the dashboard is
+# owner-only behind auth.
+Disallow: /api/
+Disallow: /dashboard.html
+Disallow: /t/
+
+Sitemap: https://snowstar.company/sitemap.xml

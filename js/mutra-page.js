@@ -815,11 +815,37 @@
     shown = 0;
     tracksEl.innerHTML = '';
     if (!list.length) {
+      /* A dead end used to be the whole answer here: a mailto and nothing else,
+         with no way to undo the filter that emptied the list and no hint which
+         one did it. Most people who land here have simply stacked two filters
+         that do not intersect. */
+      /* Named from the same state the pills are drawn from, so the empty state
+         and the pill row can never disagree about what is switched on. */
+      const active = [];
+      Object.keys(FACETS).forEach((k) => {
+        state[k].inc.forEach((v) => active.push(v));
+        state[k].exc.forEach((v) => active.push('not ' + v));
+      });
+      if (state.vocal) active.push(state.vocal);
+      if (state.lang) active.push(state.lang);
+      if (state.dur) active.push((DURATIONS.find((d) => d.id === state.dur) || {}).label || 'length');
+      if (state.bpm) active.push(state.bpm.min + '–' + state.bpm.max + ' BPM');
+      if (state.favoritesOnly) active.push('favourites');
+      if (state.q && state.q.trim()) active.push('“' + state.q.trim() + '”');
       tracksEl.innerHTML = `<div class="cat-empty">
-        <h3>Looking for something specific?</h3>
-        <p>Let us help you find it.</p>
-        <a class="mbtn mbtn-solid" href="${HELP_MAILTO}">Get in touch</a>
+        <h3>${active.length ? 'Nothing matches all of those' : 'Nothing here'}</h3>
+        ${active.length
+          ? `<p>You have ${active.length} filter${active.length === 1 ? '' : 's'} on:
+               ${active.map((a) => `<b>${esc(a)}</b>`).join(', ')}.</p>
+             <div class="cat-empty-acts">
+               <button class="mbtn mbtn-solid" id="catClear">Clear filters</button>
+               <a class="mbtn mbtn-ghost" href="${HELP_MAILTO}">Ask us to find it</a>
+             </div>`
+          : `<p>Let us help you find it.</p>
+             <a class="mbtn mbtn-solid" href="${HELP_MAILTO}">Get in touch</a>`}
       </div>`;
+      const clr = document.getElementById('catClear');
+      if (clr) clr.addEventListener('click', clearFilters);
     }
     appendPage();
     // Back to the same depth and the same place, so an edit at track 200 leaves
@@ -905,7 +931,7 @@
       ].join('');
       row.innerHTML = `
         <button class="trk-play" aria-label="Play ${track.title}">${current && current.track === track && !audio.paused ? ICON_PAUSE : ICON_PLAY}</button>
-        <img class="trk-cover" src="${track.cover}" alt="" loading="lazy">
+        <img class="trk-cover" onerror="this.style.visibility='hidden'" src="${track.cover}" alt="" loading="lazy">
         <div class="trk-id">
           <div class="trk-idtext">
             <div class="trk-title" role="button" tabindex="0" title="Credits"><span class="tt-in">${track.title}</span></div>
@@ -984,7 +1010,34 @@
         }
         if (window.mutraTrack) mutraTrack('download', track.slug);
         toast('Preparing ' + track.title + '…');
-        location.href = '/api/download?slug=' + encodeURIComponent(track.slug);
+        /* Not location.href. Every failure path of /api/download answers with a
+           JSON body, and navigating to it REPLACED the catalogue with
+           {"error":"missing_file"} — losing the visitor's scroll, their filters
+           and their place, to show them a word they cannot act on. Fetch it,
+           and only hand the browser a URL once we know there is a file at the
+           end of it. */
+        try {
+          const res = await fetch('/api/download?slug=' + encodeURIComponent(track.slug),
+            { credentials: 'same-origin' });
+          if (!res.ok) {
+            let code = '';
+            try { code = (await res.json()).error || ''; } catch { /* not JSON */ }
+            toast({ unauthorized: 'Sign in again to download that one.',
+                    not_found: 'That track is not downloadable yet.',
+                    missing_file: 'That file is missing — we are on it.',
+                  }[code] || 'That download would not start. Try again in a moment.');
+            return;
+          }
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = track.title.replace(/[\\/:*?"<>|]/g, '') + '.mp3';
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+        } catch {
+          toast('That download would not start. Try again in a moment.');
+        }
       });
 
       // copy a direct link to this track
@@ -1278,6 +1331,13 @@
      'Hebrew' is a mistake somebody made in the editor, not a fact, so it is
      never shown or filtered on. */
   const langOf = (t) => (t && t.vocal === 'Vocals' && LANGS.includes(t.lang) ? t.lang : '');
+  /* Only the languages the catalogue can actually answer for. Recomputed on
+     each draw so tagging one track makes the filter appear by itself. */
+  let LANGS_IN_USE = [];
+  const syncLangs = () => {
+    LANGS_IN_USE = LANGS.filter((l) => MUTRA.tracks.some((t) => langOf(t) === l));
+  };
+  syncLangs();
   // chromatic rather than alphabetical, so the list reads like a keyboard
   const SCALES = [...new Set(MUTRA.tracks.map(scaleOf).filter(Boolean))]
     .sort((a, b) => {
@@ -1313,10 +1373,14 @@
               ${['Vocals', 'Instrumental'].map(v => chip(v, state.vocal === v)).join('')}
             </div>
             <!-- Language sits under the vocal switch because it only means
-                 anything once there are words to be in a language. -->
-            <div class="fchips" data-group="lang">
-              ${LANGS.map(v => chip(v, state.lang === v)).join('')}
-            </div>
+                 anything once there are words to be in a language — and it
+                 only appears once a track actually carries one. Offered
+                 unconditionally, both chips emptied the catalogue and sent the
+                 visitor to the "nothing found, email us" screen, because not
+                 one track in the catalogue is tagged with a language yet. -->
+            ${LANGS_IN_USE.length ? `<div class="fchips" data-group="lang">
+              ${LANGS_IN_USE.map(v => chip(v, state.lang === v)).join('')}
+            </div>` : ''}
           </div>
           <div class="fgroup">
             <h4>Duration</h4>
@@ -1778,6 +1842,7 @@
       server-side as a per-slug patch and are merged over the shipped record
       here. Regenerating mutra-data.js therefore never wipes an edit. */
   function applyOverrides() {
+    // a language can arrive with the overrides, not just in the shipped file
     const bySlug = Object.fromEntries(MUTRA.tracks.map(t => [t.slug, t]));
     for (const [slug, patch] of Object.entries(overrides)) {
       const t = bySlug[slug];
@@ -1786,6 +1851,7 @@
       if (patch.hl) HL[slug] = patch.hl;   // highlights live in their own map
     }
     refreshVocab();
+    syncLangs();   // a language that arrived in an override makes the filter appear
   }
 
   /** Facet lists are derived from the catalog, so a newly typed tag has to be
