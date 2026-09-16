@@ -456,6 +456,18 @@
       <label class="lic-field"><span>End client</span>
         <input class="lic-client" type="text" maxlength="140"
           placeholder="${pick.who === 'business' ? 'The company in the video' : 'Yourself, or the client'}"></label>
+      <!-- The page has been promising "buying from outside Israel? say so" with
+           nowhere to say it, while the card was charged 18% VAT regardless and
+           the invoice was hardcoded standard-rated. Asked here because it
+           changes the tax document, and a tax document is not something to
+           guess at. -->
+      <label class="lic-field"><span>Where are you invoicing from?</span>
+        <select class="lic-country">
+          <option value="IL">Israel</option>
+          <option value="XX">Outside Israel</option>
+        </select></label>
+      <label class="lic-field lic-taxwrap"><span>Company number <i>optional — ח.פ / ע.מ / VAT no.</i></span>
+        <input class="lic-tax" type="text" maxlength="40" placeholder="For the invoice"></label>
       <div class="lic-priceline">
         <span class="lic-was" hidden></span>
         <span class="lic-price">${CUR}${p.amount.toLocaleString()}</span>
@@ -472,7 +484,35 @@
       <div class="lic-acts">
         <button class="lic-go lic-submit">Pay by Card <span class="lic-cards" aria-hidden="true"><i class="cb-visa">VISA</i><i class="cb-mc"></i><i class="cb-amex">AMEX</i></span></button>
       </div>
+      <!-- What they are agreeing to, before they agree to it — and reachable,
+           rather than named. -->
+      <!-- Shown when they pick "outside Israel": the card path charges Israeli
+           VAT, so it is the wrong door for them. -->
+      <p class="lic-foreign" hidden>Outside Israel, the invoice is issued
+        differently and the card page here would still add Israeli VAT — so send this
+        as a request instead and we will come back with a zero-rated invoice and a
+        way to pay, usually the same day.</p>
+      <p class="lic-legal">Paying accepts the
+        <a href="/terms.html" target="_blank" rel="noopener">licence terms</a> and
+        <a href="/refund.html" target="_blank" rel="noopener">refund policy</a>.</p>
       <button class="lic-alt" type="button">Pay with Bit instead</button>`;
+
+    /* Outside Israel the card path is simply wrong — it charges Israeli VAT and
+       issues a standard-rated document. Rather than silently making a tax
+       ruling, the button becomes a request and a person issues the right paper. */
+    const country = body().querySelector('.lic-country');
+    if (country) country.addEventListener('change', () => {
+      const foreign = country.value !== 'IL';
+      const note = body().querySelector('.lic-foreign');
+      const pay = body().querySelector('.lic-submit');
+      const alt = body().querySelector('.lic-alt');
+      const gross = body().querySelector('.lic-gross');
+      if (note) note.hidden = !foreign;
+      if (gross) gross.hidden = foreign;
+      if (alt) alt.hidden = foreign;
+      if (pay) pay.textContent = foreign ? 'Send as a request' : 'Pay by Card';
+      if (pay) pay.classList.toggle('lic-asquote', foreign);
+    });
 
     /* Checking a code shows what it would do before anyone commits. The
        answer is advisory: the price that gets charged is recomputed on the
@@ -550,7 +590,14 @@
       return false;
     };
     body().querySelector('.lic-submit').addEventListener('click', () => {
-      if (need()) submitRequest(true, proj.value.trim(), client.value.trim());
+      if (!need()) return;
+      /* straightToCard = false for a foreign buyer. The card page adds Israeli
+         VAT and the invoice would be standard-rated, neither of which is right
+         for them, so it becomes a request a person answers. */
+      const foreign = (body().querySelector('.lic-country') || {}).value
+        && body().querySelector('.lic-country').value !== 'IL';
+      submitRequest(!foreign, proj.value.trim(), client.value.trim(),
+        foreign ? { reason: 'outside Israel — needs a zero-rated invoice' } : undefined);
     });
     body().querySelector('.lic-alt').addEventListener('click', () => {
       if (!need()) return;
@@ -650,6 +697,8 @@
           duration: pick.term,
           months: term.months,
           project_name: project,
+          licensee_tax_id: (body().querySelector('.lic-tax') || {}).value || '',
+          buyer_country: (body().querySelector('.lic-country') || {}).value || 'IL',
           // Sent as typed. The server looks the code up, decides whether it
           // applies and works out the discount itself — the browser is never
           // trusted with what something costs.

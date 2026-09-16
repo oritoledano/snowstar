@@ -1886,3 +1886,20 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   .ar-list .sub-row{grid-template-columns:40px 42px minmax(0,1fr);row-gap:10px}
   .ar-list .sub-row .sub-edit{grid-column:1/-1;justify-self:start}
 }
+
+
+.mfoot-legal{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.mfoot-legal a{color:var(--muted,#93a0b8);text-decoration:none;font-size:.82rem}
+.mfoot-legal a:hover{color:var(--text,#eef3fb);text-decoration:underline}
+.lic-legal{margin:10px 0 0;font-size:.74rem;line-height:1.55;color:var(--muted,#93a0b8);text-align:center}
+.lic-legal a{color:var(--coral,#e8b98a)}
+
+
+.lic-foreign{margin:10px 0 0;padding:10px 13px;border-radius:11px;font-size:.78rem;line-height:1.55;
+  background:color-mix(in srgb,var(--coral,#e8b98a) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--coral,#e8b98a) 26%,transparent)}
+.lic-field select{width:100%;background:var(--bg,#0b0e17);
+  border:1px solid var(--line,rgba(255,255,255,.12));border-radius:10px;padding:10px 12px;
+  color:var(--text,#eef3fb);font:inherit;font-size:.88rem;outline:0}
+.lic-field select:focus{border-color:var(--coral,#e8b98a)}
+.lic-field i{font-style:normal;opacity:.7;font-size:.9em}

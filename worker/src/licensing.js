@@ -305,6 +305,10 @@ export async function createRequest(req, env, user) {
      asked for a conversation. Snapshotting it instant would let the request
      be paid at a rate nobody agreed to. */
   if (b.quote_only === true) { lane = 'quote'; listAgorot = null; couponCode = null; couponOff = 0; }
+  /* Same rule server-side. The card terminal charges ILS with 18% VAT added
+     unconditionally (hyp.js), so a buyer invoicing from outside Israel cannot
+     go down it — whatever the browser asked for. */
+  if (clean(b.buyer_country, 4) && clean(b.buyer_country, 4) !== 'IL') lane = 'quote';
 
   const t = now();
   const r = await env.DB.prepare(
@@ -323,6 +327,12 @@ export async function createRequest(req, env, user) {
          // parses it to burn the coupon, and a forged "[coupon X" would spend
          // somebody else's code.
          (couponCode ? `[coupon ${couponCode} -₪${(couponOff / 100).toFixed(0)}] ` : '')
+           /* Where they are invoicing from rides in the note rather than in a
+              new column: it changes the tax document, not the licence, and the
+              person issuing that document is the one who needs to read it.
+              Nobody should be auto-deciding a VAT treatment. */
+           + (clean(b.buyer_country, 4) && clean(b.buyer_country, 4) !== 'IL'
+              ? '[outside Israel — zero-rated invoice, do not charge Israeli VAT] ' : '')
            + clean(b.note, 1000).replace(/^\[coupon\b/i, '(coupon'),
          // The chosen term, bounded — it decides expires_at at grant time.
          // 'perp' is the one legitimate way to arrive with no months: it means
