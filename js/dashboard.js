@@ -2202,6 +2202,11 @@
   async function paintStorage() {
     const s = await get('/storage');
     const trash = await get('/storage/trash').catch(() => ({ count: 0, bytes: 0, items: [] }));
+    const texts = await get('/texts').then((d) => d.texts || {}).catch(() => ({}));
+    const mode = (texts['config.submissions-open'] || 'auto').trim();
+    const auto = (texts['config.submissions-auto'] || 'open').trim();
+    const door = { mode, closed: mode === 'closed' || (mode === 'auto' && auto === 'closed') };
+    const waitN = Number(texts['config.waitlist-count'] || 0);
     let gh = null;
     try {
       const repo = await fetch('https://api.github.com/repos/oritoledano/snowstar').then((r) => r.ok ? r.json() : null);
@@ -2252,12 +2257,50 @@
               <button class="rv-btn" id="st-reclaim">Delete the old covers</button>
             </div>`
           : ''}
-        <details class="rv-lyrics"><summary>What is inside the media bucket</summary>
+        <h3 class="st-h3">Where it goes</h3>
+        ${table(Object.entries(s.r2.categories || {}).sort((a, b) => b[1].bytes - a[1].bytes), [
+          { label: 'What', get: (r) => esc(r[0]) },
+          { label: 'Files', num: true, get: (r) => r[1].count },
+          { label: 'Size', num: true, bar: true, get: (r) => human(r[1].bytes) },
+        ], { barKey: 2 })}
+        <details class="rv-lyrics"><summary>Raw key prefixes</summary>
         ${table(rows, [
           { label: 'What', get: (r) => PREFIX_NAMES[r[0]] || esc(r[0]) },
           { label: 'Size', num: true, get: (r) => human(r[1]) },
           { label: 'Share', num: true, bar: true, get: (r) => (r[1] / s.r2.total * 100).toFixed(1) + '%' },
         ], { barKey: 1 })}</details></div>
+      <div class="db-panel"><h2>By artist <span class="pill">${(s.r2.artists || []).length}</span></h2>
+        <p class="db-empty" style="padding-top:0">What each artist has actually sent us.
+          “Held” is what their uploads still occupy — a stem whose original was dropped
+          counts nothing, which is why it can read lower than the file count suggests.</p>
+        ${table((s.r2.artists || []).filter((a) => a.files), [
+          { label: 'Artist', get: (a) => esc(a.artist || '—') },
+          { label: 'Files', num: true, get: (a) => a.files },
+          { label: 'Live', num: true, get: (a) => a.published || 0 },
+          { label: 'Waiting', num: true, get: (a) => a.pending || 0 },
+          { label: 'Held', num: true, bar: true, get: (a) => human(a.held) },
+        ], { barKey: 'held' })}</div>
+
+      <div class="db-panel"><h2>New submissions
+        <span class="pill ${door.closed ? 'warn' : 'good'}">${door.closed ? 'closed' : 'open'}</span></h2>
+        <p class="db-empty" style="padding-top:0">In <b>auto</b> the door shuts by itself once
+          storage passes the ceiling and opens again when it drops — an artist meets a warm note
+          and an email box rather than a failed upload. Force it either way when you need to.</p>
+        <div class="st-door">
+          ${['auto', 'open', 'closed'].map((m) => `<button class="rv-btn ${
+            door.mode === m ? 'rv-ok' : ''}" data-door="${m}">${
+            { auto: 'Automatic', open: 'Always open', closed: 'Closed now' }[m]}</button>`).join('')}
+          <label class="st-ceil">Close at
+            <input id="st-ceiling" type="number" min="1" max="500" step="1" value="${s.r2.ceiling_gb || 9}"> GB
+          </label>
+          <button class="rv-btn" id="st-ceilsave">Save</button>
+        </div>
+        ${door.closed ? `<p class="db-warn" style="margin-top:12px">Artists cannot upload right now.
+          ${door.mode === 'auto' ? 'Storage is over the ceiling — free some space below and this reopens itself.'
+                                 : 'You closed it by hand.'}</p>` : ''}
+        ${waitN ? `<p class="db-empty">${waitN} artist${waitN === 1 ? '' : 's'} asked to be told when we reopen.</p>` : ''}
+      </div>
+
       <div class="db-panel"><h2>Trash <span class="pill">${trash.count || 0} file${
           trash.count === 1 ? '' : 's'}</span></h2>
         <p class="db-empty" style="padding-top:0">A rejected upload used to stay in the live
@@ -2316,6 +2359,22 @@
       + 'Recent rejections are left alone — a decision made this month may still be '
       + 'argued about. Older ones are gone for good, and there is no derivative to '
       + 'fall back on: a rejected track was never published.\n\nThis cannot be undone.');
+
+    app.querySelectorAll('[data-door]').forEach((b) => b.addEventListener('click', async () => {
+      const m = b.dataset.door;
+      if (m === 'closed' && !confirm('Close submissions now?\n\n'
+        + 'Artists will see a note saying we are not taking music at the moment, with a box '
+        + 'to be told when we reopen. Nothing already uploaded is affected.')) return;
+      await post('/texts', { key: 'config.submissions-open', html: m });
+      load();
+    }));
+    const ceilSave = document.getElementById('st-ceilsave');
+    if (ceilSave) ceilSave.addEventListener('click', async () => {
+      const v = Number(document.getElementById('st-ceiling').value);
+      if (!Number.isFinite(v) || v < 1) return;
+      await post('/texts', { key: 'config.storage-ceiling-gb', html: String(v) });
+      load();
+    });
 
     const reclaimBtn = document.getElementById('st-reclaim');
     if (reclaimBtn) reclaimBtn.addEventListener('click', async () => {

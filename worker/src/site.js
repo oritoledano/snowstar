@@ -97,6 +97,124 @@ export async function saveNote(req, env, user) {
  * Infrastructure usage for the dashboard: every byte in R2 summed by product
  * prefix, plus the D1 database size. (~1.3k objects — two list calls.)
  */
+/* ═══════════ The door ══════════════════════════════════════════════════════
+   Submissions have to be able to stop. R2's free tier is 10 GB and the largest
+   single class in it is raw uploads — a couple of generous artists can close
+   the gap in an afternoon, and the failure mode without a door is uploads that
+   half-succeed and a bill nobody chose.
+
+   Config lives in site_texts, the same place config.clarity-id already lives,
+   so there is no new table and no new endpoint. GET /api/texts is public, which
+   is exactly right for the open/closed flag — the artist page has to read it
+   before it can explain itself.                                               */
+const DEFAULT_CEILING_GB = 9;
+
+async function cfg(env, key, fallback) {
+  try {
+    const r = await env.DB.prepare('SELECT html FROM site_texts WHERE key = ?').bind(key).first();
+    const v = r && r.html != null ? String(r.html).trim() : '';
+    return v === '' ? fallback : v;
+  } catch { return fallback; }
+}
+
+export async function ceilingGb(env) {
+  const n = Number(await cfg(env, 'config.storage-ceiling-gb', DEFAULT_CEILING_GB));
+  return Number.isFinite(n) && n > 0 ? n : DEFAULT_CEILING_GB;
+}
+
+/**
+ * Are we taking music right now? Returns { open, why, mode }.
+ *
+ * `auto` is the honest default: the cron measures and flips the stored verdict,
+ * and this reads it. Doing the measurement HERE instead would mean walking
+ * three buckets on every upload request, which is slow and would itself burn
+ * the Class B operations the free tier meters.
+ */
+export async function submissionsOpen(env) {
+  const mode = await cfg(env, 'config.submissions-open', 'auto');
+  if (mode === 'open') return { open: true, mode };
+  if (mode === 'closed') {
+    return { open: false, mode,
+      why: await cfg(env, 'config.submissions-closed-why', '') };
+  }
+  const verdict = await cfg(env, 'config.submissions-auto', 'open');
+  return verdict === 'closed'
+    ? { open: false, mode, why: await cfg(env, 'config.submissions-closed-why', '') }
+    : { open: true, mode };
+}
+
+/** The sentence an artist actually reads. Never an error code. */
+export const CLOSED_MESSAGE =
+  'We are not taking new music at the moment — our library is full while we work '
+  + 'through what artists have already sent us. We would genuinely love to hear '
+  + 'yours when we open again. Leave your email and you will be the first to know.';
+
+/**
+ * Cron: measure, and flip the stored verdict in auto mode.
+ * Called from the scheduled handler, which already walks R2 for orphans.
+ */
+export async function evaluateStorageGate(env) {
+  const mode = await cfg(env, 'config.submissions-open', 'auto');
+  if (mode !== 'auto') return { skipped: mode };
+
+  let total = 0;
+  for (const b of [env.MEDIA, env.MASTERS, env.APPS]) {
+    if (!b) continue;
+    let cursor;
+    do {
+      const page = await b.list({ cursor, limit: 1000 });
+      for (const o of page.objects) total += o.size || 0;
+      cursor = page.truncated ? page.cursor : null;
+    } while (cursor);
+  }
+  const ceiling = (await ceilingGb(env)) * 1024 ** 3;
+  const verdict = total >= ceiling ? 'closed' : 'open';
+  const before = await cfg(env, 'config.submissions-auto', 'open');
+  if (verdict !== before) {
+    await env.DB.prepare(
+      `INSERT INTO site_texts (key, html, updated_at) VALUES ('config.submissions-auto', ?, ?)
+       ON CONFLICT(key) DO UPDATE SET html = excluded.html, updated_at = excluded.updated_at`
+    ).bind(verdict, Math.floor(Date.now() / 1000)).run().catch(() => {});
+    try {
+      const { notifyOwner } = await import('./analytics.js');
+      await notifyOwner(env, 'storage',
+        verdict === 'closed' ? 'Submissions just closed — storage is full'
+                             : 'Submissions are open again',
+        `Storage is at ${(total / 1024 ** 3).toFixed(2)} GB against a ${(ceiling / 1024 ** 3).toFixed(0)} GB ceiling.\n\n`
+        + (verdict === 'closed'
+            ? 'New uploads are being turned away with a warm note and an email capture.\n'
+              + 'Free some space in Dashboard → Storage, or raise the ceiling, and this reopens itself.\n'
+            : 'Uploads are being accepted again.\n')
+        + '\nhttps://snowstar.company/dashboard.html#storage');
+    } catch { /* never let the notification break the sweep */ }
+  }
+  return { total, ceiling, verdict };
+}
+
+/* What each key actually IS, rather than what its first path segment happens to
+   be. The old report split on the segment before the first slash, so
+   mutra/covers, mutra/artists and mutra/collections all collapsed into one row
+   called "mutra", masters and apps contributed nothing at all, and the labels
+   named two prefixes — `covers` and `waves` — that do not exist anywhere in the
+   codebase. A category you cannot act on is not worth showing. */
+const CATEGORIES = [
+  ['Raw uploads',      (b, k) => b === 'media' && k.startsWith('submissions/')],
+  ['Trash',            (b, k) => b === 'media' && k.startsWith('trash/')],
+  ['Catalogue audio',  (b, k) => k.startsWith('audio/') || k.startsWith('stream/audio/')
+                                 || k.startsWith('audio-src/') || k.startsWith('audio-extra/')],
+  ['Cover art',        (b, k) => k.startsWith('covers-art-sm/') || k.startsWith('mutra/covers/')
+                                 || k.startsWith('og/')],
+  ['Artist & pack art',(b, k) => k.startsWith('mutra/artists/') || k.startsWith('mutra/collections/')
+                                 || k.startsWith('avatars/')],
+  ['Work films',       (b, k) => k.startsWith('work/') || k.startsWith('work-thumbs/')
+                                 || k.startsWith('clients/')],
+  ['App installers',   (b) => b === 'apps'],
+];
+const categoryOf = (bucket, key) => {
+  for (const [name, test] of CATEGORIES) if (test(bucket, key)) return name;
+  return 'Other';
+};
+
 export async function storageReport(env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
 
@@ -107,7 +225,7 @@ export async function storageReport(env, user) {
     ['media', env.MEDIA], ['masters', env.MASTERS], ['apps', env.APPS],
   ].filter(([, b]) => b);
 
-  const out = {}, prefixes = {};
+  const out = {}, prefixes = {}, categories = {};
   let total = 0, count = 0;
   /* Reclaimable, counted while we are already walking the keys:
        trash/…            rejected uploads, kept in case a rejection is reversed
@@ -124,6 +242,9 @@ export async function storageReport(env, user) {
       for (const o of page.objects) {
         const size = o.size || 0;
         bTotal += size; bCount++;
+        const cat = categoryOf(name, o.key);
+        categories[cat] = categories[cat] || { bytes: 0, count: 0 };
+        categories[cat].bytes += size; categories[cat].count++;
         if (name === 'media') {
           const p = o.key.includes('/') ? o.key.split('/')[0] : '(root)';
           prefixes[p] = (prefixes[p] || 0) + size;
@@ -164,6 +285,27 @@ export async function storageReport(env, user) {
     }
   } catch { /* pre-migration: report nothing rather than a wrong number */ }
 
+  /* Who uploaded what. R2 keys carry only a truncated user id, so this comes
+     from D1 — where the size of every upload is already recorded — using the
+     same COALESCE(managed, account) the review screen uses to name an artist. */
+  let artists = [];
+  try {
+    const r = await env.DB.prepare(
+      `SELECT COALESCE(m.name, u.artist_name, u.email) AS artist,
+              u.email AS email,
+              COUNT(*) AS files,
+              SUM(s.size) AS bytes,
+              SUM(CASE WHEN COALESCE(json_extract(s.meta,'$.raw_pruned'),0) = 1 THEN 0 ELSE s.size END) AS held,
+              SUM(CASE WHEN s.published_slug IS NOT NULL AND s.published_slug <> '' THEN 1 ELSE 0 END) AS published,
+              SUM(CASE WHEN s.status = 'pending' THEN 1 ELSE 0 END) AS pending,
+              SUM(CASE WHEN s.status = 'rejected' THEN 1 ELSE 0 END) AS rejected
+         FROM submissions s
+         LEFT JOIN users u ON u.id = s.user_id
+         LEFT JOIN managed_artists m ON m.id = s.managed_artist_id
+        GROUP BY artist ORDER BY held DESC`).all();
+    artists = (r.results || []).map((a) => ({ ...a, bytes: a.bytes || 0, held: a.held || 0 }));
+  } catch { /* pre-migration: show nothing rather than a wrong number */ }
+
   let staleCovers = { bytes: 0, count: 0 };
   for (const versions of covers.values()) {
     if (versions.length < 2) continue;
@@ -183,6 +325,9 @@ export async function storageReport(env, user) {
     }
   } catch { /* leave empty */ }
 
+  /* The ceiling the door closes at, not the free-tier number — they are
+     different things and the hardcoded 10 GB conflated them. */
+  const CEILING_GB = await ceilingGb(env);
   const LIMIT = 10 * 1024 * 1024 * 1024;
   return json({
     r2: {
@@ -191,7 +336,8 @@ export async function storageReport(env, user) {
       /* R2 bills storage per GB-month beyond the allowance. Reported so the
          number in the dashboard is a cost, not a scare. */
       overage_usd_month: Math.round(Math.max(0, total - LIMIT) / (1024 ** 3) * 0.015 * 1000) / 1000,
-      uploads,
+      uploads, categories, artists,
+      ceiling_gb: CEILING_GB,
       reclaimable: { trash, staleCovers,
                      bytes: trash.bytes + staleCovers.bytes,
                      count: trash.count + staleCovers.count },
@@ -333,5 +479,25 @@ export async function deleteNote(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const b = await req.json().catch(() => ({}));
   await env.DB.prepare('DELETE FROM site_notes WHERE id = ?').bind(Number(b.id)).run();
+  return json({ ok: true });
+}
+
+/**
+ * POST /waitlist — "tell me when you reopen".
+ *
+ * A closed door that takes an address is a lead; one that just says no is a
+ * lost artist. Deliberately unauthenticated: the whole point is that it works
+ * for somebody who has not signed up, and the unique index makes a repeat
+ * submission a no-op rather than a duplicate.
+ */
+export async function joinWaitlist(req, env) {
+  const b = await req.json().catch(() => ({}));
+  const email = String(b.email || '').trim().toLowerCase().slice(0, 200);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return json({ error: 'bad_email' }, 400);
+  const kind = String(b.kind || 'artist-submissions').slice(0, 40);
+  await env.DB.prepare(
+    `INSERT INTO waitlist (email, kind, created_at) VALUES (?, ?, ?)
+     ON CONFLICT(email, kind) DO NOTHING`
+  ).bind(email, kind, Math.floor(Date.now() / 1000)).run().catch(() => {});
   return json({ ok: true });
 }

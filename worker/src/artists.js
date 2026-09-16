@@ -56,6 +56,14 @@ export async function myUploads(env, user) {
 /** Step 1 — the audio file itself. Returns the R2 key for step 2. */
 export async function uploadTrack(req, env, user, url) {
   if (!user || !user.artist) return json({ error: 'unauthorized' }, 401);
+  /* Before the bytes, not after. The gate has to sit here AND on
+     createSubmission: a tab left open since this morning still holds a key it
+     uploaded successfully, and would otherwise file the record anyway. */
+  const door = await submissionsOpen(env);
+  if (!door.open) {
+    return json({ error: 'submissions_closed',
+                  message: door.why || CLOSED_MESSAGE }, 503);
+  }
   const name = String(url.searchParams.get('filename') || 'track.wav');
   const ext = (name.split('.').pop() || '').toLowerCase();
   if (!AUDIO_EXT[ext]) return json({ error: 'bad_type', accepted: Object.keys(AUDIO_EXT) }, 400);
@@ -71,6 +79,11 @@ export async function uploadTrack(req, env, user, url) {
 /** Step 2 — the submission record: title, note, signed rights declaration. */
 export async function createSubmission(req, env, user, ctx) {
   if (!user || !user.artist) return json({ error: 'unauthorized' }, 401);
+  const door = await submissionsOpen(env);
+  if (!door.open) {
+    return json({ error: 'submissions_closed',
+                  message: door.why || CLOSED_MESSAGE }, 503);
+  }
   const b = await req.json().catch(() => ({}));
   const title = String(b.title || '').trim().slice(0, 120);
   const key = String(b.key || '');
@@ -328,6 +341,7 @@ export async function listSubmissions(env, user, url) {
 
 /** Owner: approve (queues for catalog ingestion) or reject, with a note. */
 import { trashObject } from './trash.js';
+import { submissionsOpen, CLOSED_MESSAGE } from './site.js';
 
 export async function reviewSubmission(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);

@@ -1802,3 +1802,18 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   border:1px solid var(--line,rgba(255,255,255,.1))}
 .lic-gross > span{font-size:.78rem;color:var(--muted,#93a0b8)}
 .lic-gross > b{font-family:var(--font-display);font-size:1.12rem;color:var(--text,#eef3fb)}
+
+
+/* The closed door, where the drop zone was. Warm, not an error. */
+.ar-closed{margin:0 0 14px;padding:18px 20px;border-radius:14px;
+  background:color-mix(in srgb,var(--coral,#e8b98a) 9%,transparent);
+  border:1px solid color-mix(in srgb,var(--coral,#e8b98a) 26%,transparent)}
+.ar-closed h3{margin:0 0 8px;font-family:var(--font-display);font-size:1.05rem;
+  letter-spacing:.01em;text-transform:none}
+.ar-closed p{margin:0 0 9px;font-size:.87rem;line-height:1.6;color:var(--text,#eef3fb)}
+.ar-closed-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ar-closed-row input{flex:1 1 220px;background:var(--bg,#0b0e17);
+  border:1px solid var(--line,rgba(255,255,255,.12));border-radius:10px;padding:10px 13px;
+  color:var(--text,#eef3fb);font:inherit;font-size:.88rem;outline:0}
+.ar-closed-row input:focus{border-color:var(--coral,#e8b98a)}
+.ar-closed-said{display:block;margin-top:8px;font-size:.8rem;color:var(--muted,#93a0b8)}

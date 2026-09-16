@@ -22,7 +22,7 @@ import { transcribeSubmission, suggestVersions, suggestTags } from './intake.js'
 import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
-import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim } from './site.js';
+import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim , evaluateStorageGate, joinWaitlist} from './site.js';
 import {listOverrides, saveOverride, uploadCover, listUses, saveUse,
          setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack, tagTracks } from './catalog.js';
 import { bulkEdit, bulkUndo, listBatches, bulkArtist } from './bulk.js';
@@ -205,6 +205,7 @@ async function handle(req, env, ctx) {
   if (path === '/artist/submissions' && method === 'POST') return createSubmission(req, env, await currentUser(req, env), ctx);
   if (path === '/artist/file' && method === 'GET') return streamSubmission(req, env, await currentUser(req, env), url);
   if (path === '/artists' && method === 'GET') return listArtistsAdmin(env, await currentUser(req, env));
+  if (path === '/waitlist' && method === 'POST') return joinWaitlist(req, env);
   if (path === '/storage' && method === 'GET') return storageReport(env, await currentUser(req, env));
   if (path === '/storage/reclaim' && method === 'POST') return storageReclaim(req, env, await currentUser(req, env));
   // rejected uploads land in trash/ and are emptied deliberately, never silently
@@ -652,6 +653,11 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(sendDigest(env));
     ctx.waitUntil(cleanupOrphanUploads(env));
+    /* Measure storage once a day and close the door if we are out of room.
+       It rides here rather than on the upload path because the measurement
+       walks three buckets, and doing that per upload would be slow and would
+       itself burn the operations the free tier meters. */
+    ctx.waitUntil(evaluateStorageGate(env).catch(() => {}));
     /* A safety net, not the mechanism: routine mail sends itself the moment it
        is queued. This catches anything queued by a path that had no chance to
        flush — and it never touches the kinds that wait for review. */

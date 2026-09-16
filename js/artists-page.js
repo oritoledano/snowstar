@@ -36,6 +36,20 @@
     if (!res.ok) throw new Error(d.error || 'request_failed');
     return d;
   }
+  /* Error codes are for logs. Anything an artist can see gets a sentence. */
+  const FRIENDLY = {
+    submissions_closed: 'We are not taking new music at the moment.',
+    too_big: 'That file is over 95MB — export a smaller master.',
+    bad_type: 'We take WAV, AIFF, FLAC, MP3, M4A and OGG.',
+    unauthorized: 'Sign in as an artist to upload.',
+    network: 'The connection dropped — try that one again.',
+    file_missing: 'That upload did not finish — try it again.',
+    declaration_required: 'Pick how you own this track before submitting.',
+    signature_required: 'Type your name to sign the declaration.',
+  };
+  /* Is the door open? Read once at load; the page re-reads on render. */
+  const DOOR = { closed: false, why: '' };
+
   const get = (path) => fetch('/api' + path, { credentials: 'same-origin' }).then((r) => r.json());
   const post = (path, body) => fetch('/api' + path, {
     method: 'POST', credentials: 'same-origin',
@@ -121,6 +135,9 @@
   }
   M.onChange(render);
   render();
+  // Whether we are taking music at all. Read alongside the first render so the
+  // upload card never paints as usable and then retracts.
+  checkDoor();
 
   // ── become an artist / rename ──
   $('#arRegBtn').addEventListener('click', async () => {
@@ -186,8 +203,12 @@
       xhr.onload = () => {
         try {
           const d = JSON.parse(xhr.responseText);
-          xhr.status === 200 ? resolve(d) : reject(new Error(d.error || 'upload_failed'));
-        } catch { reject(new Error('upload_failed')); }
+          // `message` when the server wrote a sentence for a person to read; the
+          // code is only a fallback. Without this an artist saw, literally,
+          // "⚠ submissions_closed".
+          xhr.status === 200 ? resolve(d)
+            : reject(new Error(d.message || FRIENDLY[d.error] || d.error || 'upload_failed'));
+        } catch { reject(new Error('Something went wrong sending that file.')); }
       };
       xhr.onerror = () => reject(new Error('network'));
       xhr.send(file);
@@ -553,7 +574,7 @@
     const filesReady = staged.length > 0 && staged.every((s) => s.key || s.error) && staged.some((s) => s.key);
     const signed = $('#arAgree').checked && $('#arSign').value.trim().length >= 2;
     const btn = $('#arSubmit');
-    btn.disabled = !(filesReady && signed && sharesOk && controllersOk);
+    btn.disabled = DOOR.closed || !(filesReady && signed && sharesOk && controllersOk);
     const n = staged.filter((s) => s.key).length;
     btn.textContent = n ? `Submit ${n} track${n === 1 ? '' : 's'}` : 'Submit';
 
@@ -563,7 +584,8 @@
     const why = $('#arWhy');
     if (why) {
       const reason =
-        !filesReady ? (staged.length ? 'Waiting for the files to finish uploading.'
+        DOOR.closed ? DOOR.why
+        : !filesReady ? (staged.length ? 'Waiting for the files to finish uploading.'
                                      : 'Add at least one track first.')
         : !sharesOk ? 'The co-owner shares need to add up to 100%.'
         : !controllersOk ? 'Name whoever has a say in commercial use.'
@@ -640,6 +662,55 @@
     }
     syncDecl();
   });
+
+  /* ── the door ──────────────────────────────────────────────────────────
+     When the library is full, an artist should meet a sentence, not a dead
+     form and not an error code. The drop zone goes away entirely — a control
+     that looks usable and is not is worse than one that is absent — and the
+     space it leaves says why and takes an address, so a closure captures
+     interest instead of losing it. */
+  async function checkDoor() {
+    let texts = {};
+    try { texts = (await get('/texts')).texts || {}; } catch { return; }
+    const mode = (texts['config.submissions-open'] || 'auto').trim();
+    const auto = (texts['config.submissions-auto'] || 'open').trim();
+    const closed = mode === 'closed' || (mode === 'auto' && auto === 'closed');
+    DOOR.closed = closed;
+    DOOR.why = (texts['config.submissions-closed-why'] || '').trim()
+      || 'We are not taking new music at the moment — our library is full while we '
+       + 'work through what artists have already sent us.';
+    if (!closed) return;
+
+    const drop = $('#arDrop');
+    if (drop) drop.hidden = true;
+    const host = $('#arStaged');
+    if (!host || document.getElementById('arClosed')) return;
+    const box = document.createElement('div');
+    box.className = 'ar-closed';
+    box.id = 'arClosed';
+    box.innerHTML = `
+      <h3>The door is shut for now</h3>
+      <p>${esc(DOOR.why)}</p>
+      <p>We would genuinely love to hear yours when we open again — leave your
+         address and you will be the first to know.</p>
+      <div class="ar-closed-row">
+        <input type="email" id="arWait" placeholder="you@example.com" autocomplete="email">
+        <button type="button" class="mbtn mbtn-solid" id="arWaitGo">Tell me when</button>
+      </div>
+      <span class="ar-closed-said" id="arWaitSaid"></span>`;
+    host.parentElement.insertBefore(box, host);
+    const go = $('#arWaitGo'), input = $('#arWait'), said = $('#arWaitSaid');
+    go.addEventListener('click', async () => {
+      const email = (input.value || '').trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { input.focus(); return; }
+      go.disabled = true; said.textContent = 'Saving…';
+      const r = await post('/waitlist', { email, kind: 'artist-submissions' });
+      said.textContent = r && r.ok
+        ? 'Got it. We will write to you the day we reopen.'
+        : 'That did not save — try again in a moment.';
+      if (r && r.ok) input.disabled = true;
+    });
+  }
 
   function say(msg) { upStatus.textContent = msg; upStatus.hidden = false; }
 
