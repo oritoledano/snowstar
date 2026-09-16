@@ -663,6 +663,92 @@
     syncDecl();
   });
 
+  const PLAY_SVG = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">'
+    + '<path d="M8 5v14l11-7z" fill="currentColor"/></svg>';
+  const PAUSE_SVG = '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">'
+    + '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>';
+
+  /* ── playing your own track back ───────────────────────────────────────
+     An artist could not hear what they had sent us. The endpoint for it —
+     GET /artist/file?id=, ownership-checked, Range-aware — has existed all
+     along and had exactly two consumers, both of them ours: the admin review
+     screen and the re-analyser.
+
+     This is a small transport of its own rather than mutra-page.js's, which is
+     bound to catalogue objects and does not load on this page. It borrows the
+     same .player/.pl-* chrome so the two look like one product; if the portal
+     ever needs seeking, waveforms or a queue, that is the moment to extract
+     the catalogue's transport properly instead of growing a second one here. */
+  const heard = new Audio();
+  heard.preload = 'none';
+  let heardId = null;
+
+  function playerBar() {
+    let bar = document.getElementById('arPlayer');
+    if (bar) return bar;
+    bar = document.createElement('div');
+    bar.id = 'arPlayer';
+    bar.className = 'player';
+    bar.innerHTML = `
+      <div class="player-in">
+        <div class="pl-now">
+          <button class="pl-play" type="button" aria-label="Play or pause">${PLAY_SVG}</button>
+          <div class="pl-meta"><div class="pl-title"></div><div class="pl-artist">your upload</div></div>
+        </div>
+        <div class="pl-seek-wrap"><span class="pl-time">0:00</span></div>
+        <div class="pl-actions"><button class="pl-close" type="button" aria-label="Close">✕</button></div>
+      </div>`;
+    document.body.appendChild(bar);
+    bar.querySelector('.pl-play').addEventListener('click', () => {
+      if (heard.paused) heard.play(); else heard.pause();
+    });
+    bar.querySelector('.pl-close').addEventListener('click', () => {
+      heard.pause(); heardId = null; bar.classList.remove('up'); syncPlayButtons();
+    });
+    return bar;
+  }
+
+  const fmtClock = (t) => Number.isFinite(t)
+    ? `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}` : '0:00';
+
+  function syncPlayButtons() {
+    document.querySelectorAll('.sub-play').forEach((b) => {
+      const on = Number(b.dataset.sub) === heardId && !heard.paused;
+      b.innerHTML = on ? PAUSE_SVG : PLAY_SVG;
+      b.classList.toggle('on', on);
+    });
+    const bar = document.getElementById('arPlayer');
+    if (bar) bar.querySelector('.pl-play').innerHTML = heard.paused ? PLAY_SVG : PAUSE_SVG;
+  }
+  heard.addEventListener('play', syncPlayButtons);
+  heard.addEventListener('pause', syncPlayButtons);
+  heard.addEventListener('timeupdate', () => {
+    const bar = document.getElementById('arPlayer');
+    if (bar) bar.querySelector('.pl-time').textContent = fmtClock(heard.currentTime);
+  });
+  heard.addEventListener('error', () => {
+    const bar = document.getElementById('arPlayer');
+    if (bar) bar.querySelector('.pl-artist').textContent = 'could not play that file';
+  });
+
+  function wirePlayers(scope, items) {
+    scope.querySelectorAll('.sub-play').forEach((b) => b.addEventListener('click', () => {
+      const id = Number(b.dataset.sub);
+      if (heardId === id) { heard.paused ? heard.play() : heard.pause(); return; }
+      const it = items.find((x) => x.id === id);
+      heardId = id;
+      const bar = playerBar();
+      bar.querySelector('.pl-title').textContent = (it && it.title) || 'your upload';
+      bar.querySelector('.pl-artist').textContent = 'your upload';
+      bar.classList.add('up');
+      heard.src = `/api/artist/file?id=${id}`;
+      heard.play().catch(() => {
+        bar.querySelector('.pl-artist').textContent = 'could not play that file';
+      });
+      syncPlayButtons();
+    }));
+  }
+
   /* ── the door ──────────────────────────────────────────────────────────
      When the library is full, an artist should meet a sentence, not a dead
      form and not an error code. The drop zone goes away entirely — a control
@@ -740,17 +826,68 @@
       ul.innerHTML = '<li style="color:var(--muted)">Nothing yet — your uploads appear here.</li>';
       return;
     }
-    ul.innerHTML = items.map((s) => `
-      <li style="flex-wrap:wrap" data-sub="${s.id}">
-        <b>${esc(s.title)}</b>
-        <span style="color:var(--muted);font-size:.8rem">${fmtSize(s.size)} · ${fmtDate(s.created_at)}</span>
-        <span class="ar-badge ${s.status}">${STATUS_WORD[s.status] || s.status}</span>
-        ${s.lane === 'quote' ? '<span class="ar-badge">custom quote</span>' : ''}
-        ${s.status !== 'info' && s.review_note ? `<span class="ar-rnote">“${esc(s.review_note)}”</span>` : ''}
-        <button type="button" class="ar-addrow sub-edit" style="margin:0 0 0 auto">Edit details</button>
+    /* Grouped, because a flat list by upload date buries the one thing that
+       needs the artist: a question they have not answered. Order is what is
+       blocked on them, then what is blocked on us, then what is done. */
+    const GROUPS = [
+      ['info',     'Needs your answer', 'These are held until you reply.'],
+      ['pending',  'With us',           'We are listening. Nothing needed from you.'],
+      ['approved', 'Accepted',          'Taken for the catalogue.'],
+      ['rejected', 'Not this time',     ''],
+    ];
+    const meta1 = (s) => { try { return JSON.parse(s.meta || '{}') || {}; } catch { return {}; } };
+    const mins = (sec) => sec ? `${Math.floor(sec / 60)}:${String(Math.round(sec % 60)).padStart(2, '0')}` : '';
+
+    const rowFor = (s) => {
+      const m = meta1(s);
+      const facts = [mins(m.duration), m.bpm ? `${m.bpm} BPM` : '',
+                     m.key ? `${m.key}${m.scale ? ' ' + m.scale : ''}` : '',
+                     m.vocal || ''].filter(Boolean);
+      const flags = Array.isArray(m.rights_flags) ? m.rights_flags : [];
+      return `
+      <li class="sub-row" data-sub="${s.id}">
+        <button type="button" class="sub-play" data-sub="${s.id}"
+          aria-label="Play ${esc(s.title)}">${PLAY_SVG}</button>
+        <div class="sub-art${m.cover ? ' has' : ''}">${m.cover
+          ? `<img src="${esc(m.cover)}" alt="" loading="lazy">` : '<span>art</span>'}</div>
+        <div class="sub-main">
+          <div class="sub-line">
+            <b class="sub-title">${esc(s.title)}</b>
+            <span class="ar-badge ${s.status}">${STATUS_WORD[s.status] || s.status}</span>
+            ${s.lane === 'quote' ? '<span class="ar-badge">quote only</span>' : ''}
+            ${s.published_slug
+              ? `<a class="sub-live" href="/mutra.html?q=${encodeURIComponent(s.title)}"
+                   target="_blank" rel="noopener">live in the catalogue ↗</a>` : ''}
+          </div>
+          <div class="sub-facts">${facts.map((f) => `<span>${esc(f)}</span>`).join('')}
+            <span class="sub-dim">${fmtSize(s.size)} · ${fmtDate(s.created_at)}</span></div>
+          ${(m.tags || []).length
+            ? `<div class="sub-tags">${m.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
+          ${flags.length
+            ? `<p class="sub-flag">${esc(flags[0].why)}</p>` : ''}
+          ${s.status !== 'info' && s.review_note ? `<p class="ar-rnote">“${esc(s.review_note)}”</p>` : ''}
+        </div>
+        <button type="button" class="ar-addrow sub-edit">Edit details</button>
         ${askBlock(s)}
         <div class="sub-form" hidden></div>
-      </li>`).join('');
+      </li>`;
+    };
+
+    const seen = new Set();
+    let html = '';
+    for (const [key, label, blurb] of GROUPS) {
+      const inGroup = items.filter((s) => s.status === key);
+      inGroup.forEach((s) => seen.add(s.id));
+      if (!inGroup.length) continue;
+      html += `<li class="sub-group"><h3>${label}<span>${inGroup.length}</span></h3>${
+        blurb ? `<p>${blurb}</p>` : ''}</li>` + inGroup.map(rowFor).join('');
+    }
+    // Anything with a status we do not have a bucket for still has to appear.
+    const rest = items.filter((s) => !seen.has(s.id));
+    if (rest.length) html += `<li class="sub-group"><h3>Other<span>${rest.length}</span></h3></li>`
+      + rest.map(rowFor).join('');
+    ul.innerHTML = html;
+    wirePlayers(ul, items);
 
     /* Answering in place. The alternative was "reply to the email", which
        works until they reply from a different address, or answer half of it,
@@ -801,6 +938,18 @@
           <textarea class="se-lyrics" rows="3">${esc(m.lyrics || '')}</textarea></label>
         <label class="ar-field"><span>Streaming links</span>
           <textarea class="se-links" rows="2">${(m.links || []).map((l) => l.url).join('\n')}</textarea></label>
+        <div class="ar-field"><span>Artwork</span>
+          <div class="se-artrow">
+            <div class="se-artimg${m.cover ? ' has' : ''}">${m.cover
+              ? `<img src="${esc(m.cover)}" alt="">` : '<span>none yet</span>'}</div>
+            <div>
+              <label class="ar-addrow se-artpick">Choose a picture
+                <input type="file" class="se-artfile" accept="image/jpeg,image/png,image/webp" hidden></label>
+              <p class="up-note" style="margin:6px 0 0">Square looks best. Up to 6MB.
+                Without one we generate a plain card so the row is never broken.</p>
+            </div>
+          </div>
+        </div>
         <div style="display:flex;gap:8px;align-items:center">
           <button type="button" class="mbtn mbtn-solid se-save">Save</button>
           <button type="button" class="ar-addrow se-anal">Analyze the audio</button>
@@ -808,6 +957,30 @@
         </div>`;
 
       const msg = box.querySelector('.se-msg');
+
+      /* Artwork was the one piece of metadata an artist could not supply:
+         cover upload existed but was admin-only and keyed by PUBLISHED slug,
+         so it was unreachable for the whole stretch before a track goes live. */
+      const artFile = box.querySelector('.se-artfile');
+      if (artFile) artFile.addEventListener('change', async () => {
+        const f = artFile.files && artFile.files[0];
+        if (!f) return;
+        if (f.size > 6 * 1024 * 1024) { msg.textContent = 'That picture is over 6MB.'; return; }
+        msg.textContent = 'Uploading artwork…';
+        try {
+          const r = await fetch(`/api/artist/artwork?id=${s.id}`, {
+            method: 'PUT', credentials: 'same-origin',
+            headers: { 'content-type': f.type }, body: f,
+          }).then((x) => x.json());
+          if (!r || !r.ok) { msg.textContent = FRIENDLY[r && r.error] || 'That picture would not upload.'; return; }
+          const slot = box.querySelector('.se-artimg');
+          slot.classList.add('has');
+          slot.innerHTML = `<img src="${r.url}" alt="">`;
+          msg.textContent = 'Artwork saved.';
+          const d = await get('/artist/uploads');
+          paintList(d.uploads || []);
+        } catch { msg.textContent = 'That picture would not upload.'; }
+      });
       box.querySelector('.se-anal').onclick = async (e) => {
         if (!window.mutraReanalyse) { msg.textContent = 'Analyser not loaded.'; return; }
         e.target.disabled = true;

@@ -615,10 +615,16 @@ export async function answerSubmission(req, env, user) {
 
   /* Their own upload only — a submission id is a guessable integer, and the
      question thread would otherwise be writable by any logged-in account. */
+  /* Their own upload — including one filed under a managed artist they have
+     since claimed. updateSubmission and streamSubmission both already accept
+     that second case; this one did not, so a claimed artist could edit a track
+     and play it back but not answer the question holding it up. */
   const row = await env.DB.prepare(
     `SELECT sub.id, sub.meta, sub.title, sub.user_id
-       FROM submissions sub WHERE sub.id = ? AND sub.user_id = ?`
-  ).bind(id, user.id).first();
+       FROM submissions sub
+       LEFT JOIN managed_artists m ON m.id = sub.managed_artist_id
+      WHERE sub.id = ? AND (sub.user_id = ? OR m.claimed_user_id = ?)`
+  ).bind(id, user.id, user.id).first();
   if (!row) return json({ error: 'not_found' }, 404);
 
   let meta = {};
@@ -804,4 +810,48 @@ export async function deleteArtist(req, env, user) {
            `${r.deleted} uploads, ${fp.decls} declarations`, Math.floor(Date.now() / 1000)).run();
   } catch { /* the delete happened either way */ }
   return json({ ok: true, who: who.name || who.email, ...r, decls: fp.decls });
+}
+
+
+/**
+ * PUT /artist/artwork?id=<submission> — an artist's own cover art.
+ *
+ * The only thing in the metadata an artist could not supply. Cover upload
+ * existed, but admin-only and keyed by PUBLISHED slug (catalog.js uploadCover),
+ * so it was unreachable for the entire stretch when artwork is most useful —
+ * before the track is live. This writes meta.cover, which the publisher reads.
+ */
+export async function uploadSubmissionArt(req, env, user, url) {
+  if (!user) return json({ error: 'unauthorized' }, 401);
+  const id = Number(url.searchParams.get('id'));
+  if (!id) return json({ error: 'id_required' }, 400);
+
+  const row = await env.DB.prepare(
+    `SELECT sub.id, sub.meta, sub.user_id
+       FROM submissions sub
+       LEFT JOIN managed_artists m ON m.id = sub.managed_artist_id
+      WHERE sub.id = ? AND (sub.user_id = ? OR m.claimed_user_id = ? OR ? = 1)`
+  ).bind(id, user.id, user.id, user.admin ? 1 : 0).first();
+  if (!row) return json({ error: 'not_found' }, 404);
+
+  const type = req.headers.get('content-type') || '';
+  if (!/^image\/(jpeg|png|webp|avif)$/.test(type)) return json({ error: 'bad_type' }, 415);
+  const buf = await req.arrayBuffer();
+  if (!buf.byteLength || buf.byteLength > 6 * 1024 * 1024) return json({ error: 'bad_size' }, 413);
+
+  const ext = type.split('/')[1].replace('jpeg', 'jpg');
+  // Timestamped, so a replacement is never served from the old one's cache.
+  const key = `mutra/covers/sub-${id}-${Date.now()}.${ext}`;
+  await env.MEDIA.put(key, buf, {
+    httpMetadata: { contentType: type, cacheControl: 'public, max-age=31536000' },
+  });
+  const publicUrl = `https://cdn.snowstar.company/${key}`;
+
+  let meta = {};
+  try { meta = JSON.parse(row.meta || '{}') || {}; } catch { meta = {}; }
+  meta.cover = publicUrl;
+  await env.DB.prepare('UPDATE submissions SET meta = ? WHERE id = ?')
+    .bind(JSON.stringify(meta).slice(0, 8000), id).run();
+
+  return json({ ok: true, url: publicUrl });
 }

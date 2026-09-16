@@ -1817,3 +1817,72 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   color:var(--text,#eef3fb);font:inherit;font-size:.88rem;outline:0}
 .ar-closed-row input:focus{border-color:var(--coral,#e8b98a)}
 .ar-closed-said{display:block;margin-top:8px;font-size:.8rem;color:var(--muted,#93a0b8)}
+
+
+/* ═══════════ The artist's own submissions ═══════════════════════════════════
+   Built from the catalogue's vocabulary rather than beside it: the same row
+   rhythm, the same .tag pills, the same .player chrome. An artist and a buyer
+   should feel like they are on one product. */
+.ar-list .sub-group{display:block;padding:20px 0 6px;border:0;background:none}
+.ar-list .sub-group:first-child{padding-top:4px}
+.ar-list .sub-group h3{display:flex;align-items:center;gap:9px;margin:0;
+  font-family:var(--font-display);font-size:.82rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted,#93a0b8)}
+.ar-list .sub-group h3 span{font-size:.7rem;padding:1px 8px;border-radius:99px;
+  background:var(--chip-bg,rgba(255,255,255,.07));color:var(--text,#eef3fb)}
+.ar-list .sub-group p{margin:5px 0 0;font-size:.78rem;color:var(--dim,var(--muted))}
+
+.ar-list .sub-row{display:grid;grid-template-columns:44px 48px minmax(0,1fr) auto;
+  gap:13px;align-items:center;padding:12px 14px;margin:8px 0;border-radius:13px;
+  background:var(--panel,rgba(255,255,255,.03));
+  border:1px solid var(--line,rgba(255,255,255,.09));flex-wrap:wrap}
+.ar-list .sub-row:hover{border-color:var(--line-2,rgba(255,255,255,.16))}
+
+.sub-play{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid var(--line-2,rgba(255,255,255,.16));background:transparent;
+  color:var(--text,#eef3fb);cursor:pointer;transition:background .18s,color .18s}
+.sub-play:hover{background:var(--tint,rgba(255,255,255,.06))}
+.sub-play.on{background:var(--grad);color:var(--on-accent,#1b1020);border-color:transparent}
+
+.sub-art{width:48px;height:48px;border-radius:9px;overflow:hidden;display:grid;
+  place-items:center;background:var(--tint,rgba(255,255,255,.05));
+  border:1px solid var(--line,rgba(255,255,255,.08))}
+.sub-art span{font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim,var(--muted))}
+.sub-art img{width:100%;height:100%;object-fit:cover;display:block}
+
+.sub-main{min-width:0}
+.sub-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sub-title{font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sub-live{font-size:.72rem;color:var(--coral,#e8b98a);text-decoration:none}
+.sub-live:hover{text-decoration:underline}
+.sub-facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;
+  font-size:.74rem;color:var(--muted,#93a0b8)}
+.sub-dim{color:var(--dim,var(--muted));opacity:.8}
+.sub-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.sub-flag{margin:7px 0 0;padding:7px 10px;border-radius:9px;font-size:.76rem;line-height:1.5;
+  background:color-mix(in srgb,var(--coral,#e8b98a) 11%,transparent);
+  border:1px solid color-mix(in srgb,var(--coral,#e8b98a) 28%,transparent)}
+.ar-list .sub-row .ar-rnote{margin:6px 0 0;font-size:.78rem}
+.ar-list .sub-row .sub-form,
+.ar-list .sub-row .qa-open,
+.ar-list .sub-row .qa-done{grid-column:1/-1}
+
+/* artwork picker inside the editor */
+.se-artrow{display:flex;gap:12px;align-items:flex-start}
+.se-artimg{width:74px;height:74px;flex:none;border-radius:10px;overflow:hidden;display:grid;
+  place-items:center;background:var(--tint,rgba(255,255,255,.05));
+  border:1px solid var(--line,rgba(255,255,255,.1))}
+.se-artimg span{font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--dim,var(--muted))}
+.se-artimg img{width:100%;height:100%;object-fit:cover;display:block}
+.se-artpick{cursor:pointer}
+
+/* the portal's player borrows the catalogue's bar wholesale */
+#arPlayer .pl-seek-wrap{justify-content:flex-end}
+#arPlayer .pl-time{font-variant-numeric:tabular-nums}
+
+@media (max-width:620px){
+  .ar-list .sub-row{grid-template-columns:40px 42px minmax(0,1fr);row-gap:10px}
+  .ar-list .sub-row .sub-edit{grid-column:1/-1;justify-self:start}
+}
