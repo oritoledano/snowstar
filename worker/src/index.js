@@ -48,7 +48,7 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
          streamdawAdmin, streamdawRelease } from './streamdaw.js';
 import { createRequest, myLicences, listQueue, recordPayment,
-         grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
+         grantFromDashboard, revokeLicence, declineRequest , remindExpiring} from './licensing.js';
 import { handleStream } from './stream.js';
 import { getClasses, setClasses } from './pricing.js';
 import { listJobs, saveJob, exportJobs } from './jobs.js';
@@ -59,7 +59,7 @@ import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim,
          myProfile, publicArtist } from './artistprofile.js';
-import { listCoupons, saveCoupon, checkCoupon } from './coupons.js';
+import { listCoupons, saveCoupon, checkCoupon , firstLicenceOffer} from './coupons.js';
 import { listInvoices, issueInvoice, retryInvoice, whoami, previewInvoice, pinBusiness, skipInvoice } from './greeninvoice.js';
 import { listCollections, saveCollection, setCollectionTracks, uploadCollectionArt } from './collections.js';
 import { listEarnings, settleEarnings, myEarnings, saveTerms } from './earnings.js';
@@ -239,6 +239,12 @@ async function handle(req, env, ctx) {
   if (path === '/coupons' && method === 'GET') return listCoupons(env, await currentUser(req, env));
   if (path === '/coupons' && method === 'POST') return saveCoupon(req, env, await currentUser(req, env));
   if (path === '/coupons/check' && method === 'POST') return checkCoupon(req, env);
+  /* What this visitor is owed, if anything. Signed-in only and scoped to them,
+     so the banner can stop claiming a discount the backend cannot give. */
+  if (path === '/coupons/offer' && method === 'GET') {
+    const u = await currentUser(req, env);
+    return json({ offer: u ? await firstLicenceOffer(env, u) : null });
+  }
 
   if (path === '/invoices/whoami' && method === 'GET') return whoami(env, await currentUser(req, env));
   if (path === '/invoices' && method === 'GET') return listInvoices(env, await currentUser(req, env));
@@ -431,6 +437,12 @@ async function handle(req, env, ctx) {
     const newsletter = body.newsletter ? 1 : 0;
     const prod = product(body.product);
     const source = String(body.source || prod).slice(0, 30);
+    /* The page's product says WHERE they signed up; intent says what they came
+       to do. Both are needed: artists.html and mutra.html are both 'mutra', and
+       one is somebody selling us music while the other is somebody buying it. */
+    const INTENTS = new Set(['license', 'sell', 'claim', 'app', 'scan']);
+    const intent = INTENTS.has(String(body.intent)) ? String(body.intent) : null;
+    const page = String(body.page || '').slice(0, 120) || null;
 
     if (!validEmail(email)) return json({ error: 'invalid_email' }, 400);
     if (password.length < 8) return json({ error: 'weak_password' }, 400);
@@ -446,9 +458,9 @@ async function handle(req, env, ctx) {
     const id = crypto.randomUUID();
     const t = now();
     await env.DB.prepare(
-      `INSERT INTO users (id, email, name, pw_hash, pw_salt, pw_iters, newsletter, signup_source, created_at, last_login_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(id, email, name, hash, salt, PBKDF2_ITERS, newsletter, source, t, t).run();
+      `INSERT INTO users (id, email, name, pw_hash, pw_salt, pw_iters, newsletter, signup_source, signup_intent, signup_page, created_at, last_login_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(id, email, name, hash, salt, PBKDF2_ITERS, newsletter, source, intent, page, t, t).run();
 
     const token = randB64(32);
     const maxAge = SESSION_DAYS * 86400;
@@ -669,6 +681,8 @@ export default {
        walks three buckets, and doing that per upload would be slow and would
        itself burn the operations the free tier meters. */
     ctx.waitUntil(evaluateStorageGate(env).catch(() => {}));
+    /* The notice the licence text has promised since the first sale. */
+    ctx.waitUntil(remindExpiring(env).catch(() => {}));
     /* A safety net, not the mechanism: routine mail sends itself the moment it
        is queued. This catches anything queued by a path that had no chance to
        flush — and it never touches the kinds that wait for review. */

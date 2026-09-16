@@ -25,7 +25,7 @@
   };
 
   $('#arSignin').addEventListener('click', () => window.SnowstarOpenAuth && SnowstarOpenAuth('signup',
-    'Create your free account to start uploading music.'));
+    'Create your free account to start uploading music.', 'sell'));
 
   async function api(path, body) {
     const res = await fetch('/api' + path, {

@@ -1903,3 +1903,10 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   color:var(--text,#eef3fb);font:inherit;font-size:.88rem;outline:0}
 .lic-field select:focus{border-color:var(--coral,#e8b98a)}
 .lic-field i{font-style:normal;opacity:.7;font-size:.9em}
+
+
+/* the first-licence offer, on the screen where it gets used */
+.lic-offer{margin:0 0 10px;padding:10px 13px;border-radius:11px;font-size:.8rem;line-height:1.55;
+  background:color-mix(in srgb,var(--amber,#ffc24b) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--amber,#ffc24b) 30%,transparent)}
+.lic-offer b{color:var(--text,#eef3fb)}

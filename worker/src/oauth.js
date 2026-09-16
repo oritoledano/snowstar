@@ -101,6 +101,17 @@ function productFromPath(path) {
   return 'snowstar';
 }
 
+/* What the return path implies they came to do. The artists page is somebody
+   offering us music; the catalogue is somebody buying it. Both are 'mutra'. */
+function intentFromPath(back) {
+  const p = String(back || '').toLowerCase();
+  if (p.includes('artists')) return 'sell';
+  if (p.includes('streamdaw') || p.includes('/apps')) return 'app';
+  if (p.includes('snowstash')) return 'scan';
+  if (p.includes('mutra')) return 'license';
+  return null;
+}
+
 /** Only ever bounce back to our own pages. */
 function safeReturn(raw) {
   if (!raw) return '/mutra.html';
@@ -239,12 +250,21 @@ async function linkAndSignIn(env, provider, profile) {
       userId = byEmail.id;
     } else {
       userId = crypto.randomUUID();
+      /* signup_source is the PROPERTY they arrived through, not the provider.
+         This used to bind `provider`, so a Google sign-up from snowstash.html
+         and one from the StreamDAW page were both recorded as 'google' — the
+         vertical thrown away, even though productFromPath(back) is computed
+         eleven lines below for the welcome email. The provider is already in
+         `identities`, which is where it belongs. */
+      const camefrom = productFromPath(back);
       await env.DB.prepare(
-        `INSERT INTO users (id, email, name, newsletter, email_verified, avatar, signup_source, created_at, last_login_at)
-         VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?)`
+        `INSERT INTO users (id, email, name, newsletter, email_verified, avatar,
+                            signup_source, signup_intent, signup_page, created_at, last_login_at)
+         VALUES (?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)`
       ).bind(userId, profile.email || `${provider}_${profile.id}@users.snowstar.company`,
              profile.name || null, profile.verified ? 1 : 0, profile.avatar || null,
-             provider, t, t).run();
+             camefrom || provider, intentFromPath(back), String(back || '').slice(0, 120) || null,
+             t, t).run();
       /* Brand-new account: welcome them to the property they signed up ON,
          which the return path already tells us. Swallowed on failure — a
          sign-in must never break because an email did. */

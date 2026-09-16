@@ -19,7 +19,8 @@ import { alert } from './analytics.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 import { accrueEarnings } from './earnings.js';
-import { findCoupon, couponProblem, couponAllowsClass, applyCoupon, burnCoupon } from './coupons.js';
+import { findCoupon, couponProblem, couponAllowsClass, applyCoupon, burnCoupon,
+         couponProblemFor, recordCouponUse } from './coupons.js';
 import { rightsLocked } from './ownership.js';
 
 const json = (data, status = 200) =>
@@ -288,7 +289,11 @@ export async function createRequest(req, env, user) {
        make it forgeable. There is nothing to discount on a quote. */
     if (listAgorot != null && clean(b.coupon, 40)) {
       const c = await findCoupon(env, b.coupon);
-      const bad = couponProblem(c, listAgorot);
+      /* Two questions, not one: is this code usable at all, and may THIS person
+         use it. The second had no implementation, which is why a first-licence
+         discount could be promised but not given. */
+      const bad = couponProblem(c, listAgorot)
+               || await couponProblemFor(env, c, email, user && user.id);
       if (!bad && couponAllowsClass(c, pr.grade)) {
         const res = applyCoupon(listAgorot, c);
         if (res.off > 0) {
@@ -445,9 +450,27 @@ export async function listQueue(env, user, url) {
   // tab reads the licences table instead.
   const rows = status === 'granted'
     ? await env.DB.prepare(
-        `SELECT l.*, u.name AS user_name
-           FROM licences l LEFT JOIN users u ON u.id = l.user_id
-          ORDER BY l.id DESC LIMIT 200`).all()
+        /* The whole money trail on one row: what it listed at, what a coupon
+           took off, what was actually charged, and whether a tax document
+           exists. Those four numbers living in four tables is why "did we
+           overbill anyone?" could only be answered by hand. Sorted by when it
+           ENDS, not when it was granted, because the next thing to do about a
+           licence is always its renewal. */
+        `SELECT l.*, u.name AS user_name,
+                r.list_amount AS list_amount, r.note AS req_note,
+                (SELECT COALESCE(SUM(p.amount), 0) FROM payments p
+                  WHERE p.reference = l.ref AND COALESCE(p.is_test, 0) = 0) AS paid,
+                (SELECT i.status FROM invoices i WHERE i.licence_id = l.id
+                  ORDER BY i.id DESC LIMIT 1) AS invoice_status,
+                (SELECT i.number FROM invoices i WHERE i.licence_id = l.id
+                  ORDER BY i.id DESC LIMIT 1) AS invoice_number
+           FROM licences l
+           LEFT JOIN users u ON u.id = l.user_id
+           LEFT JOIN licence_requests r ON r.id = l.request_id
+          ORDER BY CASE WHEN l.revoked_at IS NOT NULL THEN 2
+                        WHEN l.expires_at IS NULL THEN 1 ELSE 0 END,
+                   l.expires_at ASC, l.id DESC
+          LIMIT 200`).all()
     : await env.DB.prepare(
         `SELECT r.*, u.name AS user_name
            FROM licence_requests r LEFT JOIN users u ON u.id = r.user_id
@@ -596,7 +619,11 @@ export async function grantLicence(env, opts) {
   // rides in the request note (written by createRequest).
   if (reqRow && reqRow.note) {
     const m = /^\[coupon (\S+) /.exec(String(reqRow.note));
-    if (m) await burnCoupon(env, m[1]);
+    if (m) {
+      await burnCoupon(env, m[1]);
+      // ...and WHO, so "one per customer" is enforceable next time.
+      await recordCouponUse(env, m[1], email, user_id, id);
+    }
   }
   if (request_id) {
     await env.DB.prepare(
@@ -686,4 +713,60 @@ export async function declineRequest(req, env, user) {
   ).bind(user.id, now(), clean(b.note, 1000), id).run();
   await logAdmin(env, user.id, 'request.decline', String(id), clean(b.note, 300));
   return json({ ok: true });
+}
+
+/* ═══════════ Thirty days before it ends ═══════════════════════════════════
+   The grant email promises "we will email you 30 days before" and has since
+   the first licence was sold. Nothing has ever scanned expires_at — the cron
+   sends a digest, sweeps orphan uploads and flushes mail, and that is all. On
+   a six-month minimum term the promise first comes due five months after
+   launch, which is exactly long enough to forget it was made.
+
+   Idempotent by construction: the reminder is recorded in admin_log and the
+   query excludes anything already recorded, so a cron that runs twice, or a
+   day that is missed and caught up later, cannot send twice.                */
+export async function remindExpiring(env, days = 30) {
+  const t = now();
+  const from = t + (days - 1) * 86400;
+  const to = t + (days + 1) * 86400;
+  let rows = [];
+  try {
+    rows = (await env.DB.prepare(
+      `SELECT l.id, l.ref, l.email, l.slug, l.expires_at, l.project_name, l.tier
+         FROM licences l
+        WHERE l.revoked_at IS NULL AND l.expires_at IS NOT NULL
+          AND l.expires_at BETWEEN ? AND ?
+          AND NOT EXISTS (SELECT 1 FROM admin_log a
+                           WHERE a.action = 'licence.expiry_notice' AND a.subject = l.ref)
+        LIMIT 50`).bind(from, to).all()).results || [];
+  } catch { return { sent: 0, reason: 'query_failed' }; }
+
+  let sent = 0;
+  for (const l of rows) {
+    if (!l.email) continue;
+    const when = new Date(l.expires_at * 1000).toLocaleDateString('en-GB',
+      { day: 'numeric', month: 'long', year: 'numeric' });
+    try {
+      await sendMail(env, {
+        to: l.email,
+        subject: `Your licence for “${l.slug}” ends on ${when}`,
+        text: `This is the notice we promised when you licensed “${l.slug}”.\n\n`
+          + `Reference ${l.ref}\n`
+          + (l.project_name ? `Project: ${l.project_name}\n` : '')
+          + `Ends: ${when} — about 30 days from now\n\n`
+          + `If the video is still up after that date the licence needs renewing; renew and it\n`
+          + `simply continues, with no gap and no new certificate to chase.\n\n`
+          + `Renew or ask us anything: https://snowstar.company/mutra.html\n\n`
+          + `— Snowstar`,
+      });
+      /* Recorded BEFORE counting it, and the query above excludes anything
+         recorded — so the worst case is a reminder that was sent and not
+         logged, never one sent twice. */
+      await env.DB.prepare(
+        'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+      ).bind('system:cron', 'licence.expiry_notice', l.ref, String(l.email).slice(0, 200), t).run();
+      sent++;
+    } catch { /* one failure must not stop the rest */ }
+  }
+  return { sent, considered: rows.length };
 }

@@ -156,3 +156,76 @@ export async function burnCoupon(env, code) {
   if (!c) return;
   await env.DB.prepare('UPDATE coupons SET used = used + 1 WHERE code = ?').bind(c).run().catch(() => null);
 }
+
+
+/* ═══════════ One per customer, and only on a first licence ════════════════
+   "10% off your first licence" has been on the sign-up modal, the scrub gate
+   and the favourites gate for weeks, honoured by nothing. It could not be
+   honoured: max_uses was a global counter, so "one each" was not expressible,
+   and nothing recorded WHO had redeemed a code.
+
+   Kept as a plain code rather than an automatic discount on purpose. A code is
+   something a person can be told, can paste, and can see working before they
+   pay — an invisible price change reads as a mistake in our favour when it
+   fails and a mystery when it works. */
+
+/** Has this buyer ever completed a licence? Email, not id — somebody can buy
+    before they have ever signed in, and then the account arrives afterwards. */
+export async function hasBoughtBefore(env, email, userId) {
+  if (!email && !userId) return false;
+  const r = await env.DB.prepare(
+    `SELECT 1 FROM licences
+      WHERE revoked_at IS NULL AND (lower(email) = ? OR (user_id IS NOT NULL AND user_id = ?))
+      LIMIT 1`
+  ).bind(String(email || '').toLowerCase(), userId || '').first().catch(() => null);
+  return !!r;
+}
+
+/**
+ * Why this person may not use this code — or null if they may.
+ *
+ * Separate from couponProblem, which answers "is this code usable at all".
+ * This one needs to know who is asking, and is the half that did not exist.
+ */
+export async function couponProblemFor(env, c, email, userId) {
+  if (!c) return 'unknown_code';
+  if (c.first_purchase_only && await hasBoughtBefore(env, email, userId)) {
+    return 'first_purchase_only';
+  }
+  const limit = Number(c.per_user_limit || 0);
+  if (limit > 0 && email) {
+    const r = await env.DB.prepare(
+      'SELECT COUNT(*) n FROM coupon_uses WHERE code = ? AND lower(email) = ?'
+    ).bind(c.code, String(email).toLowerCase()).first().catch(() => ({ n: 0 }));
+    if ((r && r.n) >= limit) return 'already_used';
+  }
+  return null;
+}
+
+/** Recorded at grant, beside the global counter, so a limit can be enforced. */
+export async function recordCouponUse(env, code, email, userId, licenceId) {
+  const c = normCode(code);
+  if (!c) return;
+  await env.DB.prepare(
+    'INSERT INTO coupon_uses (code, email, user_id, licence_id, ts) VALUES (?, ?, ?, ?, ?)'
+  ).bind(c, String(email || '').toLowerCase(), userId || null, licenceId || null,
+         Math.floor(Date.now() / 1000)).run().catch(() => null);
+}
+
+/** What to offer this visitor, if anything. Drives the banner. */
+export async function firstLicenceOffer(env, user) {
+  if (!user || !user.email) return null;
+  if (await hasBoughtBefore(env, user.email, user.id)) return null;
+  const c = await env.DB.prepare(
+    `SELECT code, kind, value FROM coupons
+      WHERE active = 1 AND first_purchase_only = 1 AND scope = 'mutra'
+        AND (expires_at IS NULL OR expires_at > ?)
+      ORDER BY id LIMIT 1`
+  ).bind(Math.floor(Date.now() / 1000)).first().catch(() => null);
+  if (!c) return null;
+  const used = await env.DB.prepare(
+    'SELECT COUNT(*) n FROM coupon_uses WHERE code = ? AND lower(email) = ?'
+  ).bind(c.code, String(user.email).toLowerCase()).first().catch(() => ({ n: 0 }));
+  if (used && used.n) return null;
+  return { code: c.code, kind: c.kind, value: c.value };
+}

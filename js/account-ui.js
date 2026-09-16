@@ -206,8 +206,15 @@
   let resumeFn = null;
   window.SnowstarAuthResume = (fn) => { resumeFn = fn; };
 
-  function open(next, reason) {
+  /* `intent` is why they are here — which button they pressed — and it is kept
+     rather than only displayed. signup_source has only ever held the PAGE's
+     product, so artists.html (sell me your music) and mutra.html (license
+     music) both recorded 'mutra': the two opposite sides of the marketplace,
+     indistinguishable afterwards. */
+  let authIntent = null;
+  function open(next, reason, intent) {
     setMode(next || 'login');
+    authIntent = intent || null;
     if (reason) subEl.textContent = reason;
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -253,7 +260,8 @@
     submitEl.textContent = mode === 'signup' ? 'Creating…' : 'Signing in…';
     try {
       if (mode === 'signup') {
-        await M.signup({ email, password, name: form.name.value.trim(), newsletter: form.newsletter.checked });
+        await M.signup({ email, password, name: form.name.value.trim(),
+                         newsletter: form.newsletter.checked, intent: authIntent });
       } else {
         await M.login({ email, password });
       }

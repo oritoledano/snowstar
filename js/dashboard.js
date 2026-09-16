@@ -2287,20 +2287,45 @@
         </div>
 
         <h4>${licTab === 'granted' ? 'Granted licences' : licTab === 'declined' ? 'Declined' : 'Requests'}</h4>
-        ${licTab === 'granted' ? (reqs.length ? `<div class="mem-list">${reqs.map((l) => {
-            const now = Math.floor(Date.now() / 1000);
-            const gone = l.revoked_at ? 'revoked' : (l.expires_at && l.expires_at < now ? 'expired' : null);
-            return `<div class="mem-row${gone ? ' is-off' : ''}">
-              <b>${esc(l.slug)}</b>
-              <span>${esc(l.licensee_name || l.email || '')}</span>
-              ${l.project_name ? `<span>${esc(l.project_name)}</span>` : ''}
-              <span>${ILS(l.amount)}</span>
-              <span class="pill">${gone || (l.expires_at ? fmt(l.expires_at) : 'no end date')}</span>
-              <span class="mem-when">${esc(l.ref)}</span>
-              <a class="chip" href="/api/licence/certificate?ref=${encodeURIComponent(l.ref)}"
-                 target="_blank" rel="noopener">Certificate</a>
-              ${gone ? '' : `<button class="chip lc-revoke" data-id="${l.id}" data-ref="${esc(l.ref)}">Revoke</button>`}
-            </div>`; }).join('')}</div>`
+        ${licTab === 'granted' ? (reqs.length ? `
+          <p class="db-empty" style="padding-top:0">Soonest to end first, because the next thing to do
+            about a licence is its renewal. <b>Trail</b> reads list → what a code took off → what the
+            card actually took → whether a tax document exists, so the four numbers that used to live
+            in four tables can be compared at a glance.</p>
+          <table><thead><tr>
+            <th>Track</th><th>Who</th><th>Project</th><th>Runs</th>
+            <th class="num">Trail</th><th>Doc</th><th></th>
+          </tr></thead><tbody>${reqs.map((l) => {
+            const nowS = Math.floor(Date.now() / 1000);
+            const gone = l.revoked_at ? 'revoked' : (l.expires_at && l.expires_at < nowS ? 'expired' : null);
+            const left = l.expires_at ? Math.round((l.expires_at - nowS) / 86400) : null;
+            /* The coupon is recoverable only from the request note, which is
+               where createRequest stamps it. */
+            const cut = /\[coupon (\S+) -₪([\d.]+)\]/.exec(String(l.req_note || ''));
+            const listAmt = l.list_amount != null ? l.list_amount : l.amount;
+            const mismatch = l.paid && Math.abs(Math.round(l.amount * 1.18) - l.paid) > 2;
+            return `<tr class="${gone ? 'is-off' : ''}">
+              <td><b>${esc(l.slug)}</b><br><span class="mem-when">${esc(l.ref)}</span></td>
+              <td>${esc(l.licensee_name || l.user_name || l.email || '')}</td>
+              <td>${esc(l.project_name || '—')}</td>
+              <td>${gone
+                  ? `<span class="pill warn">${gone}</span>`
+                  : l.expires_at
+                    ? `${when(l.expires_at)}<br><span class="mem-when">${
+                        left <= 30 ? '<b>' + left + ' days left</b>' : left + ' days left'}</span>`
+                    : '<span class="pill">no end date</span>'}</td>
+              <td class="num">${money(listAmt, 0)}${cut ? ` <span class="mem-when">−₪${esc(cut[2])} ${esc(cut[1])}</span>` : ''}
+                  <br>${l.paid ? money(l.paid, 2) + ' taken' : '<span class="mem-when">nothing taken</span>'}
+                  ${mismatch ? '<br><span class="pill warn">check</span>' : ''}</td>
+              <td>${l.invoice_number
+                  ? `<span class="pill good">${esc(l.invoice_number)}</span>`
+                  : l.invoice_status
+                    ? `<span class="pill ${l.invoice_status === 'failed' ? 'warn' : ''}">${esc(l.invoice_status)}</span>`
+                    : '<span class="mem-when">none</span>'}</td>
+              <td><a class="chip" href="/api/licence/certificate?ref=${encodeURIComponent(l.ref)}"
+                     target="_blank" rel="noopener">Cert</a>
+                  ${gone ? '' : `<button class="chip lc-revoke" data-id="${l.id}" data-ref="${esc(l.ref)}">Revoke</button>`}</td>
+            </tr>`; }).join('')}</tbody></table>`
           : '<p class="db-empty">Nothing granted yet.</p>')
         : reqs.length ? reqs.map((r) => `
           <div class="rv-item lc-req" data-id="${r.id}">

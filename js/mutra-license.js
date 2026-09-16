@@ -87,6 +87,21 @@
 
   /* Bit is the only alternative to the card, because it is the only one we can
      actually receive: there is no published bank account and no Paybox. */
+  /* What this buyer is actually owed. The site has promised "10% off your first
+     licence" on the signup modal, the scrub gate and the favourites gate for
+     weeks with nothing behind it; now there is a code, bound to one use per
+     person and refused once they have bought before, and this is where it can
+     be seen working before anyone pays. */
+  let firstOffer;
+  async function loadOffer() {
+    if (firstOffer !== undefined) return firstOffer;
+    try {
+      const r = await fetch('/api/coupons/offer', { credentials: 'same-origin' }).then((x) => x.json());
+      firstOffer = (r && r.offer) || null;
+    } catch { firstOffer = null; }
+    return firstOffer;
+  }
+
   const BIT_NUMBER = '054-449-8389';
 
   const esc = (v) => String(v == null ? '' : v)
@@ -448,6 +463,7 @@
         this is what it names.</p>
       <label class="lic-field"><span>Project name</span>
         <input class="lic-proj" type="text" maxlength="140" placeholder="Spring brand film"></label>
+      <div class="lic-offer" hidden></div>
       <label class="lic-field lic-cpwrap"><span>Discount code <i>optional</i></span>
         <span class="lic-cprow"><input class="lic-coupon" type="text" maxlength="40"
           placeholder="If you were given one" autocapitalize="characters" spellcheck="false">
@@ -500,6 +516,19 @@
     /* Outside Israel the card path is simply wrong — it charges Israeli VAT and
        issues a standard-rated document. Rather than silently making a tax
        ruling, the button becomes a request and a person issues the right paper. */
+    /* Filled in for them rather than described. A discount somebody has to
+       remember to type is a discount most people do not get. */
+    loadOffer().then((offer) => {
+      if (!offer) return;
+      const box = body().querySelector('.lic-offer');
+      const input = body().querySelector('.lic-coupon');
+      if (!box || !input) return;
+      box.hidden = false;
+      box.innerHTML = `<b>${offer.value}% off your first licence.</b> We have put the code in for you —
+        press Apply to see it come off.`;
+      if (!input.value) input.value = offer.code;
+    });
+
     const country = body().querySelector('.lic-country');
     if (country) country.addEventListener('change', () => {
       const foreign = country.value !== 'IL';
@@ -610,7 +639,7 @@
         if (window.SnowstarAuthResume) SnowstarAuthResume(resumePending);
         close();
         if (window.SnowstarOpenAuth) SnowstarOpenAuth('signup',
-          'Create a free account and we’ll send the Bit details and the files.');
+          'Create a free account and we’ll send the Bit details and the files.', 'license');
         return;
       }
       submitRequest(false, proj.value.trim(), client.value.trim());

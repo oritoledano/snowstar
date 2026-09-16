@@ -115,9 +115,14 @@
     emit();
   }
 
-  Account.signup = async function ({ email, password, name, newsletter }) {
+  Account.signup = async function ({ email, password, name, newsletter, intent }) {
     const local = [...readLocal()];
-    await enter(await post('/signup', { email, password, name, newsletter, product: PRODUCT }), local);
+    /* intent and page travel with the signup. PRODUCT is the property; intent is
+       what they came to DO on it, which is the part that was being thrown away. */
+    await enter(await post('/signup', {
+      email, password, name, newsletter, product: PRODUCT,
+      intent: intent || null, page: location.pathname,
+    }), local);
   };
 
   Account.login = async function ({ email, password }) {

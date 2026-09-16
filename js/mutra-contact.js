@@ -154,7 +154,7 @@
       act: () => {
         close();
         if (signedIn) document.querySelector('#authAccount')?.click();
-        else if (window.SnowstarOpenAuth) SnowstarOpenAuth('login', 'Sign in to see your artist panel.');
+        else if (window.SnowstarOpenAuth) SnowstarOpenAuth('login', 'Sign in to see your artist panel.', 'sell');
       },
       alt: 'Something else? Send a message', altAct: () => form('c2-artist', {}),
     });
@@ -166,7 +166,7 @@
       act: () => {
         close();
         if (signedIn) document.querySelector('#authAccount')?.click();
-        else if (window.SnowstarOpenAuth) SnowstarOpenAuth('login', 'Sign in to see your licences.');
+        else if (window.SnowstarOpenAuth) SnowstarOpenAuth('login', 'Sign in to see your licences.', 'license');
       },
       alt: 'Can’t see it? Send a message', altAct: () => form('b2-account', { orderRef: true }),
     });

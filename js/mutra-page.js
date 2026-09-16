@@ -201,7 +201,7 @@
   function startLicense(track) {
     if (!(window.SnowstarAccount && SnowstarAccount.user)) {
       toast('Sign in to start a license');
-      if (window.SnowstarOpenAuth) SnowstarOpenAuth('login', 'Sign in to start a license for this track.');
+      if (window.SnowstarOpenAuth) SnowstarOpenAuth('login', 'Sign in to start a license for this track.', 'license');
       return;
     }
     if (window.mutraTrack) mutraTrack('license', track.slug);
@@ -1005,7 +1005,7 @@
         e.stopPropagation();
         if (!(window.MutraMembers && MutraMembers.user)) {
           toast('Create a free account to download');
-          if (window.MutraOpenAuth) MutraOpenAuth('signup', 'Sign up to download tracks — browsing and previews stay free.');
+          if (window.MutraOpenAuth) MutraOpenAuth('signup', 'Sign up to download tracks — browsing and previews stay free.', 'download');
           return;
         }
         if (window.mutraTrack) mutraTrack('download', track.slug);
