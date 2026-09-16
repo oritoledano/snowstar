@@ -44,7 +44,8 @@ import { stashArtists, stashScanStart, stashScanGet, stashMine,
          stashDeezerSearch, stashDeezerImport, stashCatalogScan,
          stashRegistrations, stashRegistrationSet } from './snowstash.js';
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
-         streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken } from './streamdaw.js';
+         streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
+         streamdawAdmin, streamdawRelease } from './streamdaw.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest } from './licensing.js';
 import { handleStream } from './stream.js';
@@ -383,6 +384,8 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
   if (path === '/streamdaw/coupon/check' && method === 'POST') return streamdawCouponCheck(req, env);
   if (path === '/streamdaw/coupon' && method === 'POST') return streamdawCouponCreate(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/admin' && method === 'GET') return streamdawAdmin(env, await currentUser(req, env));
+  if (path === '/streamdaw/release' && method === 'POST') return streamdawRelease(req, env, await currentUser(req, env));
   if (path === '/streamdaw/presence-token' && (method === 'POST' || method === 'OPTIONS')) return streamdawPresenceToken(req, env);
 
   // ── licensing: request in, owner grants, member downloads the master ──

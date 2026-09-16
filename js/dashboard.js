@@ -51,6 +51,9 @@
     { key: 'snowstash', label: 'Snowstash', pages: [
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
+    { key: 'streamdaw', label: 'StreamDAW', pages: [
+      { key: 'sdaw', label: 'App', tabs: ['orders', 'people', 'codes', 'releases'] },
+    ] },
     { key: 'snowstar', label: 'Snowstar', pages: [
       { key: 'jobs',      label: 'Jobs' },
     ] },
@@ -237,6 +240,10 @@
     'mutra/msystem/notifications': () => paintMail(),
     'snowstash/stash/scans':       () => paintStashScans(),
     'snowstash/stash/codes':       () => paintStashCodes(),
+    'streamdaw/sdaw/orders':       () => paintStreamdaw('orders'),
+    'streamdaw/sdaw/people':       () => paintStreamdaw('people'),
+    'streamdaw/sdaw/codes':        () => paintStreamdaw('codes'),
+    'streamdaw/sdaw/releases':     () => paintStreamdaw('releases'),
     'snowstar/jobs':               () => paintJobs(),
     'system/alerts':               () => paintAlerts(),
     'system/pipeline':             () => paintPipeline(),
@@ -833,6 +840,173 @@
     // The cards name their destination the old way; dbGo maps it to the new nav.
     app.querySelectorAll('[data-go]').forEach((c) =>
       c.addEventListener('click', () => window.dbGo(c.dataset.go)));
+  }
+
+  /* ── StreamDAW ────────────────────────────────────────────────────────
+     The app has had a checkout, entitlements, download tokens and an
+     admin-gated coupon endpoint for weeks with nothing on this side calling
+     any of it. Four views over one fetch, because they are four questions
+     about the same eight rows and re-fetching per tab would be slower and no
+     clearer. */
+  async function paintStreamdaw(view) {
+    const d = await get('/streamdaw/admin');
+    const st = d.stats || {};
+    const dt = (t) => when(t, { time: true });
+
+    /* Said first, in red, before any table: a pointer to nothing is the whole
+       reason this screen was worth building. */
+    const blocked = d.blocked ? `
+      <div class="db-warn warn" style="margin-bottom:16px">
+        <b>Nobody can install the app.</b> ${esc(d.blocked.says)}
+        Upload the build to the <code>snowstar-apps</code> bucket, then register it
+        under <b>Releases</b>.
+      </div>` : '';
+
+    const kpis = `
+      <div class="db-kpis">
+        <div class="db-kpi"><b>${st.active || 0}</b><span>active licences</span></div>
+        <div class="db-kpi"><b>${money(st.revenue || 0, 0)}</b><span>taken</span></div>
+        <div class="db-kpi"><b>${st.abandoned || 0}</b><span>left at checkout</span></div>
+        <div class="db-kpi"><b>${st.downloads || 0}</b><span>downloads</span></div>
+      </div>`;
+
+    if (view === 'orders') {
+      return paint(`${blocked}${kpis}
+        <div class="db-panel"><h2>Orders <span class="pill">${(d.orders || []).length}</span></h2>
+          <p class="db-empty" style="padding-top:0"><b>Started</b> means they reached the card page
+            and did not come back — not a sale, and not counted as one. ${st.abandoned || 0} of
+            ${st.orders || 0} ended that way.</p>
+          ${table(d.orders || [], [
+            { label: 'Ref', get: (o) => esc(o.ref) },
+            { label: 'Who', get: (o) => esc(o.user_name || o.email || '—') },
+            { label: 'Plan', get: (o) => esc(o.plan || '—') },
+            { label: 'Amount', num: true, get: (o) => (o.amount ? money(o.amount, 0) : 'free') },
+            { label: 'Code', get: (o) => esc(o.coupon || '') },
+            { label: 'State', get: (o) => `<span class="pill ${
+                o.status === 'granted' ? 'good' : o.status === 'started' ? 'warn' : ''}">${esc(o.status)}</span>` },
+            { label: 'When', num: true, get: (o) => dt(o.created_at) },
+          ])}</div>`);
+    }
+
+    if (view === 'people') {
+      return paint(`${blocked}${kpis}
+        <div class="db-panel"><h2>Who owns it <span class="pill">${(d.entitlements || []).length}</span></h2>
+          <p class="db-empty" style="padding-top:0">An entitlement is keyed to the email, not the
+            account — a purchase can arrive before the buyer has ever signed in.</p>
+          ${table(d.entitlements || [], [
+            { label: 'Email', get: (e) => esc(e.email || '—') },
+            { label: 'Plan', get: (e) => esc(e.plan || '—') },
+            { label: 'How', get: (e) => esc(e.source || '—') },
+            { label: 'Paid', num: true, get: (e) => (e.amount ? money(e.amount, 0) : 'free') },
+            { label: 'Downloads', num: true, get: (e) => e.downloads || 0 },
+            { label: 'State', get: (e) => `<span class="pill ${
+                e.revoked_at ? 'warn' : 'good'}">${e.revoked_at ? 'revoked' : esc(e.status)}</span>` },
+            { label: 'Since', num: true, get: (e) => when(e.created_at) },
+          ])}</div>`);
+    }
+
+    if (view === 'codes') {
+      return paint(`${kpis}
+        <div class="db-panel"><h2>Discount codes <span class="pill">${(d.coupons || []).length}</span></h2>
+          <p class="db-empty" style="padding-top:0">Separate from Mutra's codes on purpose: a software
+            discount must never be redeemable against a music licence.</p>
+          <div class="sd-new">
+            <input id="sd-code" placeholder="Code — blank to generate" maxlength="40">
+            <select id="sd-kind"><option value="percent">% off</option><option value="amount">₪ off</option></select>
+            <input id="sd-val" type="number" min="1" placeholder="Value" style="width:90px">
+            <input id="sd-max" type="number" min="0" placeholder="Max uses" style="width:110px">
+            <input id="sd-note" placeholder="What it is for" maxlength="200">
+            <button class="rv-btn rv-ok" id="sd-make">Create</button>
+          </div>
+          ${table(d.coupons || [], [
+            { label: 'Code', get: (c) => `<b>${esc(c.code)}</b>` },
+            { label: 'Worth', get: (c) => (c.kind === 'percent' ? c.value + '%' : money(c.value, 0)) },
+            { label: 'Used', num: true, get: (c) => `${c.used || 0}${c.max_uses ? ' / ' + c.max_uses : ''}` },
+            { label: 'Note', get: (c) => esc(c.note || '') },
+            { label: '', get: (c) => `<button class="chip sd-tog" data-id="${c.id}">${
+                c.active ? 'on' : 'off'}</button> <button class="chip sd-del" data-id="${c.id}">✕</button>` },
+          ])}</div>`);
+      return wireStreamdaw();
+    }
+
+    // releases
+    const out = `${blocked}
+      <div class="db-panel"><h2>Releases <span class="pill">${(d.releases || []).length}</span></h2>
+        <p class="db-empty" style="padding-top:0">The installer is uploaded to R2 with wrangler —
+          it is hundreds of megabytes and has no business travelling through a Worker. This records
+          which build customers are served:<br>
+          <code>npx wrangler r2 object put snowstar-apps/apps/StreamDAW-1.0.pkg --remote --file ./StreamDAW.pkg</code>
+        </p>
+        <div class="sd-new">
+          <input id="sd-key" placeholder="apps/StreamDAW-1.0.pkg" style="flex:2 1 260px">
+          <input id="sd-ver" placeholder="1.0.0" style="width:110px">
+          <label class="rv-quiet"><input type="checkbox" id="sd-latest" checked><span>serve this one</span></label>
+          <button class="rv-btn rv-ok" id="sd-add">Register</button>
+        </div>
+        <p class="rv-note" id="sd-said"></p>
+        ${table(d.releases || [], [
+          { label: 'Version', get: (r) => `<b>${esc(r.version)}</b>` },
+          { label: 'File', get: (r) => esc(r.filename || r.r2_key) },
+          { label: 'Size', num: true, get: (r) => human(r.bytes) },
+          { label: 'Serving', get: (r) => (r.is_latest
+              ? '<span class="pill good">live</span>'
+              : `<button class="chip sd-promote" data-key="${esc(r.r2_key)}">make live</button>`) },
+          { label: 'Added', num: true, get: (r) => when(r.created_at) },
+        ])}</div>`;
+    paint(out);
+    wireStreamdaw();
+  }
+
+  /* Wired after paint rather than inside it, because paint() replaces the DOM
+     and listeners on replaced nodes do nothing — the same rule the account
+     panel's accordion learned. */
+  function wireStreamdaw() {
+    const said = document.getElementById('sd-said');
+    const say = (m) => { if (said) said.textContent = m; };
+    const add = document.getElementById('sd-add');
+    if (add) add.addEventListener('click', async () => {
+      const r2_key = (document.getElementById('sd-key').value || '').trim();
+      const version = (document.getElementById('sd-ver').value || '').trim();
+      if (!r2_key || !version) { say('Both the key and a version, please.'); return; }
+      add.disabled = true; say('Checking the bucket…');
+      const r = await post('/streamdaw/release', {
+        r2_key, version, is_latest: document.getElementById('sd-latest').checked });
+      add.disabled = false;
+      if (!r || !r.ok) {
+        say(r && r.hint ? r.hint
+          : r && r.error === 'need_key_and_version' ? 'Both the key and a version, please.'
+          : 'Could not register that build.');
+        return;
+      }
+      load();
+    });
+    document.querySelectorAll('.sd-promote').forEach((b) => b.addEventListener('click', async () => {
+      await post('/streamdaw/release', { promote: b.dataset.key });
+      load();
+    }));
+    const make = document.getElementById('sd-make');
+    if (make) make.addEventListener('click', async () => {
+      const value = Number(document.getElementById('sd-val').value);
+      if (!Number.isFinite(value) || value <= 0) { document.getElementById('sd-val').focus(); return; }
+      make.disabled = true;
+      const r = await post('/streamdaw/coupon', {
+        code: (document.getElementById('sd-code').value || '').trim(),
+        kind: document.getElementById('sd-kind').value,
+        value,
+        max_uses: Number(document.getElementById('sd-max').value) || 0,
+        note: (document.getElementById('sd-note').value || '').trim(),
+      });
+      make.disabled = false;
+      if (!r || !r.ok) { alert(r && r.error === 'code_taken' ? 'That code is taken.' : 'Could not create it.'); return; }
+      load();
+    });
+    document.querySelectorAll('.sd-tog').forEach((b) => b.addEventListener('click', async () => {
+      await post('/streamdaw/coupon', { toggle: Number(b.dataset.id) }); load();
+    }));
+    document.querySelectorAll('.sd-del').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm('Delete this code? Anyone holding it will be turned away.')) return;
+      await post('/streamdaw/coupon', { remove: Number(b.dataset.id) }); load();
+    }));
   }
 
   /* ── stats (ported from stats.html) ── */

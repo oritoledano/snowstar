@@ -349,3 +349,125 @@ this email, the same login you use for Mutra and everything else by Snowstar.
 </div>`;
   return sendMail(env, { to, subject, text, html });
 }
+
+/* ═══════════ Admin ════════════════════════════════════════════════════════
+   StreamDAW has had a checkout, entitlements, download tokens and a coupon
+   endpoint for weeks, and no way to look at any of it. The coupon creator was
+   admin-gated and reachable, with nothing in the dashboard calling it — a door
+   with no handle on this side.
+
+   The first thing this screen has to say is the thing nobody could see:
+   app_releases is empty, so /streamdaw/download answers `no_release` to every
+   entitled customer. Two people hold an active entitlement and neither can
+   install the app. That is not a statistic to bury under a table of orders. */
+export async function streamdawAdmin(env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+
+  const soft = async (sql, ...binds) => {
+    try { return (await env.DB.prepare(sql).bind(...binds).all()).results || []; }
+    catch { return []; }
+  };
+
+  const orders = await soft(
+    `SELECT o.ref, o.email, o.plan, o.amount, o.currency, o.status, o.coupon,
+            o.hyp_id, o.entitlement_id, o.created_at, o.settled_at,
+            u.name AS user_name
+       FROM streamdaw_orders o LEFT JOIN users u ON u.id = o.user_id
+      ORDER BY o.created_at DESC LIMIT 200`);
+
+  const entitlements = await soft(
+    `SELECT e.id, e.email, e.plan, e.status, e.source, e.amount, e.created_at,
+            e.expires_at, e.revoked_at,
+            (SELECT COUNT(*) FROM download_tokens t WHERE t.entitlement_id = e.id) AS tokens,
+            (SELECT COALESCE(SUM(t.uses), 0) FROM download_tokens t WHERE t.entitlement_id = e.id) AS downloads
+       FROM entitlements e WHERE e.product = 'streamdaw'
+      ORDER BY e.created_at DESC LIMIT 200`);
+
+  const coupons = await soft(
+    `SELECT id, code, kind, value, max_uses, used, expires_at, active, note, created_at
+       FROM streamdaw_coupons ORDER BY created_at DESC`);
+
+  const releases = await soft(
+    `SELECT asset, version, r2_key, filename, bytes, sha256, notarized, is_latest, created_at
+       FROM app_releases ORDER BY created_at DESC LIMIT 50`);
+
+  /* An order that never settled is not a sale and must not be counted as one.
+     `started` means the buyer reached HYP and did not come back — five of the
+     eight rows here — so revenue counts settled money only. */
+  const paid = orders.filter((o) => o.status === 'granted' && (o.amount || 0) > 0);
+  const stats = {
+    orders: orders.length,
+    abandoned: orders.filter((o) => o.status === 'started').length,
+    granted: orders.filter((o) => o.status === 'granted').length,
+    free: orders.filter((o) => o.status === 'granted' && !(o.amount || 0)).length,
+    revenue: paid.reduce((n, o) => n + (o.amount || 0), 0),
+    active: entitlements.filter((e) => e.status === 'active' && !e.revoked_at).length,
+    downloads: entitlements.reduce((n, e) => n + (e.downloads || 0), 0),
+  };
+
+  return json({
+    orders, entitlements, coupons, releases, stats,
+    /* The one blocking fact, stated rather than implied. */
+    blocked: releases.some((r) => r.is_latest)
+      ? null
+      : { why: 'no_release',
+          says: stats.active
+            ? `${stats.active} ${stats.active === 1 ? 'person holds' : 'people hold'} an active `
+              + `entitlement and cannot install the app: no release is marked latest, so every `
+              + `download answers "no_release".`
+            : 'No release is marked latest, so any download would fail. Nobody is entitled yet, '
+              + 'so nobody has hit it — but a sale today would.' },
+  });
+}
+
+/**
+ * POST /streamdaw/release — register a build that is already in the APPS bucket.
+ *
+ * The file is uploaded with wrangler (installers are hundreds of megabytes and
+ * have no business travelling through a Worker); this records which key is the
+ * one to serve. Marking a release latest un-marks the previous one in the same
+ * statement, because two rows claiming `is_latest` is a coin toss over which
+ * build a customer gets.
+ */
+export async function streamdawRelease(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const asset = String(b.asset || 'streamdaw-mac').slice(0, 60);
+
+  if (b.promote) {
+    const key = String(b.promote).slice(0, 300);
+    const row = await env.DB.prepare('SELECT asset FROM app_releases WHERE r2_key = ?').bind(key).first();
+    if (!row) return json({ error: 'not_found' }, 404);
+    await env.DB.batch([
+      env.DB.prepare('UPDATE app_releases SET is_latest = 0 WHERE asset = ?').bind(row.asset),
+      env.DB.prepare('UPDATE app_releases SET is_latest = 1 WHERE r2_key = ?').bind(key),
+    ]);
+    return json({ ok: true, promoted: key });
+  }
+  if (b.remove) {
+    await env.DB.prepare('DELETE FROM app_releases WHERE r2_key = ?').bind(String(b.remove).slice(0, 300)).run();
+    return json({ ok: true });
+  }
+
+  const r2_key = String(b.r2_key || '').trim().slice(0, 300);
+  const version = String(b.version || '').trim().slice(0, 40);
+  if (!r2_key || !version) return json({ error: 'need_key_and_version' }, 400);
+
+  /* Check the object is actually there before pointing customers at it — the
+     whole reason this screen exists is a pointer to nothing. */
+  const obj = await env.APPS.head(r2_key).catch(() => null);
+  if (!obj) return json({ error: 'not_in_bucket', hint: `No object at ${r2_key} in snowstar-apps.` }, 404);
+
+  const filename = String(b.filename || r2_key.split('/').pop()).slice(0, 200);
+  const latest = b.is_latest !== false;
+  const stmts = [];
+  if (latest) stmts.push(env.DB.prepare('UPDATE app_releases SET is_latest = 0 WHERE asset = ?').bind(asset));
+  stmts.push(env.DB.prepare(
+    `INSERT OR REPLACE INTO app_releases
+       (asset, version, r2_key, filename, bytes, sha256, notarized, is_latest, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(asset, version, r2_key, filename, obj.size || 0,
+         String(b.sha256 || '').slice(0, 64), b.notarized ? 1 : 0, latest ? 1 : 0, now()));
+  await env.DB.batch(stmts);
+  return json({ ok: true, asset, version, r2_key, bytes: obj.size || 0, is_latest: latest });
+}
