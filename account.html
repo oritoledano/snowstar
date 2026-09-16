@@ -62,12 +62,13 @@
 </style>
 </head>
 <body>
-<header class="mnav scrolled">
-  <div class="wrap mnav-in">
-    <a class="mnav-back" href="mutra.html">← Catalogue</a>
-    <a class="mnav-brand" href="mutra.html"><img src="assets/mutra-wordmark-white.png" alt="Mutra" height="18"></a>
-    <div data-account-mount></div>
-  </div>
+<!-- Same header markup as the other Mutra pages. My first attempt invented
+     .mnav-in / .mnav-back / .mnav-brand, none of which exist in the stylesheet,
+     so the bar would have rendered unstyled. -->
+<header class="mnav scrolled" id="mnav">
+  <a class="st-back" href="mutra.html" style="font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);z-index:2">← Catalog</a>
+  <a class="mlogo" href="mutra.html" aria-label="Mutra"><img class="ml-img" src="assets/mutra-wordmark.png" alt="MUTRA"><span class="ml-by">account</span></a>
+  <div class="mnav-right" data-account-mount></div>
 </header>
 
 <main class="ac-wrap" id="ac">
