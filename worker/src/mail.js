@@ -76,7 +76,7 @@ function shell(title, bodyHtml) {
   </table></body></html>`;
 }
 
-export async function sendMail(env, { to, subject, text, html, from, replyTo, attachments }) {
+export async function sendMail(env, { to, subject, text, html, from, replyTo, attachments, headers }) {
   if (!env.RESEND_KEY) throw new Error('no_mail_key');
   const res = await fetch(RESEND, {
     method: 'POST',
@@ -95,6 +95,11 @@ export async function sendMail(env, { to, subject, text, html, from, replyTo, at
       // message at 40MB; callers are expected to have checked their own size
       // before getting here.
       ...(attachments && attachments.length ? { attachments } : {}),
+      /* Custom headers. Needed for List-Unsubscribe, without which Gmail shows
+         no unsubscribe button of its own and treats the message as more likely
+         to be bulk — so a newsletter that passed them here and was silently
+         dropped would have been compliant on paper and in the spam folder. */
+      ...(headers && Object.keys(headers).length ? { headers } : {}),
     }),
   });
   if (!res.ok) {

@@ -41,7 +41,7 @@
       { key: 'inbox',     label: 'Inbox',     tabs: ['new', 'open', 'done'] },
       { key: 'people',    label: 'People' },
       { key: 'reset',     label: 'Clear tests' },
-      { key: 'editor',    label: 'Editor',    tabs: ['notes', 'coupons'] },
+      { key: 'editor',    label: 'Editor',    tabs: ['notes', 'coupons', 'newsletter'] },
     ] },
     { key: 'mutra', label: 'Mutra', pages: [
       { key: 'artists',   label: 'Artists',   tabs: ['roster', 'submissions', 'upload'] },
@@ -228,6 +228,7 @@
     'general/reset':               () => paintReset(),
     'general/editor/notes':        () => paintNotes(),
     'general/editor/coupons':      () => paintCoupons(),
+    'general/editor/newsletter':   () => paintNewsletter(),
     'mutra/artists/roster':        () => paintArtists(),
     'mutra/artists/submissions':   () => paintSubmissions(),
     'mutra/artists/upload':        () => paintUpload(),
@@ -842,6 +843,166 @@
     // The cards name their destination the old way; dbGo maps it to the new nav.
     app.querySelectorAll('[data-go]').forEach((c) =>
       c.addEventListener('click', () => window.dbGo(c.dataset.go)));
+  }
+
+  /* ── the newsletter ──────────────────────────────────────────────────
+     What this replaces: members.filter(newsletter).map(email) copied to the
+     clipboard. The opt-in column had been collected honestly since the first
+     signup and never once used to send anything.
+
+     Sending is off by default and the screen says so, because Resend's free
+     tier is 100 a day — a list of 400 is a queue that drains over five days,
+     not a button. Everything except the actual sending works meanwhile:
+     audiences, drafts, both templates, and a test to yourself with a live
+     unsubscribe link in it. */
+  let draft = null;
+  async function paintNewsletter() {
+    const d = await get('/newsletter');
+    const a = (draft && draft.audience) || {};
+    const qs = new URLSearchParams({
+      ...(a.vertical ? { vertical: a.vertical } : {}),
+      ...(a.intent ? { intent: a.intent } : {}),
+      ...(a.artistsOnly ? { artists: '1' } : {}),
+      ...(a.hasLicensed ? { licensed: '1' } : {}),
+      ...(a.hasUploaded ? { uploaded: '1' } : {}),
+      ...(a.optedInOnly === false ? { all: '1' } : {}),
+    }).toString();
+    const aud = await get('/newsletter/audience' + (qs ? '?' + qs : ''));
+
+    paint(`
+      <div class="db-panel"><h2>Newsletter
+        <span class="pill ${d.sending ? 'good' : 'warn'}">${d.sending ? 'sending on' : 'sending off'}</span></h2>
+        <p class="db-empty" style="padding-top:0">Cloudflare's mail binding only reaches verified
+          addresses — in practice just you — so everything goes through Resend, whose free tier is
+          <b>${d.daily_cap} a day</b>. A list of 400 is a queue that drains over days rather than a
+          button that fires once. Drafts, audiences, templates and a test to yourself all work with
+          sending switched off.</p>
+        <div class="st-door">
+          <button class="rv-btn ${d.sending ? '' : 'rv-ok'}" data-send="${d.sending ? 'off' : 'on'}">${
+            d.sending ? 'Switch sending off' : 'Switch sending on'}</button>
+        </div>
+      </div>
+
+      <div class="db-panel"><h2>Who it goes to <span class="pill">${aud.count || 0}</span></h2>
+        <p class="db-empty" style="padding-top:0">Built from what people have actually done, not from a
+          tag somebody remembered to set. Opted-out addresses are excluded whatever the filter says —
+          ${aud.suppressed || 0} on the suppression list.</p>
+        <div class="sd-new">
+          <select id="nl-vert"><option value="">Any vertical</option>${
+            ['mutra', 'snowstar', 'snowstash', 'streamdaw'].map((v) =>
+            `<option value="${v}"${a.vertical === v ? ' selected' : ''}>${v}</option>`).join('')}</select>
+          <select id="nl-intent"><option value="">Any intent</option>${
+            ['license', 'sell', 'claim', 'app', 'scan'].map((v) =>
+            `<option value="${v}"${a.intent === v ? ' selected' : ''}>came to ${v}</option>`).join('')}</select>
+          <label class="rv-quiet"><input type="checkbox" id="nl-art"${a.artistsOnly ? ' checked' : ''}><span>artists only</span></label>
+          <label class="rv-quiet"><input type="checkbox" id="nl-lic"${a.hasLicensed ? ' checked' : ''}><span>has licensed</span></label>
+          <label class="rv-quiet"><input type="checkbox" id="nl-upl"${a.hasUploaded ? ' checked' : ''}><span>has uploaded</span></label>
+          <button class="rv-btn" id="nl-recount">Count</button>
+        </div>
+        ${aud.count ? `<p class="rv-note">${aud.count} ${aud.count === 1 ? 'person' : 'people'} —
+          about ${aud.days} day${aud.days === 1 ? '' : 's'} to send at ${aud.daily_cap}/day.
+          First few: ${(aud.sample || []).slice(0, 5).map((e) => esc(e)).join(', ')}</p>`
+          : '<p class="rv-note">Nobody matches that. Note the default is opted-in only.</p>'}
+      </div>
+
+      <div class="db-panel"><h2>Write it</h2>
+        <div class="nl-form">
+          <input id="nl-subject" placeholder="Subject" maxlength="200" value="${esc((draft && draft.subject) || '')}">
+          <input id="nl-pre" placeholder="Preview line — what shows next to the subject" maxlength="200"
+                 value="${esc((draft && draft.preheader) || '')}">
+          <textarea id="nl-body" rows="12" placeholder="Blank line between paragraphs. No HTML needed.">${
+            esc((draft && draft.body) || '')}</textarea>
+          <div class="st-door">
+            <select id="nl-tpl">
+              <option value="dark"${(draft && draft.template) === 'dark' ? ' selected' : ''}>Dark — like the site</option>
+              <option value="cream"${(draft && draft.template) === 'cream' ? ' selected' : ''}>Cream — like the welcome email</option>
+            </select>
+            <button class="rv-btn" id="nl-save">Save draft</button>
+            <button class="rv-btn" id="nl-test">Send me a test</button>
+            <button class="rv-btn rv-ok" id="nl-queue">Queue to ${aud.count || 0}</button>
+            <span class="rv-note" id="nl-said"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="db-panel"><h2>Sent <span class="pill">${(d.campaigns || []).length}</span></h2>
+        ${table(d.campaigns || [], [
+          { label: 'Subject', get: (c) => esc(c.subject) },
+          { label: 'State', get: (c) => `<span class="pill ${
+              c.status === 'sent' ? 'good' : c.status === 'stopped' ? 'warn' : ''}">${esc(c.status)}</span>` },
+          { label: 'Sent', num: true, get: (c) => `${c.sent || 0}${c.total ? ' / ' + c.total : ''}` },
+          { label: 'Opted out', num: true, get: (c) => c.unsubs || 0 },
+          { label: 'When', num: true, get: (c) => when(c.queued_at || c.created_at) },
+          { label: '', get: (c) => (c.status === 'queued' || c.status === 'sending'
+              ? `<button class="chip nl-stop" data-id="${c.id}">Stop</button>`
+              : `<button class="chip nl-edit" data-id="${c.id}">Reuse</button>`) },
+        ])}</div>`);
+
+    const said = (m) => { const e = document.getElementById('nl-said'); if (e) e.textContent = m; };
+    const readAudience = () => ({
+      vertical: document.getElementById('nl-vert').value || null,
+      intent: document.getElementById('nl-intent').value || null,
+      artistsOnly: document.getElementById('nl-art').checked,
+      hasLicensed: document.getElementById('nl-lic').checked,
+      hasUploaded: document.getElementById('nl-upl').checked,
+    });
+    const readDraft = () => ({
+      id: draft && draft.id,
+      subject: document.getElementById('nl-subject').value.trim(),
+      preheader: document.getElementById('nl-pre').value.trim(),
+      body: document.getElementById('nl-body').value,
+      template: document.getElementById('nl-tpl').value,
+      audience: readAudience(),
+    });
+
+    document.getElementById('nl-recount').addEventListener('click', () => {
+      draft = { ...(draft || {}), ...readDraft() };
+      load();
+    });
+    document.getElementById('nl-save').addEventListener('click', async () => {
+      const r = await post('/newsletter', readDraft());
+      if (!r || !r.ok) { said('Subject and body, please.'); return; }
+      draft = { ...readDraft(), id: r.id };
+      said('Saved.');
+    });
+    document.getElementById('nl-test').addEventListener('click', async () => {
+      said('Saving, then sending…');
+      const saved = await post('/newsletter', readDraft());
+      if (!saved || !saved.ok) { said('Subject and body, please.'); return; }
+      draft = { ...readDraft(), id: saved.id };
+      const r = await post('/newsletter/test', { id: saved.id });
+      said(r && r.ok ? `Sent to ${r.to} — with a working unsubscribe link in it.`
+                     : 'Could not send the test' + (r && r.detail ? ': ' + r.detail : '.'));
+    });
+    document.getElementById('nl-queue').addEventListener('click', async () => {
+      if (!confirm(`Queue this to ${aud.count} ${aud.count === 1 ? 'person' : 'people'}?\n\n`
+        + `The list is frozen now, so somebody joining tomorrow will not be mailed.\n`
+        + `${d.sending ? `It will go out at ${d.daily_cap} a day.`
+                       : 'Sending is OFF, so nothing leaves until you switch it on.'}`)) return;
+      const r = await post('/newsletter', { ...readDraft(), queue: true });
+      said(r && r.ok ? `Queued to ${r.queued}.` : 'Could not queue that.');
+      draft = null;
+      load();
+    });
+    document.querySelectorAll('.nl-stop').forEach((b) => b.addEventListener('click', async () => {
+      await post('/newsletter', { stop: Number(b.dataset.id) }); load();
+    }));
+    document.querySelectorAll('.nl-edit').forEach((b) => b.addEventListener('click', () => {
+      const c = (d.campaigns || []).find((x) => x.id === Number(b.dataset.id));
+      if (!c) return;
+      /* Reuse copies the text into a NEW draft rather than reopening a sent
+         one — editing something already delivered would make the record lie. */
+      draft = { subject: c.subject, preheader: c.preheader, body: c.body,
+                template: c.template, audience: {} };
+      load();
+    }));
+    app.querySelectorAll('[data-send]').forEach((b) => b.addEventListener('click', async () => {
+      const on = b.dataset.send === 'on';
+      if (on && !confirm('Switch sending on?\n\nQueued campaigns will start going out at '
+        + `${d.daily_cap} a day from the next daily run.`)) return;
+      await post('/texts', { key: 'config.newsletter-sending', html: on ? 'on' : 'off' });
+      load();
+    }));
   }
 
   /* ── clearing test data ───────────────────────────────────────────────

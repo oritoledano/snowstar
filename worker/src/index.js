@@ -23,6 +23,8 @@ import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGAC
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
          listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
 import { resetPreview, resetApply, listArchive } from './reset.js';
+import { audienceCount, saveCampaign, testCampaign, listCampaigns,
+         unsubscribe, drainCampaigns } from './newsletter.js';
 import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim , evaluateStorageGate, joinWaitlist} from './site.js';
 import {listOverrides, saveOverride, uploadCover, listUses, saveUse,
          setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack, tagTracks } from './catalog.js';
@@ -164,10 +166,17 @@ async function handle(req, env, ctx) {
   const method = req.method.toUpperCase();
   const ip = req.headers.get('cf-connecting-ip') || 'unknown';
 
-  // The presence-token endpoint is cross-origin by design (the stream.snowstar.company
-  // player calls it) and does its own CORS + origin allowlist; exempt it from the
-  // same-origin CSRF guard. It's a read (returns a token for the signed-in user).
-  if (method !== 'GET' && path !== '/streamdaw/presence-token' && !originOk(req))
+  /* Two endpoints are cross-origin by design.
+     /streamdaw/presence-token is called by the stream.snowstar.company player
+     and does its own CORS + origin allowlist; it is a read.
+     /n/u is the one-click unsubscribe. Gmail and Outlook POST to it from their
+     own infrastructure with no Origin header at all, so the CSRF guard would
+     have rejected exactly the button the List-Unsubscribe header exists to
+     offer — compliant in the source and broken in the inbox. It carries a
+     single-use random token and only ever removes somebody from a list, which
+     is the one direction a forged request could not be used to harm anybody. */
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/n/u']);
+  if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
   // ── social sign-in ──
@@ -211,6 +220,13 @@ async function handle(req, env, ctx) {
   if (path === '/waitlist' && method === 'POST') return joinWaitlist(req, env);
   /* Clearing test data. Preview is a GET and changes nothing; apply needs the
      count preview returned, so a stale screen cannot clear what it never saw. */
+  /* The newsletter. Unsubscribe is public and answers GET and POST — Gmail's
+     one-click button sends a POST that no human ever sees. */
+  if (path === '/n/u') return unsubscribe(req, env, url);
+  if (path === '/newsletter' && method === 'GET') return listCampaigns(env, await currentUser(req, env));
+  if (path === '/newsletter' && method === 'POST') return saveCampaign(req, env, await currentUser(req, env));
+  if (path === '/newsletter/audience' && method === 'GET') return audienceCount(env, await currentUser(req, env), url);
+  if (path === '/newsletter/test' && method === 'POST') return testCampaign(req, env, await currentUser(req, env));
   if (path === '/reset/preview' && method === 'GET') return resetPreview(env, await currentUser(req, env), url);
   if (path === '/reset/apply' && method === 'POST') return resetApply(req, env, await currentUser(req, env));
   if (path === '/reset/archive' && method === 'GET') return listArchive(env, await currentUser(req, env));
@@ -686,6 +702,9 @@ export default {
     ctx.waitUntil(evaluateStorageGate(env).catch(() => {}));
     /* The notice the licence text has promised since the first sale. */
     ctx.waitUntil(remindExpiring(env).catch(() => {}));
+    /* Drains at most the daily cap, and does nothing at all unless
+       config.newsletter-sending is 'on'. */
+    ctx.waitUntil(drainCampaigns(env).catch(() => {}));
     /* A safety net, not the mechanism: routine mail sends itself the moment it
        is queued. This catches anything queued by a path that had no chance to
        flush — and it never touches the kinds that wait for review. */

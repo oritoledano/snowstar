@@ -603,6 +603,15 @@
 .rs-box table{width:auto;min-width:240px}
 .rs-box td{padding:3px 18px 3px 0;font-size:.82rem}
 .rs-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+/* the composer */
+.nl-form{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.nl-form input,.nl-form textarea,.nl-form select{background:var(--bg,#0b0e17);
+  border:1px solid var(--line,rgba(255,255,255,.12));border-radius:10px;padding:10px 12px;
+  color:var(--text,#eef3fb);font:inherit;font-size:.88rem;outline:0;width:100%}
+.nl-form textarea{resize:vertical;line-height:1.65;min-height:180px}
+.nl-form input:focus,.nl-form textarea:focus{border-color:var(--coral,#e8b98a)}
+.nl-form .st-door{margin-top:2px}
+.nl-form .st-door select{width:auto;flex:0 1 220px}
 .st-h3{margin:16px 0 8px;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;
   color:var(--muted,#93a0b8);font-weight:600}
 .st-door{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
@@ -675,7 +684,7 @@
 <!-- the analyser, so an already-uploaded submission can be measured from here -->
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/dashboard.js?v=58"></script>
+<script src="js/dashboard.js?v=59"></script>
 
 <!-- full-screen menu, same burger and behaviour as Mutra -->
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
