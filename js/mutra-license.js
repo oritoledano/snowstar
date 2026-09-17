@@ -766,7 +766,22 @@
   /** Straight to HYP's hosted card page. On any failure, fall back to the
    *  receipt so the reference is never lost — a buyer who has decided to pay
    *  must not hit a dead end. */
+  /**
+   * The handoff.
+   *
+   * This used to be a silent jump: press Pay by Card and the next thing you saw
+   * was a card form on somebody else's domain, in a different typeface, asking
+   * for a number you had not been shown. People abandon that, and the ones who
+   * do not have no reference to quote if anything goes wrong.
+   *
+   * So there is a screen in between. It states the exact figure the card page
+   * will ask for, names who is about to take it, and hands over the reference
+   * BEFORE leaving — so a payment that goes wrong on the other side is still
+   * traceable from this one. It is not a confirmation dialog: there is one
+   * button and it goes forward.
+   */
   async function goToCard(ref, onFail) {
+    let url;
     try {
       const r = await fetch('/api/hyp/checkout', {
         method: 'POST', credentials: 'same-origin',
@@ -775,9 +790,48 @@
       });
       const j = await r.json();
       if (!r.ok || !j.url) throw new Error(j.error || 'checkout_failed');
-      if (window.mutraTrack) mutraTrack('checkout', current ? current.slug : 'unknown');
-      location.href = j.url;
-    } catch { onFail(); }
+      url = j.url;
+      /* The gross comes back from the server, which is the only place that
+         computes it — the browser must never be the source of a figure. */
+      handoffScreen(ref, url, j.amount_gross);
+    } catch { onFail(); return; }
+    if (window.mutraTrack) mutraTrack('checkout', current ? current.slug : 'unknown');
+  }
+
+  function handoffScreen(ref, url, grossAgorot) {
+    el.querySelector('.lic-crumbs').hidden = true;
+    const gross = grossAgorot != null
+      ? CUR + (grossAgorot / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })
+      : null;
+    body().innerHTML = `
+      <div class="lic-kicker">One more step</div>
+      <h3 class="lic-q">${gross ? `You are about to pay ${gross}` : 'Ready to pay'}</h3>
+      <div class="lic-ref"><span>Your reference</span><b>${esc(ref)}</b>
+        <button class="lic-copyref" type="button">Copy</button></div>
+      <p class="lic-note">Write this down. If anything goes wrong on the card page, quoting it
+        is the fastest way for us to find your payment.</p>
+      <ul class="lic-sum">
+        <li><span>Track</span><b>${esc((current && current.title) || '')}</b></li>
+        ${gross ? `<li class="lic-tot"><span>Total including VAT</span><b>${gross}</b></li>` : ''}
+      </ul>
+      <p class="lic-note">The card itself is taken by <b>Hyp</b>, an Israeli payment provider —
+        the page will look like theirs, not ours, and your card details never reach us.
+        The clean file unlocks the moment the payment clears.</p>
+      <div class="lic-acts">
+        <button class="lic-go lic-hgo">Continue to secure payment</button>
+      </div>
+      <p class="lic-legal">Paying accepts the
+        <a href="/terms.html" target="_blank" rel="noopener">licence terms</a> and
+        <a href="/refund.html" target="_blank" rel="noopener">refund policy</a>.</p>`;
+    const copy = body().querySelector('.lic-copyref');
+    if (copy) copy.addEventListener('click', () => {
+      navigator.clipboard.writeText(ref).then(() => { copy.textContent = 'Copied'; }).catch(() => {});
+    });
+    body().querySelector('.lic-hgo').addEventListener('click', (e) => {
+      e.target.disabled = true;
+      e.target.textContent = 'Taking you there…';
+      location.href = url;
+    });
   }
 
   function showReceipt(d, quoteOnly) {
