@@ -288,7 +288,7 @@ export async function createRequest(req, env, user) {
        rounding rule eat part of the discount; applying it in the browser would
        make it forgeable. There is nothing to discount on a quote. */
     if (listAgorot != null && clean(b.coupon, 40)) {
-      const c = await findCoupon(env, b.coupon);
+      const c = await findCoupon(env, b.coupon, 'mutra');
       /* Two questions, not one: is this code usable at all, and may THIS person
          use it. The second had no implementation, which is why a first-licence
          discount could be promised but not given. */

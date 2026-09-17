@@ -423,12 +423,26 @@ export async function stashAdmin(env, user) {
 }
 
 /* ── coupons (own table; math reused from coupons.js) ────────────────────── */
+/* Snowstash's own codes first, then the Snowstar-level table for anything
+   explicitly scoped to snowstash or to all — so a code can be issued once and
+   work on the properties it was meant for, without a Snowstash service code
+   ever becoming redeemable against a music licence. */
 const findCoupon = (env, code) => env.DB.prepare(
   `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active
-     FROM snowstash_coupons WHERE code = ?`).bind(normCode(code)).first().catch(() => null);
+     FROM snowstash_coupons WHERE code = ?`).bind(normCode(code)).first().catch(() => null)
+  .then((own) => own || env.DB.prepare(
+    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active
+       FROM coupons WHERE code = ? AND (scope = 'snowstash' OR scope = 'all')`
+  ).bind(normCode(code)).first().catch(() => null));
 
-const burnCoupon = (env, code) =>
-  env.DB.prepare('UPDATE snowstash_coupons SET used = used + 1 WHERE code = ?').bind(code).run().catch(() => null);
+/* Burn wherever it lives, or a shared code's limit would mean N uses PER
+   property rather than N in total. */
+const burnCoupon = (env, code) => Promise.all([
+  env.DB.prepare('UPDATE snowstash_coupons SET used = used + 1 WHERE code = ?').bind(code).run().catch(() => null),
+  env.DB.prepare(
+    "UPDATE coupons SET used = used + 1 WHERE code = ? AND (scope = 'snowstash' OR scope = 'all')"
+  ).bind(normCode(code)).run().catch(() => null),
+]);
 
 /** POST /snowstash/coupon/check — { code } → what it does to the price. */
 export async function stashCouponCheck(req, env) {

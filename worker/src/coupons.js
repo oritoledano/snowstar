@@ -67,13 +67,31 @@ export function couponProblem(c, atAgorot) {
   return null;
 }
 
-export async function findCoupon(env, code) {
+/* The four properties a code can belong to, plus 'all'. StreamDAW and
+   Snowstash keep their own tables for codes issued inside those products — the
+   schema comment there is emphatic that a software discount must never be
+   redeemable against a music licence, and that stays true. What changes is that
+   THIS table is now the Snowstar-level one: a code here says which property it
+   is for, and each property also consults it for codes marked for itself or for
+   all. */
+export const SCOPES = ['all', 'mutra', 'streamdaw', 'snowstash', 'snowstar'];
+export const scopeOk = (v) => (SCOPES.includes(String(v)) ? String(v) : 'mutra');
+
+/**
+ * Find a code for a property.
+ *
+ * `scope` defaults to mutra because this table was Mutra's before it was
+ * everyone's, and every row already in it is a Mutra code — so a caller that
+ * does not say which property it is asking for gets exactly the old behaviour.
+ */
+export async function findCoupon(env, code, scope = 'mutra') {
   const c = normCode(code);
   if (!c) return null;
   return env.DB.prepare(
-    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note, classes
-       FROM coupons WHERE code = ?`
-  ).bind(c).first().catch(() => null);
+    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note, classes,
+            scope, per_user_limit, first_purchase_only
+       FROM coupons WHERE code = ? AND (scope = ? OR scope = 'all')`
+  ).bind(c, scopeOk(scope)).first().catch(() => null);
 }
 
 /** A coupon may be limited to certain price classes — the same instinct as
@@ -88,7 +106,9 @@ export function couponAllowsClass(c, letter) {
 export async function checkCoupon(req, env) {
   const b = await req.json().catch(() => ({}));
   const amount = Number(b.amount);
-  const c = await findCoupon(env, b.code);
+  // The public checker is Mutra's; a code for another property must not
+  // validate here and then be refused at checkout.
+  const c = await findCoupon(env, b.code, 'mutra');
   const problem = couponProblem(c, Number.isFinite(amount) ? amount : null);
   if (problem) return json({ ok: false, reason: problem });
   if (!couponAllowsClass(c, b.cls)) {
@@ -105,7 +125,7 @@ export async function listCoupons(env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const r = await env.DB.prepare(
     `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note,
-            classes, created_at
+            classes, scope, per_user_limit, first_purchase_only, created_at
        FROM coupons ORDER BY created_at DESC LIMIT 300`
   ).all().catch(() => ({ results: [] }));
   return json({ coupons: r.results || [] });
@@ -138,13 +158,17 @@ export async function saveCoupon(req, env, user) {
 
   await env.DB.prepare(
     `INSERT INTO coupons (code, kind, value, min_amount, max_uses, used, expires_at,
-                          active, note, classes, created_at, created_by)
-     VALUES (?, ?, ?, ?, ?, 0, ?, 1, ?, ?, ?, ?)`
+                          active, note, classes, scope, per_user_limit, first_purchase_only,
+                          created_at, created_by)
+     VALUES (?, ?, ?, ?, ?, 0, ?, 1, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(code, kind, value,
          Math.max(0, Math.round(Number(b.min_amount) || 0) * 100),
          Math.max(0, Math.round(Number(b.max_uses) || 0)),
          Number(b.expires_at) || null,
          clean(b.note, 200), clean(b.classes, 8).toUpperCase().replace(/[^ABCD]/g, ''),
+         scopeOk(b.scope),
+         Math.max(0, Math.round(Number(b.per_user_limit) || 0)),
+         b.first_purchase_only ? 1 : 0,
          now(), user.email || 'owner').run();
 
   return json({ ok: true, code });

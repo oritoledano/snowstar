@@ -3671,6 +3671,16 @@
         <label class="ar-f"><span>Prefix for generated</span><input id="cp-prefix" placeholder="MUTRA" maxlength="12"></label>
         <label class="ar-f"><span>Max uses (0 = unlimited)</span><input id="cp-max" type="number" min="0" value="0"></label>
         <label class="ar-f"><span>Minimum spend ₪</span><input id="cp-min" type="number" min="0" value="0"></label>
+        <label class="ar-f"><span>Which property</span>
+          <select id="cp-scope">
+            <option value="mutra">Mutra — music licensing</option>
+            <option value="all">All properties</option>
+            <option value="streamdaw">StreamDAW</option>
+            <option value="snowstash">Snowstash</option>
+            <option value="snowstar">Snowstar</option>
+          </select></label>
+        <label class="ar-f"><span>Uses per person (0 = no limit)</span>
+          <input id="cp-peruser" type="number" min="0" value="0"></label>
         <label class="ar-f"><span>Classes it applies to</span>
           <input id="cp-cls" placeholder="blank = all, e.g. CD" maxlength="4"></label>
         <label class="ar-f"><span>Expires</span><input id="cp-exp" type="date"></label>
@@ -3682,7 +3692,14 @@
       ${cs.length ? table(cs, [
         { label: 'Code', get: (c) => `<code class="cp-code">${esc(c.code)}</code>` },
         { label: 'Worth', get: (c) => c.kind === 'percent' ? c.value + '%' : ils(c.value) },
-        { label: 'Applies to', get: (c) => esc(c.classes || 'all classes') },
+        /* Two different senses of "applies to" were collapsed into one column:
+           WHICH PROPERTY a code belongs to, and which price classes within it.
+           They are separate questions and a StreamDAW code has no classes. */
+        { label: 'Property', get: (c) => `<span class="pill${
+            c.scope === 'all' ? ' good' : ''}">${esc(c.scope || 'mutra')}</span>` },
+        { label: 'Classes', get: (c) => esc(c.classes || 'all') },
+        { label: 'Per person', num: true, get: (c) => (c.first_purchase_only
+            ? 'first buy' : c.per_user_limit ? c.per_user_limit : '∞') },
         { label: 'Min', get: (c) => (c.min_amount ? ils(c.min_amount) : '—') },
         { label: 'Used', num: true, get: (c) => c.max_uses ? `${c.used}/${c.max_uses}` : String(c.used) },
         { label: 'Expires', get: (c) => when(c.expires_at) },
@@ -3703,6 +3720,8 @@
         max_uses: Number(document.getElementById('cp-max').value),
         min_amount: Number(document.getElementById('cp-min').value),
         classes: document.getElementById('cp-cls').value,
+        scope: document.getElementById('cp-scope').value,
+        per_user_limit: Number(document.getElementById('cp-peruser').value) || 0,
         note: document.getElementById('cp-note').value,
         expires_at: exp ? Math.floor(new Date(exp + 'T23:59:59').getTime() / 1000) : null,
       });

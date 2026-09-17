@@ -93,15 +93,30 @@ export async function streamdawPresenceToken(req, env) {
 function findSdawCoupon(env, code) {
   const c = normCode(code);
   if (!c) return Promise.resolve(null);
+  /* StreamDAW's own codes first — they stay StreamDAW-only, which is the rule
+     the schema has always stated: a software discount must never be redeemable
+     against a music licence. What is new is the fallback to the Snowstar-level
+     table for a code explicitly scoped to streamdaw or to all, so one code can
+     be issued once and work across the properties you chose. */
   return env.DB.prepare(
     `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note
        FROM streamdaw_coupons WHERE code = ?`
-  ).bind(c).first().catch(() => null);
+  ).bind(c).first().catch(() => null).then((own) => own || env.DB.prepare(
+    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note
+       FROM coupons WHERE code = ? AND (scope = 'streamdaw' OR scope = 'all')`
+  ).bind(c).first().catch(() => null));
 }
 function burnSdawCoupon(env, code) {
   const c = normCode(code);
   if (!c) return Promise.resolve();
-  return env.DB.prepare('UPDATE streamdaw_coupons SET used = used + 1 WHERE code = ?').bind(c).run().catch(() => null);
+  /* Burn wherever it lives. A shared code redeemed here must count against its
+     own limit, or 'twenty uses' would mean twenty per property. */
+  return Promise.all([
+    env.DB.prepare('UPDATE streamdaw_coupons SET used = used + 1 WHERE code = ?').bind(c).run().catch(() => null),
+    env.DB.prepare(
+      "UPDATE coupons SET used = used + 1 WHERE code = ? AND (scope = 'streamdaw' OR scope = 'all')"
+    ).bind(c).run().catch(() => null),
+  ]);
 }
 
 /** POST /streamdaw/coupon/check — { code } → what it does to the price. Public,
