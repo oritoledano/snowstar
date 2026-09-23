@@ -1427,29 +1427,15 @@
       const shelf = SHELF[openCat];                 // packs / characters only
 
       /* A character with a face is a card, not a word in a list. The whole card
-         is the target — picture, name and blurb — because a portrait invites a
-         click and hitting a 14px label instead is a small, avoidable annoyance. */
-      if (shelf && shelf.list.some((c) => c.art)) {
-        fdrop.innerHTML =
-          `<div class="charrow">${shelf.list.map((c) => `
-            <button type="button" class="charcard${modeOf(f, c.name) === 'inc' ? ' on' : ''}"
-              data-name="${c.name}">
-              <span class="cc-art">${c.art ? `<img src="${c.art}" alt="" loading="lazy">` : ''}</span>
-              <b>${c.name}</b><i>${c.blurb || ''}</i>
-            </button>`).join('')}</div>` +
-          (curateMode ? shelfAdminHtml(openCat) : '');
-        fdrop.querySelectorAll('.charcard').forEach((card) => card.addEventListener('click', () => {
-          const name = card.dataset.name;
-          // One character at a time: these are moods to browse, not filters to stack.
-          const already = modeOf(f, name) === 'inc';
-          f.inc.clear(); f.exc.clear();
-          if (!already) f.inc.add(name);
-          drawDrop(); drawPills(); render();
-          /* The row STAYS open. It is the answer to two things at once: the
-             chosen character's picture is what tells you whose tracks these
-             are — a name in a pill does not — and the other seven are right
-             there to switch to. Closing it threw both away. */
-        }));
+         is the target — picture and, on hover, its name and blurb — because a
+         portrait invites a click and hitting a 14px label instead is a small,
+         avoidable annoyance. Same rail the Packs hub draws, same builder: this
+         path is the owner's, reachable in curate mode, and it used to be a
+         second copy that quietly fell behind. Packs never arrives here (it
+         returns to the hub above), so characters is the only shelf with art. */
+      if (openCat === 'characters' && shelf.list.some((c) => c.art)) {
+        fdrop.innerHTML = charRailHtml() + (curateMode ? shelfAdminHtml(openCat) : '');
+        wireCharRail(drawDrop);
         if (curateMode) wireShelfAdmin(openCat);
         return;
       }
@@ -1487,66 +1473,195 @@
     if (hubMount) { hubMount.remove(); hubMount = null; }
   }
 
+  /* Survives the rail being rebuilt. drawPackHub() replaces fdrop.innerHTML on
+     every character click, so without these the rail would spring back to full
+     size the instant you chose a face while scrolled — which is the one moment
+     you least want eight portraits back. railAnchor is where the page was when
+     the rail appeared; the fold is measured from there, not from an absolute
+     offset. */
+  let railMini = false, railAll = false, railAnchor = null, railBusyUntil = 0;
+
+  /** Opening the shelf, or shutting the drawer, is a fresh rail. Without this a
+      rail closed while folded would be born folded the next time it opened. */
+  function resetRail() { railMini = false; railAll = false; railAnchor = null; railBusyUntil = 0; }
+
+  /* ── the character rail, built once ────────────────────────────────────────
+     This markup and its click handler existed twice — once here in the Packs
+     hub and once in the stand-alone Characters drawer the owner sees in curate
+     mode — and the two copies had already drifted. One builder now, so the next
+     change cannot land on only half of it.
+
+     The name and blurb sit INSIDE the card as .cc-cap rather than under it, and
+     CSS decides when they show: over the artwork on hover or focus, beside a
+     quarter-size portrait once you have scrolled on. Permanent text under eight
+     cards was about 32px each of things nobody was reading. */
+  const CC_CHEV = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" '
+    + 'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+    + 'stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+  function charRailHtml() {
+    const list = SHELF.characters.list, f = state.characters;
+    return `<div class="charrow">${list.map((c) => `
+      <button type="button" class="charcard${modeOf(f, c.name) === 'inc' ? ' on' : ''}"
+        data-name="${esc(c.name)}" aria-label="${esc(c.name)}${c.blurb ? ' — ' + esc(c.blurb) : ''}">
+        <span class="cc-art">${c.art ? `<img src="${esc(c.art)}" alt="">` : ''}</span>
+        <span class="cc-cap"><b>${esc(c.name)}</b><i>${esc(c.blurb || '')}</i></span>
+      </button>`).join('')}
+      <span class="cc-none">${list.length} characters</span>
+      <button type="button" class="cc-all" aria-expanded="false"><span
+        class="cc-all-t">All ${list.length}</span>${CC_CHEV}</button>
+    </div>`;
+  }
+
+  /** Put the rail into whichever of the three states the flags describe. */
+  function paintRail(row) {
+    if (!row) return;
+    row.classList.toggle('mini', railMini && !railAll);
+    row.classList.toggle('show-all', railAll);
+    const all = row.querySelector('.cc-all');
+    if (!all) return;
+    all.setAttribute('aria-expanded', String(railAll));
+    const t = all.querySelector('.cc-all-t');
+    if (t) t.textContent = railAll ? 'Hide' : 'All ' + SHELF.characters.list.length;
+  }
+
+  /** @param redraw the caller's own repaint — drawDrop or drawPackHub. */
+  function wireCharRail(redraw) {
+    const row = fdrop.querySelector('.charrow');
+    if (!row) return;
+    paintRail(row);
+    row.querySelectorAll('.charcard').forEach((card) => card.addEventListener('click', () => {
+      const name = card.dataset.name, f = state.characters;
+      const refocus = keepFocus(`.charcard[data-name="${CSS.escape(name)}"]`);
+      // One character at a time: these are moods to browse, not filters to stack.
+      const already = modeOf(f, name) === 'inc';
+      f.inc.clear(); f.exc.clear();
+      if (!already) f.inc.add(name);
+      // Choosing is the end of browsing: fold back to the pinned card so the
+      // answer takes one line instead of eight.
+      railAll = false;
+      /* The row STAYS open. It is the answer to two things at once: the chosen
+         character's picture is what tells you whose tracks these are — a name in
+         a pill does not — and the other seven are right there to switch to. */
+      redraw(); drawPills(); render();
+      refocus();
+    }));
+    const all = row.querySelector('.cc-all');
+    if (all) all.addEventListener('click', () => {
+      railAll = !railAll;
+      // Same 100px of list movement as the scroll fold, so the same hold.
+      holdListStill(() => paintRail(row));
+    });
+  }
+
+  /* Switching from Used by (seven strips, some 2,700px) to Artists (two rows,
+     about 800px) swaps a tall block for a short one directly above the list and
+     nothing reset the scroll, so you kept whatever offset you had and landed in
+     the middle of the new section — or past its end. Unlike revealListTop this
+     moves in BOTH directions: the point is to start the new section at its top,
+     wherever you happened to be standing. */
+  function snapToHub() {
+    const target = hubMount || tracksEl;
+    const nav = document.querySelector('.mnav');
+    const bar = document.querySelector('.cbar');
+    const stuck = (nav ? nav.getBoundingClientRect().height : 0)
+                + (bar ? bar.getBoundingClientRect().height : 0) + 12;
+    const y = target.getBoundingClientRect().top + window.pageYOffset - stuck;
+    /* The stylesheet turns html{scroll-behavior} off under prefers-reduced-motion
+       (mutra.css:34); an explicit behavior:'smooth' here would override that
+       guard and animate anyway for the people it was written for. */
+    const easy = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: Math.max(0, y), behavior: easy ? 'auto' : 'smooth' });
+  }
+
+  /* fdrop.innerHTML is replaced wholesale on every click in here, which destroys
+     the very button that was just activated and drops focus to <body> — a mouse
+     never notices, a keyboard loses its place completely. Put focus back on the
+     control that now stands where the old one did. */
+  function keepFocus(selector) {
+    const active = document.activeElement;
+    if (!active || active === document.body) return () => {};
+    return () => { const el = fdrop.querySelector(selector); if (el) el.focus(); };
+  }
+
   function drawPackHub() {
+    /* Reopening Packs with a character still chosen should show you the face you
+       chose, not four shut doors — the filter is live either way. */
+    if (hubSection === null && state.characters.inc.size) hubSection = 'characters';
+    if (hubSection === null && state.packs.inc.has('COVERS')) hubSection = 'covers';
+    /* …and the other way. The COVERS pill can be dismissed from the pills row,
+       which clears the filter but knows nothing about hubSection — leaving the
+       panel pointing at a filter that is gone, so the tile's next click only
+       toggled the stale section off and appeared to do nothing. */
+    if (hubSection === 'covers' && !state.packs.inc.has('COVERS')) hubSection = null;
+    if (hubSection === 'characters' && !SHELF.characters.list.length) hubSection = null;
+
     const coversOn = state.packs.inc.has('COVERS');
     const chars = SHELF.characters;
     const charOn = hubSection === 'characters' || state.characters.inc.size > 0;
     const tile = (k, on, name, sub) =>
-      `<button type="button" class="hub-tile${on ? ' on' : ''}" data-hub="${k}">
-         <b>${name}</b><i>${sub}</i></button>`;
+      `<button type="button" class="hub-tile${on ? ' on' : ''}" data-hub="${k}"
+         aria-expanded="${on}"><b>${name}</b><i>${sub}</i></button>`;
     fdrop.innerHTML =
       `<div class="packhub">
-        ${tile('characters', charOn, 'Characters', 'Eight moods with faces — browse a sound by who it is')}
-        ${tile('covers', coversOn, 'Covers', 'Reworked classics — master cleared, publishing stays with the source')}
-        ${tile('usedby', hubSection === 'usedby', 'Used by', 'The commercials — hear the exact track each brand ran')}
-        ${tile('artists', hubSection === 'artists', 'Artists', 'Custom-licence catalogues, album by album')}
+        ${tile('characters', charOn, 'Characters', 'Eight moods with faces')}
+        ${tile('covers', coversOn, 'Covers', 'Reworked classics, master cleared')}
+        ${tile('usedby', hubSection === 'usedby', 'Used by', 'The commercials, brand by brand')}
+        ${tile('artists', hubSection === 'artists', 'Artists', 'Catalogues, album by album')}
       </div>`
+      /* The tile subtitle had to lose the publishing caveat to fit on one line.
+         It loses nothing: the full wording appears here the moment Covers is
+         actually on, which is the only moment it means anything. */
       + (coversOn ? `<div class="hub-note">${PUB_ICON}<span><b>100% Master Clear by MUTRA.</b>
            Publishing rights must be cleared separately by the licensee via the original
            publishers / PROs.</span></div>` : '')
       + (hubSection === 'characters' && chars.list.length
-          ? `<div class="hub-charwrap"><div class="charrow">${chars.list.map((c) => `
-              <button type="button" class="charcard${modeOf(state.characters, c.name) === 'inc' ? ' on' : ''}"
-                data-name="${c.name}">
-                <span class="cc-art">${c.art ? `<img src="${c.art}" alt="" loading="lazy">` : ''}</span>
-                <b>${c.name}</b><i>${c.blurb || ''}</i>
-              </button>`).join('')}</div></div>`
-          : '')
+          ? `<div class="hub-charwrap">${charRailHtml()}</div>` : '')
       + (curateMode ? shelfAdminHtml('packs') : '');
 
     fdrop.querySelectorAll('.hub-tile').forEach((t) => t.addEventListener('click', () => {
       const k = t.dataset.hub;
-      if (k === 'covers') {
-        const f = state.packs, on = f.inc.has('COVERS');
-        f.inc.clear(); f.exc.clear();
-        if (!on) f.inc.add('COVERS');
-        drawPackHub(); drawPills(); render();
-        return;
-      }
+      const refocus = keepFocus(`.hub-tile[data-hub="${k}"]`);
+      /* The four tiles are one accordion: opening any door shuts the other
+         three. Covers used to be the exception — it toggled its filter and
+         returned BEFORE the section bookkeeping ran, so choosing Covers with
+         Characters open left the character rail sitting open underneath it and
+         the character filter still quietly narrowing the list. */
       hubSection = hubSection === k ? null : k;
+      /* Only one of the two filters these doors carry can be on at a time, for
+         the same reason: a character still narrowing the list while the Covers
+         panel is the thing on screen is a filter with nothing to say it is
+         there — the more so now that characters no longer draw a pill. */
+      state.packs.inc.clear(); state.packs.exc.clear();
+      state.characters.inc.clear(); state.characters.exc.clear();
+      if (hubSection === 'covers') state.packs.inc.add('COVERS');
+      resetRail();
+
       clearHubMount();
-      if (hubSection === 'usedby') {
+      if (hubSection === 'usedby' || hubSection === 'artists') {
         hubMount = document.createElement('div');
         hubMount.className = 'hub-mount';
         tracksEl.parentElement.insertBefore(hubMount, tracksEl);
-        (window.mutraPromos ? mutraPromos.strips() : []).forEach((s) => hubMount.appendChild(s));
-      } else if (hubSection === 'artists') {
-        hubMount = document.createElement('div');
-        hubMount.className = 'hub-mount';
-        tracksEl.parentElement.insertBefore(hubMount, tracksEl);
-        (window.mutraSpotlightRows ? mutraSpotlightRows() : []).forEach((r) => hubMount.appendChild(r));
+        const rows = hubSection === 'usedby'
+          ? (window.mutraPromos ? mutraPromos.strips() : [])
+          : (window.mutraSpotlightRows ? mutraSpotlightRows() : []);
+        rows.forEach((r) => hubMount.appendChild(r));
       }
-      drawPackHub();
-    }));
-
-    fdrop.querySelectorAll('.charcard').forEach((card) => card.addEventListener('click', () => {
-      const name = card.dataset.name, f = state.characters;
-      const already = modeOf(f, name) === 'inc';
-      f.inc.clear(); f.exc.clear();
-      if (!already) f.inc.add(name);
       drawPackHub(); drawPills(); render();
+      refocus();
+      /* Only the two doors that mount something. Characters and Covers change
+         the RESULT set, which render() already lands on via revealListTop, and
+         snapping them too would fire a second smooth scroll against the first —
+         and worse, that scroll counts toward the fold's own threshold, so
+         opening Characters would fold the rail you just asked to see. */
+      if (hubMount) {
+        // Two frames: the mounted section has to have a height before it can be
+        // scrolled to, the same reason revealListTop's caller waits.
+        requestAnimationFrame(() => requestAnimationFrame(snapToHub));
+      }
     }));
 
+    wireCharRail(drawPackHub);
     if (curateMode) wireShelfAdmin('packs');
   }
 
@@ -1680,6 +1795,7 @@
 
   function closeDrawer() {
     openCat = null;
+    resetRail();
     // the hub's mounted sections leave with their drawer — a strip stack with
     // no visible control above it reads as the page having grown a wing
     hubSection = null;
@@ -1693,6 +1809,11 @@
   function setCat(cat) {
     if (!cat) return;                      // never let a non-category open the drawer
     openCat = openCat === cat ? null : cat;
+    /* Clicking the open category shuts the drawer without going through
+       closeDrawer(), so the rail's fold state has to be cleared here too — or
+       reopening Packs hands you a rail that is already folded and a fold
+       threshold measured against a scroll position from a minute ago. */
+    resetRail();
     // leaving the hub — by toggling it shut or by opening another category —
     // takes its mounted sections along, or a strip stack lingers headless
     if (openCat !== 'packs') { hubSection = null; clearHubMount(); }
@@ -1710,6 +1831,12 @@
   function drawPills() {
     const bits = [];
     Object.keys(FACETS).forEach(k => {
+      /* Characters draw no pill. The rail above already says whose tracks these
+         are, as a face — which a word in a bubble cannot do — and the second
+         copy of that one fact cost a whole row of the catalogue. What a pill
+         did carry that the rail does not is visibility once the drawer is shut,
+         so the Packs button takes that job on below. */
+      if (k === 'characters') return;
       state[k].inc.forEach(v => bits.push({ k, v, label: v, mode: 'inc' }));
       state[k].exc.forEach(v => bits.push({ k, v, label: '− ' + v, mode: 'exc' }));
     });
@@ -1728,6 +1855,13 @@
     }));
     const clear = fpills.querySelector('.fpill-clear');
     if (clear) clear.addEventListener('click', clearFilters);
+
+    /* A dot on the Packs button, because closeDrawer() leaves state.characters
+       alone: without a pill and without the rail on screen, a chosen character
+       would go on narrowing 402 tracks with nothing anywhere admitting it. */
+    const packBtn = fbar.querySelector('.fcat[data-cat="packs"]');
+    if (packBtn) packBtn.classList.toggle('has-on',
+      state.characters.inc.size > 0 || state.packs.inc.size > 0);
   }
 
   function clearFilters() {
@@ -3252,6 +3386,82 @@
   });
 
   addEventListener('resize', () => requestAnimationFrame(measureTitles), { passive: true });
+
+  /* The character rail folds down as you scroll on past it. Bound to window
+     like the three listeners below it — scroller() can in principle return an
+     inner element, but every scroll listener in this file already assumes the
+     window, and disagreeing with them here would only make the rail the one
+     thing that behaves differently.
+
+     The anchor is where you were when the rail appeared, not an absolute
+     position: you usually scroll down to the catalogue BEFORE opening
+     Characters, so an absolute threshold would hand you a rail that arrived
+     already collapsed. Asymmetric thresholds (120 down, 24 back) keep it from
+     flapping on the shift its own collapse causes. */
+  /* Folding shortens the bar, and .cbar is sticky — which keeps it in normal
+     flow — so the list below it climbs by however much the rail just gave back.
+     Measured: 104px, more than a whole track row, snatched out from under the
+     row you were reading. Chrome's own scroll anchoring does not catch it.
+
+     So hold the list still: every frame of the transition, move the page by
+     exactly the distance the list travelled for reasons that were NOT the
+     reader scrolling. Measuring that residual rather than predicting the height
+     change means this stays correct where a browser DID anchor it — there is
+     simply nothing left to correct — and it keeps working while the reader goes
+     on scrolling through the animation.
+
+     railAnchor moves with the correction. Without that the compensation would
+     subtract from the same `moved` the fold is triggered by, drop it back under
+     the threshold, unfold, and flap between the two forever. */
+  function holdListStill(change) {
+    let prevTop = tracksEl.getBoundingClientRect().top;
+    let prevY = window.pageYOffset;
+    change();
+    const until = performance.now() + 420;
+    const hold = () => {
+      const y = window.pageYOffset;
+      const top = tracksEl.getBoundingClientRect().top;
+      const drift = top - (prevTop - (y - prevY));
+      if (Math.abs(drift) > 0.5) {
+        /* behavior:'instant' is not optional: css/mutra.css:11 sets
+           html{scroll-behavior:smooth}, so a plain scrollBy here is ANIMATED —
+           every frame would then read a position the last correction had not
+           reached yet and stack another correction on top of it. Measured, that
+           turned a 260px scroll into 35px of travel. */
+        window.scrollBy({ top: drift, behavior: 'instant' });
+        if (railAnchor !== null) railAnchor += drift;
+        prevY = window.pageYOffset;
+        prevTop = tracksEl.getBoundingClientRect().top;
+      } else {
+        prevY = y; prevTop = top;
+      }
+      if (performance.now() < until) requestAnimationFrame(hold);
+    };
+    requestAnimationFrame(hold);
+  }
+
+  (function charRailFold() {
+    addEventListener('scroll', () => {
+      const row = fdrop.querySelector('.charrow');
+      if (!row) { resetRail(); return; }
+      if (railAnchor === null) { railAnchor = window.pageYOffset; return; }
+      const moved = window.pageYOffset - railAnchor;
+      const want = moved > 120 ? true : moved < 24 ? false : railMini;
+      if (want === railMini) return;
+      /* Near the foot of a short result set the page cannot absorb the height the
+         fold gives back — the browser clamps the scroll instead, which moves
+         `moved` on its own and can drop it straight back through the band. Sit
+         out the transition and the hold that follows it rather than folding and
+         unfolding against the clamp. */
+      if (performance.now() < railBusyUntil) return;
+      railBusyUntil = performance.now() + 460;
+      railMini = want;
+      // Back up where you started is back to browsing: drop the manual override
+      // too, or the rail can never fold again this visit.
+      if (!want) railAll = false;
+      holdListStill(() => paintRail(row));
+    }, { passive: true });
+  })();
 
   /* An open facet drawer eats a lot of the screen. Once you've scrolled past
      about two tracks you're clearly reading the list, not picking filters —

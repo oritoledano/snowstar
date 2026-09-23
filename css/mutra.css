@@ -243,6 +243,11 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .fcat svg{transition:transform .25s}
 .fcat[data-cat].open{color:var(--text);background:var(--tint)}
 .fcat[data-cat].open svg{transform:rotate(180deg)}
+/* Characters and Covers no longer draw a pill, so this dot is the only thing
+   left saying a Packs filter is on once the drawer is shut. */
+.fcat[data-cat].has-on{color:var(--text)}
+.fcat[data-cat].has-on::before{content:'';width:6px;height:6px;border-radius:50%;
+  flex:none;background:var(--amber,#8fd8ff)}
 .fcat-adv{border:1px solid var(--line-2)}
 .fdrop{margin:6px 0 4px;padding:18px 4px 30px;border-top:1px solid var(--line);
   position:relative;animation:fdrop .22s ease}
@@ -655,18 +660,33 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .te-cover .te-flabel{width:100%;margin-bottom:0}
 
 /* ── character cards ────────────────────────────────────────────────────────
-   One frame around the whole row, none around each card — eight boxes inside a
-   box is a lot of borders for eight pictures. The cards divide the row evenly
-   (`flex:1`) and the artwork keeps its own aspect ratio, so the strip grows and
-   shrinks in height with the width instead of cropping the characters' heads
-   off, which is what a fixed-height box with object-fit:cover was doing. */
+   The portrait IS the label. Name and blurb used to sit as permanent text under
+   every card — about 32px a card, saying eight things at once when only one of
+   them is ever being read. They now lie over the artwork and appear on hover,
+   on keyboard focus, and permanently on the chosen card: the same
+   :hover/:focus/.state triplet .spot-vinyl uses, so a keyboard reaches what a
+   mouse reaches. Hover-in is delayed; sweeping the cursor across the strip on
+   the way somewhere else should not flash eight captions.
+
+   `aspect-ratio:1` is the source's own shape — every portrait is 885x888, so
+   this crops nothing. It also gives the box a height BEFORE the image arrives,
+   so the rail does not jolt as the eight land. That height used to be 0: the
+   box was `height:auto` around an image with no intrinsic size, which is half
+   of why not one of the eight portraits ever loaded. The other half was
+   loading="lazy" on them, now gone — these images are built only when somebody
+   opens the shelf, so there was never anything to defer. */
 .charrow{display:flex;gap:8px;align-items:flex-end;
-  border:1px solid var(--line);border-radius:16px;padding:8px;margin-bottom:0}
+  border:1px solid var(--line);border-radius:16px;padding:8px;margin-bottom:0;
+  transition:padding .26s,gap .26s}
 /* The drawer reserves 30px at the bottom for a Close button this shelf does not
-   have — the Characters button itself closes it. Reclaimed. */
-.fdrop:has(.charrow){padding:8px 4px 6px}
-.charcard{flex:1 1 0;min-width:0;background:none;border:0;padding:0;cursor:pointer;
-  color:var(--text);font:inherit;text-align:center;transition:transform .18s}
+   have — the Characters button itself closes it. Reclaimed. Direct child only:
+   in the Packs hub the rail sits inside .hub-charwrap under a drawer that DOES
+   need its normal padding, and an unscoped :has() re-padded the sticky bar by
+   34px every time the accordion opened or shut a section. */
+.fdrop:has(> .charrow){padding:8px 4px 6px}
+.charcard{position:relative;flex:1 1 0;min-width:0;background:none;border:0;padding:0;
+  cursor:pointer;color:var(--text);font:inherit;text-align:center;
+  transition:transform .18s,opacity .26s,flex-basis .26s,flex-grow .26s}
 .charcard:hover{transform:translateY(-3px)}
 /* No gesture on click. A tilt-and-settle on a photographic character reads as
    the picture wobbling, not as the character reacting — the earlier version was
@@ -674,39 +694,128 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
    little and its artwork brightens, which is enough to say "registered" without
    pretending the still is animated. */
 .charcard:active{transform:translateY(-1px)}
-.cc-art img{transition:filter .25s, transform .25s}
+/* width:100% rather than leaving it implicit: a transition between `auto` and a
+   length has no interpolation, so the pinned portrait snapped to 54px while
+   everything around it eased. Two lengths, and it shrinks. */
+.cc-art{position:relative;display:block;width:100%;border-radius:10px;overflow:hidden;
+  aspect-ratio:1;outline:1px solid transparent;transition:outline-color .18s,width .26s}
+.cc-art img{width:100%;height:100%;display:block;object-fit:cover;
+  transition:filter .25s,transform .25s}
 .charcard:hover .cc-art img{filter:brightness(1.08)}
 .charcard.on .cc-art img{filter:brightness(1.12) saturate(1.05)}
-.cc-art{display:block;border-radius:10px;overflow:hidden;margin-bottom:6px;
-  outline:1px solid transparent;transition:outline-color .18s}
-/* Height follows width, so nothing is ever cropped — the image sets the ratio. */
-.cc-art img{width:100%;height:auto;display:block}
 .charcard:hover .cc-art,.charcard.on .cc-art{outline-color:var(--amber,#8fd8ff)}
-.charcard b{display:block;font-family:var(--font-display);font-size:.72rem;letter-spacing:.06em;
+
+/* The caption. --toast-bg/--toast-fg rather than --panel/--text because this is
+   type on a photograph in every skin, and mutra.css:544 records that --text and
+   the light surface are the same colour — a scrim built from those two is
+   invisible in bone light. The toast pair is dark-on-light-text everywhere. */
+.cc-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
+  padding:22px 8px 7px;text-align:left;border-radius:0 0 10px 10px;
+  background:linear-gradient(to top,var(--toast-bg) 0,var(--toast-bg) 72%,transparent);
+  color:var(--toast-fg);opacity:0;transform:translateY(5px);
+  transition:opacity .18s,transform .18s}
+.charcard:hover .cc-cap,.charcard:focus-visible .cc-cap{
+  opacity:1;transform:none;transition-delay:.28s}
+/* The chosen one answers "whose tracks are these", so it never waits for a hover. */
+.charcard.on .cc-cap{opacity:1;transform:none;transition-delay:0s}
+.cc-cap b{display:block;font-family:var(--font-display);font-size:.72rem;letter-spacing:.06em;
   text-transform:uppercase;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.charcard i{display:block;font-style:normal;font-size:.66rem;color:var(--muted);margin-top:1px;
+.cc-cap i{display:block;font-style:normal;font-size:.63rem;opacity:.78;margin-top:1px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.charcard.on b{color:var(--amber,#8fd8ff)}
+
+/* ── the rail, minimised ────────────────────────────────────────────────────
+   Once you have scrolled on past the rail you have stopped picking and started
+   reading, and eight portraits are then a wall between you and the list. The
+   unchosen faces fade and give up their width; the chosen one shrinks to a
+   quarter and pins left with its name beside it, so the answer to "whose tracks
+   am I looking at" survives without costing a row of catalogue.
+
+   Driven by .mini from the scroll handler rather than by .cbar.stuck, because
+   you usually scroll down TO the catalogue before opening Characters at all —
+   keyed to stuck, the rail would arrive already collapsed, answering a question
+   nobody had asked yet. .show-all is the visitor overruling it by hand. */
+.charrow.mini{gap:0;padding:7px 9px;align-items:center}
+/* visibility, not just opacity: an opacity:0 button is still a tab stop and is
+   still read out, so a folded rail was handing keyboard and screen-reader users
+   seven invisible 0x0 characters to walk through. visibility is discrete, so it
+   waits out the fade on the way down and switches instantly on the way back. */
+.charrow.mini .charcard{
+  flex:0 0 0;opacity:0;visibility:hidden;pointer-events:none;overflow:hidden;transform:none;
+  transition:opacity .26s,flex-grow .26s,visibility 0s .26s}
+.charrow.mini .charcard.on{
+  flex:0 1 auto;min-width:0;opacity:1;visibility:visible;pointer-events:auto;
+  display:flex;align-items:center;gap:11px;text-align:left;transition-delay:0s}
+.charrow.mini .charcard.on .cc-art{width:54px;flex:none}
+/* out of the overlay and into the row, beside the art — the reference layout:
+   square cover left, name, subtitle under it */
+.charrow.mini .charcard.on .cc-cap{
+  position:static;opacity:1;transform:none;transition-delay:0s;
+  padding:0;background:none;color:var(--text);min-width:0}
+.charrow.mini .charcard.on .cc-cap b{font-size:.8rem}
+.charrow.mini .charcard.on .cc-cap i{
+  color:var(--muted);opacity:1;font-size:.66rem;letter-spacing:.05em;text-transform:uppercase}
+
+/* the rail with nothing chosen still has to say what it is */
+.cc-none{display:none;flex:1 1 auto;min-width:0;text-align:left;color:var(--muted);
+  font-size:.74rem;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.charrow.mini:not(:has(.charcard.on)) .cc-none{display:block}
+
+/* the way back to the other seven. Its own control rather than "click
+   Characters again", because that closes the whole section and drops the
+   selection — a different action wearing the same clothes. */
+.cc-all{display:none;flex:none;margin-left:auto;align-items:center;gap:5px;
+  background:none;border:1px solid var(--line);border-radius:99px;cursor:pointer;
+  padding:5px 11px;font:inherit;font-size:.7rem;color:var(--muted);
+  transition:color .18s,border-color .18s}
+.cc-all:hover{color:var(--text);border-color:var(--amber,#8fd8ff)}
+.cc-all svg{transition:transform .22s}
+.charrow.show-all .cc-all svg{transform:rotate(180deg)}
+.charrow.mini .cc-all,.charrow.show-all .cc-all{display:inline-flex}
+
 @media(max-width:720px){
   /* Below this the cards get too narrow to read, so the row scrolls instead. */
   .charrow{overflow-x:auto}
   .charcard{flex:0 0 108px}
+  /* nothing to scroll sideways through once it is down to one card */
+  .charrow.mini{overflow-x:hidden}
+  .charrow.mini .charcard{flex:0 0 0}
+  .charrow.mini .charcard.on{flex:0 1 auto}
+}
+/* A touch screen has no hover, so a caption that only exists on hover would
+   leave eight anonymous faces. Keep the name, drop the delay. */
+@media(hover:none){
+  .charcard .cc-cap{opacity:1;transform:none;transition-delay:0s;padding-top:13px}
+  .charcard .cc-cap i{display:none}
+  .charrow.mini .charcard.on .cc-cap i{display:block}
+}
+@media(prefers-reduced-motion:reduce){
+  .charrow,.charcard,.cc-art,.cc-art img,.cc-cap,.cc-all svg{transition-duration:.01ms}
 }
 
-/* ── the Packs hub: four doors on one row, character-shelf height ─────────── */
-.packhub{display:flex;gap:8px;border:1px solid var(--line);border-radius:16px;padding:8px}
+/* ── the Packs hub: four doors on one row ───────────────────────────────────
+   These four were 118px tall with a two-to-three line subtitle each. With the
+   character rail open underneath them that left exactly ONE track row visible
+   on a 900px screen. They are labels on doors, not cards: one line of name, one
+   line of what is behind it. The Covers caveat lost nothing by being shortened
+   here — the full publishing wording appears in .hub-note the moment Covers is
+   actually on, which is the only moment it matters. */
+.packhub{display:flex;gap:8px;border:1px solid var(--line);border-radius:16px;padding:7px}
 .hub-tile{flex:1 1 0;min-width:0;background:var(--panel);border:1px solid var(--line);
-  border-radius:12px;padding:18px 14px;cursor:pointer;color:var(--text);font:inherit;
-  text-align:center;min-height:118px;display:flex;flex-direction:column;justify-content:center;
-  gap:7px;transition:transform .18s,border-color .18s}
-.hub-tile:hover{transform:translateY(-3px);border-color:var(--amber,#8fd8ff)}
+  border-radius:11px;padding:8px 12px;cursor:pointer;color:var(--text);font:inherit;
+  text-align:center;min-height:48px;display:flex;flex-direction:column;justify-content:center;
+  gap:2px;transition:transform .18s,border-color .18s}
+.hub-tile:hover{transform:translateY(-2px);border-color:var(--amber,#8fd8ff)}
 .hub-tile.on{border-color:var(--amber,#8fd8ff);box-shadow:inset 0 0 0 1px var(--amber,#8fd8ff)}
 .hub-tile b{font-family:'Fraunces',Georgia,serif;font-weight:800;letter-spacing:-.01em;
-  font-size:clamp(1.05rem,2vw,1.45rem);line-height:1.1}
+  font-size:clamp(.9rem,1.35vw,1.1rem);line-height:1.15}
 .hub-tile.on b{color:var(--amber,#8fd8ff)}
-.hub-tile i{font-style:normal;font-size:.7rem;color:var(--muted);line-height:1.45}
-@media(max-width:720px){.packhub{flex-wrap:wrap}.hub-tile{flex:1 1 46%;min-height:96px}}
-.hub-charwrap{margin-top:10px}
+/* Two lines, not one with an ellipsis: at anything under about 880px the Covers
+   and Used by subtitles were being cut mid-phrase, and "Reworked classics, mas…"
+   is worth less than the 9px a second line costs. */
+.hub-tile i{font-style:normal;font-size:.63rem;color:var(--muted);line-height:1.3;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media(max-width:720px){.packhub{flex-wrap:wrap}.hub-tile{flex:1 1 46%;min-height:44px}}
+.hub-charwrap{margin-top:8px}
 /* the covers clearance note — same fact the per-row mark carries, in full */
 .hub-note{display:flex;gap:14px;align-items:center;margin-top:10px;padding:11px 16px;
   border:1px solid color-mix(in srgb,var(--amber,#ffc24b) 45%,transparent);border-radius:12px;
