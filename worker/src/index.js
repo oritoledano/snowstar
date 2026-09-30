@@ -48,7 +48,8 @@ import { stashArtists, stashScanStart, stashScanGet, stashMine,
          stashRegistrations, stashRegistrationSet } from './snowstash.js';
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
-         streamdawAdmin, streamdawRelease } from './streamdaw.js';
+         streamdawAdmin, streamdawRelease,
+         streamdawActivate, streamdawActivationStatus, streamdawActivationIssue } from './streamdaw.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest , remindExpiring} from './licensing.js';
 import { handleStream } from './stream.js';
@@ -414,6 +415,11 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/coupon' && method === 'POST') return streamdawCouponCreate(req, env, await currentUser(req, env));
   if (path === '/streamdaw/admin' && method === 'GET') return streamdawAdmin(env, await currentUser(req, env));
   if (path === '/streamdaw/release' && method === 'POST') return streamdawRelease(req, env, await currentUser(req, env));
+  // Licence keys: the buyer sends the machine id their plug-in shows, the owner
+  // mints it on their own Mac and pastes it back here.
+  if (path === '/streamdaw/activate' && method === 'POST') return streamdawActivate(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/activations' && method === 'GET') return streamdawActivationStatus(env, await currentUser(req, env));
+  if (path === '/streamdaw/activation/issue' && method === 'POST') return streamdawActivationIssue(req, env, await currentUser(req, env));
   if (path === '/streamdaw/presence-token' && (method === 'POST' || method === 'OPTIONS')) return streamdawPresenceToken(req, env);
 
   // ── licensing: request in, owner grants, member downloads the master ──

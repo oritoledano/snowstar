@@ -99,3 +99,32 @@ CREATE TABLE IF NOT EXISTS app_releases (
   created_at  INTEGER NOT NULL,
   PRIMARY KEY (asset, version)
 );
+
+-- ── machine activations: a buyer's licence key request ─────────────────────
+-- StreamDAW's paid features are unlocked by an RSA-signed key file that is bound
+-- to the machine it was minted for — that binding is the whole anti-sharing
+-- mechanism, so the key cannot exist until the buyer tells us their machine id.
+--
+-- Minting needs the PRIVATE signing key, which must never live in a Worker. So
+-- this table is a queue with a human at the end of it: the buyer submits an id,
+-- the owner runs `streamdaw-keygen` on their own Mac, and pastes the key back.
+-- Same shape as licensing.js — a deliberate seam, so automating the minting
+-- later changes only who calls issue, not the schema.
+CREATE TABLE IF NOT EXISTS streamdaw_activations (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  entitlement_id INTEGER REFERENCES entitlements(id) ON DELETE CASCADE,
+  email          TEXT NOT NULL,                     -- lowercased
+  machine_id     TEXT NOT NULL,                     -- what the plug-in displays, e.g. SD89B53ADC0CD4963
+  owner_name     TEXT,                              -- the name that appears on the licence
+  status         TEXT NOT NULL DEFAULT 'pending',   -- pending | issued | rejected
+  key_text       TEXT,                              -- the minted key, kept so it can be re-sent
+  serial         TEXT,
+  note           TEXT,                              -- why it was rejected, if it was
+  requested_at   INTEGER NOT NULL,
+  issued_at      INTEGER
+);
+-- One key per machine per purchase: re-submitting the same id must update the
+-- request, never queue a second one.
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sdact_ent_machine
+  ON streamdaw_activations (entitlement_id, machine_id);
+CREATE INDEX IF NOT EXISTS idx_sdact_status ON streamdaw_activations (status, requested_at);

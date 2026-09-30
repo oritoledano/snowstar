@@ -53,7 +53,7 @@
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
-      { key: 'sdaw', label: 'App', tabs: ['orders', 'people', 'codes', 'releases'] },
+      { key: 'sdaw', label: 'App', tabs: ['orders', 'people', 'keys', 'codes', 'releases'] },
     ] },
     { key: 'snowstar', label: 'Snowstar', pages: [
       { key: 'jobs',      label: 'Jobs' },
@@ -245,6 +245,7 @@
     'snowstash/stash/codes':       () => paintStashCodes(),
     'streamdaw/sdaw/orders':       () => paintStreamdaw('orders'),
     'streamdaw/sdaw/people':       () => paintStreamdaw('people'),
+    'streamdaw/sdaw/keys':         () => paintStreamdaw('keys'),
     'streamdaw/sdaw/codes':        () => paintStreamdaw('codes'),
     'streamdaw/sdaw/releases':     () => paintStreamdaw('releases'),
     'snowstar/jobs':               () => paintJobs(),
@@ -1160,6 +1161,37 @@
           ])}</div>`);
     }
 
+    /* Licence keys. These are people who have PAID and cannot use what they
+       bought until someone runs the keygen, so pending ones come first and the
+       command is pre-filled — the whole job is copy, run, paste back. */
+    if (view === 'keys') {
+      const acts = d.activations || [];
+      const pending = acts.filter((a) => a.status === 'pending');
+      const cmd = (a) => `StreamDAWKeyGen --key "$(awk '/^private /{print $2}' `
+        + `~/.cache/streamdaw/license-keypair.txt)" --name "${(a.owner_name || '').replace(/"/g, '')}" `
+        + `--machines ${a.machine_id}`;
+      return paint(`${kpis}
+        ${pending.length ? `<div class="db-warn warn" style="margin-bottom:16px">
+          <b>${pending.length} ${pending.length === 1 ? 'person has' : 'people have'} paid and cannot
+          unlock the app.</b> Run the command on each row, then paste the key back.</div>` : ''}
+        <div class="db-panel"><h2>Licence keys <span class="pill">${acts.length}</span></h2>
+          <p class="db-empty" style="padding-top:0">Keys are signed with the private key on your own
+            Mac — it never touches the server — so minting is a manual step by design.</p>
+          ${table(acts, [
+            { label: 'Who', get: (a) => `<b>${esc(a.owner_name || '—')}</b><br><small>${esc(a.email)}</small>` },
+            { label: 'Machine', get: (a) => `<code>${esc(a.machine_id)}</code>` },
+            { label: 'Asked', get: (a) => dt(a.requested_at) },
+            { label: 'State', get: (a) => a.status === 'issued'
+                ? `<span class="pill">issued ${dt(a.issued_at)}</span>`
+                : a.status === 'rejected' ? '<span class="pill">rejected</span>'
+                : '<b style="color:#e8b04b">waiting</b>' },
+            { label: '', get: (a) => a.status === 'issued' ? '' :
+                `<button class="chip sd-cmd" data-cmd="${esc(cmd(a))}">Copy command</button>
+                 <button class="chip sd-key" data-id="${a.id}">Paste key…</button>` },
+          ])}</div>`);
+      return wireStreamdaw();
+    }
+
     if (view === 'codes') {
       return paint(`${kpis}
         <div class="db-panel"><h2>Discount codes <span class="pill">${(d.coupons || []).length}</span></h2>
@@ -1218,6 +1250,23 @@
   function wireStreamdaw() {
     const said = document.getElementById('sd-said');
     const say = (m) => { if (said) said.textContent = m; };
+
+    /* Licence keys. Copy the pre-filled keygen command, run it, paste the key
+       back — the buyer is emailed automatically. */
+    document.querySelectorAll('.sd-cmd').forEach((b) => b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(b.dataset.cmd); b.textContent = 'Copied'; }
+      catch { window.prompt('Copy this command:', b.dataset.cmd); }
+      setTimeout(() => { b.textContent = 'Copy command'; }, 1600);
+    }));
+    document.querySelectorAll('.sd-key').forEach((b) => b.addEventListener('click', async () => {
+      const key = window.prompt('Paste the key that keygen printed (the whole block):');
+      if (key === null) return;
+      if (key.trim().length < 40) { alert('That looks truncated — paste the whole key.'); return; }
+      b.disabled = true; b.textContent = 'Sending…';
+      const r = await post('/streamdaw/activation/issue', { id: Number(b.dataset.id), key: key.trim() });
+      if (!r || !r.ok) { b.disabled = false; b.textContent = 'Paste key…'; alert((r && r.error) || 'That did not go through.'); return; }
+      load();          // the row flips to "issued" and the buyer has their email
+    }));
     const add = document.getElementById('sd-add');
     if (add) add.addEventListener('click', async () => {
       const r2_key = (document.getElementById('sd-key').value || '').trim();

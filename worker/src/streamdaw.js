@@ -315,6 +315,137 @@ export async function myStreamdaw(env, user) {
   return json({ owned: true, since: ent.created_at, plan: ent.plan, release: rel, download: `${SITE}/api/streamdaw/download` });
 }
 
+// ── licence activation: machine id in, key file out ────────────────────────
+//
+// The paid features are unlocked by an RSA-signed key bound to ONE machine, and
+// signing needs the private key — which stays on the owner's Mac and never comes
+// near a Worker. So this is a queue with a human at the end: the buyer submits the
+// id their plug-in shows, the owner mints with `streamdaw-keygen`, and pastes the
+// key back through /streamdaw/activation/issue, which emails it on.
+//
+// The machine id format is fixed by the plug-in (License.cpp): "SD" + 16 hex.
+const MACHINE_ID_RE = /^SD[0-9A-F]{12,20}$/;
+
+async function activeEntitlement(env, user) {
+  return env.DB.prepare(
+    `SELECT id, email FROM entitlements WHERE product = ? AND status = 'active'
+       AND (user_id = ? OR email = ?) AND (expires_at IS NULL OR expires_at > ?)
+     ORDER BY created_at DESC LIMIT 1`
+  ).bind(PRODUCT, user.id, lc(user.email), now()).first();
+}
+
+/** The buyer asks for a key for this machine. */
+export async function streamdawActivate(req, env, user) {
+  if (!user) return json({ error: 'sign in first' }, 401);
+
+  const ent = await activeEntitlement(env, user);
+  if (!ent) return json({ error: 'no StreamDAW purchase on this account' }, 403);
+
+  let body = {};
+  try { body = await req.json(); } catch {}
+  const machine = String(body.machineId || '').trim().toUpperCase();
+  const name = String(body.name || user.name || '').trim().slice(0, 60);
+
+  if (!MACHINE_ID_RE.test(machine))
+    return json({ error: 'That does not look like a machine ID. Copy it from the plug-in: ⓘ → Copy my machine ID.' }, 400);
+  if (!name)
+    return json({ error: 'Tell us the name that should appear on the licence.' }, 400);
+
+  // Already issued for this machine? Hand back the same key rather than queueing
+  // a duplicate — re-installing must not need a new request.
+  const prior = await env.DB.prepare(
+    'SELECT status, key_text FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id = ?'
+  ).bind(ent.id, machine).first();
+  if (prior && prior.status === 'issued' && prior.key_text)
+    return json({ status: 'issued', key: prior.key_text });
+
+  await env.DB.prepare(
+    `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at)
+     VALUES (?, ?, ?, ?, 'pending', ?)
+     ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
+       owner_name = excluded.owner_name, requested_at = excluded.requested_at,
+       status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
+  ).bind(ent.id, lc(ent.email), machine, name, now()).run();
+
+  // Tell the owner there is something to mint. Never fail the request over mail.
+  try {
+    await sendMail(env, {
+      to: env.ALERT_TO || 'oritoledano@gmail.com',
+      subject: `StreamDAW licence request — ${name}`,
+      text: `${name} <${ent.email}> asked for a licence key.\n\n`
+          + `Machine ID: ${machine}\n\n`
+          + `Mint it:\n`
+          + `  StreamDAWKeyGen --key "$(awk '/^private /{print $2}' ~/.cache/streamdaw/license-keypair.txt)" \\\n`
+          + `    --name "${name}" --machines ${machine}\n\n`
+          + `Then paste the key into the StreamDAW admin page to send it.`,
+    });
+  } catch {}
+
+  return json({ status: 'pending' });
+}
+
+/** The buyer polls after submitting, so the key lands without another email. */
+export async function streamdawActivationStatus(env, user) {
+  if (!user) return json({ error: 'sign in first' }, 401);
+  const ent = await activeEntitlement(env, user);
+  if (!ent) return json({ owned: false });
+
+  const rows = (await env.DB.prepare(
+    `SELECT machine_id, status, key_text, serial, requested_at, issued_at
+       FROM streamdaw_activations WHERE entitlement_id = ? ORDER BY requested_at DESC LIMIT 10`
+  ).bind(ent.id).all()).results || [];
+  return json({ owned: true, activations: rows });
+}
+
+/** Owner only: paste the minted key back in; the buyer gets it by email. */
+export async function streamdawActivationIssue(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+
+  let body = {};
+  try { body = await req.json(); } catch {}
+  const id = Number(body.id || 0);
+  const key = String(body.key || '').trim();
+  const reject = String(body.reject || '').trim();
+
+  const row = await env.DB.prepare('SELECT * FROM streamdaw_activations WHERE id = ?').bind(id).first();
+  if (!row) return json({ error: 'no such request' }, 404);
+
+  if (reject) {
+    await env.DB.prepare("UPDATE streamdaw_activations SET status = 'rejected', note = ? WHERE id = ?")
+      .bind(reject.slice(0, 300), id).run();
+    return json({ ok: true, status: 'rejected' });
+  }
+
+  // A key file is a multi-line base64 blob. Anything short is a paste accident,
+  // and storing it would tell the buyer their licence is ready when it is not.
+  if (key.length < 40) return json({ error: 'that key looks truncated' }, 400);
+
+  const serial = String(body.serial || '').trim().slice(0, 40) || null;
+  await env.DB.prepare(
+    "UPDATE streamdaw_activations SET status = 'issued', key_text = ?, serial = ?, issued_at = ? WHERE id = ?"
+  ).bind(key, serial, now(), id).run();
+
+  try {
+    await sendMail(env, {
+      to: row.email,
+      subject: 'Your StreamDAW licence key',
+      text: `Here is your StreamDAW licence key.\n\n`
+          + `Open StreamDAW, click ⓘ, paste this into "paste your licence key" and press Unlock.\n`
+          + `It is tied to machine ${row.machine_id}, so it only works on that Mac — tell us if you change computers.\n\n`
+          + `${key}\n\n— Snowstar.Company`,
+      html: `<div style="font-family:Inter,system-ui,sans-serif;max-width:560px;margin:0 auto;color:#1a1a1a">
+  <h2 style="font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em">Your StreamDAW licence</h2>
+  <p>Open StreamDAW, click <b>&#9432;</b>, paste this into <i>paste your licence key</i> and press <b>Unlock</b>.</p>
+  <pre style="white-space:pre-wrap;word-break:break-all;background:#f4f4f6;border-radius:8px;padding:14px;font-size:12px">${key.replace(/[<&]/g, (c) => (c === '<' ? '&lt;' : '&amp;'))}</pre>
+  <p style="color:#666;font-size:14px">Tied to machine <code>${row.machine_id}</code> — it only unlocks that Mac.
+     Changing computers? Reply to this email and we'll reissue it.</p>
+</div>`,
+    });
+  } catch {}
+
+  return json({ ok: true, status: 'issued' });
+}
+
 // ── helpers ────────────────────────────────────────────────────────────────
 async function grantEntitlement(env, { email, ext_ref, amount, plan, source }) {
   const existing = await env.DB.prepare('SELECT * FROM entitlements WHERE ext_ref = ?').bind(ext_ref).first();
@@ -422,6 +553,14 @@ export async function streamdawAdmin(env, user) {
 
   return json({
     orders, entitlements, coupons, releases, stats,
+    /* Licence keys waiting to be minted. Oldest first: these are people who have
+       paid and cannot use what they bought until someone runs the keygen. */
+    activations: await soft(
+      `SELECT a.id, a.email, a.machine_id, a.owner_name, a.status, a.serial,
+              a.requested_at, a.issued_at
+         FROM streamdaw_activations a
+        ORDER BY (a.status = 'pending') DESC, a.requested_at ASC LIMIT 100`),
+
     /* The one blocking fact, stated rather than implied. */
     blocked: releases.some((r) => r.is_latest)
       ? null
