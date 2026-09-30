@@ -566,6 +566,21 @@
   document.getElementById('couponApply').addEventListener('click',applyCoupon);
   cIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();applyCoupon();} });
 
+  // A coupon can arrive IN THE LINK — snowstar.company/apps/streamdaw.html?c=FRIEND100 —
+  // so a code can be handed out without asking anyone to type it. Applied on load, and
+  // the price updates before they reach the button.
+  (function(){
+    const u=new URLSearchParams(location.search);
+    const code=(u.get('c')||u.get('coupon')||'').trim();
+    if(!code) return;
+    cIn.value=code.toUpperCase();
+    applyCoupon();
+    // Land them on the price, not the top of the page — the code only means
+    // something next to the number it changes.
+    const pr=document.getElementById('pricing');
+    if(pr) setTimeout(()=>pr.scrollIntoView({behavior:'smooth',block:'start'}),400);
+  })();
+
   // ── success takeover (free grant, or returning from a paid HYP checkout) ──
   // ---- licence key: machine id in, key out ----------------------------------
   // Only shown to someone who actually owns StreamDAW; the worker checks the
