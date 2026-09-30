@@ -446,6 +446,77 @@ export async function streamdawActivationIssue(req, env, user) {
   return json({ ok: true, status: 'issued' });
 }
 
+// ── bug reports ────────────────────────────────────────────────────────────
+//
+// Open to anyone, no account. A report arrives at the moment something breaks;
+// asking the person to sign in first is asking them to close the tab instead.
+// Rate limited on a hash of the ip so one stuck client cannot flood the table.
+const REPORT_MAX = 4000;
+
+export async function streamdawReport(req, env) {
+  // Same cross-origin story as the presence token: the listener page and the plug-in's
+  // WebView are not this origin, so without CORS the browser refuses the POST outright.
+  const cors = presenceCors(req.headers.get('origin') || '');
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+
+  let b = {};
+  try { b = await req.json(); } catch {}
+
+  const body = String(b.body || '').trim().slice(0, REPORT_MAX);
+  if (body.length < 4) return json({ error: 'Tell us what went wrong.' }, 400, cors);
+
+  const source = ['plugin', 'listener', 'console'].includes(b.source) ? b.source : 'plugin';
+  const email = validEmail(b.email) ? lc(b.email) : null;
+  // Context is whatever the surface knew (version, DAW, engine up, licence state).
+  // Capped, because a runaway client should not be able to post a megabyte of state.
+  let context = null;
+  try { context = JSON.stringify(b.context || {}).slice(0, 4000); } catch {}
+
+  const ip = req.headers.get('cf-connecting-ip') || '';
+  const ipHash = ip ? (await sha256b64(ip)).slice(0, 24) : null;
+
+  if (ipHash) {
+    const recent = await env.DB.prepare(
+      'SELECT COUNT(*) AS n FROM streamdaw_reports WHERE ip_hash = ? AND created_at > ?'
+    ).bind(ipHash, now() - 3600).first();
+    if ((recent?.n || 0) >= 10) return json({ error: 'That is a lot of reports in an hour — email us instead.' }, 429, cors);
+  }
+
+  await env.DB.prepare(
+    `INSERT INTO streamdaw_reports (source, email, body, context, ip_hash, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)`
+  ).bind(source, email, body, context, ipHash, now()).run();
+
+  try {
+    await sendMail(env, {
+      to: env.ALERT_TO || 'oritoledano@gmail.com',
+      subject: `StreamDAW bug report (${source})`,
+      text: `${body}\n\n--\nfrom: ${email || 'anonymous'}\nsource: ${source}\ncontext: ${context || '{}'}`,
+      replyTo: email || undefined,
+    });
+  } catch {}
+
+  return json({ ok: true }, 200, cors);
+}
+
+/** Owner only: read and triage them. */
+export async function streamdawReports(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  if (req.method === 'POST') {
+    let b = {};
+    try { b = await req.json(); } catch {}
+    const id = Number(b.id || 0);
+    const status = ['new', 'seen', 'closed'].includes(b.status) ? b.status : 'seen';
+    await env.DB.prepare('UPDATE streamdaw_reports SET status = ? WHERE id = ?').bind(status, id).run();
+    return json({ ok: true });
+  }
+  const rows = (await env.DB.prepare(
+    `SELECT id, source, email, body, context, status, created_at FROM streamdaw_reports
+      ORDER BY (status = 'new') DESC, created_at DESC LIMIT 200`
+  ).all()).results || [];
+  return json({ reports: rows });
+}
+
 // ── helpers ────────────────────────────────────────────────────────────────
 async function grantEntitlement(env, { email, ext_ref, amount, plan, source }) {
   const existing = await env.DB.prepare('SELECT * FROM entitlements WHERE ext_ref = ?').bind(ext_ref).first();

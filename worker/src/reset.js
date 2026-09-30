@@ -55,6 +55,12 @@ const ID_TABLES = [
   ['handoffs', 'user_id'], ['artist_managers', 'user_id'], ['events', 'user_id'],
   ['snowstash_scans', 'user_id'], ['snowstash_registrations', 'user_id'],
   ['snowstash_unlocks', 'user_id'],
+  /* Request health. The FK is ON DELETE SET NULL like the rest, but D1 only
+     enforces that when the connection has foreign_keys ON and nothing here
+     guarantees it — so clear it by hand like every other table in this list.
+     Losing a cleared account's traffic history is the right outcome: the rows
+     are about a person, and the person is being cleared. */
+  ['req_log', 'user_id'],
 ];
 
 const soft = async (env, sql, ...b) => {

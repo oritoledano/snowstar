@@ -49,7 +49,8 @@ import { stashArtists, stashScanStart, stashScanGet, stashMine,
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
          streamdawAdmin, streamdawRelease,
-         streamdawActivate, streamdawActivationStatus, streamdawActivationIssue } from './streamdaw.js';
+         streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
+         streamdawReport, streamdawReports } from './streamdaw.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest , remindExpiring} from './licensing.js';
 import { handleStream } from './stream.js';
@@ -70,7 +71,8 @@ import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
-import { currentUser, readCookies } from './session.js';
+import { currentUser, readCookies, peekUser } from './session.js';
+import { recordRequest, healthReport, pruneReqLog } from './health.js';
 
 const SESSION_DAYS = 60;
 const MAX_ATTEMPTS = 8;          // per window
@@ -176,7 +178,11 @@ async function handle(req, env, ctx) {
      offer — compliant in the source and broken in the inbox. It carries a
      single-use random token and only ever removes somebody from a list, which
      is the one direction a forged request could not be used to harm anybody. */
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/n/u']);
+  // /streamdaw/report is posted from the plug-in's own WebView and from the listener
+  // page — neither shares this origin. Safe to exempt: it is anonymous, takes no
+  // authenticated action, and is rate limited by ip hash. The worst a forged post
+  // achieves is a junk row.
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -198,6 +204,7 @@ async function handle(req, env, ctx) {
   if (path === '/journey' && method === 'GET') return handleJourney(req, env, await currentUser(req, env));
   if (path === '/alerts' && method === 'GET') return listAlerts(env, await currentUser(req, env));
   if (path === '/alerts/mute' && method === 'POST') return setAlertsMuted(req, env, await currentUser(req, env));
+  if (path === '/health' && method === 'GET') return healthReport(env, await currentUser(req, env), url);
 
   // ── member download (the one thing that needs an account) ──
   // Playback is public and clean; downloading is gated and watermarked.
@@ -420,6 +427,10 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/activate' && method === 'POST') return streamdawActivate(req, env, await currentUser(req, env));
   if (path === '/streamdaw/activations' && method === 'GET') return streamdawActivationStatus(env, await currentUser(req, env));
   if (path === '/streamdaw/activation/issue' && method === 'POST') return streamdawActivationIssue(req, env, await currentUser(req, env));
+  // Bug reports: open to anyone, because the useful ones arrive the moment
+  // something breaks and a sign-in wall loses them.
+  if (path === '/streamdaw/report' && (method === 'POST' || method === 'OPTIONS')) return streamdawReport(req, env);
+  if (path === '/streamdaw/reports') return streamdawReports(req, env, await currentUser(req, env));
   if (path === '/streamdaw/presence-token' && (method === 'POST' || method === 'OPTIONS')) return streamdawPresenceToken(req, env);
 
   // ── licensing: request in, owner grants, member downloads the master ──
@@ -715,14 +726,47 @@ export default {
        is queued. This catches anything queued by a path that had no chance to
        flush — and it never touches the kinds that wait for review. */
     ctx.waitUntil(flushAutoMail(env, 200));
+    /* A fortnight of request history answers "was it doing this last week too".
+       Past that it is rows nobody reads, and this is the only cadence there is
+       to drop them on. */
+    ctx.waitUntil(pruneReqLog(env).catch(() => 0));
   },
 
   async fetch(req, env, ctx) {
+    const t0 = Date.now();
+    let res, stack = null;
     try {
-      return await handle(req, env, ctx);
+      res = await handle(req, env, ctx);
     } catch (err) {
-      console.error('api error', err && err.stack ? err.stack : String(err));
-      return json({ error: 'server_error' }, 500);
+      stack = err && err.stack ? err.stack : String(err);
+      /* The console line stays: it is what you see in `wrangler tail` while
+         watching a request go wrong live. The row written below is what is
+         still there tomorrow, which is the half that never existed. */
+      console.error('api error', stack);
+      res = json({ error: 'server_error' }, 500);
     }
+    /* After the response, never before it. waitUntil keeps the isolate alive
+       past the return, so the write costs the visitor nothing — and a health
+       log that slowed every request down in order to record how slow requests
+       are would mostly be measuring itself.
+
+       Wrapped, because this is the one piece of the request path whose failure
+       must not be able to take a request with it. recordRequest swallows its
+       own errors; this catches everything before it, down to `res` somehow not
+       being a Response. */
+    try {
+      ctx.waitUntil(recordRequest(env, {
+        url: new URL(req.url),
+        method: req.method,
+        status: (res && typeof res.status === 'number') ? res.status : 0,
+        ms: Date.now() - t0,
+        // Whatever the matched route already resolved. Never a second lookup:
+        // peekUser reads the WeakMap currentUser fills and never queries.
+        userId: (peekUser(req) || {}).id ?? null,
+        ray: req.headers.get('cf-ray'),
+        detail: stack,
+      }));
+    } catch { /* the log is the expendable half of this pair */ }
+    return res;
   },
 };

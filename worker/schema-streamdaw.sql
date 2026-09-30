@@ -128,3 +128,24 @@ CREATE TABLE IF NOT EXISTS streamdaw_activations (
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sdact_ent_machine
   ON streamdaw_activations (entitlement_id, machine_id);
 CREATE INDEX IF NOT EXISTS idx_sdact_status ON streamdaw_activations (status, requested_at);
+
+-- ── bug reports ────────────────────────────────────────────────────────────
+-- Deliberately NOT gated on an account. The reports worth having come from the
+-- moment something breaks, and asking someone to sign in first is asking them to
+-- close the tab instead. Rate limiting is by ip hash, not identity.
+--
+-- `context` is whatever the reporting surface knew: plug-in version, DAW, whether
+-- the engine was up, licence state, browser. A report without it is a sentence
+-- with no way to act on it, which is most of why bug reports go unfixed.
+CREATE TABLE IF NOT EXISTS streamdaw_reports (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  source     TEXT NOT NULL DEFAULT 'plugin',   -- plugin | listener | console
+  email      TEXT,                             -- optional: only if they want a reply
+  body       TEXT NOT NULL,
+  context    TEXT,                             -- JSON blob, whatever the surface knew
+  ip_hash    TEXT,                             -- for rate limiting, never the ip itself
+  status     TEXT NOT NULL DEFAULT 'new',      -- new | seen | closed
+  created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sdrep_status ON streamdaw_reports (status, created_at);
+CREATE INDEX IF NOT EXISTS idx_sdrep_ip     ON streamdaw_reports (ip_hash, created_at);

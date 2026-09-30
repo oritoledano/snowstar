@@ -53,7 +53,7 @@
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
-      { key: 'sdaw', label: 'App', tabs: ['orders', 'people', 'keys', 'codes', 'releases'] },
+      { key: 'sdaw', label: 'App', tabs: ['orders', 'people', 'keys', 'reports', 'codes', 'releases'] },
     ] },
     { key: 'snowstar', label: 'Snowstar', pages: [
       { key: 'jobs',      label: 'Jobs' },
@@ -246,6 +246,7 @@
     'streamdaw/sdaw/orders':       () => paintStreamdaw('orders'),
     'streamdaw/sdaw/people':       () => paintStreamdaw('people'),
     'streamdaw/sdaw/keys':         () => paintStreamdaw('keys'),
+    'streamdaw/sdaw/reports':      () => paintStreamdawReports(),
     'streamdaw/sdaw/codes':        () => paintStreamdaw('codes'),
     'streamdaw/sdaw/releases':     () => paintStreamdaw('releases'),
     'snowstar/jobs':               () => paintJobs(),
@@ -1094,6 +1095,43 @@
       }
       alert('Cleared: ' + (r.done || []).join(', ') + (r.archived ? '. Email archived.' : '.'));
       resetEmail = '';
+      load();
+    }));
+  }
+
+  /* Bug reports. Separate fetch from the rest of the StreamDAW admin because these
+     are long free text and arrive on their own schedule. */
+  async function paintStreamdawReports() {
+    const d = await get('/streamdaw/reports');
+    const rows = d.reports || [];
+    const fresh = rows.filter((r) => r.status === 'new').length;
+    const dt = (t) => when(t, { time: true });
+    const ctx = (c) => {
+      if (!c) return '';
+      try {
+        const o = JSON.parse(c);
+        return Object.entries(o).filter(([, v]) => v !== null && v !== '')
+          .map(([k, v]) => `${k}=${typeof v === 'object' ? JSON.stringify(v) : v}`).join(' · ').slice(0, 300);
+      } catch { return String(c).slice(0, 200); }
+    };
+    paint(`
+      ${fresh ? `<div class="db-warn warn" style="margin-bottom:16px"><b>${fresh} unread
+        ${fresh === 1 ? 'report' : 'reports'}.</b></div>` : ''}
+      <div class="db-panel"><h2>Bug reports <span class="pill">${rows.length}</span></h2>
+        <p class="db-empty" style="padding-top:0">Sent from the plug-in's ⓘ panel and from the
+          listener page. No account needed — a report that requires signing in is a report
+          nobody sends.</p>
+        ${table(rows, [
+          { label: 'When', get: (r) => dt(r.created_at) },
+          { label: 'From', get: (r) => `${esc(r.source)}${r.email ? '<br><small>' + esc(r.email) + '</small>' : ''}` },
+          { label: 'What', get: (r) => `${r.status === 'new' ? '<b style="color:#e8b04b">● </b>' : ''}${esc(r.body)}
+              <br><small style="opacity:.6">${esc(ctx(r.context))}</small>` },
+          { label: '', get: (r) => r.status === 'closed' ? ''
+              : `<button class="chip sd-rep" data-id="${r.id}" data-to="${r.status === 'new' ? 'seen' : 'closed'}">${
+                  r.status === 'new' ? 'mark read' : 'close'}</button>` },
+        ])}</div>`);
+    document.querySelectorAll('.sd-rep').forEach((b) => b.addEventListener('click', async () => {
+      await post('/streamdaw/reports', { id: Number(b.dataset.id), status: b.dataset.to });
       load();
     }));
   }

@@ -15,7 +15,35 @@ export function readCookies(req, name) {
   return values;
 }
 
+/* Resolved users, keyed by the Request itself.
+ *
+ * index.js calls currentUser inline on ~157 route lines, and a browser holding
+ * two ss_session cookies costs a D1 JOIN per cookie per call. One request only
+ * ever runs one of those lines today, so this is not undoing a stampede — but
+ * it does mean the request health log can name the person who made a request
+ * WITHOUT paying for a second lookup on every single request, which is the
+ * difference between instrumentation that is free and instrumentation that
+ * doubles the database traffic it is there to measure.
+ *
+ * A WeakMap keyed on the Request, not a module-level variable: one isolate
+ * serves many requests at once, and a shared `let` would hand one visitor's
+ * identity to another. The key dies with the request, so nothing accumulates. */
+const resolved = new WeakMap();
+
+/** What currentUser already worked out for this request, or null. Costs nothing
+ *  and never queries — callers that need a lookup should call currentUser. */
+export function peekUser(req) {
+  return resolved.get(req) || null;
+}
+
 export async function currentUser(req, env) {
+  if (resolved.has(req)) return resolved.get(req);
+  const found = await lookUp(req, env);
+  resolved.set(req, found);
+  return found;
+}
+
+async function lookUp(req, env) {
   // A browser can hold SEVERAL ss_session cookies — the pre-umbrella host-only
   // one next to today's Domain= cookie — and it sends the OLDEST first. Never
   // trust just the first match: a dead old cookie would shadow a live session
