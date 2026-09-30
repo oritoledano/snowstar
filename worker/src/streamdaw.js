@@ -586,7 +586,9 @@ export async function streamdawAdmin(env, user) {
 export async function streamdawRelease(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const b = await req.json().catch(() => ({}));
-  const asset = String(b.asset || 'streamdaw-mac').slice(0, 60);
+  // MUST default to the same ASSET the download route looks up, or a release
+  // registered without an explicit asset is invisible to every buyer.
+  const asset = String(b.asset || ASSET).slice(0, 60);
 
   if (b.promote) {
     const key = String(b.promote).slice(0, 300);
