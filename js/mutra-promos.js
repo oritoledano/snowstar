@@ -117,6 +117,14 @@
      a lightbox, and nothing else competing with it. Built once, reused. */
   let lb = null;
   function openFilm(p) {
+    /* One thing makes noise at a time. The film autoplays with sound, and the
+       catalogue's player sits at z-index 70 under a lightbox at 200 — so the
+       visitor cannot reach the transport to stop the music themselves even
+       when they can hear it playing under the commercial. It has to stop
+       itself. Same helper the artist lightbox and the artist page use.
+       Pause, not mute: a muted track goes on advancing, so closing the film
+       would hand back a song a minute further on than where it was left. */
+    if (window.mutraPauseMainPlayer) window.mutraPauseMainPlayer();
     if (!lb) {
       lb = document.createElement('div');
       lb.className = 'promo-lb';
@@ -128,6 +136,19 @@
       lb.querySelector('.promo-lb-x').addEventListener('click', close);
       lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
       addEventListener('keydown', (e) => { if (e.key === 'Escape' && !lb.hidden) close(); });
+      /* …and the other way round. Nothing on screen can start a track while the
+         film is up, but the player answers media keys and other scripts call
+         mutraPlayer.play() — and two soundtracks at once is worth ruling out
+         rather than assuming unreachable. Wired once, with the lightbox that
+         outlives every film. The pause above reports playing:false, so this
+         cannot answer its own call and stall the film on the way in. */
+      if (window.mutraPlayer && mutraPlayer.onChange) {
+        mutraPlayer.onChange((slug, playing) => {
+          if (!playing || lb.hidden) return;
+          const v = lb.querySelector('video');
+          if (v && !v.paused) v.pause();
+        });
+      }
     }
     lb.querySelector('.promo-lb-body').innerHTML =
       `<video src="${p.mp4}" controls autoplay playsinline poster="${p.img}"></video>`;
