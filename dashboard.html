@@ -28,6 +28,15 @@
   .db-kpi b{font-family:var(--font-display);font-size:1.7rem;line-height:1;
     font-variant-numeric:tabular-nums;color:var(--text)}
   .db-kpi span{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  /* ── System > Health ──────────────────────────────────────────────────────
+     The window picker, and one bar per hour. A sparkline rather than a chart
+     because it answers one question — was it level — and a charted axis would
+     be furniture around a yes. */
+  .he-win{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+  .he-spark{display:flex;align-items:flex-end;gap:2px;height:38px;margin:10px 0 2px;
+    padding:2px 0;border-bottom:1px solid var(--line)}
+  .he-spark i{flex:1 1 0;min-width:2px;background:var(--grad);border-radius:2px 2px 0 0;opacity:.85}
+  .he-spark i:hover{opacity:1}
   /* ── the shell: a rail, the pages beside it, the page's tabs above ───────── */
 .db-shell{display:grid;grid-template-columns:186px minmax(0,1fr);gap:26px;align-items:start}
 .db-rail{position:sticky;top:78px;display:flex;flex-direction:column;gap:2px}
@@ -684,7 +693,7 @@
 <!-- the analyser, so an already-uploaded submission can be measured from here -->
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/dashboard.js?v=60"></script>
+<script src="js/dashboard.js?v=61"></script>
 
 <!-- full-screen menu, same burger and behaviour as Mutra -->
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">

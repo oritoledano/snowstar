@@ -59,6 +59,7 @@
       { key: 'jobs',      label: 'Jobs' },
     ] },
     { key: 'system', label: 'System', pages: [
+      { key: 'health',    label: 'Health',    tabs: ['routes', 'people', 'errors'] },
       { key: 'alerts',    label: 'Alerts' },
       { key: 'pipeline',  label: 'Pipeline' },
     ] },
@@ -250,6 +251,9 @@
     'streamdaw/sdaw/codes':        () => paintStreamdaw('codes'),
     'streamdaw/sdaw/releases':     () => paintStreamdaw('releases'),
     'snowstar/jobs':               () => paintJobs(),
+    'system/health/routes':        () => paintHealth('routes'),
+    'system/health/people':        () => paintHealth('people'),
+    'system/health/errors':        () => paintHealth('errors'),
     'system/alerts':               () => paintAlerts(),
     'system/pipeline':             () => paintPipeline(),
   };
@@ -2811,6 +2815,117 @@
      see from here what had gone out or to stop it without a redeploy. The log
      records suppressed alerts too, so muting is reversible and you can read
      what you would have received while it was off. */
+  /* How far back Health looks. Module-level rather than in the hash: the window
+     is a lens on one page, not a place you would bookmark or send to somebody. */
+  let healthHours = 24;
+
+  /** System → Health. The server measuring itself, per endpoint and per person.
+   *
+   *  Before this, a 500 went to console.error inside an isolate that was gone a
+   *  second later — so the honest answer to "has anything been failing?" was
+   *  that nobody could know. Everything on this page is new signal, which is
+   *  also why it starts empty: it only knows what has happened since it shipped.
+   */
+  async function paintHealth(view) {
+    const d = await get('/health?h=' + healthHours);
+    const dt = (t) => when(t, { time: true });
+
+    if (d.error === 'no_log') {
+      return paint(`<div class="db-panel"><h2>Health</h2>
+        <p class="db-empty" style="padding-top:0">The request log table is not there yet.
+          Apply <code>worker/schema-health.sql</code> to <code>snowstar-members</code> and this
+          page fills itself from the next request onward.</p>
+        <pre style="white-space:pre-wrap">${esc(d.note || '')}</pre></div>`);
+    }
+
+    const t = d.totals || {};
+    const ms = (v) => (v == null ? '—' : v + 'ms');
+    /* p95 earns its place next to the mean: one request in twenty taking four
+       seconds barely moves an average that thousands of 20ms reads hold down,
+       and it is the one in twenty that people notice. */
+    const kpis = `
+      <div class="db-kpis">
+        <div class="db-kpi"><b>${(t.n || 0).toLocaleString()}</b><span>requests</span></div>
+        <div class="db-kpi"><b>${t.errs || 0}</b><span>failed (5xx)</span></div>
+        <div class="db-kpi"><b>${ms(t.p50_ms)}</b><span>typical</span></div>
+        <div class="db-kpi"><b>${ms(t.p95_ms)}</b><span>slowest 1 in 20</span></div>
+        <div class="db-kpi"><b>${t.people || 0}</b><span>signed-in people</span></div>
+      </div>`;
+
+    const WINDOWS = [[24, '24 hours'], [72, '3 days'], [168, '7 days'], [336, '14 days']];
+    const windows = `<div class="he-win">${WINDOWS.map(([h, label]) =>
+      `<button class="chip${healthHours === h ? ' active' : ''}" data-h="${h}">${label}</button>`).join('')}
+      <span class="rv-hint" style="margin-left:auto">Kept ${d.keep_days || 14} days, then dropped.</span></div>`;
+
+    // A sparkline, not a chart: the only question it answers is "was it level".
+    const tl = d.timeline || [];
+    const peak = Math.max(1, ...tl.map((r) => r.n || 0));
+    const spark = tl.length < 2 ? '' : `
+      <div class="he-spark" title="requests per hour">
+        ${tl.map((r) => `<i style="height:${Math.max(2, Math.round((r.n / peak) * 34))}px${
+          r.errs ? ';background:var(--coral)' : ''}" title="${dt(r.hour)} · ${r.n} requests${
+          r.errs ? ', ' + r.errs + ' failed' : ''}"></i>`).join('')}
+      </div>`;
+
+    const head = kpis + windows + spark;
+
+    let body;
+    if (view === 'people') {
+      /* Signed-out traffic is most of it and appears in the totals but not here:
+         this log holds no IP and no fingerprint, so a request nobody signed in
+         for is counted and attributed to nobody. That is deliberate. */
+      body = `<div class="db-panel"><h2>Per person <span class="pill">${(d.people || []).length}</span></h2>
+        <p class="db-empty" style="padding-top:0">Only signed-in requests can be attributed —
+          anonymous traffic is in the totals above and nowhere in this table, because
+          nothing here records an address.</p>
+        ${table(d.people || [], [
+          { label: 'Who', get: (r) => esc(r.name || r.email || ('#' + r.user_id)) },
+          { label: 'Requests', num: true, bar: true, get: (r) => (r.n || 0).toLocaleString() },
+          { label: 'Failed', num: true, get: (r) => (r.errs ? `<span class="pill warn">${r.errs}</span>` : '0') },
+          { label: 'Typical', num: true, get: (r) => ms(r.avg_ms) },
+          { label: 'Worst', num: true, get: (r) => ms(r.max_ms) },
+          { label: 'Last seen', num: true, get: (r) => dt(r.last_ts) },
+        ], { barKey: 'n' })}</div>`;
+    } else if (view === 'errors') {
+      body = `<div class="db-panel"><h2>What broke <span class="pill">${(d.errors || []).length}</span></h2>
+        <p class="db-empty" style="padding-top:0">Every 500 the Worker threw, with the stack that
+          used to go to the console and disappear with the isolate. A 4xx is a request being
+          refused on purpose and is not here — those are counted per endpoint.</p>
+        ${(d.errors || []).length ? (d.errors || []).map((r) => `
+          <details class="rv-mrow">
+            <summary>
+              <b>${esc(r.method)} ${esc(r.route)}</b>
+              <span class="pill warn">${r.status}</span>
+              <span style="color:var(--muted)">${esc(r.email || 'signed out')}</span>
+              <span style="margin-left:auto;color:var(--muted)">${dt(r.ts)}${r.ray ? ' · ' + esc(r.ray) : ''}</span>
+            </summary>
+            <pre style="white-space:pre-wrap">${esc(r.detail || 'no stack recorded')}</pre>
+          </details>`).join('')
+        : '<p class="db-empty">Nothing has failed in this window.</p>'}</div>`;
+    } else {
+      body = `<div class="db-panel"><h2>Per endpoint <span class="pill">${(d.routes || []).length}</span></h2>
+        <p class="db-empty" style="padding-top:0">The forty busiest. Share pages collapse into
+          <code>/t/:slug</code> — a crawler walking all four hundred would otherwise bury
+          everything else. Refused counts 4xx: sign-in walls and validation, not faults.</p>
+        ${table(d.routes || [], [
+          { label: 'Endpoint', get: (r) => `<code>${esc(r.route)}</code>` },
+          { label: 'Method', get: (r) => esc(r.method) },
+          { label: 'Requests', num: true, bar: true, get: (r) => (r.n || 0).toLocaleString() },
+          { label: 'Failed', num: true, get: (r) => (r.errs ? `<span class="pill warn">${r.errs}</span>` : '0') },
+          { label: 'Refused', num: true, get: (r) => r.refused || 0 },
+          { label: 'Typical', num: true, get: (r) => ms(r.avg_ms) },
+          { label: 'Worst', num: true, get: (r) => ms(r.max_ms) },
+        ], { barKey: 'n' })}</div>`;
+    }
+
+    paint(head + body);
+
+    app.querySelectorAll('.he-win .chip[data-h]').forEach((b) => b.addEventListener('click', () => {
+      healthHours = +b.dataset.h;
+      paintHealth(view);
+    }));
+  }
+
   async function paintAlerts() {
     const d = await get('/alerts');
     const rows = d.alerts || [];
