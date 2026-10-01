@@ -2486,9 +2486,14 @@
     } catch {}
   }
 
+  /* Sound was the one facet the catalogue filters on that this panel could not
+     edit. The worker has accepted it the whole time — catalog.js lists
+     characteristics in LIST_FIELDS — so a track's Sound tags could only ever be
+     set by the bulk tagger or by hand, never from the track itself. */
   const EDIT_FACETS = [
     ['genres', 'Genres', () => MUTRA.genres],
     ['moods', 'Moods', () => MUTRA.moods],
+    ['characteristics', 'Sound', () => CHARACTERISTICS],
     ['instruments', 'Instruments', () => INSTRUMENTS],
   ];
   const PITCHES = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
@@ -2508,6 +2513,7 @@
       lang: track.lang || '',
       cover: track.cover,
       genres: [...(track.genres || [])], moods: [...(track.moods || [])],
+      characteristics: [...(track.characteristics || [])],
       instruments: [...(track.instruments || [])],
       hl: [hl[0], hl[1]],
       credits: (track.credits || []).map(c => ({ ...c })),
@@ -2536,16 +2542,16 @@
           <option>English</option><option>Hebrew</option></select></label>
       </div>
       ${EDIT_FACETS.map(([k, label]) => `
-        <div class="te-facet" data-facet="${k}">
-          <div class="te-flabel">${label}</div>
+        <details class="te-facet" data-facet="${k}">
+          <summary class="te-flabel">${label}<span class="te-sum"></span></summary>
           <div class="te-chips"></div>
           <input class="te-add" placeholder="add \u2026" maxlength="60">
-        </div>`).join('')}
+        </details>`).join('')}
       ${['packs', 'characters'].map((k) => `
-        <div class="te-facet te-coll" data-shelf="${k}">
-          <div class="te-flabel">${k === 'packs' ? 'Packs' : 'Characters'}</div>
+        <details class="te-facet te-coll" data-shelf="${k}">
+          <summary class="te-flabel">${k === 'packs' ? 'Packs' : 'Characters'}<span class="te-sum"></span></summary>
           <div class="te-chips"></div>
-        </div>`).join('')}
+        </details>`).join('')}
       <div class="te-hl">
         <div class="te-flabel">Highlight \u2014 where preview starts</div>
         <div class="te-hlrow">
@@ -2751,6 +2757,11 @@
           at < 0 ? draft[k].push(v) : draft[k].splice(at, 1);
           paintChips();
         }));
+        const sum = panel.querySelector(`[data-facet="${k}"] .te-sum`);
+        if (sum) {
+          sum.textContent = draft[k].length ? draft[k].join(', ') : 'none';
+          sum.classList.toggle('te-sum-none', !draft[k].length);
+        }
       });
     }
     paintChips();
@@ -2764,6 +2775,14 @@
       panel.querySelectorAll('.te-coll').forEach((box) => {
         const key = box.dataset.shelf, sh = SHELF[key];
         const chips = box.querySelector('.te-chips');
+        /* The same summary the tag groups carry: folded shut, the row still
+           says which shelves this track is on. */
+        const sum = box.querySelector('.te-sum');
+        if (sum) {
+          const on = sh.list.filter((c) => (c.tracks || []).includes(track.slug)).map((c) => c.name);
+          sum.textContent = on.length ? on.join(', ') : 'none';
+          sum.classList.toggle('te-sum-none', !on.length);
+        }
         if (!sh.list.length) {
           chips.innerHTML = `<span class="te-hint">None yet — make one in the ${
             key === 'packs' ? 'Packs' : 'Characters'} menu.</span>`;

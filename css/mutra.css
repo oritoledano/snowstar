@@ -126,8 +126,24 @@ body.menu-open .mnav-burger span:nth-child(3){transform:translateY(-7px) rotate(
 .mhero-in{text-align:center;display:flex;flex-direction:column;align-items:center}
 .mhero-title{
   font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
-  font-size:clamp(2.3rem,9.2vw,8rem);line-height:.9;letter-spacing:-.012em;
+  font-size:clamp(2.3rem,9.2vw,8rem);line-height:1;letter-spacing:-.012em;
   text-transform:uppercase;margin:0;text-wrap:balance}
+
+/* ── the headline on a phone ─────────────────────────────────────────────────
+   It was stopping at 80% of the screen. Two things held it there: 9.2vw fell
+   BELOW the 2.3rem floor on every phone, so the size stopped responding to the
+   width entirely and sat on its minimum; and the wrap's 20px gutters took 40px
+   off a 390px screen before the type got a say.
+
+   10.2vw with 14px gutters fills about 95% instead, measured on the longest
+   line there is — "CHOSEN BY TOP BRANDS". That line is the whole constraint on
+   how big two lines can be, and the ceiling was found by walking it up until it
+   broke: 10.4vw still holds two lines on the narrowest phone, 10.8vw drops to
+   three. 10.2 leaves a little room for a longer headline than today's. */
+@media (max-width:620px){
+  .mhero .wrap{padding-left:14px;padding-right:14px}
+  .mhero-title{font-size:10.2vw}
+}
 /* Commit Mono by Eigil Nikolajsen, MIT — see assets/fonts/commit-mono-LICENSE.txt.
    Self-hosted, pinned to one weight and subset to Latin: 5.8 KB instead of 85. */
 @font-face{
@@ -641,7 +657,28 @@ body.no-lyr .trk-lyr,body.no-key .trk-key{display:none}
 .te-f input,.te-f select,.te-add{width:100%;background:var(--bg);border:1px solid var(--line);
   border-radius:9px;padding:8px 10px;color:var(--text);font:inherit;font-size:.86rem;outline:0;box-sizing:border-box}
 .te-f input:focus,.te-f select:focus,.te-add:focus{border-color:var(--amber,var(--coral))}
+/* ── the tag groups, folded ──────────────────────────────────────────────────
+   Four vocabularies and two shelves, each rendering EVERY value it knows, is
+   about eighty chips in a panel you may have opened to fix a typo in a title.
+   They fold now, and the summary carries what is actually set — so shut, the
+   panel still tells you where the track stands; nothing is hidden, only folded.
+
+   <details> rather than a JS toggle: it is exactly a disclosure widget, the
+   browser already ships one, and keyboard and screen-reader behaviour come
+   with it rather than being re-implemented here. */
 .te-facet{margin-top:14px}
+details.te-facet>summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;
+  gap:9px;margin-bottom:0;padding:5px 0}
+details.te-facet>summary::-webkit-details-marker{display:none}
+details.te-facet>summary::after{content:'+';margin-left:auto;padding-left:8px;
+  font-size:1rem;line-height:1;color:var(--dim,var(--muted))}
+details.te-facet[open]>summary::after{content:'\2212'}
+details.te-facet[open]>summary{margin-bottom:7px}
+details.te-facet>summary:hover{color:var(--text)}
+/* the chosen values, read as content rather than as another label */
+.te-sum{text-transform:none;letter-spacing:0;font-weight:400;font-size:.76rem;
+  color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.te-sum-none{color:var(--dim,var(--muted));font-style:italic}
 .te-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px}
 .te-chip{background:none;border:1px solid var(--line);border-radius:99px;color:var(--muted);
   font:inherit;font-size:.74rem;padding:4px 11px;cursor:pointer;transition:.15s}
