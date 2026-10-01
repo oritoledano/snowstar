@@ -2545,7 +2545,10 @@
         <details class="te-facet" data-facet="${k}">
           <summary class="te-flabel">${label}<span class="te-sum"></span></summary>
           <div class="te-chips"></div>
-          <input class="te-add" placeholder="add \u2026" maxlength="60">
+          <div class="te-frow">
+            <input class="te-add" placeholder="add \u2026" maxlength="60">
+            <button type="button" class="te-prune" aria-pressed="false">Remove a tag\u2026</button>
+          </div>
         </details>`).join('')}
       ${['packs', 'characters'].map((k) => `
         <details class="te-facet te-coll" data-shelf="${k}">
@@ -2753,6 +2756,10 @@
           `<button type="button" class="te-chip${draft[k].includes(v) ? ' on' : ''}">${v}</button>`).join('');
         box.querySelectorAll('.te-chip').forEach((b, i) => b.addEventListener('click', () => {
           const v = all[i];
+          /* Deleting a tag from the whole catalogue and un-ticking it for this
+             one track are a keystroke apart, so they are not one gesture. The
+             facet has to be put into removing mode first, deliberately. */
+          if (b.closest('.te-facet').classList.contains('pruning')) { pruneTag(k, v); return; }
           const at = draft[k].indexOf(v);
           at < 0 ? draft[k].push(v) : draft[k].splice(at, 1);
           paintChips();
@@ -2816,6 +2823,73 @@
       });
     }
     paintColl();
+
+    /* ── removing a tag from the platform ──────────────────────────────────
+       The vocabularies are not stored anywhere: refreshVocab derives each one
+       from the tracks that carry its values, so there is no list to delete a
+       tag out of. A tag stops existing exactly when the last track stops
+       carrying it — which means "remove this tag" is an edit to every track
+       that has it, and the only honest way to offer it is to say how many
+       before touching any of them. */
+    async function pruneTag(k, v) {
+      const carriers = MUTRA.tracks.filter((t) => (t[k] || []).includes(v));
+      if (!carriers.length) return;
+      const others = carriers.filter((t) => t.slug !== track.slug).length;
+      const label = (EDIT_FACETS.find(([key]) => key === k) || [, k])[1];
+      const ok = confirm(others
+        ? `Remove \u201c${v}\u201d from ${label} everywhere?\n\n`
+          + `${others} other track${others === 1 ? '' : 's'} ${others === 1 ? 'carries' : 'carry'} it and `
+          + `will lose it too. Once nothing carries it, it is gone from the catalogue filters as well.`
+        : `Remove \u201c${v}\u201d from ${label}?\n\n`
+          + `No other track uses it, so it disappears from the catalogue filters entirely.`);
+      if (!ok) return;
+
+      // The endpoint takes 100 at a time, and a tag can easily be on more.
+      const items = carriers.map((t) => ({ slug: t.slug, [k]: (t[k] || []).filter((x) => x !== v) }));
+      let saved = 0;
+      for (let i = 0; i < items.length; i += 100) {
+        const chunk = items.slice(i, i + 100);
+        const r = await fetch('/api/catalog/tag', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ items: chunk }),
+        }).then((x) => x.json()).catch(() => null);
+        if (!r || r.error) break;
+        saved += (r.done || []).length;
+      }
+      if (saved < carriers.length) {
+        /* Say what actually happened rather than claiming the whole job. A
+           half-finished prune leaves the tag on the tracks that did not save,
+           and a reload is what shows you which. */
+        toast(saved
+          ? `Removed from ${saved} of ${carriers.length} \u2014 reload to see what is left`
+          : `Could not remove \u201c${v}\u201d`);
+        if (!saved) return;
+      } else {
+        toast(`\u201c${v}\u201d removed from ${saved} track${saved === 1 ? '' : 's'}`);
+      }
+
+      carriers.forEach((t) => { t[k] = (t[k] || []).filter((x) => x !== v); });
+      const at = draft[k].indexOf(v);
+      if (at >= 0) draft[k].splice(at, 1);
+      refreshVocab();
+      // A filter still pinned to a tag nothing carries would empty the catalogue.
+      if (state[k]) { state[k].inc.delete(v); state[k].exc.delete(v); }
+      /* The rows carry tag buttons too, but a render() here would rebuild the
+         list and tear out the panel being worked in — the same trap paintColl
+         documents. Drop the dead chips where they stand instead. */
+      tracksEl.querySelectorAll(`.tag[data-facet="${k}"]`).forEach((b) => {
+        if (b.dataset.val === v) b.remove();
+      });
+      paintChips(); drawPills(); drawDrop();
+    }
+
+    panel.querySelectorAll('.te-prune').forEach((btn) => btn.addEventListener('click', () => {
+      const facet = btn.closest('.te-facet');
+      const on = facet.classList.toggle('pruning');
+      btn.setAttribute('aria-pressed', String(on));
+      btn.textContent = on ? 'Done removing' : 'Remove a tag\u2026';
+    }));
 
     panel.querySelectorAll('.te-add').forEach(inp => inp.addEventListener('keydown', e => {
       if (e.key !== 'Enter') return;

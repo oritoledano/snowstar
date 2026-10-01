@@ -685,6 +685,23 @@ details.te-facet>summary:hover{color:var(--text)}
 .te-chip:hover{color:var(--text);border-color:var(--line-2,var(--line))}
 .te-chip.on{background:var(--amber,var(--coral));border-color:transparent;color:var(--on-accent,#0d0a12)}
 .te-add{max-width:190px}
+/* ── removing a tag from the platform ────────────────────────────────────────
+   A mode rather than an × on every chip: eighty chips would mean eighty extra
+   tab stops, and a destructive action one pixel from a harmless one is a trap.
+   Switched on, the chips stop looking like toggles and start looking like
+   consequences — then one click, one count, one confirm. */
+.te-frow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.te-prune{background:none;border:1px solid var(--line);border-radius:99px;cursor:pointer;
+  color:var(--dim,var(--muted));font:inherit;font-size:.72rem;padding:5px 11px;transition:.15s}
+.te-prune:hover{color:var(--text);border-color:var(--line-2,var(--line))}
+.te-prune[aria-pressed="true"]{color:var(--coral);border-color:var(--coral)}
+.te-facet.pruning .te-chips{outline:1px dashed color-mix(in srgb,var(--coral) 55%,transparent);
+  outline-offset:7px;border-radius:7px}
+.te-facet.pruning .te-chip{border-color:color-mix(in srgb,var(--coral) 45%,transparent);
+  color:var(--coral);background:none}
+.te-facet.pruning .te-chip::after{content:" \00d7";font-weight:700}
+.te-facet.pruning .te-chip:hover{background:var(--coral);border-color:transparent;
+  color:var(--on-accent,#0d0a12)}
 .te-hl{margin-top:16px}
 .te-hlrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .te-hlrow input[type=range]{flex:1;min-width:120px;accent-color:var(--amber,var(--coral))}
