@@ -138,13 +138,30 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   background:linear-gradient(180deg,transparent 60%,var(--bg) 99%)}
 @media (prefers-reduced-motion:reduce){.hero-glow{transition:none}}
 .hero-inner{position:relative;z-index:3;text-align:center;padding:120px 24px 80px;max-width:960px}
+/* One line, always. The line wants 408px at the designed size and the size was
+   a fixed .82rem that never shrank, so on any screen narrower than about 456px
+   — which is every phone — "Audio eXperience agency · Tel Aviv" broke in two.
+   The tracking is what costs: .34em at 13px is 147px of that 408, over a third
+   of the line spent on the gaps between letters.
+
+   So both scale, and the tracking scales faster than the type. At 720px and up
+   nothing changes at all — .62vw has reached its 4.46px ceiling, which is
+   exactly the .34em it always was — and below that the line tightens just
+   enough to hold together down to a 300px phone. */
 .hero-kicker{
-  font-size:.82rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ice);
+  font-size:clamp(.55rem,3vw,.82rem);
+  letter-spacing:clamp(1.4px,.62vw,4.46px);
+  white-space:nowrap;
+  text-transform:uppercase;color:var(--ice);
   margin-bottom:22px;font-weight:600;
 }
 /* Anton, as on Mutra — single weight, so never ask for bold */
+/* line-height 1 rather than .9: the two lines were set so tight that "WE MAKE
+   BRANDS" and "SOUND UNFORGETTABLE" read as one block of letters rather than
+   two statements. A tenth of an em is ~10px at the desktop size — enough to
+   separate them, not enough to loosen the stack. */
 .hero-title{font-family:"Anton",var(--font-display),sans-serif;font-weight:400;
-  font-size:clamp(2.1rem,9vw,6rem);line-height:.9;letter-spacing:-.01em;text-transform:uppercase;
+  font-size:clamp(2.1rem,9vw,6rem);line-height:1;letter-spacing:-.01em;text-transform:uppercase;
   margin-bottom:24px}
 .hero-title .nowrap{white-space:nowrap}
 /* Commit Mono by Eigil Nikolajsen, MIT — see assets/fonts/commit-mono-LICENSE.txt.
