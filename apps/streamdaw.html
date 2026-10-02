@@ -287,6 +287,7 @@
     <a class="link" href="#pricing">Pricing</a>
     <a class="link" href="#faq">FAQ</a>
     <a class="link" href="../index.html">← Snowstar</a>
+    <span data-currency-switcher aria-label="Currency"></span>
     <span class="nav-acct" data-account-mount></span>
     <button class="btn sm" data-buy="lifetime">Get it</button>
   </nav>
@@ -300,14 +301,14 @@
       <h1 class="title">Stream<br>your studio.<br><span class="hl">Live &amp; lossless.</span></h1>
       <p class="lede">Put StreamDAW on your master bus and send bit-perfect audio from Logic, Ableton, Cubase or Studio One to anyone with a link. No upload, no export — they hear the session <span class="em">as you play it.</span></p>
       <div class="hero-ctas">
-        <button class="btn" data-buy="lifetime">Get StreamDAW — ₪249</button>
+        <button class="btn" data-buy="lifetime">Get StreamDAW — <span data-ils="249">₪249</span></button>
         <a class="btn ghost" href="#features">How it works</a>
       </div>
       <p class="hero-note">One payment, <b>yours forever</b>. Mac (Apple Silicon &amp; Intel), Windows soon. No subscription, ever.</p>
     </div>
 
     <div class="hero-art">
-      <div class="price-sticker"><span class="p">₪249</span><span class="s">One time</span></div>
+      <div class="price-sticker"><span class="p" data-ils="249">₪249</span><span class="s">One time</span></div>
       <div class="art-card">
         <div class="halftone-bg"></div>
         <div class="eq" id="eq"></div>
@@ -368,7 +369,7 @@
       <div class="ticket">
         <div class="stamp" id="stamp">One payment</div>
         <div class="pname">StreamDAW · Lifetime</div>
-        <div class="big" id="bigPrice">₪249<small> once (≈ $69)</small></div>
+        <div class="big" id="bigPrice"><span data-ils="249">₪249</span><small> once</small></div>
         <div class="sub" id="priceSub">Every future update included. No renewals.</div>
         <ul>
           <li>Unlimited lossless streams &amp; listeners</li>
@@ -388,7 +389,7 @@
         <div class="compare-row"><span>Audiomovers ListenTo — Basic</span><b>$99 / yr</b></div>
         <div class="compare-row"><span>Audiomovers ListenTo — Pro</span><b>$199 / yr</b></div>
         <div class="compare-row"><span>Waves &amp; others</span><b>Subscription</b></div>
-        <div class="compare-row win"><span>StreamDAW</span><b>₪249 once, then ₪0</b></div>
+        <div class="compare-row win"><span>StreamDAW</span><b><span data-ils="249">₪249</span> once, then <span data-ils="0">₪0</span></b></div>
         <small>It pays for itself before ListenTo's first year is up — and then it's free. Prices as observed; ILS via your Snowstar account.</small>
       </div>
     </div>
@@ -479,7 +480,7 @@
       </details>
       <details>
         <summary>Is it really one payment?</summary>
-        <p>₪249 once. No renewal, no subscription, every future update included. Compare that with
+        <p><span data-ils="249">₪249</span> once. No renewal, no subscription, every future update included. Compare that with
         the yearly alternatives on the pricing table above.</p>
       </details>
       <details>
@@ -502,6 +503,7 @@
 </main>
 
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
+<script src="../js/money.js?v=1"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=24"></script>
 <script src="../js/site-edit.js?v=5"></script>
@@ -535,7 +537,8 @@
   const bigPrice=document.getElementById('bigPrice'), priceSub=document.getElementById('priceSub'),
         stamp=document.getElementById('stamp'), buyBtn=document.getElementById('buyBtn');
   function showMsg(t,ok){ cMsg.textContent=t; cMsg.className='coupon-msg '+(ok?'ok':'bad'); cMsg.hidden=false; }
-  function ils(a){ return '₪'+(a/100).toFixed(0); }
+  // Money is loaded on this page; the fallback keeps the price readable if it is not.
+  function ils(a){ return window.Money ? Money.fmt(a/100) : '₪'+(a/100).toFixed(0); }
   async function applyCoupon(){
     const code=(cIn.value||'').trim();
     if(!code){ coupon=null; resetPrice(); cMsg.hidden=true; return; }
@@ -559,7 +562,7 @@
     }catch(e){ showMsg('Could not check that code. Try again.',false); }
   }
   function resetPrice(){
-    bigPrice.innerHTML='₪249<small> once (≈ $69)</small>'; stamp.textContent='One payment';
+    bigPrice.innerHTML='<span data-ils="249">'+ils(24900)+'</span><small> once</small>'; stamp.textContent='One payment';
     priceSub.textContent='Every future update included. No renewals.';
     buyBtn.textContent='Get StreamDAW →';
   }

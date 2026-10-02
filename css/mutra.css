@@ -2073,3 +2073,16 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
   background:color-mix(in srgb,var(--amber,#ffc24b) 12%,transparent);
   border:1px solid color-mix(in srgb,var(--amber,#ffc24b) 30%,transparent)}
 .lic-offer b{color:var(--text,#eef3fb)}
+
+/* ── currency switcher ───────────────────────────────────────────────────────
+   Prices are shown in the visitor’s chosen currency; the shekel is still what the
+   card is charged, and every screen that commits somebody to paying says so. */
+.cur-pick{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line);
+  border-radius:99px;padding:2px;flex:none}
+.cur-pick button{background:none;border:0;cursor:pointer;font:inherit;font-size:.68rem;
+  letter-spacing:.04em;color:var(--muted);padding:3px 7px;border-radius:99px;
+  display:inline-flex;align-items:center;gap:3px;transition:.15s;line-height:1}
+.cur-pick button:hover{color:var(--text)}
+.cur-pick button[aria-current]{background:var(--grad,var(--accent));color:var(--on-accent,#0d0a12)}
+.cur-pick button span{display:none}
+@media(min-width:900px){.cur-pick button span{display:inline}}

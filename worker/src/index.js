@@ -73,6 +73,7 @@ import { publicUser } from './user.js';
 import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
 import { currentUser, readCookies, peekUser } from './session.js';
 import { recordRequest, healthReport, pruneReqLog } from './health.js';
+import { fxEndpoint, refreshRates } from './fx.js';
 
 const SESSION_DAYS = 60;
 const MAX_ATTEMPTS = 8;          // per window
@@ -197,6 +198,8 @@ async function handle(req, env, ctx) {
 
   // ── analytics beacon (anonymous, no auth) ──
   if (path === '/track' && method === 'POST') return handleTrack(req, env, ctx);
+  // Exchange rates. Public and cacheable: it decorates prices, it does not set them.
+  if (path === '/fx' && method === 'GET') return fxEndpoint(req, env, ctx);
 
   // ── owner-only stats ──
   if (path === '/stats' && method === 'GET') return handleStats(req, env, await currentUser(req, env));
@@ -730,6 +733,8 @@ export default {
        Past that it is rows nobody reads, and this is the only cadence there is
        to drop them on. */
     ctx.waitUntil(pruneReqLog(env).catch(() => 0));
+    /* Today's shekel rates, so a dollar price is today's dollar price. */
+    ctx.waitUntil(refreshRates(env).catch(() => null));
   },
 
   async fetch(req, env, ctx) {

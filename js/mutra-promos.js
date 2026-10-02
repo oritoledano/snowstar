@@ -227,7 +227,8 @@
     try {
       const t = window.mutraCatalog && mutraCatalog.all().find((x) => x.slug === slug);
       const f = t && window.mutraLicense && mutraLicense.priceFor(t, 'individual-own', 'standard', '6m');
-      if (f && !f.quote && f.amount > 0) return `Starting at ${f.amount}₪ for 6 months`;
+      if (f && !f.quote && f.amount > 0) return `Starting at ${
+        window.Money ? Money.fmt(f.amount) : f.amount + '\u20aa'} for 6 months`;
     } catch {}
     return 'Licensed per project — get a quote';
   }

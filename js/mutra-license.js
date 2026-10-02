@@ -35,7 +35,23 @@
    same table before a shekel is charged. Nothing sent from this file is
    trusted as an amount. */
 (function () {
+  /* CUR is still the shekel, because the shekel is still what is CHARGED —
+     hyp.js sends Coin:'1' and refuses a reply in anything else. What follows
+     changes what is READ.
+
+     price()  — informational: whatever currency the visitor picked.
+     charged() — the figure their card will actually take, always in shekels.
+
+     Anything that commits somebody to paying shows both, and the shekel one is
+     the one labelled as the charge. Showing $214 on a button and ₪659.40 on
+     the bank's screen is how a sale becomes a chargeback. */
   const CUR = '₪';
+  const M = () => window.Money;
+  const price = (shekels) => (M() ? M().fmt(shekels)
+    : CUR + Math.round(Number(shekels) || 0).toLocaleString());
+  const charged = (shekels) => (M() ? M().ils(shekels, { decimals: 2 })
+    : CUR + (Number(shekels) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 }));
+  const showingIls = () => !M() || M().isSettlement();
 
   /* Bands and multipliers. MUST stay in step with worker/src/pricing.js — that
      file is the authority, this one is the shop window. */
@@ -418,7 +434,7 @@
       </label>
 
       <div class="lic-priceline">
-        <span class="lic-price">${p.quote ? 'On request' : CUR + p.amount.toLocaleString()}</span>
+        <span class="lic-price">${p.quote ? 'On request' : price(p.amount)}</span>
         <span class="lic-per">${p.quote ? '' : 'one track, one project · ex VAT'}</span>
       </div>
 
@@ -429,7 +445,7 @@
         <li>Web, social, podcast, internal and industrial video, worldwide.</li>
         <li>${term.id === 'perp'
           ? 'Organic only — no paid promotion behind this project.'
-          : `Paid media up to ${CUR}25,000 behind this project.`}</li>
+          : `Paid media up to ${price(25000)} behind this project.`}</li>
         <li>${term.id === 'perp'
           ? 'Yours with no end date, and nothing to renew.'
           : 'Renew before it ends to keep using it — renewals cost less.'}</li>
@@ -486,7 +502,7 @@
         <input class="lic-tax" type="text" maxlength="40" placeholder="For the invoice"></label>
       <div class="lic-priceline">
         <span class="lic-was" hidden></span>
-        <span class="lic-price">${CUR}${p.amount.toLocaleString()}</span>
+        <span class="lic-price">${price(p.amount)}</span>
         <span class="lic-per">+ VAT 18%</span>
       </div>
       <!-- The number the card page will actually ask for. Showing ₪179 on the
@@ -494,7 +510,9 @@
            chargeback; the gross was computed only on the fallback receipt. -->
       <div class="lic-gross">
         <span>Total charged today</span>
-        <b class="lic-grossnum">${CUR}${Math.round(p.amount * 1.18).toLocaleString()}</b>
+        <b class="lic-grossnum">${price(Math.round(p.amount * 1.18))}</b>
+        <i class="lic-grossils"${showingIls() ? ' hidden' : ''}>your card is charged ${
+          charged(Math.round(p.amount * 1.18))}</i>
       </div>
       <p class="lic-err" hidden></p>
       <div class="lic-acts">
@@ -555,18 +573,25 @@
       const btn2 = body().querySelector('.lic-submit');
       const alt = body().querySelector('.lic-alt');
       if (!el2) return;
-      el2.textContent = amount == null ? 'On request' : CUR + amount.toLocaleString();
+      el2.textContent = amount == null ? 'On request' : price(amount);
       /* The gross lives here too, or a coupon silently leaves it showing the
          pre-discount total — worse than not showing it at all. */
       const gross = body().querySelector('.lic-gross');
       const grossNum = body().querySelector('.lic-grossnum');
+      const grossIls = body().querySelector('.lic-grossils');
       if (gross && grossNum) {
         gross.hidden = amount == null || amount === 0;
-        if (amount != null) grossNum.textContent = CUR + Math.round(amount * 1.18).toLocaleString();
+        if (amount != null) grossNum.textContent = price(Math.round(amount * 1.18));
+        if (grossIls) {
+          // Only worth saying when it differs from what is on the line above it.
+          grossIls.hidden = showingIls() || amount == null;
+          if (amount != null) grossIls.textContent = 'your card is charged '
+            + charged(Math.round(amount * 1.18));
+        }
       }
       if (was) {
         was.hidden = !(wasAmount != null && wasAmount !== amount);
-        was.textContent = wasAmount != null ? CUR + wasAmount.toLocaleString() : '';
+        was.textContent = wasAmount != null ? price(wasAmount) : '';
       }
       /* A card charge of zero is refused by the processor, so a code that takes
          the price to nothing has to complete without one rather than sending
@@ -653,7 +678,7 @@
     const t = current;
     const why = {
       co_owned: 'This track is co-owned. Commercial use goes through the other rights holder, so we price it case by case. Same catalogue, one extra email.',
-      extended_coverage: 'Broadcast, cinema and radio we price by hand. From ' + CUR + '1,600 per track. Tell us the project and you’ll have a price the same day.',
+      extended_coverage: 'Broadcast, cinema and radio we price by hand. From ' + price(1600) + ' per track. Tell us the project and you’ll have a price the same day.',
       large_client: 'For an end client over 250 people we price per campaign. Tell us the project and you’ll have a price the same day.',
       exclusive: 'Exclusive use — nobody else licences this track while you hold it. Priced per case.',
       big_account: 'Over 500k followers we price per campaign. Tell us where it runs and you’ll have a price the same day.',
@@ -800,9 +825,17 @@
 
   function handoffScreen(ref, url, grossAgorot) {
     el.querySelector('.lic-crumbs').hidden = true;
-    const gross = grossAgorot != null
-      ? CUR + (grossAgorot / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })
+    /* At the door of the card page the shekel figure leads, whatever currency
+       the catalogue has been read in: it is the number on the bank's screen,
+       the number on the statement and the number on the invoice. The chosen
+       currency follows in brackets as the gloss it actually is. */
+    const grossIls = grossAgorot != null
+      ? (M() ? M().ilsFromAgorot(grossAgorot, { decimals: 2 })
+             : CUR + (grossAgorot / 100).toLocaleString(undefined, { minimumFractionDigits: 2 }))
       : null;
+    const grossAlt = (grossAgorot != null && !showingIls())
+      ? ' (about ' + price(grossAgorot / 100) + ')' : '';
+    const gross = grossIls ? grossIls + grossAlt : null;
     body().innerHTML = `
       <div class="lic-kicker">One more step</div>
       <h3 class="lic-q">${gross ? `You are about to pay ${gross}` : 'Ready to pay'}</h3>
@@ -834,6 +867,10 @@
     });
   }
 
+  /* Deliberately shekels throughout, whatever currency the catalogue is being
+     read in. This is an Israeli tax breakdown and, on the transfer lane, an
+     instruction to send a specific sum through Bit — an Israeli app that moves
+     shekels. A converted figure here would be a number nobody can pay. */
   function showReceipt(d, quoteOnly) {
     const ex = d.amount_ex_vat != null ? d.amount_ex_vat / 100 : null;
     const vat = ex != null ? Math.round(ex * 0.18) : null;

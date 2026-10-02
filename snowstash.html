@@ -350,6 +350,7 @@
 <header class="nav" id="nav">
   <button class="st-burger" id="stBurger" aria-label="Menu" aria-expanded="false" aria-controls="stMenu"><span></span><span></span><span></span></button>
   <div class="nav-title">SNOW<b>STASH</b></div>
+  <span data-currency-switcher aria-label="Currency"></span>
   <span class="nav-acct" data-account-mount></span>
 </header>
 
@@ -427,7 +428,7 @@
         <p>Every claimable recording with its ISRC, every gap on your own tracks, and the
         step-by-step claiming guide for the MLC, SoundExchange and your society.</p>
         <div class="pay">
-          <button class="cta" id="payBtn" type="button">Unlock — <span id="payPrice">₪69</span></button>
+          <button class="cta" id="payBtn" type="button">Unlock — <span id="payPrice" data-ils="69">₪69</span></button>
           <input id="couponIn" placeholder="Coupon" autocomplete="off">
           <button class="cta ghost" id="couponBtn" type="button">Apply</button>
         </div>
@@ -610,7 +611,7 @@
         <details>
           <summary>What does it cost?</summary>
           <div class="a">The scan is free and always will be — you see your score, how many findings there are,
-          and the first few in each category. The full report is a one-off <b>₪69</b>: every finding with its
+          and the first few in each category. The full report is a one-off <b data-ils="69">₪69</b>: every finding with its
           ISRC, and the claiming guide. No subscription, and we never take a percentage of anything you recover.</div>
         </details>
 
@@ -692,6 +693,7 @@
 </footer>
 
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
+<script src="js/money.js?v=1"></script>
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=26"></script>
 <script src="js/site-edit.js?v=5"></script>
@@ -844,10 +846,13 @@
       if (!d.ok) { coupon = null; msg.className = 'msg bad'; msg.textContent = d.reason || 'That code cannot be used.'; return; }
       coupon = d.code;
       msg.className = 'msg good';
+      // agorot in, the visitor's currency out — falling back to shekels if
+      // money.js has not loaded for any reason.
+      const money = (ag) => (window.Money ? Money.fmtAgorot(ag) : '\u20aa' + (ag / 100).toFixed(0));
       msg.textContent = d.free ? d.label + ' — this report is on the house. Press Unlock.'
-                               : d.label + ' — new price ₪' + (d.amount / 100).toFixed(0) + '. Press Unlock.';
+                               : d.label + ' — new price ' + money(d.amount) + '. Press Unlock.';
       if (d.free) $('payBtn').innerHTML = 'Unlock — free';
-      else $('payBtn').innerHTML = 'Unlock — ₪' + (d.amount / 100).toFixed(0);
+      else $('payBtn').innerHTML = 'Unlock — ' + money(d.amount);
     });
   });
 
