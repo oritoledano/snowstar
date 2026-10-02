@@ -25,10 +25,16 @@
      Keep in step with FALLBACK in worker/src/fx.js. */
   const FALLBACK = { ILS: 1, USD: 0.3252, EUR: 0.2884 };
 
+  /* One locale for all three, and it is the page's own. Formatting by each
+     currency's home locale looked right in isolation and wrong in a row: he-IL
+     returns the shekel wrapped in RTL marks, which bleed into the English
+     sentence around them, and de-DE puts the euro sign after the number, so
+     "$81" and "72 €" sat in the same switcher disagreeing about where a symbol
+     goes. en-US renders all three symbol-first and unadorned. */
   const META = {
-    ILS: { symbol: '₪', locale: 'he-IL', name: 'Shekel' },
+    ILS: { symbol: '₪', locale: 'en-US', name: 'Shekel' },
     USD: { symbol: '$', locale: 'en-US', name: 'US dollar' },
-    EUR: { symbol: '€', locale: 'de-DE', name: 'Euro' },
+    EUR: { symbol: '€', locale: 'en-US', name: 'Euro' },
   };
 
   let rates = { ...FALLBACK };

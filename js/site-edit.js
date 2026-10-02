@@ -23,6 +23,12 @@
       const id = a.getAttribute('href').slice(1);
       a.style.display = hiddenIds.includes(id) ? 'none' : '';
     });
+    renumberMenus();
+  }
+
+  /** 01/02/03 closes ranks so the menu never counts something it is not
+   *  showing. Called by both the section sync and the property sync. */
+  function renumberMenus() {
     document.querySelectorAll('nav').forEach((nav) => {
       let n = 0;
       nav.querySelectorAll('a').forEach((a) => {
@@ -34,6 +40,56 @@
     });
   }
 
+  /* ── properties: a vertical, hidden across the whole site ──────────────────
+     Sections are per page and anchor-linked. A PROPERTY is a whole vertical —
+     its own page, its teaser on the home page, and a link in every menu on
+     every other page. The Sections panel could hide the teaser, but only on the
+     page you happened to be standing on, and it cannot touch a link to another
+     page at all: syncMenus matches a[href^="#"] and a product link is
+     "snowstash.html". So taking Snowstash down meant five separate saves and
+     still left every menu pointing at it.
+
+     One switch, stored once under a site-wide key, applied on every page by the
+     hydration every visitor already runs. Section and menu are separate because
+     they answer different questions: "stop advertising this" and "stop showing
+     this", and the owner may well want the first without the second. */
+  const PROPERTIES = [
+    { id: 'mutra',     label: 'Mutra',       page: 'mutra.html' },
+    { id: 'snowstash', label: 'Snowstash',   page: 'snowstash.html' },
+    { id: 'streamdaw', label: 'StreamDAW',   page: 'streamdaw.html' },
+    { id: 'artists',   label: 'For artists', page: 'artists.html' },
+  ];
+  const PROP_KEY = 'config.properties';
+
+  /** Does this href point at that property's page? Matches 'snowstash.html',
+   *  '/snowstash.html', '../snowstash.html' and 'apps/streamdaw.html' alike,
+   *  and tolerates a query or a hash on the end. */
+  function pointsAt(href, page) {
+    const bare = String(href || '').split('?')[0].split('#')[0];
+    return bare.endsWith(page);
+  }
+
+  function applyProperties(state) {
+    if (!state) return;
+    PROPERTIES.forEach((p) => {
+      const s = state[p.id] || {};
+      if (s.section) {
+        const el = document.getElementById(p.id);
+        if (el) el.style.display = 'none';
+      }
+      if (s.menu) {
+        /* Menus only, not every link in the page body. "Hide it from the menu"
+           is about how the site advertises itself; a link inside an article is
+           a sentence, and removing words from sentences is the Remove row tool
+           doing a different job. */
+        document.querySelectorAll('nav a[href], #mmenu a[href], .mmenu a[href]').forEach((a) => {
+          if (pointsAt(a.getAttribute('href'), p.page)) a.style.display = 'none';
+        });
+      }
+    });
+    renumberMenus();
+  }
+
   // ── 1. hydration — runs for everyone, fails silent ──
   const hydrate = fetch('/api/texts')
     .then((r) => (r.ok ? r.json() : { texts: {} }))
@@ -43,6 +99,10 @@
           try { JSON.parse(html).forEach((sel) => {
             document.querySelectorAll(sel).forEach((el) => el.remove());
           }); } catch {}
+          continue;
+        }
+        if (key === PROP_KEY) {
+          try { applyProperties(JSON.parse(html)); } catch {}
           continue;
         }
         if (key === 'sections.hidden.' + PAGE) {
@@ -495,16 +555,34 @@
     let hidden = [];
     try { hidden = JSON.parse((texts && texts[key]) || '[]'); } catch {}
     const sections = [...document.querySelectorAll('main section[id], body > section[id]')];
-    if (!sections.length) { toast('No sections found on this page'); return; }
+
+    let props = {};
+    try { props = JSON.parse((texts && texts[PROP_KEY]) || '{}') || {}; } catch {}
+
+    /* Properties first, because they are the bigger lever and the one that
+       works from whichever page you happen to be on. artists.html has no
+       <main>, so the sections list below is empty there — which used to make
+       this whole panel refuse to open. It opens now regardless. */
+    const propRows = PROPERTIES.map((p) => {
+      const s2 = props[p.id] || {};
+      return `<label class="se-prop"><b>${p.label}</b>
+        <span><input type="checkbox" data-prop="${p.id}" data-k="section"${s2.section ? ' checked' : ''}> hide section</span>
+        <span><input type="checkbox" data-prop="${p.id}" data-k="menu"${s2.menu ? ' checked' : ''}> hide from menu</span>
+      </label>`;
+    }).join('');
 
     const pop = document.createElement('div');
     pop.className = 'se-pop se-sections';
-    pop.innerHTML = '<p>Sections on this page</p>' + sections.map((s) => {
-      const h = s.querySelector('h1,h2,h3');
-      const label = (h ? h.textContent : s.id).trim().replace(/\s+/g, ' ').slice(0, 40);
-      const off = hidden.includes(s.id) || s.style.display === 'none';
-      return `<label><input type="checkbox" data-id="${s.id}" ${off ? '' : 'checked'}> ${label}</label>`;
-    }).join('') + '<div><button class="se-primary" data-a="save">Save</button><button data-a="close">Close</button></div>';
+    pop.innerHTML = '<p>Across the whole site</p>' + propRows
+      + (sections.length
+          ? '<p>Sections on this page</p>' + sections.map((s) => {
+              const h = s.querySelector('h1,h2,h3');
+              const label = (h ? h.textContent : s.id).trim().replace(/\s+/g, ' ').slice(0, 40);
+              const off = hidden.includes(s.id) || s.style.display === 'none';
+              return `<label><input type="checkbox" data-id="${s.id}" ${off ? '' : 'checked'}> ${label}</label>`;
+            }).join('')
+          : '<p class="se-none">No sections on this page</p>')
+      + '<div><button class="se-primary" data-a="save">Save</button><button data-a="close">Close</button></div>';
     document.body.appendChild(pop);
     pop.style.position = 'fixed'; pop.style.right = '18px'; pop.style.bottom = '74px';
     pop.style.left = 'auto'; pop.style.top = 'auto';
@@ -513,12 +591,25 @@
       const a = e.target.dataset && e.target.dataset.a;
       if (a === 'close') pop.remove();
       if (a === 'save') {
-        const off = [...pop.querySelectorAll('input')].filter((i) => !i.checked).map((i) => i.dataset.id);
+        // A ticked SECTION box means shown; a ticked PROPERTY box means hidden.
+        // Opposite senses, because each reads naturally next to its own label.
+        const off = [...pop.querySelectorAll('input[data-id]')]
+          .filter((i) => !i.checked).map((i) => i.dataset.id);
+        const next = {};
+        pop.querySelectorAll('input[data-prop]').forEach((i) => {
+          if (!i.checked) return;
+          (next[i.dataset.prop] = next[i.dataset.prop] || {})[i.dataset.k] = true;
+        });
         try {
           await api('/texts', { key, html: off.length ? JSON.stringify(off) : '' });
+          await api('/texts', { key: PROP_KEY, html: Object.keys(next).length ? JSON.stringify(next) : '' });
           sections.forEach((s) => { s.style.display = off.includes(s.id) ? 'none' : ''; });
           syncMenus(off);
-          toast('Sections saved — live now');
+          /* Showing something again needs a reload: these only ever set
+             display:none, so there is nothing to put back without re-reading
+             the page's own markup. Hiding is live; unhiding says so. */
+          applyProperties(next);
+          toast('Saved — hiding is live, showing again needs a reload');
           pop.remove();
         } catch (err) { toast('Couldn’t save: ' + err.message); }
       }
@@ -569,6 +660,13 @@
     .se-pop button{border:1px solid rgba(235,225,210,.3);background:none;color:#f2ede4;font:600 .72rem system-ui;
       padding:6px 10px;border-radius:8px;cursor:pointer}
     .se-sections label{display:block;margin:6px 0;cursor:pointer;color:#c9d4e8}
+    .se-sections p{margin:12px 0 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.6}
+    .se-sections p:first-child{margin-top:0}
+    .se-none{opacity:.45}
+    .se-prop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 9px;margin:5px 0}
+    .se-prop b{min-width:86px;font-weight:600}
+    .se-prop span{display:inline-flex;align-items:center;gap:4px;font-size:12px;opacity:.85}
     .se-sections div{margin-top:10px}
     .se-toast{position:fixed;left:50%;transform:translate(-50%,10px);bottom:64px;z-index:97;opacity:0;
       padding:9px 16px;border-radius:10px;background:rgba(8,11,20,.95);border:1px solid rgba(224,180,139,.4);
