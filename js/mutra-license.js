@@ -587,10 +587,15 @@
        there rather than honoured because the browser said so. */
     /* One place that writes the total, so the discounted figure, the struck-out
        original and the button label can never disagree with each other. */
-    let shownAmount = null, shownWas = null;
+    /* Seeded from the figure screen 6 just rendered into its own template,
+       NOT left null: showPrice only runs when a coupon is checked, so on a
+       screen nobody has typed a code into, repaintPrice would still be null
+       and a currency switch would fall through to the full redraw — taking
+       the project name, client and company number with it. Which is exactly
+       what it did. */
+    let shownAmount = p.quote ? null : p.amount, shownWas = null;
     const showPrice = (amount, wasAmount) => {
       shownAmount = amount; shownWas = wasAmount;
-      repaintPrice = () => showPrice(shownAmount, shownWas);
       const el2 = body().querySelector('.lic-price');
       const was = body().querySelector('.lic-was');
       const btn2 = body().querySelector('.lic-submit');
@@ -627,6 +632,7 @@
       const per = body().querySelector('.lic-per');
       if (per) per.hidden = free;
     };
+    repaintPrice = () => showPrice(shownAmount, shownWas);
 
     const cin = body().querySelector('.lic-coupon');
     const cgo = body().querySelector('.lic-cpgo');
