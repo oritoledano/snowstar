@@ -301,8 +301,28 @@
 
   /* ── the screens ───────────────────────────────────────────────────────── */
 
+  /* Every figure in this modal is rendered as text, not as a [data-ils] node,
+     so Money.paint() cannot reach any of it: switching currency with the funnel
+     open would leave the whole screen quoting the currency before.
+
+     Most screens can simply be redrawn — render() rebuilds from `pick` and
+     nothing is lost. The pay screen cannot: it holds a typed project name, a
+     client, a coupon and a company number, and redrawing it to change a symbol
+     would throw all four away. So that one screen publishes a narrower repaint
+     here, and the rest fall back to a full redraw. */
+  let repaintPrice = null;
+  if (window.Money) {
+    window.Money.onChange(() => {
+      if (!el || !current) return;
+      if (repaintPrice) repaintPrice();
+      else render();
+    });
+  }
+
   function render() {
     if (!current) return;
+    // Belongs to whichever screen is about to be drawn; screen 6 re-sets it.
+    repaintPrice = null;
     crumbs();
     const t = current;
 
@@ -567,7 +587,10 @@
        there rather than honoured because the browser said so. */
     /* One place that writes the total, so the discounted figure, the struck-out
        original and the button label can never disagree with each other. */
+    let shownAmount = null, shownWas = null;
     const showPrice = (amount, wasAmount) => {
+      shownAmount = amount; shownWas = wasAmount;
+      repaintPrice = () => showPrice(shownAmount, shownWas);
       const el2 = body().querySelector('.lic-price');
       const was = body().querySelector('.lic-was');
       const btn2 = body().querySelector('.lic-submit');
