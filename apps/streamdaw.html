@@ -66,7 +66,12 @@
   /* Same trimmed wordmarks as the other menus, inverted: this menu is paper
      white and the shared assets are white-on-transparent. They are pure white
      with clean alpha, so invert() gives true black rather than a grey. */
-  .sd-menu .menu-word{height:.8em;width:auto;display:block;flex:none;
+  /* Matched on optical area, not cap height — see the note in css/style.css.
+     These pages carry their own CSS, so the three ratios are repeated here. */
+  .menu-word[alt="Mutra"]{--menu-word-h:.865em}
+  .menu-word[alt="StreamDAW"]{--menu-word-h:.539em}
+  .menu-word[alt="Snowstar"]{--menu-word-h:.513em}
+  .sd-menu .menu-word{height:var(--menu-word-h,.8em);width:auto;display:block;flex:none;
     filter:invert(1);transition:filter .25s}
   .sd-menu a:hover .menu-word{filter:invert(1) drop-shadow(0 0 10px rgba(37,99,235,.45))}
   .sd-menu a i{font-family:var(--sans);font-style:normal;font-weight:600;font-size:.7rem;color:var(--muted)}
@@ -700,7 +705,7 @@
     <a href="#pricing"><i>02</i>Pricing</a>
     <a href="#faq"><i>03</i>FAQ</a>
     <span class="menu-div">Products</span>
-    <a href="../index.html">Snowstar</a>
+    <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
     <a href="streamdaw.html" class="now"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
     <a href="../snowstash.html">Snowstash</a>

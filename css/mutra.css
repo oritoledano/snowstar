@@ -2098,8 +2098,19 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
    same height, so they match each other exactly whatever the menu is sized to. */
 .menu-word{height:var(--menu-word-h,.82em);width:auto;display:block;flex:none;
   transition:transform .3s ease,filter .3s ease}
-/* Both menu families are set in Anton, so both take its measured cap ratio. */
-.menu-nav a .menu-word,.mmenu-nav a .menu-word{--menu-word-h:.865em}
+/* Equal cap height is NOT equal size when the marks are different shapes.
+   MUTRA is 4.2 wide for its height; STREAMDAW is 10.9 and SNOWSTAR 12.0 — so
+   set to one cap height the long two carried nearly three times the ink and
+   towered over the short one, which is exactly how it looked.
+
+   So they are matched on optical AREA instead: width is aspect x height, so
+   equal area means height proportional to 1/sqrt(aspect). Mutra keeps the
+   .865em cap it already had and the other two are scaled to it. The result is
+   three marks that read as one size, which is what "the same size" has to mean
+   when the words are five, nine and fifteen letters long. */
+.menu-word[alt="Mutra"]{--menu-word-h:.865em}
+.menu-word[alt="StreamDAW"]{--menu-word-h:.539em}
+.menu-word[alt="Snowstar"]{--menu-word-h:.513em}
 .menu-nav a:hover .menu-word,.mmenu-nav a:hover .menu-word{transform:translateX(16px);
   filter:drop-shadow(0 0 14px rgba(224,180,139,.45))}
 /* The marks are pure white with clean alpha, so inverting gives true black —

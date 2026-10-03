@@ -97,7 +97,12 @@
      to the ink, so height IS cap height and the bottom edge IS the baseline —
      which is what lets a baseline-aligned row place them like capitals. Both
      take the same height, so they always match each other. */
-  .st-menu .menu-word{height:.8em;width:auto;display:block;flex:none;transition:filter .25s}
+  /* Matched on optical area, not cap height — see the note in css/style.css.
+     These pages carry their own CSS, so the three ratios are repeated here. */
+  .menu-word[alt="Mutra"]{--menu-word-h:.865em}
+  .menu-word[alt="StreamDAW"]{--menu-word-h:.539em}
+  .menu-word[alt="Snowstar"]{--menu-word-h:.513em}
+  .st-menu .menu-word{height:var(--menu-word-h,.8em);width:auto;display:block;flex:none;transition:filter .25s}
   .st-menu a:hover .menu-word{filter:drop-shadow(0 0 12px rgba(125,211,252,.5))}
   .st-menu a i{font-family:var(--mono);font-style:normal;font-size:.7rem;color:var(--ice-deep)}
   .st-menu a:hover{color:var(--ice)}
@@ -372,7 +377,7 @@
     <a href="#how"><i>02</i>How it works</a>
     <a href="#cand"><i>03</i>Run a check</a>
     <span class="menu-div">Products</span>
-    <a href="index.html">Snowstar</a>
+    <a href="index.html"><img class="menu-word" src="assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="mutra.html"><img class="menu-word" src="assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
     <a href="apps/streamdaw.html"><img class="menu-word" src="assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
     <a href="snowstash.html" class="now">Snowstash</a>
