@@ -63,6 +63,12 @@
   body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
   .sd-menu a{display:flex;align-items:baseline;gap:16px;font-family:var(--poster);
     text-transform:uppercase;font-size:clamp(1.8rem,5.5vw,3.2rem);color:var(--ink);line-height:1.35}
+  /* Same trimmed wordmarks as the other menus, inverted: this menu is paper
+     white and the shared assets are white-on-transparent. They are pure white
+     with clean alpha, so invert() gives true black rather than a grey. */
+  .sd-menu .menu-word{height:.8em;width:auto;display:block;flex:none;
+    filter:invert(1);transition:filter .25s}
+  .sd-menu a:hover .menu-word{filter:invert(1) drop-shadow(0 0 10px rgba(37,99,235,.45))}
   .sd-menu a i{font-family:var(--sans);font-style:normal;font-weight:600;font-size:.7rem;color:var(--muted)}
   .sd-menu a:hover{color:var(--blue)}
   .sd-menu a.now{color:var(--blue)}
@@ -101,6 +107,11 @@
     color:var(--text);  /* the modal mounts on <body>, so give it its own base ink, not the page's */
   }
   .auth-card h1,.auth-card h2,.auth-card h3{color:var(--text)}
+  .theme-btn.cur-btn{display:grid;place-items:center;width:36px;height:36px;flex:none;
+    border-radius:50%;background:none;border:1px solid rgba(15,23,42,.18);
+    color:var(--muted);cursor:pointer;font-family:var(--poster);font-size:1.02rem;
+    font-weight:600;line-height:1;padding:0 0 1px;transition:.2s}
+  .theme-btn.cur-btn:hover{color:var(--ink);border-color:var(--blue,#2563eb)}
   .nav-acct{display:inline-flex;align-items:center}
   .nav-acct .mnav-auth{font-family:var(--poster);text-transform:uppercase;letter-spacing:.08em;font-size:.76rem}
 
@@ -503,7 +514,7 @@
 </main>
 
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
-<script src="../js/money.js?v=2"></script>
+<script src="../js/money.js?v=3"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=24"></script>
 <script src="../js/site-edit.js?v=6"></script>
@@ -690,8 +701,8 @@
     <a href="#faq"><i>03</i>FAQ</a>
     <span class="menu-div">Products</span>
     <a href="../index.html">Snowstar</a>
-    <a href="../mutra.html">Mutra</a>
-    <a href="streamdaw.html" class="now">StreamDAW</a>
+    <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
+    <a href="streamdaw.html" class="now"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
     <a href="../snowstash.html">Snowstash</a>
   </nav>
 </div>

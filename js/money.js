@@ -134,20 +134,36 @@
       return rates;
     },
 
-    /** A switcher, built where it is asked for. */
+    /** The next currency in the ring. */
+    next() {
+      const i = Money.currencies.indexOf(code);
+      return Money.currencies[(i + 1) % Money.currencies.length];
+    },
+
+    /** A switcher, built where it is asked for.
+     *
+     *  One button rather than a row of three, carrying the symbol of whatever
+     *  is currently selected and cycling on click — the same gesture, and the
+     *  same 36px circle, as the theme toggle it sits beside. It takes the
+     *  theme-btn class itself rather than a copy of its rules, so the two can
+     *  never drift apart: resize that button and this one follows. */
     mount(el) {
-      if (!el) return;
-      el.classList.add('cur-pick');
-      el.innerHTML = Money.currencies.map((c) =>
-        `<button type="button" data-cur="${c}"${c === code ? ' aria-current="true"' : ''}>${
-          META[c].symbol}<span>${c}</span></button>`).join('');
-      el.addEventListener('click', (e) => {
-        const b = e.target.closest('button[data-cur]');
-        if (!b) return;
-        Money.set(b.dataset.cur);
-        el.querySelectorAll('button').forEach((x) =>
-          x.toggleAttribute('aria-current', x.dataset.cur === code));
-      });
+      if (!el || el.dataset.curMounted) return;
+      el.dataset.curMounted = '1';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'theme-btn cur-btn';
+      const label = () => {
+        btn.textContent = META[code].symbol;
+        // The name, not just the glyph: "$" alone tells a screen reader nothing
+        // about what it does or what pressing it would change to.
+        btn.setAttribute('aria-label', `Currency: ${META[code].name}. Switch to ${META[Money.next()].name}`);
+        btn.title = `Prices in ${META[code].name} — click for ${META[Money.next()].name}`;
+      };
+      label();
+      btn.addEventListener('click', () => { Money.set(Money.next()); label(); });
+      Money.onChange(label);
+      el.replaceChildren(btn);
     },
   };
 

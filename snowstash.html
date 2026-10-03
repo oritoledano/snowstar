@@ -72,6 +72,11 @@
     font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.42em;
     font-size:.85rem;color:var(--text)}
   .nav-title b{color:var(--ice);font-weight:600}
+  .theme-btn.cur-btn{display:grid;place-items:center;width:36px;height:36px;flex:none;
+    border-radius:50%;background:none;border:1px solid var(--line,rgba(255,255,255,.14));
+    color:var(--muted);cursor:pointer;font-family:var(--display);font-size:1.02rem;
+    font-weight:600;line-height:1;padding:0 0 1px;transition:.2s}
+  .theme-btn.cur-btn:hover{color:var(--text);border-color:var(--ice,rgba(125,211,252,.5))}
   .nav-acct{display:flex;align-items:center;margin-left:auto}
 
 
@@ -88,6 +93,12 @@
   body.menu-open .st-menu{clip-path:inset(0 0 0 0)}
   .st-menu a{display:flex;align-items:baseline;gap:16px;font-family:var(--display);font-weight:600;
     text-transform:uppercase;font-size:clamp(1.8rem,5.5vw,3.2rem);color:var(--text);line-height:1.35;border:none}
+  /* Mutra and StreamDAW wear their own wordmarks here. The assets are trimmed
+     to the ink, so height IS cap height and the bottom edge IS the baseline —
+     which is what lets a baseline-aligned row place them like capitals. Both
+     take the same height, so they always match each other. */
+  .st-menu .menu-word{height:.8em;width:auto;display:block;flex:none;transition:filter .25s}
+  .st-menu a:hover .menu-word{filter:drop-shadow(0 0 12px rgba(125,211,252,.5))}
   .st-menu a i{font-family:var(--mono);font-style:normal;font-size:.7rem;color:var(--ice-deep)}
   .st-menu a:hover{color:var(--ice)}
   .st-menu a.now{color:var(--ice)}
@@ -362,8 +373,8 @@
     <a href="#cand"><i>03</i>Run a check</a>
     <span class="menu-div">Products</span>
     <a href="index.html">Snowstar</a>
-    <a href="mutra.html">Mutra</a>
-    <a href="apps/streamdaw.html">StreamDAW</a>
+    <a href="mutra.html"><img class="menu-word" src="assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
+    <a href="apps/streamdaw.html"><img class="menu-word" src="assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
     <a href="snowstash.html" class="now">Snowstash</a>
   </nav>
   <div class="st-menu-foot">hello@snowstar.company &middot; Tel Aviv</div>
@@ -693,7 +704,7 @@
 </footer>
 
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
-<script src="js/money.js?v=2"></script>
+<script src="js/money.js?v=3"></script>
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=26"></script>
 <script src="js/site-edit.js?v=6"></script>

@@ -2075,14 +2075,33 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .lic-offer b{color:var(--text,#eef3fb)}
 
 /* ── currency switcher ───────────────────────────────────────────────────────
-   Prices are shown in the visitor’s chosen currency; the shekel is still what the
-   card is charged, and every screen that commits somebody to paying says so. */
-.cur-pick{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line);
-  border-radius:99px;padding:2px;flex:none}
-.cur-pick button{background:none;border:0;cursor:pointer;font:inherit;font-size:.68rem;
-  letter-spacing:.04em;color:var(--muted);padding:3px 7px;border-radius:99px;
-  display:inline-flex;align-items:center;gap:3px;transition:.15s;line-height:1}
-.cur-pick button:hover{color:var(--text)}
-.cur-pick button[aria-current]{background:var(--grad,var(--accent));color:var(--on-accent,#0d0a12)}
-.cur-pick button span{display:none}
-@media(min-width:900px){.cur-pick button span{display:inline}}
+   One bubble, not a row of three: it takes the .theme-btn class itself so the
+   circle, the 36px, the border and the hover all come from that single rule
+   and the two can never drift apart. All this adds is the glyph, which has to
+   be optically centred — a currency symbol is not a 24px icon and sits high in
+   its em box without the nudge. Prices are shown in the visitor's chosen
+   currency; the shekel is still what the card is charged, and every screen
+   that commits somebody to paying says so. */
+.cur-btn{font-family:var(--font-display,inherit);font-size:1.02rem;font-weight:600;
+  line-height:1;letter-spacing:0;padding:0 0 1px}
+.cur-btn:hover{color:var(--text)}
+
+/* ── product wordmarks in the menu ───────────────────────────────────────────
+   Mutra and StreamDAW are brands, so in the Products list they wear their own
+   faces rather than the menu's. The assets are trimmed to their ink, which is
+   what makes them line up: with no padding baked into the PNG, `height` IS cap
+   height and the bottom edge IS the baseline — so a baseline-aligned flex row
+   puts them exactly where a capital letter would sit.
+
+   .865em is Anton's cap ratio, measured on a canvas rather than guessed (the
+   usual 0.7 rule of thumb is wrong for Anton by a sixth). Both marks take the
+   same height, so they match each other exactly whatever the menu is sized to. */
+.menu-word{height:var(--menu-word-h,.82em);width:auto;display:block;flex:none;
+  transition:transform .3s ease,filter .3s ease}
+.menu-nav a .menu-word{--menu-word-h:.865em}
+.menu-nav a:hover .menu-word{transform:translateX(16px);
+  filter:drop-shadow(0 0 14px rgba(224,180,139,.45))}
+/* The marks are pure white with clean alpha, so inverting gives true black —
+   the same trick .nav-word already uses when the overlay turns light. */
+[data-theme="light"] .menu-word{filter:invert(1)}
+[data-theme="light"] .menu-nav a:hover .menu-word{filter:invert(1) drop-shadow(0 0 14px rgba(217,116,74,.4))}
