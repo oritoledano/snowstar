@@ -856,7 +856,12 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    .865em is Anton's cap ratio, measured on a canvas rather than guessed (the
    usual 0.7 rule of thumb is wrong for Anton by a sixth). Both marks take the
    same height, so they match each other exactly whatever the menu is sized to. */
-.menu-word{height:var(--menu-word-h,.82em);width:auto;display:block;flex:none;
+/* max-width:none is load-bearing. Both sheets carry a global img{max-width:100%},
+   and in the .mmenu chain that percentage resolves against a parent whose own
+   width is being derived from this image — circular, so the browser settles it
+   at zero and the mark vanishes. Width comes from the intrinsic ratio and the
+   height instead, which depends on nothing outside the element. */
+.menu-word{height:var(--menu-word-h,.82em);width:auto;max-width:none;display:block;flex:none;
   transition:transform .3s ease,filter .3s ease}
 /* Equal cap height is NOT equal size when the marks are different shapes.
    MUTRA is 4.2 wide for its height; STREAMDAW is 10.9 and SNOWSTAR 12.0 — so
