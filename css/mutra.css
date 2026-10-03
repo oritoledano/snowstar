@@ -2098,10 +2098,11 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
    same height, so they match each other exactly whatever the menu is sized to. */
 .menu-word{height:var(--menu-word-h,.82em);width:auto;display:block;flex:none;
   transition:transform .3s ease,filter .3s ease}
-.menu-nav a .menu-word{--menu-word-h:.865em}
-.menu-nav a:hover .menu-word{transform:translateX(16px);
+/* Both menu families are set in Anton, so both take its measured cap ratio. */
+.menu-nav a .menu-word,.mmenu-nav a .menu-word{--menu-word-h:.865em}
+.menu-nav a:hover .menu-word,.mmenu-nav a:hover .menu-word{transform:translateX(16px);
   filter:drop-shadow(0 0 14px rgba(224,180,139,.45))}
 /* The marks are pure white with clean alpha, so inverting gives true black —
    the same trick .nav-word already uses when the overlay turns light. */
 [data-theme="light"] .menu-word{filter:invert(1)}
-[data-theme="light"] .menu-nav a:hover .menu-word{filter:invert(1) drop-shadow(0 0 14px rgba(217,116,74,.4))}
+[data-theme="light"] .menu-nav a:hover .menu-word,[data-theme="light"] .mmenu-nav a:hover .menu-word{filter:invert(1) drop-shadow(0 0 14px rgba(217,116,74,.4))}
