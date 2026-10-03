@@ -363,7 +363,7 @@
       </div>
       <div class="pj-step">
         <div class="pj-screen" aria-hidden="true">
-          <div class="pj-lane a">Instant licence<small>Buyers self-serve at curated prices — from 99₪ / 6 months</small></div>
+          <div class="pj-lane a">Instant licence<small>Buyers self-serve at curated prices — from <span data-ils="49">₪49</span> / 6 months</small></div>
           <div class="pj-lane b">Custom quote<small>Every use goes through us — bigger campaigns, co-owned tracks</small></div>
         </div>
         <h4>2 · Choose how it licenses</h4>
@@ -375,7 +375,11 @@
           <div class="pj-split">You — 50%<div class="pj-bar"><i></i></div></div>
           <div class="pj-split b">Dave — 20%<div class="pj-bar"><i></i></div></div>
           <div class="pj-split c">Kelly — 30%<div class="pj-bar"><i></i></div></div>
-          <!-- The figures follow from the split, they are not decoration: a 990₪
+          <!-- A round 990 so the arithmetic is followable; the real ladder only
+               ever lands on a 9 (pricePoint rounds to the nearest ten minus one),
+               so the nearest actual licence is 989. The percentages are the point
+               here, not the ticket.
+               The figures follow from the split, they are not decoration: a 990₪
                licence leaves 495₪ for the artists, then 50/20/30 of that. -->
           <span class="pj-chip pj-sale">Licensed · 990₪ → you +247.50₪ · Dave +99₪ · Kelly +148.50₪</span>
         </div>

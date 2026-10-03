@@ -840,7 +840,16 @@
     group(d.attention, 'att', 'Fix your data — gaps on your own tracks');
     group(d.info, '', 'FYI — not your problem, but worth knowing');
 
-    if (d.price) $('payPrice').textContent = d.price.label;
+    if (d.price) {
+      /* The server sends a ready-made "\u20aa69" alongside the agorot, and
+         writing that straight into the button undid the whole switcher: the
+         converted price rendered, then this replaced it with shekels a moment
+         later. Take the number, not its formatting — and keep data-ils in step
+         so a later switch repaints this the same as everything else. */
+      const pe = $('payPrice');
+      pe.setAttribute('data-ils', (d.price.agorot / 100).toFixed(0));
+      pe.textContent = window.Money ? Money.fmtAgorot(d.price.agorot) : d.price.label;
+    }
     $('lock').hidden = !!d.unlocked;
     if (d.unlocked) {
       const done = document.createElement('p');
