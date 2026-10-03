@@ -54,12 +54,24 @@
      they answer different questions: "stop advertising this" and "stop showing
      this", and the owner may well want the first without the second. */
   const PROPERTIES = [
-    { id: 'mutra',     label: 'Mutra',       page: 'mutra.html' },
-    { id: 'snowstash', label: 'Snowstash',   page: 'snowstash.html' },
-    { id: 'streamdaw', label: 'StreamDAW',   page: 'streamdaw.html' },
+    { id: 'snowstar',  label: 'Snowstar',    page: 'index.html',
+      mark: 'assets/snowstar-word-trim.png?v=1', product: true },
+    { id: 'mutra',     label: 'Mutra',       page: 'mutra.html',
+      mark: 'assets/mutra-word-trim.png?v=1',    product: true },
+    { id: 'streamdaw', label: 'StreamDAW',   page: 'streamdaw.html', dir: 'apps/',
+      mark: 'assets/sdaw-word-trim.png?v=1',     product: true },
+    { id: 'snowstash', label: 'Snowstash',   page: 'snowstash.html', product: true },
+    // Not a product row — it is a door for artists, listed with the page links.
     { id: 'artists',   label: 'For artists', page: 'artists.html' },
   ];
   const PROP_KEY = 'config.properties';
+
+  /** Is this page the property's own page? */
+  function isCurrent(p) {
+    const path = location.pathname;
+    if (p.page === 'index.html') return path === '/' || /\/index\.html$/.test(path);
+    return path.endsWith('/' + p.page) || path === '/' + (p.dir || '') + p.page;
+  }
 
   /** Does this href point at that property's page? Matches 'snowstash.html',
    *  '/snowstash.html', '../snowstash.html' and 'apps/streamdaw.html' alike,
@@ -67,6 +79,50 @@
   function pointsAt(href, page) {
     const bare = String(href || '').split('?')[0].split('#')[0];
     return bare.endsWith(page);
+  }
+
+  /* ── the Products block, from one list ─────────────────────────────────────
+     It was written by hand in seven files, which is why it had already drifted:
+     every page listed itself except the home page, which left Snowstar out
+     entirely. Adding a vertical meant seven edits and remembering all seven.
+
+     The decision this settles: every vertical is listed on every page,
+     INCLUDING the one you are on, where it is marked and made inert rather than
+     removed. A menu that changes shape per page is a worse map of a business
+     than one that always shows the same rooms and greys out the one you are
+     standing in — and it is the behaviour three of the four pages already had.
+
+     Hidden verticals are the same rule from the other side: a vertical switched
+     off in the menu loses its row everywhere, its own page included. Static
+     markup stays as the no-JS baseline; this only corrects it. */
+  function syncProducts(hidden) {
+    document.querySelectorAll('nav').forEach((nav) => {
+      const div = [...nav.children].find((n) => n.classList && n.classList.contains('menu-div'));
+      if (!div) return;                         // not a menu with a Products block
+      /* Only the rows AFTER the divider. Searching the whole nav would find
+         "Browse the catalogue" on the artist pages — which points at mutra.html
+         and is not the Mutra product row. */
+      const block = [];
+      for (let n = div.nextElementSibling; n; n = n.nextElementSibling) {
+        if (n.tagName === 'A') block.push(n);
+      }
+      let after = div;
+      PROPERTIES.filter((p) => p.product).forEach((p) => {
+        let a = block.find((x) => pointsAt(x.getAttribute('href'), p.page));
+        if ((hidden[p.id] || {}).menu) { if (a) a.remove(); return; }
+        if (!a) {
+          a = document.createElement('a');
+          // Root-relative, so one href is right from every directory depth.
+          a.href = '/' + (p.dir || '') + p.page;
+          a.innerHTML = p.mark
+            ? `<img class="menu-word" src="/${p.mark}" alt="${p.label}">`
+            : `<span class="lbl">${p.label}</span>`;
+          after.insertAdjacentElement('afterend', a);
+        }
+        a.classList.toggle('now', isCurrent(p));
+        after = a;
+      });
+    });
   }
 
   function applyProperties(state) {
@@ -94,6 +150,7 @@
   const hydrate = fetch('/api/texts')
     .then((r) => (r.ok ? r.json() : { texts: {} }))
     .then(({ texts }) => {
+      let props = {};
       for (const [key, html] of Object.entries(texts)) {
         if (key === 'rows.removed.' + PAGE) {
           try { JSON.parse(html).forEach((sel) => {
@@ -102,7 +159,7 @@
           continue;
         }
         if (key === PROP_KEY) {
-          try { applyProperties(JSON.parse(html)); } catch {}
+          try { props = JSON.parse(html) || {}; applyProperties(props); } catch {}
           continue;
         }
         if (key === 'sections.hidden.' + PAGE) {
@@ -119,9 +176,13 @@
         const el = document.querySelector(`[data-txt="${key}"]`);
         if (el) el.innerHTML = html;
       }
+      /* Always, not only when a config exists — the home page needs its own
+         Snowstar row inserted whether or not anything has ever been hidden. */
+      syncProducts(props);
+      renumberMenus();
       return texts;
     })
-    .catch(() => ({}));
+    .catch(() => { syncProducts({}); renumberMenus(); return {}; });
 
   // ── 2. editor — only ever wakes up for the admin ──
   const M = window.SnowstarAccount;

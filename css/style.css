@@ -873,9 +873,14 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    .865em cap it already had and the other two are scaled to it. The result is
    three marks that read as one size, which is what "the same size" has to mean
    when the words are five, nine and fifteen letters long. */
-.menu-word[alt="Mutra"]{--menu-word-h:.865em}
-.menu-word[alt="StreamDAW"]{--menu-word-h:.539em}
-.menu-word[alt="Snowstar"]{--menu-word-h:.513em}
+/* Halved from the cap-height-matched figures. A wordmark does not need to
+   shout at the size a word does: it is recognised by shape, not read letter by
+   letter, so it carries at half the type's presence and stops competing with
+   the navigation above it. The ratios between the three are untouched — they
+   are still equal optical area, just quieter. */
+.menu-word[alt="Mutra"]{--menu-word-h:.433em}
+.menu-word[alt="StreamDAW"]{--menu-word-h:.270em}
+.menu-word[alt="Snowstar"]{--menu-word-h:.257em}
 .menu-nav a:hover .menu-word,.mmenu-nav a:hover .menu-word{transform:translateX(16px);
   filter:drop-shadow(0 0 14px rgba(224,180,139,.45))}
 /* The marks are pure white with clean alpha, so inverting gives true black —

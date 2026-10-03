@@ -68,15 +68,16 @@
      with clean alpha, so invert() gives true black rather than a grey. */
   /* Matched on optical area, not cap height — see the note in css/style.css.
      These pages carry their own CSS, so the three ratios are repeated here. */
-  .menu-word[alt="Mutra"]{--menu-word-h:.865em}
-  .menu-word[alt="StreamDAW"]{--menu-word-h:.539em}
-  .menu-word[alt="Snowstar"]{--menu-word-h:.513em}
+  .menu-word[alt="Mutra"]{--menu-word-h:.433em}
+  .menu-word[alt="StreamDAW"]{--menu-word-h:.270em}
+  .menu-word[alt="Snowstar"]{--menu-word-h:.257em}
   .sd-menu .menu-word{height:var(--menu-word-h,.8em);width:auto;max-width:none;display:block;flex:none;
     filter:invert(1);transition:filter .25s}
   .sd-menu a:hover .menu-word{filter:invert(1) drop-shadow(0 0 10px rgba(37,99,235,.45))}
   .sd-menu a i{font-family:var(--sans);font-style:normal;font-weight:600;font-size:.7rem;color:var(--muted)}
   .sd-menu a:hover{color:var(--blue)}
-  .sd-menu a.now{color:var(--blue)}
+  /* The row for the page you are on: marked, and inert — same as the others. */
+  .sd-menu a.now{color:var(--blue);opacity:.55;pointer-events:none}
 
   /* ── masthead / nav ── */
   .masthead{border-bottom:1px solid var(--line);background:var(--paper)}
@@ -522,7 +523,7 @@
 <script src="../js/money.js?v=3"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=24"></script>
-<script src="../js/site-edit.js?v=6"></script>
+<script src="../js/site-edit.js?v=7"></script>
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 

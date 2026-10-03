@@ -99,14 +99,16 @@
      take the same height, so they always match each other. */
   /* Matched on optical area, not cap height — see the note in css/style.css.
      These pages carry their own CSS, so the three ratios are repeated here. */
-  .menu-word[alt="Mutra"]{--menu-word-h:.865em}
-  .menu-word[alt="StreamDAW"]{--menu-word-h:.539em}
-  .menu-word[alt="Snowstar"]{--menu-word-h:.513em}
+  .menu-word[alt="Mutra"]{--menu-word-h:.433em}
+  .menu-word[alt="StreamDAW"]{--menu-word-h:.270em}
+  .menu-word[alt="Snowstar"]{--menu-word-h:.257em}
   .st-menu .menu-word{height:var(--menu-word-h,.8em);width:auto;max-width:none;display:block;flex:none;transition:filter .25s}
   .st-menu a:hover .menu-word{filter:drop-shadow(0 0 12px rgba(125,211,252,.5))}
   .st-menu a i{font-family:var(--mono);font-style:normal;font-size:.7rem;color:var(--ice-deep)}
   .st-menu a:hover{color:var(--ice)}
-  .st-menu a.now{color:var(--ice)}
+  /* The row for the page you are on: marked, and inert. A link to where you
+     already are is a dead click, and the other menus already treat it so. */
+  .st-menu a.now{color:var(--ice);opacity:.55;pointer-events:none}
   .st-menu .st-menu-foot{margin-top:40px;color:var(--faint);font-size:.85rem}
 
   /* ── hero ── */
@@ -712,7 +714,7 @@
 <script src="js/money.js?v=3"></script>
 <script src="js/account.js?v=3"></script>
 <script src="js/account-ui.js?v=26"></script>
-<script src="js/site-edit.js?v=6"></script>
+<script src="js/site-edit.js?v=7"></script>
 <script>
 (function(){
   document.getElementById('year').textContent = new Date().getFullYear();
