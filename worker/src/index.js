@@ -51,6 +51,8 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawAdmin, streamdawRelease,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
          streamdawReport, streamdawReports } from './streamdaw.js';
+import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
+         streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest , remindExpiring} from './licensing.js';
 import { handleStream } from './stream.js';
@@ -183,7 +185,10 @@ async function handle(req, env, ctx) {
   // page — neither shares this origin. Safe to exempt: it is anonymous, takes no
   // authenticated action, and is rate limited by ip hash. The worst a forged post
   // achieves is a junk row.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/n/u']);
+  // /streamdaw/telemetry and /streamdaw/usage are posted by StreamDAW relays on users' Macs,
+  // which send no Origin at all. Anonymous, shaped and clamped (streamdaw-telemetry.js); the
+  // worst a forged post achieves is a junk stream row that ages out of the 24-hour view.
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -435,6 +440,12 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/report' && (method === 'POST' || method === 'OPTIONS')) return streamdawReport(req, env);
   if (path === '/streamdaw/reports') return streamdawReports(req, env, await currentUser(req, env));
   if (path === '/streamdaw/presence-token' && (method === 'POST' || method === 'OPTIONS')) return streamdawPresenceToken(req, env);
+  // Stream health: every relay posts a heartbeat while on air and a usage line per sitting;
+  // the owner reads them under StreamDAW › App › health.
+  if (path === '/streamdaw/telemetry' && method === 'POST') return streamdawTelemetry(req, env);
+  if (path === '/streamdaw/usage' && method === 'POST') return streamdawUsage(req, env);
+  if (path === '/streamdaw/health' && method === 'GET') return streamdawHealth(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/health/stream' && method === 'GET') return streamdawHealthStream(req, env, await currentUser(req, env), url);
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
@@ -733,6 +744,8 @@ export default {
        Past that it is rows nobody reads, and this is the only cadence there is
        to drop them on. */
     ctx.waitUntil(pruneReqLog(env).catch(() => 0));
+    /* StreamDAW's health graphs keep a fortnight too. */
+    ctx.waitUntil(streamdawTelemetryCleanup(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },
@@ -759,7 +772,11 @@ export default {
        must not be able to take a request with it. recordRequest swallows its
        own errors; this catches everything before it, down to `res` somehow not
        being a Response. */
-    try {
+    /* A StreamDAW relay posts a heartbeat every 30 s while it is on air. Those land in
+       their own tables already; a req_log row for each would double the writes and bury
+       every route that matters under one machine's clock. Failures are still logged. */
+    const heartbeat = /^\/(api\/)?streamdaw\/(telemetry|usage)$/.test(new URL(req.url).pathname) && res && res.status < 400;
+    if (!heartbeat) try {
       ctx.waitUntil(recordRequest(env, {
         url: new URL(req.url),
         method: req.method,

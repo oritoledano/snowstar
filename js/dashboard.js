@@ -53,7 +53,7 @@
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
-      { key: 'sdaw', label: 'App', tabs: ['orders', 'people', 'keys', 'reports', 'codes', 'releases'] },
+      { key: 'sdaw', label: 'App', tabs: ['orders', 'health', 'people', 'keys', 'reports', 'codes', 'releases'] },
     ] },
     { key: 'snowstar', label: 'Snowstar', pages: [
       { key: 'jobs',      label: 'Jobs' },
@@ -248,6 +248,7 @@
     'streamdaw/sdaw/people':       () => paintStreamdaw('people'),
     'streamdaw/sdaw/keys':         () => paintStreamdaw('keys'),
     'streamdaw/sdaw/reports':      () => paintStreamdawReports(),
+    'streamdaw/sdaw/health':       () => paintStreamdawHealth(),
     'streamdaw/sdaw/codes':        () => paintStreamdaw('codes'),
     'streamdaw/sdaw/releases':     () => paintStreamdaw('releases'),
     'snowstar/jobs':               () => paintJobs(),
@@ -1138,6 +1139,106 @@
       await post('/streamdaw/reports', { id: Number(b.dataset.id), status: b.dataset.to });
       load();
     }));
+  }
+
+  /* StreamDAW › App › health. Every StreamDAW Mac runs its own relay; while a stream is on
+     air that relay posts a heartbeat every 30 s (worker/src/streamdaw-telemetry.js): who is
+     connected and how each one's line holds up, as their own page measures it. Live first,
+     then the last 24 hours. A row opens that stream: its people now and its last six hours.
+     Refreshes itself every 10 s while the tab is open. Nothing here names anybody: ids are
+     hashes, the Mac is its licence's hashed machine id. */
+  let sdHealthSel = null, sdHealthTimer = null;
+  async function paintStreamdawHealth() {
+    const d = await get('/streamdaw/health');
+    const t = d.totals || {}, rows = d.streams || [];
+    const dash = '<span style="opacity:.4">—</span>';
+    const n = (v, dp = 0) => (v == null ? dash : Number(v).toFixed(dp));
+    const dur = (sec) => { sec = Math.max(0, sec | 0); const h = Math.floor(sec / 3600), m = Math.floor(sec / 60) % 60, x = sec % 60;
+      return h ? `${h}h ${String(m).padStart(2, '0')}m` : m ? `${m}m ${String(x).padStart(2, '0')}s` : `${x}s`; };
+    const ago = (sec) => (sec < 5 ? 'now' : sec < 90 ? `${sec}s ago` : sec < 5400 ? `${Math.round(sec / 60)}m ago` : `${Math.round(sec / 3600)}h ago`);
+    // a number worth a look (amber) or hurting somebody (red)
+    const grade = (v, warn, bad, dp = 0, sfx = '') => (v == null ? dash
+      : `<span style="${v >= bad ? 'color:#ef4444;font-weight:600' : v >= warn ? 'color:#eab308' : ''}">${Number(v).toFixed(dp)}${sfx}</span>`);
+    const low = (v, warn, bad) => (v == null ? dash
+      : `<span style="${v <= bad ? 'color:#ef4444;font-weight:600' : v <= warn ? 'color:#eab308' : ''}">${Math.round(v)}</span>`);
+    const STATUS = { on: ['On', '#34d399'], paused: ['Paused', '#eab308'], 'no-signal': ['No signal', '#ef4444'], off: ['Off', 'var(--muted)'] };
+    const status = (s) => { const [label, c] = STATUS[s.status] || [s.status, 'var(--muted)'];
+      return `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600"><i style="width:8px;height:8px;border-radius:50%;background:${c};display:inline-block"></i>${esc(label)}</span>`
+        + (s.ended ? `<br><small style="opacity:.6">${esc(s.ended)}</small>` : ''); };
+
+    if (sdHealthSel && !rows.some((r) => r.id === sdHealthSel)) sdHealthSel = null;
+    let detail = '';
+    if (sdHealthSel) {
+      const one = await get('/streamdaw/health/stream?id=' + encodeURIComponent(sdHealthSel));
+      const S = one.samples || [], LEVEL = ['fine', 'strained', 'in trouble'];
+      const spark = (key, colour, label) => {
+        const pts = S.filter((x) => x[key] != null);
+        if (pts.length < 2) return `<p class="db-empty" style="padding:6px 0">${label}: not enough samples yet.</p>`;
+        const t0 = pts[0].at, t1 = pts[pts.length - 1].at, top = Math.max(1, ...pts.map((x) => x[key])) * 1.15, W = 600, H = 60;
+        const path = pts.map((x, i) => `${i ? 'L' : 'M'}${((x.at - t0) / Math.max(1, t1 - t0) * W).toFixed(1)},${(H - 2 - x[key] / top * (H - 6)).toFixed(1)}`).join('');
+        return `<div style="margin:4px 0 12px"><small style="color:var(--muted);letter-spacing:.08em;text-transform:uppercase">${label} · up to ${Math.round(Math.max(...pts.map((x) => x[key])) * 10) / 10}</small>
+          <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:60px;display:block">
+          <path d="${path}" fill="none" stroke="${colour}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg></div>`;
+      };
+      const st = one.stream || {};
+      detail = `<div class="db-panel"><h2>Mac ${esc((st.machine || '?').slice(0, 6))} <span class="pill">${esc(st.mode === 'inEar' ? 'in-ear' : 'live')}</span>
+          <span class="pill">${esc(st.source || '?')}</span> <span class="pill">${n(st.tracks)} track(s)</span></h2>
+        <div class="db-grid">${spark('a_jitter_ms', '#eab308', 'Audio jitter, ms')}${spark('a_loss_pct', '#ef4444', 'Audio loss, %')}
+          ${spark('listeners', 'currentColor', 'People')}${spark('v_fps', '#34d399', 'Video frames a second')}</div>
+        ${table(one.people || [], [
+          { label: 'Person', get: (p) => `<code>${esc(p.id || '?')}</code>` },
+          { label: 'Device', get: (p) => esc(p.kind) },
+          { label: 'Connected', get: (p) => dur(p.sec), num: true },
+          { label: 'Play', get: (p) => (p.playing ? 'on' : '<span style="opacity:.5">off</span>') },
+          { label: 'Health', get: (p) => `<span style="${p.level === 2 ? 'color:#ef4444' : p.level === 1 ? 'color:#eab308' : ''}">${LEVEL[p.level || 0]}</span>` },
+          { label: 'Buffer ms', get: (p) => (p.audio ? low(p.audio.marginMs, 120, 60) : dash), num: true },
+          { label: 'RTT ms', get: (p) => n(p.audio && p.audio.rttMs), num: true },
+          { label: 'Jitter ms', get: (p) => grade(p.audio && p.audio.jitterMs, 20, 60, 1), num: true },
+          { label: 'Loss', get: (p) => grade(p.audio && p.audio.lossPct, 0.5, 3, 1, '%'), num: true },
+          { label: 'Underruns', get: (p) => grade(p.audio && p.audio.underruns, 1, 10), num: true },
+          { label: 'kb/s', get: (p) => n(p.audio && p.audio.kbps), num: true },
+          { label: 'FPS', get: (p) => (p.video ? low(p.video.fps, 12, 6) : dash), num: true },
+          { label: 'Dropped', get: (p) => (p.video ? grade(p.video.dropped, 30, 300) : dash), num: true },
+          { label: 'Video loss', get: (p) => (p.video ? grade(p.video.lostPct, 1, 5, 1, '%') : dash), num: true },
+        ])}
+        <p class="db-empty" style="padding-bottom:0">Measured by each listener's own page: jitter is how unevenly the audio arrives
+          against how evenly it was sent; loss is packets that never came; buffer is the audio held ahead of the playhead.</p></div>`;
+    }
+
+    paint(`
+      <div class="db-kpis">
+        <div class="db-kpi"><b>${t.liveStreams || 0}</b><span>Live streams</span></div>
+        <div class="db-kpi"><b>${t.peopleNow || 0}</b><span>Connected now</span></div>
+        <div class="db-kpi"><b>${t.sittings24h || 0}</b><span>Sittings, 24 h</span></div>
+        <div class="db-kpi"><b>${t.minutesConnected24h || 0}</b><span>Minutes connected, 24 h</span></div>
+        <div class="db-kpi"><b>${t.machines24h || 0}</b><span>Macs, 24 h</span></div>
+        <div class="db-kpi"><b>${t.freeLimitHits24h || 0}</b><span>Free hour used up, 24 h</span></div>
+      </div>
+      <div class="db-panel" style="margin-top:16px"><h2>Streams, last 24 hours <span class="pill">${rows.length}</span></h2>
+        ${rows.length ? table(rows, [
+          { label: 'Status', get: status },
+          { label: 'Mac', get: (s) => `<code>${esc((s.machine || '?').slice(0, 6))}</code>` },
+          { label: 'Plan · app', get: (s) => `${esc(s.tier || '?')} · ${esc(s.app || '?')}` },
+          { label: 'On air', get: (s) => dur(s.on_air_sec), num: true },
+          { label: 'Connected', get: (s) => dur(s.connected_sec), num: true },
+          { label: 'People', get: (s) => `${n(s.listeners)}<span style="opacity:.5"> / ${n(s.peak)}</span>`, num: true },
+          { label: 'Jitter ms', get: (s) => `${grade(s.a_jitter_ms, 20, 60, 1)}<span style="opacity:.5"> / ${n(s.a_jitter_max_ms, 1)}</span>`, num: true },
+          { label: 'Loss', get: (s) => grade(s.a_loss_pct, 0.5, 3, 1, '%'), num: true },
+          { label: 'Underruns', get: (s) => grade(s.a_underruns, 1, 10), num: true },
+          { label: 'Audio kb/s', get: (s) => n(s.a_kbps), num: true },
+          { label: 'FPS', get: (s) => (s.v_fps == null ? dash : low(s.v_fps, 12, 6)), num: true },
+          { label: 'Dropped', get: (s) => grade(s.v_dropped, 30, 300), num: true },
+          { label: 'Heard', get: (s) => ago(s.ageSec), num: true },
+        ], { rowAttr: (s) => ` data-sd="${esc(s.id)}" style="cursor:pointer${s.id === sdHealthSel ? ';background:rgba(128,128,128,.12)' : ''}"` })
+        : '<p class="db-empty">No StreamDAW stream has reported in the last 24 hours. Each one reports while it is on air, when its host has Settings › Usage on.</p>'}
+      </div>
+      ${detail}`);
+    document.querySelectorAll('[data-sd]').forEach((tr) => tr.addEventListener('click', () => {
+      sdHealthSel = tr.dataset.sd === sdHealthSel ? null : tr.dataset.sd;
+      load();
+    }));
+    clearTimeout(sdHealthTimer);
+    sdHealthTimer = setTimeout(() => { if (href() === 'streamdaw/sdaw/health' && !document.hidden) load(); }, 10000);
   }
 
   /* ── StreamDAW ────────────────────────────────────────────────────────
