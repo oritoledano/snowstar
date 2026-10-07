@@ -1267,6 +1267,7 @@
         <div class="db-kpi"><b>${money(st.revenue || 0, 0)}</b><span>taken</span></div>
         <div class="db-kpi"><b>${st.abandoned || 0}</b><span>left at checkout</span></div>
         <div class="db-kpi"><b>${st.downloads || 0}</b><span>downloads</span></div>
+        <div class="db-kpi"><b>${st.freeDownloads14d || 0}</b><span>free downloads, 14 days</span></div>
       </div>`;
 
     if (view === 'orders') {

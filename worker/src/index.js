@@ -50,7 +50,7 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
          streamdawAdmin, streamdawRelease,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
-         streamdawReport, streamdawReports } from './streamdaw.js';
+         streamdawReport, streamdawReports, streamdawDownloadFree } from './streamdaw.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -425,6 +425,8 @@ async function handle(req, env, ctx) {
 
   if (path === '/streamdaw/checkout' && method === 'POST') return streamdawCheckout(req, env);
   if (path === '/streamdaw/download' && method === 'GET') return streamdawDownload(req, env);
+  // The free version: the same installer, for anyone (Pro is a key for one Mac).
+  if (path === '/streamdaw/download/free' && (method === 'GET' || method === 'HEAD')) return streamdawDownloadFree(req, env);
   if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
   if (path === '/streamdaw/coupon/check' && method === 'POST') return streamdawCouponCheck(req, env);
   if (path === '/streamdaw/coupon' && method === 'POST') return streamdawCouponCreate(req, env, await currentUser(req, env));

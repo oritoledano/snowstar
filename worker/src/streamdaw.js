@@ -176,18 +176,21 @@ export async function streamdawCheckout(req, env) {
   }
 
   const ref = 'SD-' + urlToken(9).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10).padEnd(6, 'X');
+  // Bought from inside the app ("Get Pro" opens this page with ?machine=SD…): the order
+  // carries that Mac, and the key request files itself once the money is in. No sign-in
+  // to the page afterwards, no machine ID to copy and paste.
+  const machine = normMachine(body.machine);
+  const ownerName = String(user?.name || body.name || '').trim().slice(0, 60) || null;
 
   // ── free (a coupon covered the whole price): grant now, no HYP ──
   if (amount <= 0) {
     if (!hypConfigured(env)) { /* free path needs no gateway, continue */ }
-    await env.DB.prepare(
-      `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, created_at)
-       VALUES (?, ?, ?, 'lifetime', 0, 'ILS', 'granted', ?, ?)`
-    ).bind(ref, user?.id || null, email, couponCode, now()).run();
+    await insertOrder(env, { ref, userId: user?.id || null, email, amount: 0, status: 'granted', coupon: couponCode, machine, ownerName });
     const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, plan: 'lifetime', source: 'coupon' });
     if (couponCode) await burnSdawCoupon(env, couponCode);
     const link = await mintDownloadLink(env, ent.id, email);
-    await emailReceipt(env, email, link).catch(() => {});
+    if (machine) await requestKey(env, { entId: ent.id, email, machine, name: ownerName || email, via: 'checkout' }).catch(() => {});
+    await emailReceipt(env, email, link, machine).catch(() => {});
     await env.DB.prepare('UPDATE streamdaw_orders SET entitlement_id = ?, settled_at = ? WHERE ref = ?')
       .bind(ent.id, now(), ref).run().catch(() => {});
     return json({ ok: true, free: true, ref, download: link, redirect: `${SITE}/apps/streamdaw.html?bought=1&free=1` });
@@ -196,10 +199,7 @@ export async function streamdawCheckout(req, env) {
   // ── paid (full price, or partially discounted): send to HYP ──
   if (!hypConfigured(env)) return json({ error: 'hyp_not_configured' }, 503);
   const shekels = (amount / 100).toFixed(2);
-  await env.DB.prepare(
-    `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, created_at)
-     VALUES (?, ?, ?, 'lifetime', ?, 'ILS', 'started', ?, ?)`
-  ).bind(ref, user?.id || null, email, amount, couponCode, now()).run();
+  await insertOrder(env, { ref, userId: user?.id || null, email, amount, status: 'started', coupon: couponCode, machine, ownerName });
 
   // APISign — mirrors the music checkout's signing, including the gotchas the
   // comments in hyp.js were written in blood for: signMe=1, and using HYP's
@@ -255,7 +255,9 @@ export async function streamdawReturn(req, env, raw, q) {
   const ent = await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: paid, plan: order.plan || 'lifetime', source: 'hyp' });
   if (order.coupon) await burnSdawCoupon(env, order.coupon);
   const link = await mintDownloadLink(env, ent.id, order.email);
-  await emailReceipt(env, order.email, link).catch(() => {});
+  if (order.machine_id)
+    await requestKey(env, { entId: ent.id, email: order.email, machine: order.machine_id, name: order.owner_name || order.email, via: 'checkout' }).catch(() => {});
+  await emailReceipt(env, order.email, link, order.machine_id || null).catch(() => {});
   await env.DB.prepare(`UPDATE streamdaw_orders SET status='granted', hyp_id=?, entitlement_id=?, settled_at=? WHERE ref=?`)
     .bind(String(q.Id || ''), ent.id, now(), ref).run().catch(() => {});
   return Response.redirect(`${SITE}/apps/streamdaw.html?bought=1&ref=${encodeURIComponent(ref)}`, 302);
@@ -302,6 +304,27 @@ export async function streamdawDownload(req, env) {
   });
 }
 
+/** GET /streamdaw/download/free — the free version: the same installer, for anyone.
+ *  Pro switches on later with a key made for one Mac, so the build itself is not the thing
+ *  being sold, and a free user who cannot download is a customer who never starts.
+ *  Counted from req_log (route + status 200) for the dashboard's funnel. */
+export async function streamdawDownloadFree(req, env) {
+  const rel = await env.DB.prepare(
+    'SELECT * FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
+  ).bind(ASSET).first();
+  if (!rel) return json({ error: 'no_release' }, 404);
+  const obj = await env.APPS.get(rel.r2_key);
+  if (!obj) return json({ error: 'file_missing' }, 404);
+  return new Response(req.method === 'HEAD' ? null : obj.body, {
+    headers: {
+      'content-type': 'application/octet-stream',
+      'content-disposition': `attachment; filename="${rel.filename}"`,
+      'content-length': String(rel.bytes || obj.size || ''),
+      'cache-control': 'public, max-age=300',
+    },
+  });
+}
+
 // ── 4. Dashboard: does this member own StreamDAW? ──────────────────────────
 export async function myStreamdaw(env, user) {
   if (!user) return json({ owned: false }, 401);
@@ -325,6 +348,60 @@ export async function myStreamdaw(env, user) {
 //
 // The machine id format is fixed by the plug-in (License.cpp): "SD" + 16 hex.
 const MACHINE_ID_RE = /^SD[0-9A-F]{12,20}$/;
+const normMachine = (v) => { const m = String(v || '').trim().toUpperCase(); return MACHINE_ID_RE.test(m) ? m : null; };
+
+/* An order row, with the Mac it was bought for. The two columns arrive with
+   schema-streamdaw-order-machine.sql; until that has run, the order is written without
+   them (and the key request is then made the old way, on the page), so a deploy before
+   the migration cannot break checkout. */
+async function insertOrder(env, { ref, userId, email, amount, status, coupon, machine, ownerName }) {
+  try {
+    await env.DB.prepare(
+      `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, machine_id, owner_name, created_at)
+       VALUES (?, ?, ?, 'lifetime', ?, 'ILS', ?, ?, ?, ?, ?)`
+    ).bind(ref, userId, email, amount, status, coupon, machine, ownerName, now()).run();
+  } catch (e) {
+    if (!/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
+    await env.DB.prepare(
+      `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, created_at)
+       VALUES (?, ?, ?, 'lifetime', ?, 'ILS', ?, ?, ?)`
+    ).bind(ref, userId, email, amount, status, coupon, now()).run();
+  }
+}
+
+/* A key request for one Mac under one purchase: queued for minting, the owner told.
+   From the page's activation form, and on its own when the purchase came from the app. */
+async function requestKey(env, { entId, email, machine, name, via }) {
+  // Already issued for this machine? Hand back the same key rather than queueing a
+  // duplicate — re-installing must not need a new request.
+  const prior = await env.DB.prepare(
+    'SELECT status, key_text FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id = ?'
+  ).bind(entId, machine).first();
+  if (prior && prior.status === 'issued' && prior.key_text) return { status: 'issued', key: prior.key_text };
+
+  await env.DB.prepare(
+    `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at)
+     VALUES (?, ?, ?, ?, 'pending', ?)
+     ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
+       owner_name = excluded.owner_name, requested_at = excluded.requested_at,
+       status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
+  ).bind(entId, lc(email), machine, name, now()).run();
+
+  // Tell the owner there is something to mint. Never fail the request over mail.
+  try {
+    await sendMail(env, {
+      to: env.ALERT_TO || 'oritoledano@gmail.com',
+      subject: `StreamDAW licence request — ${name}${via === 'checkout' ? ' (bought in the app)' : ''}`,
+      text: `${name} <${email}> ${via === 'checkout' ? 'bought StreamDAW from inside the app; their Mac came with the order.' : 'asked for a licence key.'}\n\n`
+          + `Machine ID: ${machine}\n\n`
+          + `Mint it:\n`
+          + `  StreamDAWKeyGen --key "$(awk '/^private /{print $2}' ~/.cache/streamdaw/license-keypair.txt)" \\\n`
+          + `    --name "${name}" --machines ${machine}\n\n`
+          + `Then paste the key into the StreamDAW admin page to send it.`,
+    });
+  } catch {}
+  return { status: 'pending' };
+}
 
 async function activeEntitlement(env, user) {
   return env.DB.prepare(
@@ -351,37 +428,7 @@ export async function streamdawActivate(req, env, user) {
   if (!name)
     return json({ error: 'Tell us the name that should appear on the licence.' }, 400);
 
-  // Already issued for this machine? Hand back the same key rather than queueing
-  // a duplicate — re-installing must not need a new request.
-  const prior = await env.DB.prepare(
-    'SELECT status, key_text FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id = ?'
-  ).bind(ent.id, machine).first();
-  if (prior && prior.status === 'issued' && prior.key_text)
-    return json({ status: 'issued', key: prior.key_text });
-
-  await env.DB.prepare(
-    `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at)
-     VALUES (?, ?, ?, ?, 'pending', ?)
-     ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
-       owner_name = excluded.owner_name, requested_at = excluded.requested_at,
-       status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
-  ).bind(ent.id, lc(ent.email), machine, name, now()).run();
-
-  // Tell the owner there is something to mint. Never fail the request over mail.
-  try {
-    await sendMail(env, {
-      to: env.ALERT_TO || 'oritoledano@gmail.com',
-      subject: `StreamDAW licence request — ${name}`,
-      text: `${name} <${ent.email}> asked for a licence key.\n\n`
-          + `Machine ID: ${machine}\n\n`
-          + `Mint it:\n`
-          + `  StreamDAWKeyGen --key "$(awk '/^private /{print $2}' ~/.cache/streamdaw/license-keypair.txt)" \\\n`
-          + `    --name "${name}" --machines ${machine}\n\n`
-          + `Then paste the key into the StreamDAW admin page to send it.`,
-    });
-  } catch {}
-
-  return json({ status: 'pending' });
+  return json(await requestKey(env, { entId: ent.id, email: ent.email, machine, name, via: 'page' }));
 }
 
 /** The buyer polls after submitting, so the key lands without another email. */
@@ -539,12 +586,15 @@ async function mintDownloadLink(env, entitlementId, email) {
   return `${SITE}/api/streamdaw/download?t=${token}`;
 }
 
-function emailReceipt(env, to, link) {
+function emailReceipt(env, to, link, machine) {
   const subject = 'Your StreamDAW download — by Snowstar';
+  const keyLine = machine
+    ? `Your Pro key for this Mac (${machine}) is being made now. It arrives by email, usually within a few hours: paste it into StreamDAW › Settings › Licence.\n\n`
+    : '';
   const text =
 `Thanks for getting StreamDAW.
 
-Download it here (link is private to you, good for 7 days):
+${keyLine}Download it here (link is private to you, good for 7 days):
 ${link}
 
 Install the .pkg, open your DAW, drop StreamDAW on the master bus, press GO LIVE.
@@ -556,6 +606,7 @@ this email, the same login you use for Mutra and everything else by Snowstar.
   const html =
 `<div style="font-family:Inter,system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1a1a1a">
   <h2 style="font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em">Welcome to StreamDAW</h2>
+  ${machine ? `<p>Your Pro key for this Mac (<code>${machine}</code>) is being made now. It arrives by email, usually within a few hours: paste it into StreamDAW › Settings › Licence.</p>` : ''}
   <p>Your private download link (good for 7 days):</p>
   <p><a href="${link}" style="display:inline-block;background:#1c2be0;color:#fff;font-weight:700;
      padding:12px 22px;border-radius:8px;text-decoration:none">Download StreamDAW</a></p>
@@ -620,6 +671,10 @@ export async function streamdawAdmin(env, user) {
     revenue: paid.reduce((n, o) => n + (o.amount || 0), 0),
     active: entitlements.filter((e) => e.status === 'active' && !e.revoked_at).length,
     downloads: entitlements.reduce((n, e) => n + (e.downloads || 0), 0),
+    // the free version, from the request log (req_log keeps a fortnight)
+    freeDownloads14d: ((await soft(
+      `SELECT COUNT(*) AS n FROM req_log WHERE route = '/streamdaw/download/free' AND status = 200 AND ts > ?`,
+      Math.floor(Date.now() / 1000) - 14 * 86400))[0] || {}).n || 0,
   };
 
   return json({
