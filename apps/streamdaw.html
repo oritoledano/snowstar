@@ -529,14 +529,14 @@
         </div>
         <div>
           <div id="licForm">
-            <input id="licName" type="text" maxlength="60" placeholder="Name on the licence">
+            <input id="licName" type="text" maxlength="60" placeholder="Your name (on the licence, with your email)">
             <input id="licMachine" type="text" maxlength="30" placeholder="SD…" spellcheck="false" aria-label="Machine ID">
             <button class="btn ink" id="licSend">Request my key</button>
             <div class="lmsg" id="licMsg"></div>
           </div>
           <div id="licKeyWrap" hidden>
-            <p style="margin-bottom:8px">Your key. Paste it into StreamDAW › Settings › Licence:</p>
-            <textarea id="licKey" readonly rows="4"></textarea>
+            <p style="margin-bottom:8px">Your key. Copy it, paste it into StreamDAW › Settings › Licence, press Unlock:</p>
+            <textarea id="licKey" readonly rows="6" spellcheck="false"></textarea>
             <button class="btn ghost sm" id="licCopy">Copy key</button>
           </div>
         </div>
@@ -687,7 +687,7 @@
       const issued=(d.activations||[]).find(a=>a.status==='issued'&&a.key_text);
       if(issued) showKey(issued.key_text);
       else if((d.activations||[]).some(a=>a.status==='pending'))
-        licMsg('Your request is in. Keys are made by hand, so give it a few hours: it arrives by email and appears here.');
+        licMsg('Your request is in. Your key arrives by email, usually within a few hours, and appears here.');
     }catch(e){}
   }
   function licMsg(t,bad){ const m=document.getElementById('licMsg'); if(m){ m.textContent=t; m.className='lmsg'+(bad?' bad':''); } }
@@ -707,7 +707,7 @@
       const d=await r.json();
       if(!r.ok){ licMsg(d.error||'That did not go through.',true); btn.disabled=false; return; }
       if(d.status==='issued'&&d.key){ showKey(d.key); return; }
-      licMsg('Got it. Keys are made by hand, so give it a few hours: it arrives by email and appears here.');
+      licMsg('Got it: we emailed you a confirmation. Your key arrives in a second email, usually within a few hours, and appears here.');
     }catch(e){ licMsg('Network trouble. Try again.',true); btn.disabled=false; }
   }
   document.getElementById('licSend').addEventListener('click',licRequest);

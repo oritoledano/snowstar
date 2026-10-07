@@ -1311,9 +1311,12 @@
     if (view === 'keys') {
       const acts = d.activations || [];
       const pending = acts.filter((a) => a.status === 'pending');
-      const cmd = (a) => `StreamDAWKeyGen --key "$(awk '/^private /{print $2}' `
-        + `~/.cache/streamdaw/license-keypair.txt)" --name "${(a.owner_name || '').replace(/"/g, '')}" `
-        + `--machines ${a.machine_id}`;
+      /* The name is what listeners see as the host; the email rides in the key for the
+         buyer's own licence panel. Same command as the "[Admin] Mint…" email. */
+      const clean = (t) => String(t || '').replace(/["$`\\]/g, '');
+      const cmd = (a) => `~/.cache/streamdaw/bin/streamdaw-keygen --key "$(awk '/^private /{print $2}' `
+        + `~/.cache/streamdaw/license-keypair.txt)" --name "${clean(a.owner_name)}" `
+        + `--email "${clean(a.email).toLowerCase()}" --machines ${a.machine_id}`;
       return paint(`${kpis}
         ${pending.length ? `<div class="db-warn warn" style="margin-bottom:16px">
           <b>${pending.length} ${pending.length === 1 ? 'person has' : 'people have'} paid and cannot
@@ -1403,9 +1406,10 @@
       setTimeout(() => { b.textContent = 'Copy command'; }, 1600);
     }));
     document.querySelectorAll('.sd-key').forEach((b) => b.addEventListener('click', async () => {
-      const key = window.prompt('Paste the key that keygen printed (the whole block):');
+      // Everything keygen printed is fine: the Worker keeps the key's hex and reads the serial.
+      const key = window.prompt('Paste everything keygen printed:');
       if (key === null) return;
-      if (key.trim().length < 40) { alert('That looks truncated — paste the whole key.'); return; }
+      if (key.trim().length < 40) { alert('That looks truncated — paste everything keygen printed.'); return; }
       b.disabled = true; b.textContent = 'Sending…';
       const r = await post('/streamdaw/activation/issue', { id: Number(b.dataset.id), key: key.trim() });
       if (!r || !r.ok) { b.disabled = false; b.textContent = 'Paste key…'; alert((r && r.error) || 'That did not go through.'); return; }
