@@ -35,8 +35,10 @@
   --meter: #16140f; --shadow: 0 1px 0 rgba(22,20,15,.08);
   --vu-hi: #fdfbf4; --vu-lo: #e8e1cf; --vu-ink: 22, 20, 15; --vu-edge: 255, 255, 255;   /* the meters: a light face */
   --vu-g: #1d9a4a; --vu-y: #d29a00; --vu-r: #e02f3a; --vu-off: .16; --vu-glow: 2;
-  --amp: #c7b9a6 url(demo/leather-light.jpg) center / 440px auto repeat;   /* the leather (Ori's tolex): the phone's play card */
-  --amp-wall: linear-gradient(rgba(239,233,218,.5), rgba(239,233,218,.5)), #cfc3b0 url(demo/leather-light.jpg) 0 0 / 440px auto repeat;  /* the app's middle */
+  /* The leather: Ori's amp tolex, one seamless tile (site/snowstar/demo/leather-make.py), with a
+     soft light from the top left. --amp: the phone's play card; --amp-wall: the app's middle. */
+  --amp: linear-gradient(155deg, rgba(255,255,255,.28) 0%, rgba(255,255,255,.06) 32%, rgba(0,0,0,0) 58%, rgba(0,0,0,.08) 100%), #bdb4ab url(demo/leather-light.jpg) 0 0 / 330px auto repeat;
+  --amp-wall: linear-gradient(rgba(239,233,218,.35), rgba(239,233,218,.35)), #c4bbb1 url(demo/leather-light.jpg) 0 0 / 330px auto repeat;
   --amp-ink: #16140f; --amp-sub: rgba(22,20,15,.7); --amp-edge: #6f6556; --amp-text: 0 1px 0 rgba(255,255,255,.45);
   --amp-glow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 3px rgba(0,0,0,.08), 0 10px 24px -16px rgba(40,30,10,.55);
   --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.35);
@@ -55,8 +57,8 @@ html[data-theme="dark"] {
   --meter: #f3eddc; --shadow: none;
   --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
   --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
-  --amp: #24221f url(demo/leather-dark.jpg) center / 300px auto repeat;
-  --amp-wall: linear-gradient(rgba(18,17,14,.42), rgba(18,17,14,.42)), #1c1b19 url(demo/leather-dark.jpg) 0 0 / 300px auto repeat;
+  --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #141312 url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
+  --amp-wall: linear-gradient(rgba(18,17,14,.32), rgba(18,17,14,.32)), #141312 url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
   --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
   --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
   --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
@@ -72,8 +74,8 @@ html[data-theme="dark"] {
     --meter: #f3eddc; --shadow: none;
     --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
     --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
-    --amp: #24221f url(demo/leather-dark.jpg) center / 300px auto repeat;
-    --amp-wall: linear-gradient(rgba(18,17,14,.42), rgba(18,17,14,.42)), #1c1b19 url(demo/leather-dark.jpg) 0 0 / 300px auto repeat;
+    --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #141312 url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
+    --amp-wall: linear-gradient(rgba(18,17,14,.32), rgba(18,17,14,.32)), #141312 url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
     --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
     --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
     --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
@@ -535,6 +537,159 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
       <a href="streamdaw.html" target="_top">StreamDAW</a> · free on your master bus.</p>
   </div>
 </div>
+<script>// Two analog VU meters on one canvas: the listener page, the control page, the site's demo.
+//
+// Backlit faces, a real VU scale (linear in voltage: -20 sits near the stop, 0 VU two thirds
+// across), needles on a damped spring that rise fast and fall slowly, and a peak lamp at
+// -1 dBFS. 0 VU = -4 dBFS of peak, so a mastered mix swings around the red.
+//
+// Light on the page (2026-10-08, after a dropout that came with a video starting): everything
+// that does not move (bezels, faces, scales, glass, lamps) is drawn once per size and theme
+// into layers; a frame is two images, two needles and two lamps, at most 30 a second, only
+// while a needle moves, and never while the page is hidden.
+//
+//   const m = SdawVU.create(canvas);  m.feed(peakL, peakR);  m.pose(l, r, peak);  m.redraw();
+(function () {
+  'use strict';
+  const REF = -4;
+  const toDb = (v) => (v > 0 ? 20 * Math.log10(v) : -120);
+  const needleAt = (db) => Math.min(1.06, Math.pow(10, (db - REF) / 20) / Math.pow(10, 3 / 20));   // 0..1 = rest..+3 VU
+  const isDark = () => {
+    const t = document.documentElement.getAttribute('data-theme');
+    return t ? t === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  };
+  const PAL = {
+    dark:  { f0: '#f7e2a6', f1: '#d9b866', glow: 'rgba(255,214,120,.55)', ink: '#2b2416', bez0: '#3a3833', bez1: '#0e0d0b' },
+    light: { f0: '#fbf5e4', f1: '#e7dcbd', glow: 'rgba(255,246,214,.6)', ink: '#2b2416', bez0: '#4a4741', bez1: '#15140f' },
+  };
+  const all = new Set();
+
+  // The geometry of one meter, shared by the layers and the needle.
+  function geo(x0, w, h) {
+    const fx = x0 + 6, fy = 7, fw = w - 12, fh = h - 16;
+    const cx = fx + fw / 2, cy = fy + fh * 1.45, R = Math.min(fh * 1.25, fw * 0.55), A = 42 * Math.PI / 180;
+    return { x0, w, h, fx, fy, fw, fh, cx, cy, R, A, ang: (p) => -A + 2 * A * Math.max(0, Math.min(1, p)) - Math.PI / 2 };
+  }
+  function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
+  function paintBack(g, m, side, pal) {
+    const { x0, w, h, fx, fy, fw, fh, cx, cy, R, ang } = m;
+    g.save(); g.shadowColor = 'rgba(0,0,0,.55)'; g.shadowBlur = 8; g.shadowOffsetY = 3;
+    const bz = g.createLinearGradient(0, 0, 0, h); bz.addColorStop(0, pal.bez0); bz.addColorStop(1, pal.bez1);
+    rr(g, x0, 1, w, h - 4, 9); g.fillStyle = bz; g.fill(); g.restore();
+    g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 1; rr(g, x0 + 0.5, 1.5, w - 1, h - 5, 8.5); g.stroke();
+    g.save(); rr(g, fx, fy, fw, fh, 5); g.clip();
+    const face = g.createLinearGradient(0, fy, 0, fy + fh); face.addColorStop(0, pal.f0); face.addColorStop(1, pal.f1);
+    g.fillStyle = face; g.fillRect(fx, fy, fw, fh);
+    const glow = g.createRadialGradient(fx + fw / 2, fy + fh * 0.9, 4, fx + fw / 2, fy + fh * 0.9, fw * 0.7); glow.addColorStop(0, pal.glow); glow.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = glow; g.fillRect(fx, fy, fw, fh);
+    const vig = g.createRadialGradient(fx + fw / 2, fy + fh / 2, fh * 0.2, fx + fw / 2, fy + fh / 2, fw * 0.75); vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(60,40,10,.28)');
+    g.fillStyle = vig; g.fillRect(fx, fy, fw, fh);
+    const at = (vuDb) => needleAt(vuDb + REF);
+    g.lineWidth = 1.2; g.strokeStyle = pal.ink;
+    g.beginPath(); g.arc(cx, cy, R, ang(at(-20)), ang(at(0))); g.stroke();
+    g.strokeStyle = '#c4271f'; g.lineWidth = 3.2; g.beginPath(); g.arc(cx, cy, R + 1.5, ang(at(0)), ang(1)); g.stroke();
+    g.font = '600 ' + Math.max(7, Math.round(fh * 0.13)) + 'px ui-sans-serif, -apple-system, Helvetica, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (const [d, lab] of [[-20, '20'], [-10, '10'], [-7, ''], [-5, '5'], [-3, '3'], [-2, ''], [-1, ''], [0, '0'], [1, ''], [2, ''], [3, '+3']]) {
+      const t = ang(at(d)), big = lab !== '', c = Math.cos(t), sn = Math.sin(t);
+      g.strokeStyle = d > 0 ? '#c4271f' : pal.ink; g.lineWidth = big ? 1.3 : 1;
+      g.beginPath(); g.moveTo(cx + c * R, cy + sn * R); g.lineTo(cx + c * (R + (big ? 6 : 4)), cy + sn * (R + (big ? 6 : 4))); g.stroke();
+      if (big && fw > 100) { g.fillStyle = d > 0 ? '#c4271f' : pal.ink; g.fillText(lab, cx + c * (R + 13), cy + sn * (R + 13)); }
+    }
+    g.fillStyle = pal.ink; g.font = 'italic 700 ' + Math.max(9, Math.round(fh * 0.2)) + 'px Georgia, "Times New Roman", serif';
+    g.fillText('VU', cx, fy + fh * 0.8);
+    g.font = '600 ' + Math.max(7, Math.round(fh * 0.12)) + 'px ui-sans-serif, -apple-system, Helvetica, Arial'; g.textAlign = 'left';
+    g.fillText(side, fx + 7, fy + 10);
+    g.restore();
+  }
+  function paintFront(g, m) {   // over the needle: the pivot's cover and the glass
+    const { fx, fy, fw, fh } = m;
+    g.save(); rr(g, fx, fy, fw, fh, 5); g.clip();
+    const cover = g.createLinearGradient(0, fy + fh - 12, 0, fy + fh); cover.addColorStop(0, 'rgba(20,18,14,0)'); cover.addColorStop(1, 'rgba(20,18,14,.35)');
+    g.fillStyle = cover; g.fillRect(fx, fy + fh - 12, fw, 12);
+    const gl = g.createLinearGradient(0, fy, 0, fy + fh * 0.55); gl.addColorStop(0, 'rgba(255,255,255,.42)'); gl.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gl; g.beginPath(); g.moveTo(fx, fy); g.lineTo(fx + fw, fy); g.lineTo(fx + fw, fy + fh * 0.32); g.quadraticCurveTo(fx + fw / 2, fy + fh * 0.5, fx, fy + fh * 0.32); g.closePath(); g.fill();
+    g.restore();
+  }
+  function lamp(on, dpr) {
+    const c = document.createElement('canvas'), s = Math.ceil(18 * dpr); c.width = c.height = s;
+    const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (on) { const halo = g.createRadialGradient(9, 9, 1, 9, 9, 9); halo.addColorStop(0, 'rgba(255,59,47,.6)'); halo.addColorStop(1, 'rgba(255,59,47,0)'); g.fillStyle = halo; g.fillRect(0, 0, 18, 18); }
+    const l = g.createRadialGradient(8, 8, 0.5, 9, 9, 4); l.addColorStop(0, on ? '#ffd1c7' : '#7a2a24'); l.addColorStop(1, on ? '#ff3b2f' : '#2b0f0d');
+    g.fillStyle = l; g.beginPath(); g.arc(9, 9, 3.2, 0, 2 * Math.PI); g.fill();
+    return c;
+  }
+
+  function create(cv) {
+    const s = { tl: 0, tr: 0, xl: 0, xr: 0, vl: 0, vr: 0, pkl: -1e9, pkr: -1e9, at: 0, last: 0, drawn: 0, running: false, L: null, key: '' };
+    function layers() {
+      const dpr = Math.min(3, window.devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight;
+      if (!W || !H) return null;
+      const dark = isDark(), key = [W, H, dpr, dark].join();
+      if (s.L && s.key === key) return s.L;
+      if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+      const pal = dark ? PAL.dark : PAL.light, gap = 10, mw = (W - gap) / 2;
+      const ms = [geo(0, mw, H), geo(mw + gap, mw, H)];
+      const mk = () => { const c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); return [c, g]; };
+      const [bg, gb] = mk(), [fg, gf] = mk();
+      paintBack(gb, ms[0], 'L', pal); paintBack(gb, ms[1], 'R', pal);
+      paintFront(gf, ms[0]); paintFront(gf, ms[1]);
+      s.L = { bg, fg, ms, dpr, W, H, on: lamp(true, dpr), off: lamp(false, dpr) }; s.key = key;
+      return s.L;
+    }
+    function draw() {
+      const L = layers(); if (!L) return;
+      const g = cv.getContext('2d'), now = performance.now();
+      g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.drawImage(L.bg, 0, 0);
+      g.setTransform(L.dpr, 0, 0, L.dpr, 0, 0); g.lineCap = 'round';
+      [[L.ms[0], s.xl, now - s.pkl < 500], [L.ms[1], s.xr, now - s.pkr < 500]].forEach(([m, x, pk]) => {
+        const t = m.ang(x), c = Math.cos(t), sn = Math.sin(t), r0 = m.R * 0.42, r1 = m.R + 7;
+        g.save(); g.beginPath(); g.rect(m.fx, m.fy, m.fw, m.fh); g.clip();
+        g.strokeStyle = 'rgba(40,25,5,.25)'; g.lineWidth = 2; g.beginPath(); g.moveTo(m.cx + c * r0 + 2, m.cy + sn * r0 + 2); g.lineTo(m.cx + c * r1 + 2, m.cy + sn * r1 + 2); g.stroke();
+        g.strokeStyle = '#141210'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(m.cx + c * r0, m.cy + sn * r0); g.lineTo(m.cx + c * r1, m.cy + sn * r1); g.stroke();
+        g.restore();
+        g.drawImage(pk ? L.on : L.off, m.fx + m.fw - 18, m.fy + 1, 18, 18);
+      });
+      g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(L.fg, 0, 0);
+    }
+    function step(now) {
+      if (document.hidden) { s.running = false; return; }
+      if (now - s.drawn < 32) { requestAnimationFrame(step); return; }   // at most 30 frames a second
+      const dt = Math.min(0.05, (now - (s.last || now)) / 1000); s.last = now; s.drawn = now;
+      const fresh = now - s.at < 400;
+      const tl = fresh ? needleAt(toDb(s.tl)) : 0, tr = fresh ? needleAt(toDb(s.tr)) : 0;
+      s.tl *= 0.6; s.tr *= 0.6;
+      for (const [t, x, v] of [[tl, 'xl', 'vl'], [tr, 'xr', 'vr']]) {
+        // a damped spring: quick up (about 5 Hz), slow down (about 1.6 Hz), as a VU's needle
+        const w = 2 * Math.PI * (t > s[x] ? 5 : 1.6), K = w * w, C = 1.8 * w;
+        for (let i = 0; i < 2; i++) { const hh = dt / 2; s[v] += (K * (t - s[x]) - C * s[v]) * hh; s[x] = Math.max(-0.02, Math.min(1.08, s[x] + s[v] * hh)); }
+      }
+      draw();
+      const moving = Math.abs(s.vl) + Math.abs(s.vr) > 0.002 || s.xl > 0.002 || s.xr > 0.002;
+      if (moving || fresh || now - Math.max(s.pkl, s.pkr) < 600) requestAnimationFrame(step);
+      else { s.running = false; s.xl = s.xr = s.vl = s.vr = 0; draw(); }
+    }
+    const api = {
+      feed(l, r) {
+        l = +l || 0; r = +r || 0;
+        s.tl = Math.max(s.tl, l); s.tr = Math.max(s.tr, r); s.at = performance.now();
+        if (l > 0.89) s.pkl = s.at; if (r > 0.89) s.pkr = s.at;
+        if (!s.running && !document.hidden) { s.running = true; s.last = performance.now(); requestAnimationFrame(step); }
+      },
+      pose(l, r, peak) { s.xl = +l || 0; s.xr = +r || 0; s.vl = s.vr = 0; if (peak) s.pkl = s.pkr = performance.now(); draw(); },
+      redraw() { s.key = ''; draw(); },
+    };
+    all.add(api);
+    requestAnimationFrame(() => draw());
+    return api;
+  }
+  const again = () => { for (const m of all) m.redraw(); };
+  window.addEventListener('sdawtheme', again);
+  window.addEventListener('resize', again);
+  if (window.matchMedia) { const mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', again); }
+  window.SdawVU = { create, toDb, needleAt };
+})();
+</script>
 <script>
 (function () {
   'use strict';
@@ -828,118 +983,23 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     requestAnimationFrame(vuLoop);
   }
   // ---------- the meter band ----------
-  // Two analog VU meters (2026-10-08, Ori: "depth and realism, as if it is an analog
-  // machine"): backlit faces, a real VU scale (linear in voltage, so -20 sits near the stop and
-  // 0 VU two thirds across), needles with VU ballistics (a damped spring: about 300 ms to the
-  // mark, a hair of overshoot) and a peak light. Fed with the peaks of what this page plays
-  // (vuFeed); drawn only while a needle moves (landmine 22: the page must stay light).
-  const vu = { tl: 0, tr: 0, xl: 0, xr: 0, vl: 0, vr: 0, pkl: -1e9, pkr: -1e9, last: 0, at: 0, running: false, key: '' };
-  let listenSince = 0;
+  // Two analog VU meters (vu-analog.js: shared with the control page and the site's demo),
+  // fed with the level of what this page is PLAYING: the audio engine reports it with its
+  // stats, about nine times a second. The level of what ARRIVES ran half a second early in
+  // sync mode (2026-10-08: "the meters are not in time with what is playing").
+  const meterVU = window.SdawVU && $('vuCanvas') ? SdawVU.create($('vuCanvas')) : null;
+  let listenSince = 0, vuFromEngine = 0;
   const VU_MIN = -42, toDb = (v) => (v > 0 ? 20 * Math.log10(v) : -120);
-  function dbPos(db) {           // the old segment scale: still what the track meters use
+  function dbPos(db) {           // the track meters' scale
     if (db <= VU_MIN) return 0; if (db >= 0) return 1;
     if (db < -20) return (db - VU_MIN) / (-20 - VU_MIN) * 0.30;
     if (db < -10) return 0.30 + (db + 20) / 10 * 0.25;
     return 0.55 + (db + 10) / 10 * 0.45;
   }
-  const VU_REF = -4;             // 0 VU = -4 dBFS of peak: a mastered mix swings around the red
-  const vuNeedle = (db) => Math.min(1.06, Math.pow(10, (db - VU_REF) / 20) / Math.pow(10, 3 / 20));   // 0..1 = rest..+3 VU
-  function vuFeed(l, r) {
-    vu.tl = Math.max(vu.tl, +l || 0); vu.tr = Math.max(vu.tr, +r || 0); vu.at = performance.now();
-    if ((+l || 0) > 0.89) vu.pkl = vu.at; if ((+r || 0) > 0.89) vu.pkr = vu.at;     // -1 dBFS lights the peak lamp
-    if (!vu.running && !document.hidden) { vu.running = true; vu.last = performance.now(); requestAnimationFrame(vuStep); }
-    if (wantPlay && !listenSince) listenSince = Date.now(); else if (!wantPlay) listenSince = 0;
-  }
-  function vuStep(now) {
-    const dt = Math.min(0.05, (now - vu.last) / 1000); vu.last = now;
-    const fresh = now - vu.at < 400;
-    const tl = fresh ? vuNeedle(toDb(vu.tl)) : 0, tr = fresh ? vuNeedle(toDb(vu.tr)) : 0;
-    vu.tl *= 0.6; vu.tr *= 0.6;
-    // the needle: x'' = k(target - x) - c x'  (about 2 Hz, damped a little under critical)
-    const K = 175, C = 21;
-    for (const [t, x, v] of [[tl, 'xl', 'vl'], [tr, 'xr', 'vr']]) {
-      for (let i = 0; i < 2; i++) { const h = dt / 2; vu[v] += (K * (t - vu[x]) - C * vu[v]) * h; vu[x] = Math.max(-0.02, Math.min(1.08, vu[x] + vu[v] * h)); }
-    }
-    drawVu();
-    const moving = Math.abs(vu.vl) + Math.abs(vu.vr) > 0.002 || vu.xl > 0.002 || vu.xr > 0.002;
-    if (!document.hidden && (moving || fresh || now - Math.max(vu.pkl, vu.pkr) < 600)) requestAnimationFrame(vuStep);
-    else { vu.running = false; vu.xl = vu.xr = vu.vl = vu.vr = 0; drawVu(); }
-  }
-  function drawVu() {
-    const cv = $('vuCanvas'); if (!cv) return;
-    const dpr = Math.min(3, window.devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
-    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); vu.key = ''; }
-    const now = performance.now(), pal = vuPalette();
-    const key = [W, H, vu.xl.toFixed(3), vu.xr.toFixed(3), now - vu.pkl < 500, now - vu.pkr < 500, pal.k].join();
-    if (key === vu.key) return; vu.key = key;
-    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
-    const gap = 10, mw = (W - gap) / 2;
-    vuMeter(g, 0, mw, H, vu.xl, now - vu.pkl < 500, 'L', pal);
-    vuMeter(g, mw + gap, mw, H, vu.xr, now - vu.pkr < 500, 'R', pal);
-  }
-  // The meters' face and bezel follow the theme a little (an ivory face in the bright theme, a
-  // warm backlit one in the dark); the needle, the scale and the red are the same in both.
-  function vuPalette() {
-    const dark = (document.documentElement.getAttribute('data-theme') || (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
-    return dark ? { k: 'd', f0: '#f7e2a6', f1: '#d9b866', glow: 'rgba(255,214,120,.55)', ink: '#2b2416', bez0: '#3a3833', bez1: '#0e0d0b' }
-                : { k: 'l', f0: '#fbf5e4', f1: '#e7dcbd', glow: 'rgba(255,246,214,.6)', ink: '#2b2416', bez0: '#4a4741', bez1: '#15140f' };
-  }
-  window.addEventListener('sdawtheme', () => { vu.key = ''; drawVu(); });
-  if (window.matchMedia) { const mq = matchMedia('(prefers-color-scheme: dark)'); const re = () => { vu.key = ''; drawVu(); }; if (mq.addEventListener) mq.addEventListener('change', re); }
-  function vuMeter(g, x0, w, h, pos, peak, side, pal) {
-    const rr = (x, y, ww, hh, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + ww, y, x + ww, y + hh, r); g.arcTo(x + ww, y + hh, x, y + hh, r); g.arcTo(x, y + hh, x, y, r); g.arcTo(x, y, x + ww, y, r); g.closePath(); };
-    // bezel: dark metal with a lit top edge, and a shadow it casts on the leather
-    g.save(); g.shadowColor = 'rgba(0,0,0,.55)'; g.shadowBlur = 8; g.shadowOffsetY = 3;
-    const bz = g.createLinearGradient(0, 0, 0, h); bz.addColorStop(0, pal.bez0); bz.addColorStop(1, pal.bez1);
-    rr(x0, 1, w, h - 4, 9); g.fillStyle = bz; g.fill(); g.restore();
-    g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 1; rr(x0 + .5, 1.5, w - 1, h - 5, 8.5); g.stroke();
-    // face: backlit from below the scale, darker at the corners
-    const fx = x0 + 6, fy = 7, fw = w - 12, fh = h - 16;
-    g.save(); rr(fx, fy, fw, fh, 5); g.clip();
-    const face = g.createLinearGradient(0, fy, 0, fy + fh); face.addColorStop(0, pal.f0); face.addColorStop(1, pal.f1);
-    g.fillStyle = face; g.fillRect(fx, fy, fw, fh);
-    const glow = g.createRadialGradient(fx + fw / 2, fy + fh * 0.9, 4, fx + fw / 2, fy + fh * 0.9, fw * 0.7); glow.addColorStop(0, pal.glow); glow.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = glow; g.fillRect(fx, fy, fw, fh);
-    const vig = g.createRadialGradient(fx + fw / 2, fy + fh / 2, fh * 0.2, fx + fw / 2, fy + fh / 2, fw * 0.75); vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(60,40,10,.28)');
-    g.fillStyle = vig; g.fillRect(fx, fy, fw, fh);
-    // the scale: an arc around a pivot below the face
-    const cx = fx + fw / 2, cy = fy + fh * 1.45, R = Math.min(fh * 1.25, fw * 0.55), A = 42 * Math.PI / 180;
-    const ang = (p) => -A + 2 * A * Math.max(0, Math.min(1, p)) - Math.PI / 2;
-    const at = (vuDb) => vuNeedle(vuDb + VU_REF);
-    g.lineWidth = 1.2; g.strokeStyle = pal.ink;
-    g.beginPath(); g.arc(cx, cy, R, ang(at(-20)), ang(at(0))); g.stroke();
-    g.strokeStyle = '#c4271f'; g.lineWidth = 3.2; g.beginPath(); g.arc(cx, cy, R + 1.5, ang(at(0)), ang(1)); g.stroke();
-    g.font = '600 ' + Math.max(7, Math.round(fh * 0.13)) + 'px ui-sans-serif, -apple-system, Helvetica, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    for (const [d, lab] of [[-20, '20'], [-10, '10'], [-7, ''], [-5, '5'], [-3, '3'], [-2, ''], [-1, ''], [0, '0'], [1, ''], [2, ''], [3, '+3']]) {
-      const t = ang(at(d)), big = lab !== '', c = Math.cos(t), sn = Math.sin(t);
-      g.strokeStyle = d > 0 ? '#c4271f' : pal.ink; g.lineWidth = big ? 1.3 : 1;
-      g.beginPath(); g.moveTo(cx + c * R, cy + sn * R); g.lineTo(cx + c * (R + (big ? 6 : 4)), cy + sn * (R + (big ? 6 : 4))); g.stroke();
-      if (big && fw > 100) { g.fillStyle = d > 0 ? '#c4271f' : pal.ink; g.fillText(lab, cx + c * (R + 13), cy + sn * (R + 13)); }
-    }
-    g.fillStyle = pal.ink; g.font = 'italic 700 ' + Math.max(9, Math.round(fh * 0.2)) + 'px Georgia, "Times New Roman", serif';
-    g.fillText('VU', cx, fy + fh * 0.8);
-    g.font = '600 ' + Math.max(7, Math.round(fh * 0.12)) + 'px ui-sans-serif, -apple-system, Helvetica, Arial'; g.textAlign = 'left';
-    g.fillText(side, fx + 7, fy + 10);
-    // the needle, with its shadow on the face
-    const t = ang(pos), c = Math.cos(t), sn = Math.sin(t), r0 = R * 0.42, r1 = R + 7;
-    g.lineCap = 'round';
-    g.strokeStyle = 'rgba(40,25,5,.25)'; g.lineWidth = 2; g.beginPath(); g.moveTo(cx + c * r0 + 2, cy + sn * r0 + 2); g.lineTo(cx + c * r1 + 2, cy + sn * r1 + 2); g.stroke();
-    g.strokeStyle = '#141210'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(cx + c * r0, cy + sn * r0); g.lineTo(cx + c * r1, cy + sn * r1); g.stroke();
-    // the pivot's cover: a dark band along the bottom
-    const cover = g.createLinearGradient(0, fy + fh - 12, 0, fy + fh); cover.addColorStop(0, 'rgba(20,18,14,0)'); cover.addColorStop(1, 'rgba(20,18,14,.35)');
-    g.fillStyle = cover; g.fillRect(fx, fy + fh - 12, fw, 12);
-    // glass: a soft reflection across the top
-    const gl = g.createLinearGradient(0, fy, 0, fy + fh * 0.55); gl.addColorStop(0, 'rgba(255,255,255,.42)'); gl.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = gl; g.beginPath(); g.moveTo(fx, fy); g.lineTo(fx + fw, fy); g.lineTo(fx + fw, fy + fh * 0.32); g.quadraticCurveTo(fx + fw / 2, fy + fh * 0.5, fx, fy + fh * 0.32); g.closePath(); g.fill();
-    g.restore();
-    // the peak lamp, on the bezel
-    const lx = fx + fw - 9, ly = fy + 10;
-    const lamp = g.createRadialGradient(lx - 1, ly - 1, 0.5, lx, ly, 4);
-    lamp.addColorStop(0, peak ? '#ffd1c7' : '#7a2a24'); lamp.addColorStop(1, peak ? '#ff3b2f' : '#2b0f0d');
-    g.fillStyle = lamp; g.beginPath(); g.arc(lx, ly, 3.2, 0, 2 * Math.PI); g.fill();
-    if (peak) { g.save(); g.shadowColor = '#ff3b2f'; g.shadowBlur = 8; g.fill(); g.restore(); }
-  }
-  window.addEventListener('resize', () => { vu.key = ''; drawVu(); });
+  function vuFeed(l, r) { if (meterVU) meterVU.feed(l, r); listenTick(); }
+  function listenTick() { if (wantPlay && !listenSince) listenSince = Date.now(); else if (!wantPlay) listenSince = 0; }
+  function drawVu() { if (meterVU) meterVU.redraw(); }
+  // ---------- the meter band: end ----------
   drawVu();
   // For the demo's own test (site/snowstar/demo/demo.test.mjs) and for a curious console.
   window.__demo = { get ctx() { return ctx; }, tracks: TRACKS, get scheduled() { return [...scheduled.keys()]; },
