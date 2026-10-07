@@ -28,6 +28,19 @@
     --display:"Oswald",system-ui,sans-serif;
     --body:"Inter",system-ui,-apple-system,sans-serif;
     --mono:"IBM Plex Mono",monospace;
+
+    /* ── the shared account UI, translated into this page's palette ──────────
+       Same translation StreamDAW needs, for the same reason: css/account.css
+       is written against the Snowstar token names and this page speaks night,
+       ice and display. --panel happens to match so the menu was never
+       transparent here, but --grad did not exist, and `background:var(--grad)`
+       with nothing behind it leaves the sign-in button with no background at
+       all — near-black text on a near-black page. */
+    --bg:var(--night); --panel-2:var(--panel); --muted:var(--dim);
+    --font-body:var(--body); --font-display:var(--display);
+    --tint:rgba(184,230,255,.08);
+    --amber:var(--ice); --coral:var(--ice-deep);
+    --grad:var(--ice-grad);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}

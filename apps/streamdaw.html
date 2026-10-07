@@ -26,6 +26,21 @@
     --poster:"Anton",Impact,sans-serif;
     --maxw:1160px;
     --lift:0 40px 80px -40px rgba(23,20,13,.45), 0 2px 0 rgba(23,20,13,.04);
+
+    /* ── the shared account UI, translated into this page's palette ──────────
+       js/account-ui.js and css/account.css are loaded by every page and are
+       written against the Snowstar/Mutra token names. This page has its own
+       vocabulary — paper, card, ink — so those names resolved to nothing here,
+       and `background:var(--panel-2,var(--panel))` with neither defined is not
+       a fallback, it is no background at all: the account menu rendered
+       transparent with the hero showing straight through it. Aliases rather
+       than edits to the shared sheet, so nothing else on the site moves. */
+    --bg:var(--paper); --panel:var(--card); --panel-2:var(--card);
+    --text:var(--ink); --dim:var(--muted);
+    --font-body:var(--sans); --font-display:var(--serif);
+    --tint:rgba(23,20,13,.06);
+    --amber:var(--lime); --coral:var(--pink); --ice:var(--blue);
+    --grad:linear-gradient(96deg,#c8f23a,#a9e21c);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -47,6 +62,14 @@
   .nav-tools{display:flex;align-items:center;gap:14px}
   .nav-tools .btn{gap:4px}
   header.nav nav + .nav-tools{margin-left:4px}
+  /* The currency switcher, matching the circle Snowstar and Mutra use. These
+     rules lived here before and went out with the page rebuild, which left the
+     button rendering as a browser-default 14x30 box with an outset border. */
+  .theme-btn.cur-btn{display:grid;place-items:center;width:36px;height:36px;flex:none;
+    border-radius:50%;background:none;border:1px solid var(--line-2);
+    color:var(--ink-2);cursor:pointer;font-family:var(--sans);font-size:1.02rem;
+    font-weight:600;line-height:1;padding:0 0 1px;transition:.2s}
+  .theme-btn.cur-btn:hover{color:var(--ink);border-color:var(--ink);background:var(--lime)}
   .nav-acct{display:inline-flex;align-items:center;white-space:nowrap}
   .nav-acct .mnav-auth{margin:0;font:500 14px/1 var(--sans)}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:999px;font:600 15px/1 var(--sans);border:1.5px solid var(--ink);cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
