@@ -846,44 +846,56 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   line-height:1;letter-spacing:0;padding:0 0 1px}
 .cur-btn:hover{color:var(--text)}
 
-/* ── product wordmarks in the menu ───────────────────────────────────────────
-   Mutra and StreamDAW are brands, so in the Products list they wear their own
-   faces rather than the menu's. The assets are trimmed to their ink, which is
-   what makes them line up: with no padding baked into the PNG, `height` IS cap
-   height and the bottom edge IS the baseline — so a baseline-aligned flex row
-   puts them exactly where a capital letter would sit.
+/* ── the Products lockup ─────────────────────────────────────────────────────
+   Three wordmarks of wildly different proportion — MUTRA is 4.2 wide for its
+   height, STREAMDAW 10.9, SNOWSTAR 12.0 — have to read as one considered set
+   rather than three images that happened to land near each other.
 
-   .865em is Anton's cap ratio, measured on a canvas rather than guessed (the
-   usual 0.7 rule of thumb is wrong for Anton by a sixth). Both marks take the
-   same height, so they match each other exactly whatever the menu is sized to. */
-/* max-width:none is load-bearing. Both sheets carry a global img{max-width:100%},
-   and in the .mmenu chain that percentage resolves against a parent whose own
-   width is being derived from this image — circular, so the browser settles it
-   at zero and the mark vanishes. Width comes from the intrinsic ratio and the
-   height instead, which depends on nothing outside the element. */
-.menu-word{height:var(--menu-word-h,.82em);width:auto;max-width:none;display:block;flex:none;
-  transition:transform .3s ease,filter .3s ease}
-/* Equal cap height is NOT equal size when the marks are different shapes.
-   MUTRA is 4.2 wide for its height; STREAMDAW is 10.9 and SNOWSTAR 12.0 — so
-   set to one cap height the long two carried nearly three times the ink and
-   towered over the short one, which is exactly how it looked.
+   Three rules do that work.
 
-   So they are matched on optical AREA instead: width is aspect x height, so
-   equal area means height proportional to 1/sqrt(aspect). Mutra keeps the
-   .865em cap it already had and the other two are scaled to it. The result is
-   three marks that read as one size, which is what "the same size" has to mean
-   when the words are five, nine and fifteen letters long. */
-/* Halved from the cap-height-matched figures. A wordmark does not need to
-   shout at the size a word does: it is recognised by shape, not read letter by
-   letter, so it carries at half the type's presence and stops competing with
-   the navigation above it. The ratios between the three are untouched — they
-   are still equal optical area, just quieter. */
-.menu-word[alt="Mutra"]{--menu-word-h:.433em}
-.menu-word[alt="StreamDAW"]{--menu-word-h:.270em}
-.menu-word[alt="Snowstar"]{--menu-word-h:.257em}
-.menu-nav a:hover .menu-word,.mmenu-nav a:hover .menu-word{transform:translateX(16px);
-  filter:drop-shadow(0 0 14px rgba(224,180,139,.45))}
+   A SLOT. Every product row is the same height whatever is inside it, and the
+   mark is centred in it. That is what gives the group an even rhythm: without
+   it the row heights follow the marks, so a tall one and two short ones sat at
+   three different spacings and the block looked spilled rather than set.
+
+   SIZE IN VIEWPORT UNITS, NOT em. This is the bug behind "not consistent on
+   every page": the two menu families are set at different sizes — up to 80px
+   on Snowstar and Mutra, 51px on Snowstash and StreamDAW — so marks sized in
+   em came out 40% smaller on half the site. Sized against the viewport they
+   are identical everywhere, which is what a brand family has to be.
+
+   OPTICAL AREA between them. Width is aspect x height, so equal area means
+   height proportional to 1/sqrt(aspect) — the ratios below. Equal cap height
+   would make the long two tower; equal width would make MUTRA a monolith.
+
+   The frame is the hover plate rather than a permanent box: these are brands,
+   and penning each one in a visible rectangle would say less about them, not
+   more. The plate appears under the pointer, which is the moment a frame is
+   actually useful. */
+.menu-word{
+  --slot:clamp(34px,3.8vw,52px);
+  width:auto;max-width:none;display:block;flex:none;
+  transition:transform .25s ease,filter .25s ease;
+}
+.menu-word[alt="Mutra"]    {height:calc(var(--slot) * .500)}
+.menu-word[alt="StreamDAW"]{height:calc(var(--slot) * .312)}
+.menu-word[alt="Snowstar"] {height:calc(var(--slot) * .296)}
+
+/* The row that holds one. :has() rather than a class, so a mark dropped into
+   any menu is framed correctly without the markup having to say so. */
+.menu-nav a:has(.menu-word),.mmenu-nav a:has(.menu-word),
+.st-menu a:has(.menu-word),.sd-menu a:has(.menu-word){
+  align-items:center;min-height:clamp(34px,3.8vw,52px);
+  padding:0 14px;margin-left:-14px;border-radius:12px;width:max-content;
+  transition:background .25s ease,transform .25s ease;
+}
+.menu-nav a:has(.menu-word):hover,.mmenu-nav a:has(.menu-word):hover,
+.st-menu a:has(.menu-word):hover,.sd-menu a:has(.menu-word):hover{
+  background:color-mix(in srgb,currentColor 9%,transparent);transform:translateX(6px);
+}
+/* The one you are on is marked by being quiet, and takes no plate. */
+.menu-nav a.now:has(.menu-word),.mmenu-nav a.now:has(.menu-word),
+.st-menu a.now:has(.menu-word),.sd-menu a.now:has(.menu-word){background:none;transform:none}
 /* The marks are pure white with clean alpha, so inverting gives true black —
    the same trick .nav-word already uses when the overlay turns light. */
 [data-theme="light"] .menu-word{filter:invert(1)}
-[data-theme="light"] .menu-nav a:hover .menu-word,[data-theme="light"] .mmenu-nav a:hover .menu-word{filter:invert(1) drop-shadow(0 0 14px rgba(217,116,74,.4))}

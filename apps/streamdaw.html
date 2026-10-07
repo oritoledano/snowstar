@@ -72,13 +72,26 @@
   body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
   .sd-menu a{display:flex;align-items:baseline;gap:16px;font-family:var(--poster);
     text-transform:uppercase;font-size:clamp(1.8rem,5.5vw,3.2rem);color:var(--ink);line-height:1.35}
-  /* Same trimmed wordmarks as the other menus, inverted (they are white on transparent).
-     Matched on optical area, not cap height — see the note in css/style.css. */
-  .menu-word[alt="Mutra"]{--menu-word-h:.433em}
-  .menu-word[alt="StreamDAW"]{--menu-word-h:.270em}
-  .menu-word[alt="Snowstar"]{--menu-word-h:.257em}
-  .sd-menu .menu-word{height:var(--menu-word-h,.8em);width:auto;max-width:none;display:block;flex:none;filter:invert(1);transition:filter .25s}
-  .sd-menu a:hover .menu-word{filter:invert(1) drop-shadow(0 0 10px rgba(37,99,235,.45))}
+  /* ── the Products lockup ───────────────────────────────────────────────
+     Identical to css/style.css — this page carries its own CSS, so the rules
+     are repeated rather than inherited. A slot gives the three rows one
+     rhythm, viewport units keep the marks the same size as on every other
+     page (sized in em they came out 40% smaller here, because this menu is
+     set at 51px where the others reach 80px), and the ratios between the
+     three are equal optical area. Inverted, because this menu is paper white
+     and the shared marks are white on transparent. */
+  .menu-word{--slot:clamp(34px,3.8vw,52px);
+    width:auto;max-width:none;display:block;flex:none;filter:invert(1);
+    transition:filter .25s ease}
+  .menu-word[alt="Mutra"]    {height:calc(var(--slot) * .500)}
+  .menu-word[alt="StreamDAW"]{height:calc(var(--slot) * .312)}
+  .menu-word[alt="Snowstar"] {height:calc(var(--slot) * .296)}
+  .sd-menu a:has(.menu-word){align-items:center;min-height:clamp(34px,3.8vw,52px);
+    padding:0 14px;margin-left:-14px;border-radius:12px;width:max-content;
+    transition:background .25s ease,transform .25s ease}
+  .sd-menu a:has(.menu-word):hover{background:color-mix(in srgb,currentColor 9%,transparent);
+    transform:translateX(6px)}
+  .sd-menu a.now:has(.menu-word){background:none;transform:none}
   .sd-menu a i{font-family:var(--sans);font-style:normal;font-weight:600;font-size:.7rem;color:var(--muted)}
   .sd-menu a:hover{color:var(--blue)}
   .sd-menu a.now{color:var(--blue);opacity:.55;pointer-events:none}
