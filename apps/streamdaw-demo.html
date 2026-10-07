@@ -602,14 +602,108 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     for (const srcs of scheduled.values()) for (const s of srcs) { try { s.stop(); } catch (e) {} }
     scheduled.clear(); clearInterval(timer); playing = false;
   }
-  function finish() { stopAll(); ended = true; listenSince = 0; showState(); }
+  function finish() { stopAll(); ended = true; if (!ROOM) listenSince = 0; showState(); }
+
+  // ---------- joined to a studio: the sale page on a computer (?room=…) ----------
+  // The computer is the DAW: its Play is the transport. This phone plays the same song from
+  // the same instant: the room (a Durable Object on snowstar.company) says "from pos, as of
+  // server time at", and the phone knows the server's clock from round trips (the fastest
+  // ones win, as in the real page's sync). The phone's own Play is "listen", as in a session.
+  const Q = new URLSearchParams(location.search);
+  const ROOM = /^[a-z0-9]{8,16}$/.test(Q.get('room') || '') ? Q.get('room') : '';
+  const LOCAL = /^(127\.0\.0\.1|localhost)$/.test(location.hostname);
+  const WS_URL = ((LOCAL && Q.get('ws')) || ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host)) + '/api/streamdaw/demo/ws?role=phone&room=' + ROOM;
+  let sock = null, linked = false, hostUp = false, tr = null, listening = false, clockOff = null, clockRtt = Infinity;
+  const samples = [];
+  const nowMs = () => performance.timeOrigin + performance.now();
+  function connectRoom() {
+    const s = new WebSocket(WS_URL); sock = s;
+    s.onopen = () => { linked = true; for (let i = 0; i < 6; i++) setTimeout(ping, i * 150); say({ type: 'listen', on: listening }); showState(); };
+    s.onmessage = (e) => { let m; try { m = JSON.parse(e.data); } catch (er) { return; } onRoom(m); };
+    s.onclose = () => { if (sock !== s) return; linked = false; showState(); setTimeout(connectRoom, 2000); };
+    s.onerror = () => {};
+  }
+  const say = (m) => { if (sock && sock.readyState === 1) sock.send(JSON.stringify(m)); };
+  const ping = () => say({ type: 'ping', t: nowMs() });
+  function onRoom(m) {
+    if (m.type === 'welcome') { hostUp = !!m.host; tr = m.transport; follow(true); }
+    else if (m.type === 'pong') {
+      const t1 = nowMs(), rtt = t1 - m.t;
+      samples.push({ rtt, off: m.now - (m.t + t1) / 2 }); if (samples.length > 16) samples.shift();
+      const best = samples.reduce((x, y) => (y.rtt < x.rtt ? y : x));
+      const first = clockOff === null; clockOff = best.off; clockRtt = best.rtt;
+      follow(first);
+    }
+    else if (m.type === 'transport') { tr = m; follow(true); }
+    else if (m.type === 'host') { hostUp = !!m.up; if (!hostUp) tr = null; follow(true); }
+  }
+  // The context time at which the song's 0 is heard, from the studio's transport: the server
+  // instant of 0, on this phone's clock, mapped onto the audio output's own clock.
+  function songT0() {
+    const local = tr.at - tr.pos * 1000 - clockOff;
+    const ts = ctx.getOutputTimestamp ? ctx.getOutputTimestamp() : null;
+    let c, p;
+    if (ts && ts.performanceTime > 0) { c = ts.contextTime; p = ts.performanceTime; }
+    else { c = ctx.currentTime - (ctx.outputLatency || ctx.baseLatency || 0); p = performance.now(); }
+    return c + (local - performance.timeOrigin - p) / 1000;
+  }
+  function follow(force) {
+    if (!ROOM || !ctx) { showState(); return; }
+    const want = !!(tr && tr.playing && hostUp && listening && clockOff !== null && ctx.state === 'running');
+    if (!want) { if (playing) stopAll(); showState(); return; }
+    const nt0 = songT0(), pos = ctx.currentTime - nt0;
+    if (pos >= DUR) { if (playing) finish(); return; }
+    if (!playing || force || Math.abs(nt0 - t0) > 0.25) {
+      stopAll(); t0 = nt0; playing = true; ended = false;
+      clearInterval(timer); timer = setInterval(pump, 250); pump(); vuLoop();
+    } else if (Math.abs(nt0 - t0) > 0.012) t0 = nt0;      // a small drift: the next piece starts where it should
+    showState();
+  }
+  async function listenToggle() {
+    if (!ctx) build();
+    listening = !listening;
+    say({ type: 'listen', on: listening });
+    if (listening) {
+      await ctx.resume().catch(() => {});
+      listenSince = Date.now();
+      const p = tr ? (tr.playing && clockOff !== null ? tr.pos + (nowMs() + clockOff - tr.at) / 1000 : tr.pos) : 0;
+      fetchPiece(Math.max(0, Math.min(PIECES - 1, Math.floor(p / PIECE)))).catch(() => {});   // the piece the studio is at, now
+      follow(true);
+    } else { stopAll(); listenSince = 0; showState(); }
+  }
+  if (ROOM) {
+    $('presenceLine').textContent = 'In the studio’s session · KAYMA · “MAMA”';
+    $('tryLine').innerHTML = '<b>You joined the studio.</b> Press play here to listen, then press play on the computer. The mix below is yours.';
+    connectRoom(); setInterval(ping, 3000);
+  }
+
   $('playBtn').onclick = () => {
+    if (ROOM) { listenToggle(); return; }
     if (!playing) { start(); return; }
     if (ctx.state === 'running') { ctx.suspend(); listenSince = 0; } else { ctx.resume(); listenSince = Date.now(); }
     showState();
   };
+  const mmss = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
   function showState() {
-    const b = $('playBtn'), paused = playing && ctx && ctx.state !== 'running';
+    const b = $('playBtn'), pill = $('livePill');
+    if (ROOM) {
+      b.classList.toggle('stop', listening);
+      b.innerHTML = listening ? '&#10073;&#10073;' : '&#9654;&#xFE0E;';
+      b.setAttribute('aria-label', listening ? 'Stop listening' : 'Listen');
+      const studioPlays = !!(tr && tr.playing && hostUp);
+      let st, sub;
+      if (!linked) { st = 'Joining the studio…'; sub = 'one moment'; }
+      else if (!hostUp) { st = 'The studio is closed'; sub = 'The page on the computer was closed. Open it again to carry on.'; }
+      else if (!listening) { st = 'Ready'; sub = studioPlays ? 'The studio is playing: press play to listen' : 'Press play, then press play on the computer'; }
+      else if (!studioPlays) { st = 'Listening'; sub = 'Waiting for the studio to press play' + (tr && tr.pos ? ' (stopped at ' + mmss(tr.pos) + ')' : ''); }
+      else if (ended) { st = 'That was the first verse'; sub = 'Press play on the computer to hear it again'; }
+      else { const pos = playing ? Math.max(0, Math.min(DUR, ctx.currentTime - t0)) : 0; st = 'Playing · in time'; sub = mmss(pos) + ' / 1:32 · synced ±' + Math.max(1, Math.round(clockRtt / 2)) + ' ms'; }
+      $('stateText').textContent = st; $('fmtText').textContent = sub;
+      pill.classList.toggle('live', studioPlays);
+      pill.textContent = !linked ? 'connecting…' : studioPlays ? 'live' : hostUp ? 'studio' : 'offline';
+      return;
+    }
+    const paused = playing && ctx && ctx.state !== 'running';
     b.classList.toggle('stop', playing && !paused);
     b.innerHTML = playing && !paused ? '&#10073;&#10073;' : '&#9654;&#xFE0E;';
     b.setAttribute('aria-label', playing && !paused ? 'Pause' : 'Play');
@@ -617,12 +711,12 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
       $('stateText').textContent = ended ? 'That was the first verse' : 'Ready';
       $('fmtText').textContent = ended ? 'Press play to hear it again, in your mix' : 'Earphones in, then press play';
     } else {
-      const s = Math.max(0, Math.min(DUR, ctx.currentTime - t0)), mm = Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+      const sec = Math.max(0, Math.min(DUR, ctx.currentTime - t0));
       $('stateText').textContent = paused ? 'Paused' : 'Playing';
-      $('fmtText').textContent = mm + ' / 1:32 · ' + (playMode === 'master' ? 'the band’s mix' : 'your mix');
+      $('fmtText').textContent = mmss(sec) + ' / 1:32 · ' + (playMode === 'master' ? 'the band’s mix' : 'your mix');
     }
-    $('livePill').classList.toggle('live', playing && !paused);
-    $('livePill').textContent = playing && !paused ? 'demo · playing' : 'demo';
+    pill.classList.toggle('live', playing && !paused);
+    pill.textContent = playing && !paused ? 'demo · playing' : 'demo';
   }
 
   // ---------- the mix ----------
@@ -774,6 +868,8 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   // For the demo's own test (site/snowstar/demo/demo.test.mjs) and for a curious console.
   window.__demo = { get ctx() { return ctx; }, tracks: TRACKS, get scheduled() { return [...scheduled.keys()]; },
                     get pos() { return ctx && playing ? ctx.currentTime - t0 : 0; }, get playing() { return playing; },
+                    get clock() { return { off: clockOff, rtt: clockRtt, linked, hostUp, listening, tr }; },
+                    songPosAt: (wallMs) => (ctx && playing ? (wallMs - performance.timeOrigin - (ctx.getOutputTimestamp ? ctx.getOutputTimestamp().performanceTime : performance.now())) / 1000 + (ctx.getOutputTimestamp ? ctx.getOutputTimestamp().contextTime : ctx.currentTime) - t0 : null),
                     vuTick: () => { try { vuLoop(); return 'ok'; } catch (e) { return String(e && e.stack || e); } } };
 })();
 </script>

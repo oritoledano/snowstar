@@ -61,3 +61,14 @@ crons = ["0 7 * * *"]
 
 [observability]
 enabled = true
+
+# The StreamDAW demo's studio rooms: the sale page on a computer and the phones that scanned
+# its QR code meet here (src/streamdaw-demo-room.js). SQLite-backed, which is what the Workers
+# Free plan allows; a room holds one small key (the transport) and hibernates when idle.
+[[durable_objects.bindings]]
+name = "DEMO_ROOM"
+class_name = "DemoRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DemoRoom"]

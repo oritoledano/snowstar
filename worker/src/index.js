@@ -76,6 +76,9 @@ import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js
 import { currentUser, readCookies, peekUser } from './session.js';
 import { recordRequest, healthReport, pruneReqLog } from './health.js';
 import { fxEndpoint, refreshRates } from './fx.js';
+import { DemoRoom, streamdawDemoSocket } from './streamdaw-demo-room.js';
+// The demo's studio rooms are Durable Objects: the runtime finds their class among the exports.
+export { DemoRoom };
 
 const SESSION_DAYS = 60;
 const MAX_ATTEMPTS = 8;          // per window
@@ -753,6 +756,10 @@ export default {
   },
 
   async fetch(req, env, ctx) {
+    /* The StreamDAW demo's studio rooms (the sale page ↔ the phones that scanned it): the
+       WebSocket goes straight to its Durable Object. No request log: one connection is a
+       whole visit, and the room keeps nothing about anyone. */
+    if (new URL(req.url).pathname === '/api/streamdaw/demo/ws') return streamdawDemoSocket(req, env);
     const t0 = Date.now();
     let res, stack = null;
     try {

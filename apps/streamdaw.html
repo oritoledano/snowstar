@@ -180,23 +180,26 @@
   .synced i{width:22px;height:22px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
   .synced i svg{width:12px;height:12px}
 
-  /* ── try it ───────────────────────────────────────────────── */
+  /* ── try it: the studio on a computer, the phone page on a phone ── */
   .demo{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .demo-in{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(32px,6vw,80px);align-items:center}
-  .demo h2{font-size:clamp(34px,4.4vw,56px);margin:14px 0 16px}
+  .demo-in{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(32px,5vw,64px);align-items:center}
+  .demo h2{font-size:clamp(32px,3.8vw,52px);margin:14px 0 16px}
   .demo-copy>p{color:var(--ink-2);font-size:17px;max-width:32em}
-  .demo-qr{display:flex;align-items:center;gap:18px;margin-top:30px;padding:16px;border:1px solid var(--line-2);border-radius:18px;background:var(--card);max-width:440px}
-  .demo-qr img{width:132px;height:132px;flex:none}
+  .demo-qr{display:flex;align-items:center;gap:18px;margin-top:28px;padding:14px;border:1px solid var(--line-2);border-radius:18px;background:var(--card);max-width:440px}
+  .qrbox{width:140px;height:140px;flex:none;background:#fff;border-radius:8px}
+  .qrbox svg{display:block;width:100%;height:100%}
   .demo-qr p{font-size:15px;color:var(--ink-2)}
   .demo-qr b{color:var(--ink);font-weight:600}
-  .demo-open,.demo-fine{display:none}
-  .demo-phone{width:390px;height:780px;border:8px solid var(--ink);border-radius:46px;overflow:hidden;background:var(--card);box-shadow:var(--lift)}
-  .demo-phone iframe{display:block;width:100%;height:100%;border:0}
+  .demo-qr .qrstate{margin-top:6px;font-size:14px;color:var(--ok);font-weight:500}
+  .demo-alt{margin-top:14px}
+  .demo-alt a{text-decoration:underline}
+  .only-narrow{display:none}
   @media (max-width:900px){
     .demo-in{grid-template-columns:1fr}
-    .demo-qr,.demo-phone{display:none}
-    .demo-open{display:inline-flex;margin-top:26px}
-    .demo-fine{display:block;margin-top:12px}
+    .only-wide{display:none!important}
+    .only-narrow{display:block}
+    .demo-open.only-narrow{display:inline-flex;margin-top:26px}
+    .demo-fine{margin-top:12px}
   }
 
   /* ── how it works ───────────────────────────────────────── */
@@ -434,16 +437,19 @@
     <div class="wrap demo-in">
       <div class="demo-copy">
         <div class="kicker">Try it now</div>
-        <h2>Hear it the way the band does.</h2>
-        <p>“MAMA” by KAYMA, from a real session: eight sends from the DAW, in time. Put your earphones in, press play, and make the mix yours. More click, less strings, solo the vocal.</p>
-        <div class="demo-qr">
-          <img src="demo/qr-demo.svg" alt="QR code to the StreamDAW demo" width="132" height="132">
-          <p><b>On your phone:</b> scan, earphones in, press play. That is how your band will join.</p>
+        <h2 class="only-wide">You're the producer. Your phone is the band.</h2>
+        <h2 class="only-narrow">Hear it the way the band does.</h2>
+        <p class="only-wide">This is KAYMA's “MAMA” session, in a DAW. Scan the code with your phone, put your earphones in and press play on the phone. Then press play here: the song plays on your phone, in time, and the mix on the phone is yours.</p>
+        <p class="only-narrow">“MAMA” by KAYMA, from a real session: eight sends from the DAW, in time. Put your earphones in, press play, and make the mix yours. More click, less strings, solo the vocal.</p>
+        <div class="demo-qr only-wide">
+          <div class="qrbox" id="demoQr" aria-live="polite"></div>
+          <div><p><b>Scan to join this session.</b></p><p class="qrstate" id="demoQrState">Waiting for your phone…</p></div>
         </div>
-        <a class="btn ink demo-open" href="streamdaw-demo.html">Open the demo</a>
-        <p class="fine demo-fine">Earphones in. About 8 MB as it plays.</p>
+        <p class="fine demo-alt only-wide">No phone at hand? <a href="streamdaw-demo.html" target="_blank" rel="noopener">Hear it in this browser</a>.</p>
+        <a class="btn ink demo-open only-narrow" href="streamdaw-demo.html">Open the demo</a>
+        <p class="fine demo-fine only-narrow">Earphones in. About 8 MB as it plays.</p>
       </div>
-      <div class="demo-phone"><iframe src="streamdaw-demo.html?embed=1" title="The StreamDAW demo: a band's eight sends, in a mix of your own" loading="lazy" allow="autoplay"></iframe></div>
+      <div class="demo-daw only-wide"><div id="demoDaw"></div></div>
     </div>
   </section>
 
@@ -795,5 +801,7 @@
 })();
 </script>
 <script src="../js/consent.js?v=1"></script>
+<script src="demo/qr.js?v=1" defer></script>
+<script src="demo/studio.js?v=1" defer></script>
 </body>
 </html>
