@@ -125,6 +125,101 @@
     });
   }
 
+  /* ── the menu footer, from one definition ──────────────────────────────────
+     Only the home page carried the contact block. Mutra, the artist pages and
+     the dashboard had an email and a one-line note; Snowstash had a single
+     line; StreamDAW had no footer at all. So "how do I reach these people"
+     had a different answer depending on which door you came through.
+
+     One block now, rendered into whatever footer each menu already has — or
+     into a footer created for the menu that had none. The currency toggle
+     rides here too rather than in the nav bar, which is where it was asked to
+     go and also where it belongs: it is a preference, not a destination, and
+     the nav bar is for destinations. */
+  const CONTACT = {
+    mail: 'hello@snowstar.company',
+    tel: [['Israel', '+972.54.449.8389'], ['US', '+1.847.440.4615']],
+    social: [
+      ['Vimeo', 'https://vimeo.com/snowstarcompany',
+       'M23.977 6.416c-.105 2.338-1.739 5.543-4.894 9.609-3.268 4.247-6.026 6.37-8.29 6.37-1.409 0-2.578-1.294-3.553-3.881L5.322 11.4C4.603 8.816 3.834 7.522 3.01 7.522c-.179 0-.806.378-1.881 1.132L0 7.197a315.065 315.065 0 0 0 3.501-3.128C5.08 2.701 6.266 1.984 7.055 1.91c1.867-.18 3.016 1.1 3.447 3.838.465 2.953.789 4.789.971 5.507.539 2.45 1.131 3.674 1.776 3.674.502 0 1.256-.796 2.265-2.385 1.004-1.589 1.54-2.797 1.612-3.628.144-1.371-.395-2.061-1.614-2.061-.574 0-1.167.121-1.777.391 1.186-3.868 3.434-5.757 6.762-5.637 2.473.06 3.628 1.664 3.48 4.807z'],
+      ['Instagram', 'https://www.instagram.com/snowstar.company',
+       'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0 5.838a5.999 5.999 0 1 0 0 11.998 5.999 5.999 0 0 0 0-11.998zm0 9.896a3.897 3.897 0 1 1 0-7.794 3.897 3.897 0 0 1 0 7.794zm6.24-11.3a1.402 1.402 0 1 0 0 2.804 1.402 1.402 0 0 0 0-2.804z'],
+      ['Facebook', 'https://www.facebook.com/snowstar.company',
+       'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z'],
+    ],
+  };
+
+  function footHtml() {
+    return `<a class="ss-mail" href="mailto:${CONTACT.mail}">${CONTACT.mail}</a>
+      <div class="ss-tel">${CONTACT.tel.map(([k, v]) =>
+        `<span>${k}&nbsp;<a href="tel:${v.replace(/[^+\d]/g, '')}">${v}</a></span>`).join('<i>&middot;</i>')}</div>
+      <div class="ss-row">
+        <div class="ss-soc">${CONTACT.social.map(([name, href, d]) =>
+          `<a href="${href}" target="_blank" rel="noopener" aria-label="${name}"><svg viewBox="0 0 24 24"
+             width="20" height="20"><path fill="currentColor" d="${d}"/></svg></a>`).join('')}</div>
+        <span class="ss-cur" data-currency-switcher aria-label="Currency"></span>
+      </div>`;
+  }
+
+  function syncMenuFoot() {
+    document.querySelectorAll('nav').forEach((nav) => {
+      // only the real menus — the ones carrying a Products block
+      if (![...nav.children].some((n) => n.classList && n.classList.contains('menu-div'))) return;
+      const menu = nav.parentElement;
+      if (!menu) return;
+      let foot = menu.querySelector('[class*="menu-foot"], .ss-foot');
+      if (!foot) {
+        // StreamDAW's menu had no footer at all
+        foot = document.createElement('div');
+        foot.className = 'ss-foot';
+        menu.appendChild(foot);
+      }
+      foot.classList.add('ss-foot');
+      foot.innerHTML = footHtml();
+      /* StreamDAW had already moved a switcher into its own menu before this
+         existed, so without this the menu would end up with two. Exactly one,
+         and it is the one in the canonical footer. */
+      menu.querySelectorAll('[data-currency-switcher]').forEach((el) => {
+        if (!foot.contains(el)) (el.closest('.menu-cur') || el).remove();
+      });
+      const cur = foot.querySelector('[data-currency-switcher]');
+      /* money.js mounts at DOMContentLoaded and this runs after a fetch, so the
+         switcher it is looking for does not exist yet when it looks. Mount it
+         here instead; Money.mount is idempotent. */
+      if (cur && window.Money) window.Money.mount(cur);
+    });
+  }
+
+  /* Injected rather than added to four stylesheets, two of which live inside
+     their own page. Everything inherits colour, so one block serves a night
+     menu and a paper one. No flash to worry about: a menu footer is only ever
+     seen after somebody opens the menu. */
+  function footCss() {
+    if (document.getElementById('ss-foot-css')) return;
+    const st = document.createElement('style');
+    st.id = 'ss-foot-css';
+    st.textContent = `
+      .ss-foot{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:auto}
+      .ss-foot .ss-mail{font-size:clamp(.98rem,2vw,1.3rem);font-weight:600;color:inherit;
+        text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px}
+      .ss-tel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.76rem;
+        letter-spacing:.09em;text-transform:uppercase;opacity:.62}
+      .ss-tel a{color:inherit;text-decoration:none}
+      .ss-tel a:hover{text-decoration:underline}
+      .ss-tel i{font-style:normal;opacity:.5}
+      .ss-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;width:100%}
+      .ss-soc{display:flex;gap:14px}
+      .ss-soc a{color:inherit;opacity:.55;transition:opacity .2s,transform .2s;display:block}
+      .ss-soc a:hover{opacity:1;transform:translateY(-2px)}
+      .ss-cur{margin-left:auto}
+      .ss-cur .cur-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+        border:1px solid color-mix(in srgb,currentColor 32%,transparent);background:none;
+        color:inherit;font:600 .95rem/1 inherit;cursor:pointer;padding:0 0 1px;transition:.2s}
+      .ss-cur .cur-btn:hover{border-color:currentColor}
+    `;
+    document.head.appendChild(st);
+  }
+
   function applyProperties(state) {
     if (!state) return;
     PROPERTIES.forEach((p) => {
@@ -179,10 +274,12 @@
       /* Always, not only when a config exists — the home page needs its own
          Snowstar row inserted whether or not anything has ever been hidden. */
       syncProducts(props);
+      footCss();
+      syncMenuFoot();
       renumberMenus();
       return texts;
     })
-    .catch(() => { syncProducts({}); renumberMenus(); return {}; });
+    .catch(() => { syncProducts({}); footCss(); syncMenuFoot(); renumberMenus(); return {}; });
 
   // ── 2. editor — only ever wakes up for the admin ──
   const M = window.SnowstarAccount;
