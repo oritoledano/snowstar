@@ -35,6 +35,11 @@
   --meter: #16140f; --shadow: 0 1px 0 rgba(22,20,15,.08);
   --vu-hi: #fdfbf4; --vu-lo: #e8e1cf; --vu-ink: 22, 20, 15; --vu-edge: 255, 255, 255;   /* the meters: a light face */
   --vu-g: #1d9a4a; --vu-y: #d29a00; --vu-r: #e02f3a; --vu-off: .16; --vu-glow: 2;
+  --amp: #c7b9a6 url(demo/leather-light.jpg) center / 440px auto repeat;   /* the leather (Ori's tolex): the phone's play card */
+  --amp-wall: linear-gradient(rgba(239,233,218,.5), rgba(239,233,218,.5)), #cfc3b0 url(demo/leather-light.jpg) 0 0 / 440px auto repeat;  /* the app's middle */
+  --amp-ink: #16140f; --amp-sub: rgba(22,20,15,.7); --amp-edge: #6f6556; --amp-text: 0 1px 0 rgba(255,255,255,.45);
+  --amp-glow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 3px rgba(0,0,0,.08), 0 10px 24px -16px rgba(40,30,10,.55);
+  --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.35);
   --head: "Fraunces", Georgia, "Times New Roman", serif;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
@@ -50,6 +55,11 @@ html[data-theme="dark"] {
   --meter: #f3eddc; --shadow: none;
   --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
   --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
+  --amp: #24221f url(demo/leather-dark.jpg) center / 300px auto repeat;
+  --amp-wall: linear-gradient(rgba(18,17,14,.42), rgba(18,17,14,.42)), #1c1b19 url(demo/leather-dark.jpg) 0 0 / 300px auto repeat;
+  --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
+  --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
+  --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
   color-scheme: dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -62,6 +72,11 @@ html[data-theme="dark"] {
     --meter: #f3eddc; --shadow: none;
     --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
     --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
+    --amp: #24221f url(demo/leather-dark.jpg) center / 300px auto repeat;
+    --amp-wall: linear-gradient(rgba(18,17,14,.42), rgba(18,17,14,.42)), #1c1b19 url(demo/leather-dark.jpg) 0 0 / 300px auto repeat;
+    --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
+    --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
+    --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
     color-scheme: dark;
   }
 }
@@ -117,6 +132,12 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .pnhdr { padding: 16px 20px; border-bottom: 1px solid var(--line); }
   .hrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .hright { display: flex; align-items: center; gap: 8px; flex: none; }
+  .pill[hidden] { display: none; }
+  /* Exit, in the corner: back to the waiting room (2026-10-07: it took the live pill's place) */
+  .exitbtn { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .exitbtn[hidden] { display: none; }
+  .exitbtn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .exitbtn:hover { color: var(--hot); border-color: var(--hot); }
   .pnhdr .wordmark { width: 154px; height: 18px; flex: 0 1 auto; min-width: 0; }
   .pnbody { padding: 24px 20px 26px; }
   @media (min-width: 720px) { .pnhdr { padding: 18px 32px; } .pnbody { padding: 32px 32px 30px; } }
@@ -158,11 +179,21 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
 
   .meters { display: none; }                     /* the bars: replaced by the meter band (kept for the code that feeds them) */
   /* The meter band: the plug-in's two arc meters, on hardware that follows the theme (--vu-*). */
-  .vuband { height: 92px; margin: 0 0 20px; border-radius: 12px; border: 1px solid var(--line);
-            background: var(--vu-lo); overflow: hidden; }   /* the face (dark or light, --vu-*) is painted by drawVu */
+  .vuband { height: 96px; margin: 0 0 20px; }           /* two analog meters, painted by drawVu on the leather */
   .vuband canvas { display: block; width: 100%; height: 100%; }
   /* Mic, camera, screen: one row of icons. A small arrow opens the device list. */
   .mediarow { display: flex; gap: 10px; align-items: center; justify-content: center; margin: -6px 0 18px; }
+  .sesshead { position: relative; }
+  .volpop { position: absolute; right: 0; top: 100%; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-top: -6px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--pop-shadow); min-width: 220px; }
+  .volpop[hidden] { display: none; }
+  .volpop input { flex: 1; }
+  .volpop output { font: 500 12px var(--mono); color: var(--dim); min-width: 36px; text-align: right; }
+  /* Sync mode: one badge (every device plays the same instant: a band, a venue, a beach) */
+  .syncmode { margin-left: auto; flex: none; display: inline-flex; flex-direction: column; align-items: center; gap: 3px; color: var(--ink); }
+  .syncmode[hidden] { display: none; }
+  .syncmode svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .syncmode small { font: 700 8px/1 var(--sans); letter-spacing: .16em; }
   .mgrp { display: inline-flex; align-items: stretch; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
   .mbtn { appearance: none; border: 0; background: transparent; color: var(--ink); width: 46px; height: 42px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
   .mbtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -343,6 +374,8 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .inearph { display: flex; align-items: baseline; gap: 10px; margin: -4px 0 14px; flex-wrap: wrap; }
   .inearph[hidden] { display: none; }
   .inearph .k { font-size: 10px; font-weight: 500; letter-spacing: .14em; color: var(--dim); }
+  .inearph .k[hidden], .inearph .lt[hidden] { display: none; }
+  .inearph .lt { font: 600 13px var(--mono); color: var(--ink); margin-right: 8px; }
   .inearph .clk { color: var(--ink); align-self: center; }
   .inearph .lk { font-size: 12px; color: var(--dim); }
   .inearph .lk.ok { color: var(--ok); }
@@ -396,7 +429,12 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .sesshead .session { margin-bottom: 6px; }
   .sesshead .presenceline { margin: 0; line-height: 1.5; }
   .sesshead .mediarow { margin: 0; padding-top: 22px; justify-content: flex-end; flex: none; gap: 8px; }
-  .playcard { border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin: 0 0 16px; }
+  /* The play card: guitar-amp tolex (2026-10-08, Ori's leather, black in the dark, grey in the
+     bright: the --amp tokens in theme.css). */
+  .playcard { border: 1px solid var(--amp-edge); border-radius: 16px; padding: 14px; margin: 0 0 16px; background: var(--amp); color: var(--amp-ink); box-shadow: var(--amp-glow); }
+  .playcard .playinfo .sub { color: var(--amp-sub); }
+  .playcard .syncmode { color: inherit; }
+  .playcard .playinfo, .playcard .syncmode { text-shadow: var(--amp-text); }
   .playcard .playwrap { margin: 0 0 12px; }
   .playcard .vuband { margin: 0; }
   .foot .idrow { display: inline-flex; margin: 0 4px; vertical-align: middle; }
@@ -733,12 +771,12 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   function render() {
     const box = $('mixer'); box.innerHTML = '';
     const seg = document.createElement('div'); seg.className = 'mx-seg';
-    seg.innerHTML = '<button class="mx-mode' + (playMode === 'master' ? ' on' : '') + '" data-m="master">Master mix</button>'
+    seg.innerHTML = '<button class="mx-mode' + (playMode === 'master' ? ' on' : '') + '" data-m="master">Full mix</button>'
                   + '<button class="mx-mode' + (playMode === 'tracks' ? ' on' : '') + '" data-m="tracks">Track mixer</button>';
     for (const b of seg.querySelectorAll('[data-m]')) b.onclick = () => { playMode = b.dataset.m; render(); applyGains(); showState(); };
     box.appendChild(seg);
     if (playMode === 'master') {
-      const n = document.createElement('div'); n.className = 'mx-note'; n.textContent = 'The band’s own mix, as the producer sends it. Switch to Track mixer to make it yours.'; box.appendChild(n);
+      const n = document.createElement('div'); n.className = 'mx-note'; n.textContent = 'Switch to Track mixer to control your own mix.'; box.appendChild(n);
       return;
     }
     const h = document.createElement('div'); h.className = 'mx-h';
@@ -790,78 +828,116 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     requestAnimationFrame(vuLoop);
   }
   // ---------- the meter band ----------
-  // The plug-in's arc meters, here fed by what this page plays. Drawn only when a segment
-  // changes, and only while there is something to show (landmine 22: the page must stay light).
-  const vu = { tl: 0, tr: 0, al: 0, ar: 0, pl: 0, pr: 0, plAt: 0, prAt: 0, last: 0, at: 0, running: false, key: '' };
+  // Two analog VU meters (2026-10-08, Ori: "depth and realism, as if it is an analog
+  // machine"): backlit faces, a real VU scale (linear in voltage, so -20 sits near the stop and
+  // 0 VU two thirds across), needles with VU ballistics (a damped spring: about 300 ms to the
+  // mark, a hair of overshoot) and a peak light. Fed with the peaks of what this page plays
+  // (vuFeed); drawn only while a needle moves (landmine 22: the page must stay light).
+  const vu = { tl: 0, tr: 0, xl: 0, xr: 0, vl: 0, vr: 0, pkl: -1e9, pkr: -1e9, last: 0, at: 0, running: false, key: '' };
   let listenSince = 0;
   const VU_MIN = -42, toDb = (v) => (v > 0 ? 20 * Math.log10(v) : -120);
-  function dbPos(db) {
+  function dbPos(db) {           // the old segment scale: still what the track meters use
     if (db <= VU_MIN) return 0; if (db >= 0) return 1;
     if (db < -20) return (db - VU_MIN) / (-20 - VU_MIN) * 0.30;
     if (db < -10) return 0.30 + (db + 20) / 10 * 0.25;
     return 0.55 + (db + 10) / 10 * 0.45;
   }
+  const VU_REF = -4;             // 0 VU = -4 dBFS of peak: a mastered mix swings around the red
+  const vuNeedle = (db) => Math.min(1.06, Math.pow(10, (db - VU_REF) / 20) / Math.pow(10, 3 / 20));   // 0..1 = rest..+3 VU
   function vuFeed(l, r) {
     vu.tl = Math.max(vu.tl, +l || 0); vu.tr = Math.max(vu.tr, +r || 0); vu.at = performance.now();
+    if ((+l || 0) > 0.89) vu.pkl = vu.at; if ((+r || 0) > 0.89) vu.pkr = vu.at;     // -1 dBFS lights the peak lamp
     if (!vu.running && !document.hidden) { vu.running = true; vu.last = performance.now(); requestAnimationFrame(vuStep); }
     if (wantPlay && !listenSince) listenSince = Date.now(); else if (!wantPlay) listenSince = 0;
   }
   function vuStep(now) {
-    const dt = Math.min(0.1, (now - vu.last) / 1000); vu.last = now;
-    const fresh = now - vu.at < 400, tl = fresh ? vu.tl : 0, tr = fresh ? vu.tr : 0;
-    vu.tl *= 0.5; vu.tr *= 0.5;
-    const fall = Math.pow(10, -24 * dt / 20);
-    vu.al = tl > vu.al ? vu.al + (tl - vu.al) * 0.6 : Math.max(tl, vu.al * fall);
-    vu.ar = tr > vu.ar ? vu.ar + (tr - vu.ar) * 0.6 : Math.max(tr, vu.ar * fall);
-    const hold = (p, at, v) => (v >= p ? [v, now] : (now - at > 1500 ? [p * Math.pow(10, -18 * dt / 20), at] : [p, at]));
-    [vu.pl, vu.plAt] = hold(vu.pl, vu.plAt, tl); [vu.pr, vu.prAt] = hold(vu.pr, vu.prAt, tr);
+    const dt = Math.min(0.05, (now - vu.last) / 1000); vu.last = now;
+    const fresh = now - vu.at < 400;
+    const tl = fresh ? vuNeedle(toDb(vu.tl)) : 0, tr = fresh ? vuNeedle(toDb(vu.tr)) : 0;
+    vu.tl *= 0.6; vu.tr *= 0.6;
+    // the needle: x'' = k(target - x) - c x'  (about 2 Hz, damped a little under critical)
+    const K = 175, C = 21;
+    for (const [t, x, v] of [[tl, 'xl', 'vl'], [tr, 'xr', 'vr']]) {
+      for (let i = 0; i < 2; i++) { const h = dt / 2; vu[v] += (K * (t - vu[x]) - C * vu[v]) * h; vu[x] = Math.max(-0.02, Math.min(1.08, vu[x] + vu[v] * h)); }
+    }
     drawVu();
-    if (!document.hidden && (vu.al > 0.0005 || vu.ar > 0.0005 || vu.pl > 0.0005 || fresh)) requestAnimationFrame(vuStep);
-    else { vu.running = false; vu.al = vu.ar = vu.pl = vu.pr = 0; drawVu(); }
+    const moving = Math.abs(vu.vl) + Math.abs(vu.vr) > 0.002 || vu.xl > 0.002 || vu.xr > 0.002;
+    if (!document.hidden && (moving || fresh || now - Math.max(vu.pkl, vu.pkr) < 600)) requestAnimationFrame(vuStep);
+    else { vu.running = false; vu.xl = vu.xr = vu.vl = vu.vr = 0; drawVu(); }
   }
   function drawVu() {
     const cv = $('vuCanvas'); if (!cv) return;
     const dpr = Math.min(3, window.devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
     if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); vu.key = ''; }
-    const N = 32, seg = (v) => Math.round(dbPos(toDb(v)) * N);
-    const secs = listenSince ? Math.floor((Date.now() - listenSince) / 1000) : -1;
-    const pal = vuPalette();
-    const key = [W, H, seg(vu.al), seg(vu.ar), seg(vu.pl), seg(vu.pr), secs, syncMs, pal.k].join();
+    const now = performance.now(), pal = vuPalette();
+    const key = [W, H, vu.xl.toFixed(3), vu.xr.toFixed(3), now - vu.pkl < 500, now - vu.pkr < 500, pal.k].join();
     if (key === vu.key) return; vu.key = key;
     const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
-    const face = g.createLinearGradient(0, 0, 0, H); face.addColorStop(0, pal.hi); face.addColorStop(1, pal.lo);
-    g.fillStyle = face; g.fillRect(0, 0, W, H); g.fillStyle = 'rgba(' + pal.edge + ',.06)'; g.fillRect(0, 0, W, 1);
-    const gap = 10, mw = (W - gap * 3) / 2;
-    const t = secs >= 0 ? Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0') : '';
-    vuArc(g, gap, mw, H, vu.al, vu.pl, 'L', t ? 'LISTENING ' + t : '', pal);
-    vuArc(g, gap * 2 + mw, mw, H, vu.ar, vu.pr, 'R', syncMs ? 'IN-EAR ' + syncMs + ' MS' : 'LIVE', pal);
+    const gap = 10, mw = (W - gap) / 2;
+    vuMeter(g, 0, mw, H, vu.xl, now - vu.pkl < 500, 'L', pal);
+    vuMeter(g, mw + gap, mw, H, vu.xr, now - vu.pkr < 500, 'R', pal);
   }
-  // The meters' colours, from the theme (theme.css --vu-*): a light face in the bright theme.
+  // The meters' face and bezel follow the theme a little (an ivory face in the bright theme, a
+  // warm backlit one in the dark); the needle, the scale and the red are the same in both.
   function vuPalette() {
-    const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim();
-    const p = { hi: v('--vu-hi') || '#1d1c18', lo: v('--vu-lo') || '#0c0b09', edge: v('--vu-edge') || '255, 255, 255', ink: v('--vu-ink') || '232, 226, 207',
-                g: v('--vu-g') || '#44d36e', y: v('--vu-y') || '#f4c430', r: v('--vu-r') || '#ff4b4b', off: parseFloat(v('--vu-off')) || 0.12, glow: parseFloat(v('--vu-glow')) || 0 };
-    p.k = p.hi + p.g;
-    return p;
+    const dark = (document.documentElement.getAttribute('data-theme') || (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')) === 'dark';
+    return dark ? { k: 'd', f0: '#f7e2a6', f1: '#d9b866', glow: 'rgba(255,214,120,.55)', ink: '#2b2416', bez0: '#3a3833', bez1: '#0e0d0b' }
+                : { k: 'l', f0: '#fbf5e4', f1: '#e7dcbd', glow: 'rgba(255,246,214,.6)', ink: '#2b2416', bez0: '#4a4741', bez1: '#15140f' };
   }
   window.addEventListener('sdawtheme', () => { vu.key = ''; drawVu(); });
   if (window.matchMedia) { const mq = matchMedia('(prefers-color-scheme: dark)'); const re = () => { vu.key = ''; drawVu(); }; if (mq.addEventListener) mq.addEventListener('change', re); }
-  function vuArc(g, x0, w, h, avg, peak, side, caption, pal) {
-    const N = 32, A = 38 * Math.PI / 180, top = 18, drop = h - top - 30;
-    const R = Math.min(drop / (1 - Math.cos(A)), (w * 0.44) / Math.sin(A)), cx = x0 + w / 2, cy = top + R;
-    const lit = Math.round(dbPos(toDb(avg)) * N), pk = Math.round(dbPos(toDb(peak)) * N) - 1;
-    const segDb = (i) => { const tt = (i + 0.5) / N; let lo = VU_MIN, hi = 0; for (let k = 0; k < 20; k++) { const m = (lo + hi) / 2; if (dbPos(m) < tt) lo = m; else hi = m; } return lo; };
-    for (let i = 0; i < N; i++) {
-      const a0 = -A + (i + 0.12) / N * 2 * A, a1 = -A + (i + 0.88) / N * 2 * A, db = segDb(i);
-      const c = db >= -3 ? pal.r : db >= -12 ? pal.y : pal.g, on = i < lit, isPk = i === pk && pk >= lit;
-      g.beginPath(); g.arc(cx, cy, R, a0 - Math.PI / 2, a1 - Math.PI / 2); g.arc(cx, cy, R - 10, a1 - Math.PI / 2, a0 - Math.PI / 2, true); g.closePath();
-      g.fillStyle = c; g.globalAlpha = on || isPk ? 1 : pal.off; g.shadowColor = c; g.shadowBlur = on || isPk ? pal.glow : 0; g.fill();
-      g.shadowBlur = 0; g.globalAlpha = 1;
+  function vuMeter(g, x0, w, h, pos, peak, side, pal) {
+    const rr = (x, y, ww, hh, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + ww, y, x + ww, y + hh, r); g.arcTo(x + ww, y + hh, x, y + hh, r); g.arcTo(x, y + hh, x, y, r); g.arcTo(x, y, x + ww, y, r); g.closePath(); };
+    // bezel: dark metal with a lit top edge, and a shadow it casts on the leather
+    g.save(); g.shadowColor = 'rgba(0,0,0,.55)'; g.shadowBlur = 8; g.shadowOffsetY = 3;
+    const bz = g.createLinearGradient(0, 0, 0, h); bz.addColorStop(0, pal.bez0); bz.addColorStop(1, pal.bez1);
+    rr(x0, 1, w, h - 4, 9); g.fillStyle = bz; g.fill(); g.restore();
+    g.strokeStyle = 'rgba(255,255,255,.14)'; g.lineWidth = 1; rr(x0 + .5, 1.5, w - 1, h - 5, 8.5); g.stroke();
+    // face: backlit from below the scale, darker at the corners
+    const fx = x0 + 6, fy = 7, fw = w - 12, fh = h - 16;
+    g.save(); rr(fx, fy, fw, fh, 5); g.clip();
+    const face = g.createLinearGradient(0, fy, 0, fy + fh); face.addColorStop(0, pal.f0); face.addColorStop(1, pal.f1);
+    g.fillStyle = face; g.fillRect(fx, fy, fw, fh);
+    const glow = g.createRadialGradient(fx + fw / 2, fy + fh * 0.9, 4, fx + fw / 2, fy + fh * 0.9, fw * 0.7); glow.addColorStop(0, pal.glow); glow.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = glow; g.fillRect(fx, fy, fw, fh);
+    const vig = g.createRadialGradient(fx + fw / 2, fy + fh / 2, fh * 0.2, fx + fw / 2, fy + fh / 2, fw * 0.75); vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(60,40,10,.28)');
+    g.fillStyle = vig; g.fillRect(fx, fy, fw, fh);
+    // the scale: an arc around a pivot below the face
+    const cx = fx + fw / 2, cy = fy + fh * 1.45, R = Math.min(fh * 1.25, fw * 0.55), A = 42 * Math.PI / 180;
+    const ang = (p) => -A + 2 * A * Math.max(0, Math.min(1, p)) - Math.PI / 2;
+    const at = (vuDb) => vuNeedle(vuDb + VU_REF);
+    g.lineWidth = 1.2; g.strokeStyle = pal.ink;
+    g.beginPath(); g.arc(cx, cy, R, ang(at(-20)), ang(at(0))); g.stroke();
+    g.strokeStyle = '#c4271f'; g.lineWidth = 3.2; g.beginPath(); g.arc(cx, cy, R + 1.5, ang(at(0)), ang(1)); g.stroke();
+    g.font = '600 ' + Math.max(7, Math.round(fh * 0.13)) + 'px ui-sans-serif, -apple-system, Helvetica, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    for (const [d, lab] of [[-20, '20'], [-10, '10'], [-7, ''], [-5, '5'], [-3, '3'], [-2, ''], [-1, ''], [0, '0'], [1, ''], [2, ''], [3, '+3']]) {
+      const t = ang(at(d)), big = lab !== '', c = Math.cos(t), sn = Math.sin(t);
+      g.strokeStyle = d > 0 ? '#c4271f' : pal.ink; g.lineWidth = big ? 1.3 : 1;
+      g.beginPath(); g.moveTo(cx + c * R, cy + sn * R); g.lineTo(cx + c * (R + (big ? 6 : 4)), cy + sn * (R + (big ? 6 : 4))); g.stroke();
+      if (big && fw > 100) { g.fillStyle = d > 0 ? '#c4271f' : pal.ink; g.fillText(lab, cx + c * (R + 13), cy + sn * (R + 13)); }
     }
-    g.font = '600 10px ui-monospace, SFMono-Regular, Menlo, monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.fillStyle = 'rgba(' + pal.ink + ',.85)'; g.fillText(side, cx, cy - R + 24);
-    g.font = '600 8.5px ui-monospace, SFMono-Regular, Menlo, monospace'; g.fillStyle = pal.y; g.textAlign = 'left';
-    g.fillText(caption, x0 + 2, h - 9);
+    g.fillStyle = pal.ink; g.font = 'italic 700 ' + Math.max(9, Math.round(fh * 0.2)) + 'px Georgia, "Times New Roman", serif';
+    g.fillText('VU', cx, fy + fh * 0.8);
+    g.font = '600 ' + Math.max(7, Math.round(fh * 0.12)) + 'px ui-sans-serif, -apple-system, Helvetica, Arial'; g.textAlign = 'left';
+    g.fillText(side, fx + 7, fy + 10);
+    // the needle, with its shadow on the face
+    const t = ang(pos), c = Math.cos(t), sn = Math.sin(t), r0 = R * 0.42, r1 = R + 7;
+    g.lineCap = 'round';
+    g.strokeStyle = 'rgba(40,25,5,.25)'; g.lineWidth = 2; g.beginPath(); g.moveTo(cx + c * r0 + 2, cy + sn * r0 + 2); g.lineTo(cx + c * r1 + 2, cy + sn * r1 + 2); g.stroke();
+    g.strokeStyle = '#141210'; g.lineWidth = 1.4; g.beginPath(); g.moveTo(cx + c * r0, cy + sn * r0); g.lineTo(cx + c * r1, cy + sn * r1); g.stroke();
+    // the pivot's cover: a dark band along the bottom
+    const cover = g.createLinearGradient(0, fy + fh - 12, 0, fy + fh); cover.addColorStop(0, 'rgba(20,18,14,0)'); cover.addColorStop(1, 'rgba(20,18,14,.35)');
+    g.fillStyle = cover; g.fillRect(fx, fy + fh - 12, fw, 12);
+    // glass: a soft reflection across the top
+    const gl = g.createLinearGradient(0, fy, 0, fy + fh * 0.55); gl.addColorStop(0, 'rgba(255,255,255,.42)'); gl.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gl; g.beginPath(); g.moveTo(fx, fy); g.lineTo(fx + fw, fy); g.lineTo(fx + fw, fy + fh * 0.32); g.quadraticCurveTo(fx + fw / 2, fy + fh * 0.5, fx, fy + fh * 0.32); g.closePath(); g.fill();
+    g.restore();
+    // the peak lamp, on the bezel
+    const lx = fx + fw - 9, ly = fy + 10;
+    const lamp = g.createRadialGradient(lx - 1, ly - 1, 0.5, lx, ly, 4);
+    lamp.addColorStop(0, peak ? '#ffd1c7' : '#7a2a24'); lamp.addColorStop(1, peak ? '#ff3b2f' : '#2b0f0d');
+    g.fillStyle = lamp; g.beginPath(); g.arc(lx, ly, 3.2, 0, 2 * Math.PI); g.fill();
+    if (peak) { g.save(); g.shadowColor = '#ff3b2f'; g.shadowBlur = 8; g.fill(); g.restore(); }
   }
   window.addEventListener('resize', () => { vu.key = ''; drawVu(); });
   drawVu();
