@@ -200,16 +200,24 @@
     st.id = 'ss-foot-css';
     st.textContent = `
       .ss-foot{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:auto}
-      .ss-foot .ss-mail{font-size:clamp(.98rem,2vw,1.3rem);font-weight:600;color:inherit;
-        text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px}
-      .ss-tel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.76rem;
-        letter-spacing:.09em;text-transform:uppercase;opacity:.62}
-      .ss-tel a{color:inherit;text-decoration:none}
-      .ss-tel a:hover{text-decoration:underline}
+      /* Every one of these menus styles its links by container — .sd-menu a,
+         .st-menu a — at display size and uppercase, and this footer lives
+         inside those containers. Without an explicit reset the phone numbers
+         came out set at 3.2rem. Two classes deep so it outranks them rather
+         than relying on being injected last. */
+      .ss-foot a{font:inherit;font-size:inherit;letter-spacing:inherit;
+        text-transform:none;line-height:1.35;display:inline;color:inherit;text-decoration:none}
+      .ss-foot a.ss-mail{font-size:clamp(.98rem,2vw,1.3rem);font-weight:600;
+        border-bottom:1px solid currentColor;padding-bottom:2px;line-height:1.2}
+      .ss-foot .ss-tel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.76rem;
+        letter-spacing:.09em;text-transform:uppercase;opacity:.62;line-height:1.4}
+      .ss-foot .ss-tel a{font-size:inherit;letter-spacing:inherit;text-transform:inherit}
+      .ss-foot .ss-tel a:hover{text-decoration:underline}
       .ss-tel i{font-style:normal;opacity:.5}
       .ss-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;width:100%}
       .ss-soc{display:flex;gap:14px}
-      .ss-soc a{color:inherit;opacity:.55;transition:opacity .2s,transform .2s;display:block}
+      .ss-foot .ss-soc a{color:inherit;opacity:.55;transition:opacity .2s,transform .2s;display:block;
+        font-size:0;border:0;padding:0}
       .ss-soc a:hover{opacity:1;transform:translateY(-2px)}
       .ss-cur{margin-left:auto}
       .ss-cur .cur-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
