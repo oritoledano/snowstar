@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StreamDAW demo — a band's stems, in a mix of your own</title>
+<meta name="description" content="Try StreamDAW on your phone: a band's song in eight sends, in time, in a mix of your own. Put your earphones in and press play.">
+<link rel="canonical" href="https://snowstar.company/apps/streamdaw-demo.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Snowstar">
+<meta property="og:title" content="StreamDAW demo — your own mix of the band">
+<meta property="og:description" content="Put your earphones in and press play: eight sends, in time, and every fader is yours.">
+<meta property="og:image" content="https://snowstar.company/assets/og-streamdaw.jpg">
+<meta name="theme-color" content="#efe9da">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500&display=swap">
+<!-- BUILT by site/snowstar/demo/build-demo.mjs in the StreamDAW repo: the look is the real
+     listener page's (its <style>, theme.css and theme.js, copied in at build time), so the
+     demo is what a phone in a session shows. Edit the source there, not this file. -->
+<style>
+/* StreamDAW — one look, dark and bright (2026-10-06; meters light in the bright one, 10-07).
+   The "Stage" look chosen by Ori: paper and ink, a lime "on" colour, a hot pink for what
+   needs attention, the Snowstar blue for links. Every page links this file and uses only
+   these tokens; html[data-theme] is set by theme.js (device setting first, then the
+   person's own choice, remembered on that device). */
+:root, html[data-theme="light"] {
+  --bg: #efe9da;  --panel: #f7f3e8;  --panel2: #e6dfcd;  --field: #fbf8f0;
+  --ink: #16140f; --dim: #6f6a5c;    --faint: #a59f8c;
+  --line: #16140f; --soft: #d3cbb6;
+  --lime: #c8f23a; --lime-ink: #1d2a00;
+  --hot: #e0164f;  --hot-ink: #ffffff;
+  --blue: #1c2be0; --ok: #23864a;    --warn: #b06a00;
+  --meter: #16140f; --shadow: 0 1px 0 rgba(22,20,15,.08);
+  --vu-hi: #fdfbf4; --vu-lo: #e8e1cf; --vu-ink: 22, 20, 15; --vu-edge: 255, 255, 255;   /* the meters: a light face */
+  --vu-g: #1d9a4a; --vu-y: #d29a00; --vu-r: #e02f3a; --vu-off: .16; --vu-glow: 2;
+  --head: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+html[data-theme="dark"] {
+  --bg: #12110e;  --panel: #1b1a16;  --panel2: #26241e;  --field: #15140f;
+  --ink: #f3eddc; --dim: #a39d8a;    --faint: #6a6556;
+  --line: #5b574a; --soft: #34322a;
+  --lime: #c8f23a; --lime-ink: #1d2a00;
+  --hot: #ff5c8a;  --hot-ink: #1a0610;
+  --blue: #8c96ff; --ok: #5fd38a;    --warn: #f0b04a;
+  --meter: #f3eddc; --shadow: none;
+  --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
+  --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    --bg: #12110e;  --panel: #1b1a16;  --panel2: #26241e;  --field: #15140f;
+    --ink: #f3eddc; --dim: #a39d8a;    --faint: #6a6556;
+    --line: #5b574a; --soft: #34322a;
+    --hot: #ff5c8a;  --hot-ink: #1a0610;
+    --blue: #8c96ff; --ok: #5fd38a;    --warn: #f0b04a;
+    --meter: #f3eddc; --shadow: none;
+    --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
+    --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
+    color-scheme: dark;
+  }
+}
+/* The StreamDAW wordmark, in the ink of whichever theme is on: the PNG is used as a mask. */
+.wordmark { display: inline-block; width: 150px; height: 15px; background: var(--ink);
+  -webkit-mask: url(demo/streamdaw-wordmark.png) left center / contain no-repeat;
+          mask: url(demo/streamdaw-wordmark.png) left center / contain no-repeat; }
+.theme-btn { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink);
+  border-radius: 999px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; font: 14px var(--sans); padding: 0; }
+.theme-btn::before { content: "\263E"; }                          /* a moon: switch to dark */
+html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: switch to bright */
+@media (prefers-color-scheme: dark) { html:not([data-theme]) .theme-btn::before { content: "\2600"; } }
+
+
+  /* ═══ The "Stage" look (2026-10-06): paper and ink, one look in two themes ═══
+     It replaced three skins (aurora / thermal / oracle) that the studio pushed to every
+     listener; the theme is now the LISTENER's — their device's dark/bright setting, or
+     the switch in the header, remembered on that device. Every colour below is a token
+     from /theme.css. The names on the left are the ones this page's code has always used
+     (the rewind waveform reads --accent and --dim2 at runtime), mapped onto the tokens so
+     the code did not have to learn new ones. Do not give this page a colour of its own:
+     a literal here is one the other theme cannot change. */
+  :root {
+    --text: var(--ink);
+    --dim2: var(--dim);            /* unplayed waveform; --faint vanished on paper at the waveform's 45 % */
+    --accent: var(--ink);          /* the strong mark: played waveform, primary buttons, slider knobs */
+    --accent-dim: var(--dim);
+    --accent-tint: var(--panel2);
+    --onaccent: var(--bg);         /* text on an --accent fill */
+    --amber: var(--warn);
+    --display: var(--head);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  button, input, select, textarea { font-family: inherit; }
+  /* A column: the card, then "Report a problem" under it. A phone is held from the top; a
+     desk screen centres a short card. */
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 15px/1.5 var(--sans);
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 16px 16px 24px;
+  }
+  @media (min-width: 720px) { body { justify-content: center; padding: 40px 24px; } }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .card { flex: none; width: 100%; max-width: 560px; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; position: relative; box-shadow: var(--shadow); }
+  /* bigger on tablet/desktop so the video has room */
+  @media (min-width: 720px)  { .card { max-width: 720px; } }
+  @media (min-width: 1100px) { .card { max-width: 860px; } }
+
+  /* header: the wordmark, what is on air, and the dark/bright switch */
+  .pnhdr { padding: 16px 20px; border-bottom: 1px solid var(--line); }
+  .hrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .hright { display: flex; align-items: center; gap: 8px; flex: none; }
+  .pnhdr .wordmark { width: 154px; height: 18px; flex: 0 1 auto; min-width: 0; }
+  .pnbody { padding: 24px 20px 26px; }
+  @media (min-width: 720px) { .pnhdr { padding: 18px 32px; } .pnbody { padding: 32px 32px 30px; } }
+  .pill { font: 500 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; background: transparent; color: var(--dim); border: 1px solid var(--line); white-space: nowrap; }
+  .pill.live { color: var(--lime-ink); background: var(--lime); }
+  .pill.live::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 7px; vertical-align: 1px; }
+  .pill.dvr { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+  .pill.offline { color: var(--dim); }
+  .session { color: var(--dim); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 22px; }
+  .session b { display: block; margin-top: 4px; font: 500 34px/1.08 var(--head); letter-spacing: -.015em; text-transform: none; color: var(--ink); overflow-wrap: anywhere; }
+  @media (min-width: 720px) { .session b { font-size: 44px; } }
+
+  .playwrap { display: flex; align-items: center; gap: 18px; margin: 6px 0 22px; }
+  button.play {
+    width: 76px; height: 76px; border-radius: 50%; border: 1px solid var(--ink); cursor: pointer;
+    background: var(--ink); color: var(--bg); font-size: 26px; flex: none; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .08s ease, background .15s ease;
+  }
+  button.play:active { transform: scale(.96); }
+  /* lime is "on": the button is lime while this device is playing */
+  button.play.stop { background: var(--lime); color: var(--lime-ink); border-color: var(--line); }
+  /* nothing to connect to yet — don't promise a live stream with a solid button */
+  button.play.offline { background: transparent; color: var(--faint); border-color: var(--line); }
+  .playinfo { min-width: 0; }
+  .playinfo .state { font: 500 22px/1.2 var(--head); letter-spacing: -.01em; }
+  .playinfo .sub { color: var(--dim); font-size: 13px; margin-top: 3px; }
+
+  .timeline { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  /* min-width:0 — a canvas refuses to shrink below its intrinsic 300 px otherwise, and on a
+     narrow phone that pushed LIVE outside the card, where it could not be tapped. */
+  .tlwave { flex: 1 1 0; min-width: 0; width: 0; height: 46px; border-radius: 12px; background: var(--panel2); touch-action: none; cursor: pointer; display: block; }
+  .livechip {
+    font: 500 11px/1 var(--sans); letter-spacing: .08em; padding: 11px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; flex: none;
+  }
+  .livechip.at-edge { background: var(--lime); color: var(--lime-ink); }
+  .livechip.behind { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+
+  .meters { display: none; }                     /* the bars: replaced by the meter band (kept for the code that feeds them) */
+  /* The meter band: the plug-in's two arc meters, on hardware that follows the theme (--vu-*). */
+  .vuband { height: 92px; margin: 0 0 20px; border-radius: 12px; border: 1px solid var(--line);
+            background: var(--vu-lo); overflow: hidden; }   /* the face (dark or light, --vu-*) is painted by drawVu */
+  .vuband canvas { display: block; width: 100%; height: 100%; }
+  /* Mic, camera, screen: one row of icons. A small arrow opens the device list. */
+  .mediarow { display: flex; gap: 10px; align-items: center; justify-content: center; margin: -6px 0 18px; }
+  .mgrp { display: inline-flex; align-items: stretch; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .mbtn { appearance: none; border: 0; background: transparent; color: var(--ink); width: 46px; height: 42px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+  .mbtn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .mbtn.chev { width: 26px; border-left: 1px solid var(--soft); }
+  .mbtn.chev svg { width: 12px; height: 12px; }
+  .mgrp.on { background: var(--lime); border-color: var(--line); }
+  .mgrp.on .mbtn { color: var(--lime-ink); }
+  .mgrp.on .mbtn:first-child svg { fill: currentColor; }
+  .mgrp.blocked { border-color: var(--hot); }
+  .mgrp.blocked .mbtn { color: var(--hot); }
+  .mgrp.closed .mbtn:first-child { color: var(--faint); cursor: default; }
+  .devmenu { position: absolute; z-index: 30; min-width: 220px; max-width: 300px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 6px; box-shadow: var(--shadow); }
+  .devmenu button { display: block; width: 100%; text-align: left; border: 0; background: transparent; color: var(--ink); font: 13px var(--sans); padding: 9px 10px; border-radius: 8px; cursor: pointer; }
+  .devmenu button:hover, .devmenu button.on { background: var(--panel2); }
+  .devmenu .h { font: 600 10px var(--mono); letter-spacing: .08em; color: var(--dim); padding: 6px 10px 4px; text-transform: uppercase; }
+  .legacy { display: none !important; }
+  .foot .ficon { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); width: 38px; height: 38px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; margin: 0 4px; cursor: pointer; vertical-align: middle; }
+  .foot .ficon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .mx-reset { float: right; appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 11px var(--sans); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+  .meter { height: 6px; background: var(--soft); border-radius: 999px; overflow: hidden; position: relative; }
+  .meter i { position: absolute; inset: 0 100% 0 0; background: var(--meter); border-radius: 999px; transition: inset-inline-end .05s linear; }
+
+  /* Sliders: a thin ink line and an ink knob, the same everywhere (the browser's own
+     slider is a different object on every phone, and blue on most of them). */
+  input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; height: 26px; margin: 0; cursor: pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height: 2px; border-radius: 1px; background: var(--line); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; margin-top: -8px; border-radius: 50%; border: 0; background: var(--accent); }
+  input[type=range]::-moz-range-track { height: 2px; border-radius: 1px; background: var(--line); }
+  input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; border: 0; background: var(--accent); }
+
+  /* multi-track mixer (per-track volume, pan, solo / mute — the rows of 2026-10-05) */
+  .mixer { margin-bottom: 24px; border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px 4px; }
+  .mx-h { display: flex; align-items: center; gap: 10px; font: 500 11px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin: 4px 0 4px; }
+  .mx-h .mx-reset { margin-left: auto; float: none; }
+  .mx-row { padding: 12px 0 12px; }
+  .mx-row + .mx-row { border-top: 1px solid var(--soft); }
+  .mx-top, .mx-ctl { display: flex; align-items: center; gap: 8px; }
+  .mx-ctl { margin-top: 6px; }
+  .mx-lab { font: 500 10px/1 var(--sans); letter-spacing: .08em; color: var(--dim); flex: none; }
+  .mx-vol { flex: 2 1 0; min-width: 0; width: 0; }
+  /* Pan is not a "how much" control: no fill from the left, a mark at the centre. */
+  input[type=range].mx-pan { flex: 1 1 0; min-width: 0; width: 0; padding: 0;
+            background: linear-gradient(var(--dim), var(--dim)) center / 2px 12px no-repeat; }
+  .mx-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); }
+  .mx-seg { display: flex; gap: 4px; padding: 4px; margin: 2px 0 10px; border: 1px solid var(--line); border-radius: 999px; }
+  .mx-mode { flex: 1; padding: 10px 8px; border-radius: 999px; border: 0; background: transparent; color: var(--dim); font: 500 13px/1 var(--sans); cursor: pointer; }
+  .mx-mode.on { background: var(--ink); color: var(--bg); }
+  .mx-note { font-size: 13px; color: var(--dim); padding: 4px 2px 12px; }
+  .mx-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 11px/1 var(--sans); cursor: pointer; flex: none; padding: 0; }
+  .mx-btn.solo.on { background: var(--lime); color: var(--lime-ink); }
+  .mx-btn.mute.on { background: var(--hot); border-color: var(--hot); color: var(--hot-ink); }
+  .mx-name { flex: 1; min-width: 0; font-size: 14px; color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mx-meter { width: 84px; height: 6px; background: var(--soft); border-radius: 999px; overflow: hidden; flex: none; }
+  .mx-meter i { display: block; height: 100%; width: 0; background: var(--meter); border-radius: 999px; transition: width .06s linear; }
+  @media (max-width: 520px) { .mx-meter { width: 52px; } }
+
+  /* identity / sign-in */
+  .idrow { display: flex; align-items: center; gap: 8px; margin: -6px 0 22px; flex-wrap: wrap; }
+  .idbtn { display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--sans); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; white-space: nowrap; }
+  .idbtn:hover { background: var(--panel2); }
+  .idbtn.knock.sent, .idbtn.oncam { background: var(--lime); color: var(--lime-ink); }
+  .idstate { margin-left: auto; font-size: 12px; color: var(--dim); }
+  .vcell video { cursor: zoom-in; }
+  .vhint { position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--dim); background: var(--panel); padding: 2px 7px; border-radius: 999px; pointer-events: none; }
+  /* invite card — title, host, schedule + save-to-calendar */
+  .invite { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    margin: -6px 0 20px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel2); }
+  .inv-ttl { font: 500 19px/1.2 var(--head); }
+  .inv-sub { font-size: 13px; color: var(--dim); margin-top: 2px; }
+  .inv-when { font-size: 12px; font-weight: 500; color: var(--hot); margin-top: 6px; }
+  .inv-cal { display: flex; gap: 8px; }
+  #videoMe { transform: scaleX(-1); }   /* mirror your own preview, like every video app */
+  #videoMe.back { transform: none; }    /* …but not the back camera: that is the world, not you */
+  .presenceline { font-size: 12px; color: var(--dim); margin: -12px 0 18px; }
+  .presenceline b { color: var(--ink); font-weight: 500; }
+  /* The full-stop cards (lobby, in-ear refusal, session over, sign-in required) cover the
+     SCREEN, not the card: on a phone the card is taller than the screen and a card centred
+     in it could sit below the fold, where nobody waiting at the door would see it. */
+  .authwrap { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px;
+    background: var(--bg); background: color-mix(in srgb, var(--bg) 90%, transparent); }
+  .authwrap[hidden] { display: none; }
+  body:has(.authwrap:not([hidden])) .bugopen { visibility: hidden; }
+  .auth-card { width: 360px; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 30px 24px 24px; text-align: center; box-shadow: var(--shadow); }
+  .auth-ic { font-size: 28px; line-height: 1; margin-bottom: 14px; }
+  .auth-ttl { font: 500 26px/1.15 var(--head); letter-spacing: -.01em; color: var(--ink); }
+  .auth-sub { font-size: 14px; line-height: 1.5; color: var(--dim); margin: 10px 0 20px; }
+  .auth-sub b { color: var(--ink); font-weight: 500; }
+  .auth-btn { width: 100%; border: 1px solid var(--ink); border-radius: 999px; padding: 14px 16px; font: 500 14px/1.2 var(--sans); color: var(--bg); background: var(--ink); cursor: pointer; }
+  .auth-link { display: block; margin: 14px auto 0; background: none; border: 0; color: var(--dim); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .auth-inp { width: 100%; background: var(--field); border: 1px solid var(--line); border-radius: 999px; color: var(--ink); font: 15px/1.4 var(--sans); padding: 12px 16px; margin-bottom: 10px; outline: none; text-align: center; }
+  .auth-inp::placeholder { color: var(--faint); }
+  .auth-inp:focus { box-shadow: inset 0 0 0 1px var(--ink); }
+  .lobby-wait { margin-top: 16px; font-size: 13px; color: var(--dim); }
+  .lobby-dots { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--hot); animation: lobbypulse 1.2s ease-in-out infinite; vertical-align: -1px; margin-right: 6px; }
+  @keyframes lobbypulse { 0%,100% { opacity: .35; transform: scale(.8); } 50% { opacity: 1; transform: scale(1.15); } }
+
+  /* producer video + talkback */
+  .videowrap { margin: 0 0 22px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--panel2); }
+  /* Zoom-style room grid — one tile per live source, the speaker ringed in lime */
+  .vgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2px; }
+  .vgrid.two { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  @media (max-width: 460px) { .vgrid { grid-template-columns: 1fr 1fr; } }
+  .vcell { position: relative; background: var(--panel2); }
+  .vcell.speaking { outline: 3px solid var(--lime); outline-offset: -3px; }
+  .vcell video { width: 100%; display: block; aspect-ratio: 16/9; object-fit: contain; background: var(--panel2); }
+  .vlabel { position: absolute; top: 8px; left: 8px; font: 500 11px/1 var(--sans); background: var(--panel); color: var(--ink); border: 1px solid var(--line); padding: 5px 9px; border-radius: 999px; }
+  #talkAudio { display: none; }
+  .vbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 12px; background: var(--panel); border-top: 1px solid var(--line); }
+  .vsrc { font-size: 12px; color: var(--dim); }
+  .talkbtn { display: inline-flex; align-items: center; gap: 8px; font: 500 12px/1 var(--sans); padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; white-space: nowrap; }
+  .talkbtn .sw { width: 26px; height: 14px; border-radius: 999px; border: 1px solid currentColor; position: relative; flex: none; }
+  .talkbtn .sw::after { content: ''; position: absolute; top: 1px; left: 1px; width: 10px; height: 10px; border-radius: 50%; background: currentColor; transition: transform .15s ease; }
+  .talkbtn.on .sw::after { transform: translateX(12px); }
+  .talkbtn.on { background: var(--lime); color: var(--lime-ink); }
+  .talkbtn:disabled { opacity: .5; cursor: default; }
+  .vbtns { display: flex; align-items: center; gap: 8px; }
+  /* Under the card, in the page — not floating: on a phone a pinned button sat on top of
+     whatever was being scrolled past (a mixer row, the footer). Its form still pops up
+     over the page, bottom right. Above the full-stop cards' veil: someone stuck at the
+     door is exactly who needs it. */
+  .bugopen { order: 2; flex: none; position: relative; z-index: 61; margin-top: 16px; background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; font-size: 12px; color: var(--dim); cursor: pointer; }
+  .bugbar { position: fixed; right: 12px; bottom: 12px; z-index: 89; width: min(340px, calc(100vw - 24px)); background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; padding: 14px; box-shadow: var(--shadow); }
+  .bugbar[hidden] { display: none; }
+  .bugbar textarea { width: 100%; background: var(--field); border: 1px solid var(--line); border-radius: 12px; color: var(--ink); padding: 10px 12px; font: 13px/1.45 var(--sans); resize: vertical; outline: none; }
+  .bugbar textarea::placeholder { color: var(--faint); }
+  .bug-row { display: flex; gap: 8px; margin-top: 10px; }
+  .bug-row button { flex: 1; border: 1px solid var(--ink); border-radius: 999px; padding: 10px; font: 500 13px/1 var(--sans); background: var(--ink); color: var(--bg); cursor: pointer; }
+  .bug-row button.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .bug-msg { margin-top: 8px; font-size: 12px; color: var(--dim); }
+  .cookiebar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 90; max-width: 720px; margin: 0 auto; display: flex; gap: 14px;
+               align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .cookiebar[hidden] { display: none; }
+  .cb-txt { font-size: 12px; line-height: 1.5; color: var(--dim); }
+  .cb-txt b { color: var(--ink); font-weight: 500; }
+  .cb-ok { flex: none; background: var(--ink); border: 1px solid var(--ink); border-radius: 999px; padding: 10px 20px; font: 500 13px/1 var(--sans); color: var(--bg); cursor: pointer; }
+  @media (max-width: 560px) { .cookiebar { flex-direction: column; align-items: stretch; } }
+
+  /* Zoom view: every camera on one full-screen grid */
+  .videowrap.zoom { position: fixed; inset: 0; z-index: 45; margin: 0; border: 0; border-radius: 0; display: flex; flex-direction: column; background: var(--bg); }
+  .videowrap.zoom .vgrid { flex: 1; overflow: auto; align-content: center; gap: 6px; padding: 6px;
+    grid-template-columns: repeat(auto-fit, minmax(min(46vw, 340px), 1fr)) !important; }
+  .videowrap.zoom .vcell video { aspect-ratio: 16/9; object-fit: contain; }
+  .videowrap.zoom .vbar { flex: none; }
+
+  /* studio asks for your mic — approve bar (hot: it is waiting for an answer) */
+  .micask { position: fixed; left: 12px; right: 12px; bottom: 14px; z-index: 50; max-width: 640px; margin: 0 auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    background: var(--panel); border: 1px solid var(--hot); border-radius: 18px; padding: 14px 16px; color: var(--ink); box-shadow: var(--shadow); }
+  .micask[hidden] { display: none; }
+  .micask .t { flex: 1; font-size: 14px; min-width: 180px; }
+  .micask .yes { border: 0; border-radius: 999px; padding: 11px 18px; font: 500 13px/1 var(--sans); color: var(--hot-ink); background: var(--hot); cursor: pointer; }
+  .micask .no { background: none; border: 0; color: var(--dim); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+  /* the studio records THIS device's mic — the listener's own switch, a level, and which mic */
+  .recbar { margin: 0 0 24px; padding: 16px; border: 1px solid var(--hot); border-radius: 18px; background: var(--panel); }
+  .recbar[hidden] { display: none; }
+  .recbar .t { font: 500 19px/1.25 var(--head); letter-spacing: -.01em; }
+  .recbar .h { font-size: 12px; line-height: 1.45; color: var(--dim); margin-top: 4px; }
+  .recbar .rr { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+  .recbar canvas { flex: 1 1 0; min-width: 0; width: 0; height: 8px; border-radius: 999px; background: var(--soft); }
+  .recbar .talkbtn { flex: none; }
+  .recbar .rmic { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .recbar .rmic label { font-size: 12px; color: var(--dim); flex: none; }
+  .recbar .rmic select { flex: 1 1 0; min-width: 0; max-width: 420px; }
+
+  .row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .row label { color: var(--dim); font-size: 13px; width: 72px; flex: none; }
+  .row input[type=range] { flex: 1 1 0; min-width: 0; }
+  .row select { flex: 1 1 0; min-width: 0; max-width: 420px; }   /* a desk-wide select reads as a text field */
+  .row output { font-variant-numeric: tabular-nums; font-size: 13px; width: 44px; text-align: right; color: var(--ink); flex: none; }
+  select {
+    flex: 1; background: var(--field); color: var(--ink); border: 1px solid var(--line);
+    border-radius: 999px; padding: 8px 14px; font-size: 14px; outline: none; max-width: 100%;
+  }
+  /* iOS zooms the whole page into any field smaller than 16 px when it is tapped */
+  @media (max-width: 720px) { select, .auth-inp, .bugbar textarea { font-size: 16px; } }
+  .outhint { font-size: 12px; color: var(--dim); margin: -6px 0 14px; line-height: 1.45; }
+  .outhint b { color: var(--ink); font-weight: 500; }
+  .inearph { display: flex; align-items: baseline; gap: 10px; margin: -4px 0 14px; flex-wrap: wrap; }
+  .inearph[hidden] { display: none; }
+  .inearph .k { font-size: 10px; font-weight: 500; letter-spacing: .14em; color: var(--dim); }
+  .inearph .clk { color: var(--ink); align-self: center; }
+  .inearph .lk { font-size: 12px; color: var(--dim); }
+  .inearph .lk.ok { color: var(--ok); }
+  .inearph .lk.off { color: var(--warn); }
+  /* Syncing this phone by its own microphone: a button beside "in time", a small panel. */
+  .syncbtn { margin-left: auto; font: 500 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; padding: 6px 11px; border-radius: 999px;
+             border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+  .syncbtn.ok { color: var(--ok); }
+  .syncbtn[hidden] { display: none; }
+  .syncpanel { border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin: -6px 0 16px; background: var(--panel2); }
+  .syncpanel[hidden] { display: none; }
+  .syncpanel .t { font-weight: 600; margin-bottom: 10px; }
+  .syncpanel .refs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .syncpanel .refchip { font: 500 13px/1 var(--sans); padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+  .syncpanel .refchip.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .syncpanel .s { font-size: 12px; color: var(--dim); margin: 0 0 10px; }
+  .syncpanel .s.ok { color: var(--ok); } .syncpanel .s.bad { color: var(--hot); }
+  .syncpanel .acts { display: flex; gap: 8px; }
+  .syncpanel .acts button { font: 500 13px/1 var(--sans); padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+  .syncpanel .acts button.go { background: var(--lime); color: var(--lime-ink); border-color: var(--lime); }
+  .syncpanel .acts button:disabled { opacity: .5; cursor: default; }
+
+  .anbtn { display: flex; align-items: center; gap: 6px; width: 100%; background: none; border: 0; padding: 6px 0 10px; margin-top: 6px;
+    font: 500 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); cursor: pointer; }
+  .anbtn:hover { color: var(--ink); }
+  .anchev { transition: transform .15s ease; display: inline-block; }
+  .anbtn[aria-expanded="true"] .anchev { transform: rotate(90deg); }
+  .stats[hidden] { display: none; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--soft); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .stat { background: var(--panel); padding: 10px 12px; min-width: 0; }
+  .stat .k { font: 500 10px/1.2 var(--sans); text-transform: uppercase; letter-spacing: .08em; color: var(--dim); }
+  .stat .v { font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; margin-top: 4px; overflow-wrap: anywhere; }
+  .foot { margin-top: 24px; color: var(--dim); font-size: 12px; text-align: center; }
+  /* 2026-10-07, Ori's sketch: one head (the session, who is here, your own mic / camera /
+     cast on the right), then a card per thing: what you hear, the picture, your mix. Less
+     scrolling; sign-in moves down to the footer. */
+  .prejoin { margin: 4px 0 14px; text-align: left; }
+  .pj-view { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: var(--panel2); border: 1px solid var(--line); margin-bottom: 10px; }
+  .pj-view video { width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1); }
+  .pj-view video.back { transform: none; }
+  .pj-off { position: absolute; inset: 0; display: grid; place-items: center; color: var(--dim); font-size: 13px; }
+  .pj-off[hidden], .pj-scr[hidden] { display: none; }
+  .pj-scr { position: absolute; left: 8px; bottom: 8px; background: var(--lime); color: var(--lime-ink); font: 600 11px/1 var(--sans); padding: 5px 8px; border-radius: 999px; }
+  .pj-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pj-level { flex: 1; min-width: 60px; height: 10px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--soft); }
+  .pj-hint { font-size: 12px; color: var(--dim); margin: 8px 0 0; }
+  .sesshead { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px 14px; margin-bottom: 18px; }
+  .sessleft { min-width: 0; flex: 1 1 170px; }             /* narrower than this: the icons go under the name */
+  .sesshead .session b { overflow-wrap: break-word; }      /* break a long name only where it must, never "rehea / rsal" */
+  .sesshead .mediarow { margin-left: auto; }
+  .sesshead .session { margin-bottom: 6px; }
+  .sesshead .presenceline { margin: 0; line-height: 1.5; }
+  .sesshead .mediarow { margin: 0; padding-top: 22px; justify-content: flex-end; flex: none; gap: 8px; }
+  .playcard { border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin: 0 0 16px; }
+  .playcard .playwrap { margin: 0 0 12px; }
+  .playcard .vuband { margin: 0; }
+  .foot .idrow { display: inline-flex; margin: 0 4px; vertical-align: middle; }
+  .foot .idrow .idbtn { height: 38px; }
+
+  .foot a { color: var(--blue); text-decoration: none; white-space: nowrap; }
+  .powered { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 7px; }
+  /* the Snowstar mark is a white PNG: drawn as a mask, it takes the theme's colour */
+  .powered .mark { width: 14px; height: 14px; flex: none; background: var(--dim);
+    -webkit-mask: url(demo/snowstar-mark.png) center / contain no-repeat; mask: url(demo/snowstar-mark.png) center / contain no-repeat; }
+  .powered a { color: var(--dim); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
+  .powered a b { color: var(--ink); font-weight: 500; }
+
+  /* the demo's own few lines */
+  body.embed { padding: 0; background: transparent; }
+  body.embed .card { border-radius: 0; border: 0; box-shadow: none; max-width: none; }
+  .pill.demo { color: var(--lime-ink); background: var(--lime); border-color: var(--lime); }
+  .try { font-size: 13px; color: var(--dim); margin: 0 0 14px; line-height: 1.5; }
+  .try b { color: var(--ink); font-weight: 500; }
+  .loading .play { opacity: .6; }
+  .dfoot { margin-top: 18px; font-size: 12px; color: var(--dim); text-align: center; line-height: 1.6; }
+  .dfoot a { color: var(--blue); text-decoration: none; }
+  .mx-row.off .mx-name { color: var(--faint); }
+</style>
+<script>// The theme: the device's own dark/bright setting, unless this person flipped it here
+// (remembered on this device only). Load in <head>, before the page paints:
+//   <link rel="stylesheet" href="/theme.css"><script src="/theme.js"><\/script>
+// and give any button class="theme-btn" — it toggles.
+(function () {
+  var KEY = 'sdaw-theme';
+  function stored() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+  function system() { return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+  function current() { return document.documentElement.getAttribute('data-theme') || stored() || system(); }
+  function apply(t) {
+    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+    try { window.dispatchEvent(new CustomEvent('sdawtheme', { detail: current() })); } catch (e) {}
+  }
+  var s = stored(); if (s) apply(s);
+  window.sdawTheme = {
+    get: current,
+    set: function (t) { try { localStorage.setItem(KEY, t); } catch (e) {} apply(t); },
+    toggle: function () { window.sdawTheme.set(current() === 'dark' ? 'light' : 'dark'); }
+  };
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest && e.target.closest('.theme-btn');
+    if (b) { e.preventDefault(); window.sdawTheme.toggle(); }
+  });
+  // Another page of this site switched (the control page, with the video console inside it):
+  // follow it.
+  window.addEventListener('storage', function (e) { if (e.key === KEY) apply(e.newValue); });
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var on = function () { if (!stored()) apply(null); };
+    if (mq.addEventListener) mq.addEventListener('change', on); else if (mq.addListener) mq.addListener(on);
+  }
+})();
+</script>
+<script>
+  // Inside the sale page (?embed=1): paper, like the page around it, unless this person chose.
+  try { if (/[?&]embed=1/.test(location.search) && !localStorage.getItem('sdaw-theme')) document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="card">
+  <div class="pnhdr">
+    <div class="hrow">
+      <span class="wordmark" role="img" aria-label="StreamDAW"></span>
+      <div class="hright">
+        <div class="pill demo" id="livePill">demo</div>
+        <button class="theme-btn" type="button" title="Dark or bright" aria-label="Switch between dark and bright"></button>
+      </div>
+    </div>
+  </div>
+  <div class="pnbody">
+    <div class="sesshead">
+      <div class="sessleft">
+        <div class="session">session <b>mama</b></div>
+        <div class="presenceline" id="presenceLine">KAYMA · “MAMA” · 8 sends from the session</div>
+      </div>
+    </div>
+
+    <div class="playcard" id="playCard">
+      <div class="playwrap">
+        <button class="play" id="playBtn" title="Listen" aria-label="Play">&#9654;&#xFE0E;</button>
+        <div class="playinfo">
+          <div class="state" id="stateText">Ready</div>
+          <div class="sub" id="fmtText">Earphones in, then press play</div>
+        </div>
+      </div>
+      <div class="vuband" id="vuBand"><canvas id="vuCanvas" aria-label="Level of what you hear"></canvas></div>
+    </div>
+
+    <p class="try" id="tryLine"><b>Try it:</b> solo VOX, or more CLICK and less STRINGS. The S and M at the top do every track at once.</p>
+    <div class="mixer" id="mixer"></div>
+
+    <p class="dfoot">“MAMA” by KAYMA, from a real session, recorded for this page. In yours, it is your DAW, live:
+      <a href="streamdaw.html" target="_top">StreamDAW</a> · free on your master bus.</p>
+  </div>
+</div>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  if (/[?&]embed=1/.test(location.search)) document.body.classList.add('embed');
+
+  // ---------- the song: eight sends, cut into pieces ----------
+  // Each send is 10 s pieces (+0.25 s overlap, crossfaded), so the first sound needs one
+  // piece of each (under 1 MB), not the song, and a phone never holds the whole song decoded.
+  const BASE = 'demo/mama/', PIECE = 10, OVER = 0.25, DUR = 92, PIECES = 10;
+  const TRACKS = [
+    { id: 'groove', name: 'GROOVE' }, { id: 'bass', name: 'BASS' }, { id: 'keys', name: 'KEYS' }, { id: 'guitars', name: 'GUITARS' },
+    { id: 'strings', name: 'STRINGS' }, { id: 'vox', name: 'VOX' }, { id: 'guide', name: 'GUIDE' }, { id: 'click', name: 'CLICK' },
+  ];
+  for (const t of TRACKS) { t.vol = 1; t.pan = 0; t.solo = false; t.mute = false; }
+  let playMode = 'tracks';
+
+  // ---------- audio ----------
+  let ctx = null, master = null, limiter = null, out = null, anL = null, anR = null;
+  let t0 = 0, playing = false, ended = false, scheduled = new Map(), timer = 0, epoch = 0;
+  const pieces = new Map();   // "k" → Promise<[AudioBuffer…]> in TRACKS order
+  function fetchPiece(k) {
+    if (!pieces.has(k)) {
+      pieces.set(k, Promise.all(TRACKS.map((t) => fetch(BASE + t.id + '-' + k + '.m4a')
+        .then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+        .then((b) => new Promise((ok, no) => ctx.decodeAudioData(b, ok, no))))));
+      pieces.get(k).catch(() => pieces.delete(k));     // a failed piece is fetched again next time
+    }
+    return pieces.get(k);
+  }
+  function build() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    ctx = new AC({ latencyHint: 'playback' });
+    // iPhone: play even with the ringer switch on silent (Safari 17+).
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    master = ctx.createGain();
+    // The sends are trimmed 9 dB so that all eight together never clip; a gentle limiter
+    // gives the level back, as a desk's bus would.
+    limiter = ctx.createDynamicsCompressor();
+    limiter.threshold.value = -8; limiter.knee.value = 4; limiter.ratio.value = 12; limiter.attack.value = 0.003; limiter.release.value = 0.12;
+    out = ctx.createGain(); out.gain.value = 1.9;
+    master.connect(limiter); limiter.connect(out); out.connect(ctx.destination);
+    const split = ctx.createChannelSplitter(2); out.connect(split);
+    anL = ctx.createAnalyser(); anR = ctx.createAnalyser(); anL.fftSize = anR.fftSize = 1024;
+    split.connect(anL, 0); split.connect(anR, 1);
+    for (const t of TRACKS) {
+      t.in = ctx.createGain(); t.gain = ctx.createGain(); t.panner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      t.an = ctx.createAnalyser(); t.an.fftSize = 512;
+      t.in.connect(t.gain);
+      if (t.panner) { t.gain.connect(t.panner); t.panner.connect(master); t.panner.connect(t.an); }
+      else { t.gain.connect(master); t.gain.connect(t.an); }
+    }
+    applyGains(true);
+  }
+  // Piece k of every send starts at t0 + k·10 s, fading in over the 0.25 s in which piece
+  // k−1 fades out: the same samples, so the sum is seamless, and the eight sends are started
+  // by one clock, so they stay together to the sample.
+  function schedule(k, bufs) {
+    if (scheduled.has(k)) return;
+    const when = t0 + k * PIECE, now = ctx.currentTime;
+    const off = Math.max(0, now + 0.02 - when);        // late (a slow network): join it mid-piece, still in step
+    if (off >= bufs[0].duration) return;
+    const at = when + off, srcs = [];
+    TRACKS.forEach((t, i) => {
+      const s = ctx.createBufferSource(); s.buffer = bufs[i];
+      const g = ctx.createGain(); s.connect(g); g.connect(t.in);
+      if (k > 0 && off < OVER) { g.gain.setValueAtTime(0, when); g.gain.linearRampToValueAtTime(1, when + OVER); }
+      const end = when + PIECE;                          // hand over to the next piece
+      if (k < PIECES - 1) { g.gain.setValueAtTime(1, end); g.gain.linearRampToValueAtTime(0, end + OVER); }
+      s.start(at, off); srcs.push(s);
+    });
+    scheduled.set(k, srcs);
+  }
+  function pump() {
+    if (!playing) return;
+    const pos = ctx.currentTime - t0, cur = Math.max(0, Math.floor(pos / PIECE));
+    for (let k = cur; k <= Math.min(PIECES - 1, cur + 2); k++) {
+      const e = epoch;
+      fetchPiece(k).then((b) => { if (playing && e === epoch) schedule(k, b); }, () => {});
+    }
+    for (const k of [...pieces.keys()]) if (k < cur - 1 && k !== 0) pieces.delete(k);   // keep piece 0 for a replay
+    for (const [k, srcs] of scheduled) if (k < cur - 1) { scheduled.delete(k); srcs.length = 0; }
+    if (pos >= DUR) finish();
+    showState();
+  }
+  async function start() {
+    if (!ctx) build();
+    ctx.resume().catch(() => {});
+    $('playCard').classList.add('loading'); $('stateText').textContent = 'Loading…'; $('fmtText').textContent = 'the first 10 seconds of eight sends';
+    let first;
+    try { first = await fetchPiece(0); }
+    catch (e) { $('playCard').classList.remove('loading'); $('stateText').textContent = 'Could not load'; $('fmtText').textContent = 'Check the connection and press play again'; return; }
+    $('playCard').classList.remove('loading');
+    epoch++; scheduled.clear(); ended = false; playing = true;
+    t0 = ctx.currentTime + 0.12;
+    schedule(0, first);
+    clearInterval(timer); timer = setInterval(pump, 250); pump();
+    listenSince = Date.now(); vuLoop();
+    showState();
+  }
+  function stopAll() {
+    epoch++;
+    for (const srcs of scheduled.values()) for (const s of srcs) { try { s.stop(); } catch (e) {} }
+    scheduled.clear(); clearInterval(timer); playing = false;
+  }
+  function finish() { stopAll(); ended = true; listenSince = 0; showState(); }
+  $('playBtn').onclick = () => {
+    if (!playing) { start(); return; }
+    if (ctx.state === 'running') { ctx.suspend(); listenSince = 0; } else { ctx.resume(); listenSince = Date.now(); }
+    showState();
+  };
+  function showState() {
+    const b = $('playBtn'), paused = playing && ctx && ctx.state !== 'running';
+    b.classList.toggle('stop', playing && !paused);
+    b.innerHTML = playing && !paused ? '&#10073;&#10073;' : '&#9654;&#xFE0E;';
+    b.setAttribute('aria-label', playing && !paused ? 'Pause' : 'Play');
+    if (!playing) {
+      $('stateText').textContent = ended ? 'That was the first verse' : 'Ready';
+      $('fmtText').textContent = ended ? 'Press play to hear it again, in your mix' : 'Earphones in, then press play';
+    } else {
+      const s = Math.max(0, Math.min(DUR, ctx.currentTime - t0)), mm = Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+      $('stateText').textContent = paused ? 'Paused' : 'Playing';
+      $('fmtText').textContent = mm + ' / 1:32 · ' + (playMode === 'master' ? 'the band’s mix' : 'your mix');
+    }
+    $('livePill').classList.toggle('live', playing && !paused);
+    $('livePill').textContent = playing && !paused ? 'demo · playing' : 'demo';
+  }
+
+  // ---------- the mix ----------
+  function applyGains(now) {
+    if (!ctx) return;
+    const anySolo = TRACKS.some((t) => t.solo), T = ctx.currentTime;
+    for (const t of TRACKS) {
+      const on = playMode === 'master' || (!t.mute && (!anySolo || t.solo));
+      const g = playMode === 'master' ? 1 : (on ? t.vol : 0), p = playMode === 'master' ? 0 : t.pan;
+      if (now) t.gain.gain.value = g; else t.gain.gain.setTargetAtTime(g, T, 0.015);
+      if (t.panner) { if (now) t.panner.pan.value = p; else t.panner.pan.setTargetAtTime(p, T, 0.015); }
+    }
+  }
+  function render() {
+    const box = $('mixer'); box.innerHTML = '';
+    const seg = document.createElement('div'); seg.className = 'mx-seg';
+    seg.innerHTML = '<button class="mx-mode' + (playMode === 'master' ? ' on' : '') + '" data-m="master">Master mix</button>'
+                  + '<button class="mx-mode' + (playMode === 'tracks' ? ' on' : '') + '" data-m="tracks">Track mixer</button>';
+    for (const b of seg.querySelectorAll('[data-m]')) b.onclick = () => { playMode = b.dataset.m; render(); applyGains(); showState(); };
+    box.appendChild(seg);
+    if (playMode === 'master') {
+      const n = document.createElement('div'); n.className = 'mx-note'; n.textContent = 'The band’s own mix, as the producer sends it. Switch to Track mixer to make it yours.'; box.appendChild(n);
+      return;
+    }
+    const h = document.createElement('div'); h.className = 'mx-h';
+    const allS = TRACKS.every((t) => t.solo), allM = TRACKS.every((t) => t.mute);
+    h.innerHTML = '<span class="mx-dot" style="visibility:hidden"></span>'
+      + '<button class="mx-btn solo' + (allS ? ' on' : '') + '" data-all="solo" title="' + (allS ? 'Clear every solo' : 'Solo every track') + '">S</button>'
+      + '<button class="mx-btn mute' + (allM ? ' on' : '') + '" data-all="mute" title="' + (allM ? 'Unmute every track' : 'Mute every track') + '">M</button>'
+      + '<span class="mx-hl">Tracks</span><button class="mx-reset" title="Every track back to full volume, centre, no solo, no mute">Reset mix</button>';
+    for (const b of h.querySelectorAll('[data-all]')) b.onclick = () => { const k = b.dataset.all, on = !TRACKS.every((t) => t[k]); for (const t of TRACKS) t[k] = on; render(); applyGains(); };
+    h.querySelector('.mx-reset').onclick = () => { for (const t of TRACKS) { t.vol = 1; t.pan = 0; t.solo = false; t.mute = false; } render(); applyGains(); };
+    box.appendChild(h);
+    const anySolo = TRACKS.some((t) => t.solo);
+    for (const t of TRACKS) {
+      const row = document.createElement('div'); row.className = 'mx-row' + (t.mute || (anySolo && !t.solo) ? ' off' : ''); row.dataset.id = t.id;
+      row.innerHTML = '<div class="mx-top"><span class="mx-dot"></span>'
+        + '<button class="mx-btn solo' + (t.solo ? ' on' : '') + '" data-act="solo">S</button>'
+        + '<button class="mx-btn mute' + (t.mute ? ' on' : '') + '" data-act="mute">M</button>'
+        + '<span class="mx-name"></span><div class="mx-meter"><i></i></div></div>'
+        + '<div class="mx-ctl"><span class="mx-lab">VOL</span>'
+        + '<input type="range" class="mx-vol" min="0" max="100" step="1" value="' + Math.round(t.vol * 100) + '" aria-label="' + t.name + ' volume">'
+        + '<span class="mx-lab">L</span><input type="range" class="mx-pan" min="-100" max="100" step="5" value="' + Math.round(t.pan * 100) + '" aria-label="' + t.name + ' pan" title="Pan — double-tap for centre"><span class="mx-lab">R</span></div>';
+      row.querySelector('.mx-name').textContent = t.name;
+      row.querySelector('.mx-dot').style.visibility = 'hidden';   // as on the real page: the sends carry no colour
+      row.querySelector('[data-act=solo]').onclick = () => { t.solo = !t.solo; render(); applyGains(); };
+      row.querySelector('[data-act=mute]').onclick = () => { t.mute = !t.mute; render(); applyGains(); };
+      row.querySelector('.mx-vol').oninput = (e) => { t.vol = e.target.value / 100; applyGains(); };
+      const pan = row.querySelector('.mx-pan');
+      pan.oninput = (e) => { let v = +e.target.value; if (Math.abs(v) <= 8) { v = 0; e.target.value = 0; } t.pan = v / 100; applyGains(); };
+      pan.ondblclick = () => { pan.value = 0; t.pan = 0; applyGains(); };
+      t.bar = row.querySelector('.mx-meter i');
+      box.appendChild(row);
+    }
+  }
+  render();
+
+  // ---------- the meters (the listener page's own, below) ----------
+  let wantPlay = false;          // listenSince comes with the meter code below
+  const syncMs = 500;     // what the right meter's caption says: every phone plays the same instant
+  const peakOf = (an, buf) => { an.getFloatTimeDomainData(buf); let p = 0; for (let i = 0; i < buf.length; i++) { const v = Math.abs(buf[i]); if (v > p) p = v; } return p; };
+  let bufM = null, bufT = null;
+  function vuLoop() {
+    if (!playing) { for (const t of TRACKS) if (t.bar) t.bar.style.width = '0'; return; }
+    if (!bufM) { bufM = new Float32Array(anL.fftSize); bufT = new Float32Array(512); }
+    wantPlay = ctx.state === 'running';
+    if (wantPlay) {
+      vuFeed(peakOf(anL, bufM), peakOf(anR, bufM));
+      for (const t of TRACKS) if (t.bar && t.bar.isConnected) { const p = peakOf(t.an, bufT) * 1.9; t.bar.style.width = Math.round(dbPos(toDb(p)) * 100) + '%'; }
+    }
+    requestAnimationFrame(vuLoop);
+  }
+  // ---------- the meter band ----------
+  // The plug-in's arc meters, here fed by what this page plays. Drawn only when a segment
+  // changes, and only while there is something to show (landmine 22: the page must stay light).
+  const vu = { tl: 0, tr: 0, al: 0, ar: 0, pl: 0, pr: 0, plAt: 0, prAt: 0, last: 0, at: 0, running: false, key: '' };
+  let listenSince = 0;
+  const VU_MIN = -42, toDb = (v) => (v > 0 ? 20 * Math.log10(v) : -120);
+  function dbPos(db) {
+    if (db <= VU_MIN) return 0; if (db >= 0) return 1;
+    if (db < -20) return (db - VU_MIN) / (-20 - VU_MIN) * 0.30;
+    if (db < -10) return 0.30 + (db + 20) / 10 * 0.25;
+    return 0.55 + (db + 10) / 10 * 0.45;
+  }
+  function vuFeed(l, r) {
+    vu.tl = Math.max(vu.tl, +l || 0); vu.tr = Math.max(vu.tr, +r || 0); vu.at = performance.now();
+    if (!vu.running && !document.hidden) { vu.running = true; vu.last = performance.now(); requestAnimationFrame(vuStep); }
+    if (wantPlay && !listenSince) listenSince = Date.now(); else if (!wantPlay) listenSince = 0;
+  }
+  function vuStep(now) {
+    const dt = Math.min(0.1, (now - vu.last) / 1000); vu.last = now;
+    const fresh = now - vu.at < 400, tl = fresh ? vu.tl : 0, tr = fresh ? vu.tr : 0;
+    vu.tl *= 0.5; vu.tr *= 0.5;
+    const fall = Math.pow(10, -24 * dt / 20);
+    vu.al = tl > vu.al ? vu.al + (tl - vu.al) * 0.6 : Math.max(tl, vu.al * fall);
+    vu.ar = tr > vu.ar ? vu.ar + (tr - vu.ar) * 0.6 : Math.max(tr, vu.ar * fall);
+    const hold = (p, at, v) => (v >= p ? [v, now] : (now - at > 1500 ? [p * Math.pow(10, -18 * dt / 20), at] : [p, at]));
+    [vu.pl, vu.plAt] = hold(vu.pl, vu.plAt, tl); [vu.pr, vu.prAt] = hold(vu.pr, vu.prAt, tr);
+    drawVu();
+    if (!document.hidden && (vu.al > 0.0005 || vu.ar > 0.0005 || vu.pl > 0.0005 || fresh)) requestAnimationFrame(vuStep);
+    else { vu.running = false; vu.al = vu.ar = vu.pl = vu.pr = 0; drawVu(); }
+  }
+  function drawVu() {
+    const cv = $('vuCanvas'); if (!cv) return;
+    const dpr = Math.min(3, window.devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight; if (!W || !H) return;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); vu.key = ''; }
+    const N = 32, seg = (v) => Math.round(dbPos(toDb(v)) * N);
+    const secs = listenSince ? Math.floor((Date.now() - listenSince) / 1000) : -1;
+    const pal = vuPalette();
+    const key = [W, H, seg(vu.al), seg(vu.ar), seg(vu.pl), seg(vu.pr), secs, syncMs, pal.k].join();
+    if (key === vu.key) return; vu.key = key;
+    const g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    const face = g.createLinearGradient(0, 0, 0, H); face.addColorStop(0, pal.hi); face.addColorStop(1, pal.lo);
+    g.fillStyle = face; g.fillRect(0, 0, W, H); g.fillStyle = 'rgba(' + pal.edge + ',.06)'; g.fillRect(0, 0, W, 1);
+    const gap = 10, mw = (W - gap * 3) / 2;
+    const t = secs >= 0 ? Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0') : '';
+    vuArc(g, gap, mw, H, vu.al, vu.pl, 'L', t ? 'LISTENING ' + t : '', pal);
+    vuArc(g, gap * 2 + mw, mw, H, vu.ar, vu.pr, 'R', syncMs ? 'IN-EAR ' + syncMs + ' MS' : 'LIVE', pal);
+  }
+  // The meters' colours, from the theme (theme.css --vu-*): a light face in the bright theme.
+  function vuPalette() {
+    const cs = getComputedStyle(document.documentElement), v = (n) => cs.getPropertyValue(n).trim();
+    const p = { hi: v('--vu-hi') || '#1d1c18', lo: v('--vu-lo') || '#0c0b09', edge: v('--vu-edge') || '255, 255, 255', ink: v('--vu-ink') || '232, 226, 207',
+                g: v('--vu-g') || '#44d36e', y: v('--vu-y') || '#f4c430', r: v('--vu-r') || '#ff4b4b', off: parseFloat(v('--vu-off')) || 0.12, glow: parseFloat(v('--vu-glow')) || 0 };
+    p.k = p.hi + p.g;
+    return p;
+  }
+  window.addEventListener('sdawtheme', () => { vu.key = ''; drawVu(); });
+  if (window.matchMedia) { const mq = matchMedia('(prefers-color-scheme: dark)'); const re = () => { vu.key = ''; drawVu(); }; if (mq.addEventListener) mq.addEventListener('change', re); }
+  function vuArc(g, x0, w, h, avg, peak, side, caption, pal) {
+    const N = 32, A = 38 * Math.PI / 180, top = 18, drop = h - top - 30;
+    const R = Math.min(drop / (1 - Math.cos(A)), (w * 0.44) / Math.sin(A)), cx = x0 + w / 2, cy = top + R;
+    const lit = Math.round(dbPos(toDb(avg)) * N), pk = Math.round(dbPos(toDb(peak)) * N) - 1;
+    const segDb = (i) => { const tt = (i + 0.5) / N; let lo = VU_MIN, hi = 0; for (let k = 0; k < 20; k++) { const m = (lo + hi) / 2; if (dbPos(m) < tt) lo = m; else hi = m; } return lo; };
+    for (let i = 0; i < N; i++) {
+      const a0 = -A + (i + 0.12) / N * 2 * A, a1 = -A + (i + 0.88) / N * 2 * A, db = segDb(i);
+      const c = db >= -3 ? pal.r : db >= -12 ? pal.y : pal.g, on = i < lit, isPk = i === pk && pk >= lit;
+      g.beginPath(); g.arc(cx, cy, R, a0 - Math.PI / 2, a1 - Math.PI / 2); g.arc(cx, cy, R - 10, a1 - Math.PI / 2, a0 - Math.PI / 2, true); g.closePath();
+      g.fillStyle = c; g.globalAlpha = on || isPk ? 1 : pal.off; g.shadowColor = c; g.shadowBlur = on || isPk ? pal.glow : 0; g.fill();
+      g.shadowBlur = 0; g.globalAlpha = 1;
+    }
+    g.font = '600 10px ui-monospace, SFMono-Regular, Menlo, monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillStyle = 'rgba(' + pal.ink + ',.85)'; g.fillText(side, cx, cy - R + 24);
+    g.font = '600 8.5px ui-monospace, SFMono-Regular, Menlo, monospace'; g.fillStyle = pal.y; g.textAlign = 'left';
+    g.fillText(caption, x0 + 2, h - 9);
+  }
+  window.addEventListener('resize', () => { vu.key = ''; drawVu(); });
+  drawVu();
+  // For the demo's own test (site/snowstar/demo/demo.test.mjs) and for a curious console.
+  window.__demo = { get ctx() { return ctx; }, tracks: TRACKS, get scheduled() { return [...scheduled.keys()]; },
+                    get pos() { return ctx && playing ? ctx.currentTime - t0 : 0; }, get playing() { return playing; },
+                    vuTick: () => { try { vuLoop(); return 'ok'; } catch (e) { return String(e && e.stack || e); } } };
+})();
+</script>
+</body>
+</html>

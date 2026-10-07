@@ -157,6 +157,25 @@
   .synced i{width:22px;height:22px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
   .synced i svg{width:12px;height:12px}
 
+  /* ── try it ───────────────────────────────────────────────── */
+  .demo{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .demo-in{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(32px,6vw,80px);align-items:center}
+  .demo h2{font-size:clamp(34px,4.4vw,56px);margin:14px 0 16px}
+  .demo-copy>p{color:var(--ink-2);font-size:17px;max-width:32em}
+  .demo-qr{display:flex;align-items:center;gap:18px;margin-top:30px;padding:16px;border:1px solid var(--line-2);border-radius:18px;background:var(--card);max-width:440px}
+  .demo-qr img{width:132px;height:132px;flex:none}
+  .demo-qr p{font-size:15px;color:var(--ink-2)}
+  .demo-qr b{color:var(--ink);font-weight:600}
+  .demo-open,.demo-fine{display:none}
+  .demo-phone{width:390px;height:780px;border:8px solid var(--ink);border-radius:46px;overflow:hidden;background:var(--card);box-shadow:var(--lift)}
+  .demo-phone iframe{display:block;width:100%;height:100%;border:0}
+  @media (max-width:900px){
+    .demo-in{grid-template-columns:1fr}
+    .demo-qr,.demo-phone{display:none}
+    .demo-open{display:inline-flex;margin-top:26px}
+    .demo-fine{display:block;margin-top:12px}
+  }
+
   /* ── how it works ───────────────────────────────────────── */
   .how{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,40px)}
@@ -177,6 +196,10 @@
   .plan .tag{align-self:flex-start}
   .plan .ticks{margin-bottom:30px}
   .plan.pro .ticks li{color:rgba(239,233,218,.86)}
+  .plan.pro .ticks li b{color:var(--paper);font-weight:600}
+  /* what Free does not have: the same rows as Pro, so the two lists read side by side */
+  .ticks li.no{color:var(--muted)}
+  .ticks li.no::before{background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2377705d' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M8 8l8 8M16 8l-8 8'/%3E%3C/svg%3E") center/12px no-repeat;border:1px solid var(--line-2)}
   .plan .btn{margin-top:auto;align-self:flex-start}
   .plan .after{margin-top:14px;font-size:13px;color:rgba(239,233,218,.62)}
   .plan .after a{text-decoration:underline}
@@ -280,6 +303,7 @@
     <a href="#top" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW"></a>
     <nav aria-label="Page">
       <a href="#uses">Uses</a>
+      <a href="#demo">Try it</a>
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">Questions</a>
@@ -382,6 +406,24 @@
     </div>
   </section>
 
+  <!-- ── try it: the demo (apps/streamdaw-demo.html, built from the real listener page) ── -->
+  <section class="demo" id="demo">
+    <div class="wrap demo-in">
+      <div class="demo-copy">
+        <div class="kicker">Try it now</div>
+        <h2>Hear it the way the band does.</h2>
+        <p>“MAMA” by KAYMA, from a real session: eight sends from the DAW, in time. Put your earphones in, press play, and make the mix yours. More click, less strings, solo the vocal.</p>
+        <div class="demo-qr">
+          <img src="demo/qr-demo.svg" alt="QR code to the StreamDAW demo" width="132" height="132">
+          <p><b>On your phone:</b> scan, earphones in, press play. That is how your band will join.</p>
+        </div>
+        <a class="btn ink demo-open" href="streamdaw-demo.html">Open the demo</a>
+        <p class="fine demo-fine">Earphones in. About 8 MB as it plays.</p>
+      </div>
+      <div class="demo-phone"><iframe src="streamdaw-demo.html?embed=1" title="The StreamDAW demo: a band's eight sends, in a mix of your own" loading="lazy" allow="autoplay"></iframe></div>
+    </div>
+  </section>
+
   <!-- ── how it works ── -->
   <section class="how" id="how">
     <div class="wrap">
@@ -403,7 +445,7 @@
       <div class="head">
         <div class="kicker">Free and Pro</div>
         <h2>Start free. Pay once for the rest.</h2>
-        <p>Every copy is the same app. Pro switches on with a key made for your Mac.</p>
+        <p>StreamDAW and StreamDAW Pro are one app. Pro does everything StreamDAW does, and switches on the rest with a key made for your Mac.</p>
       </div>
       <div class="plans">
         <div class="plan">
@@ -413,8 +455,13 @@
           <ul class="ticks">
             <li>The plug-in on your master bus</li>
             <li>Your mix on a link and a QR code</li>
-            <li>A lobby: you let people in</li>
+            <li>A waiting room: you let people in</li>
             <li>Sessions up to 60 minutes</li>
+            <li class="no">Up to 32 stems, a mix for every listener</li>
+            <li class="no">In-ear sync for bands, with the room lined up</li>
+            <li class="no">Record up to 16 remote people into your DAW</li>
+            <li class="no">Camera, screen share and conversation</li>
+            <li class="no">Monitor, presets, sign-in-only sessions</li>
           </ul>
           <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl>Download for Mac</a>
         </div>
@@ -423,11 +470,15 @@
           <div class="price" id="bigPrice"><span data-ils="249">₪249</span><small>once, VAT included</small></div>
           <p class="note" id="priceSub">Every update included. No subscription.</p>
           <ul class="ticks">
-            <li>Up to 32 stems, a mix for every listener</li>
-            <li>In-ear sync for bands, with the room lined up</li>
-            <li>Record up to 16 remote people into your DAW</li>
-            <li>Camera, screen share and conversation</li>
-            <li>Monitor, presets, sign-in only sessions, no time limit</li>
+            <li>The plug-in on your master bus</li>
+            <li>Your mix on a link and a QR code</li>
+            <li>A waiting room: you let people in</li>
+            <li><b>No time limit</b></li>
+            <li><b>Up to 32 stems, a mix for every listener</b></li>
+            <li><b>In-ear sync for bands, with the room lined up</b></li>
+            <li><b>Record up to 16 remote people into your DAW</b></li>
+            <li><b>Camera, screen share and conversation</b></li>
+            <li><b>Monitor, presets, sign-in-only sessions</b></li>
           </ul>
           <div class="coupon">
             <input id="couponInput" type="text" placeholder="Coupon code" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Coupon code">
@@ -698,9 +749,10 @@
 <div class="sd-menu" id="sdMenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <nav aria-label="Main">
     <a href="#uses"><i>01</i>Uses</a>
-    <a href="#how"><i>02</i>How it works</a>
-    <a href="#pricing"><i>03</i>Pricing</a>
-    <a href="#faq"><i>04</i>Questions</a>
+    <a href="#demo"><i>02</i>Try it</a>
+    <a href="#how"><i>03</i>How it works</a>
+    <a href="#pricing"><i>04</i>Pricing</a>
+    <a href="#faq"><i>05</i>Questions</a>
     <span class="menu-div">Products</span>
     <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
