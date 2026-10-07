@@ -673,10 +673,18 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   border-top:1px solid rgba(23,20,13,.14);border-bottom:1px solid rgba(23,20,13,.14);
   padding:clamp(52px,7vw,96px) clamp(20px,4vw,48px)}
 .sdaw-inner{position:relative;z-index:1;max-width:1160px;margin:0 auto;
-  display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(26px,5vw,56px);align-items:center}
+  display:grid;grid-template-columns:.88fr 1.12fr;gap:clamp(26px,5vw,52px);align-items:center}
 .sdaw-copy{position:relative}
-.sdaw-kicker{font-family:"Inter",system-ui,sans-serif;font-size:.7rem;font-weight:600;
-  letter-spacing:.16em;text-transform:uppercase;color:#77705d;margin:0 0 14px}
+/* The mark rides with the kicker. It has to: the shot is cropped past the
+   app's own sidebar to buy legibility, and the wordmark lived in that sidebar
+   — so without this the section would never say StreamDAW above body copy.
+   Inverted, because the shared mark is white on transparent and this block is
+   paper. */
+.sdaw-kicker{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  font-family:"Inter",system-ui,sans-serif;font-size:.7rem;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:#77705d;margin:0 0 16px}
+.sdaw-mark{height:15px;width:auto;max-width:none;display:block;filter:invert(1)}
+.sdaw-kicker span{padding-left:12px;border-left:1px solid rgba(23,20,13,.22)}
 /* Anton for the statement, Fraunces italic for the turn — the app's own pairing. */
 .sdaw-h{font-family:"Anton",var(--font-display),sans-serif;font-weight:400;line-height:.92;
   letter-spacing:-.01em;font-size:clamp(2.1rem,4.2vw,3.5rem);margin:0;
