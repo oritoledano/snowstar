@@ -28,7 +28,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/account.css?v=12">
-<link rel="stylesheet" href="css/style.css?v=56">
+<link rel="stylesheet" href="css/style.css?v=57">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -218,37 +218,39 @@
   <section class="sdaw-teaser" id="streamdaw">
     <div class="sdaw-aura" aria-hidden="true"></div>
     <div class="sdaw-inner reveal">
-      <div class="sd-rig" role="img"
-           aria-label="StreamDAW on the master bus of an Ableton session, and the same live stream open in a listener's phone browser">
-        <div class="sd-lap">
-          <div class="sd-lap-screen">
-            <img src="assets/sdaw-ableton.webp?v=2" alt="" loading="lazy" width="1700" height="1038">
-            <span class="sd-glare" aria-hidden="true"></span>
-          </div>
-          <div class="sd-lap-base" aria-hidden="true"><i></i></div>
-        </div>
-        <div class="sd-phone">
-          <span class="sd-island" aria-hidden="true"></span>
-          <img src="assets/sdaw-remote.webp?v=2" alt="" loading="lazy" width="560" height="1016">
-          <span class="sd-glare" aria-hidden="true"></span>
-        </div>
-      </div>
       <div class="sdaw-copy">
-        <img class="sdaw-logo" src="assets/streamdaw-wordmark-white.png" alt="StreamDAW" loading="lazy">
-        <h2 class="sdaw-h">The only DAW stream<br><span class="hl">you&rsquo;ll ever need.</span></h2>
-        <p class="sdaw-p">Stream lossless audio, any screen and your camera, live to anyone anywhere —
-        up to 50 people at once. Force sign-in when the session is private, hand out multitrack control,
-        and keep talking while it runs. One secure login, in real time.</p>
-        <ul class="sdaw-pts">
-          <li><b>Lossless PCM</b> straight off the master bus</li>
-          <li><b>Audio, screen and camera</b> on one link</li>
-          <li><b>Talkback &amp; multitrack control</b> for the room</li>
+        <img class="sdaw-logo" src="assets/sdaw-word-trim.png?v=1" alt="StreamDAW" loading="lazy">
+        <h2 class="sdaw-h">Your session,<br><span class="hl">on a link.</span></h2>
+        <p class="sdaw-p">Drop it on the master bus and press GO LIVE. Whoever you send the
+        link to hears exactly what you hear — lossless, in a browser, with nothing to install.</p>
+        <!-- Three measured facts instead of three adjectives. Every figure here is
+             one StreamDAW already states in its own FAQ, which is the only kind
+             worth putting on a banner. -->
+        <ul class="sdaw-spec">
+          <li><b>16-bit PCM</b><span>44.1 kHz, lossless</span></li>
+          <li><b>~200 ms</b><span>end to end</span></li>
+          <li><b>AU &amp; VST3</b><span>any macOS host</span></li>
         </ul>
         <div class="sdaw-actions">
           <a class="sdaw-cta" href="apps/streamdaw.html">Get StreamDAW</a>
-          <span class="sdaw-price"><span data-ils="249">₪249</span> <i>one time</i></span>
+          <!-- The price is the argument, not the small print: everything this
+               competes with is billed yearly, forever. -->
+          <span class="sdaw-badge"><b data-ils="249">₪249</b><i>once &mdash; no subscription</i></span>
         </div>
       </div>
+
+      <!-- The plug-in itself, cropped out of a real session rather than shrunk
+           inside a laptop frame until none of it could be read. The strip of
+           Ableton around the edge is the part that says "in your DAW"; the panel
+           is the part that says what it does. -->
+      <figure class="sdaw-shot">
+        <span class="sdaw-live"><i aria-hidden="true"></i>On air</span>
+        <img class="sdaw-plug" src="assets/sdaw-plugin.webp?v=1" width="922" height="631"
+             alt="The StreamDAW plug-in on a master bus inside an Ableton session, on air and streaming lossless PCM"
+             loading="lazy">
+        <img class="sdaw-ph" src="assets/sdaw-remote.webp?v=2" width="560" height="1016"
+             alt="The same stream open in a listener’s phone browser" loading="lazy">
+      </figure>
     </div>
   </section>
 
