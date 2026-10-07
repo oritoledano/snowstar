@@ -659,86 +659,66 @@ body.menu-open .menu-foot{opacity:1;transform:none}
    a cut-away, not a second hero. Plugin left, words right. */
 /* The block is the product's world: near-black, one aurora bloom, glass.
    Fixed colours on purpose — StreamDAW stays night in every site theme. */
-.sdaw-teaser{position:relative;overflow:hidden;background:#07080c;color:#eef2ff;
-  border-top:1px solid rgba(150,170,255,.14);border-bottom:1px solid rgba(150,170,255,.14);
+/* ── StreamDAW teaser ────────────────────────────────────────────────────────
+   A cut-away to StreamDAW's own world, the way the Snowstash block cuts to
+   night. That world changed: v2 is paper and lime where v1 was a purple-lit
+   plug-in, so this block is rebuilt against it rather than left quoting an
+   interface that no longer exists. Tokens lifted straight from the app's own
+   :root so the two cannot drift — #efe9da paper, #17140d ink, #c8f23a lime,
+   Fraunces for the turn of the headline.
+
+   Fixed colours on purpose: StreamDAW stays paper in every site theme, which
+   is the whole point of a cut-away. */
+.sdaw-teaser{position:relative;overflow:hidden;background:#efe9da;color:#17140d;
+  border-top:1px solid rgba(23,20,13,.14);border-bottom:1px solid rgba(23,20,13,.14);
   padding:clamp(52px,7vw,96px) clamp(20px,4vw,48px)}
-/* the light behind the glass — one source, off to the left, like the reference */
-.sdaw-aura{position:absolute;inset:-30% -10% auto -20%;height:150%;pointer-events:none;
-  background:
-    radial-gradient(38% 46% at 26% 34%, rgba(92,72,255,.5), transparent 68%),
-    radial-gradient(34% 40% at 46% 62%, rgba(255,47,107,.28), transparent 70%),
-    radial-gradient(30% 36% at 12% 74%, rgba(0,196,255,.22), transparent 72%);
-  filter:blur(46px)}
-.sdaw-inner{position:relative;z-index:1;max-width:1180px;margin:0 auto;
-  display:grid;grid-template-columns:.96fr 1.04fr;gap:clamp(26px,5vw,60px);align-items:center}
+.sdaw-inner{position:relative;z-index:1;max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(26px,5vw,56px);align-items:center}
 .sdaw-copy{position:relative}
-/* The mark is an eyebrow, not the headline. It was 230px wide above a 2rem
-   line, so the logo was shouting over the sentence that had something to say. */
-.sdaw-logo{width:min(132px,36%);height:auto;margin:0 0 18px;display:block;
-  filter:drop-shadow(0 6px 22px rgba(120,110,255,.3))}
-/* Sora — the logo's own geometry, so the words look like they came with it. */
-.sdaw-h{font-family:"Sora",system-ui,sans-serif;font-weight:700;line-height:1.02;
-  letter-spacing:-.028em;font-size:clamp(1.9rem,3.6vw,3.1rem);margin:0;
-  color:#eef2ff;text-transform:none;position:relative}
-.sdaw-h .hl{background:linear-gradient(96deg,#8f7bff 0%,#5ad1ff 52%,#ff5c9d 110%);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-.sdaw-p{position:relative;color:#a9b2cc;max-width:46ch;margin:16px 0 22px;
-  font-size:.97rem;line-height:1.62}
+.sdaw-kicker{font-family:"Inter",system-ui,sans-serif;font-size:.7rem;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;color:#77705d;margin:0 0 14px}
+/* Anton for the statement, Fraunces italic for the turn — the app's own pairing. */
+.sdaw-h{font-family:"Anton",var(--font-display),sans-serif;font-weight:400;line-height:.92;
+  letter-spacing:-.01em;font-size:clamp(2.1rem,4.2vw,3.5rem);margin:0;
+  color:#17140d;text-transform:uppercase}
+.sdaw-h em{font-family:"Fraunces",Georgia,serif;font-weight:900;font-style:italic;
+  text-transform:none;letter-spacing:-.02em}
+.sdaw-p{color:#403a2c;max-width:44ch;margin:18px 0 24px;font-size:1rem;line-height:1.6}
 
-/* ── the spec row ───────────────────────────────────────────────────────────
-   Three measured facts rather than three adjectives, set in the mono the rest
-   of the site uses for anything instrument-like. Bulleted adjectives are what
-   every plug-in page has; numbers are what a buyer actually weighs. */
-.sdaw-spec{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-wrap:wrap;
-  gap:0;border-top:1px solid rgba(150,170,255,.16);border-bottom:1px solid rgba(150,170,255,.16)}
-.sdaw-spec li{flex:1 1 auto;min-width:112px;padding:12px 18px 12px 0;
-  border-right:1px solid rgba(150,170,255,.1)}
-.sdaw-spec li:last-child{border-right:0}
-.sdaw-spec li+li{padding-left:18px}
-.sdaw-spec b{display:block;font-family:"Commit Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  font-weight:400;font-size:1.02rem;color:#eef2ff;letter-spacing:-.01em;line-height:1.1}
-.sdaw-spec span{display:block;margin-top:3px;font-size:.7rem;letter-spacing:.07em;
-  text-transform:uppercase;color:#7c86a3}
-
-.sdaw-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.sdaw-cta{display:inline-flex;align-items:center;gap:9px;font-family:"Sora",system-ui,sans-serif;
-  font-weight:600;font-size:.92rem;letter-spacing:.01em;color:#0a0b10;
-  background:linear-gradient(96deg,#9d8cff,#5ad1ff);
-  border:0;border-radius:99px;padding:14px 28px;
-  box-shadow:0 10px 30px rgba(120,110,255,.34);transition:transform .16s,box-shadow .16s}
-.sdaw-cta:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(120,110,255,.46);color:#0a0b10}
-/* The price carries the argument, so it is sized like one. Everything this
-   competes with is billed yearly, forever; "once" is the whole pitch. */
-.sdaw-badge{display:flex;flex-direction:column;line-height:1.1}
-.sdaw-badge b{font-family:"Sora",system-ui,sans-serif;font-weight:700;font-size:1.25rem;color:#eef2ff}
-.sdaw-badge i{font-style:normal;margin-top:3px;font-size:.72rem;letter-spacing:.07em;
-  text-transform:uppercase;color:#8f99b8}
+.sdaw-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+/* Free leads. The paid tier is the upgrade, not the door, and the page this
+   links to puts them in exactly this order. */
+.sdaw-cta{display:inline-flex;align-items:center;gap:9px;font-family:"Inter",system-ui,sans-serif;
+  font-weight:600;font-size:.92rem;color:#f7f3e8;background:#17140d;
+  border:0;border-radius:99px;padding:13px 24px;
+  box-shadow:0 14px 30px -14px rgba(23,20,13,.7);transition:transform .16s,box-shadow .16s}
+.sdaw-cta:hover{transform:translateY(-2px);box-shadow:0 20px 40px -14px rgba(23,20,13,.8);color:#f7f3e8}
+.sdaw-alt{display:inline-flex;align-items:center;gap:5px;font-family:"Inter",system-ui,sans-serif;
+  font-weight:500;font-size:.9rem;color:#17140d;background:none;
+  border:1px solid rgba(23,20,13,.28);border-radius:99px;padding:12px 20px;transition:.16s}
+.sdaw-alt b{font-weight:700}
+.sdaw-alt:hover{background:#c8f23a;border-color:transparent;color:#1d2a00}
+.sdaw-fine{margin:16px 0 0;font-size:.78rem;line-height:1.55;color:#77705d;max-width:46ch}
 
 /* ── the shot ───────────────────────────────────────────────────────────────
-   The plug-in, cropped out of a real session. It used to sit inside a drawn
-   laptop at 603px wide, which put a whole Ableton window — tracks, browser,
-   mixer and all — into about the space a business card takes, and none of it
-   could be read. What matters is the panel: the wordmark, ON AIR, the session
-   code, the link. So that is what is shown, with a strip of the session around
-   it to say where it lives. */
+   The app as it is now: stems on air, listeners by name, and a phone showing
+   the other end of the link. Shown large enough to read, which the previous
+   one was not — it put a whole DAW window inside a drawn laptop at 603px. */
 .sdaw-shot{position:relative;margin:0;isolation:isolate}
-.sdaw-plug{display:block;width:100%;height:auto;border-radius:14px;
-  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(150,170,255,.16);
-  background:#05060a}
-/* the listener's side, overlapping the corner — the other half of the story */
-.sdaw-ph{position:absolute;right:-2%;bottom:-9%;width:19%;height:auto;z-index:2;
-  border-radius:16px;box-shadow:0 22px 48px rgba(0,0,0,.6),0 0 0 1px rgba(150,170,255,.2)}
-/* says "real time" before a word is read */
-.sdaw-live{position:absolute;left:14px;top:14px;z-index:3;display:inline-flex;align-items:center;
-  gap:7px;padding:5px 11px;border-radius:99px;font-family:"Sora",system-ui,sans-serif;
-  font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  color:#ffe9ef;background:rgba(10,8,16,.72);backdrop-filter:blur(8px);
-  box-shadow:0 0 0 1px rgba(255,92,157,.35)}
-.sdaw-live i{width:7px;height:7px;border-radius:50%;background:#ff5c9d;
-  box-shadow:0 0 0 0 rgba(255,92,157,.7);animation:sdawPulse 2s infinite}
+.sdaw-studio{display:block;width:100%;height:auto;border-radius:12px;
+  box-shadow:0 40px 80px -40px rgba(23,20,13,.55),0 0 0 1px rgba(23,20,13,.12)}
+.sdaw-ph{position:absolute;right:-3%;bottom:-12%;width:17%;height:auto;z-index:2;
+  border-radius:14px;box-shadow:0 26px 50px -18px rgba(23,20,13,.6),0 0 0 1px rgba(23,20,13,.14)}
+/* says real time before a word is read, in the app's own lime */
+.sdaw-live{position:absolute;left:12px;top:12px;z-index:3;display:inline-flex;align-items:center;
+  gap:7px;padding:5px 11px;border-radius:99px;font-family:"Inter",system-ui,sans-serif;
+  font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:#1d2a00;background:#c8f23a;box-shadow:0 2px 10px rgba(23,20,13,.18)}
+.sdaw-live i{width:7px;height:7px;border-radius:50%;background:#1d2a00;
+  box-shadow:0 0 0 0 rgba(29,42,0,.6);animation:sdawPulse 2s infinite}
 @keyframes sdawPulse{
-  70%{box-shadow:0 0 0 8px rgba(255,92,157,0)}
-  100%{box-shadow:0 0 0 0 rgba(255,92,157,0)}
+  70%{box-shadow:0 0 0 7px rgba(29,42,0,0)}
+  100%{box-shadow:0 0 0 0 rgba(29,42,0,0)}
 }
 @media (prefers-reduced-motion:reduce){.sdaw-live i{animation:none}}
 
@@ -746,15 +726,7 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .sdaw-inner{grid-template-columns:1fr}
   .sdaw-copy{order:1}
   .sdaw-shot{order:2;max-width:560px;margin-inline:auto}
-  .sdaw-ph{width:22%;right:0;bottom:-7%}
-  /* A wrapped flex row leaves the item that starts the second line carrying
-     the left padding meant to separate it from a neighbour it no longer has,
-     so AU & VST3 sat indented from 16-bit PCM directly above it. A grid has
-     no such notion: two columns, one left edge. */
-  .sdaw-spec{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
-  .sdaw-spec li{min-width:0;padding:12px 0;border-right:0}
-  .sdaw-spec li+li{padding-left:0}
-  .sdaw-spec li:nth-child(odd){border-right:1px solid rgba(150,170,255,.1);padding-right:18px}
+  .sdaw-ph{width:20%;right:-2%;bottom:-9%}
 }
 
 /* ————— SNOWSTASH teaser — night-radar identity (Oswald, monochrome ice) —————

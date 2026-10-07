@@ -28,7 +28,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/account.css?v=12">
-<link rel="stylesheet" href="css/style.css?v=58">
+<link rel="stylesheet" href="css/style.css?v=59">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -215,41 +215,40 @@
        glass. The paper collage belonged to a poster; this is a piece of studio
        hardware and it should read like one. Fixed colours — the block stays
        night in every site theme. -->
+  <!-- A cut-away to StreamDAW's own world, which is paper and lime — the way
+       the Snowstash block one down cuts to night. The app was rebuilt (v2) and
+       this follows it: free on the master bus with Pro as one payment, a link
+       OR a QR code, everyone in time, everyone in a mix of their own. -->
   <section class="sdaw-teaser" id="streamdaw">
-    <div class="sdaw-aura" aria-hidden="true"></div>
     <div class="sdaw-inner reveal">
       <div class="sdaw-copy">
-        <img class="sdaw-logo" src="assets/sdaw-word-trim.png?v=1" alt="StreamDAW" loading="lazy">
-        <h2 class="sdaw-h">Your session,<br><span class="hl">on a link.</span></h2>
-        <p class="sdaw-p">Drop it on the master bus and press GO LIVE. Whoever you send the
-        link to hears exactly what you hear — lossless, in a browser, with nothing to install.</p>
-        <!-- Three measured facts instead of three adjectives. Every figure here is
-             one StreamDAW already states in its own FAQ, which is the only kind
-             worth putting on a banner. -->
-        <ul class="sdaw-spec">
-          <li><b>16-bit PCM</b><span>44.1 kHz, lossless</span></li>
-          <li><b>~200 ms</b><span>end to end</span></li>
-          <li><b>AU &amp; VST3</b><span>any macOS host</span></li>
-        </ul>
+        <p class="sdaw-kicker">For Mac &middot; AU &amp; VST3</p>
+        <h2 class="sdaw-h">Your session,<br><em>on a link.</em></h2>
+        <p class="sdaw-p">StreamDAW streams your DAW to anyone with a link or a QR code.
+        They listen in a browser with nothing to install &mdash; in time with each other,
+        and in a mix of their own.</p>
+        <!-- Free leads, because free IS the offer: the paid tier is the upgrade,
+             not the door. Matches the order on StreamDAW's own page. -->
         <div class="sdaw-actions">
-          <a class="sdaw-cta" href="apps/streamdaw.html">Get StreamDAW</a>
-          <!-- The price is the argument, not the small print: everything this
-               competes with is billed yearly, forever. -->
-          <span class="sdaw-badge"><b data-ils="249">₪249</b><i>once &mdash; no subscription</i></span>
+          <a class="sdaw-cta" href="apps/streamdaw.html">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+            Download free</a>
+          <a class="sdaw-alt" href="apps/streamdaw.html#pricing">Get Pro &middot;
+            <b data-ils="249">₪249</b> once</a>
         </div>
+        <p class="sdaw-fine">Free on your master bus. Every Pro feature free for 7 days
+        inside the app, no card. Mac with Apple silicon.</p>
       </div>
 
-      <!-- The plug-in itself, cropped out of a real session rather than shrunk
-           inside a laptop frame until none of it could be read. The strip of
-           Ableton around the edge is the part that says "in your DAW"; the panel
-           is the part that says what it does. -->
       <figure class="sdaw-shot">
         <span class="sdaw-live"><i aria-hidden="true"></i>On air</span>
-        <img class="sdaw-plug" src="assets/sdaw-plugin.webp?v=1" width="922" height="631"
-             alt="The StreamDAW plug-in on a master bus inside an Ableton session, on air and streaming lossless PCM"
+        <img class="sdaw-studio" src="apps/sdaw-v2-studio.jpg?v=1" width="2560" height="1180"
+             alt="The StreamDAW window: eight stems on air, six people listening by name"
              loading="lazy">
-        <img class="sdaw-ph" src="assets/sdaw-remote.webp?v=2" width="560" height="1016"
-             alt="The same stream open in a listener’s phone browser" loading="lazy">
+        <img class="sdaw-ph" src="apps/sdaw-v2-phone.jpg?v=1" width="1170" height="2280"
+             alt="A listener’s phone: playing live, in-ear mode, in time" loading="lazy">
       </figure>
     </div>
   </section>
