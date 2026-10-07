@@ -747,8 +747,14 @@ body.menu-open .menu-foot{opacity:1;transform:none}
   .sdaw-copy{order:1}
   .sdaw-shot{order:2;max-width:560px;margin-inline:auto}
   .sdaw-ph{width:22%;right:0;bottom:-7%}
-  .sdaw-spec li{min-width:92px;padding-right:12px}
-  .sdaw-spec li+li{padding-left:12px}
+  /* A wrapped flex row leaves the item that starts the second line carrying
+     the left padding meant to separate it from a neighbour it no longer has,
+     so AU & VST3 sat indented from 16-bit PCM directly above it. A grid has
+     no such notion: two columns, one left edge. */
+  .sdaw-spec{display:grid;grid-template-columns:1fr 1fr;column-gap:18px}
+  .sdaw-spec li{min-width:0;padding:12px 0;border-right:0}
+  .sdaw-spec li+li{padding-left:0}
+  .sdaw-spec li:nth-child(odd){border-right:1px solid rgba(150,170,255,.1);padding-right:18px}
 }
 
 /* ————— SNOWSTASH teaser — night-radar identity (Oswald, monochrome ice) —————
