@@ -42,6 +42,7 @@
   --amp-ink: #16140f; --amp-sub: rgba(22,20,15,.7); --amp-edge: #6f6556; --amp-text: 0 1px 0 rgba(255,255,255,.45);
   --amp-glow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 3px rgba(0,0,0,.08), 0 10px 24px -16px rgba(40,30,10,.55);
   --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.35);
+  --screen-bg: #000;   /* behind a picture made big (both themes) */
   --head: "Fraunces", Georgia, "Times New Roman", serif;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
@@ -301,6 +302,13 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .vcell { position: relative; background: var(--panel2); }
   .vcell.speaking { outline: 3px solid var(--lime); outline-offset: -3px; }
   .vcell video { width: 100%; display: block; aspect-ratio: 16/9; object-fit: contain; background: var(--panel2); }
+  /* Big: the CELL fills the screen (full screen where the browser allows it, the window
+     otherwise), never the video itself — see toggleBig. */
+  .vcell:fullscreen, .vcell.max { display: flex; align-items: center; justify-content: center; background: var(--screen-bg); }
+  .vcell:-webkit-full-screen { display: flex; align-items: center; justify-content: center; background: var(--screen-bg); }
+  .vcell.max { position: fixed; inset: 0; z-index: 60; outline: 0; }
+  .vcell:fullscreen video, .vcell.max video { width: 100%; height: 100%; aspect-ratio: auto; background: transparent; cursor: zoom-out; }
+  .vcell:-webkit-full-screen video { width: 100%; height: 100%; aspect-ratio: auto; background: transparent; cursor: zoom-out; }
   .vlabel { position: absolute; top: 8px; left: 8px; font: 500 11px/1 var(--sans); background: var(--panel); color: var(--ink); border: 1px solid var(--line); padding: 5px 9px; border-radius: 999px; }
   #talkAudio { display: none; }
   .vbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 12px; background: var(--panel); border-top: 1px solid var(--line); }

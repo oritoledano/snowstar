@@ -388,14 +388,14 @@
 <meta property="og:url" content="https://snowstar.company/apps/streamdaw.html">
 <meta property="og:title" content="StreamDAW — Stream your DAW. Live. Lossless.">
 <meta property="og:description" content="Send your studio session to anyone with a link or a QR code — live, lossless, nothing to install. Free on your master bus; Pro is one payment.">
-<meta property="og:image" content="https://snowstar.company/assets/og-streamdaw.jpg">
+<meta property="og:image" content="https://snowstar.company/assets/og-streamdaw.jpg?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="StreamDAW — Stream your DAW. Live. Lossless.">
 <meta name="twitter:description" content="Send your studio session to anyone with a link or a QR code — live, lossless, nothing to install. Free on your master bus; Pro is one payment.">
-<meta name="twitter:image" content="https://snowstar.company/assets/og-streamdaw.jpg">
+<meta name="twitter:image" content="https://snowstar.company/assets/og-streamdaw.jpg?v=2">
 <script type="application/ld+json">
 {"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 11 or later (Apple silicon)", "description": "Stream your DAW to anyone with a link or a QR code, live and lossless. Remote studio sessions with camera, screen and talkback; in-ear sync for bands on their phones.", "offers": [{"@type": "Offer", "name": "StreamDAW", "price": "0", "priceCurrency": "ILS"}, {"@type": "Offer", "name": "StreamDAW Pro", "price": "249", "priceCurrency": "ILS"}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
 </script>
@@ -459,7 +459,13 @@
       <div class="demo-copy">
         <h2>Try it!</h2>
         <p class="demo-sub">You're the producer. Your phone is the band.</p>
-        <p class="only-wide">“MAMA” by KAYMA, a real session. Scan the code, put your earphones in and press Play on your phone. Then press Play here: your phone plays along, in time, in a mix you control.</p>
+        <p class="only-wide">“MAMA” by KAYMA, a real session, live from this page to your phone.</p>
+        <ol class="demo-steps only-wide" id="demoSteps">
+          <li data-s="scan"><span><b>Scan</b> the code with your phone</span></li>
+          <li data-s="phone"><span><b>Press Play</b> on your phone, earphones in</span></li>
+          <li data-s="play"><span><b>Press Play here</b>: your phone plays along</span></li>
+          <li data-s="tips"><span><b>Make it yours</b>: solo, mute, jump</span></li>
+        </ol>
         <p class="only-narrow">“MAMA” by KAYMA, a real session: eight tracks from the DAW, in time. Earphones in, press Play, make the mix yours.</p>
         <div class="demo-qr only-wide">
           <div class="qrbox" id="demoQr" aria-live="polite"></div>
@@ -902,5 +908,6 @@
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/studio.js?v=7b7d7508" defer></script>
+<script src="demo/coach.js?v=e9795193" defer></script>
 </body>
 </html>
