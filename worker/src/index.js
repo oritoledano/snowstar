@@ -50,6 +50,7 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
          streamdawAdmin, streamdawRelease,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
+         streamdawMinterPending, streamdawMinterIssue,
          streamdawReport, streamdawReports, streamdawDownloadFree } from './streamdaw.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
@@ -440,6 +441,9 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/activate' && method === 'POST') return streamdawActivate(req, env, await currentUser(req, env));
   if (path === '/streamdaw/activations' && method === 'GET') return streamdawActivationStatus(env, await currentUser(req, env));
   if (path === '/streamdaw/activation/issue' && method === 'POST') return streamdawActivationIssue(req, env, await currentUser(req, env));
+  // The minter on the owner's Mac (a bearer token, no session): what to sign, and the signed key.
+  if (path === '/streamdaw/minter/pending' && method === 'GET') return streamdawMinterPending(req, env);
+  if (path === '/streamdaw/minter/issue' && method === 'POST') return streamdawMinterIssue(req, env);
   // Bug reports: open to anyone, because the useful ones arrive the moment
   // something breaks and a sign-in wall loses them.
   if (path === '/streamdaw/report' && (method === 'POST' || method === 'OPTIONS')) return streamdawReport(req, env);

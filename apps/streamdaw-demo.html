@@ -37,8 +37,8 @@
   --vu-g: #1d9a4a; --vu-y: #d29a00; --vu-r: #e02f3a; --vu-off: .16; --vu-glow: 2;
   /* The leather: Ori's amp tolex, one seamless tile (site/snowstar/demo/leather-make.py), with a
      soft light from the top left. --amp: the phone's play card; --amp-wall: the app's middle. */
-  --amp: linear-gradient(155deg, rgba(255,255,255,.28) 0%, rgba(255,255,255,.06) 32%, rgba(0,0,0,0) 58%, rgba(0,0,0,.08) 100%), #e7e1d4 url(demo/leather-light.jpg) 0 0 / 330px auto repeat;
-  --amp-wall: linear-gradient(rgba(239,233,218,.25), rgba(239,233,218,.25)), #e7e1d4 url(demo/leather-light.jpg) 0 0 / 330px auto repeat;
+  --amp: linear-gradient(155deg, rgba(255,255,255,.28) 0%, rgba(255,255,255,.06) 32%, rgba(0,0,0,0) 58%, rgba(0,0,0,.08) 100%), #e7e1d4 url(demo/leather-light.jpg?v=02726ec0) 0 0 / 330px auto repeat;
+  --amp-wall: linear-gradient(rgba(239,233,218,.25), rgba(239,233,218,.25)), #e7e1d4 url(demo/leather-light.jpg?v=02726ec0) 0 0 / 330px auto repeat;
   --amp-ink: #16140f; --amp-sub: rgba(22,20,15,.7); --amp-edge: #6f6556; --amp-text: 0 1px 0 rgba(255,255,255,.45);
   --amp-glow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 3px rgba(0,0,0,.08), 0 10px 24px -16px rgba(40,30,10,.55);
   --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.35);
@@ -57,8 +57,8 @@ html[data-theme="dark"] {
   --meter: #f3eddc; --shadow: none;
   --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
   --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
-  --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #12110e url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
-  --amp-wall: linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
+  --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
+  --amp-wall: linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
   --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
   --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
   --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
@@ -74,8 +74,8 @@ html[data-theme="dark"] {
     --meter: #f3eddc; --shadow: none;
     --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
     --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
-    --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #12110e url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
-    --amp-wall: linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg) 0 0 / 330px auto repeat;
+    --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
+    --amp-wall: linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
     --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
     --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
     --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
@@ -256,7 +256,7 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .idrow { display: flex; align-items: center; gap: 8px; margin: -6px 0 22px; flex-wrap: wrap; }
   .idbtn { display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--sans); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; white-space: nowrap; }
   .idbtn:hover { background: var(--panel2); }
-  .idbtn.knock.sent, .idbtn.oncam { background: var(--lime); color: var(--lime-ink); }
+  .idbtn.oncam { background: var(--lime); color: var(--lime-ink); }
   .idstate { margin-left: auto; font-size: 12px; color: var(--dim); }
   .vcell video { cursor: zoom-in; }
   .vhint { position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--dim); background: var(--panel); padding: 2px 7px; border-radius: 999px; pointer-events: none; }

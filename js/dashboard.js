@@ -1314,8 +1314,8 @@
       /* The name is what listeners see as the host; the email rides in the key for the
          buyer's own licence panel. Same command as the "[Admin] Mint…" email. */
       const clean = (t) => String(t || '').replace(/["$`\\]/g, '');
-      const cmd = (a) => `~/.cache/streamdaw/bin/streamdaw-keygen --key "$(awk '/^private /{print $2}' `
-        + `~/.cache/streamdaw/license-keypair.txt)" --name "${clean(a.owner_name)}" `
+      const cmd = (a) => `~/.cache/streamdaw/bin/streamdaw-keygen --keyfile ~/.cache/streamdaw/license-keypair.txt `
+        + `--name "${clean(a.owner_name)}" `
         + `--email "${clean(a.email).toLowerCase()}" --machines ${a.machine_id}`;
       return paint(`${kpis}
         ${pending.length ? `<div class="db-warn warn" style="margin-bottom:16px">
@@ -1323,7 +1323,9 @@
           unlock the app.</b> Run the command on each row, then paste the key back.</div>` : ''}
         <div class="db-panel"><h2>Licence keys <span class="pill">${acts.length}</span></h2>
           <p class="db-empty" style="padding-top:0">Keys are signed with the private key on your own
-            Mac — it never touches the server — so minting is a manual step by design.</p>
+            Mac — it never touches the server. The minter there (scripts/licence-minter.mjs) sends
+            a buyer's first two Macs within a minute while the Mac is awake; anything still waiting
+            here is yours to send by hand.</p>
           ${table(acts, [
             { label: 'Who', get: (a) => `<b>${esc(a.owner_name || '—')}</b><br><small>${esc(a.email)}</small>` },
             { label: 'Machine', get: (a) => `<code>${esc(a.machine_id)}</code>` },

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StreamDAW — your session, on a link | by Snowstar</title>
-<meta name="description" content="StreamDAW streams your DAW to anyone with a link or a QR code. They listen in a browser, in time, in a mix of their own. For producers' review sessions and for bands playing to stems. Free on your master bus.">
+<title>StreamDAW — Stream your DAW. Live. Lossless. | by Snowstar</title>
+<meta name="description" content="Stream your DAW to anyone with a link or a QR code: live, lossless, nothing for them to install. For remote studio sessions, and for bands in sync on their phones. Free on your master bus; Pro is one payment.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/assets/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -124,7 +124,8 @@
   /* ── hero ───────────────────────────────────────────────── */
   .hero{padding:clamp(56px,8vw,104px) 0 clamp(40px,6vw,72px)}
   .hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(32px,5vw,64px);align-items:center}
-  .hero h1{font-size:clamp(44px,5.4vw,76px);margin:18px 0 22px}
+  .hero h1{font-size:clamp(36px,4.1vw,62px);margin:18px 0 22px}
+  .hero h1 .nb{white-space:nowrap}
   .hero h1 em{font-style:italic;font-weight:500}
   .hero .lead{font-size:clamp(17px,1.5vw,19px);color:var(--ink-2);max-width:30em}
   .cta{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 16px}
@@ -136,9 +137,14 @@
   .phone{position:absolute;right:0;bottom:0;width:31%;border:6px solid var(--ink);border-radius:34px;overflow:hidden;background:var(--card);box-shadow:var(--lift)}
   .phone img{width:100%}
 
-  .daws{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0}
-  .daws .wrap{display:flex;flex-wrap:wrap;gap:10px 32px;align-items:center;justify-content:center;font-size:14px;color:var(--muted)}
-  .daws b{font-weight:600;color:var(--ink-2)}
+  .hero .punch{margin-top:14px;font:600 clamp(17px,1.5vw,19px)/1.3 var(--sans);color:var(--ink)}
+  .daws{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0}
+  .daws .wrap{display:grid;gap:14px;justify-items:center;text-align:center}
+  .flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;font:600 clamp(18px,2vw,24px)/1.2 var(--serif);color:var(--ink)}
+  .flow i{font-style:normal;color:var(--muted);font-family:var(--sans);font-weight:500}
+  .flow span:last-child{background:var(--lime);color:var(--lime-ink);padding:2px 10px;border-radius:8px}
+  .works{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;justify-content:center;font-size:14px;color:var(--muted)}
+  .works b{font-weight:600;color:var(--ink-2)}
 
   /* ── the two rooms ──────────────────────────────────────── */
   .head{max-width:640px;margin-bottom:clamp(36px,5vw,56px)}
@@ -183,7 +189,8 @@
   /* ── try it: the studio on a computer, the phone page on a phone ── */
   .demo{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .demo-in{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(32px,5vw,64px);align-items:center}
-  .demo h2{font-size:clamp(32px,3.8vw,52px);margin:14px 0 16px}
+  .demo h2{font-size:clamp(48px,6vw,84px);margin:0 0 6px}
+  .demo .demo-sub{font:600 clamp(19px,1.8vw,23px)/1.25 var(--serif);color:var(--ink);margin:0 0 14px}
   .demo-copy>p{color:var(--ink-2);font-size:17px;max-width:32em}
   .demo-qr{display:flex;align-items:center;gap:18px;margin-top:28px;padding:14px;border:1px solid var(--line-2);border-radius:18px;background:var(--card);max-width:440px}
   .qrbox{width:140px;height:140px;flex:none;background:#fff;border-radius:8px}
@@ -239,6 +246,17 @@
   .msg{font-size:14px;font-weight:500;margin:0 0 14px}
   .msg.ok{color:var(--lime)}
   .msg.bad{color:#ff8fa8}
+  /* one payment against the yearly subscriptions */
+  .versus{margin-top:24px;border:1px solid var(--line-2);border-radius:22px;background:var(--card);padding:clamp(22px,3vw,32px)}
+  .vs-h{font:600 clamp(20px,2vw,26px)/1.2 var(--serif);margin-bottom:14px}
+  .vs-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .vs-rows div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:4px}
+  .vs-rows div>span{font-size:14px;color:var(--muted)}
+  .vs-rows b{font:600 20px/1.2 var(--serif);color:var(--ink)}
+  .vs-rows .us{background:var(--ink);border-color:var(--ink)}
+  .vs-rows .us>span{color:rgba(239,233,218,.7)}
+  .vs-rows .us b{color:var(--lime)}
+  .vs-fine{margin-top:12px;font-size:13px;color:var(--muted)}
   .reqs{margin-top:28px;text-align:center;font-size:14px;color:var(--muted)}
   .reqs b{color:var(--ink-2);font-weight:600}
 
@@ -268,6 +286,7 @@
 
   .last{text-align:center}
   .last h2{font-size:clamp(38px,5vw,64px)}
+  .last h2 em{font-style:italic;font-weight:500}
   .last .cta{justify-content:center}
   footer{border-top:1px solid var(--line);padding:28px 0 40px;font-size:13px;color:var(--muted)}
   footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -276,7 +295,7 @@
   @media (max-width:900px){
     header.nav nav{display:none}
     .nav-tools{margin-left:auto}
-    .hero .wrap,.rooms,.plans,.lic{grid-template-columns:1fr}
+    .hero .wrap,.rooms,.plans,.lic,.vs-rows{grid-template-columns:1fr}
     .steps{grid-template-columns:1fr}
     .stage{padding:0 10% 14% 0}
     .phone{width:36%;border-width:5px;border-radius:26px}
@@ -292,33 +311,93 @@
   }
 </style>
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
- {"@type": "Question", "name": "Do listeners install anything?", "acceptedAnswer": {"@type": "Answer", "text": "No. The link or the QR code opens StreamDAW in their browser. To know exactly who is listening, require a Snowstar sign-in."}},
- {"@type": "Question", "name": "Which DAWs does it run in?", "acceptedAnswer": {"@type": "Answer", "text": "Any Mac host that loads AU or VST3: Logic Pro, Ableton Live, Cubase, Studio One, Reaper, Bitwig. Pro Tools (AAX) is not supported yet."}},
- {"@type": "Question", "name": "How many people can listen?", "acceptedAnswer": {"@type": "Answer", "text": "As many as your internet upload carries: each listener gets their own stream from your Mac. Video is meant for a handful of people, and it steps down before anyone's audio suffers."}},
- {"@type": "Question", "name": "How good is the sound?", "acceptedAnswer": {"@type": "Answer", "text": "Your mix arrives lossless: the same samples your DAW plays, at your session's sample rate. On a weak connection, or in a personal mix, listeners get a high-quality compressed stream instead."}},
- {"@type": "Question", "name": "Is everyone really in time?", "acceptedAnswer": {"@type": "Answer", "text": "In in-ear mode every phone plays the same instant, half a second behind your DAW. A few short beeps, from the Mac or from a phone already in time, line the room's speakers and every phone up."}},
- {"@type": "Question", "name": "Can we use Bluetooth earphones?", "acceptedAnswer": {"@type": "Answer", "text": "They work, but each headset adds its own delay. Wired in-ears keep a band tight."}},
- {"@type": "Question", "name": "How does the licence work?", "acceptedAnswer": {"@type": "Answer", "text": "One payment, no subscription, every update included. The key is made for your Mac and arrives by email: paste it into StreamDAW, Settings, Licence. Moving to a new Mac? Sign in on this page and request a key for it."}},
- {"@type": "Question", "name": "Something is not working.", "acceptedAnswer": {"@type": "Answer", "text": "Write to hello@snowstar.company. It reaches the person who wrote StreamDAW."}}
-]}
+{
+"@context": "https://schema.org",
+"@type": "FAQPage",
+"mainEntity": [
+ {
+"@type": "Question",
+"name": "Do listeners need to install anything?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "No. They open a link or scan the QR code. That's it."
+}
+},
+ {
+"@type": "Question",
+"name": "How good is the sound?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "Lossless, straight from your DAW. No MP3, no AAC, no bounce and re-upload: they hear the samples your session plays. In sync mode, or on a weak connection, they get a high-quality compressed stream instead, so nobody drops out."
+}
+},
+ {
+"@type": "Question",
+"name": "How many people can listen?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "Each listener gets their own stream from your Mac, so your upload sets the limit. A lossless listener takes about 1.6 Mbit/s, a phone in sync mode about 0.15: a 20 Mbit/s upload carries a review session of 10, or a band of 20 with room to spare. Up to 6 guests on camera."
+}
+},
+ {
+"@type": "Question",
+"name": "Which DAWs does it work in?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "Logic Pro, Ableton Live, Cubase, Studio One, Reaper, Bitwig: any Mac DAW that loads AU or VST3. Pro Tools isn't supported yet."
+}
+},
+ {
+"@type": "Question",
+"name": "Is everyone really in time?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest: Bluetooth adds its own delay."
+}
+},
+ {
+"@type": "Question",
+"name": "How does the licence work?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "One payment, no subscription, and every StreamDAW 1 update included. Your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? Sign in here and request a key for it. The licence terms."
+}
+},
+ {
+"@type": "Question",
+"name": "Can I get a refund?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "Try before you buy: the free version and the 7-day Pro trial cost nothing. Once your key is issued, Pro isn't refundable, except for a double charge or a key that never arrives. Details."
+}
+},
+ {
+"@type": "Question",
+"name": "Something is not working.",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "Write to hello@snowstar.company. Every report is read by the person who wrote StreamDAW; fixes arrive in updates."
+}
+}
+]
+}
 </script>
 <link rel="canonical" href="https://snowstar.company/apps/streamdaw.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
 <meta property="og:url" content="https://snowstar.company/apps/streamdaw.html">
-<meta property="og:title" content="StreamDAW — your session, on a link">
-<meta property="og:description" content="Stream your DAW to anyone with a link or a QR code. In time, in a mix of their own. Free on your master bus; Pro is one payment.">
+<meta property="og:title" content="StreamDAW — Stream your DAW. Live. Lossless.">
+<meta property="og:description" content="Send your studio session to anyone with a link or a QR code — live, lossless, nothing to install. Free on your master bus; Pro is one payment.">
 <meta property="og:image" content="https://snowstar.company/assets/og-streamdaw.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="StreamDAW — your session, on a link">
-<meta name="twitter:description" content="Stream your DAW to anyone with a link or a QR code. In time, in a mix of their own. Free on your master bus; Pro is one payment.">
+<meta name="twitter:title" content="StreamDAW — Stream your DAW. Live. Lossless.">
+<meta name="twitter:description" content="Send your studio session to anyone with a link or a QR code — live, lossless, nothing to install. Free on your master bus; Pro is one payment.">
 <meta name="twitter:image" content="https://snowstar.company/assets/og-streamdaw.jpg">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 11 or later (Apple silicon)", "description": "Stream your DAW to anyone with a link or a QR code: in time, in a mix of their own. Review sessions with camera, screen and talkback; in-ear sync for bands.", "offers": [{"@type": "Offer", "name": "StreamDAW", "price": "0", "priceCurrency": "ILS"}, {"@type": "Offer", "name": "StreamDAW Pro", "price": "249", "priceCurrency": "ILS"}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
+{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 11 or later (Apple silicon)", "description": "Stream your DAW to anyone with a link or a QR code, live and lossless. Remote studio sessions with camera, screen and talkback; in-ear sync for bands on their phones.", "offers": [{"@type": "Offer", "name": "StreamDAW", "price": "0", "priceCurrency": "ILS"}, {"@type": "Offer", "name": "StreamDAW Pro", "price": "249", "priceCurrency": "ILS"}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
 </script>
 </head>
 <body>
@@ -328,8 +407,8 @@
     <button class="sd-burger" id="sdBurger" aria-label="Menu" aria-expanded="false" aria-controls="sdMenu"><span></span><span></span><span></span></button>
     <a href="#top" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW"></a>
     <nav aria-label="Page">
-      <a href="#uses">Uses</a>
       <a href="#demo">Try it</a>
+      <a href="#uses">Uses</a>
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">Questions</a>
@@ -347,38 +426,63 @@
     <div class="wrap">
       <div>
         <div class="kicker">For Mac · AU &amp; VST3</div>
-        <h1>Your session,<br><em>on a link.</em></h1>
-        <p class="lead">StreamDAW streams your DAW to anyone with a link or a QR code. They listen in a browser, with nothing to install, in time with each other and in a mix of their own.</p>
+        <h1><span class="nb">Stream your DAW.</span><br><em>Live. Lossless.</em></h1>
+        <p class="lead">Send your studio session to anyone, anywhere — live from Logic, Ableton, Cubase or Studio One. Nothing for them to install.</p>
+        <p class="punch">No upload. No bounce. Just press Play.</p>
         <div class="cta">
           <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Download free</a>
           <button class="btn ghost" data-buy="lifetime"><span>Get Pro · <span data-ils="249">₪249</span> once</span></button>
         </div>
-        <p class="fine">Free on your master bus. Every Pro feature free for 7 days inside the app, no card. Mac with Apple silicon.</p>
+        <p class="fine">Free on your master bus. Try every Pro feature for 7 days, no card. Mac with Apple silicon.</p>
       </div>
       <div class="stage" aria-label="StreamDAW on a Mac, and a listener's phone">
         <div class="laptop">
           <div class="bar"><i></i><i></i><i></i></div>
-          <img src="sdaw-v2-studio.jpg" alt="The StreamDAW window: eight stems on air, six people listening" width="2560" height="1180">
+          <img src="sdaw-v2-studio.jpg?v=3" alt="The StreamDAW window: eight stems on air, six people listening" width="2560" height="1180">
         </div>
-        <div class="phone"><img src="sdaw-v2-phone.jpg" alt="A listener's phone: playing live, in-ear mode, synced" width="1170" height="2280"></div>
+        <div class="phone"><img src="sdaw-v2-phone.jpg?v=3" alt="A listener's phone: playing live, in sync mode" width="1170" height="2280"></div>
       </div>
     </div>
   </section>
 
+  <!-- the one line the whole page says, then where it runs -->
   <div class="daws">
-    <div class="wrap"><span>Works in</span><b>Logic Pro</b><b>Ableton Live</b><b>Cubase</b><b>Studio One</b><b>Reaper</b><b>Bitwig</b></div>
+    <div class="wrap">
+      <p class="flow"><span>Your DAW</span><i aria-hidden="true">→</i><span>One link</span><i aria-hidden="true">→</i><span>Everyone hears it live</span></p>
+      <p class="works"><span>Works in</span><b>Logic Pro</b><b>Ableton Live</b><b>Cubase</b><b>Studio One</b><b>Reaper</b><b>Bitwig</b></p>
+    </div>
   </div>
 
-  <!-- ── the two rooms ── -->
+  <!-- ── try it: the demo (apps/streamdaw-demo.html, built from the real listener page) ── -->
+  <section class="demo" id="demo">
+    <div class="wrap demo-in">
+      <div class="demo-copy">
+        <h2>Try it!</h2>
+        <p class="demo-sub">You're the producer. Your phone is the band.</p>
+        <p class="only-wide">“MAMA” by KAYMA, a real session. Scan the code, put your earphones in and press Play on your phone. Then press Play here: your phone plays along, in time, in a mix you control.</p>
+        <p class="only-narrow">“MAMA” by KAYMA, a real session: eight tracks from the DAW, in time. Earphones in, press Play, make the mix yours.</p>
+        <div class="demo-qr only-wide">
+          <div class="qrbox" id="demoQr" aria-live="polite"></div>
+          <div><p><b>Scan to join this session.</b></p><p class="qrstate" id="demoQrState">Waiting for your phone…</p></div>
+        </div>
+        <p class="fine demo-alt only-wide">No phone at hand? <a href="streamdaw-demo.html" target="_blank" rel="noopener">Hear it in this browser</a>.</p>
+        <a class="btn ink demo-open only-narrow" href="streamdaw-demo.html">Open the demo</a>
+        <p class="fine demo-fine only-narrow">Earphones in. About 8 MB as it plays.</p>
+      </div>
+      <div class="demo-daw only-wide"><div id="demoDaw"></div></div>
+    </div>
+  </section>
+
+  <!-- ── the two uses ── These two cards become the two films (the producer's session with his
+       team and a voice-over recorded from afar; the band playing in sync mode): when they
+       exist, a <video> goes in each .art in place of the drawing. -->
   <section id="uses">
     <div class="wrap">
       <div class="head">
-        <div class="kicker">Two ways in</div>
-        <h2>One app, two rooms.</h2>
-        <p>The same session, a link away: for the people who have to approve the music, and for the people who have to play it.</p>
+        <div class="kicker">Uses</div>
+        <h2>Two ways to use StreamDAW.</h2>
       </div>
       <div class="rooms">
-        <!-- Producer Virtual Studio -->
         <article class="room">
           <div class="art" aria-hidden="true">
             <div class="vs">
@@ -396,59 +500,36 @@
             </div>
           </div>
           <div class="body">
-            <span class="tag pro">Producer Virtual Studio</span>
-            <h3>The review session, without the room.</h3>
-            <p class="sub">Clients, agency and talent on one link, hearing your session as you play it.</p>
+            <span class="tag pro">Remote studio sessions</span>
+            <h3>The studio session, without the studio.</h3>
+            <p class="sub">Invite clients, producers and artists into your DAW session — live, lossless and in sync.</p>
             <ul class="ticks">
-              <li>Your DAW, live and lossless, in their browser.</li>
-              <li>Talk, see each other and share your screen, like a call. The screen stays in time with the music.</li>
-              <li>Record a voice-over from another city straight onto a DAW track.</li>
+              <li>No exports, no bouncing, no revisions back and forth.</li>
+              <li>Talk, see each other and share your screen, in time with the music.</li>
+              <li>Record a singer or a voice-over from another city, straight onto a track.</li>
             </ul>
           </div>
         </article>
 
-        <!-- Band in Sync -->
         <article class="room">
           <div class="art" aria-hidden="true">
             <div class="band">
-              <img src="sdaw-v2-mixes.jpg" alt="" width="2560" height="1180">
+              <img src="sdaw-v2-mixes.jpg?v=3" alt="" width="2560" height="1180">
               <div class="synced"><i><svg viewBox="0 0 24 24" fill="none" stroke="#1d2a00" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></i>6 phones in time</div>
             </div>
           </div>
           <div class="body">
-            <span class="tag pro">Band in Sync</span>
-            <h3>Every player on the same beat, in a mix of their own.</h3>
-            <p class="sub">A QR code on the screen, wired in-ears, phones in pockets. Count in.</p>
+            <span class="tag pro">Live in-ear for bands</span>
+            <h3>Turn any phone into a wireless in-ear monitor.</h3>
+            <p class="sub">Everyone hears the same performance in sync, with their own personal mix.</p>
             <ul class="ticks">
               <li>Scan, plug in, press Play. No app, no account.</li>
-              <li>Every phone plays the same instant, half a second behind the DAW.</li>
-              <li>More click, less strings: each player mixes their own, or you set it for them from the desk.</li>
-              <li>A few short beeps line the room's speakers and every phone up.</li>
+              <li>Every phone plays the same instant.</li>
+              <li>More click, less strings: each player sets their own mix.</li>
             </ul>
           </div>
         </article>
       </div>
-    </div>
-  </section>
-
-  <!-- ── try it: the demo (apps/streamdaw-demo.html, built from the real listener page) ── -->
-  <section class="demo" id="demo">
-    <div class="wrap demo-in">
-      <div class="demo-copy">
-        <div class="kicker">Try it now</div>
-        <h2 class="only-wide">You're the producer. Your phone is the band.</h2>
-        <h2 class="only-narrow">Hear it the way the band does.</h2>
-        <p class="only-wide">This is KAYMA's “MAMA” session, in a DAW. Scan the code with your phone, put your earphones in and press play on the phone. Then press play here: the song plays on your phone, in time, and the mix on the phone is yours.</p>
-        <p class="only-narrow">“MAMA” by KAYMA, from a real session: eight sends from the DAW, in time. Put your earphones in, press play, and make the mix yours. More click, less strings, solo the vocal.</p>
-        <div class="demo-qr only-wide">
-          <div class="qrbox" id="demoQr" aria-live="polite"></div>
-          <div><p><b>Scan to join this session.</b></p><p class="qrstate" id="demoQrState">Waiting for your phone…</p></div>
-        </div>
-        <p class="fine demo-alt only-wide">No phone at hand? <a href="streamdaw-demo.html" target="_blank" rel="noopener">Hear it in this browser</a>.</p>
-        <a class="btn ink demo-open only-narrow" href="streamdaw-demo.html">Open the demo</a>
-        <p class="fine demo-fine only-narrow">Earphones in. About 8 MB as it plays.</p>
-      </div>
-      <div class="demo-daw only-wide"><div id="demoDaw"></div></div>
     </div>
   </section>
 
@@ -460,9 +541,9 @@
         <h2>Three steps, then Play.</h2>
       </div>
       <div class="steps">
-        <div class="step"><div class="n">01</div><h3>Add StreamDAW</h3><p>Put the plug-in on your master bus.<small>For stems, send your DAW's tracks to StreamDAW Audio, the audio device it installs.</small></p></div>
-        <div class="step"><div class="n">02</div><h3>Go live</h3><p>One button. Your session gets a link and a QR code.<small>The session stays up when you close the project.</small></p></div>
-        <div class="step"><div class="n">03</div><h3>Share it</h3><p>People open it on a phone or a computer, check their mic and camera, and wait at the door until you let them in.<small>When you end the session, everyone is back at the door.</small></p></div>
+        <div class="step"><div class="n">01</div><h3>Open your DAW</h3><p>Put StreamDAW on your master bus.<small>Stems? Send your tracks to StreamDAW Audio.</small></p></div>
+        <div class="step"><div class="n">02</div><h3>Press Go Live</h3><p>Get a private link and a QR code, instantly.</p></div>
+        <div class="step"><div class="n">03</div><h3>Share</h3><p>They open it in a browser. You keep making music.</p></div>
       </div>
     </div>
   </section>
@@ -472,8 +553,8 @@
     <div class="wrap">
       <div class="head">
         <div class="kicker">Free and Pro</div>
-        <h2>Start free. Pay once for the rest.</h2>
-        <p>StreamDAW and StreamDAW Pro are one app. Pro does everything StreamDAW does, and switches on the rest with a key made for your Mac.</p>
+        <h2>Try everything. Buy it once.</h2>
+        <p>StreamDAW is free on your master bus. Pro adds stems, in-ear sync, remote recording, video and no time limit. Try all of it free for 7 days.</p>
       </div>
       <div class="plans">
         <div class="plan">
@@ -481,31 +562,27 @@
           <div class="price">Free</div>
           <p class="note">For as long as you like.</p>
           <ul class="ticks">
-            <li>The plug-in on your master bus</li>
-            <li>Your mix on a link and a QR code</li>
+            <li>Your master mix on a link and a QR code</li>
             <li>A waiting room: you let people in</li>
             <li>Sessions up to 60 minutes</li>
-            <li class="no">Up to 32 stems, a mix for every listener</li>
-            <li class="no">In-ear sync for bands, with the room lined up</li>
-            <li class="no">Record up to 16 remote people into your DAW</li>
-            <li class="no">Camera, screen share and conversation</li>
-            <li class="no">Monitor, presets, sign-in-only sessions</li>
+            <li class="no">Stems, and a mix for every listener</li>
+            <li class="no">In-ear sync for bands</li>
+            <li class="no">Record remote people into your DAW</li>
+            <li class="no">Camera, screen share and talkback</li>
           </ul>
           <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl>Download for Mac</a>
         </div>
         <div class="plan pro" id="ticket">
           <span class="tag lime" id="stamp">StreamDAW Pro</span>
-          <div class="price" id="bigPrice"><span data-ils="249">₪249</span><small>once, VAT included</small></div>
-          <p class="note" id="priceSub">Every update included. No subscription.</p>
+          <div class="price" id="bigPrice"><span data-ils="249">₪249</span><small>one payment · VAT included</small></div>
+          <p class="note" id="priceSub">No subscription. Every StreamDAW 1 update included.</p>
           <ul class="ticks">
-            <li>The plug-in on your master bus</li>
-            <li>Your mix on a link and a QR code</li>
-            <li>A waiting room: you let people in</li>
+            <li>Everything in Free</li>
             <li><b>No time limit</b></li>
             <li><b>Up to 32 stems, a mix for every listener</b></li>
-            <li><b>In-ear sync for bands, with the room lined up</b></li>
+            <li><b>In-ear sync for bands</b></li>
             <li><b>Record up to 16 remote people into your DAW</b></li>
-            <li><b>Camera, screen share and conversation</b></li>
+            <li><b>Camera, screen share and talkback</b></li>
             <li><b>Monitor, presets, sign-in-only sessions</b></li>
           </ul>
           <div class="coupon">
@@ -515,8 +592,20 @@
           <p class="msg" id="couponMsg" hidden></p>
           <p class="msg ok" id="forMac" hidden></p>
           <button class="btn lime" data-buy="lifetime" id="buyBtn">Get StreamDAW Pro</button>
-          <p class="after">Or try every Pro feature for 7 days inside the app. No card, once per Mac.</p>
+          <p class="after">Or try every Pro feature for 7 days inside the app. No card.<br>Buying means you accept the <a href="streamdaw-terms.html">StreamDAW licence terms</a>.</p>
         </div>
+      </div>
+
+      <!-- Competitors' prices, as their own sites showed them (read 2026-10-08): keep the date
+           in the footnote, and check again before changing a word. -->
+      <div class="versus">
+        <p class="vs-h">Others bill you every year.</p>
+        <div class="vs-rows">
+          <div><span>Waves Stream</span><b>$88.88 a year</b></div>
+          <div><span>Audiomovers LISTENTO</span><b>from $99.99 a year</b></div>
+          <div class="us"><span>StreamDAW Pro</span><b><span data-ils="249">₪249</span> once</b></div>
+        </div>
+        <p class="vs-fine">About one year of a streaming subscription, and then it's yours. Prices as listed on waves.com and audiomovers.com, October 2026.</p>
       </div>
 
       <!-- Shown only to someone who owns StreamDAW; the Worker checks the
@@ -554,29 +643,29 @@
         <h2>Straight answers.</h2>
       </div>
       <div class="faq">
-        <details><summary>Do listeners install anything?</summary>
-          <p>No. The link or the QR code opens StreamDAW in their browser. To know exactly who is listening, require a Snowstar sign-in.</p></details>
-        <details><summary>Which DAWs does it run in?</summary>
-          <p>Any Mac host that loads AU or VST3: Logic Pro, Ableton Live, Cubase, Studio One, Reaper, Bitwig. Pro Tools (AAX) is not supported yet.</p></details>
-        <details><summary>How many people can listen?</summary>
-          <p>As many as your internet upload carries: each listener gets their own stream from your Mac. Video is meant for a handful of people, and it steps down before anyone's audio suffers.</p></details>
+        <details><summary>Do listeners need to install anything?</summary>
+          <p>No. They open a link or scan the QR code. That's it.</p></details>
         <details><summary>How good is the sound?</summary>
-          <p>Your mix arrives lossless: the same samples your DAW plays, at your session's sample rate. On a weak connection, or in a personal mix, listeners get a high-quality compressed stream instead.</p></details>
+          <p>Lossless, straight from your DAW. No MP3, no AAC, no bounce and re-upload: they hear the samples your session plays. In sync mode, or on a weak connection, they get a high-quality compressed stream instead, so nobody drops out.</p></details>
+        <details><summary>How many people can listen?</summary>
+          <p>Each listener gets their own stream from your Mac, so your upload sets the limit. A lossless listener takes about 1.6 Mbit/s, a phone in sync mode about 0.15: a 20 Mbit/s upload carries a review session of 10, or a band of 20 with room to spare. Up to 6 guests on camera.</p></details>
+        <details><summary>Which DAWs does it work in?</summary>
+          <p>Logic Pro, Ableton Live, Cubase, Studio One, Reaper, Bitwig: any Mac DAW that loads AU or VST3. Pro Tools isn't supported yet.</p></details>
         <details><summary>Is everyone really in time?</summary>
-          <p>In in-ear mode every phone plays the same instant, half a second behind your DAW. A few short beeps, from the Mac or from a phone already in time, line the room's speakers and every phone up.</p></details>
-        <details><summary>Can we use Bluetooth earphones?</summary>
-          <p>They work, but each headset adds its own delay. Wired in-ears keep a band tight.</p></details>
+          <p>Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest: Bluetooth adds its own delay.</p></details>
         <details><summary>How does the licence work?</summary>
-          <p>One payment, no subscription, every update included. The key is made for your Mac and arrives by email: paste it into StreamDAW › Settings › Licence. Moving to a new Mac? Sign in on this page and request a key for it.</p></details>
+          <p>One payment, no subscription, and every StreamDAW 1 update included. Your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? Sign in here and request a key for it. <a href="streamdaw-terms.html">The licence terms</a>.</p></details>
+        <details><summary>Can I get a refund?</summary>
+          <p>Try before you buy: the free version and the 7-day Pro trial cost nothing. Once your key is issued, Pro isn't refundable, except for a double charge or a key that never arrives. <a href="streamdaw-terms.html#refunds">Details</a>.</p></details>
         <details><summary>Something is not working.</summary>
-          <p>Write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>. It reaches the person who wrote StreamDAW.</p></details>
+          <p>Write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>. Every report is read by the person who wrote StreamDAW; fixes arrive in updates.</p></details>
       </div>
     </div>
   </section>
 
   <section class="last" style="padding-top:0">
     <div class="wrap">
-      <h2>Press Play together.</h2>
+      <h2>Stop sending mixes.<br><em>Let them hear the session.</em></h2>
       <div class="cta">
         <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl>Download free</a>
         <button class="btn ghost" data-buy="lifetime"><span>Get Pro · <span data-ils="249">₪249</span> once</span></button>
@@ -641,8 +730,8 @@
     }catch(e){ showMsg('Could not check that code. Try again.',false); }
   }
   function resetPrice(){
-    bigPrice.innerHTML='<span data-ils="249">'+ils(24900)+'</span><small>once, VAT included</small>'; stamp.textContent='StreamDAW Pro';
-    priceSub.textContent='Every update included. No subscription.';
+    bigPrice.innerHTML='<span data-ils="249">'+ils(24900)+'</span><small>one payment · VAT included</small>'; stamp.textContent='StreamDAW Pro';
+    priceSub.textContent='No subscription. Every StreamDAW 1 update included.';
     buyBtn.textContent='Get StreamDAW Pro';
   }
   document.getElementById('couponApply').addEventListener('click',applyCoupon);
@@ -687,8 +776,18 @@
       const issued=(d.activations||[]).find(a=>a.status==='issued'&&a.key_text);
       if(issued) showKey(issued.key_text);
       else if((d.activations||[]).some(a=>a.status==='pending'))
-        licMsg('Your request is in. Your key arrives by email, usually within a few hours, and appears here.');
+        licMsg('Your request is in. Your key arrives by email and appears here.');
     }catch(e){}
+  }
+  // The minter on our side usually sends a key within a minute: watch for it for a few minutes.
+  async function licWait(t0,machine){
+    try{
+      const r=await fetch('/api/streamdaw/activations',{credentials:'include'}); const d=await r.json();
+      const issued=(d.activations||[]).find(a=>a.status==='issued'&&a.key_text&&a.machine_id===machine);
+      if(issued){ showKey(issued.key_text); return; }
+    }catch(e){}
+    if(Date.now()-t0<5*60000) setTimeout(()=>licWait(t0,machine),10000);
+    else licMsg('Your key is taking longer than usual. It arrives by email, and appears here when you come back.');
   }
   function licMsg(t,bad){ const m=document.getElementById('licMsg'); if(m){ m.textContent=t; m.className='lmsg'+(bad?' bad':''); } }
   function showKey(k){
@@ -707,7 +806,8 @@
       const d=await r.json();
       if(!r.ok){ licMsg(d.error||'That did not go through.',true); btn.disabled=false; return; }
       if(d.status==='issued'&&d.key){ showKey(d.key); return; }
-      licMsg('Got it: we emailed you a confirmation. Your key arrives in a second email, usually within a few hours, and appears here.');
+      if(d.soon){ licMsg('Got it. Your key is being made: it appears here and arrives by email, usually within a minute.'); licWait(Date.now(),machine); }
+      else licMsg('Got it: we emailed you a confirmation. Your key arrives in a second email, usually within a day, and appears here.');
     }catch(e){ licMsg('Network trouble. Try again.',true); btn.disabled=false; }
   }
   document.getElementById('licSend').addEventListener('click',licRequest);
@@ -800,7 +900,7 @@
 })();
 </script>
 <script src="../js/consent.js?v=1"></script>
-<script src="demo/qr.js?v=1" defer></script>
-<script src="demo/studio.js?v=1" defer></script>
+<script src="demo/qr.js?v=8047289a" defer></script>
+<script src="demo/studio.js?v=7b7d7508" defer></script>
 </body>
 </html>
