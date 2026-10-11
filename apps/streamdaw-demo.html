@@ -4,21 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>StreamDAW demo — a band's stems, in a mix of your own</title>
-<meta name="description" content="Try StreamDAW on your phone: a band's song in eight sends, in time, in a mix of your own. Put your earphones in and press play.">
+<meta name="description" content="Try StreamDAW on your phone: a band's song in eight tracks, in time, in a mix of your own. Put your earphones in and press play.">
 <link rel="canonical" href="https://snowstar.company/apps/streamdaw-demo.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
 <meta property="og:title" content="StreamDAW demo — your own mix of the band">
-<meta property="og:description" content="Put your earphones in and press play: eight sends, in time, and every fader is yours.">
+<meta property="og:description" content="Put your earphones in and press play: eight tracks, in time, and every fader is yours.">
 <meta property="og:image" content="https://snowstar.company/assets/og-streamdaw.jpg">
-<meta name="theme-color" content="#efe9da">
+<meta name="theme-color" content="#12110e">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap">
 <!-- BUILT by site/snowstar/demo/build-demo.mjs in the StreamDAW repo: the look is the real
-     listener page's (its <style>, theme.css and theme.js, copied in at build time), so the
-     demo is what a phone in a session shows. Edit the source there, not this file. -->
+     listener page's (its <style>, theme.css, theme.js, the VU meters and the fader-meters, copied
+     in at build time), so the demo is what a phone in a session shows. Edit the source there,
+     not this file. -->
 <style>
 /* StreamDAW — one look, dark and bright (2026-10-06; meters light in the bright one, 10-07).
    The "Stage" look chosen by Ori: paper and ink, a lime "on" colour, a hot pink for what
@@ -43,6 +44,12 @@
   --amp-glow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 0 0 3px rgba(0,0,0,.08), 0 10px 24px -16px rgba(40,30,10,.55);
   --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.35);
   --screen-bg: #000;   /* behind a picture made big (both themes) */
+  /* The invite card (the QR over the listener page, 2026-10-10): the link preview's look, dark
+     leather in both themes, so these are not redefined for the dark one. */
+  --inv-ink: #f3eddc; --inv-sub: rgba(243,237,220,.82); --inv-dim: rgba(243,237,220,.62); --inv-fine: rgba(243,237,220,.55);
+  --inv-line: rgba(243,237,220,.38); --inv-hover: rgba(243,237,220,.08); --inv-veil: rgba(8,7,5,.62); --inv-edge: #000; --inv-tile: #fff;
+  --inv-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 60px -20px rgba(0,0,0,.8); --inv-tile-shadow: 0 10px 30px -12px rgba(0,0,0,.7);
+  --inv-wall: linear-gradient(155deg, rgba(255,255,255,.08) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,.3) 100%), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
   --head: "Fraunces", Georgia, "Times New Roman", serif;
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
@@ -59,7 +66,7 @@ html[data-theme="dark"] {
   --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
   --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
   --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
-  --amp-wall: linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
+  --amp-wall: linear-gradient(rgba(0,0,0,.62), rgba(0,0,0,.62)), linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;   /* 2026-10-10, Ori: darker; his example is 38 % of the light it had: black at .62 over what it was */
   --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
   --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
   --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
@@ -76,7 +83,7 @@ html[data-theme="dark"] {
     --vu-hi: #1d1c18; --vu-lo: #0c0b09; --vu-ink: 232, 226, 207; --vu-edge: 255, 255, 255;  /* the meters: dark hardware */
     --vu-g: #44d36e; --vu-y: #f4c430; --vu-r: #ff4b4b; --vu-off: .11; --vu-glow: 6;
     --amp: linear-gradient(155deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.025) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.22) 100%), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
-    --amp-wall: linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;
+    --amp-wall: linear-gradient(rgba(0,0,0,.62), rgba(0,0,0,.62)), linear-gradient(rgba(18,17,14,.2), rgba(18,17,14,.2)), #12110e url(demo/leather-dark.jpg?v=4b6aaf55) 0 0 / 330px auto repeat;   /* 2026-10-10, Ori: darker; his example is 38 % of the light it had: black at .62 over what it was */
     --amp-ink: #f3eddc; --amp-sub: rgba(243,237,220,.7); --amp-edge: #000; --amp-text: 0 1px 2px rgba(0,0,0,.55);
     --amp-glow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 3px rgba(0,0,0,.25), 0 10px 24px -14px rgba(0,0,0,.6);
     --pop-shadow: 0 10px 30px -10px rgba(0,0,0,.55);
@@ -188,10 +195,12 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .mediarow { display: flex; gap: 10px; align-items: center; justify-content: center; margin: -6px 0 18px; }
   .sesshead { position: relative; }
   .volpop { position: absolute; right: 0; top: 100%; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-top: -6px;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--pop-shadow); min-width: 220px; }
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--pop-shadow); min-width: 260px; }
   .volpop[hidden] { display: none; }
-  .volpop input { flex: 1; }
-  .volpop output { font: 500 12px var(--mono); color: var(--dim); min-width: 36px; text-align: right; }
+  /* The volume: a fader on the stereo meter of what arrives (fadermeter.js, 2026-10-10). */
+  .volpop .volfader { flex: 1; min-width: 0; height: 30px; }
+  @media (pointer: coarse) { .volpop .volfader { height: 36px; } }
+  .volpop output { font: 500 12px var(--mono); color: var(--dim); min-width: 58px; text-align: right; white-space: nowrap; }
   /* Sync mode: one badge (every device plays the same instant: a band, a venue, a beach) */
   .syncmode { margin-left: auto; flex: none; display: inline-flex; flex-direction: column; align-items: center; gap: 3px; color: var(--ink); }
   .syncmode[hidden] { display: none; }
@@ -214,6 +223,7 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .devmenu .h { font: 600 10px var(--mono); letter-spacing: .08em; color: var(--dim); padding: 6px 10px 4px; text-transform: uppercase; }
   .legacy { display: none !important; }
   .foot .ficon { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); width: 38px; height: 38px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; margin: 0 4px; cursor: pointer; vertical-align: middle; }
+  .foot .ficon.copied { background: var(--lime); color: var(--lime-ink); border-color: var(--lime); }
   .foot .ficon svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .mx-reset { float: right; appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 11px var(--sans); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
   .meter { height: 6px; background: var(--soft); border-radius: 999px; overflow: hidden; position: relative; }
@@ -227,19 +237,49 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   input[type=range]::-moz-range-track { height: 2px; border-radius: 1px; background: var(--line); }
   input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; border: 0; background: var(--accent); }
 
+  /* Panels that fold (2026-10-09, Ori): the pictures and the mixer each have a header with a
+     chevron, and say in a few words what is folded away ("Video · 3 pictures", "Mixer · Track
+     mixer, 2 soloed"), so a listener reaches the mixer without scrolling past every camera.
+     The few words show only while folded: open, the panel shows itself. The people list does
+     not fold: it is the meeting. */
+  .panel-h { appearance: none; display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: transparent; color: var(--ink);
+    padding: 12px 16px; font: inherit; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .panel-h[hidden] { display: none; }
+  .panel-t { flex: none; font: 500 11px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
+  .panel-sum { flex: 1 1 auto; min-width: 0; font-size: 13px; line-height: 1.2; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .panel-sum::before { content: "· "; color: var(--faint); }
+  .panel-h[aria-expanded="true"] .panel-sum { display: none; }
+  .panel-chev { flex: none; margin-left: auto; width: 18px; height: 18px; fill: none; stroke: var(--dim); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s ease; }
+  .panel-h[aria-expanded="true"] .panel-chev { transform: rotate(180deg); }
+  .panel-h:hover .panel-t { color: var(--ink); }
+  .panel-h:hover .panel-chev { stroke: var(--ink); }
+  .panel-h:focus-visible { outline-offset: -2px; }
+
   /* multi-track mixer (per-track volume, pan, solo / mute — the rows of 2026-10-05) */
-  .mixer { margin-bottom: 24px; border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px 4px; }
-  .mx-h { display: flex; align-items: center; gap: 10px; font: 500 11px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin: 4px 0 4px; }
-  .mx-h .mx-reset { margin-left: auto; float: none; }
+  .mixer { margin-bottom: 24px; border: 1px solid var(--line); border-radius: 18px; padding: 0 16px 4px; }
+  .mixer > .panel-h { margin: 0 -16px; width: calc(100% + 32px); padding: 14px 16px 10px; border-radius: 18px 18px 0 0; }
+  .mixer.closed { padding-bottom: 0; }
+  .mixer.closed > .panel-h { padding-bottom: 14px; border-radius: 18px; }
+  .mixer.closed .mx-body { display: none; }
+  /* The header's S and M (all tracks at once), 2026-10-09 (Ori: too close at 390 px): 16 px of
+     air and nothing else stood between them and the first track's S and M, and they sat 2 and
+     4 px off that track's column. Now a line and 12 px each side part the header from the
+     tracks, each S/M sits straight over the column it acts on (one gap, 12 px, in the header
+     and in every row), and TRACKS keeps 16 px from M; Reset mix stays at the far end. */
+  .mx-h { display: flex; align-items: center; gap: 12px; font: 500 11px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); margin: 8px 0 0; padding: 0 0 12px; border-bottom: 1px solid var(--soft); }
+  .mx-h .mx-hl { margin-left: 4px; }
+  .mx-h .mx-reset { margin-left: auto; float: none; flex: none; }
   .mx-row { padding: 12px 0 12px; }
   .mx-row + .mx-row { border-top: 1px solid var(--soft); }
   .mx-top, .mx-ctl { display: flex; align-items: center; gap: 8px; }
-  .mx-ctl { margin-top: 6px; }
-  .mx-lab { font: 500 10px/1 var(--sans); letter-spacing: .08em; color: var(--dim); flex: none; }
-  .mx-vol { flex: 2 1 0; min-width: 0; width: 0; }
-  /* Pan is not a "how much" control: no fill from the left, a mark at the centre. */
-  input[type=range].mx-pan { flex: 1 1 0; min-width: 0; width: 0; padding: 0;
-            background: linear-gradient(var(--dim), var(--dim)) center / 2px 12px no-repeat; }
+  .mx-top { gap: 12px; }
+  /* A row's controls (2026-10-10, Ori): the volume as a fader on the track's stereo meter, and
+     pan as a knob (fadermeter.js; a finger holds it, then slides; a mouse dials it). The hidden
+     range inputs inside them keep the classes .mx-vol and .mx-pan (and their .value). */
+  .mx-ctl { margin-top: 8px; gap: 12px; }
+  .mx-fader { flex: 1 1 auto; min-width: 0; height: 30px; }
+  .mx-knob { flex: none; width: 40px; height: 40px; }
+  @media (pointer: coarse) { .mx-fader { height: 36px; } .mx-knob { width: 44px; height: 44px; } }
   .mx-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); }
   .mx-seg { display: flex; gap: 4px; padding: 4px; margin: 2px 0 10px; border: 1px solid var(--line); border-radius: 999px; }
   .mx-mode { flex: 1; padding: 10px 8px; border-radius: 999px; border: 0; background: transparent; color: var(--dim); font: 500 13px/1 var(--sans); cursor: pointer; }
@@ -249,9 +289,6 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .mx-btn.solo.on { background: var(--lime); color: var(--lime-ink); }
   .mx-btn.mute.on { background: var(--hot); border-color: var(--hot); color: var(--hot-ink); }
   .mx-name { flex: 1; min-width: 0; font-size: 14px; color: var(--ink); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mx-meter { width: 84px; height: 6px; background: var(--soft); border-radius: 999px; overflow: hidden; flex: none; }
-  .mx-meter i { display: block; height: 100%; width: 0; background: var(--meter); border-radius: 999px; transition: width .06s linear; }
-  @media (max-width: 520px) { .mx-meter { width: 52px; } }
 
   /* identity / sign-in */
   .idrow { display: flex; align-items: center; gap: 8px; margin: -6px 0 22px; flex-wrap: wrap; }
@@ -278,6 +315,26 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .authwrap { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px;
     background: var(--bg); background: color-mix(in srgb, var(--bg) 90%, transparent); }
   .authwrap[hidden] { display: none; }
+  /* the QR card (the invite's look in both themes: dark leather, cream, lime; theme.css --inv-*) */
+  .qrsheet { position: fixed; inset: 0; z-index: 95; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--inv-veil); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .qrsheet[hidden] { display: none; }
+  .qrcard { position: relative; width: min(380px, 100%); max-height: calc(100vh - 32px); overflow: auto; border-radius: 24px; padding: 24px 22px 20px; text-align: center; color: var(--inv-ink);
+    background: var(--inv-wall); border: 1px solid var(--inv-edge); box-shadow: var(--inv-shadow); }
+  .qrcard .qrwm { background: var(--inv-ink); width: 150px; height: 16px; -webkit-mask-position: center; mask-position: center; margin: 2px auto 18px; display: block; }
+  .qrh { font: 600 32px/1.05 var(--head); letter-spacing: -.01em; }
+  .qrs { font: 400 15px/1.35 var(--head); color: var(--inv-sub); margin: 6px 0 16px; }
+  .qrs b { font-weight: 600; color: var(--inv-ink); }
+  .qrtile { background: var(--inv-tile); border-radius: 18px; padding: 12px; width: min(250px, 72vw); margin: 0 auto; box-shadow: var(--inv-tile-shadow); }
+  .qrtile img { display: block; width: 100%; height: auto; aspect-ratio: 1; }
+  .qrlime { color: var(--lime); font: 500 14px/1.3 var(--sans); margin: 16px 0 6px; }
+  .qrurl { font: 12px/1.3 var(--mono); color: var(--inv-dim); word-break: break-all; }
+  .qracts { display: flex; gap: 8px; justify-content: center; margin: 14px 0 10px; }
+  .qrb { appearance: none; border: 1px solid var(--inv-line); background: transparent; color: var(--inv-ink); border-radius: 999px; padding: 9px 16px; font: 500 13px/1 var(--sans); cursor: pointer; }
+  .qrb:hover { background: var(--inv-hover); }
+  .qrb.done { background: var(--lime); color: var(--lime-ink); border-color: var(--lime); }
+  .qrfine { font-size: 12px; color: var(--inv-fine); }
+  .qrx { position: absolute; right: 12px; top: 10px; appearance: none; border: 0; background: transparent; color: var(--inv-dim); font: 300 28px/1 var(--sans); cursor: pointer; padding: 4px 8px; }
+  .qrx:hover { color: var(--inv-ink); }
   body:has(.authwrap:not([hidden])) .bugopen { visibility: hidden; }
   .auth-card { width: 360px; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: 30px 24px 24px; text-align: center; box-shadow: var(--shadow); }
   .auth-ic { font-size: 28px; line-height: 1; margin-bottom: 14px; }
@@ -340,6 +397,63 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .cb-txt b { color: var(--ink); font-weight: 500; }
   .cb-ok { flex: none; background: var(--ink); border: 1px solid var(--ink); border-radius: 999px; padding: 10px 20px; font: 500 13px/1 var(--sans); color: var(--bg); cursor: pointer; }
   @media (max-width: 560px) { .cookiebar { flex-direction: column; align-items: stretch; } }
+
+  /* The people in the room (2026-10-09): who is here, a light while they speak, and THIS
+     listener's own mix of the room's voices. It is the video area when nobody shows a picture,
+     and sits under the pictures when someone does.
+     Redrawn the same evening (Ori): the list is for the meeting, not the music (mute two
+     people talking over the song, or follow one of 20 by soloing him), so it carries the host's
+     roster icons (studio.html personBtns), not the track mixer's S and M: microphone, camera,
+     screen, lit when that person has it on, crossed when the studio turned it off. The
+     MICROPHONE is the one control and cycles on each tap: solo (a lime ring, the row lit),
+     muted (red and crossed, as the roster's "off by you"; the name dimmed), normal. A lit
+     camera or screen shows that picture big. 36 px, not the roster's 22: they are touched. */
+  .vgrid[hidden], .people[hidden], .talkbtn[hidden] { display: none; }
+  .people { padding: 6px 16px 4px; background: var(--panel); }
+  .vgrid:not([hidden]) + .people { border-top: 1px solid var(--line); }
+  .vgrid.one { grid-template-columns: 1fr; }            /* one picture: the width, not half of it beside an empty half */
+  .pp-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 10px 0 6px; }
+  .pp-h b { font: 500 11px/1 var(--sans); text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
+  .pp-h span { font-size: 11px; color: var(--faint); text-align: right; }
+  .pp-row { display: flex; align-items: center; gap: 12px; margin: 0 -16px; padding: 6px 16px; }
+  .pp-row + .pp-row { border-top: 1px solid var(--soft); }
+  .pp-row.solo { background: color-mix(in srgb, var(--lime) 18%, transparent); }
+  .pp-lit { width: 10px; height: 10px; border-radius: 50%; flex: none; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); transition: background .12s linear; }
+  .pp-lit.on { background: var(--lime); box-shadow: 0 0 0 3px color-mix(in srgb, var(--lime) 35%, transparent); }
+  .pp-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 500; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pp-row.out .pp-name { color: var(--faint); }          /* not in what you hear: muted, or someone else soloed */
+  .pp-ic { display: inline-flex; gap: 8px; flex: none; }
+  /* Each icon in a slot of its own. With the Me row there, the microphone's and the camera's
+     slots are wide enough for its ▾ in every row, so each icon stands in one column down the
+     list (2026-10-09). */
+  .pp-slot { display: inline-flex; align-items: center; flex: none; width: 36px; }
+  #peopleRows.withme .pp-slot.w { width: 54px; }
+  .pp-dev { appearance: none; width: 18px; height: 36px; border: 0; background: transparent; color: var(--dim); padding: 0; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex: none; -webkit-tap-highlight-color: transparent; }
+  .pp-dev svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+  .pp-dev:hover { color: var(--ink); }
+  .pp-dev:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; border-radius: 6px; }
+  .pp-row.me + .pp-row { border-top-color: var(--line); }   /* you, then the room */
+  .pp-b { width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--soft); background: transparent; color: var(--faint); display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; flex: none; -webkit-tap-highlight-color: transparent; }
+  .pp-b svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+  .pp-b.live { background: var(--lime); color: var(--lime-ink); border-color: var(--line); }
+  /* Solo: a lime ring with a thin edge of the line colour, so it reads on the light theme's
+     cream as well as on the dark panel. */
+  .pp-b.solo { color: var(--ink); border-color: var(--line); box-shadow: 0 0 0 3px var(--lime), 0 0 0 4px var(--line); }
+  .pp-b.solo.live { color: var(--lime-ink); }
+  .pp-b.muted { background: transparent; color: var(--hot); border-color: var(--hot); }
+  .pp-b:disabled, .pp-b[aria-disabled="true"] { cursor: default; }
+  .pp-b:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .videowrap.zoom .people { display: none; }
+  /* The pictures fold under their header (2026-10-09). A picture made big from the people
+     list still shows while they are folded, and so does the Grid view. */
+  .videowrap > .panel-h { background: var(--panel); }
+  .videowrap:not(.vclosed) > .panel-h { border-bottom: 1px solid var(--line); }
+  .videowrap.vclosed .vgrid { display: none; }
+  .videowrap.vclosed .vgrid:has(.vcell.max) { display: grid; }
+  .videowrap.vclosed .vgrid:has(.vcell:fullscreen) { display: grid; }
+  .videowrap.vclosed .vgrid:has(.vcell:-webkit-full-screen) { display: grid; }
+  .videowrap.zoom .vgrid:not([hidden]) { display: grid; }
+  .videowrap.zoom > .panel-h { display: none; }
 
   /* Zoom view: every camera on one full-screen grid */
   .videowrap.zoom { position: fixed; inset: 0; z-index: 45; margin: 0; border: 0; border-radius: 0; display: flex; flex-direction: column; background: var(--bg); }
@@ -407,6 +521,12 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   .syncpanel .acts button { font: 500 13px/1 var(--sans); padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
   .syncpanel .acts button.go { background: var(--lime); color: var(--lime-ink); border-color: var(--lime); }
   .syncpanel .acts button:disabled { opacity: .5; cursor: default; }
+  .syncbtn.due { color: var(--hot); border-color: var(--hot); }
+  /* By ear: later (+) or sooner (−) than now, 1 or 5 ms at a time, kept (one value for both microphone states, 2026-10-09). */
+  .syncpanel .nudge { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--soft); }
+  .syncpanel .nudge .nl { font-size: 12px; color: var(--dim); margin-right: auto; }
+  .syncpanel .nudge button { font: 600 13px/1 var(--mono); width: 38px; height: 32px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; }
+  .syncpanel .nudge b { font: 600 13px/1 var(--mono); min-width: 92px; text-align: center; }
 
   .anbtn { display: flex; align-items: center; gap: 6px; width: 100%; background: none; border: 0; padding: 6px 0 10px; margin-top: 6px;
     font: 500 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); cursor: pointer; }
@@ -463,13 +583,14 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   /* the demo's own few lines */
   body.embed { padding: 0; background: transparent; }
   body.embed .card { border-radius: 0; border: 0; box-shadow: none; max-width: none; }
-  .pill.demo { color: var(--lime-ink); background: var(--lime); border-color: var(--lime); }
-  .try { font-size: 13px; color: var(--dim); margin: 0 0 14px; line-height: 1.5; }
-  .try b { color: var(--ink); font-weight: 500; }
   .loading .play { opacity: .6; }
-  .dfoot { margin-top: 18px; font-size: 12px; color: var(--dim); text-align: center; line-height: 1.6; }
-  .dfoot a { color: var(--blue); text-decoration: none; }
   .mx-row.off .mx-name { color: var(--faint); }
+  .mx-row { transition: box-shadow .4s ease; }
+  .mx-row.flash { box-shadow: inset 3px 0 0 var(--lime); }          /* the studio just moved this one */
+  .foot .dfoot { margin: 14px 0 0; font-size: 12px; color: var(--dim); }
+  .foot .dfoot a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+  .qrtile svg { display: block; width: 100%; height: auto; }
+  .inearph .lk.ok::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 6px; vertical-align: 1px; }
 </style>
 <script>// The theme: the device's own dark/bright setting, unless this person flipped it here
 // (remembered on this device only). Load in <head>, before the page paints:
@@ -506,7 +627,7 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
 })();
 </script>
 <script>
-  // Inside the sale page (?embed=1): paper, like the page around it, unless this person chose.
+  // Inside a page around it (?embed=1): paper, like the page, unless this person chose.
   try { if (/[?&]embed=1/.test(location.search) && !localStorage.getItem('sdaw-theme')) document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}
 </script>
 </head>
@@ -516,7 +637,6 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     <div class="hrow">
       <span class="wordmark" role="img" aria-label="StreamDAW"></span>
       <div class="hright">
-        <div class="pill demo" id="livePill">demo</div>
         <button class="theme-btn" type="button" title="Dark or bright" aria-label="Switch between dark and bright"></button>
       </div>
     </div>
@@ -525,7 +645,14 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     <div class="sesshead">
       <div class="sessleft">
         <div class="session">session <b>mama</b></div>
-        <div class="presenceline" id="presenceLine">KAYMA · “MAMA” · 8 sends from the session</div>
+        <div class="presenceline" id="presenceLine">Host: <b>KAYMA</b> · 8 tracks</div>
+      </div>
+      <div class="mediarow" id="mediaRow">
+        <span class="mgrp" id="gVol"><button class="mbtn" id="mVol" aria-label="Volume" aria-expanded="false" title="Volume"><svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12.5 5v14l-5-4.5H4z"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg></button></span>
+      </div>
+      <div class="volpop" id="volPop" hidden>
+        <div class="volfader" id="volFader"></div>
+        <output id="volOut">0.0 dB</output>
       </div>
     </div>
 
@@ -536,45 +663,61 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
           <div class="state" id="stateText">Ready</div>
           <div class="sub" id="fmtText">Earphones in, then press play</div>
         </div>
+        <span class="syncmode" id="syncMode" hidden title="Sync mode: every phone plays the same instant" aria-label="Sync mode"><svg viewBox="0 0 32 32"><rect x="3" y="5" width="11" height="22" rx="2.5"/><rect x="18" y="5" width="11" height="22" rx="2.5"/><path d="M21.5 12.5h-11M13 10l-2.5 2.5L13 15"/><path d="M10.5 19.5h11M19 17l2.5 2.5L19 22"/></svg><small>SYNC MODE</small></span>
       </div>
       <div class="vuband" id="vuBand"><canvas id="vuCanvas" aria-label="Level of what you hear"></canvas></div>
     </div>
 
-    <p class="try" id="tryLine"><b>Try it:</b> solo VOX, or more CLICK and less STRINGS. The S and M at the top do every track at once.</p>
-    <div class="mixer" id="mixer"></div>
+    <div class="inearph" id="statusRow" hidden>
+      <span class="k">LISTENING</span><span class="lt" id="phListen">0:00</span>
+      <span class="k">PLAYHEAD</span><span class="lt" id="phHead">0:00</span>
+      <span class="lk" id="phLock"></span>
+    </div>
 
-    <p class="dfoot">“MAMA” by KAYMA, from a real session, recorded for this page. In yours, it is your DAW, live:
-      <a href="streamdaw.html" target="_top">StreamDAW</a> · free on your master bus.</p>
+    <div class="mixer" id="mixer">
+      <button class="panel-h" id="mixerHead" type="button" aria-expanded="true" aria-controls="mixerBody"><span class="panel-t">Mixer</span><span class="panel-sum" id="mixerSum"></span><svg class="panel-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+      <div class="mx-body" id="mixerBody"></div>
+    </div>
+
+    <div class="foot">
+      <a class="ficon" id="qrLink" href="#" title="QR code" aria-label="QR code"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M17 21h4v-4M14 21v-3"/></svg></a>
+      <button class="ficon" id="shareBtn" title="Copy or share the link" aria-label="Share the link"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button>
+      <p class="dfoot">“MAMA” by KAYMA, a real session. Yours, live: <a href="streamdaw.html" target="_top">StreamDAW</a></p>
+    </div>
+    <div class="powered"><span class="mark" aria-hidden="true"></span><a href="https://snowstar.company" target="_blank" rel="noopener">powered by <b>snowstar.company</b></a></div>
+  </div>
+  <!-- The QR code, over the page: the invite card's look (dark leather, the wordmark, "You're
+       invited"). In a studio's room it carries the room, so a friend's phone joins it too. -->
+  <div class="qrsheet" id="qrSheet" hidden role="dialog" aria-modal="true" aria-label="Scan to join">
+    <div class="qrcard">
+      <button class="qrx" id="qrClose" aria-label="Close">&times;</button>
+      <span class="wordmark qrwm" role="img" aria-label="StreamDAW"></span>
+      <div class="qrh">You're invited</div>
+      <div class="qrs">to <b>mama</b>, a remote studio session</div>
+      <div class="qrtile" id="qrTile"></div>
+      <div class="qrlime">Listen live · in time · in your own mix</div>
+      <div class="qrurl" id="qrUrl"></div>
+      <div class="qracts"><button class="qrb" id="qrCopy">Copy link</button><button class="qrb" id="qrShare" hidden>Share</button></div>
+      <div class="qrfine">Point a phone camera at it. Nothing to install.</div>
+    </div>
   </div>
 </div>
-<script>// Two analog VU meters on one canvas: the listener page, the control page, the site's demo.
-//
-// Backlit faces, a real VU scale (linear in voltage: -20 sits near the stop, 0 VU two thirds
-// across), needles on a damped spring that rise fast and fall slowly, and a peak lamp at
-// -1 dBFS. 0 VU = -4 dBFS of peak, so a mastered mix swings around the red.
-//
-// Light on the page (2026-10-08, after a dropout that came with a video starting): everything
-// that does not move (bezels, faces, scales, glass, lamps) is drawn once per size and theme
-// into layers; a frame is two images, two needles and two lamps, at most 30 a second, only
-// while a needle moves, and never while the page is hidden.
-//
-//   const m = SdawVU.create(canvas);  m.feed(peakL, peakR);  m.pose(l, r, peak);  m.redraw();
-(function () {
+<script>(function () {
   'use strict';
   const REF = -4;
   const toDb = (v) => (v > 0 ? 20 * Math.log10(v) : -120);
   const needleAt = (db) => Math.min(1.06, Math.pow(10, (db - REF) / 20) / Math.pow(10, 3 / 20));   // 0..1 = rest..+3 VU
-  const isDark = () => {
-    const t = document.documentElement.getAttribute('data-theme');
+  const isDark = (el) => {
+    const sc = el && el.closest ? el.closest('[data-theme]') : null;
+    const t = sc ? sc.getAttribute('data-theme') : document.documentElement.getAttribute('data-theme');
     return t ? t === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
   };
   const PAL = {
-    dark:  { f0: '#f7e2a6', f1: '#d9b866', glow: 'rgba(255,214,120,.55)', ink: '#2b2416', bez0: '#3a3833', bez1: '#0e0d0b' },
-    light: { f0: '#fbf5e4', f1: '#e7dcbd', glow: 'rgba(255,246,214,.6)', ink: '#2b2416', bez0: '#4a4741', bez1: '#15140f' },
+    dark:  { f0: '#f7e2a6', f1: '#d9b866', glow: 'rgba(255,214,120,.55)', vig: 'rgba(60,40,10,.28)', ink: '#2b2416', red: '#c4271f', lamp: [255, 59, 47], lampHi: '#ffd1c7', lampOff: ['#7a2a24', '#2b0f0d'], bez0: '#3a3833', bez1: '#0e0d0b' },
+    light: { f0: '#fbf5e4', f1: '#e7dcbd', glow: 'rgba(255,246,214,.6)', vig: 'rgba(60,40,10,.28)', ink: '#2b2416', red: '#c4271f', lamp: [255, 59, 47], lampHi: '#ffd1c7', lampOff: ['#7a2a24', '#2b0f0d'], bez0: '#4a4741', bez1: '#15140f' },
   };
   const all = new Set();
 
-  // The geometry of one meter, shared by the layers and the needle.
   function geo(x0, w, h) {
     const fx = x0 + 6, fy = 7, fw = w - 12, fh = h - 16;
     const cx = fx + fw / 2, cy = fy + fh * 1.45, R = Math.min(fh * 1.25, fw * 0.55), A = 42 * Math.PI / 180;
@@ -593,18 +736,18 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     g.fillStyle = face; g.fillRect(fx, fy, fw, fh);
     const glow = g.createRadialGradient(fx + fw / 2, fy + fh * 0.9, 4, fx + fw / 2, fy + fh * 0.9, fw * 0.7); glow.addColorStop(0, pal.glow); glow.addColorStop(1, 'rgba(255,255,255,0)');
     g.fillStyle = glow; g.fillRect(fx, fy, fw, fh);
-    const vig = g.createRadialGradient(fx + fw / 2, fy + fh / 2, fh * 0.2, fx + fw / 2, fy + fh / 2, fw * 0.75); vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(60,40,10,.28)');
+    const vig = g.createRadialGradient(fx + fw / 2, fy + fh / 2, fh * 0.2, fx + fw / 2, fy + fh / 2, fw * 0.75); vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, pal.vig);
     g.fillStyle = vig; g.fillRect(fx, fy, fw, fh);
     const at = (vuDb) => needleAt(vuDb + REF);
     g.lineWidth = 1.2; g.strokeStyle = pal.ink;
     g.beginPath(); g.arc(cx, cy, R, ang(at(-20)), ang(at(0))); g.stroke();
-    g.strokeStyle = '#c4271f'; g.lineWidth = 3.2; g.beginPath(); g.arc(cx, cy, R + 1.5, ang(at(0)), ang(1)); g.stroke();
+    g.strokeStyle = pal.red; g.lineWidth = 3.2; g.beginPath(); g.arc(cx, cy, R + 1.5, ang(at(0)), ang(1)); g.stroke();
     g.font = '600 ' + Math.max(7, Math.round(fh * 0.13)) + 'px ui-sans-serif, -apple-system, Helvetica, Arial'; g.textAlign = 'center'; g.textBaseline = 'middle';
     for (const [d, lab] of [[-20, '20'], [-10, '10'], [-7, ''], [-5, '5'], [-3, '3'], [-2, ''], [-1, ''], [0, '0'], [1, ''], [2, ''], [3, '+3']]) {
       const t = ang(at(d)), big = lab !== '', c = Math.cos(t), sn = Math.sin(t);
-      g.strokeStyle = d > 0 ? '#c4271f' : pal.ink; g.lineWidth = big ? 1.3 : 1;
+      g.strokeStyle = d > 0 ? pal.red : pal.ink; g.lineWidth = big ? 1.3 : 1;
       g.beginPath(); g.moveTo(cx + c * R, cy + sn * R); g.lineTo(cx + c * (R + (big ? 6 : 4)), cy + sn * (R + (big ? 6 : 4))); g.stroke();
-      if (big && fw > 100) { g.fillStyle = d > 0 ? '#c4271f' : pal.ink; g.fillText(lab, cx + c * (R + 13), cy + sn * (R + 13)); }
+      if (big && fw > 100) { g.fillStyle = d > 0 ? pal.red : pal.ink; g.fillText(lab, cx + c * (R + 13), cy + sn * (R + 13)); }
     }
     g.fillStyle = pal.ink; g.font = 'italic 700 ' + Math.max(9, Math.round(fh * 0.2)) + 'px Georgia, "Times New Roman", serif';
     g.fillText('VU', cx, fy + fh * 0.8);
@@ -621,30 +764,32 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     g.fillStyle = gl; g.beginPath(); g.moveTo(fx, fy); g.lineTo(fx + fw, fy); g.lineTo(fx + fw, fy + fh * 0.32); g.quadraticCurveTo(fx + fw / 2, fy + fh * 0.5, fx, fy + fh * 0.32); g.closePath(); g.fill();
     g.restore();
   }
-  function lamp(on, dpr) {
+  function lamp(on, dpr, pal) {
     const c = document.createElement('canvas'), s = Math.ceil(18 * dpr); c.width = c.height = s;
     const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (on) { const halo = g.createRadialGradient(9, 9, 1, 9, 9, 9); halo.addColorStop(0, 'rgba(255,59,47,.6)'); halo.addColorStop(1, 'rgba(255,59,47,0)'); g.fillStyle = halo; g.fillRect(0, 0, 18, 18); }
-    const l = g.createRadialGradient(8, 8, 0.5, 9, 9, 4); l.addColorStop(0, on ? '#ffd1c7' : '#7a2a24'); l.addColorStop(1, on ? '#ff3b2f' : '#2b0f0d');
+    const rgb = pal.lamp.join(',');
+    if (on) { const halo = g.createRadialGradient(9, 9, 1, 9, 9, 9); halo.addColorStop(0, 'rgba(' + rgb + ',.6)'); halo.addColorStop(1, 'rgba(' + rgb + ',0)'); g.fillStyle = halo; g.fillRect(0, 0, 18, 18); }
+    const l = g.createRadialGradient(8, 8, 0.5, 9, 9, 4); l.addColorStop(0, on ? pal.lampHi : pal.lampOff[0]); l.addColorStop(1, on ? 'rgb(' + rgb + ')' : pal.lampOff[1]);
     g.fillStyle = l; g.beginPath(); g.arc(9, 9, 3.2, 0, 2 * Math.PI); g.fill();
     return c;
   }
 
-  function create(cv) {
+  function create(cv, o) {
+    const P = { dark: { ...PAL.dark, ...((o && o.pal && o.pal.dark) || {}) }, light: { ...PAL.light, ...((o && o.pal && o.pal.light) || {}) } };
     const s = { tl: 0, tr: 0, xl: 0, xr: 0, vl: 0, vr: 0, pkl: -1e9, pkr: -1e9, at: 0, last: 0, drawn: 0, running: false, L: null, key: '' };
     function layers() {
       const dpr = Math.min(3, window.devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight;
       if (!W || !H) return null;
-      const dark = isDark(), key = [W, H, dpr, dark].join();
+      const dark = isDark(cv), key = [W, H, dpr, dark].join();
       if (s.L && s.key === key) return s.L;
       if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
-      const pal = dark ? PAL.dark : PAL.light, gap = 10, mw = (W - gap) / 2;
+      const pal = dark ? P.dark : P.light, gap = 10, mw = (W - gap) / 2;
       const ms = [geo(0, mw, H), geo(mw + gap, mw, H)];
       const mk = () => { const c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); return [c, g]; };
       const [bg, gb] = mk(), [fg, gf] = mk();
       paintBack(gb, ms[0], 'L', pal); paintBack(gb, ms[1], 'R', pal);
       paintFront(gf, ms[0]); paintFront(gf, ms[1]);
-      s.L = { bg, fg, ms, dpr, W, H, on: lamp(true, dpr), off: lamp(false, dpr) }; s.key = key;
+      s.L = { bg, fg, ms, dpr, W, H, on: lamp(true, dpr, pal), off: lamp(false, dpr, pal) }; s.key = key;
       return s.L;
     }
     function draw() {
@@ -670,7 +815,6 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
       const tl = fresh ? needleAt(toDb(s.tl)) : 0, tr = fresh ? needleAt(toDb(s.tr)) : 0;
       s.tl *= 0.6; s.tr *= 0.6;
       for (const [t, x, v] of [[tl, 'xl', 'vl'], [tr, 'xr', 'vr']]) {
-        // a damped spring: quick up (about 5 Hz), slow down (about 1.6 Hz), as a VU's needle
         const w = 2 * Math.PI * (t > s[x] ? 5 : 1.6), K = w * w, C = 1.8 * w;
         for (let i = 0; i < 2; i++) { const hh = dt / 2; s[v] += (K * (t - s[x]) - C * s[v]) * hh; s[x] = Math.max(-0.02, Math.min(1.08, s[x] + s[v] * hh)); }
       }
@@ -700,25 +844,519 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   window.SdawVU = { create, toDb, needleAt };
 })();
 </script>
+<script>(function () {
+  'use strict';
+  if (window.SdawFader) return;
+
+  const pos = (d) => (d <= -60 ? 0 : d >= -18 ? 0.55 + (d + 18) / 18 * 0.45 : (d + 60) / 42 * 0.55);
+  const unpos = (p) => (p <= 0 ? -Infinity : p >= 0.55 ? (p - 0.55) / 0.45 * 18 - 18 : p / 0.55 * 42 - 60);
+  const toDb = (v) => (v > 0 ? 20 * Math.log10(v) : -Infinity);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const topOf = (max) => pos(toDb(max));
+  function xOf(v, max) { max = max > 0 ? max : 1; return v > 0 ? clamp(pos(toDb(Math.min(v, max))) / topOf(max), 0, 1) : 0; }
+  function valueAt(x, max) {
+    max = max > 0 ? max : 1;
+    if (!(x > 0.004)) return 0;
+    if (x >= 1) return max;
+    return Math.min(max, Math.pow(10, unpos(x * topOf(max)) / 20));
+  }
+  function dbText(v) {
+    if (!(v > 0.00001)) return '−∞ dB';
+    const d = toDb(v);
+    return Math.abs(d) < 0.05 ? '0.0 dB' : (d > 0 ? '+' : '−') + Math.abs(d).toFixed(1) + ' dB';
+  }
+  function panText(v) { const n = Math.round(v * 100); return n === 0 ? 'C' : (n < 0 ? 'L ' : 'R ') + Math.abs(n); }
+  function panWords(v) { const n = Math.round(v * 100); return n === 0 ? 'centre' : (n < 0 ? 'left ' : 'right ') + Math.abs(n); }
+
+  const isDark = () => {
+    const t = document.documentElement.getAttribute('data-theme');
+    return t ? t === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+  };
+  const coarse = () => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } };
+  function readPal(el) {
+    const cs = getComputedStyle(el);
+    const v = (n, d) => { const s = cs.getPropertyValue(n); return (s && s.trim()) || d; };
+    const num = (s, d) => { const n = parseFloat(s); return isFinite(n) ? n : d; };
+    const fd = v('--fader-dark', ''), dark = fd ? fd === '1' : isDark();
+    return {
+      dark,
+      seg: [v('--vu-g', '#44d36e'), v('--vu-y', '#f4c430'), v('--vu-r', '#ff4b4b')],
+      off: num(v('--vu-off', '.12'), 0.12), glow: num(v('--vu-glow', '4'), 4),
+      hi: v('--vu-hi', '#1d1c18'), lo: v('--vu-lo', '#0c0b09'), ink: v('--vu-ink', '232, 226, 207'),
+      cap: v('--fader-cap', '') || v('--ink', '#f3eddc'),
+      hot: v('--fader-hot', '') || v('--lime', '#c8f23a'),
+      arc: v('--fader-arc', '') || (dark ? v('--lime', '#c8f23a') : v('--ink', '#16140f')),
+      text: v('--ink', '#f3eddc'), k0: v('--field', '#15140f'), k1: v('--panel2', '#26241e'),
+    };
+  }
+
+  function css() {
+    if (document.getElementById('sdaw-fader-css')) return;
+    const s = document.createElement('style'); s.id = 'sdaw-fader-css';
+    s.textContent =
+      '.sdf,.sdk{position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;outline:none}' +
+      '.sdf{cursor:pointer;border-radius:999px}.sdk{cursor:grab;border-radius:50%}.sdf.sd-act,.sdk.sd-act{cursor:grabbing}' +
+      '.sdf>canvas,.sdk>canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none}' +
+      '.sdf>input.sd-in[type=range],.sdk>input.sd-in[type=range]{position:absolute;left:0;top:0;width:100%;height:100%;margin:0;padding:0;border:0;' +
+        'opacity:0;pointer-events:none;-webkit-appearance:none;appearance:none;background:none}' +
+      '.sd-tip{position:absolute;left:50%;bottom:100%;transform:translate(-50%,-3px);padding:3px 7px;border-radius:999px;background:var(--ink);' +
+        'color:var(--bg);font:500 11px/1.25 var(--mono,ui-monospace,Menlo,monospace);white-space:nowrap;pointer-events:none;z-index:6}' +
+      '.sd-tip[hidden]{display:none}' +
+      '.sdf.sd-off{cursor:default}.sdk.sd-off{cursor:default;opacity:.28}' +
+      '.sdf.sd-focus:not(.sd-act),.sdk.sd-focus:not(.sd-act){outline:2px solid var(--ink);outline-offset:2px}';
+    (document.head || document.documentElement).appendChild(s);
+  }
+  const live = new Set(), dirty = new Set(), byEl = new WeakMap();
+  let raf = 0;
+  function want(i) { dirty.add(i); if (!raf) raf = requestAnimationFrame(flush); }
+  function flush() { raf = 0; const list = [...dirty]; dirty.clear(); for (const i of list) if (!i.dead) i.paint(); }
+  const ro = typeof ResizeObserver === 'function'
+    ? new ResizeObserver((es) => { for (const e of es) { const i = byEl.get(e.target); if (i && !i.dead) want(i); } }) : null;
+  function retheme() { for (const i of live) { i.pal = null; i.bg = null; want(i); } }
+  window.addEventListener('sdawtheme', retheme);
+  try { const mq = matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', retheme); } catch (e) {}
+
+  function rrect(g, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+  }
+  function disc(g, x, y, r) { g.beginPath(); g.arc(x, y, Math.max(0.1, r), 0, Math.PI * 2); }
+
+  class Ctl {
+    constructor(el, o, kind) {
+      css();
+      const old = byEl.get(el); if (old) old.destroy();
+      this.el = el; this.o = o; this.kind = kind; this.dead = false; this.act = false; this.drag = null;
+      this.pal = null; this.bg = null; this.W = 0; this.H = 0; this.dpr = 0; this.ls = [];
+      el.classList.add(kind);
+      this.cv = document.createElement('canvas'); this.cv.setAttribute('aria-hidden', 'true');
+      const inp = this.input = document.createElement('input');
+      inp.type = 'range'; inp.className = 'sd-in' + (o.inputClass ? ' ' + o.inputClass : '');
+      if (o.inputId) inp.id = o.inputId;
+      inp.setAttribute('aria-label', o.label || (kind === 'sdf' ? 'Volume' : 'Pan'));
+      this.tip = document.createElement('div'); this.tip.className = 'sd-tip'; this.tip.hidden = true; this.tip.setAttribute('aria-hidden', 'true');
+      el.append(this.cv, inp, this.tip);
+      byEl.set(el, this); live.add(this); if (ro) ro.observe(el);
+      this.on(el, 'pointerdown', (e) => this.down(e));
+      this.on(el, 'pointermove', (e) => this.move(e));
+      this.on(el, 'pointerup', (e) => this.up(e, false));
+      this.on(el, 'pointercancel', (e) => this.up(e, true));
+      this.on(el, 'touchmove', (e) => { if (this.drag && this.drag.on && e.cancelable) e.preventDefault(); }, { passive: false });
+      this.on(el, 'dblclick', (e) => { e.preventDefault(); this.home(); });
+      this.on(el, 'contextmenu', (e) => { if (this.drag) e.preventDefault(); });
+      this.on(inp, 'keydown', (e) => { if (/^(Arrow|Page|Home|End)/.test(e.key)) el.classList.add('sd-focus'); this.key(e); });
+      this.on(inp, 'input', () => this.fromInput());
+      this.on(inp, 'focus', () => { let fv = !this.ptrFocus; if (fv) try { fv = inp.matches(':focus-visible'); } catch (e) {} this.ptrFocus = false; el.classList.toggle('sd-focus', fv); });
+      this.on(inp, 'blur', () => el.classList.remove('sd-focus'));
+    }
+    on(t, ty, fn, op) { t.addEventListener(ty, fn, op); this.ls.push([t, ty, fn, op]); }
+    get value() { return this.v; }
+    setValue(v, force) { if (this.drag && this.drag.on && !force) return; this.v = this.clampV(+v || 0); this.write(); want(this); }
+    emit(final) { if (this.o.onInput) this.o.onInput(this.v, !!final); }
+    set(v, final) {
+      v = this.clampV(v);
+      const ch = v !== this.v; this.v = v;
+      if (ch) { this.write(); want(this); }
+      if (ch || final) this.emit(final);
+    }
+    home() { if (this.disabled) return; this.set(this.homeV(), true); if (this.o.onDouble) this.o.onDouble(this.v); }
+    setDisabled(b) {
+      b = !!b; if (!!this.disabled === b) return;
+      this.disabled = b; this.input.disabled = b; this.el.classList.toggle('sd-off', b);
+      if (b && this.drag) { this.drag = null; this.active(false); }
+      want(this);
+    }
+    tapped(e) {
+      const now = performance.now(), t = this.lastTap;
+      if (t && now - t.t < 350 && Math.hypot(e.clientX - t.x, e.clientY - t.y) < 30) { this.lastTap = null; this.home(); }
+      else this.lastTap = { t: now, x: e.clientX, y: e.clientY };
+    }
+    active(on) {
+      if (this.act === on) return;
+      this.act = on; this.el.classList.toggle('sd-act', on);
+      this.tip.hidden = !on; if (on) this.tipSync();
+      want(this);
+    }
+    size() {
+      const W = this.el.clientWidth, H = this.el.clientHeight;
+      if (!W || !H) return false;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      if (W !== this.W || H !== this.H || dpr !== this.dpr) {
+        this.W = W; this.H = H; this.dpr = dpr; this.bg = null;
+        this.cv.width = Math.round(W * dpr); this.cv.height = Math.round(H * dpr);
+        this.layout();
+      }
+      if (!this.pal) { this.pal = readPal(this.el); this.bg = null; }
+      return true;
+    }
+    layout() {}
+    redraw() { this.pal = null; this.bg = null; if (!this.dead) this.paint(); }
+    destroy() {
+      if (this.dead) return;
+      this.dead = true;
+      for (const [t, ty, fn, op] of this.ls) t.removeEventListener(ty, fn, op);
+      this.ls = []; clearTimeout(this.holdT); clearTimeout(this.whT);
+      if (this.anim) cancelAnimationFrame(this.anim);
+      if (ro) ro.unobserve(this.el);
+      live.delete(this); dirty.delete(this);
+      if (byEl.get(this.el) === this) byEl.delete(this.el);
+      this.cv.remove(); this.input.remove(); this.tip.remove();
+      this.el.classList.remove(this.kind, 'sd-act', 'sd-focus', 'sd-held');
+    }
+  }
+
+  class Fader extends Ctl {
+    constructor(el, o) {
+      super(el, o, 'sdf');
+      this.vert = o.orientation === 'v';
+      this.max = o.max > 0 ? +o.max : 1;
+      this.unity = o.unity > 0 ? Math.min(+o.unity, this.max) : Math.min(1, this.max);
+      el.style.touchAction = this.vert ? 'pan-x' : 'pan-y';
+      const inp = this.input;
+      inp.min = '0'; inp.max = String(Math.round(this.max * 100)); inp.step = 'any';   // the value in % of gain: '50' = 0.5
+      if (this.vert) inp.setAttribute('aria-orientation', 'vertical');
+      this.lv = [0, 0]; this.pk = [{ p: 0, at: 0 }, { p: 0, at: 0 }]; this.lt = 0; this.shown = null;
+      this.v = this.clampV(o.value != null ? +o.value : this.unity);
+      this.write(); want(this);
+    }
+    clampV(v) { return clamp(isFinite(v) ? v : 0, 0, this.max); }
+    homeV() { return this.unity; }
+    layout() {
+      const Lg = this.vert ? this.H : this.W, T = this.vert ? this.W : this.H;
+      const R = Math.max(6, Math.min(11, T / 2 - 2));                 // the thumb
+      const a0 = R + 1, a1 = Math.max(a0 + 1, Lg - R - 1), span = a1 - a0;
+      const tt = Math.max(8, Math.min(T - 4, Math.round(R * 1.5)));  // the track's thickness
+      const gap = tt >= 14 ? 2 : 1, pad = 2, bh = (tt - 2 * pad - gap) / 2, c = T / 2;
+      const N = clamp(Math.round(span / 5), 12, 120);                 // segments of about 5 px (the desk's are 4.75)
+      this.g = { Lg, T, R, a0, a1, span, tt, gap, pad, bh, c, N, top: c - tt / 2, yL: c - gap / 2 - bh, yR: c + gap / 2 };
+      const top = topOf(this.max);
+      this.segCol = new Uint8Array(N);
+      for (let k = 0; k < N; k++) { const d = unpos((k + 0.5) / N * top); this.segCol[k] = d > -6 ? 2 : d > -18 ? 1 : 0; }
+    }
+    geom() {
+      if (!this.size()) return null;
+      const g = this.g;
+      return { vert: this.vert, a0: g.a0, a1: g.a1, span: g.span, R: g.R, thumb: this.thumbAt(), segments: g.N,
+               yL: g.yL + g.bh / 2, yR: g.yR + g.bh / 2, lit: this.shown ? this.shown.slice(0, 4) : null };
+    }
+    setLevels(l, r) {
+      const now = performance.now(), dt = this.lt ? Math.min(0.5, (now - this.lt) / 1000) : 0;
+      this.lt = now;
+      const top = topOf(this.max);
+      for (let ch = 0; ch < 2; ch++) {
+        const lin = ch ? (r == null ? l : r) : l, pk = this.pk[ch];
+        const p = lin > 0 ? clamp(pos(toDb(lin)) / top, 0, 1) : 0;
+        this.lv[ch] = p;
+        if (p >= pk.p) { pk.p = p; pk.at = now; }
+        else if (now - pk.at > 1500) pk.p = Math.max(p, pk.p - dt * 0.5);
+      }
+      const s = this.state(), o = this.shown;
+      if (!o || s[0] !== o[0] || s[1] !== o[1] || s[2] !== o[2] || s[3] !== o[3]) want(this);
+    }
+    state() {
+      const N = this.g ? this.g.N : 40;
+      const seg = (p) => Math.round(p * N), pk = (p) => (p > 0.001 ? Math.max(0, Math.round(p * N) - 1) : -1);
+      return [seg(this.lv[0]), seg(this.lv[1]), pk(this.pk[0].p), pk(this.pk[1].p)];
+    }
+    thumbAt() { const g = this.g; return g ? g.a0 + xOf(this.v, this.max) * g.span : 0; }
+    write() {
+      const inp = this.input, s = String(Math.round(this.v * 10000) / 100), t = dbText(this.v);
+      if (inp.value !== s) inp.value = s;
+      inp.setAttribute('aria-valuetext', t);
+      this.el.title = (this.o.label || 'Volume') + ' ' + t + ' · double-' + (coarse() ? 'tap' : 'click') + ' for ' + dbText(this.unity);
+      if (this.act) this.tipSync();
+    }
+    tipSync() {
+      this.tip.textContent = dbText(this.v);
+      if (this.vert) { this.tip.style.left = '50%'; this.tip.style.bottom = '100%'; }
+      else if (this.g) this.tip.style.left = Math.round(this.thumbAt()) + 'px';
+    }
+    frame(g) { g.setTransform(this.dpr, 0, 0, this.dpr, 0, 0); if (this.vert) { g.translate(0, this.H); g.rotate(-Math.PI / 2); } }
+    paintBg() {
+      const b = document.createElement('canvas'); b.width = this.cv.width; b.height = this.cv.height;
+      const cx = b.getContext('2d'), g = this.g, P = this.pal, dpr = this.dpr;
+      this.frame(cx);
+      const x0 = Math.max(0.5, g.a0 - 6), x1 = Math.min(g.Lg - 0.5, g.a1 + 6), y0 = g.top;
+      rrect(cx, x0, y0, x1 - x0, g.tt, g.tt / 2);
+      const grd = cx.createLinearGradient(0, y0, 0, y0 + g.tt); grd.addColorStop(0, P.lo); grd.addColorStop(1, P.hi);
+      cx.fillStyle = grd; cx.fill();
+      cx.save(); rrect(cx, x0, y0, x1 - x0, g.tt, g.tt / 2); cx.clip();                    // a recessed slot: shadow under the top lip
+      cx.shadowColor = 'rgba(0,0,0,' + (P.dark ? 0.75 : 0.22) + ')'; cx.shadowBlur = 3 * dpr; cx.shadowOffsetY = 1 * dpr;
+      cx.strokeStyle = '#000'; cx.lineWidth = 3; rrect(cx, x0 - 1.5, y0 - 1.5, x1 - x0 + 3, g.tt + 3, g.tt / 2 + 1.5); cx.stroke();
+      cx.restore();
+      cx.strokeStyle = 'rgba(' + P.ink + ',' + (P.dark ? 0.12 : 0.22) + ')'; cx.lineWidth = 1;
+      rrect(cx, x0, y0, x1 - x0, g.tt, g.tt / 2); cx.stroke();
+      const pitch = g.span / g.N, sw = Math.max(1, pitch - (pitch >= 3 ? 1 : 0.6)), paths = [new Path2D(), new Path2D(), new Path2D()];
+      for (const y of [g.yL, g.yR]) for (let k = 0; k < g.N; k++) paths[this.segCol[k]].rect(g.a0 + k * pitch + (pitch - sw) / 2, y, sw, g.bh);
+      cx.globalAlpha = P.off;
+      for (let ci = 0; ci < 3; ci++) { cx.fillStyle = P.seg[ci]; cx.fill(paths[ci]); }
+      cx.globalAlpha = 1;
+      const au = g.a0 + xOf(this.unity, this.max) * g.span;                                  // unity: a notch above and below
+      cx.strokeStyle = 'rgba(' + P.ink + ',.6)'; cx.lineWidth = 1.5; cx.lineCap = 'round';
+      cx.beginPath(); cx.moveTo(au, y0 - 4.5); cx.lineTo(au, y0 - 1.5); cx.moveTo(au, y0 + g.tt + 1.5); cx.lineTo(au, y0 + g.tt + 4.5); cx.stroke();
+      return b;
+    }
+    paint() {
+      if (!this.size()) return;
+      const g = this.g, P = this.pal, dpr = this.dpr, cx = this.cv.getContext('2d');
+      if (!this.bg) this.bg = this.paintBg();
+      cx.setTransform(1, 0, 0, 1, 0, 0); cx.clearRect(0, 0, this.cv.width, this.cv.height); cx.drawImage(this.bg, 0, 0);
+      this.frame(cx);
+      const st = this.shown = this.state();
+      const pitch = g.span / g.N, sw = Math.max(1, pitch - (pitch >= 3 ? 1 : 0.6));
+      const paths = [new Path2D(), new Path2D(), new Path2D()], used = [0, 0, 0];
+      for (let ch = 0; ch < 2; ch++) {
+        const lit = st[ch], pk = st[2 + ch], y = ch ? g.yR : g.yL;
+        for (let k = 0; k < g.N; k++) {
+          if (k < lit || k === pk) { const ci = this.segCol[k]; paths[ci].rect(g.a0 + k * pitch + (pitch - sw) / 2, y, sw, g.bh); used[ci] = 1; }
+        }
+      }
+      for (let ci = 0; ci < 3; ci++) {
+        if (!used[ci]) continue;
+        cx.fillStyle = P.seg[ci]; cx.shadowColor = P.seg[ci]; cx.shadowBlur = P.glow * dpr; cx.fill(paths[ci]);
+      }
+      cx.shadowBlur = 0; cx.shadowColor = 'transparent';
+      if (!this.disabled) this.paintThumb(cx);       // no thumb: a meter alone (the control page's rows a mix does not have)
+    }
+    paintThumb(cx) {
+      const g = this.g, P = this.pal, dpr = this.dpr, at = this.thumbAt(), c = g.c, R = g.R;
+      cx.save();
+      if (this.act) {                                                // held: a glow in its own colour
+        cx.shadowColor = P.hot; cx.shadowBlur = 12 * dpr; cx.globalAlpha = P.dark ? 0.5 : 0.8; cx.fillStyle = P.hot;
+        disc(cx, at, c, R + 2); cx.fill(); cx.globalAlpha = 1;
+      }
+      cx.shadowColor = 'rgba(0,0,0,' + (P.dark ? 0.6 : 0.35) + ')'; cx.shadowBlur = 4 * dpr; cx.shadowOffsetY = 1 * dpr;
+      cx.fillStyle = P.cap; disc(cx, at, c, R); cx.fill();
+      cx.shadowColor = 'transparent'; cx.shadowBlur = 0; cx.shadowOffsetY = 0;
+      const hl = cx.createRadialGradient(at - R * 0.35, c - R * 0.45, 0.5, at, c, R);
+      hl.addColorStop(0, 'rgba(255,255,255,.55)'); hl.addColorStop(0.6, 'rgba(255,255,255,.08)'); hl.addColorStop(1, 'rgba(255,255,255,0)');
+      cx.fillStyle = hl; disc(cx, at, c, R); cx.fill();
+      cx.strokeStyle = 'rgba(0,0,0,.28)'; cx.lineWidth = 1; disc(cx, at, c, R - 0.5); cx.stroke();
+      cx.strokeStyle = P.dark ? 'rgba(0,0,0,.6)' : 'rgba(255,255,255,.85)'; cx.lineWidth = 1.5; cx.lineCap = 'round';   // the exact place
+      cx.beginPath(); cx.moveTo(at, c - R * 0.5); cx.lineTo(at, c + R * 0.5); cx.stroke();
+      cx.restore();
+    }
+    along(e) { const r = this.el.getBoundingClientRect(); return this.vert ? r.bottom - e.clientY : e.clientX - r.left; }
+    setAlong(a, final) { const g = this.g; if (g) this.set(valueAt((a - g.a0) / g.span, this.max), final); }
+    down(e) {
+      if (this.disabled || this.drag || (e.pointerType === 'mouse' && e.button !== 0) || !this.size()) return;
+      const touch = e.pointerType === 'touch', a = this.along(e), at = this.thumbAt();
+      const d = this.drag = { id: e.pointerId, touch, x0: e.clientX, y0: e.clientY, a0: a, t0: performance.now(), on: false, off: 0 };
+      if (touch) return;                     // a finger: wait to see which way it goes (a vertical one is the page scrolling)
+      e.preventDefault();
+      try { this.el.setPointerCapture(e.pointerId); } catch (err) {}
+      this.ptrFocus = true; try { this.input.focus({ preventScroll: true }); } catch (err) {} this.ptrFocus = false;
+      d.on = true; this.active(true);
+      if (Math.abs(a - at) <= this.g.R + 2) d.off = at - a;   // on the thumb: it stays where it was under the pointer
+      else this.setAlong(a, false);                           // on the track: it goes there
+    }
+    move(e) {
+      const d = this.drag; if (!d || e.pointerId !== d.id) return;
+      if (!d.on) {
+        const dx = e.clientX - d.x0, dy = e.clientY - d.y0, al = this.vert ? -dy : dx, ac = this.vert ? dx : dy;
+        if (Math.abs(ac) > 8 && Math.abs(ac) >= Math.abs(al)) { this.drag = null; return; }
+        if (Math.abs(al) < 5) return;
+        d.on = true; d.off = this.thumbAt() - d.a0; this.active(true);   // a finger moves the thumb by its own travel, from anywhere
+      }
+      this.setAlong(this.along(e) + d.off, false);
+    }
+    up(e, cancel) {
+      const d = this.drag; if (!d || e.pointerId !== d.id) return;
+      this.drag = null;
+      if (d.on) { this.active(false); this.emit(true); }
+      else if (d.touch && !cancel && performance.now() - d.t0 < 300 && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 10) this.tapped(e);
+    }
+    key(e) {
+      const k = e.key, x = xOf(this.v, this.max), st = e.shiftKey ? 0.005 : 0.025;   // ~1 dB a press near the top
+      let v;
+      if (k === 'ArrowRight' || k === 'ArrowUp') v = valueAt(Math.max(x + st, 0.005), this.max);
+      else if (k === 'ArrowLeft' || k === 'ArrowDown') v = valueAt(x - st, this.max);
+      else if (k === 'PageUp') v = valueAt(x + 0.125, this.max);
+      else if (k === 'PageDown') v = valueAt(x - 0.125, this.max);
+      else if (k === 'Home') v = this.unity;
+      else if (k === 'End') v = this.max;
+      else return;
+      e.preventDefault(); this.set(v, true);
+    }
+    fromInput() { this.v = this.clampV((+this.input.value || 0) / 100); this.write(); want(this); this.emit(true); }
+  }
+
+  const HOLD_MS = 200, TOUCH_PX = 120, MOUSE_PX = 150;   // a finger: 120 px from centre to one side; a mouse: 150 px
+  class Knob extends Ctl {
+    constructor(el, o) {
+      super(el, o, 'sdk');
+      this.detent = o.detent != null ? +o.detent : 0.08;      // the sticky centre (the slider's ±8 of 100)
+      el.style.touchAction = 'pan-y';
+      const inp = this.input; inp.min = '-100'; inp.max = '100'; inp.step = '1';
+      this.v = this.clampV(+o.value || 0); this.pulse = 0; this.pulseAt = 0; this.chargeFrom = 0; this.anim = 0; this.wh = null;
+      this.on(el, 'wheel', (e) => this.wheel(e), { passive: false });
+      this.write(); want(this);
+    }
+    clampV(v) { return clamp(isFinite(v) ? Math.round(v * 100) / 100 : 0, -1, 1); }
+    homeV() { return 0; }
+    snap(raw) { return Math.abs(raw) <= this.detent ? 0 : raw; }
+    write() {
+      const inp = this.input, s = String(Math.round(this.v * 100)), w = panWords(this.v);
+      if (inp.value !== s) inp.value = s;
+      inp.setAttribute('aria-valuetext', w);
+      this.el.title = (this.o.label || 'Pan') + ': ' + w + (coarse() ? ' · hold, then slide left or right · double-tap for centre' : ' · drag or scroll to turn · double-click for centre');
+      if (this.act) this.tipSync();
+    }
+    tipSync() { this.tip.textContent = panText(this.v); }
+    down(e) {
+      if (this.disabled || this.drag || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      const touch = e.pointerType === 'touch';
+      const d = this.drag = { id: e.pointerId, touch, x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, raw: this.v, on: false, t0: performance.now() };
+      if (touch) {                           // a finger holds first; the ring fills while it does
+        this.holdT = setTimeout(() => this.engage(), HOLD_MS);
+        this.chargeFrom = performance.now(); this.animate();
+        return;
+      }
+      e.preventDefault();
+      try { this.el.setPointerCapture(e.pointerId); } catch (err) {}
+      this.ptrFocus = true; try { this.input.focus({ preventScroll: true }); } catch (err) {} this.ptrFocus = false;
+      d.on = true; this.active(true);
+    }
+    engage() {
+      const d = this.drag; this.holdT = 0; this.chargeFrom = 0;
+      if (!d || d.on || this.dead) return;
+      d.on = true; d.raw = this.v;
+      this.el.classList.add('sd-held');
+      this.pulse = 1; this.pulseAt = performance.now(); this.animate();
+      try { if (navigator.vibrate && navigator.userActivation && navigator.userActivation.hasBeenActive) navigator.vibrate(8); } catch (err) {}
+      this.active(true);
+    }
+    unhold() { clearTimeout(this.holdT); this.holdT = 0; this.chargeFrom = 0; this.drag = null; want(this); }
+    move(e) {
+      const d = this.drag; if (!d || e.pointerId !== d.id) return;
+      const dx = e.clientX - d.x, dy = e.clientY - d.y; d.x = e.clientX; d.y = e.clientY;
+      if (!d.on) { if (Math.hypot(d.x - d.x0, d.y - d.y0) > 8) this.unhold(); return; }   // moved before the hold: a scroll or a swipe
+      d.raw = clamp(d.raw + (d.touch ? dx / TOUCH_PX : (dx - dy) / MOUSE_PX * (e.shiftKey ? 0.2 : 1)), -1, 1);
+      this.set(this.snap(d.raw), false);
+    }
+    up(e, cancel) {
+      const d = this.drag; if (!d || e.pointerId !== d.id) return;
+      clearTimeout(this.holdT); this.holdT = 0; this.chargeFrom = 0; this.drag = null;
+      this.el.classList.remove('sd-held');
+      if (d.on) { this.active(false); this.emit(true); }
+      else if (d.touch && !cancel && performance.now() - d.t0 < 300 && Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 10) this.tapped(e);
+      want(this);
+    }
+    wheel(e) {
+      if (this.disabled) return;
+      if (this.drag) return;
+      e.preventDefault();
+      const now = performance.now();
+      if (!this.wh || now - this.wh.at > 800) this.wh = { raw: this.v, at: now };
+      this.wh.at = now;
+      const k = e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? 300 : 1;      // lines, pages, pixels
+      this.wh.raw = clamp(this.wh.raw + (e.deltaX - e.deltaY) * k * 0.0006, -1, 1);   // a notch (100 px) = 6
+      this.active(true);
+      this.set(this.snap(this.wh.raw), false);
+      clearTimeout(this.whT);
+      this.whT = setTimeout(() => { this.active(false); this.emit(true); }, 450);
+    }
+    key(e) {
+      const k = e.key, st = e.shiftKey ? 0.01 : 0.05;
+      let v;
+      if (k === 'ArrowRight' || k === 'ArrowUp') v = this.v + st;
+      else if (k === 'ArrowLeft' || k === 'ArrowDown') v = this.v - st;
+      else if (k === 'PageUp') v = this.v + 0.25;
+      else if (k === 'PageDown') v = this.v - 0.25;
+      else if (k === 'Home') v = 0;
+      else return;
+      e.preventDefault(); this.set(v, true);
+    }
+    fromInput() { this.v = this.clampV(this.snap((+this.input.value || 0) / 100)); this.write(); want(this); this.emit(true); }
+    animate() {
+      if (this.anim || this.dead) return;
+      const step = () => {
+        this.anim = 0;
+        if (this.dead) return;
+        if (this.pulse > 0) this.pulse = Math.max(0, 1 - (performance.now() - this.pulseAt) / 260);
+        this.paint();
+        if (this.pulse > 0 || this.chargeFrom) this.anim = requestAnimationFrame(step);
+      };
+      this.anim = requestAnimationFrame(step);
+    }
+    paint() {
+      if (!this.size()) return;
+      const P = this.pal, cx = this.cv.getContext('2d'), dpr = this.dpr, W = this.W, H = this.H;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, W, H);
+      const S = Math.min(W, H), x = W / 2, y = H / 2, aw = Math.max(2.5, S * 0.07);
+      const ro = S / 2 - aw / 2 - 2.5, rb = Math.max(4, ro - aw / 2 - 2.6);
+      const A = (v) => -Math.PI / 2 + v * Math.PI * 0.75;          // -1 … +1 = 135° either side of the top
+      const hot = this.act, charge = this.chargeFrom ? clamp((performance.now() - this.chargeFrom) / HOLD_MS, 0, 1) : 0;
+      cx.lineCap = 'round';
+      cx.strokeStyle = 'rgba(' + P.ink + ',' + (P.dark ? 0.16 : 0.2) + ')'; cx.lineWidth = aw;     // the travel
+      cx.beginPath(); cx.arc(x, y, ro, A(-1), A(1)); cx.stroke();
+      cx.strokeStyle = 'rgba(' + P.ink + ',.55)'; cx.lineWidth = 1.5;                                 // the centre's mark
+      cx.beginPath(); cx.moveTo(x, y - ro - aw / 2 - 0.5); cx.lineTo(x, y - ro - aw / 2 - 2.5); cx.stroke();
+      if (S >= 34) {                                                                                  // L and R under the ends
+        cx.fillStyle = 'rgba(' + P.ink + ',.6)'; cx.font = '600 7px ' + 'ui-sans-serif, -apple-system, Helvetica, Arial';
+        cx.textAlign = 'center'; cx.textBaseline = 'middle';
+        cx.fillText('L', x - ro * 0.42, y + ro + 0.5); cx.fillText('R', x + ro * 0.42, y + ro + 0.5);
+      }
+      if (charge > 0) {                                                                               // a finger holding: the ring fills
+        cx.strokeStyle = P.hot; cx.globalAlpha = (P.dark ? 0.25 : 0.5) + 0.5 * charge; cx.lineWidth = aw;
+        cx.beginPath(); cx.arc(x, y, ro, A(-1), A(-1) + charge * Math.PI * 1.5); cx.stroke(); cx.globalAlpha = 1;
+      }
+      if (Math.abs(this.v) >= 0.005) {                                                                // where it sits: an arc from the top
+        cx.save(); if (hot) { cx.shadowColor = P.hot; cx.shadowBlur = 8 * dpr; }
+        cx.strokeStyle = P.arc; cx.lineWidth = aw; cx.beginPath();
+        if (this.v > 0) cx.arc(x, y, ro, A(0), A(this.v)); else cx.arc(x, y, ro, A(this.v), A(0));
+        cx.stroke(); cx.restore();
+      }
+      if (hot) {                                                                                      // turning: it glows
+        cx.save(); cx.shadowColor = P.hot; cx.shadowBlur = 10 * dpr; cx.strokeStyle = P.hot; cx.lineWidth = P.dark ? 2 : 3;
+        disc(cx, x, y, rb + 1.5); cx.stroke(); cx.restore();
+        if (!P.dark) { cx.strokeStyle = 'rgba(' + P.ink + ',.55)'; cx.lineWidth = 1; disc(cx, x, y, rb + 3.5); cx.stroke(); }   // lime on paper: an ink edge so it reads
+      }
+      if (this.pulse > 0) {                                                                           // the hold took: a ring goes out
+        cx.strokeStyle = P.hot; cx.globalAlpha = this.pulse; cx.lineWidth = 2;
+        disc(cx, x, y, rb + 1.5 + (1 - this.pulse) * (ro - rb + 1)); cx.stroke(); cx.globalAlpha = 1;
+      }
+      const rB = rb * (1 + 0.07 * this.pulse);
+      cx.save();
+      cx.shadowColor = 'rgba(0,0,0,' + (P.dark ? 0.6 : 0.3) + ')'; cx.shadowBlur = 3 * dpr; cx.shadowOffsetY = 1 * dpr;
+      const bg = cx.createLinearGradient(0, y - rB, 0, y + rB);
+      bg.addColorStop(0, P.dark ? P.k1 : P.k0); bg.addColorStop(1, P.dark ? P.k0 : P.k1);
+      cx.fillStyle = bg; disc(cx, x, y, rB); cx.fill(); cx.restore();
+      cx.strokeStyle = 'rgba(' + P.ink + ',' + (P.dark ? 0.3 : 0.35) + ')'; cx.lineWidth = 1; disc(cx, x, y, rB - 0.5); cx.stroke();
+      const a = A(this.v);                                                                            // the pointer
+      cx.strokeStyle = hot && P.dark ? P.hot : P.text; cx.lineWidth = 2.2;
+      cx.beginPath(); cx.moveTo(x + Math.cos(a) * rB * 0.2, y + Math.sin(a) * rB * 0.2); cx.lineTo(x + Math.cos(a) * rB * 0.82, y + Math.sin(a) * rB * 0.82); cx.stroke();
+    }
+  }
+
+  window.SdawFader = { create: (el, o) => new Fader(el, o || {}), of: (el) => { const i = byEl.get(el); return i instanceof Fader ? i : null; }, xOf, valueAt, dbText };
+  window.SdawKnob = { create: (el, o) => new Knob(el, o || {}), of: (el) => { const i = byEl.get(el); return i instanceof Knob ? i : null; }, panText, panWords };
+})();
+</script>
 <script>
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
   if (/[?&]embed=1/.test(location.search)) document.body.classList.add('embed');
+  const LEVELS_URL = "demo/levels.bin?v=0bc4986d", QR_URL = "demo/qr.js?v=8047289a";
+  const mmss = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
   // ---------- the song: eight sends, cut into pieces ----------
   // Each send is 10 s pieces (+0.25 s overlap, crossfaded), so the first sound needs one
   // piece of each (under 1 MB), not the song, and a phone never holds the whole song decoded.
   const BASE = 'demo/mama/', PIECE = 10, OVER = 0.25, DUR = 92, PIECES = 10;
   const TRACKS = [
-    { id: 'groove', name: 'GROOVE' }, { id: 'bass', name: 'BASS' }, { id: 'keys', name: 'KEYS' }, { id: 'guitars', name: 'GUITARS' },
-    { id: 'strings', name: 'STRINGS' }, { id: 'vox', name: 'VOX' }, { id: 'guide', name: 'GUIDE' }, { id: 'click', name: 'CLICK' },
+    { id: 'groove', name: 'GROOVE', color: '#f2e43c' }, { id: 'bass', name: 'BASS', color: '#5ce3d6' }, { id: 'keys', name: 'KEYS', color: '#f0393d' },
+    { id: 'guitars', name: 'GUITARS', color: '#2f52c4' }, { id: 'strings', name: 'STRINGS', color: '#ffa47c' }, { id: 'vox', name: 'VOX', color: '#7fe36c' },
+    { id: 'guide', name: 'GUIDE', color: '#f4f4f4' }, { id: 'click', name: 'CLICK', color: '#f4f4f4' },
   ];
   for (const t of TRACKS) { t.vol = 1; t.pan = 0; t.solo = false; t.mute = false; }
-  let playMode = 'tracks';
+  let playMode = 'tracks', volume = 1;
 
   // ---------- audio ----------
-  let ctx = null, master = null, limiter = null, out = null, anL = null, anR = null;
+  let ctx = null, master = null, limiter = null, out = null, volG = null, anL = null, anR = null;
   let t0 = 0, playing = false, ended = false, scheduled = new Map(), timer = 0, epoch = 0;
   const pieces = new Map();   // "k" → Promise<[AudioBuffer…]> in TRACKS order
   function fetchPiece(k) {
@@ -741,16 +1379,15 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     limiter = ctx.createDynamicsCompressor();
     limiter.threshold.value = -8; limiter.knee.value = 4; limiter.ratio.value = 12; limiter.attack.value = 0.003; limiter.release.value = 0.12;
     out = ctx.createGain(); out.gain.value = 1.9;
-    master.connect(limiter); limiter.connect(out); out.connect(ctx.destination);
-    const split = ctx.createChannelSplitter(2); out.connect(split);
+    volG = ctx.createGain(); volG.gain.value = volume;
+    master.connect(limiter); limiter.connect(out); out.connect(volG); volG.connect(ctx.destination);
+    const split = ctx.createChannelSplitter(2); volG.connect(split);
     anL = ctx.createAnalyser(); anR = ctx.createAnalyser(); anL.fftSize = anR.fftSize = 1024;
     split.connect(anL, 0); split.connect(anR, 1);
     for (const t of TRACKS) {
       t.in = ctx.createGain(); t.gain = ctx.createGain(); t.panner = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-      t.an = ctx.createAnalyser(); t.an.fftSize = 512;
       t.in.connect(t.gain);
-      if (t.panner) { t.gain.connect(t.panner); t.panner.connect(master); t.panner.connect(t.an); }
-      else { t.gain.connect(master); t.gain.connect(t.an); }
+      if (t.panner) { t.gain.connect(t.panner); t.panner.connect(master); } else t.gain.connect(master);
     }
     applyGains(true);
   }
@@ -775,29 +1412,29 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   }
   function pump() {
     if (!playing) return;
-    const pos = ctx.currentTime - t0, cur = Math.max(0, Math.floor(pos / PIECE));
+    const p = ctx.currentTime - t0, cur = Math.max(0, Math.floor(p / PIECE));
     for (let k = cur; k <= Math.min(PIECES - 1, cur + 2); k++) {
       const e = epoch;
       fetchPiece(k).then((b) => { if (playing && e === epoch) schedule(k, b); }, () => {});
     }
     for (const k of [...pieces.keys()]) if (k < cur - 1 && k !== 0) pieces.delete(k);   // keep piece 0 for a replay
     for (const [k, srcs] of scheduled) if (k < cur - 1) { scheduled.delete(k); srcs.length = 0; }
-    if (pos >= DUR) finish();
+    if (p >= DUR) finish();
     showState();
   }
   async function start() {
     if (!ctx) build();
     ctx.resume().catch(() => {});
-    $('playCard').classList.add('loading'); $('stateText').textContent = 'Loading…'; $('fmtText').textContent = 'the first 10 seconds of eight sends';
+    $('playCard').classList.add('loading'); $('stateText').textContent = 'Loading…'; $('fmtText').textContent = 'the first 10 seconds';
     let first;
     try { first = await fetchPiece(0); }
-    catch (e) { $('playCard').classList.remove('loading'); $('stateText').textContent = 'Could not load'; $('fmtText').textContent = 'Check the connection and press play again'; return; }
+    catch (e) { $('playCard').classList.remove('loading'); $('stateText').textContent = 'Could not load'; $('fmtText').textContent = 'Check the connection, then press play'; return; }
     $('playCard').classList.remove('loading');
     epoch++; scheduled.clear(); ended = false; playing = true;
     t0 = ctx.currentTime + 0.12;
     schedule(0, first);
     clearInterval(timer); timer = setInterval(pump, 250); pump();
-    listenSince = Date.now(); vuLoop();
+    listenSince = Date.now(); loop();
     showState();
   }
   function stopAll() {
@@ -808,20 +1445,24 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   function finish() { stopAll(); ended = true; if (!ROOM) listenSince = 0; showState(); }
 
   // ---------- joined to a studio: the sale page on a computer (?room=…) ----------
-  // The computer is the DAW: its Play is the transport. This phone plays the same song from
+  // The computer is the DAW: its GO LIVE is the transport. This phone plays the same song from
   // the same instant: the room (a Durable Object on snowstar.company) says "from pos, as of
   // server time at", and the phone knows the server's clock from round trips (the fastest
   // ones win, as in the real page's sync). The phone's own Play is "listen", as in a session.
+  // Its mix goes to the studio ({type:'mix'}) and the studio can set it ({type:'mixSet'}), as
+  // the control page sets a listener's mix.
   const Q = new URLSearchParams(location.search);
   const ROOM = /^[a-z0-9]{8,16}$/.test(Q.get('room') || '') ? Q.get('room') : '';
   const LOCAL = /^(127\.0\.0\.1|localhost)$/.test(location.hostname);
-  const WS_URL = ((LOCAL && Q.get('ws')) || ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host)) + '/api/streamdaw/demo/ws?role=phone&room=' + ROOM;
+  const WSQ = LOCAL ? Q.get('ws') || '' : '';
+  const WS_URL = (WSQ || ((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host)) + '/api/streamdaw/demo/ws?role=phone&room=' + ROOM;
+  const SHARE_URL = location.origin + location.pathname + (ROOM ? '?room=' + ROOM + (WSQ ? '&ws=' + encodeURIComponent(WSQ) : '') : '');
   let sock = null, linked = false, hostUp = false, tr = null, listening = false, clockOff = null, clockRtt = Infinity;
   const samples = [];
   const nowMs = () => performance.timeOrigin + performance.now();
   function connectRoom() {
     const s = new WebSocket(WS_URL); sock = s;
-    s.onopen = () => { linked = true; for (let i = 0; i < 6; i++) setTimeout(ping, i * 150); say({ type: 'listen', on: listening }); showState(); };
+    s.onopen = () => { linked = true; for (let i = 0; i < 6; i++) setTimeout(ping, i * 150); say({ type: 'listen', on: listening }); reportMix(true); showState(); };
     s.onmessage = (e) => { let m; try { m = JSON.parse(e.data); } catch (er) { return; } onRoom(m); };
     s.onclose = () => { if (sock !== s) return; linked = false; showState(); setTimeout(connectRoom, 2000); };
     s.onerror = () => {};
@@ -839,6 +1480,7 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     }
     else if (m.type === 'transport') { tr = m; follow(true); }
     else if (m.type === 'host') { hostUp = !!m.up; if (!hostUp) tr = null; follow(true); }
+    else if (m.type === 'mixSet') onMixSet(m);
   }
   // The context time at which the song's 0 is heard, from the studio's transport: the server
   // instant of 0, on this phone's clock, mapped onto the audio output's own clock.
@@ -854,11 +1496,11 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     if (!ROOM || !ctx) { showState(); return; }
     const want = !!(tr && tr.playing && hostUp && listening && clockOff !== null && ctx.state === 'running');
     if (!want) { if (playing) stopAll(); showState(); return; }
-    const nt0 = songT0(), pos = ctx.currentTime - nt0;
-    if (pos >= DUR) { if (playing) finish(); return; }
+    const nt0 = songT0(), p = ctx.currentTime - nt0;
+    if (p >= DUR) { if (playing) finish(); return; }
     if (!playing || force || Math.abs(nt0 - t0) > 0.25) {
       stopAll(); t0 = nt0; playing = true; ended = false;
-      clearInterval(timer); timer = setInterval(pump, 250); pump(); vuLoop();
+      clearInterval(timer); timer = setInterval(pump, 250); pump(); loop();
     } else if (Math.abs(nt0 - t0) > 0.012) t0 = nt0;      // a small drift: the next piece starts where it should
     showState();
   }
@@ -875,8 +1517,8 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     } else { stopAll(); listenSince = 0; showState(); }
   }
   if (ROOM) {
-    $('presenceLine').textContent = 'In the studio’s session · KAYMA · “MAMA”';
-    $('tryLine').innerHTML = '<b>You joined the studio.</b> Press play here to listen, then press play on the computer. The mix below is yours.';
+    $('presenceLine').innerHTML = 'Host: <b>KAYMA</b> · in the studio’s session';
+    $('syncMode').hidden = false;
     connectRoom(); setInterval(ping, 3000);
   }
 
@@ -886,40 +1528,39 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
     if (ctx.state === 'running') { ctx.suspend(); listenSince = 0; } else { ctx.resume(); listenSince = Date.now(); }
     showState();
   };
-  const mmss = (s) => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  const songPos = () => (playing && ctx ? clamp(ctx.currentTime - t0 - (ctx.outputLatency || 0), 0, DUR) : 0);
   function showState() {
-    const b = $('playBtn'), pill = $('livePill');
+    const b = $('playBtn');
+    let st, sub, on;
     if (ROOM) {
-      b.classList.toggle('stop', listening);
-      b.innerHTML = listening ? '&#10073;&#10073;' : '&#9654;&#xFE0E;';
-      b.setAttribute('aria-label', listening ? 'Stop listening' : 'Listen');
+      on = listening;
       const studioPlays = !!(tr && tr.playing && hostUp);
-      let st, sub;
-      if (!linked) { st = 'Joining the studio…'; sub = 'one moment'; }
-      else if (!hostUp) { st = 'The studio is closed'; sub = 'The page on the computer was closed. Open it again to carry on.'; }
-      else if (!listening) { st = 'Ready'; sub = studioPlays ? 'The studio is playing: press play to listen' : 'Press play, then press play on the computer'; }
-      else if (!studioPlays) { st = 'Listening'; sub = 'Waiting for the studio to press play' + (tr && tr.pos ? ' (stopped at ' + mmss(tr.pos) + ')' : ''); }
-      else if (ended) { st = 'That was the first verse'; sub = 'Press play on the computer to hear it again'; }
-      else { const pos = playing ? Math.max(0, Math.min(DUR, ctx.currentTime - t0)) : 0; st = 'Playing · in time'; sub = mmss(pos) + ' / 1:32 · synced ±' + Math.max(1, Math.round(clockRtt / 2)) + ' ms'; }
-      $('stateText').textContent = st; $('fmtText').textContent = sub;
-      pill.classList.toggle('live', studioPlays);
-      pill.textContent = !linked ? 'connecting…' : studioPlays ? 'live' : hostUp ? 'studio' : 'offline';
-      return;
-    }
-    const paused = playing && ctx && ctx.state !== 'running';
-    b.classList.toggle('stop', playing && !paused);
-    b.innerHTML = playing && !paused ? '&#10073;&#10073;' : '&#9654;&#xFE0E;';
-    b.setAttribute('aria-label', playing && !paused ? 'Pause' : 'Play');
-    if (!playing) {
-      $('stateText').textContent = ended ? 'That was the first verse' : 'Ready';
-      $('fmtText').textContent = ended ? 'Press play to hear it again, in your mix' : 'Earphones in, then press play';
+      if (!linked) { st = 'Joining…'; sub = 'the studio’s session'; }
+      else if (!hostUp) { st = 'Studio closed'; sub = 'Open the page on the computer again'; }
+      else if (!listening) { st = 'Ready'; sub = studioPlays ? 'The studio is live: press play' : 'Press play, then GO LIVE'; }
+      else if (!studioPlays) { st = 'Listening'; sub = 'Waiting for GO LIVE' + (tr && tr.pos ? ' · stopped at ' + mmss(tr.pos) : ''); }
+      else if (ended) { st = 'That was the first verse'; sub = 'GO LIVE again on the computer'; }
+      else { st = 'Live'; sub = mmss(songPos()) + ' / 1:32'; }
     } else {
-      const sec = Math.max(0, Math.min(DUR, ctx.currentTime - t0));
-      $('stateText').textContent = paused ? 'Paused' : 'Playing';
-      $('fmtText').textContent = mmss(sec) + ' / 1:32 · ' + (playMode === 'master' ? 'the band’s mix' : 'your mix');
+      const paused = playing && ctx && ctx.state !== 'running';
+      on = playing && !paused;
+      if (!playing) { st = ended ? 'That was the first verse' : 'Ready'; sub = ended ? 'Press play to hear it again' : 'Earphones in, then press play'; }
+      else { st = paused ? 'Paused' : 'Playing'; sub = mmss(songPos()) + ' / 1:32 · ' + (playMode === 'master' ? 'the full mix' : 'your mix'); }
     }
-    pill.classList.toggle('live', playing && !paused);
-    pill.textContent = playing && !paused ? 'demo · playing' : 'demo';
+    b.classList.toggle('stop', on);
+    const ic = on ? '&#10073;&#10073;' : '&#9654;&#xFE0E;'; if (b.__ic !== ic) { b.__ic = ic; b.innerHTML = ic; }
+    b.setAttribute('aria-label', ROOM ? (on ? 'Stop listening' : 'Listen') : (on ? 'Pause' : 'Play'));
+    if ($('stateText').textContent !== st) $('stateText').textContent = st;
+    if ($('fmtText').textContent !== sub) $('fmtText').textContent = sub;
+    // LISTENING and PLAYHEAD, as on the real page
+    const show = ROOM ? listening : playing;
+    $('statusRow').hidden = !show;
+    if (show) {
+      $('phListen').textContent = mmss(listenSince ? (Date.now() - listenSince) / 1000 : 0);
+      $('phHead').textContent = mmss(playing ? songPos() : tr && tr.pos ? tr.pos : 0);
+      const lk = $('phLock'), t = ROOM && playing ? 'in time ±' + Math.max(1, Math.round(clockRtt / 2)) + ' ms' : '';
+      lk.textContent = t; lk.className = 'lk' + (t ? ' ok' : '');
+    }
   }
 
   // ---------- the mix ----------
@@ -933,64 +1574,181 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
       if (t.panner) { if (now) t.panner.pan.value = p; else t.panner.pan.setTargetAtTime(p, T, 0.015); }
     }
   }
+  // The studio sees this phone's mix (whose-mix switch): after every change, at most every 80 ms.
+  let mixT = 0, mixAt = 0;
+  function reportMix(now) {
+    if (!ROOM) return;
+    const go = () => { mixAt = Date.now(); say({ type: 'mix', mode: playMode, t: TRACKS.map((t) => [t.name, Math.round(t.vol * 1000) / 1000, Math.round(t.pan * 100) / 100, t.mute ? 1 : 0, t.solo ? 1 : 0]) }); };
+    clearTimeout(mixT);
+    if (now || Date.now() - mixAt > 80) go(); else mixT = setTimeout(go, 80 - (Date.now() - mixAt));
+  }
+  function changed() { patchMixer(); applyGains(); reportMix(); }
+  // The studio set something here: the faders move by themselves (not one a finger holds).
+  function onMixSet(m) {
+    let rebuild = false;
+    if (m.reset) { for (const t of TRACKS) { t.vol = 1; t.pan = 0; t.solo = false; t.mute = false; } rebuild = true; }
+    if ((m.mode === 'master' || m.mode === 'tracks') && m.mode !== playMode) { playMode = m.mode; rebuild = true; }
+    const moved = [];
+    if (Array.isArray(m.t)) for (const e of m.t) {
+      const t = Array.isArray(e) && TRACKS.find((x) => x.name === e[0]); if (!t) continue;
+      if (e[1] != null && isFinite(+e[1])) t.vol = clamp(+e[1], 0, 1);
+      if (e[2] != null && isFinite(+e[2])) t.pan = clamp(+e[2], -1, 1);
+      if (e[3] != null) t.mute = !!e[3];
+      if (e[4] != null) t.solo = !!e[4];
+      moved.push(t);
+    }
+    if (rebuild) render(); else patchMixer();
+    for (const t of moved) if (t.row) { t.row.classList.add('flash'); clearTimeout(t.flashT); t.flashT = setTimeout(() => t.row && t.row.classList.remove('flash'), 700); }
+    applyGains(); reportMix();
+  }
+  const ctls = [];
   function render() {
-    const box = $('mixer'); box.innerHTML = '';
+    const box = $('mixerBody'); box.innerHTML = '';
+    for (const c of ctls.splice(0)) c.destroy();
+    for (const t of TRACKS) { t.fader = t.knob = t.row = null; }
     const seg = document.createElement('div'); seg.className = 'mx-seg';
     seg.innerHTML = '<button class="mx-mode' + (playMode === 'master' ? ' on' : '') + '" data-m="master">Full mix</button>'
                   + '<button class="mx-mode' + (playMode === 'tracks' ? ' on' : '') + '" data-m="tracks">Track mixer</button>';
-    for (const b of seg.querySelectorAll('[data-m]')) b.onclick = () => { playMode = b.dataset.m; render(); applyGains(); showState(); };
+    for (const b of seg.querySelectorAll('[data-m]')) b.onclick = () => { if (playMode === b.dataset.m) return; playMode = b.dataset.m; render(); applyGains(); reportMix(); showState(); };
     box.appendChild(seg);
     if (playMode === 'master') {
       const n = document.createElement('div'); n.className = 'mx-note'; n.textContent = 'Switch to Track mixer to control your own mix.'; box.appendChild(n);
-      return;
+      summary(); return;
     }
     const h = document.createElement('div'); h.className = 'mx-h';
-    const allS = TRACKS.every((t) => t.solo), allM = TRACKS.every((t) => t.mute);
     h.innerHTML = '<span class="mx-dot" style="visibility:hidden"></span>'
-      + '<button class="mx-btn solo' + (allS ? ' on' : '') + '" data-all="solo" title="' + (allS ? 'Clear every solo' : 'Solo every track') + '">S</button>'
-      + '<button class="mx-btn mute' + (allM ? ' on' : '') + '" data-all="mute" title="' + (allM ? 'Unmute every track' : 'Mute every track') + '">M</button>'
+      + '<button class="mx-btn solo" data-all="solo">S</button><button class="mx-btn mute" data-all="mute">M</button>'
       + '<span class="mx-hl">Tracks</span><button class="mx-reset" title="Every track back to full volume, centre, no solo, no mute">Reset mix</button>';
-    for (const b of h.querySelectorAll('[data-all]')) b.onclick = () => { const k = b.dataset.all, on = !TRACKS.every((t) => t[k]); for (const t of TRACKS) t[k] = on; render(); applyGains(); };
-    h.querySelector('.mx-reset').onclick = () => { for (const t of TRACKS) { t.vol = 1; t.pan = 0; t.solo = false; t.mute = false; } render(); applyGains(); };
+    for (const b of h.querySelectorAll('[data-all]')) b.onclick = () => { const k = b.dataset.all, on = !TRACKS.every((t) => t[k]); for (const t of TRACKS) t[k] = on; changed(); };
+    h.querySelector('.mx-reset').onclick = () => { for (const t of TRACKS) { t.vol = 1; t.pan = 0; t.solo = false; t.mute = false; } render(); applyGains(); reportMix(); };
     box.appendChild(h);
-    const anySolo = TRACKS.some((t) => t.solo);
     for (const t of TRACKS) {
-      const row = document.createElement('div'); row.className = 'mx-row' + (t.mute || (anySolo && !t.solo) ? ' off' : ''); row.dataset.id = t.id;
+      const row = document.createElement('div'); row.className = 'mx-row'; row.dataset.id = t.id;
       row.innerHTML = '<div class="mx-top"><span class="mx-dot"></span>'
-        + '<button class="mx-btn solo' + (t.solo ? ' on' : '') + '" data-act="solo">S</button>'
-        + '<button class="mx-btn mute' + (t.mute ? ' on' : '') + '" data-act="mute">M</button>'
-        + '<span class="mx-name"></span><div class="mx-meter"><i></i></div></div>'
-        + '<div class="mx-ctl"><span class="mx-lab">VOL</span>'
-        + '<input type="range" class="mx-vol" min="0" max="100" step="1" value="' + Math.round(t.vol * 100) + '" aria-label="' + t.name + ' volume">'
-        + '<span class="mx-lab">L</span><input type="range" class="mx-pan" min="-100" max="100" step="5" value="' + Math.round(t.pan * 100) + '" aria-label="' + t.name + ' pan" title="Pan — double-tap for centre"><span class="mx-lab">R</span></div>';
+        + '<button class="mx-btn solo" data-act="solo" aria-label="Solo ' + t.name + '">S</button>'
+        + '<button class="mx-btn mute" data-act="mute" aria-label="Mute ' + t.name + '">M</button>'
+        + '<span class="mx-name"></span></div>'
+        + '<div class="mx-ctl"><div class="mx-fader"></div><div class="mx-knob"></div></div>';
       row.querySelector('.mx-name').textContent = t.name;
-      row.querySelector('.mx-dot').style.visibility = 'hidden';   // as on the real page: the sends carry no colour
-      row.querySelector('[data-act=solo]').onclick = () => { t.solo = !t.solo; render(); applyGains(); };
-      row.querySelector('[data-act=mute]').onclick = () => { t.mute = !t.mute; render(); applyGains(); };
-      row.querySelector('.mx-vol').oninput = (e) => { t.vol = e.target.value / 100; applyGains(); };
-      const pan = row.querySelector('.mx-pan');
-      pan.oninput = (e) => { let v = +e.target.value; if (Math.abs(v) <= 8) { v = 0; e.target.value = 0; } t.pan = v / 100; applyGains(); };
-      pan.ondblclick = () => { pan.value = 0; t.pan = 0; applyGains(); };
-      t.bar = row.querySelector('.mx-meter i');
+      row.querySelector('.mx-dot').style.background = t.color;
+      row.querySelector('[data-act=solo]').onclick = () => { t.solo = !t.solo; changed(); };
+      row.querySelector('[data-act=mute]').onclick = () => { t.mute = !t.mute; changed(); };
+      // Volume: a fader on the track's own stereo meter (what leaves the fader); double-tap: unity.
+      t.fader = SdawFader.create(row.querySelector('.mx-fader'), { value: t.vol, max: 1, label: 'Volume, ' + t.name, inputClass: 'mx-vol',
+        onInput: (v) => { t.vol = v; applyGains(); reportMix(); } });
+      // Pan: a knob (hold, then slide, on a phone); the middle is sticky; double-tap: centre.
+      t.knob = SdawKnob.create(row.querySelector('.mx-knob'), { value: t.pan, detent: 0.08, label: 'Pan, ' + t.name, inputClass: 'mx-pan',
+        onInput: (v) => { t.pan = v; applyGains(); reportMix(); } });
+      ctls.push(t.fader, t.knob);
+      t.row = row;
       box.appendChild(row);
     }
+    patchMixer();
   }
+  function patchMixer() {
+    const anySolo = TRACKS.some((t) => t.solo);
+    const hS = document.querySelector('.mx-h [data-all=solo]'), hM = document.querySelector('.mx-h [data-all=mute]');
+    if (hS) hS.classList.toggle('on', TRACKS.every((t) => t.solo));
+    if (hM) hM.classList.toggle('on', TRACKS.every((t) => t.mute));
+    for (const t of TRACKS) {
+      if (!t.row) continue;
+      t.row.classList.toggle('off', t.mute || (anySolo && !t.solo));
+      t.row.querySelector('[data-act=solo]').classList.toggle('on', t.solo);
+      t.row.querySelector('[data-act=mute]').classList.toggle('on', t.mute);
+      if (Math.abs(t.fader.value - t.vol) > 1e-4) t.fader.setValue(t.vol);
+      if (Math.abs(t.knob.value - t.pan) > 1e-4) t.knob.setValue(t.pan);
+    }
+    summary();
+  }
+  function summary() {
+    const nS = TRACKS.filter((t) => t.solo).length, nM = TRACKS.filter((t) => t.mute).length;
+    $('mixerSum').textContent = playMode === 'master' ? 'Full mix' : ['Track mixer'].concat(nS ? [nS + ' soloed'] : [], nM ? [nM + ' muted'] : []).join(', ');
+  }
+  $('mixerHead').onclick = () => {
+    const open = $('mixer').classList.toggle('closed') === false;
+    $('mixerHead').setAttribute('aria-expanded', String(open));
+  };
   render();
+
+  // ---------- the volume: a fader on the meter of what you hear ----------
+  const volF = SdawFader.create($('volFader'), { value: volume, max: 1, label: 'Volume', inputId: 'volSlider',
+    onInput: (v) => { volume = v; if (volG) volG.gain.setTargetAtTime(v, ctx.currentTime, 0.015); $('volOut').textContent = SdawFader.dbText(v); } });
+  $('volOut').textContent = SdawFader.dbText(volume);
+  $('mVol').onclick = (e) => { e.stopPropagation(); const p = $('volPop'); p.hidden = !p.hidden; $('mVol').setAttribute('aria-expanded', String(!p.hidden)); $('gVol').classList.toggle('on', !p.hidden); if (!p.hidden) volF.redraw(); };
+  document.addEventListener('click', (e) => { if (!$('volPop').hidden && !e.target.closest('#volPop, #gVol')) { $('volPop').hidden = true; $('gVol').classList.remove('on'); $('mVol').setAttribute('aria-expanded', 'false'); } });
+
+  // ---------- the QR code and the link ----------
+  let qrLoading = null;
+  function qrLib() {
+    if (window.SdawQR) return Promise.resolve();
+    if (!qrLoading) qrLoading = new Promise((ok, no) => { const s = document.createElement('script'); s.src = QR_URL; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+    return qrLoading;
+  }
+  $('qrLink').onclick = (e) => {
+    e.preventDefault();
+    $('qrUrl').textContent = SHARE_URL.replace(/^https?:\/\//, '');
+    $('qrShare').hidden = !navigator.share;
+    $('qrSheet').hidden = false;
+    qrLib().then(() => {
+      if ($('qrTile').firstChild) return;
+      const m = window.SdawQR.matrix(SHARE_URL), n = m.size, q = 1;
+      let d = ''; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (m.get(r, c)) d += 'M' + (c + q) + ' ' + (r + q) + 'h1v1h-1z';
+      $('qrTile').innerHTML = '<svg viewBox="0 0 ' + (n + 2 * q) + ' ' + (n + 2 * q) + '" shape-rendering="crispEdges" role="img" aria-label="QR code"><path fill="#17140d" d="' + d + '"/></svg>';
+    }, () => {});
+  };
+  $('qrClose').onclick = () => { $('qrSheet').hidden = true; };
+  $('qrSheet').onclick = (e) => { if (e.target === e.currentTarget) $('qrSheet').hidden = true; };
+  const copy = (btn, word) => (navigator.clipboard ? navigator.clipboard.writeText(SHARE_URL) : Promise.reject()).then(() => {
+    btn.classList.add(btn.classList.contains('ficon') ? 'copied' : 'done'); if (word) btn.textContent = word;
+    setTimeout(() => { btn.classList.remove('copied', 'done'); if (word) btn.textContent = 'Copy link'; }, 1500);
+  }, () => {});
+  $('qrCopy').onclick = () => copy($('qrCopy'), 'Copied');
+  $('qrShare').onclick = () => { navigator.share({ title: 'StreamDAW demo', url: SHARE_URL }).catch(() => {}); };
+  $('shareBtn').onclick = () => { if (navigator.share && matchMedia('(pointer: coarse)').matches) navigator.share({ title: 'StreamDAW demo', url: SHARE_URL }).catch(() => {}); else copy($('shareBtn')); };
+
+  // ---------- the song's levels (the same 17 KB as the studio's): each track's fader-meter ----------
+  let LV = null, LVW = 19, LVF = 0;
+  fetch(LEVELS_URL).then((r) => (r.ok ? r.arrayBuffer() : null)).then((b) => {
+    if (!b) return; const u = new Uint8Array(b); if (u[0] !== 0x53 || u[3] !== 0x56) return;
+    LVW = u[5] * 2 + 3; LVF = u[6] | (u[7] << 8); LV = u;
+  }).catch(() => {});
+  const lin = (b) => (b ? Math.pow(10, (b / 4 - 60) / 20) : 0);
 
   // ---------- the meters (the listener page's own, below) ----------
   let wantPlay = false;          // listenSince comes with the meter code below
-  const syncMs = 500;     // what the right meter's caption says: every phone plays the same instant
   const peakOf = (an, buf) => { an.getFloatTimeDomainData(buf); let p = 0; for (let i = 0; i < buf.length; i++) { const v = Math.abs(buf[i]); if (v > p) p = v; } return p; };
-  let bufM = null, bufT = null;
-  function vuLoop() {
-    if (!playing) { for (const t of TRACKS) if (t.bar) t.bar.style.width = '0'; return; }
-    if (!bufM) { bufM = new Float32Array(anL.fftSize); bufT = new Float32Array(512); }
+  let bufM = null, lastF = -1, lastShow = 0, looping = false;
+  function loop() { if (!looping) { looping = true; requestAnimationFrame(tick); } }
+  function tick() {
+    const now = performance.now();
+    if (now - lastShow > 250) { lastShow = now; showState(); }
+    if (!playing) {
+      looping = false;
+      for (const t of TRACKS) if (t.fader) t.fader.setLevels(0, 0);
+      volF.setLevels(0, 0); lastF = -1; showState(); return;
+    }
+    if (!bufM) bufM = new Float32Array(anL.fftSize);
     wantPlay = ctx.state === 'running';
     if (wantPlay) {
-      vuFeed(peakOf(anL, bufM), peakOf(anR, bufM));
-      for (const t of TRACKS) if (t.bar && t.bar.isConnected) { const p = peakOf(t.an, bufT) * 1.9; t.bar.style.width = Math.round(dbPos(toDb(p)) * 100) + '%'; }
+      const l = peakOf(anL, bufM), r = peakOf(anR, bufM);
+      vuFeed(l, r);
+      if (!$('volPop').hidden) volF.setLevels(Math.min(1, l), Math.min(1, r));
+      const f = Math.floor(songPos() * 10);
+      if (LV && f !== lastF && f >= 0 && f < LVF) {
+        lastF = f;
+        const anySolo = TRACKS.some((t) => t.solo), o = 8 + f * LVW;
+        TRACKS.forEach((t, i) => {
+          if (!t.fader) return;
+          const on = !t.mute && (!anySolo || t.solo), g = on ? t.vol : 0, p = t.pan;
+          let L = lin(LV[o + i * 2]) * g, R = lin(LV[o + i * 2 + 1]) * g;
+          // the panner's law, near enough for a meter
+          if (p < 0) { const x = (p + 1) * Math.PI / 2; [L, R] = [Math.max(L, R * Math.cos(x)), R * Math.sin(x)]; }
+          else if (p > 0) { const x = p * Math.PI / 2; [L, R] = [L * Math.cos(x), Math.max(R, L * Math.sin(x))]; }
+          t.fader.setLevels(Math.min(1, L), Math.min(1, R));
+        });
+      }
     }
-    requestAnimationFrame(vuLoop);
+    requestAnimationFrame(tick);
   }
   // ---------- the meter band ----------
   // Two analog VU meters (vu-analog.js: shared with the control page and the site's demo),
@@ -1011,12 +1769,12 @@ html[data-theme="dark"] .theme-btn::before { content: "\2600"; }  /* a sun: swit
   function drawVu() { if (meterVU) meterVU.redraw(); }
   // ---------- the meter band: end ----------
   drawVu();
-  // For the demo's own test (site/snowstar/demo/demo.test.mjs) and for a curious console.
-  window.__demo = { get ctx() { return ctx; }, tracks: TRACKS, get scheduled() { return [...scheduled.keys()]; },
+  showState();
+  // For a test and a curious console.
+  window.__demo = { get ctx() { return ctx; }, tracks: TRACKS, get scheduled() { return [...scheduled.keys()]; }, get mode() { return playMode; },
                     get pos() { return ctx && playing ? ctx.currentTime - t0 : 0; }, get playing() { return playing; },
                     get clock() { return { off: clockOff, rtt: clockRtt, linked, hostUp, listening, tr }; },
-                    songPosAt: (wallMs) => (ctx && playing ? (wallMs - performance.timeOrigin - (ctx.getOutputTimestamp ? ctx.getOutputTimestamp().performanceTime : performance.now())) / 1000 + (ctx.getOutputTimestamp ? ctx.getOutputTimestamp().contextTime : ctx.currentTime) - t0 : null),
-                    vuTick: () => { try { vuLoop(); return 'ok'; } catch (e) { return String(e && e.stack || e); } } };
+                    songPosAt: (wallMs) => (ctx && playing ? (wallMs - performance.timeOrigin - (ctx.getOutputTimestamp ? ctx.getOutputTimestamp().performanceTime : performance.now())) / 1000 + (ctx.getOutputTimestamp ? ctx.getOutputTimestamp().contextTime : ctx.currentTime) - t0 : null) };
 })();
 </script>
 </body>

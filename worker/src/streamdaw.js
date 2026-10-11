@@ -190,7 +190,7 @@ export async function streamdawCheckout(req, env) {
     if (couponCode) await burnSdawCoupon(env, couponCode);
     const link = await mintDownloadLink(env, ent.id, email);
     if (machine) await requestKey(env, { entId: ent.id, email, machine, name: ownerName || email, via: 'checkout' }).catch(() => {});
-    await emailReceipt(env, email, link, machine).catch(() => {});
+    await emailReceipt(env, email, link, machine, { ref, amount: 0, coupon: couponCode }).catch(() => {});
     await env.DB.prepare('UPDATE streamdaw_orders SET entitlement_id = ?, settled_at = ? WHERE ref = ?')
       .bind(ent.id, now(), ref).run().catch(() => {});
     return json({ ok: true, free: true, ref, download: link, redirect: `${SITE}/apps/streamdaw.html?bought=1&free=1` });
@@ -257,7 +257,7 @@ export async function streamdawReturn(req, env, raw, q) {
   const link = await mintDownloadLink(env, ent.id, order.email);
   if (order.machine_id)
     await requestKey(env, { entId: ent.id, email: order.email, machine: order.machine_id, name: order.owner_name || order.email, via: 'checkout' }).catch(() => {});
-  await emailReceipt(env, order.email, link, order.machine_id || null).catch(() => {});
+  await emailReceipt(env, order.email, link, order.machine_id || null, { ref, amount: paid, coupon: order.coupon || null }).catch(() => {});
   await env.DB.prepare(`UPDATE streamdaw_orders SET status='granted', hyp_id=?, entitlement_id=?, settled_at=? WHERE ref=?`)
     .bind(String(q.Id || ''), ent.id, now(), ref).run().catch(() => {});
   return Response.redirect(`${SITE}/apps/streamdaw.html?bought=1&ref=${encodeURIComponent(ref)}`, 302);
@@ -340,9 +340,9 @@ export async function myStreamdaw(env, user) {
 
 // ── licence activation: machine id in, key file out ────────────────────────
 //
-// The paid features are unlocked by an RSA-signed key bound to ONE machine, and
-// signing needs the private key — which stays on the owner's Mac and never comes
-// near a Worker. So this is a queue with a human at the end: the buyer submits the
+// The paid features are unlocked by a signed key bound to ONE machine (P-256 since
+// StreamDAW 0.5.0; see checkKey), and signing needs the private key — which stays on
+// the owner's Mac and never comes near a Worker. So this is a queue with a human at the end: the buyer submits the
 // id their plug-in shows, the owner mints with `streamdaw-keygen`, and pastes the
 // key back through /streamdaw/activation/issue, which emails it on.
 //
@@ -362,25 +362,67 @@ function keyHex(k) {
   return best.toLowerCase();
 }
 const keyLines = (k) => (keyHex(k).match(/.{1,64}/g) || []).join('\n');
-const SERIAL_RE = /\b([A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4})\b/;
+
+/* Keys are format 2 (StreamDAW 0.5.0 on, plugin/Source/LicenceKey.h): hex of "SD", 2, then the
+   payload — product, serial|name, email, machines, issued, one a line — then a 64-byte P-256
+   signature (r, s) over everything before it. Checked here before a key is stored or emailed:
+   a key that would not unlock never reaches a buyer. Format 1 (JUCE's 512-bit RSA) is refused:
+   512 bits can be factored, so those keys are no longer minted (the app still accepts the ones
+   already issued, on the Macs they were issued for).
+   The PUBLIC half of the signing pair — the same value as kPublicKey in plugin/Source/License.cpp.
+   The private half stays on the owner's Mac. */
+const STREAMDAW_KEY_PUBLIC = '0450e5706281c210bfaaa3e901c9d0b0a289bb6f93643bb8edca91800436164a070dadbfee3ad6bbbe641bdad21c946bb1e568671d5a0f8b46a4cbb93f1a77c2a4';
+const MIN_APP = '0.5.0';
+const fromHex = (h) => Uint8Array.from(String(h).match(/../g) || [], (x) => parseInt(x, 16));
+async function checkKey(hex, machine) {
+  if (!/^534402(?:[0-9a-f]{2})+$/.test(hex)) return { error: 'that is not a StreamDAW key — paste everything streamdaw-keygen printed (keys from the old 512-bit pair are no longer accepted)' };
+  const b = fromHex(hex);
+  if (b.length < 3 + 16 + 64) return { error: 'that key looks truncated — paste everything keygen printed' };
+  const signed = b.subarray(0, b.length - 64);
+  let ok = false;
+  try {
+    const pub = await crypto.subtle.importKey('raw', fromHex(STREAMDAW_KEY_PUBLIC), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+    ok = await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, pub, b.subarray(b.length - 64), signed);
+  } catch {}
+  if (!ok) return { error: 'that key does not carry the StreamDAW signature (damaged in the paste, or signed with another pair)' };
+  const f = new TextDecoder().decode(signed.subarray(3)).split('\n');
+  if (f.length !== 5 || f[0] !== 'StreamDAW') return { error: 'that key is not for StreamDAW' };
+  if (!f[3].split(',').map((m) => m.trim().toUpperCase()).includes(machine)) return { error: `that key is for ${f[3]}, not ${machine}` };
+  return { serial: f[1].split('|')[0].trim() || null };
+}
 const firstName = (n) => String(n || '').trim().split(/\s+/)[0] || '';
 const escHtml = (t) => String(t || '').replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
 /* The mint command, ready to paste in Terminal on the owner's Mac. The name is what listeners
    see as the host; the email rides in the key for this Mac's licence panel only. */
 const mintCommand = ({ name, email, machine }) =>
-  `~/.cache/streamdaw/bin/streamdaw-keygen --keyfile ~/.cache/streamdaw/license-keypair.txt `
+  `~/.cache/streamdaw/bin/streamdaw-keygen --keyfile ~/.cache/streamdaw/license-keypair-v2.txt `
   + `--name "${String(name || '').replace(/["$`\\]/g, '')}" --email "${lc(email).replace(/["$`\\]/g, '')}" --machines ${machine}`;
 
 /* One look for every StreamDAW licence email to a buyer. */
-function licenceMail({ title, intro, steps, key, footer }) {
+/* Every StreamDAW email has the same shape (2026-10-10, Ori: "do what other big brands do and
+   close all loose ends"): a title, one line, the steps, at most one main button, the key in a
+   box when there is one, the details, and the same links at the foot: get a key for a Mac,
+   your account and downloads, help, the terms. The text part says the same, links spelled out. */
+const UNLOCK_URL = `${SITE}/apps/streamdaw-unlock.html`;
+const ACCOUNT_URL = `${SITE}/account.html`;
+const TERMS_URL = `${SITE}/apps/streamdaw-terms.html`;
+const HELP_MAIL = 'hello@snowstar.company';
+const mailLinksHtml = () =>
+  `<a href="${UNLOCK_URL}" style="color:#16140f">Get a key for a Mac</a> · <a href="${ACCOUNT_URL}" style="color:#16140f">Your account and downloads</a>`
+  + ` · <a href="mailto:${HELP_MAIL}" style="color:#16140f">Help</a> · <a href="${TERMS_URL}" style="color:#16140f">Terms</a>`;
+const mailLinksText = () =>
+  `Get a key for a Mac: ${UNLOCK_URL}\nYour account and downloads: ${ACCOUNT_URL}\nHelp: ${HELP_MAIL}\nTerms: ${TERMS_URL}`;
+function licenceMail({ title, intro, steps, key, footer, button }) {
   const html =
 `<div style="font-family:Inter,system-ui,-apple-system,sans-serif;max-width:560px;margin:0 auto;color:#16140f;line-height:1.5">
   <h2 style="font-family:Anton,Impact,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:0 0 12px">${escHtml(title)}</h2>
   <p style="margin:0 0 14px">${intro}</p>
-  <ol style="margin:0 0 16px;padding-left:22px">${steps.map((t) => `<li style="margin:0 0 6px">${t}</li>`).join('')}</ol>
+  ${steps && steps.length ? `<ol style="margin:0 0 16px;padding-left:22px">${steps.map((t) => `<li style="margin:0 0 6px">${t}</li>`).join('')}</ol>` : ''}
+  ${button ? `<p style="margin:0 0 18px"><a href="${button.href}" style="display:inline-block;background:#16140f;color:#c8f23a;font-weight:700;padding:12px 22px;border-radius:999px;text-decoration:none">${escHtml(button.label)}</a></p>` : ''}
   ${key ? `<pre style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.45;background:#f4f0e4;border:1px solid #d3cbb6;border-radius:10px;padding:14px 16px;margin:0 0 16px;white-space:pre;overflow-x:auto">${escHtml(key)}</pre>` : ''}
-  <p style="color:#6f6a5c;font-size:13px;margin:0">${footer}</p>
-  <p style="color:#a59f8c;font-size:12px;margin:18px 0 0">StreamDAW · by Snowstar.Company</p>
+  ${footer ? `<p style="color:#6f6a5c;font-size:13px;margin:0 0 16px">${footer}</p>` : ''}
+  <p style="font-size:13px;margin:0;padding-top:12px;border-top:1px solid #e3dccb">${mailLinksHtml()}</p>
+  <p style="color:#a59f8c;font-size:12px;margin:14px 0 0">StreamDAW · by Snowstar.Company · Ori Toledano, 22 Eilat Street, Tel Aviv</p>
 </div>`;
   return html;
 }
@@ -463,15 +505,15 @@ async function requestKey(env, { entId, email, machine, name, via }) {
         text: `${hi ? `Hi ${hi},\n\n` : ''}We got your request for a StreamDAW Pro key for this Mac:\n${machine}\n\n`
             + `What happens next:\n`
             + `1. We make your key, ${auto ? 'usually within minutes' : 'usually within a day'}.\n`
-            + `2. It arrives in a second email, "Your StreamDAW Pro key", and on ${SITE}/apps/streamdaw when you are signed in.\n`
+            + `2. It arrives in a second email, "Your StreamDAW Pro key", and on ${UNLOCK_URL} when you are signed in.\n`
             + `3. Paste it into StreamDAW › Settings › Licence and press Unlock.\n\n`
-            + `Nothing to do until then. StreamDAW keeps working in the meantime.\n\n— Snowstar.Company`,
+            + `Nothing to do until then. StreamDAW keeps working in the meantime.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
         html: licenceMail({
           title: 'Your key is on its way',
           intro: `${hi ? `Hi ${escHtml(hi)}, we` : 'We'} got your request for a StreamDAW Pro key for this Mac: <code>${escHtml(machine)}</code>`,
           steps: [
             `We make your key, ${auto ? 'usually within minutes' : 'usually within a day'}.`,
-            `It arrives in a second email, <b>Your StreamDAW Pro key</b>, and on <a href="${SITE}/apps/streamdaw">snowstar.company</a> when you are signed in.`,
+            `It arrives in a second email, <b>Your StreamDAW Pro key</b>, and on <a href="${UNLOCK_URL}">your unlock page</a> when you are signed in.`,
             'Paste it into <b>StreamDAW › Settings › Licence</b> and press <b>Unlock</b>.',
           ],
           footer: 'Nothing to do until then. StreamDAW keeps working in the meantime.',
@@ -543,22 +585,22 @@ export async function streamdawActivationIssue(req, env, user) {
     return json({ ok: true, status: 'rejected' });
   }
 
-  const r = await issueKey(env, row, key, body.serial, false);
+  const r = await issueKey(env, row, key, false);
   return json(r.error ? { error: r.error } : { ok: true, status: 'issued' }, r.error ? (r.code || 400) : 200);
 }
 
 /* Store a minted key and email it to the buyer — from the dashboard (the owner pasting) or
    from the minter on the owner's Mac. `onlyPending`: the minter never overwrites a key the
    owner already sent by hand. */
-async function issueKey(env, row, key, serialHint, onlyPending) {
-  // Keep only the signed hex (keygen's whole printout may be pasted). A real key is several
-  // hundred hex digits; anything short is a paste accident, and storing it would tell the
-  // buyer their licence is ready when it is not.
+async function issueKey(env, row, key, onlyPending) {
+  // Keep only the signed hex (keygen's whole printout may be pasted), and check it is a whole
+  // format-2 key for this request's Mac with a good signature: storing anything else would tell
+  // the buyer their licence is ready when it is not. The serial is read from the signed payload.
   const hex = keyHex(key);
-  if (hex.length < 256) return { error: 'that key looks truncated — paste everything keygen printed' };
+  const checked = await checkKey(hex, row.machine_id);
+  if (checked.error) return { error: checked.error };
   const lines = keyLines(hex);
-
-  const serial = (String(serialHint || '').trim().toUpperCase().match(SERIAL_RE) || String(key).toUpperCase().match(SERIAL_RE) || [])[1] || null;
+  const serial = checked.serial;
   const res = await env.DB.prepare(
     "UPDATE streamdaw_activations SET status = 'issued', key_text = ?, serial = ?, issued_at = ? WHERE id = ?"
     + (onlyPending ? " AND status = 'pending'" : '')
@@ -579,7 +621,9 @@ async function issueKey(env, row, key, serialHint, onlyPending) {
           + `Registered to: ${row.owner_name || row.email} · ${row.email}\n`
           + (serial ? `Serial: ${serial}\n` : '')
           + `Works on this Mac only: ${row.machine_id}\n`
-          + `New Mac? Sign in at ${SITE}/apps/streamdaw and request a key for it.\n\n— Snowstar.Company`,
+          + `Needs StreamDAW ${MIN_APP} or newer. Older copy? Download the latest from your account first: ${ACCOUNT_URL}\n`
+          + `Another Mac? Get a key for it here: ${UNLOCK_URL}\n`
+          + `Keep this email: it is your licence. Lost it? The same page shows your keys when you sign in.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
       html: licenceMail({
         title: 'Your StreamDAW Pro key',
         intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready.`,
@@ -592,7 +636,9 @@ async function issueKey(env, row, key, serialHint, onlyPending) {
         footer: `Registered to <b>${escHtml(row.owner_name || row.email)}</b> · ${escHtml(row.email)}<br>`
           + (serial ? `Serial <code>${escHtml(serial)}</code><br>` : '')
           + `Works on this Mac only: <code>${escHtml(row.machine_id)}</code><br>`
-          + `New Mac? <a href="${SITE}/apps/streamdaw">Sign in</a> and request a key for it.`,
+          + `Needs StreamDAW ${MIN_APP} or newer. Older copy? <a href="${ACCOUNT_URL}">Download the latest</a> from your account first.<br>`
+          + `Another Mac? <a href="${UNLOCK_URL}">Get a key for it</a>.<br>`
+          + `Keep this email: it is your licence. Lost it? <a href="${UNLOCK_URL}">Sign in</a> to see your keys.`,
       }),
     });
   } catch {}
@@ -641,7 +687,7 @@ export async function streamdawMinterIssue(req, env) {
   // The signed key carries the machine and the name it was made for; check the minter signed
   // what was asked (a bug there must not email one buyer a key for someone else's Mac).
   if (String(body.machine || '') !== row.machine_id) return json({ error: 'machine mismatch' }, 409);
-  const r = await issueKey(env, row, String(body.key || ''), body.serial, true);
+  const r = await issueKey(env, row, String(body.key || ''), true);
   return json(r.error ? { error: r.error } : { ok: true }, r.error ? (r.code || 400) : 200);
 }
 
@@ -738,36 +784,47 @@ async function mintDownloadLink(env, entitlementId, email) {
   return `${SITE}/api/streamdaw/download?t=${token}`;
 }
 
-function emailReceipt(env, to, link, machine) {
-  const subject = 'Your StreamDAW download — by Snowstar';
+function emailReceipt(env, to, link, machine, order) {
+  const subject = 'Your StreamDAW Pro receipt and download';
   const soon = env.MINTER_TOKEN ? 'usually within minutes' : 'usually within a day';
+  const o = order || {};
+  const paid = typeof o.amount === 'number' ? (o.amount > 0 ? `₪${(o.amount / 100).toFixed(2)}` : 'free (coupon)') : '';
+  const when = new Date().toISOString().slice(0, 10);
+  const lines = [
+    o.ref ? `Order: ${o.ref}` : '',
+    `Product: StreamDAW Pro, one payment, every StreamDAW 1 update included`,
+    paid ? `Paid: ${paid}${o.coupon ? ` (coupon ${o.coupon})` : ''}` : '',
+    `Date: ${when}`,
+  ].filter(Boolean);
   const keyLine = machine
-    ? `Your Pro key for this Mac (${machine}) is being made now. It arrives by email, ${soon}: paste it into StreamDAW › Settings › Licence.\n\n`
-    : '';
+    ? `Your Pro key for this Mac (${machine}) is being made now. It arrives in a second email, ${soon}: paste it into StreamDAW › Settings › Licence and press Unlock.`
+    : `Get your Pro key for each Mac you use on ${UNLOCK_URL} (sign in with this email).`;
   const text =
-`Thanks for getting StreamDAW.
+`Thanks for getting StreamDAW Pro.
 
-${keyLine}Download it here (link is private to you, good for 7 days):
+${lines.join('\n')}
+
+Download (a private link, good for 7 days; after that, from your account):
 ${link}
 
-Install the .pkg, open your DAW, drop StreamDAW on the master bus, press GO LIVE.
+${keyLine}
 
-You can re-download anytime from your account at ${SITE} — StreamDAW is tied to
-this email, the same login you use for Mutra and everything else by Snowstar.
+Then: install the .pkg, open your DAW, put StreamDAW on the master bus, press GO LIVE.
+
+${mailLinksText()}
 
 — Snowstar.Company`;
-  const html =
-`<div style="font-family:Inter,system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1a1a1a">
-  <h2 style="font-family:Anton,sans-serif;text-transform:uppercase;letter-spacing:.02em">Welcome to StreamDAW</h2>
-  ${machine ? `<p>Your Pro key for this Mac (<code>${machine}</code>) is being made now. It arrives by email, ${soon}: paste it into StreamDAW › Settings › Licence.</p>` : ''}
-  <p>Your private download link (good for 7 days):</p>
-  <p><a href="${link}" style="display:inline-block;background:#1c2be0;color:#fff;font-weight:700;
-     padding:12px 22px;border-radius:8px;text-decoration:none">Download StreamDAW</a></p>
-  <p style="color:#666;font-size:14px">Install the .pkg, open your DAW, drop StreamDAW on the master bus,
-     and press GO LIVE. Re-download anytime from your account at
-     <a href="${SITE}">snowstar.company</a> — it's tied to this email, the same login as Mutra.</p>
-  <p style="color:#999;font-size:12px">Powered by Snowstar.Company</p>
-</div>`;
+  const html = licenceMail({
+    title: 'Welcome to StreamDAW Pro',
+    intro: 'Thanks for getting StreamDAW Pro. Your download is below; your key follows.',
+    steps: [
+      'Download StreamDAW and install the .pkg.',
+      escHtml(keyLine),
+      'Open your DAW, put StreamDAW on the master bus, press <b>GO LIVE</b>.',
+    ],
+    button: { href: link, label: 'Download StreamDAW' },
+    footer: lines.map(escHtml).join('<br>') + '<br>The download link is private to you and good for 7 days; after that, download from <a href="' + ACCOUNT_URL + '">your account</a>.',
+  });
   return sendMail(env, { to, subject, text, html });
 }
 

@@ -12,317 +12,16 @@
 <meta name="theme-color" content="#efe9da">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<style>
-  :root{
-    --paper:#efe9da; --paper-2:#e7e0cd; --card:#f7f3e8;
-    --ink:#17140d; --ink-2:#403a2c; --muted:#77705d;
-    --line:rgba(23,20,13,.14); --line-2:rgba(23,20,13,.28);
-    --lime:#c8f23a; --lime-ink:#1d2a00; --blue:#1c2be0; --pink:#ff2f6b; --ok:#23864a;
-    --serif:"Fraunces",Georgia,"Times New Roman",serif;
-    --sans:"Inter",system-ui,-apple-system,sans-serif;
-    --poster:"Anton",Impact,sans-serif;
-    --maxw:1160px;
-    --lift:0 40px 80px -40px rgba(23,20,13,.45), 0 2px 0 rgba(23,20,13,.04);
-
-    /* ── the shared account UI, translated into this page's palette ──────────
-       js/account-ui.js and css/account.css are loaded by every page and are
-       written against the Snowstar/Mutra token names. This page has its own
-       vocabulary — paper, card, ink — so those names resolved to nothing here,
-       and `background:var(--panel-2,var(--panel))` with neither defined is not
-       a fallback, it is no background at all: the account menu rendered
-       transparent with the hero showing straight through it. Aliases rather
-       than edits to the shared sheet, so nothing else on the site moves. */
-    --bg:var(--paper); --panel:var(--card); --panel-2:var(--card);
-    --text:var(--ink); --dim:var(--muted);
-    --font-body:var(--sans); --font-display:var(--serif);
-    --tint:rgba(23,20,13,.06);
-    --amber:var(--lime); --coral:var(--pink); --ice:var(--blue);
-    --grad:linear-gradient(96deg,#c8f23a,#a9e21c);
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
-  img{display:block;max-width:100%;height:auto}
-  a{color:inherit;text-decoration:none}
-  button{font:inherit;color:inherit}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(16px,4vw,40px)}
-  h1,h2,h3{font-family:var(--serif);font-weight:600;letter-spacing:-.02em;line-height:1.02}
-  .kicker{font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-  section{padding:clamp(72px,10vw,128px) 0;scroll-margin-top:64px}
-
-  /* ── header ─────────────────────────────────────────────── */
-  header.nav{position:sticky;top:0;z-index:80;background:rgba(239,233,218,.9);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
-  header.nav .wrap{display:flex;align-items:center;gap:22px;height:64px}
-  .wordmark{height:15px;width:auto}
-  header.nav nav{display:flex;gap:26px;margin-left:auto;font-size:14px;color:var(--ink-2)}
-  header.nav nav a:hover{color:var(--ink)}
-  .nav-tools{display:flex;align-items:center;gap:14px}
-  .nav-tools .btn{gap:4px}
-  header.nav nav + .nav-tools{margin-left:4px}
-  /* The currency switcher, matching the circle Snowstar and Mutra use. These
-     rules lived here before and went out with the page rebuild, which left the
-     button rendering as a browser-default 14x30 box with an outset border. */
-  .theme-btn.cur-btn{display:grid;place-items:center;width:36px;height:36px;flex:none;
-    border-radius:50%;background:none;border:1px solid var(--line-2);
-    color:var(--ink-2);cursor:pointer;font-family:var(--sans);font-size:1.02rem;
-    font-weight:600;line-height:1;padding:0 0 1px;transition:.2s}
-  .theme-btn.cur-btn:hover{color:var(--ink);border-color:var(--ink);background:var(--lime)}
-  .nav-acct{display:inline-flex;align-items:center;white-space:nowrap}
-  .nav-acct .mnav-auth{margin:0;font:500 14px/1 var(--sans)}
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 22px;border-radius:999px;font:600 15px/1 var(--sans);border:1.5px solid var(--ink);cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
-  .btn:hover{transform:translateY(-1px)}
-  .btn[disabled]{cursor:default;transform:none}
-  .btn.ink{background:var(--ink);color:var(--paper)}
-  .btn.lime{background:var(--lime);color:var(--lime-ink);border-color:var(--lime)}
-  .btn.ghost{background:transparent;color:var(--ink)}
-  .btn.sm{height:38px;padding:0 16px;font-size:14px}
-  .btn svg{width:18px;height:18px}
-
-  /* burger — the same 44px box and viewport offset as the other Snowstar pages */
-  .sd-burger{position:absolute;left:clamp(20px,5vw,56px);top:50%;transform:translateY(-50%);
-    display:grid;place-content:center;gap:5px;width:44px;height:44px;z-index:90;background:none;border:0;cursor:pointer;padding:0}
-  .sd-burger span{display:block;width:22px;height:2px;background:var(--ink);transition:transform .3s,opacity .2s}
-  body.sd-menu-open .sd-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
-  body.sd-menu-open .sd-burger span:nth-child(2){opacity:0}
-  body.sd-menu-open .sd-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-  @media(max-width:1330px){header.nav .wrap{padding-left:calc(clamp(20px,5vw,56px) + 48px)}}
-  .sd-menu{position:fixed;inset:0;min-height:100svh;z-index:75;background:var(--paper);display:flex;flex-direction:column;
-    justify-content:center;padding:90px clamp(24px,7vw,120px) 40px;border-top:6px solid var(--ink);
-    clip-path:inset(0 0 100% 0);transition:clip-path .45s cubic-bezier(.7,0,.3,1)}
-  body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
-  .sd-menu a{display:flex;align-items:baseline;gap:16px;font-family:var(--poster);
-    text-transform:uppercase;font-size:clamp(1.8rem,5.5vw,3.2rem);color:var(--ink);line-height:1.35}
-  /* ── the Products lockup ───────────────────────────────────────────────
-     Identical to css/style.css — this page carries its own CSS, so the rules
-     are repeated rather than inherited. A slot gives the three rows one
-     rhythm, viewport units keep the marks the same size as on every other
-     page (sized in em they came out 40% smaller here, because this menu is
-     set at 51px where the others reach 80px), and the ratios between the
-     three are equal optical area. Inverted, because this menu is paper white
-     and the shared marks are white on transparent. */
-  .menu-word{--slot:clamp(34px,3.8vw,52px);
-    width:auto;max-width:none;display:block;flex:none;filter:invert(1);
-    transition:filter .25s ease}
-  .menu-word[alt="Mutra"]    {height:calc(var(--slot) * .500)}
-  .menu-word[alt="StreamDAW"]{height:calc(var(--slot) * .312)}
-  .menu-word[alt="Snowstar"] {height:calc(var(--slot) * .296)}
-  .sd-menu a:has(.menu-word){align-items:center;min-height:clamp(34px,3.8vw,52px);
-    padding:0 14px;margin-left:-14px;border-radius:12px;width:max-content;
-    transition:background .25s ease,transform .25s ease}
-  .sd-menu a:has(.menu-word):hover{background:color-mix(in srgb,currentColor 9%,transparent);
-    transform:translateX(6px)}
-  .sd-menu a.now:has(.menu-word){background:none;transform:none}
-  .sd-menu a i{font-family:var(--sans);font-style:normal;font-weight:600;font-size:.7rem;color:var(--muted)}
-  .sd-menu a:hover{color:var(--blue)}
-  .sd-menu a.now{color:var(--blue);opacity:.55;pointer-events:none}
-  .menu-div{display:block;margin:22px 0 6px;font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-  .menu-cur{margin-top:26px;display:none}
-
-  /* ── hero ───────────────────────────────────────────────── */
-  .hero{padding:clamp(56px,8vw,104px) 0 clamp(40px,6vw,72px)}
-  .hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(32px,5vw,64px);align-items:center}
-  .hero h1{font-size:clamp(36px,4.1vw,62px);margin:18px 0 22px}
-  .hero h1 .nb{white-space:nowrap}
-  .hero h1 em{font-style:italic;font-weight:500}
-  .hero .lead{font-size:clamp(17px,1.5vw,19px);color:var(--ink-2);max-width:30em}
-  .cta{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 16px}
-  .fine{font-size:13px;color:var(--muted)}
-  .stage{position:relative;padding:0 6% 9% 0}
-  .laptop{border:1.5px solid var(--ink);border-radius:14px;background:var(--card);overflow:hidden;box-shadow:var(--lift)}
-  .laptop .bar{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line)}
-  .laptop .bar i{width:9px;height:9px;border-radius:50%;background:var(--paper-2);border:1px solid var(--line-2)}
-  .phone{position:absolute;right:0;bottom:0;width:31%;border:6px solid var(--ink);border-radius:34px;overflow:hidden;background:var(--card);box-shadow:var(--lift)}
-  .phone img{width:100%}
-
-  .hero .punch{margin-top:14px;font:600 clamp(17px,1.5vw,19px)/1.3 var(--sans);color:var(--ink)}
-  .daws{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0}
-  .daws .wrap{display:grid;gap:14px;justify-items:center;text-align:center}
-  .flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;font:600 clamp(18px,2vw,24px)/1.2 var(--serif);color:var(--ink)}
-  .flow i{font-style:normal;color:var(--muted);font-family:var(--sans);font-weight:500}
-  .flow span:last-child{background:var(--lime);color:var(--lime-ink);padding:2px 10px;border-radius:8px}
-  .works{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;justify-content:center;font-size:14px;color:var(--muted)}
-  .works b{font-weight:600;color:var(--ink-2)}
-
-  /* ── the two rooms ──────────────────────────────────────── */
-  .head{max-width:640px;margin-bottom:clamp(36px,5vw,56px)}
-  .head h2{font-size:clamp(34px,4.4vw,56px);margin-top:14px}
-  .head p{color:var(--ink-2);margin-top:16px;font-size:17px}
-  .rooms{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-  .room{background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column}
-  .room .art{aspect-ratio:16/10;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
-  .room .body{padding:clamp(24px,3vw,36px)}
-  .room h3{font-size:clamp(26px,2.6vw,34px);margin:12px 0 10px}
-  .room .sub{color:var(--ink-2);margin-bottom:22px}
-  .ticks{list-style:none;display:grid;gap:12px}
-  .ticks li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:15px;color:var(--ink-2)}
-  .ticks li::before{content:"";width:18px;height:18px;margin-top:3px;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d2a00' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center/11px no-repeat}
-  .tag{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2)}
-  .tag.pro{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-  .tag.lime{background:var(--lime);color:var(--lime-ink);border-color:var(--lime)}
-
-  /* Producer Virtual Studio: a call, a talkback line, a take on a DAW track */
-  .vs{position:absolute;inset:0;background:var(--paper-2);padding:6%;display:grid;grid-template-rows:auto 1fr;gap:5%}
-  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:4%}
-  .tile{aspect-ratio:4/3;border-radius:12px;background:var(--ink);position:relative;display:grid;place-items:center;overflow:hidden}
-  .tile .av{width:42%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font:600 clamp(11px,1.3vw,16px)/1 var(--sans);color:var(--ink)}
-  .tile .nm{position:absolute;left:8%;bottom:8%;font:500 clamp(8px,.85vw,11px)/1 var(--sans);color:var(--paper);opacity:.85}
-  .tile.talk{outline:3px solid var(--lime);outline-offset:-3px}
-  .daw{background:var(--card);border:1px solid var(--line-2);border-radius:12px;padding:4% 4.5%;display:grid;grid-template-rows:auto 1fr;gap:6%}
-  .daw .row{display:flex;align-items:center;gap:10px;font:600 clamp(9px,.95vw,12px)/1 var(--sans);color:var(--ink-2)}
-  .daw .rec{margin-left:auto;color:var(--pink);display:flex;align-items:center;gap:6px}
-  .daw .rec::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--pink)}
-  .daw .lane{position:relative;border-radius:8px;background:rgba(200,242,58,.32);border:1px solid rgba(29,42,0,.25);overflow:hidden}
-  .daw .lane svg{position:absolute;inset:0;width:100%;height:100%}
-  .bubble{position:absolute;right:6%;top:39%;background:var(--card);border:1px solid var(--line-2);border-radius:14px 14px 4px 14px;padding:9px 12px;font:500 clamp(10px,1vw,13px)/1.3 var(--sans);box-shadow:0 12px 24px -12px rgba(23,20,13,.35);max-width:52%}
-  .bubble b{display:block;font-size:.82em;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-
-  /* Band in Sync: the desk setting each player's mix */
-  .band{position:absolute;inset:0;background:var(--paper-2)}
-  .band img{position:absolute;left:6%;top:9%;width:120%;max-width:none;border:1.5px solid var(--ink);border-radius:10px;box-shadow:var(--lift)}
-  .synced{position:absolute;right:6%;bottom:9%;display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--ink);border-radius:999px;padding:9px 14px 9px 10px;font:600 clamp(10px,1vw,13px)/1 var(--sans);box-shadow:0 12px 24px -12px rgba(23,20,13,.4)}
-  .synced i{width:22px;height:22px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
-  .synced i svg{width:12px;height:12px}
-
-  /* ── try it: the studio on a computer, the phone page on a phone ── */
-  .demo{background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .demo-in{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(32px,5vw,64px);align-items:center}
-  .demo h2{font-size:clamp(48px,6vw,84px);margin:0 0 6px}
-  .demo .demo-sub{font:600 clamp(19px,1.8vw,23px)/1.25 var(--serif);color:var(--ink);margin:0 0 14px}
-  .demo-copy>p{color:var(--ink-2);font-size:17px;max-width:32em}
-  .demo-qr{display:flex;align-items:center;gap:18px;margin-top:28px;padding:14px;border:1px solid var(--line-2);border-radius:18px;background:var(--card);max-width:440px}
-  .qrbox{width:140px;height:140px;flex:none;background:#fff;border-radius:8px}
-  .qrbox svg{display:block;width:100%;height:100%}
-  .demo-qr p{font-size:15px;color:var(--ink-2)}
-  .demo-qr b{color:var(--ink);font-weight:600}
-  .demo-qr .qrstate{margin-top:6px;font-size:14px;color:var(--ok);font-weight:500}
-  .demo-alt{margin-top:14px}
-  .demo-alt a{text-decoration:underline}
-  .only-narrow{display:none}
-  @media (max-width:900px){
-    .demo-in{grid-template-columns:1fr}
-    .only-wide{display:none!important}
-    .only-narrow{display:block}
-    .demo-open.only-narrow{display:inline-flex;margin-top:26px}
-    .demo-fine{margin-top:12px}
-  }
-
-  /* ── how it works ───────────────────────────────────────── */
-  .how{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,40px)}
-  .step{border-top:1.5px solid var(--ink);padding-top:22px}
-  .step .n{font:600 13px/1 var(--sans);letter-spacing:.14em;color:var(--muted)}
-  .step h3{font-size:clamp(22px,2.2vw,28px);margin:12px 0 10px}
-  .step p{color:var(--ink-2);font-size:15px}
-  .step p small{display:block;margin-top:10px;color:var(--muted);font-size:13px}
-
-  /* ── pricing ────────────────────────────────────────────── */
-  .plans{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
-  .plan{border:1px solid var(--line);border-radius:22px;background:var(--card);padding:clamp(26px,3vw,40px);display:flex;flex-direction:column}
-  .plan.pro{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-  .plan .price{font:600 clamp(44px,5vw,60px)/1 var(--serif);letter-spacing:-.02em;margin:14px 0 6px}
-  .plan .price small{font:500 15px var(--sans);letter-spacing:0;color:var(--muted);margin-left:8px}
-  .plan.pro .price small,.plan.pro .note{color:rgba(239,233,218,.62)}
-  .plan .note{font-size:14px;color:var(--muted);margin-bottom:26px}
-  .plan .tag{align-self:flex-start}
-  .plan .ticks{margin-bottom:30px}
-  .plan.pro .ticks li{color:rgba(239,233,218,.86)}
-  .plan.pro .ticks li b{color:var(--paper);font-weight:600}
-  /* what Free does not have: the same rows as Pro, so the two lists read side by side */
-  .ticks li.no{color:var(--muted)}
-  .ticks li.no::before{background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2377705d' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M8 8l8 8M16 8l-8 8'/%3E%3C/svg%3E") center/12px no-repeat;border:1px solid var(--line-2)}
-  .plan .btn{margin-top:auto;align-self:flex-start}
-  .plan .after{margin-top:14px;font-size:13px;color:rgba(239,233,218,.62)}
-  .plan .after a{text-decoration:underline}
-  .coupon{display:flex;gap:8px;margin:auto 0 12px;max-width:360px}
-  .coupon input{flex:1;min-width:0;height:42px;padding:0 14px;border-radius:999px;border:1px solid rgba(239,233,218,.28);background:rgba(239,233,218,.06);color:var(--paper);font:500 14px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;outline:none}
-  .coupon input::placeholder{color:rgba(239,233,218,.45);text-transform:none;letter-spacing:0}
-  .coupon input:focus{border-color:var(--lime)}
-  .coupon button{height:42px;padding:0 16px;border-radius:999px;border:1px solid rgba(239,233,218,.4);background:transparent;color:var(--paper);font:600 14px/1 var(--sans);cursor:pointer}
-  .coupon button:hover{border-color:var(--lime);color:var(--lime)}
-  #buyBtn{margin-top:0}
-  .msg{font-size:14px;font-weight:500;margin:0 0 14px}
-  .msg.ok{color:var(--lime)}
-  .msg.bad{color:#ff8fa8}
-  /* one payment against the yearly subscriptions */
-  .versus{margin-top:24px;border:1px solid var(--line-2);border-radius:22px;background:var(--card);padding:clamp(22px,3vw,32px)}
-  .vs-h{font:600 clamp(20px,2vw,26px)/1.2 var(--serif);margin-bottom:14px}
-  .vs-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .vs-rows div{border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:4px}
-  .vs-rows div>span{font-size:14px;color:var(--muted)}
-  .vs-rows b{font:600 20px/1.2 var(--serif);color:var(--ink)}
-  .vs-rows .us{background:var(--ink);border-color:var(--ink)}
-  .vs-rows .us>span{color:rgba(239,233,218,.7)}
-  .vs-rows .us b{color:var(--lime)}
-  .vs-fine{margin-top:12px;font-size:13px;color:var(--muted)}
-  .reqs{margin-top:28px;text-align:center;font-size:14px;color:var(--muted)}
-  .reqs b{color:var(--ink-2);font-weight:600}
-
-  /* the owner's key, on this page once they have bought */
-  .lic{margin-top:24px;border:1px solid var(--line-2);border-radius:22px;background:var(--card);padding:clamp(24px,3vw,36px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(20px,3vw,40px);align-items:start}
-  .lic h3{font-size:clamp(24px,2.4vw,30px);margin:12px 0 8px}
-  .lic p{color:var(--ink-2);font-size:15px}
-  .lic input,.lic textarea{width:100%;border:1px solid var(--line-2);border-radius:12px;background:#fff;color:var(--ink);font:500 15px/1.4 var(--sans);padding:11px 14px;outline:none}
-  .lic input:focus,.lic textarea:focus{border-color:var(--ink)}
-  .lic input + input{margin-top:8px}
-  #licMachine,.lic textarea{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
-  #licMachine{text-transform:uppercase}
-  .lic .btn{margin-top:12px}
-  .lic .lmsg{margin-top:10px;font-size:14px;color:var(--muted)}
-  .lic .lmsg.bad{color:#c01d4f}
-
-  /* ── questions ──────────────────────────────────────────── */
-  .faq{max-width:780px}
-  details{border-top:1px solid var(--line-2);padding:20px 0}
-  details:last-child{border-bottom:1px solid var(--line-2)}
-  summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;font:600 clamp(18px,1.8vw,21px)/1.3 var(--serif)}
-  summary::-webkit-details-marker{display:none}
-  summary::after{content:"+";font:400 24px/1 var(--sans);color:var(--muted);transition:transform .2s}
-  details[open] summary::after{transform:rotate(45deg)}
-  details p{margin-top:12px;color:var(--ink-2);max-width:62ch}
-  details a{text-decoration:underline}
-
-  .last{text-align:center}
-  .last h2{font-size:clamp(38px,5vw,64px)}
-  .last h2 em{font-style:italic;font-weight:500}
-  .last .cta{justify-content:center}
-  footer{border-top:1px solid var(--line);padding:28px 0 40px;font-size:13px;color:var(--muted)}
-  footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-  footer b{color:var(--ink);font-weight:600}
-
-  @media (max-width:900px){
-    header.nav nav{display:none}
-    .nav-tools{margin-left:auto}
-    .hero .wrap,.rooms,.plans,.lic,.vs-rows{grid-template-columns:1fr}
-    .steps{grid-template-columns:1fr}
-    .stage{padding:0 10% 14% 0}
-    .phone{width:36%;border-width:5px;border-radius:26px}
-  }
-  @media (max-width:560px){
-    .nav-tools [data-currency-switcher]{display:none}
-    .menu-cur{display:block}
-    .nav-tools .btn .long{display:none}
-    .tile .nm{display:none}
-    .tile{border-radius:9px}
-    .bubble{top:auto;bottom:7%;right:5%;padding:7px 10px}
-    .daw .row span:nth-child(2){display:none}
-  }
-</style>
+<link rel="stylesheet" href="../css/streamdaw.css?v=1">
+<!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
 {
 "@context": "https://schema.org",
 "@type": "FAQPage",
 "mainEntity": [
- {
-"@type": "Question",
-"name": "Do listeners need to install anything?",
-"acceptedAnswer": {
-"@type": "Answer",
-"text": "No. They open a link or scan the QR code. That's it."
-}
-},
  {
 "@type": "Question",
 "name": "How good is the sound?",
@@ -341,14 +40,6 @@
 },
  {
 "@type": "Question",
-"name": "Which DAWs does it work in?",
-"acceptedAnswer": {
-"@type": "Answer",
-"text": "Logic Pro, Ableton Live, Cubase, Studio One, Reaper, Bitwig: any Mac DAW that loads AU or VST3. Pro Tools isn't supported yet."
-}
-},
- {
-"@type": "Question",
 "name": "Is everyone really in time?",
 "acceptedAnswer": {
 "@type": "Answer",
@@ -357,10 +48,18 @@
 },
  {
 "@type": "Question",
+"name": "Which DAWs does it work in?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "Logic Pro, Ableton Live, Cubase, Studio One, Reaper and Bitwig: any Mac DAW that loads AU or VST3. Pro Tools isn't supported."
+}
+},
+ {
+"@type": "Question",
 "name": "How does the licence work?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "One payment, no subscription, and every StreamDAW 1 update included. Your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? Sign in here and request a key for it. The licence terms."
+"text": "One payment, no subscription, and every StreamDAW 1 update included. Your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? Sign in on the unlock page and request a key for it. The licence terms."
 }
 },
  {
@@ -369,14 +68,6 @@
 "acceptedAnswer": {
 "@type": "Answer",
 "text": "Try before you buy: the free version and the 7-day Pro trial cost nothing. Once your key is issued, Pro isn't refundable, except for a double charge or a key that never arrives. Details."
-}
-},
- {
-"@type": "Question",
-"name": "Something is not working.",
-"acceptedAnswer": {
-"@type": "Answer",
-"text": "Write to hello@snowstar.company. Every report is read by the person who wrote StreamDAW; fixes arrive in updates."
 }
 }
 ]
@@ -402,194 +93,263 @@
 </head>
 <body>
 
-<header class="nav">
+<header class="nav has-burger">
   <div class="wrap">
     <button class="sd-burger" id="sdBurger" aria-label="Menu" aria-expanded="false" aria-controls="sdMenu"><span></span><span></span><span></span></button>
-    <a href="#top" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW"></a>
+    <a href="#top" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW" width="149" height="15"></a>
     <nav aria-label="Page">
+      <a href="#features">Features</a>
+      <a href="#stories">Stories</a>
       <a href="#demo">Try it</a>
-      <a href="#uses">Uses</a>
-      <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">Questions</a>
     </nav>
     <div class="nav-tools">
       <span class="nav-acct" data-account-mount></span>
-      <a class="btn ink sm" href="/api/streamdaw/download/free" data-free-dl>Download<span class="long">free</span></a>
+      <!-- For someone who owns Pro this becomes "Unlock a Mac" (js/streamdaw-page.js): same box, no shift. -->
+      <a class="btn ink sm" id="navCta" href="/api/streamdaw/download/free" data-free-dl>Download<span class="long">free</span></a>
     </div>
   </div>
 </header>
 
 <main id="top">
-  <!-- ── hero ── -->
-  <section class="hero">
+
+  <!-- ── hero: the line, the buttons, the app at work ── -->
+  <section class="hero" id="hero" aria-labelledby="heroTitle">
     <div class="wrap">
-      <div>
-        <div class="kicker">For Mac · AU &amp; VST3</div>
-        <h1><span class="nb">Stream your DAW.</span><br><em>Live. Lossless.</em></h1>
-        <p class="lead">Send your studio session to anyone, anywhere — live from Logic, Ableton, Cubase or Studio One. Nothing for them to install.</p>
-        <p class="punch">No upload. No bounce. Just press Play.</p>
-        <div class="cta">
-          <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Download free</a>
-          <button class="btn ghost" data-buy="lifetime"><span>Get Pro · <span data-ils="249">₪249</span> once</span></button>
-        </div>
-        <p class="fine">Free on your master bus. Try every Pro feature for 7 days, no card. Mac with Apple silicon.</p>
+      <p class="kicker" data-txt="streamdaw.hero.kicker">For Mac · AU and VST3</p>
+      <h1 id="heroTitle" data-txt="streamdaw.hero.title"><span class="nb">Stream your DAW.</span><br><em>Live. Lossless.</em></h1>
+      <p class="lead" data-txt="streamdaw.hero.sub">Anyone, anywhere, hears your session as you play it. One link. Nothing to install.</p>
+      <div class="cta">
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-free">Download free</span></a>
+        <button class="btn ghost" data-buy="lifetime"><span><span data-txt="streamdaw.hero.cta-pro">Get Pro ·</span> <span data-ils="249">₪249</span> <span data-txt="streamdaw.hero.cta-once">once</span></span></button>
       </div>
-      <div class="stage" aria-label="StreamDAW on a Mac, and a listener's phone">
-        <div class="laptop">
-          <div class="bar"><i></i><i></i><i></i></div>
-          <img src="sdaw-v2-studio.jpg?v=3" alt="The StreamDAW window: eight stems on air, six people listening" width="2560" height="1180">
-        </div>
-        <div class="phone"><img src="sdaw-v2-phone.jpg?v=3" alt="A listener's phone: playing live, in sync mode" width="1170" height="2280"></div>
-      </div>
+      <p class="fine" data-txt="streamdaw.hero.fine">Free on your master bus. Every Pro feature free for 7 days, no card. Mac with Apple silicon.</p>
+
+      <!-- media/streamdaw/hero.*: the app on a Mac and a listener's phone, looping. Hydrated and
+           played by js/streamdaw-page.js (only while on screen; posters only for reduced motion). -->
+      <figure class="reel wide mark hero-reel" data-media="hero" aria-label="StreamDAW on a Mac, and a phone playing the session">
+        <video muted loop playsinline preload="none" width="1920" height="1080"></video>
+        <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+      </figure>
+      <p class="works" data-txt="streamdaw.hero.works"><span>Works in</span><b>Logic Pro</b><b>Ableton Live</b><b>Cubase</b><b>Studio One</b><b>Reaper</b><b>Bitwig</b></p>
     </div>
   </section>
 
-  <!-- the one line the whole page says, then where it runs -->
-  <div class="daws">
-    <div class="wrap">
-      <p class="flow"><span>Your DAW</span><i aria-hidden="true">→</i><span>One link</span><i aria-hidden="true">→</i><span>Everyone hears it live</span></p>
-      <p class="works"><span>Works in</span><b>Logic Pro</b><b>Ableton Live</b><b>Cubase</b><b>Studio One</b><b>Reaper</b><b>Bitwig</b></p>
+  <!-- ── what you can do: one tall card per feature, a clip each ── -->
+  <section class="feats" id="features" aria-labelledby="featTitle">
+    <div class="wrap sec-head">
+      <h2 id="featTitle" data-txt="streamdaw.features.title">What you can do.</h2>
+      <div class="arrows">
+        <button class="arrow" type="button" data-rail="-1" aria-label="Previous" aria-controls="featRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="arrow" type="button" data-rail="1" aria-label="Next" aria-controls="featRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
     </div>
-  </div>
+    <ul class="rail" id="featRail" tabindex="0" aria-label="StreamDAW features">
+      <li class="feat">
+        <figure class="reel tall" data-media="golive">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.golive.label">Share</span></span><h3 data-txt="streamdaw.features.golive.title">Go live</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.golive.sub">Press Go Live. Send the link or show the QR code. They press Play.</p>
+      </li>
+      <li class="feat">
+        <figure class="reel tall" data-media="ownmix">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.ownmix.label">Mix</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.ownmix.title">Their own mix</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.ownmix.sub">Send stems. Every listener sets level, solo, mute and pan on their phone.</p>
+      </li>
+      <li class="feat">
+        <figure class="reel tall" data-media="intime">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.intime.label">Sync</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.intime.title">In time, every phone</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.intime.sub">Every phone plays the same instant. A few beeps line up the room's speakers.</p>
+      </li>
+      <li class="feat">
+        <figure class="reel tall" data-media="engineer">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.engineer.label">Control</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.engineer.title">You're the engineer</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.engineer.sub">Pick anyone and set their mix from your desk. Copy it, paste it to the next.</p>
+      </li>
+      <li class="feat">
+        <figure class="reel tall" data-media="pictures">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.pictures.label">Video</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.pictures.title">See each other</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.pictures.sub">Cameras, up to three shared screens and talkback, in time with the music.</p>
+      </li>
+      <li class="feat">
+        <figure class="reel tall" data-media="record">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.record.label">Record</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.record.title">Record anyone</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.record.sub">Put a person on a DAW input. Their voice lands on the track, in time.</p>
+      </li>
+      <li class="feat">
+        <figure class="reel tall" data-media="anyapp">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.anyapp.label">Sources</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.anyapp.title">Any app, into the stream</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.anyapp.sub">Spotify, Music, YouTube, a browser or an audio interface, mixed into the stream.</p>
+      </li>
+      <li class="feat">
+        <figure class="reel tall" data-media="analytics">
+          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
+          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.analytics.label">Analytics</span></span><h3 data-txt="streamdaw.features.analytics.title">Know it's working</h3></figcaption>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <p class="feat-cap" data-txt="streamdaw.features.analytics.sub">Who is listening, how loud it is, and how each connection is holding up.</p>
+      </li>
+    </ul>
+  </section>
 
-  <!-- ── try it: the demo (apps/streamdaw-demo.html, built from the real listener page) ── -->
+  <!-- ── the two stories the product is built for (the plan's Story 1 and Story 2).
+       Each frame plays media/streamdaw/review.* or band.* once those exist; until then the
+       drawn still under the video is what shows. ── -->
+  <section class="stories" id="stories" aria-labelledby="storiesTitle">
+    <div class="wrap">
+      <div class="sec-head"><h2 id="storiesTitle" data-txt="streamdaw.stories.title">Built for two rooms.</h2></div>
+
+      <article class="story">
+        <figure class="reel wide" data-media="review" aria-label="A score review: six people on camera, a voice-over take recording on a track">
+          <div class="still" aria-hidden="true">
+            <div class="tiles">
+              <div class="tile"><div class="av" style="background:#f3e3a8">CD</div><span class="nm">Creative director</span></div>
+              <div class="tile"><div class="av" style="background:#c9cdfb">FD</div><span class="nm">Film director</span></div>
+              <div class="tile talk"><div class="av" style="background:var(--lime)">BM</div><span class="nm">Brand manager</span><span class="say">“Warmer on the last line.”</span></div>
+              <div class="tile"><div class="av" style="background:#f2c6d4">CW</div><span class="nm">Copywriter</span></div>
+              <div class="tile"><div class="av" style="background:#bfe8dc">PR</div><span class="nm">Producer</span></div>
+              <div class="tile"><div class="av" style="background:#ffd0b5">VO</div><span class="nm">Voice-over</span></div>
+            </div>
+            <div class="take">
+              <div class="take-h"><span>VO · Take 2</span><span class="rec">REC</span></div>
+              <div class="lane"><svg viewBox="0 0 400 60" preserveAspectRatio="none" id="wave"></svg></div>
+            </div>
+          </div>
+          <video muted loop playsinline preload="none" width="1920" height="1080"></video>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <div>
+          <p class="kicker" data-txt="streamdaw.stories.review.kicker">Remote studio session</p>
+          <h3 data-txt="streamdaw.stories.review.title">The session review</h3>
+          <ul class="lines">
+            <li data-txt="streamdaw.stories.review.l1">The team hears the score as you play it, and watches the cut in time with it.</li>
+            <li data-txt="streamdaw.stories.review.l2">You let the voice-over artist in. Her take lands on a track in your DAW, in time.</li>
+            <li data-txt="streamdaw.stories.review.l3">The brand manager solos her and asks for one change over talkback. Take two.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="story flip">
+        <figure class="reel wide" data-media="band" aria-label="Eight phones at a rehearsal, all at the same point in the song">
+          <div class="still band" aria-hidden="true">
+            <span class="count">1, 2, 3, 4!</span>
+            <div class="phones">
+              <div class="ph"><span class="scr"><i></i></span><b>Drums</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Bass</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Guitar</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Keys</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Violin</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Cello</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Horns</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Perc</b></div>
+            </div>
+            <span class="synced">8 phones in time</span>
+          </div>
+          <video muted loop playsinline preload="none" width="1920" height="1080"></video>
+          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        </figure>
+        <div>
+          <p class="kicker" data-txt="streamdaw.stories.band.kicker">Rehearsal</p>
+          <h3 data-txt="streamdaw.stories.band.title">The band, in their ears</h3>
+          <ul class="lines">
+            <li data-txt="streamdaw.stories.band.l1">Everyone scans one QR code. No app, no account.</li>
+            <li data-txt="streamdaw.stories.band.l2">Wired in-ears, Play, and their own mix: level, solo, mute, pan.</li>
+            <li data-txt="streamdaw.stories.band.l3">Phones in pockets. On the count-in, the whole room plays together.</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ── try it: the demo (apps/streamdaw-demo.html, built from the real listener page).
+       demo/studio.js draws the DAW into #demoDaw and the QR into #demoQr; demo/coach.js
+       drives #demoSteps and .demo-qr. Keep those ids and classes. ── -->
   <section class="demo" id="demo">
     <div class="wrap demo-in">
       <div class="demo-copy">
-        <h2>Try it!</h2>
-        <p class="demo-sub">You're the producer. Your phone is the band.</p>
-        <p class="only-wide">“MAMA” by KAYMA, a real session, live from this page to your phone.</p>
+        <p class="kicker" data-txt="streamdaw.demo.kicker">Live demo</p>
+        <h2 data-txt="streamdaw.demo.title">Try it.</h2>
+        <p class="demo-sub" data-txt="streamdaw.demo.sub">You're the producer. Your phone is the band.</p>
+        <p class="only-wide" data-txt="streamdaw.demo.line">“MAMA” by KAYMA, a real session, live from this page to your phone.</p>
         <ol class="demo-steps only-wide" id="demoSteps">
-          <li data-s="scan"><span><b>Scan</b> the code with your phone</span></li>
-          <li data-s="phone"><span><b>Press Play</b> on your phone, earphones in</span></li>
-          <li data-s="play"><span><b>Press Play here</b>: your phone plays along</span></li>
-          <li data-s="tips"><span><b>Make it yours</b>: solo, mute, jump</span></li>
+          <li data-s="scan"><span data-txt="streamdaw.demo.step1"><b>Scan</b> the code with your phone</span></li>
+          <li data-s="phone"><span data-txt="streamdaw.demo.step2"><b>Press Play</b> on your phone, earphones in</span></li>
+          <li data-s="play"><span data-txt="streamdaw.demo.step3"><b>GO LIVE here</b>: your phone plays along</span></li>
+          <li data-s="tips"><span data-txt="streamdaw.demo.step4"><b>Make it yours</b>: solo, mute, jump</span></li>
         </ol>
-        <p class="only-narrow">“MAMA” by KAYMA, a real session: eight tracks from the DAW, in time. Earphones in, press Play, make the mix yours.</p>
+        <p class="only-narrow" data-txt="streamdaw.demo.line-phone">“MAMA” by KAYMA, a real session: eight tracks from the DAW, in time. Earphones in, press Play, make the mix yours.</p>
         <div class="demo-qr only-wide">
           <div class="qrbox" id="demoQr" aria-live="polite"></div>
           <div><p><b>Scan to join this session.</b></p><p class="qrstate" id="demoQrState">Waiting for your phone…</p></div>
         </div>
-        <p class="fine demo-alt only-wide">No phone at hand? <a href="streamdaw-demo.html" target="_blank" rel="noopener">Hear it in this browser</a>.</p>
-        <a class="btn ink demo-open only-narrow" href="streamdaw-demo.html">Open the demo</a>
-        <p class="fine demo-fine only-narrow">Earphones in. About 8 MB as it plays.</p>
+        <p class="fine demo-alt only-wide" data-txt="streamdaw.demo.alt">No phone at hand? <a href="streamdaw-demo.html" target="_blank" rel="noopener">Hear it in this browser</a>.</p>
+        <a class="btn ink demo-open only-narrow" href="streamdaw-demo.html" data-txt="streamdaw.demo.open">Open the demo</a>
+        <p class="fine demo-fine only-narrow" data-txt="streamdaw.demo.fine-phone">Earphones in. About 8 MB as it plays.</p>
       </div>
       <div class="demo-daw only-wide"><div id="demoDaw"></div></div>
     </div>
   </section>
 
-  <!-- ── the two uses ── These two cards become the two films (the producer's session with his
-       team and a voice-over recorded from afar; the band playing in sync mode): when they
-       exist, a <video> goes in each .art in place of the drawing. -->
-  <section id="uses">
-    <div class="wrap">
-      <div class="head">
-        <div class="kicker">Uses</div>
-        <h2>Two ways to use StreamDAW.</h2>
-      </div>
-      <div class="rooms">
-        <article class="room">
-          <div class="art" aria-hidden="true">
-            <div class="vs">
-              <div class="tiles">
-                <div class="tile talk"><div class="av" style="background:var(--lime)">CD</div><span class="nm">Creative director</span></div>
-                <div class="tile"><div class="av" style="background:#f2c6d4">AP</div><span class="nm">Agency</span></div>
-                <div class="tile"><div class="av" style="background:#c9cdfb">BM</div><span class="nm">Brand</span></div>
-                <div class="tile"><div class="av" style="background:#f3e3a8">VO</div><span class="nm">Voice-over</span></div>
-              </div>
-              <div class="daw">
-                <div class="row"><span>VO · Take 2</span><span style="color:var(--muted);font-weight:500">Input 1 · StreamDAW Audio</span><span class="rec">REC</span></div>
-                <div class="lane"><svg viewBox="0 0 400 60" preserveAspectRatio="none" id="wave"></svg></div>
-              </div>
-              <div class="bubble"><b>Creative director</b>“Warmer on the last line.”</div>
-            </div>
-          </div>
-          <div class="body">
-            <span class="tag pro">Remote studio sessions</span>
-            <h3>The studio session, without the studio.</h3>
-            <p class="sub">Invite clients, producers and artists into your DAW session — live, lossless and in sync.</p>
-            <ul class="ticks">
-              <li>No exports, no bouncing, no revisions back and forth.</li>
-              <li>Talk, see each other and share your screen, in time with the music.</li>
-              <li>Record a singer or a voice-over from another city, straight onto a track.</li>
-            </ul>
-          </div>
-        </article>
-
-        <article class="room">
-          <div class="art" aria-hidden="true">
-            <div class="band">
-              <img src="sdaw-v2-mixes.jpg?v=3" alt="" width="2560" height="1180">
-              <div class="synced"><i><svg viewBox="0 0 24 24" fill="none" stroke="#1d2a00" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></i>6 phones in time</div>
-            </div>
-          </div>
-          <div class="body">
-            <span class="tag pro">Live in-ear for bands</span>
-            <h3>Turn any phone into a wireless in-ear monitor.</h3>
-            <p class="sub">Everyone hears the same performance in sync, with their own personal mix.</p>
-            <ul class="ticks">
-              <li>Scan, plug in, press Play. No app, no account.</li>
-              <li>Every phone plays the same instant.</li>
-              <li>More click, less strings: each player sets their own mix.</li>
-            </ul>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── how it works ── -->
-  <section class="how" id="how">
-    <div class="wrap">
-      <div class="head">
-        <div class="kicker">How it works</div>
-        <h2>Three steps, then Play.</h2>
-      </div>
-      <div class="steps">
-        <div class="step"><div class="n">01</div><h3>Open your DAW</h3><p>Put StreamDAW on your master bus.<small>Stems? Send your tracks to StreamDAW Audio.</small></p></div>
-        <div class="step"><div class="n">02</div><h3>Press Go Live</h3><p>Get a private link and a QR code, instantly.</p></div>
-        <div class="step"><div class="n">03</div><h3>Share</h3><p>They open it in a browser. You keep making music.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── pricing ── -->
+  <!-- ── Free and Pro ── -->
   <section id="pricing">
     <div class="wrap">
-      <div class="head">
-        <div class="kicker">Free and Pro</div>
-        <h2>Try everything. Buy it once.</h2>
-        <p>StreamDAW is free on your master bus. Pro adds stems, in-ear sync, remote recording, video and no time limit. Try all of it free for 7 days.</p>
+      <div class="sec-head center">
+        <p class="kicker" data-txt="streamdaw.pricing.kicker">Free and Pro</p>
+        <h2 data-txt="streamdaw.pricing.title">Try everything. Buy it once.</h2>
       </div>
+
+      <!-- Shown to someone signed in who owns Pro (js/streamdaw-page.js). -->
+      <p class="owned" id="owned" hidden>You have StreamDAW Pro. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="/api/streamdaw/download">Download the installer</a></p>
+
       <div class="plans">
         <div class="plan">
-          <span class="tag">StreamDAW</span>
-          <div class="price">Free</div>
-          <p class="note">For as long as you like.</p>
-          <ul class="ticks">
-            <li>Your master mix on a link and a QR code</li>
-            <li>A waiting room: you let people in</li>
-            <li>Sessions up to 60 minutes</li>
-            <li class="no">Stems, and a mix for every listener</li>
-            <li class="no">In-ear sync for bands</li>
-            <li class="no">Record remote people into your DAW</li>
-            <li class="no">Camera, screen share and talkback</li>
+          <span class="tag" data-txt="streamdaw.pricing.free.tag">StreamDAW</span>
+          <div class="price" data-txt="streamdaw.pricing.free.price">Free</div>
+          <p class="note" data-txt="streamdaw.pricing.free.note">For as long as you like.</p>
+          <ul class="list">
+            <li data-txt="streamdaw.pricing.free.f1">Your master mix, straight from the plug-in</li>
+            <li data-txt="streamdaw.pricing.free.f2">A link and a QR code</li>
+            <li data-txt="streamdaw.pricing.free.f3">A waiting room: you let people in</li>
+            <li data-txt="streamdaw.pricing.free.f4">Up to 60 minutes a session</li>
+            <li data-txt="streamdaw.pricing.free.f5">Analytics: who is listening, loudness, connections</li>
           </ul>
-          <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl>Download for Mac</a>
+          <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.pricing.free.cta">Download for Mac</a>
         </div>
         <div class="plan pro" id="ticket">
           <span class="tag lime" id="stamp">StreamDAW Pro</span>
           <div class="price" id="bigPrice"><span data-ils="249">₪249</span><small>one payment · VAT included</small></div>
           <p class="note" id="priceSub">No subscription. Every StreamDAW 1 update included.</p>
-          <ul class="ticks">
-            <li>Everything in Free</li>
-            <li><b>No time limit</b></li>
-            <li><b>Up to 32 stems, a mix for every listener</b></li>
-            <li><b>In-ear sync for bands</b></li>
-            <li><b>Record up to 16 remote people into your DAW</b></li>
-            <li><b>Camera, screen share and talkback</b></li>
-            <li><b>Monitor, presets, sign-in-only sessions</b></li>
+          <ul class="list">
+            <li class="plus" data-txt="streamdaw.pricing.pro.plus">Everything in Free, plus:</li>
+            <li data-txt="streamdaw.pricing.pro.f1">Up to 32 stems, and a mix for every listener</li>
+            <li data-txt="streamdaw.pricing.pro.f2">Anyone's mix, set from your desk <small>Main or a listener; copy, paste, reset</small></li>
+            <li data-txt="streamdaw.pricing.pro.f3">Sync mode: every phone in time, the room lined up</li>
+            <li data-txt="streamdaw.pricing.pro.f4">Camera, up to three screens (a window or an app) and talkback</li>
+            <li data-txt="streamdaw.pricing.pro.f5">Record up to 16 people into your DAW, in time</li>
+            <li data-txt="streamdaw.pricing.pro.f6">Any app or input into the stream <small>Spotify, Music, YouTube, a browser, an interface</small></li>
+            <li data-txt="streamdaw.pricing.pro.f7">The monitor, presets and sign-in-only sessions</li>
+            <li data-txt="streamdaw.pricing.pro.f8">No time limit</li>
           </ul>
           <div class="coupon">
             <input id="couponInput" type="text" placeholder="Coupon code" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Coupon code">
@@ -598,293 +358,75 @@
           <p class="msg" id="couponMsg" hidden></p>
           <p class="msg ok" id="forMac" hidden></p>
           <button class="btn lime" data-buy="lifetime" id="buyBtn">Get StreamDAW Pro</button>
-          <p class="after">Or try every Pro feature for 7 days inside the app. No card.<br>Buying means you accept the <a href="streamdaw-terms.html">StreamDAW licence terms</a>.</p>
+          <p class="after" data-txt="streamdaw.pricing.pro.after">Or try every Pro feature for 7 days inside the app. No card.<br>Buying means you accept the <a href="streamdaw-terms.html">StreamDAW licence terms</a>.</p>
         </div>
       </div>
+
+      <p class="unlock-cta" data-txt="streamdaw.pricing.unlock">Bought Pro? <a href="streamdaw-unlock.html">Unlock StreamDAW on your Mac</a></p>
 
       <!-- Competitors' prices, as their own sites showed them (read 2026-10-08): keep the date
            in the footnote, and check again before changing a word. -->
       <div class="versus">
-        <p class="vs-h">Others bill you every year.</p>
-        <div class="vs-rows">
-          <div><span>Waves Stream</span><b>$88.88 a year</b></div>
-          <div><span>Audiomovers LISTENTO</span><b>from $99.99 a year</b></div>
-          <div class="us"><span>StreamDAW Pro</span><b><span data-ils="249">₪249</span> once</b></div>
-        </div>
-        <p class="vs-fine">About one year of a streaming subscription, and then it's yours. Prices as listed on waves.com and audiomovers.com, October 2026.</p>
+        <p class="vs-h" data-txt="streamdaw.pricing.vs.title">Others bill you every year.</p>
+        <div><span data-txt="streamdaw.pricing.vs.a-name">Waves Stream</span><b data-txt="streamdaw.pricing.vs.a-price">$88.88 a year</b></div>
+        <div><span data-txt="streamdaw.pricing.vs.b-name">Audiomovers LISTENTO</span><b data-txt="streamdaw.pricing.vs.b-price">from $99.99 a year</b></div>
+        <div class="us"><span>StreamDAW Pro</span><b><span data-ils="249">₪249</span> once</b></div>
+        <p class="vs-fine" data-txt="streamdaw.pricing.vs.fine">About one year of a streaming subscription, and then it's yours. Prices as listed on waves.com and audiomovers.com, October 2026.</p>
       </div>
 
-      <!-- Shown only to someone who owns StreamDAW; the Worker checks the
-           entitlement again on every call, so hiding it is convenience, not security. -->
-      <div class="lic" id="licBox" hidden>
-        <div>
-          <span class="tag">Your licence</span>
-          <h3>Unlock your Mac.</h3>
-          <p>In StreamDAW open <b>Settings › Licence</b>, press <b>Copy</b> next to your machine ID and paste it here. The key is made for that Mac.</p>
-        </div>
-        <div>
-          <div id="licForm">
-            <input id="licName" type="text" maxlength="60" placeholder="Your name (on the licence, with your email)">
-            <input id="licMachine" type="text" maxlength="30" placeholder="SD…" spellcheck="false" aria-label="Machine ID">
-            <button class="btn ink" id="licSend">Request my key</button>
-            <div class="lmsg" id="licMsg"></div>
-          </div>
-          <div id="licKeyWrap" hidden>
-            <p style="margin-bottom:8px">Your key. Copy it, paste it into StreamDAW › Settings › Licence, press Unlock:</p>
-            <textarea id="licKey" readonly rows="6" spellcheck="false"></textarea>
-            <button class="btn ghost sm" id="licCopy">Copy key</button>
-          </div>
-        </div>
-      </div>
-
-      <p class="reqs">Needs a <b>Mac with Apple silicon</b>, macOS 11 or later. Listeners: <b>any recent browser</b> on iPhone, Android, Mac or PC.</p>
+      <p class="reqs" data-txt="streamdaw.pricing.reqs">Needs a <b>Mac with Apple silicon</b>, macOS 11 or later. Listeners: <b>any recent browser</b> on iPhone, Android, Mac or PC.</p>
     </div>
   </section>
 
   <!-- ── questions ── mirrored in the FAQPage schema in <head> -->
   <section id="faq" style="padding-top:0">
     <div class="wrap">
-      <div class="head">
-        <div class="kicker">Questions</div>
-        <h2>Straight answers.</h2>
-      </div>
+      <div class="sec-head center"><h2 data-txt="streamdaw.faq.title">Questions.</h2></div>
       <div class="faq">
-        <details><summary>Do listeners need to install anything?</summary>
-          <p>No. They open a link or scan the QR code. That's it.</p></details>
-        <details><summary>How good is the sound?</summary>
-          <p>Lossless, straight from your DAW. No MP3, no AAC, no bounce and re-upload: they hear the samples your session plays. In sync mode, or on a weak connection, they get a high-quality compressed stream instead, so nobody drops out.</p></details>
-        <details><summary>How many people can listen?</summary>
-          <p>Each listener gets their own stream from your Mac, so your upload sets the limit. A lossless listener takes about 1.6 Mbit/s, a phone in sync mode about 0.15: a 20 Mbit/s upload carries a review session of 10, or a band of 20 with room to spare. Up to 6 guests on camera.</p></details>
-        <details><summary>Which DAWs does it work in?</summary>
-          <p>Logic Pro, Ableton Live, Cubase, Studio One, Reaper, Bitwig: any Mac DAW that loads AU or VST3. Pro Tools isn't supported yet.</p></details>
-        <details><summary>Is everyone really in time?</summary>
-          <p>Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest: Bluetooth adds its own delay.</p></details>
-        <details><summary>How does the licence work?</summary>
-          <p>One payment, no subscription, and every StreamDAW 1 update included. Your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? Sign in here and request a key for it. <a href="streamdaw-terms.html">The licence terms</a>.</p></details>
-        <details><summary>Can I get a refund?</summary>
-          <p>Try before you buy: the free version and the 7-day Pro trial cost nothing. Once your key is issued, Pro isn't refundable, except for a double charge or a key that never arrives. <a href="streamdaw-terms.html#refunds">Details</a>.</p></details>
-        <details><summary>Something is not working.</summary>
-          <p>Write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>. Every report is read by the person who wrote StreamDAW; fixes arrive in updates.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q1">How good is the sound?</span></summary>
+          <p data-txt="streamdaw.faq.a1">Lossless, straight from your DAW. No MP3, no AAC, no bounce and re-upload: they hear the samples your session plays. In sync mode, or on a weak connection, they get a high-quality compressed stream instead, so nobody drops out.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q2">How many people can listen?</span></summary>
+          <p data-txt="streamdaw.faq.a2">Each listener gets their own stream from your Mac, so your upload sets the limit. A lossless listener takes about 1.6 Mbit/s, a phone in sync mode about 0.15: a 20 Mbit/s upload carries a review session of 10, or a band of 20 with room to spare. Up to 6 guests on camera.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q3">Is everyone really in time?</span></summary>
+          <p data-txt="streamdaw.faq.a3">Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest: Bluetooth adds its own delay.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs does it work in?</span></summary>
+          <p data-txt="streamdaw.faq.a4">Logic Pro, Ableton Live, Cubase, Studio One, Reaper and Bitwig: any Mac DAW that loads AU or VST3. Pro Tools isn't supported.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q5">How does the licence work?</span></summary>
+          <p data-txt="streamdaw.faq.a5">One payment, no subscription, and every StreamDAW 1 update included. Your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? <a href="streamdaw-unlock.html">Sign in on the unlock page</a> and request a key for it. <a href="streamdaw-terms.html">The licence terms</a>.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q6">Can I get a refund?</span></summary>
+          <p data-txt="streamdaw.faq.a6">Try before you buy: the free version and the 7-day Pro trial cost nothing. Once your key is issued, Pro isn't refundable, except for a double charge or a key that never arrives. <a href="streamdaw-terms.html#refunds">Details</a>.</p></details>
       </div>
     </div>
   </section>
 
-  <section class="last" style="padding-top:0">
+  <section class="last" id="last" style="padding-top:0">
     <div class="wrap">
-      <h2>Stop sending mixes.<br><em>Let them hear the session.</em></h2>
+      <h2 data-txt="streamdaw.last.title">Stop sending mixes.<br><em>Let them hear the session.</em></h2>
       <div class="cta">
-        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl>Download free</a>
-        <button class="btn ghost" data-buy="lifetime"><span>Get Pro · <span data-ils="249">₪249</span> once</span></button>
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.last.cta-free">Download free</a>
+        <button class="btn ghost" data-buy="lifetime"><span><span data-txt="streamdaw.last.cta-pro">Get Pro ·</span> <span data-ils="249">₪249</span> <span data-txt="streamdaw.last.cta-once">once</span></span></button>
       </div>
     </div>
   </section>
 </main>
 
 <footer>
-  <div class="wrap"><span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span><a href="../index.html">powered by <b>snowstar.company</b></a></div>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="StreamDAW">
+      <a href="streamdaw-unlock.html">Unlock your Mac</a>
+      <a href="streamdaw-terms.html">Licence terms</a>
+      <a href="mailto:hello@snowstar.company">Something not working? hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
 </footer>
-
-<!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
-<script src="../js/money.js?v=3"></script>
-<script src="../js/account.js?v=3"></script>
-<script src="../js/account-ui.js?v=24"></script>
-<script src="../js/site-edit.js?v=9"></script>
-<script>
-  document.getElementById('yr').textContent = new Date().getFullYear();
-
-  // The voice-over take on its DAW track: a waveform drawn once, the same every time.
-  (function () {
-    var svg = document.getElementById('wave'); if (!svg) return;
-    var n = 96, w = 400 / n, s = 7, out = '';
-    for (var i = 0; i < n; i++) {
-      s = (s * 9301 + 49297) % 233280;
-      var env = Math.sin(Math.PI * i / n) * (0.55 + 0.45 * Math.abs(Math.sin(i / 6)));
-      var h = Math.max(2, 52 * env * (0.35 + 0.65 * s / 233280));
-      out += '<rect x="' + (i * w + w * 0.2).toFixed(2) + '" y="' + (30 - h / 2).toFixed(2) + '" width="' + (w * 0.6).toFixed(2) + '" height="' + h.toFixed(2) + '" rx="1" fill="#1d2a00" opacity=".7"/>';
-    }
-    svg.innerHTML = out;
-  })();
-
-  // ── coupons ── (Checkout asks the Worker to sign a HYP pay page, then sends the buyer to it.)
-  let coupon = null; // {code, free, amount, label}
-  const cIn=document.getElementById('couponInput'), cMsg=document.getElementById('couponMsg');
-  const bigPrice=document.getElementById('bigPrice'), priceSub=document.getElementById('priceSub'),
-        stamp=document.getElementById('stamp'), buyBtn=document.getElementById('buyBtn');
-  function showMsg(t,ok){ cMsg.textContent=t; cMsg.className='msg '+(ok?'ok':'bad'); cMsg.hidden=false; }
-  // Money is loaded on this page; the fallback keeps the price readable if it is not.
-  function ils(a){ return window.Money ? Money.fmt(a/100) : '₪'+(a/100).toFixed(0); }
-  async function applyCoupon(){
-    const code=(cIn.value||'').trim();
-    if(!code){ coupon=null; resetPrice(); cMsg.hidden=true; return; }
-    try{
-      const r=await fetch('/api/streamdaw/coupon/check',{method:'POST',headers:{'content-type':'application/json'},
-        body:JSON.stringify({code})});
-      const d=await r.json();
-      if(!d.ok){ coupon=null; resetPrice(); showMsg(d.reason||'That code can’t be used.',false); return; }
-      coupon={code:d.code, free:d.free, amount:d.amount, label:d.label};
-      if(d.free){
-        bigPrice.innerHTML='Free<small>with '+d.code+'</small>'; stamp.textContent='Coupon';
-        priceSub.textContent='No payment: the download unlocks right away.';
-        buyBtn.textContent='Get StreamDAW Pro free';
-        showMsg('100% off applied. It’s on the house.',true);
-      }else{
-        bigPrice.innerHTML=ils(d.amount)+'<small>once · '+d.label+'</small>'; stamp.textContent=d.label;
-        priceSub.textContent='Discount applied at checkout.';
-        buyBtn.textContent='Get StreamDAW Pro · '+ils(d.amount);
-        showMsg(d.label+' applied: you pay '+ils(d.amount)+'.',true);
-      }
-    }catch(e){ showMsg('Could not check that code. Try again.',false); }
-  }
-  function resetPrice(){
-    bigPrice.innerHTML='<span data-ils="249">'+ils(24900)+'</span><small>one payment · VAT included</small>'; stamp.textContent='StreamDAW Pro';
-    priceSub.textContent='No subscription. Every StreamDAW 1 update included.';
-    buyBtn.textContent='Get StreamDAW Pro';
-  }
-  document.getElementById('couponApply').addEventListener('click',applyCoupon);
-  cIn.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();applyCoupon();} });
-
-  // A coupon can arrive IN THE LINK — snowstar.company/apps/streamdaw.html?c=FRIEND100 —
-  // so a code can be handed out without asking anyone to type it. Applied on load, and
-  // the page lands on the price, the only place the code means something.
-  (function(){
-    const u=new URLSearchParams(location.search);
-    const code=(u.get('c')||u.get('coupon')||'').trim();
-    if(!code) return;
-    cIn.value=code.toUpperCase();
-    applyCoupon();
-    const pr=document.getElementById('pricing');
-    if(pr) setTimeout(()=>pr.scrollIntoView({behavior:'smooth',block:'start'}),400);
-  })();
-
-  // Bought from inside the app: "Upgrade" opens this page with ?buy=1&machine=SD…. The Mac
-  // rides along to checkout (kept in this tab through the payment page and back), so the
-  // key request files itself once the money is in: nothing to copy, nothing to paste.
-  const MACHINE_RE=/^SD[0-9A-F]{12,20}$/;
-  function forMac(){ try{ const m=sessionStorage.getItem('sd_machine'); return MACHINE_RE.test(m||'')?m:null; }catch(e){ return null; } }
-  (function(){
-    const u=new URLSearchParams(location.search);
-    const m=(u.get('machine')||'').trim().toUpperCase();
-    if(MACHINE_RE.test(m)){ try{ sessionStorage.setItem('sd_machine',m); }catch(e){} }
-    const mac=forMac(), box=document.getElementById('forMac');
-    if(mac && box){ box.textContent='For this Mac ('+mac+'): the key is made for it after you pay, and arrives by email.'; box.hidden=false; }
-    if(u.get('buy')==='1'){ const pr=document.getElementById('pricing'); if(pr) setTimeout(()=>pr.scrollIntoView({behavior:'smooth',block:'start'}),300); }
-  })();
-
-  // ── licence key: machine id in, key out ──
-  async function licInit(){
-    try{
-      const r=await fetch('/api/streamdaw/activations',{credentials:'include'});
-      if(!r.ok) return;
-      const d=await r.json();
-      if(!d.owned) return;
-      document.getElementById('licBox').hidden=false;
-      const mac=forMac(); if(mac) document.getElementById('licMachine').value=mac;
-      const issued=(d.activations||[]).find(a=>a.status==='issued'&&a.key_text);
-      if(issued) showKey(issued.key_text);
-      else if((d.activations||[]).some(a=>a.status==='pending'))
-        licMsg('Your request is in. Your key arrives by email and appears here.');
-    }catch(e){}
-  }
-  // The minter on our side usually sends a key within a minute: watch for it for a few minutes.
-  async function licWait(t0,machine){
-    try{
-      const r=await fetch('/api/streamdaw/activations',{credentials:'include'}); const d=await r.json();
-      const issued=(d.activations||[]).find(a=>a.status==='issued'&&a.key_text&&a.machine_id===machine);
-      if(issued){ showKey(issued.key_text); return; }
-    }catch(e){}
-    if(Date.now()-t0<5*60000) setTimeout(()=>licWait(t0,machine),10000);
-    else licMsg('Your key is taking longer than usual. It arrives by email, and appears here when you come back.');
-  }
-  function licMsg(t,bad){ const m=document.getElementById('licMsg'); if(m){ m.textContent=t; m.className='lmsg'+(bad?' bad':''); } }
-  function showKey(k){
-    document.getElementById('licForm').hidden=true;
-    document.getElementById('licKeyWrap').hidden=false;
-    document.getElementById('licKey').value=k;
-  }
-  async function licRequest(){
-    const name=document.getElementById('licName').value.trim();
-    const machine=document.getElementById('licMachine').value.trim().toUpperCase();
-    if(!machine){ licMsg('Paste the machine ID from StreamDAW › Settings › Licence first.',true); return; }
-    const btn=document.getElementById('licSend'); btn.disabled=true; licMsg('Sending…');
-    try{
-      const r=await fetch('/api/streamdaw/activate',{method:'POST',credentials:'include',
-        headers:{'content-type':'application/json'},body:JSON.stringify({machineId:machine,name})});
-      const d=await r.json();
-      if(!r.ok){ licMsg(d.error||'That did not go through.',true); btn.disabled=false; return; }
-      if(d.status==='issued'&&d.key){ showKey(d.key); return; }
-      if(d.soon){ licMsg('Got it. Your key is being made: it appears here and arrives by email, usually within a minute.'); licWait(Date.now(),machine); }
-      else licMsg('Got it: we emailed you a confirmation. Your key arrives in a second email, usually within a day, and appears here.');
-    }catch(e){ licMsg('Network trouble. Try again.',true); btn.disabled=false; }
-  }
-  document.getElementById('licSend').addEventListener('click',licRequest);
-  document.getElementById('licCopy').addEventListener('click',()=>{
-    const t=document.getElementById('licKey'), c=document.getElementById('licCopy');
-    const done=()=>{ c.textContent='Copied'; setTimeout(()=>c.textContent='Copy key',1500); };
-    if(navigator.clipboard) navigator.clipboard.writeText(t.value).then(done,()=>{ t.select(); try{ document.execCommand('copy'); done(); }catch(e){} });
-    else { t.select(); try{ document.execCommand('copy'); done(); }catch(e){} }
-  });
-  licInit();
-
-  // ── success (a free grant, or back from a paid HYP checkout) ──
-  function success(downloadUrl,free){
-    const t=document.getElementById('ticket');
-    t.innerHTML='<span class="tag lime">You’re in</span>'
-      +'<div class="price">Unlocked.</div>'
-      +'<p class="note">'+(free?'No charge. Enjoy.':'Payment received. Thank you.')+' Your private download link is in your inbox too.'
-      +(forMac()?' The Pro key for this Mac is being made and arrives by email: paste it into StreamDAW › Settings › Licence.':'')+'</p>'
-      +(downloadUrl?'<a class="btn lime" href="'+downloadUrl+'">Download StreamDAW</a>':'')
-      +'<p class="after">Signed in? It is in your Snowstar account too: download it again any time.</p>';
-  }
-
-  // ── account: the SAME sign-in lightbox as Mutra & the homepage ──
-  const acct = () => window.SnowstarAccount;
-  const signedIn = () => { const M=acct(); return !!(M && M.user); };
-  async function ready(){ const M=acct(); if(!M || M.ready) return; await new Promise(r=>{ const off=M.onChange(()=>{off();r();}); }); }
-
-  async function doCheckout(){
-    // Signed in → the server reads the email from the session; no prompt, no typing.
-    const btns=document.querySelectorAll('[data-buy]'); btns.forEach(b=>{b.disabled=true;b.style.opacity=.6});
-    try{
-      const r=await fetch('/api/streamdaw/checkout',{method:'POST',headers:{'content-type':'application/json'},
-        credentials:'include',body:JSON.stringify({plan:'lifetime',coupon:coupon&&coupon.code,machine:forMac()})});
-      const d=await r.json();
-      if(d && d.free){ success(d.download,true); return; }
-      if(d && d.url){ location.href=d.url; return; }              // → HYP payment page
-      if(d && d.error==='email_required'){ openAuth(); return; }  // session lost — sign in again
-      if(d && d.error==='coupon'){ showMsg(d.reason||'That coupon can’t be used.',false); return; }
-      alert(d && d.error==='hyp_not_configured'
-        ? 'Checkout isn’t switched on yet: the payment terminal still needs its keys.'
-        : 'Could not start checkout'+(d&&d.error?': '+d.error:'')+'. Please try again.');
-    }catch(err){ alert('Network error starting checkout. Please try again.'); }
-    finally{ btns.forEach(b=>{b.disabled=false;b.style.opacity=1}); }
-  }
-
-  function openAuth(){
-    const open = window.SnowstarOpenAuth || window.MutraOpenAuth;
-    if(!open){ alert('Sign-in is loading. One moment, then try again.'); return; }
-    if(window.SnowstarAuthResume) window.SnowstarAuthResume(()=>doCheckout()); // resume the purchase after sign-in
-    open('signup','Create your Snowstar account to get StreamDAW Pro: one login for Mutra and everything by Snowstar.');
-  }
-
-  async function buy(){
-    await ready();
-    if(signedIn()) return doCheckout();   // straight to HYP (or a free grant)
-    openAuth();                            // the shared lightbox; resumes to checkout after
-  }
-  document.querySelectorAll('[data-buy]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();buy();}));
-
-  // Back from a successful HYP payment → the success state.
-  if(/[?&]bought=1/.test(location.search)){
-    try{ document.getElementById('pricing').scrollIntoView(); }catch(e){}
-    success(null,/[?&]free=1/.test(location.search));
-  }
-</script>
 
 <div class="sd-menu" id="sdMenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <nav aria-label="Main">
-    <a href="#uses"><i>01</i>Uses</a>
-    <a href="#demo"><i>02</i>Try it</a>
-    <a href="#how"><i>03</i>How it works</a>
+    <a href="#features"><i>01</i>Features</a>
+    <a href="#stories"><i>02</i>Stories</a>
+    <a href="#demo"><i>03</i>Try it</a>
     <a href="#pricing"><i>04</i>Pricing</a>
     <a href="#faq"><i>05</i>Questions</a>
     <span class="menu-div">Products</span>
@@ -895,19 +437,16 @@
   </nav>
   <div class="menu-cur"><span data-currency-switcher aria-label="Currency"></span></div>
 </div>
-<script>
-(function(){
-  var b=document.getElementById('sdBurger'),m=document.getElementById('sdMenu');
-  function set(o){document.body.classList.toggle('sd-menu-open',o);
-    b.setAttribute('aria-expanded',o?'true':'false');m.setAttribute('aria-hidden',o?'false':'true');}
-  b.addEventListener('click',function(){set(!document.body.classList.contains('sd-menu-open'));});
-  m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
-})();
-</script>
+
+<!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
+<script src="../js/money.js?v=3"></script>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=27"></script>
+<script src="../js/site-edit.js?v=9"></script>
+<script src="../js/streamdaw-page.js?v=1"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
-<script src="demo/studio.js?v=7b7d7508" defer></script>
-<script src="demo/coach.js?v=e9795193" defer></script>
+<script src="demo/studio.js?v=1435ed44" defer></script>
+<script src="demo/coach.js?v=f72e509d" defer></script>
 </body>
 </html>

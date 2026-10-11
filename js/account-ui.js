@@ -570,8 +570,8 @@
             <span class="acct-item-name">StreamDAW${rel.version ? ` <i>${esc(rel.version)}</i>` : ''}</span>
             <span class="acct-item-date">${d.since ? fmtDate(d.since) : ''}</span>
           </li></ul>
-          <p class="acct-note">Your licence follows this account — sign in on a new machine and
-          download again.</p>
+          <p class="acct-note">Each Mac gets its own key. New Mac? Unlock it with this account.</p>
+          <a class="acct-mini acct-mini-block" href="/apps/streamdaw-unlock.html">Unlock a Mac →</a>
           <a class="acct-mini acct-mini-block" href="/api/streamdaw/download">Download the installer →</a>`;
       });
   }

@@ -10,12 +10,23 @@
 //
 // host → room   {type:'transport', playing, pos}      pos = song seconds at this instant
 //               {type:'ping', t}
+//               {type:'mixSet', id, mode?, t?, reset?}   set phone `id`'s mix (2026-10-10)
 // phone → room  {type:'hello', name}  {type:'listen', on}  {type:'ping', t}
+//               {type:'mix', mode, t}                     its own mix, after each change (2026-10-10)
 // room → all    {type:'welcome', role, id, now, transport, host}   on joining
 //               {type:'pong', t, now}
 // room → phones {type:'transport', playing, pos, at, seq}            at = server ms of pos
 //               {type:'host', up}
-// room → host   {type:'presence', phones:[{id, name, listening}]}
+//               {type:'mixSet', mode?, t?, reset?}        from the studio
+// room → host   {type:'presence', phones:[{id, name, listening, mix?}]}
+//               {type:'mix', id, mode, t}                 a phone's mix, as it changes
+//
+// A mix (2026-10-10, the control page's "whose mix" switch): mode 'master' (the full mix) or
+// 'tracks' (its own), t = [[track name, volume 0..1.5, pan -1..1, mute 0/1, solo 0/1], …], at
+// most 16; in a mixSet any of the four may be null (unchanged). The room only checks and passes
+// them on, and keeps each phone's last one (in its attachment) for a studio page that comes
+// back. Pages from before this know none of it: an old phone never sends a mix (the studio
+// lists it, without a mix to set), an old studio ignores 'mix' and sends no 'mixSet'.
 //
 // Hibernates between messages (the WebSocket Hibernation API), so an idle room costs nothing.
 // Limits: 16 phones a room, 512-byte messages; a second studio page replaces the first.
@@ -65,6 +76,22 @@ export class DemoRoom {
     if (me.role === 'phone' && m.type === 'listen') {
       me.listening = !!m.on; ws.serializeAttachment(me); this.presence(); return;
     }
+    if (me.role === 'phone' && m.type === 'mix') {
+      const t = tracks(m.t, false);
+      if (!t || (m.mode !== 'master' && m.mode !== 'tracks')) return;
+      me.mix = { mode: m.mode, t }; ws.serializeAttachment(me);
+      for (const h of this.ctx.getWebSockets('host')) send(h, { type: 'mix', id: me.id, ...me.mix });
+      return;
+    }
+    if (me.role === 'host' && m.type === 'mixSet') {
+      const to = this.ctx.getWebSockets('phone').find((p) => (p.deserializeAttachment() || {}).id === m.id);
+      if (!to) return;
+      const o = { type: 'mixSet' };
+      if (m.mode === 'master' || m.mode === 'tracks') o.mode = m.mode;
+      if (m.reset === true) o.reset = true;
+      if (m.t !== undefined) { const t = tracks(m.t, true); if (!t) return; o.t = t; }
+      send(to, o); return;
+    }
   }
 
   async webSocketClose(ws) { this.left(ws); try { ws.close(); } catch {} }
@@ -84,13 +111,28 @@ export class DemoRoom {
 
   presence(gone) {
     const phones = this.ctx.getWebSockets('phone').filter((p) => p !== gone).map((p) => {
-      const a = p.deserializeAttachment() || {}; return { id: a.id, name: a.name, listening: !!a.listening };
+      const a = p.deserializeAttachment() || {}; return a.mix ? { id: a.id, name: a.name, listening: !!a.listening, mix: a.mix } : { id: a.id, name: a.name, listening: !!a.listening };
     });
     for (const h of this.ctx.getWebSockets('host')) if (h !== gone) send(h, { type: 'presence', phones });
   }
 }
 
 function send(ws, msg) { try { ws.send(JSON.stringify(msg)); } catch {} }
+// A mix's tracks, checked: [[name, volume, pan, mute, solo], …], at most 16, a name of 1–24
+// characters. `partial`: a value may be null (a mixSet changes only what it names).
+function tracks(t, partial) {
+  if (!Array.isArray(t) || t.length > 16) return null;
+  const num = (v, lo, hi) => (v === null && partial ? null : typeof v === 'number' && isFinite(v) ? Math.max(lo, Math.min(hi, Math.round(v * 1000) / 1000)) : undefined);
+  const flag = (v) => (v === null && partial ? null : v === 1 || v === true ? 1 : v === 0 || v === false ? 0 : undefined);
+  const out = [];
+  for (const e of t) {
+    if (!Array.isArray(e) || typeof e[0] !== 'string' || !e[0] || e[0].length > 24) return null;
+    const r = [e[0], num(e[1], 0, 1.5), num(e[2], -1, 1), flag(e[3]), flag(e[4])];
+    if (r.includes(undefined)) return null;
+    out.push(r);
+  }
+  return out;
+}
 function guessName(ua) {
   ua = String(ua || '');
   return /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android' : /Macintosh/.test(ua) ? 'Mac' : 'Phone';

@@ -195,9 +195,11 @@
 
   function apps() {
     return `<div class="ac-panel"><h2>StreamDAW</h2>
-      <p class="ac-note">Your licence is tied to this email, so it follows you to a new machine.</p>
+      <p class="ac-note">Your Pro licence is kept with this account. Each Mac gets its own key:
+        request one for a new Mac on the unlock page.</p>
       <div class="ac-acts" style="justify-content:flex-start">
-        <a class="mbtn mbtn-solid" href="/api/streamdaw/download">Download the app</a>
+        <a class="mbtn mbtn-solid" href="/apps/streamdaw-unlock.html">Unlock a Mac</a>
+        <a class="mbtn mbtn-ghost" href="/api/streamdaw/download">Download the app</a>
       </div></div>`;
   }
 
