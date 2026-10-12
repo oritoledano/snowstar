@@ -36,6 +36,32 @@ const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 day
 // ₪249 ≈ $69. Change here and on the buy page together.
 const PRICE_GROSS = 24900;
 
+// The 7-day Pro pass (2026-10-12, Ori: a middle tier that pushes buyers to Pro). Every Pro
+// feature for PASS_DAYS, no renewal; what was paid for passes in the PASS_CREDIT_DAYS before a
+// Pro purchase comes off Pro, so a pass is a step toward buying it once. Its key is format 3
+// (an end date the app enforces offline), which apps before PASS_MIN_APP refuse.
+const PASS_GROSS = 4900;
+const PASS_DAYS = 7;
+const PASS_CREDIT_DAYS = 30;
+const PASS_MIN_APP = '0.5.2';
+const isPass = (plan) => plan === 'pass';
+const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
+
+/* Pass money paid by this buyer that a Pro purchase now may use: passes settled in the last
+   PASS_CREDIT_DAYS and after their last Pro purchase (a credit is used once). */
+async function passCredit(env, email) {
+  try {
+    const lastPro = ((await env.DB.prepare(
+      `SELECT MAX(settled_at) AS t FROM streamdaw_orders WHERE email = ? AND plan = 'lifetime' AND status = 'granted'`
+    ).bind(lc(email)).first()) || {}).t || 0;
+    const r = await env.DB.prepare(
+      `SELECT COALESCE(SUM(amount), 0) AS n FROM streamdaw_orders
+        WHERE email = ? AND plan = 'pass' AND status = 'granted' AND settled_at > ? AND settled_at > ?`
+    ).bind(lc(email), now() - PASS_CREDIT_DAYS * 86400, lastPro).first();
+    return Math.max(0, Math.min(PRICE_GROSS, (r && r.n) || 0));
+  } catch { return 0; }
+}
+
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200, headers = {}) =>
   new Response(JSON.stringify(data), {
@@ -165,13 +191,18 @@ export async function streamdawCheckout(req, env) {
   const email = lc(user?.email || body.email);
   if (!validEmail(email)) return json({ error: 'email_required' }, 400);
 
-  // Coupon (optional). Invalid code entered → tell them, don't silently charge full.
-  let amount = PRICE_GROSS, couponCode = null;
+  // Pro (once) or the 7-day pass. A pass is never discounted; Pro takes the buyer's recent
+  // pass money off first, then a coupon on what is left.
+  const plan = isPass(body.plan) ? 'pass' : 'lifetime';
+  const credit = plan === 'pass' ? 0 : await passCredit(env, email);
+  let amount = plan === 'pass' ? PASS_GROSS : PRICE_GROSS - credit, couponCode = null;
   if (body.coupon && String(body.coupon).trim()) {
+    if (plan === 'pass') return json({ error: 'coupon', reason: 'coupons are for StreamDAW Pro, not the 7-day pass' }, 400);
+    // Coupon (optional). Invalid code entered → tell them, don't silently charge full.
     const c = await findSdawCoupon(env, body.coupon);
-    const problem = couponProblem(c, PRICE_GROSS);
+    const problem = couponProblem(c, amount);
     if (problem) return json({ error: 'coupon', reason: problem }, 400);
-    ({ amount } = applyCoupon(PRICE_GROSS, c));
+    ({ amount } = applyCoupon(amount, c));
     couponCode = c.code;
   }
 
@@ -185,12 +216,12 @@ export async function streamdawCheckout(req, env) {
   // ── free (a coupon covered the whole price): grant now, no HYP ──
   if (amount <= 0) {
     if (!hypConfigured(env)) { /* free path needs no gateway, continue */ }
-    await insertOrder(env, { ref, userId: user?.id || null, email, amount: 0, status: 'granted', coupon: couponCode, machine, ownerName });
-    const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, plan: 'lifetime', source: 'coupon' });
+    await insertOrder(env, { ref, userId: user?.id || null, email, plan, amount: 0, status: 'granted', coupon: couponCode, machine, ownerName });
+    const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, plan, source: credit ? 'pass-credit' : 'coupon' });
     if (couponCode) await burnSdawCoupon(env, couponCode);
     const link = await mintDownloadLink(env, ent.id, email);
     if (machine) await requestKey(env, { entId: ent.id, email, machine, name: ownerName || email, via: 'checkout' }).catch(() => {});
-    await emailReceipt(env, email, link, machine, { ref, amount: 0, coupon: couponCode }).catch(() => {});
+    await emailReceipt(env, email, link, machine, { ref, amount: 0, coupon: couponCode, plan, credit, expiresAt: ent.expires_at }).catch(() => {});
     await env.DB.prepare('UPDATE streamdaw_orders SET entitlement_id = ?, settled_at = ? WHERE ref = ?')
       .bind(ent.id, now(), ref).run().catch(() => {});
     return json({ ok: true, free: true, ref, download: link, redirect: `${SITE}/apps/streamdaw.html?bought=1&free=1` });
@@ -199,7 +230,7 @@ export async function streamdawCheckout(req, env) {
   // ── paid (full price, or partially discounted): send to HYP ──
   if (!hypConfigured(env)) return json({ error: 'hyp_not_configured' }, 503);
   const shekels = (amount / 100).toFixed(2);
-  await insertOrder(env, { ref, userId: user?.id || null, email, amount, status: 'started', coupon: couponCode, machine, ownerName });
+  await insertOrder(env, { ref, userId: user?.id || null, email, plan, amount, status: 'started', coupon: couponCode, machine, ownerName });
 
   // APISign — mirrors the music checkout's signing, including the gotchas the
   // comments in hyp.js were written in blood for: signMe=1, and using HYP's
@@ -208,7 +239,7 @@ export async function streamdawCheckout(req, env) {
     action: 'APISign', What: 'SIGN',
     Masof: env.HYP_TERMINAL, KEY: env.HYP_API_KEY, PassP: env.HYP_PASSP,
     Amount: shekels, Coin: '1',
-    Info: `StreamDAW ${ref}`, Order: ref,
+    Info: `StreamDAW ${plan === 'pass' ? '7-day pass' : 'Pro'} ${ref}`, Order: ref,
     UTF8: 'True', UTF8out: 'True', signMe: '1', MoreData: 'True',
     PageLang: 'ENG', tmp: '1', ClientName: email, email,
     SendHesh: 'True', Postpone: 'False', J5: 'False',
@@ -218,7 +249,7 @@ export async function streamdawCheckout(req, env) {
   if (/^\s*</.test(text)) return json({ error: 'hyp_system_error' }, 502);
   const d = parseHyp(text);
   if (!d.signature) return json({ error: 'hyp_sign_failed', ccode: d.CCode || null }, 502);
-  return json({ ok: true, url: `${BASE}?${text.trim()}`, ref, amount_gross: amount });
+  return json({ ok: true, url: `${BASE}?${text.trim()}`, ref, plan, amount_gross: amount, credit });
 }
 
 // ── 2. The verified return (dispatched from hyp.js by the SD- prefix) ───────
@@ -252,12 +283,14 @@ export async function streamdawReturn(req, env, raw, q) {
   if (paid !== order.amount) return fail('amount_mismatch');
   if (q.Coin && q.Coin !== '1') return fail('bad_currency');
 
-  const ent = await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: paid, plan: order.plan || 'lifetime', source: 'hyp' });
+  const plan = order.plan || 'lifetime';
+  const ent = await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: paid, plan, source: 'hyp' });
   if (order.coupon) await burnSdawCoupon(env, order.coupon);
   const link = await mintDownloadLink(env, ent.id, order.email);
   if (order.machine_id)
     await requestKey(env, { entId: ent.id, email: order.email, machine: order.machine_id, name: order.owner_name || order.email, via: 'checkout' }).catch(() => {});
-  await emailReceipt(env, order.email, link, order.machine_id || null, { ref, amount: paid, coupon: order.coupon || null }).catch(() => {});
+  await emailReceipt(env, order.email, link, order.machine_id || null,
+    { ref, amount: paid, coupon: order.coupon || null, plan, expiresAt: ent.expires_at }).catch(() => {});
   await env.DB.prepare(`UPDATE streamdaw_orders SET status='granted', hyp_id=?, entitlement_id=?, settled_at=? WHERE ref=?`)
     .bind(String(q.Id || ''), ent.id, now(), ref).run().catch(() => {});
   return Response.redirect(`${SITE}/apps/streamdaw.html?bought=1&ref=${encodeURIComponent(ref)}`, 302);
@@ -329,13 +362,16 @@ export async function streamdawDownloadFree(req, env) {
 export async function myStreamdaw(env, user) {
   if (!user) return json({ owned: false }, 401);
   const ent = await env.DB.prepare(
-    `SELECT id, plan, created_at FROM entitlements WHERE product = ? AND status = 'active'
-       AND (user_id = ? OR email = ?) AND (expires_at IS NULL OR expires_at > ?) ORDER BY created_at DESC LIMIT 1`
+    `SELECT id, plan, created_at, expires_at FROM entitlements WHERE product = ? AND status = 'active'
+       AND (user_id = ? OR email = ?) AND (expires_at IS NULL OR expires_at > ?) ORDER BY (expires_at IS NULL) DESC, created_at DESC LIMIT 1`
   ).bind(PRODUCT, user.id, lc(user.email), now()).first();
-  if (!ent) return json({ owned: false });
+  // What Pro costs this buyer now: less what their recent passes paid (the page shows it).
+  const proPrice = PRICE_GROSS - await passCredit(env, user.email);
+  if (!ent) return json({ owned: false, proPrice });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();
-  return json({ owned: true, since: ent.created_at, plan: ent.plan, release: rel, download: `${SITE}/api/streamdaw/download` });
+  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice,
+                release: rel, download: `${SITE}/api/streamdaw/download` });
 }
 
 // ── licence activation: machine id in, key file out ────────────────────────
@@ -374,8 +410,14 @@ const keyLines = (k) => (keyHex(k).match(/.{1,64}/g) || []).join('\n');
 const STREAMDAW_KEY_PUBLIC = '0450e5706281c210bfaaa3e901c9d0b0a289bb6f93643bb8edca91800436164a070dadbfee3ad6bbbe641bdad21c946bb1e568671d5a0f8b46a4cbb93f1a77c2a4';
 const MIN_APP = '0.5.0';
 const fromHex = (h) => Uint8Array.from(String(h).match(/../g) || [], (x) => parseInt(x, 16));
-async function checkKey(hex, machine) {
-  if (!/^534402(?:[0-9a-f]{2})+$/.test(hex)) return { error: 'that is not a StreamDAW key — paste everything streamdaw-keygen printed (keys from the old 512-bit pair are no longer accepted)' };
+/* A Pro pass is format 3: magic 534403 and a sixth line, the end (hex ms). `expiresAt` is what the
+   order says (SECONDS, as in every table here; null/undefined: permanent), and the key's end must be
+   exactly that: a pass never goes out as a permanent key, nor a permanent order as a pass. */
+const isoOf = (ms) => new Date(ms).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+async function checkKey(hex, machine, expiresAt) {
+  const magic = /^5344(02|03)(?:[0-9a-f]{2})+$/.exec(hex);
+  if (!magic) return { error: 'that is not a StreamDAW key — paste everything streamdaw-keygen printed (keys from the old 512-bit pair are no longer accepted)' };
+  const pass = magic[1] === '03';
   const b = fromHex(hex);
   if (b.length < 3 + 16 + 64) return { error: 'that key looks truncated — paste everything keygen printed' };
   const signed = b.subarray(0, b.length - 64);
@@ -386,17 +428,24 @@ async function checkKey(hex, machine) {
   } catch {}
   if (!ok) return { error: 'that key does not carry the StreamDAW signature (damaged in the paste, or signed with another pair)' };
   const f = new TextDecoder().decode(signed.subarray(3)).split('\n');
-  if (f.length !== 5 || f[0] !== 'StreamDAW') return { error: 'that key is not for StreamDAW' };
+  if (f.length !== (pass ? 6 : 5) || f[0] !== 'StreamDAW') return { error: 'that key is not for StreamDAW' };
   if (!f[3].split(',').map((m) => m.trim().toUpperCase()).includes(machine)) return { error: `that key is for ${f[3]}, not ${machine}` };
-  return { serial: f[1].split('|')[0].trim() || null };
+  const ends = pass ? parseInt(f[5], 16) : 0, want = expiresAt ? Number(expiresAt) * 1000 : 0;
+  if (ends !== want) {
+    if (!want) return { error: `that is a Pro pass (until ${isoOf(ends)}), but this order is permanent Pro — mint it without --days/--expires` };
+    if (!ends) return { error: `that is a permanent key, but this order is a Pro pass until ${isoOf(want)} — mint it with --expires ${want}` };
+    return { error: `that pass ends ${isoOf(ends)}, but the order says ${isoOf(want)} — mint it with --expires ${want}` };
+  }
+  return { serial: f[1].split('|')[0].trim() || null, expiresAt: ends ? ends / 1000 : null };
 }
 const firstName = (n) => String(n || '').trim().split(/\s+/)[0] || '';
 const escHtml = (t) => String(t || '').replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
 /* The mint command, ready to paste in Terminal on the owner's Mac. The name is what listeners
    see as the host; the email rides in the key for this Mac's licence panel only. */
-const mintCommand = ({ name, email, machine }) =>
+const mintCommand = ({ name, email, machine, expiresAt }) =>
   `~/.cache/streamdaw/bin/streamdaw-keygen --keyfile ~/.cache/streamdaw/license-keypair-v2.txt `
-  + `--name "${String(name || '').replace(/["$`\\]/g, '')}" --email "${lc(email).replace(/["$`\\]/g, '')}" --machines ${machine}`;
+  + `--name "${String(name || '').replace(/["$`\\]/g, '')}" --email "${lc(email).replace(/["$`\\]/g, '')}" --machines ${machine}`
+  + (expiresAt ? ` --expires ${Number(expiresAt) * 1000}` : '');   // a Pro pass: its end (seconds here, ms for the keygen)
 
 /* One look for every StreamDAW licence email to a buyer. */
 /* Every StreamDAW email has the same shape (2026-10-10, Ori: "do what other big brands do and
@@ -431,18 +480,19 @@ function licenceMail({ title, intro, steps, key, footer, button }) {
    schema-streamdaw-order-machine.sql; until that has run, the order is written without
    them (and the key request is then made the old way, on the page), so a deploy before
    the migration cannot break checkout. */
-async function insertOrder(env, { ref, userId, email, amount, status, coupon, machine, ownerName }) {
+async function insertOrder(env, { ref, userId, email, plan, amount, status, coupon, machine, ownerName }) {
+  plan = isPass(plan) ? 'pass' : 'lifetime';
   try {
     await env.DB.prepare(
       `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, machine_id, owner_name, created_at)
-       VALUES (?, ?, ?, 'lifetime', ?, 'ILS', ?, ?, ?, ?, ?)`
-    ).bind(ref, userId, email, amount, status, coupon, machine, ownerName, now()).run();
+       VALUES (?, ?, ?, ?, ?, 'ILS', ?, ?, ?, ?, ?)`
+    ).bind(ref, userId, email, plan, amount, status, coupon, machine, ownerName, now()).run();
   } catch (e) {
     if (!/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
     await env.DB.prepare(
       `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, created_at)
-       VALUES (?, ?, ?, 'lifetime', ?, 'ILS', ?, ?, ?)`
-    ).bind(ref, userId, email, amount, status, coupon, now()).run();
+       VALUES (?, ?, ?, ?, ?, 'ILS', ?, ?, ?)`
+    ).bind(ref, userId, email, plan, amount, status, coupon, now()).run();
   }
 }
 
@@ -459,13 +509,30 @@ async function requestKey(env, { entId, email, machine, name, via }) {
   ).bind(entId, machine).first();
   if (prior && prior.status === 'issued' && prior.key_text) return { status: 'issued', key: keyLines(prior.key_text) };
 
-  await env.DB.prepare(
-    `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at)
-     VALUES (?, ?, ?, ?, 'pending', ?)
-     ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
-       owner_name = excluded.owner_name, requested_at = excluded.requested_at,
-       status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
-  ).bind(entId, lc(email), machine, name, now()).run();
+  // A pass: its key ends when the pass does (seconds, as every table here; the minter turns it
+  // into the keygen's --expires in ms, and issueKey refuses a key whose end differs).
+  const ent = await env.DB.prepare('SELECT plan, expires_at FROM entitlements WHERE id = ?').bind(entId).first().catch(() => null);
+  const expiresAt = ent && isPass(ent.plan) && ent.expires_at ? Number(ent.expires_at) : null;
+  if (ent && isPass(ent.plan) && (!expiresAt || expiresAt <= now())) return { status: 'expired' };
+  try {
+    await env.DB.prepare(
+      `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at, expires_at)
+       VALUES (?, ?, ?, ?, 'pending', ?, ?)
+       ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
+         owner_name = excluded.owner_name, requested_at = excluded.requested_at, expires_at = excluded.expires_at,
+         status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
+    ).bind(entId, lc(email), machine, name, now(), expiresAt).run();
+  } catch (e) {
+    // Before schema-streamdaw-pass.sql ran: Pro requests still file; a pass waits (never permanent).
+    if (expiresAt || !/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
+    await env.DB.prepare(
+      `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at)
+       VALUES (?, ?, ?, ?, 'pending', ?)
+       ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
+         owner_name = excluded.owner_name, requested_at = excluded.requested_at,
+         status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
+    ).bind(entId, lc(email), machine, name, now()).run();
+  }
 
   // Will the minter on the owner's Mac sign this one by itself? Only for a purchase's first
   // AUTO_MACS Macs (see the minter, below).
@@ -476,7 +543,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
 
   // Tell the owner. Never fail the request over mail. The subject says ADMIN: the owner is
   // often the buyer too (testing), and this is not a key.
-  const byHand = `Run this in Terminal on your Mac:\n\n${mintCommand({ name, email, machine })}\n\n`
+  const byHand = `Run this in Terminal on your Mac:\n\n${mintCommand({ name, email, machine, expiresAt })}\n\n`
     + `Then open ${SITE}/dashboard (StreamDAW › Keys), press "Paste key…" on this row and paste everything it printed.\n`
     + `The buyer gets the key by email at once.`;
   try {
@@ -501,7 +568,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
     try {
       await sendMail(env, {
         to: email,
-        subject: 'We got your StreamDAW key request',
+        subject: expiresAt ? 'We got your StreamDAW Pro pass request' : 'We got your StreamDAW key request',
         text: `${hi ? `Hi ${hi},\n\n` : ''}We got your request for a StreamDAW Pro key for this Mac:\n${machine}\n\n`
             + `What happens next:\n`
             + `1. We make your key, ${auto ? 'usually within minutes' : 'usually within a day'}.\n`
@@ -526,9 +593,9 @@ async function requestKey(env, { entId, email, machine, name, via }) {
 
 async function activeEntitlement(env, user) {
   return env.DB.prepare(
-    `SELECT id, email FROM entitlements WHERE product = ? AND status = 'active'
+    `SELECT id, email, plan, expires_at FROM entitlements WHERE product = ? AND status = 'active'
        AND (user_id = ? OR email = ?) AND (expires_at IS NULL OR expires_at > ?)
-     ORDER BY created_at DESC LIMIT 1`
+     ORDER BY (expires_at IS NULL) DESC, created_at DESC LIMIT 1`
   ).bind(PRODUCT, user.id, lc(user.email), now()).first();
 }
 
@@ -597,7 +664,7 @@ async function issueKey(env, row, key, onlyPending) {
   // format-2 key for this request's Mac with a good signature: storing anything else would tell
   // the buyer their licence is ready when it is not. The serial is read from the signed payload.
   const hex = keyHex(key);
-  const checked = await checkKey(hex, row.machine_id);
+  const checked = await checkKey(hex, row.machine_id, row.expires_at);   // a pass row carries its end
   if (checked.error) return { error: checked.error };
   const lines = keyLines(hex);
   const serial = checked.serial;
@@ -609,11 +676,15 @@ async function issueKey(env, row, key, onlyPending) {
 
   const hi = firstName(row.owner_name);
   const n = lines.split('\n').length;
+  // A pass: says until when, and needs the app that reads format-3 keys.
+  const until = row.expires_at ? dayOf(row.expires_at) : '';
+  const what = until ? `StreamDAW Pro pass key (until ${until})` : 'StreamDAW Pro key';
+  const minApp = until ? PASS_MIN_APP : MIN_APP;
   try {
     await sendMail(env, {
       to: row.email,
-      subject: 'Your StreamDAW Pro key',
-      text: `${hi ? `Hi ${hi}, your` : 'Your'} StreamDAW Pro key is ready.\n\n`
+      subject: until ? `Your StreamDAW Pro pass key, until ${until}` : 'Your StreamDAW Pro key',
+      text: `${hi ? `Hi ${hi}, your` : 'Your'} ${what} is ready.\n\n`
           + `1. Open StreamDAW › Settings › Licence.\n`
           + `2. Copy the key below (all ${n} lines) and paste it into the box.\n`
           + `3. Press Unlock.\n\n`
@@ -621,12 +692,13 @@ async function issueKey(env, row, key, onlyPending) {
           + `Registered to: ${row.owner_name || row.email} · ${row.email}\n`
           + (serial ? `Serial: ${serial}\n` : '')
           + `Works on this Mac only: ${row.machine_id}\n`
-          + `Needs StreamDAW ${MIN_APP} or newer. Older copy? Download the latest from your account first: ${ACCOUNT_URL}\n`
+          + (until ? `Every Pro feature until ${until}; then StreamDAW goes back to Free. Buy Pro within ${PASS_CREDIT_DAYS} days of the pass and what you paid for it comes off: ${SITE}/apps/streamdaw.html#pricing\n` : '')
+          + `Needs StreamDAW ${minApp} or newer. Older copy? Download the latest from your account first: ${ACCOUNT_URL}\n`
           + `Another Mac? Get a key for it here: ${UNLOCK_URL}\n`
           + `Keep this email: it is your licence. Lost it? The same page shows your keys when you sign in.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
       html: licenceMail({
-        title: 'Your StreamDAW Pro key',
-        intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready.`,
+        title: until ? 'Your StreamDAW Pro pass' : 'Your StreamDAW Pro key',
+        intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready${until ? `: every Pro feature until <b>${until}</b>` : ''}.`,
         steps: [
           'Open <b>StreamDAW › Settings › Licence</b>.',
           `Copy the key below (all ${n} lines) and paste it into the box.`,
@@ -636,7 +708,8 @@ async function issueKey(env, row, key, onlyPending) {
         footer: `Registered to <b>${escHtml(row.owner_name || row.email)}</b> · ${escHtml(row.email)}<br>`
           + (serial ? `Serial <code>${escHtml(serial)}</code><br>` : '')
           + `Works on this Mac only: <code>${escHtml(row.machine_id)}</code><br>`
-          + `Needs StreamDAW ${MIN_APP} or newer. Older copy? <a href="${ACCOUNT_URL}">Download the latest</a> from your account first.<br>`
+          + (until ? `After ${until} StreamDAW goes back to Free. Buy Pro within ${PASS_CREDIT_DAYS} days of the pass and what you paid comes off: <a href="${SITE}/apps/streamdaw.html#pricing">get Pro</a>.<br>` : '')
+          + `Needs StreamDAW ${minApp} or newer. Older copy? <a href="${ACCOUNT_URL}">Download the latest</a> from your account first.<br>`
           + `Another Mac? <a href="${UNLOCK_URL}">Get a key for it</a>.<br>`
           + `Keep this email: it is your licence. Lost it? <a href="${UNLOCK_URL}">Sign in</a> to see your keys.`,
       }),
@@ -667,7 +740,7 @@ function minterAuthorised(req, env) {
 export async function streamdawMinterPending(req, env) {
   if (!minterAuthorised(req, env)) return json({ error: 'forbidden' }, 403);
   const rows = (await env.DB.prepare(
-    `SELECT a.id, a.email, a.machine_id, a.owner_name
+    `SELECT a.id, a.email, a.machine_id, a.owner_name, a.expires_at
        FROM streamdaw_activations a
       WHERE a.status = 'pending'
         AND (SELECT COUNT(*) FROM streamdaw_activations b
@@ -767,11 +840,12 @@ async function grantEntitlement(env, { email, ext_ref, amount, plan, source }) {
   const existing = await env.DB.prepare('SELECT * FROM entitlements WHERE ext_ref = ?').bind(ext_ref).first();
   if (existing) return existing;
   const u = await env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(lc(email)).first();
+  const expiresAt = isPass(plan) ? now() + PASS_DAYS * 86400 : null;   // a pass ends; Pro does not
   const ins = await env.DB.prepare(
-    `INSERT INTO entitlements (user_id, email, product, plan, status, source, ext_ref, amount, currency, created_at)
-     VALUES (?, ?, ?, ?, 'active', ?, ?, ?, 'ILS', ?)`
-  ).bind(u?.id || null, lc(email), PRODUCT, plan, source || 'hyp', ext_ref, amount, now()).run();
-  return { id: ins.meta.last_row_id, email: lc(email) };
+    `INSERT INTO entitlements (user_id, email, product, plan, status, source, ext_ref, amount, currency, created_at, expires_at)
+     VALUES (?, ?, ?, ?, 'active', ?, ?, ?, 'ILS', ?, ?)`
+  ).bind(u?.id || null, lc(email), PRODUCT, plan, source || 'hyp', ext_ref, amount, now(), expiresAt).run();
+  return { id: ins.meta.last_row_id, email: lc(email), plan, expires_at: expiresAt };
 }
 
 async function mintDownloadLink(env, entitlementId, email) {
@@ -785,22 +859,27 @@ async function mintDownloadLink(env, entitlementId, email) {
 }
 
 function emailReceipt(env, to, link, machine, order) {
-  const subject = 'Your StreamDAW Pro receipt and download';
-  const soon = env.MINTER_TOKEN ? 'usually within minutes' : 'usually within a day';
   const o = order || {};
-  const paid = typeof o.amount === 'number' ? (o.amount > 0 ? `₪${(o.amount / 100).toFixed(2)}` : 'free (coupon)') : '';
+  const pass = isPass(o.plan);
+  const until = pass && o.expiresAt ? dayOf(o.expiresAt) : '';
+  const subject = pass ? 'Your StreamDAW 7-day pass: receipt and download' : 'Your StreamDAW Pro receipt and download';
+  const soon = env.MINTER_TOKEN ? 'usually within minutes' : 'usually within a day';
+  const paid = typeof o.amount === 'number' ? (o.amount > 0 ? `₪${(o.amount / 100).toFixed(2)}` : (o.credit ? 'nothing more (your pass covered it)' : 'free (coupon)')) : '';
   const when = new Date().toISOString().slice(0, 10);
   const lines = [
     o.ref ? `Order: ${o.ref}` : '',
-    `Product: StreamDAW Pro, one payment, every StreamDAW 1 update included`,
-    paid ? `Paid: ${paid}${o.coupon ? ` (coupon ${o.coupon})` : ''}` : '',
+    pass ? `Product: StreamDAW Pro 7-day pass, every Pro feature until ${until}, no renewal`
+         : `Product: StreamDAW Pro, one payment, every StreamDAW 1 update included`,
+    paid ? `Paid: ${paid}${o.coupon ? ` (coupon ${o.coupon})` : ''}${o.credit ? ` (₪${(o.credit / 100).toFixed(2)} from your pass taken off)` : ''}` : '',
     `Date: ${when}`,
   ].filter(Boolean);
+  const keyWord = pass ? 'pass key' : 'Pro key';
   const keyLine = machine
-    ? `Your Pro key for this Mac (${machine}) is being made now. It arrives in a second email, ${soon}: paste it into StreamDAW › Settings › Licence and press Unlock.`
-    : `Get your Pro key for each Mac you use on ${UNLOCK_URL} (sign in with this email).`;
+    ? `Your ${keyWord} for this Mac (${machine}) is being made now. It arrives in a second email, ${soon}: paste it into StreamDAW › Settings › Licence and press Unlock.`
+    : `Get your ${keyWord} for each Mac you use on ${UNLOCK_URL} (sign in with this email).`;
+  const upgrade = pass ? `Want to keep Pro? Buy it within ${PASS_CREDIT_DAYS} days and what you paid for this pass comes off: ${SITE}/apps/streamdaw.html#pricing` : '';
   const text =
-`Thanks for getting StreamDAW Pro.
+`Thanks for getting ${pass ? 'a StreamDAW Pro 7-day pass' : 'StreamDAW Pro'}.
 
 ${lines.join('\n')}
 
@@ -808,22 +887,24 @@ Download (a private link, good for 7 days; after that, from your account):
 ${link}
 
 ${keyLine}
-
-Then: install the .pkg, open your DAW, put StreamDAW on the master bus, press GO LIVE.
+${upgrade ? `\n${upgrade}\n` : ''}
+Then: install the .pkg (StreamDAW ${pass ? PASS_MIN_APP : MIN_APP} or newer), open your DAW, put StreamDAW on the master bus, press GO LIVE.
 
 ${mailLinksText()}
 
 — Snowstar.Company`;
   const html = licenceMail({
-    title: 'Welcome to StreamDAW Pro',
-    intro: 'Thanks for getting StreamDAW Pro. Your download is below; your key follows.',
+    title: pass ? `StreamDAW Pro until ${until}` : 'Welcome to StreamDAW Pro',
+    intro: pass ? `Thanks for getting a 7-day pass: every Pro feature until <b>${until}</b>. Your download is below; your key follows.`
+                : 'Thanks for getting StreamDAW Pro. Your download is below; your key follows.',
     steps: [
       'Download StreamDAW and install the .pkg.',
       escHtml(keyLine),
       'Open your DAW, put StreamDAW on the master bus, press <b>GO LIVE</b>.',
     ],
     button: { href: link, label: 'Download StreamDAW' },
-    footer: lines.map(escHtml).join('<br>') + '<br>The download link is private to you and good for 7 days; after that, download from <a href="' + ACCOUNT_URL + '">your account</a>.',
+    footer: lines.map(escHtml).join('<br>') + '<br>The download link is private to you and good for 7 days; after that, download from <a href="' + ACCOUNT_URL + '">your account</a>.'
+      + (pass ? `<br>Want to keep Pro? <a href="${SITE}/apps/streamdaw.html#pricing">Buy it within ${PASS_CREDIT_DAYS} days</a> and what you paid for this pass comes off.` : ''),
   });
   return sendMail(env, { to, subject, text, html });
 }

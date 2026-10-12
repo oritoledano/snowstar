@@ -248,6 +248,10 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .plan .btn{margin-top:auto;align-self:flex-start}
 .plan .after{margin-top:14px;font-size:13px;color:rgba(239,233,218,.66)}
 .plan .after a{text-decoration:underline}
+.plan .pass{margin-top:16px;padding-top:14px;border-top:1px solid rgba(239,233,218,.16);font-size:14px;color:rgba(239,233,218,.86)}
+.plan .pass .pass-btn{margin-left:4px;padding:0;border:0;background:none;color:var(--lime);font:600 14px/1.4 var(--sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.plan .pass .pass-btn:disabled{opacity:.6;cursor:default}
+.plan .pass small{display:block;margin-top:4px;font-size:12.5px;color:rgba(239,233,218,.6)}
 .coupon{display:flex;gap:8px;margin:auto 0 12px;max-width:360px}
 .coupon input{flex:1;min-width:0;height:42px;padding:0 14px;border-radius:999px;border:1px solid rgba(239,233,218,.28);background:rgba(239,233,218,.06);color:var(--paper);font:500 14px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;outline:none}
 .coupon input::placeholder{color:rgba(239,233,218,.5);text-transform:none;letter-spacing:0}

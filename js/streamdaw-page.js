@@ -202,15 +202,19 @@
     const mac = forMac(), box = $('forMac');
     if (mac && box) { box.textContent = 'For this Mac (' + mac + '): the key is made for it after you pay, and arrives by email.'; box.hidden = false; }
     if (q.get('buy') === '1') toPricing(300);
+    // From the app's "7-day pass" button: the pass line, ready to press.
+    if (q.get('plan') === 'pass') setTimeout(() => { const p = document.querySelector('.pass-btn'); if (p) p.focus({ preventScroll: true }); }, 700);
   })();
 
   // ── success (a free grant, or back from a paid HYP checkout) ──
-  function success(downloadUrl, free) {
+  function success(downloadUrl, free, pass) {
     const t = $('ticket'); if (!t) return;
+    const what = pass ? 'pass key' : 'Pro key';
     t.innerHTML = '<span class="tag lime">You’re in</span>'
-      + '<div class="price">Unlocked.</div>'
+      + '<div class="price">' + (pass ? 'Pro for 7 days.' : 'Unlocked.') + '</div>'
       + '<p class="note">' + (free ? 'No charge. Enjoy.' : 'Payment received. Thank you.') + ' Your private download link is in your inbox too.'
-      + (forMac() ? ' The Pro key for this Mac is being made and arrives by email: paste it into StreamDAW › Settings › Licence.' : ' Next, get the key for your Mac: it takes a minute.') + '</p>'
+      + (forMac() ? ' The ' + what + ' for this Mac is being made and arrives by email: paste it into StreamDAW › Settings › Licence.' : ' Next, get the key for your Mac: it takes a minute.')
+      + (pass ? ' Buy Pro within 30 days and what you paid comes off.' : '') + '</p>'
       + '<div class="cta">'
       + (downloadUrl ? '<a class="btn lime" href="' + downloadUrl + '">Download StreamDAW</a>' : '')
       + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your Mac</a>'
@@ -223,14 +227,16 @@
   const signedIn = () => { const M = acct(); return !!(M && M.user); };
   async function ready() { const M = acct(); if (!M || M.ready) return; await new Promise((r) => { const off = M.onChange(() => { off(); r(); }); }); }
 
-  async function doCheckout() {
+  async function doCheckout(plan) {
+    plan = plan === 'pass' ? 'pass' : 'lifetime';
+    try { sessionStorage.setItem('sd_plan', plan); } catch (e) {}   // read back on the return from HYP
     // Signed in → the server reads the email from the session; no prompt, no typing.
     const btns = document.querySelectorAll('[data-buy]'); btns.forEach((b) => { b.disabled = true; b.style.opacity = 0.6; });
     try {
       const r = await fetch('/api/streamdaw/checkout', { method: 'POST', headers: { 'content-type': 'application/json' },
-        credentials: 'include', body: JSON.stringify({ plan: 'lifetime', coupon: coupon && coupon.code, machine: forMac() }) });
+        credentials: 'include', body: JSON.stringify({ plan, coupon: plan === 'lifetime' && coupon ? coupon.code : null, machine: forMac() }) });
       const d = await r.json();
-      if (d && d.free) { success(d.download, true); toPricing(0); return; }
+      if (d && d.free) { success(d.download, true, plan === 'pass'); toPricing(0); return; }
       if (d && d.url) { location.href = d.url; return; }               // → HYP payment page
       if (d && d.error === 'email_required') { openAuth(); return; }   // session lost: sign in again
       if (d && d.error === 'coupon') { showMsg(d.reason || 'That coupon can’t be used.', false); return; }
@@ -240,24 +246,25 @@
     } catch (err) { alert('Network error starting checkout. Please try again.'); }
     finally { btns.forEach((b) => { b.disabled = false; b.style.opacity = 1; }); }
   }
-  function openAuth() {
+  function openAuth(plan) {
     const open = window.SnowstarOpenAuth || window.MutraOpenAuth;
     if (!open) { alert('Sign-in is loading. One moment, then try again.'); return; }
-    if (window.SnowstarAuthResume) window.SnowstarAuthResume(() => doCheckout()); // resume the purchase after sign-in
+    if (window.SnowstarAuthResume) window.SnowstarAuthResume(() => doCheckout(plan)); // resume the purchase after sign-in
     open('signup', 'Create your Snowstar account to get StreamDAW Pro: one login for Mutra and everything by Snowstar.');
   }
-  async function buy() {
+  async function buy(plan) {
     await ready();
-    if (signedIn()) return doCheckout();   // straight to HYP (or a free grant)
-    openAuth();                            // the shared lightbox; resumes to checkout after
+    if (signedIn()) return doCheckout(plan);   // straight to HYP (or a free grant)
+    openAuth(plan);                            // the shared lightbox; resumes to checkout after
   }
-  document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); buy(); }));
+  document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); buy(el.getAttribute('data-buy')); }));
 
   // Back from the payment page. The Worker sends ?bought=1 (paid, or a free grant),
   // ?pay=failed&reason=… or ?pay=confirming (charged, still being verified).
   if (q.get('bought') === '1') {
     toPricing(0);
-    success(null, q.get('free') === '1');
+    let plan = ''; try { plan = sessionStorage.getItem('sd_plan') || ''; } catch (e) {}
+    success(null, q.get('free') === '1', plan === 'pass');
   } else if (q.get('pay') === 'failed' && cMsg) {
     showMsg(q.get('reason') === 'declined'
       ? 'The card was declined, so nothing went through. Try again, or use another card.'
@@ -283,7 +290,18 @@
       const r = await fetch('/api/streamdaw/mine', { credentials: 'include' });
       if (!r.ok) return;
       const d = await r.json();
+      // Pass money paid recently comes off Pro: show this buyer their price.
+      if (d && d.proPrice && d.proPrice < 24900) {
+        const big = $('bigPrice'), sub = $('priceSub');
+        if (big) big.innerHTML = '<span data-ils="' + d.proPrice / 100 + '">₪' + (d.proPrice / 100) + '</span><small>for you: your pass comes off · VAT included</small>';
+        if (sub) sub.textContent = 'Was ₪249. What you paid for your pass is taken off.';
+      }
       if (!d || !d.owned) return;
+      if (d.plan === 'pass') {                      // a pass: keep the buy buttons, say until when
+        const o = $('owned');
+        if (o) { o.innerHTML = 'You have a Pro pass until ' + new Date(d.expiresAt * 1000).toISOString().slice(0, 10) + '. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="/api/streamdaw/download">Download the installer</a>'; o.hidden = false; }
+        return;
+      }
       const cta = $('navCta');
       if (cta) { cta.href = 'streamdaw-unlock.html'; cta.removeAttribute('data-free-dl'); cta.innerHTML = 'Unlock<span class="long">a Mac</span>'; }
       const o = $('owned'); if (o) o.hidden = false;
