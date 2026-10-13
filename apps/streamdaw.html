@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=3">
+<link rel="stylesheet" href="../css/streamdaw.css?v=4">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
 {
@@ -52,6 +52,14 @@
 "acceptedAnswer": {
 "@type": "Answer",
 "text": "We have streamed sessions from Ableton Live and from the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig, which we have not tested yet. Pro Tools is on the way."
+}
+},
+ {
+"@type": "Question",
+"name": "Why does macOS ask me to allow StreamDAW?",
+"acceptedAnswer": {
+"@type": "Answer",
+"text": "StreamDAW isn't notarized by Apple yet, so the first time you open the installer macOS says it can't verify it. Allow it once in System Settings › Privacy & Security › Open Anyway. The installer adds only the StreamDAW app, its plug-ins and the StreamDAW Audio device. The install guide shows every screen."
 }
 },
  {
@@ -426,6 +434,8 @@
           <p data-txt="streamdaw.faq.a3">Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest; Bluetooth adds its own delay.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs does it work in?</span></summary>
           <p data-txt="streamdaw.faq.a4">We have streamed sessions from Ableton Live and from the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig, which we have not tested yet. Pro Tools is on the way.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q9">Why does macOS ask me to allow StreamDAW?</span></summary>
+          <p data-txt="streamdaw.faq.a9">StreamDAW isn't notarized by Apple yet, so the first time you open the installer macOS says it can't verify it. Allow it once in System Settings › Privacy &amp; Security › Open Anyway. The installer adds only the StreamDAW app, its plug-ins and the StreamDAW Audio device. <a href="streamdaw-install.html">The install guide</a> shows every screen.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q7">Who can get into my session?</span></summary>
           <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q8">Is there a monthly plan?</span></summary>
@@ -478,12 +488,18 @@
   <div class="menu-cur"><span data-currency-switcher aria-label="Currency"></span></div>
 </div>
 
+<!-- After a free download starts (js/streamdaw-page.js): the way to the install guide. -->
+<div class="dl-hint" id="dlHint" role="status" hidden>
+  <p><b>StreamDAW is downloading.</b> macOS asks you to allow it once: <a href="streamdaw-install.html">see how, step by step</a>.</p>
+  <button type="button" id="dlHintX" aria-label="Close">×</button>
+</div>
+
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
 <script src="../js/money.js?v=3"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=28"></script>
 <script src="../js/site-edit.js?v=9"></script>
-<script src="../js/streamdaw-page.js?v=3"></script>
+<script src="../js/streamdaw-page.js?v=4"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/studio.js?v=1435ed44" defer></script>

@@ -346,6 +346,58 @@ footer b{color:var(--ink);font-weight:600}
 .ul-fine{margin-top:22px;font-size:14px;color:var(--muted)}
 .ul-fine a{text-decoration:underline}
 
+/* ── the install page (apps/streamdaw-install.html) ─────────
+   The unlock page's frame (.ul-main, .ul-lead, .panel), its numbered steps standing one
+   under the other, each with the screen macOS shows on the leather's night. */
+.in-main .panel{margin-top:clamp(32px,4vw,48px)}
+.in-main .panel a,.in-step a{text-decoration:underline;text-underline-offset:3px}
+.in-places{list-style:none;margin-top:12px;display:grid}
+.in-places li{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:10px 0;border-top:1px solid var(--line);font-size:15px;color:var(--ink-2)}
+.in-places li:last-child{border-bottom:1px solid var(--line)}
+.in-places b{color:var(--ink);font-weight:600}
+.in-places code{margin-left:auto;font:500 13px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted)}
+.in-steps{list-style:none;counter-reset:s;margin-top:clamp(40px,5vw,64px)}
+.in-step{counter-increment:s;display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:8px;border-top:1.5px solid var(--ink);padding:26px 0 clamp(32px,4vw,44px)}
+.in-step::before{content:"0" counter(s);grid-row:1 / span 20;font:600 12px/1 var(--sans);letter-spacing:.14em;color:var(--muted);padding-top:9px}
+.in-step>*{grid-column:2}
+.in-step h2{font-size:clamp(24px,2.4vw,32px);letter-spacing:-.02em}
+.in-step p{color:var(--ink-2);font-size:16px;margin-top:10px;max-width:40em}
+.in-step b{color:var(--ink);font-weight:600}
+.in-step .in-do{color:var(--ink)}
+.in-shot{margin:22px 0 6px}
+.in-frame{display:grid;place-items:center;border-radius:clamp(18px,2.2vw,26px);padding:clamp(28px,5vw,56px) 16px;
+  background:linear-gradient(rgba(18,16,12,.55),rgba(18,16,12,.55)),var(--night) var(--leather) center/330px}
+.in-frame img{width:260px;max-width:100%;border-radius:14px;box-shadow:0 30px 60px -24px rgba(0,0,0,.7)}
+.in-frame.wide{padding:clamp(16px,3vw,32px) clamp(10px,2vw,24px)}
+.in-frame.wide img{width:723px;border-radius:12px}
+.in-shot figcaption{margin-top:12px;font-size:13.5px;color:var(--muted);max-width:52em}
+.in-tag{display:inline-block;margin-right:6px;padding:2px 9px;border:1px solid var(--line-2);border-radius:999px;font:600 11px/1.5 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap}
+.in-perms{margin-top:16px;display:grid}
+.in-perms div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 18px;padding:14px 0;border-top:1px solid var(--line)}
+.in-perms div:last-child{border-bottom:1px solid var(--line)}
+.in-perms dt{font:600 17px/1.4 var(--serif);color:var(--ink)}
+.in-perms dd{font-size:15px;color:var(--ink-2)}
+@media (max-width:700px){
+  .in-step{grid-template-columns:1fr}
+  .in-step::before{grid-row:auto;padding:0 0 10px}
+  .in-step>*{grid-column:1}
+  .in-perms div{grid-template-columns:1fr}
+  .in-places code{margin-left:0}
+}
+
+/* The free download's next step (js/streamdaw-page.js): once the file is on its way, a strip
+   at the bottom points to the install guide, because macOS stops the installer once. */
+.dl-hint{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;
+  width:min(640px,calc(100% - 32px));display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
+  padding:14px 16px 14px 20px;border-radius:18px;background:var(--ink);color:var(--paper);font-size:15px;line-height:1.45;
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.6)}
+.dl-hint[hidden]{display:none}
+.dl-hint p{flex:1 1 260px}
+.dl-hint b{font-weight:600}
+.dl-hint a{color:var(--lime);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.dl-hint button{flex:none;width:32px;height:32px;border-radius:50%;border:0;cursor:pointer;background:rgba(239,233,218,.14);color:var(--paper);font:400 20px/1 var(--sans);padding:0 0 2px}
+.dl-hint button:hover{background:rgba(239,233,218,.26)}
+
 @media (max-width:980px){
   header.nav nav{display:none}
   .nav-tools{margin-left:auto}
@@ -457,6 +509,7 @@ html.sdco-lock,html.sdco-lock body{overflow:hidden}
 .sdco-check{width:58px;height:58px;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d2a00' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center/28px no-repeat}
 .sdco-alt{margin-top:12px;font-size:13px;color:var(--muted)}
 .sdco-alt button{padding:0;border:0;background:none;cursor:pointer;font:600 13px/1.4 var(--sans);color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.sdco-alt a{font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 
 @media (max-width:760px){
   .sdco{padding:0;display:block}

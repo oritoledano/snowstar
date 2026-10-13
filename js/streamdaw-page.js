@@ -5,7 +5,8 @@
       through the shared sign-in, the return from the payment page (?bought / ?pay=)
    4. an owner on this page: the header button and a line above the plans point to
       the unlock page (apps/streamdaw-unlock.html), where keys are requested now.
-   5. the free download: a Snowstar account first (the shared sign-up), then the file. */
+   5. the free download: a Snowstar account first (the shared sign-up), then the file, then
+      the way to the install guide (apps/streamdaw-install.html): macOS stops the installer once. */
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -236,7 +237,8 @@
       + (downloadUrl ? '<a class="btn lime" href="' + downloadUrl + '">Download StreamDAW</a>' : '')
       + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your Mac</a>'
       + '</div>'
-      + '<p class="after">Signed in? It is in your Snowstar account too: download it again any time.</p>';
+      + '<p class="after">Signed in? It is in your Snowstar account too: download it again any time. '
+      + 'macOS asks you to allow the installer once: <a href="streamdaw-install.html">how to install</a>.</p>';
   }
 
   // ── account: the SAME sign-in lightbox as Mutra and the homepage ──
@@ -248,7 +250,7 @@
   // What you get on the left, HYP's payment page in a frame on the right; the result comes back
   // into it. If its script cannot load, the whole tab goes to HYP as it always did.
   const CHECKOUT_JS = (function () {
-    try { return new URL('streamdaw-checkout.js?v=1', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=1'; }
+    try { return new URL('streamdaw-checkout.js?v=2', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=2'; }
   })();
   // Switched off until a payment has gone through it on HYP's test terminal (2026-10-13): `?lb=1`
   // turns it on for this tab, to test. Off, every purchase goes to HYP's page as before.
@@ -398,8 +400,18 @@
   const FREE_DL = '/api/streamdaw/download/free', FREE_KEY = 'sd_free_dl', FREE_FOR = 15 * 60 * 1000;
   const wantFree = () => { try { const t = +sessionStorage.getItem(FREE_KEY) || 0; return t > 0 && Date.now() - t < FREE_FOR; } catch (e) { return false; } };
   const keepFree = (on) => { try { if (on) sessionStorage.setItem(FREE_KEY, String(Date.now())); else sessionStorage.removeItem(FREE_KEY); } catch (e) {} };
-  // Once per wish: the sign-in's resume and the account's change can both call this.
-  function startFree() { keepFree(false); location.href = FREE_DL; }
+  // Once per wish: the sign-in's resume and the account's change can both call this. The file
+  // comes as an attachment, so this page stays, and a strip points to the install guide.
+  function startFree() { keepFree(false); location.href = FREE_DL; setTimeout(installHint, 600); }
+  function installHint() {
+    const h = $('dlHint'), x = $('dlHintX');
+    if (!h) return;
+    // Above the cookie bar (js/consent.js) while that is still waiting for an answer.
+    const cc = document.querySelector('.cc-bar.in');
+    h.style.bottom = cc ? (cc.offsetHeight + 28) + 'px' : '';
+    h.hidden = false;
+    if (x && !x.dataset.on) { x.dataset.on = '1'; x.addEventListener('click', () => { h.hidden = true; }); }
+  }
   function freeIfWanted() { if (wantFree() && signedIn()) startFree(); }
   function askFree() {
     const open = window.SnowstarOpenAuth;

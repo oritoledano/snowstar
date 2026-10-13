@@ -51,7 +51,8 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawAdmin, streamdawRelease,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
          streamdawMinterPending, streamdawMinterIssue,
-         streamdawReport, streamdawReports, streamdawDownloadFree } from './streamdaw.js';
+         streamdawReport, streamdawReports, streamdawDownloadFree,
+         streamdawLiveRegister, streamdawLiveStatus, streamdawLivePage, streamdawLiveCleanup } from './streamdaw.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -172,6 +173,8 @@ function originOk(req) {
 async function handle(req, env, ctx) {
   const url = new URL(req.url);
   if (url.pathname.startsWith('/t/')) return sharePage(req, env, url);
+  // StreamDAW live links: on to the Mac's tunnel, or a page that waits for it (streamdaw.js).
+  if (url.pathname.startsWith('/live/')) return streamdawLivePage(req, env, url);
   const path = url.pathname.replace(/^\/api/, '') || '/';
   const method = req.method.toUpperCase();
   const ip = req.headers.get('cf-connecting-ip') || 'unknown';
@@ -192,7 +195,9 @@ async function handle(req, env, ctx) {
   // /streamdaw/telemetry and /streamdaw/usage are posted by StreamDAW relays on users' Macs,
   // which send no Origin at all. Anonymous, shaped and clamped (streamdaw-telemetry.js); the
   // worst a forged post achieves is a junk stream row that ages out of the 24-hour view.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/n/u']);
+  // /streamdaw/live/register is posted by the same relays (no Origin, no cookie): it carries the
+  // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -455,6 +460,10 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/usage' && method === 'POST') return streamdawUsage(req, env);
   if (path === '/streamdaw/health' && method === 'GET') return streamdawHealth(req, env, await currentUser(req, env));
   if (path === '/streamdaw/health/stream' && method === 'GET') return streamdawHealthStream(req, env, await currentUser(req, env), url);
+  // Live links (snowstar.company/live/<id>): a relay says where its Mac is now; the waiting page asks.
+  if (path === '/streamdaw/live/register' && method === 'POST') return streamdawLiveRegister(req, env);
+  const liveId = path.match(/^\/streamdaw\/live\/([a-z0-9]{1,32})$/);
+  if (liveId && method === 'GET') return streamdawLiveStatus(req, env, liveId[1]);
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
@@ -755,6 +764,8 @@ export default {
     ctx.waitUntil(pruneReqLog(env).catch(() => 0));
     /* StreamDAW's health graphs keep a fortnight too. */
     ctx.waitUntil(streamdawTelemetryCleanup(env).catch(() => {}));
+    /* StreamDAW live links unseen for half a year. */
+    ctx.waitUntil(streamdawLiveCleanup(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },

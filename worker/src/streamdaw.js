@@ -1111,3 +1111,173 @@ export async function streamdawRelease(req, env, user) {
   await env.DB.batch(stmts);
   return json({ ok: true, asset, version, r2_key, bytes: obj.size || 0, is_latest: latest });
 }
+
+// ── Live links: https://snowstar.company/live/<id> (2026-10-13, "stream without you", phase 2) ──
+//
+// Every customer's Mac runs its own relay and reaches the internet through a Cloudflare QUICK
+// tunnel, whose https://<four-words>.trycloudflare.com address is new each time the tunnel
+// starts. A QR code on that address dies with it. So the relay registers its current address
+// here under an id of its own, and the link it hands out is /live/<id>/s/<session>: online, a
+// 302 to the tunnel with the same path and query; offline, a small page that waits and goes on
+// by itself when the Mac is back. (The relay side: server/livelink.js in the StreamDAW repo.)
+//
+// No accounts, and no Snowstar secret on anyone's Mac. What the Mac has:
+//   - the id (10 characters) and a secret (32 random bytes) it made on its first run. The
+//     first registration of an id claims it (we keep sha256 of the secret); after that only
+//     the same secret moves it;
+//   - its machine: sha256("streamdaw-live:" + the licence machine id), made on the Mac. The same
+//     id from another machine (a copied install) is refused with 409, and that Mac makes its
+//     own: one id, one Mac.
+// The address must be a quick tunnel's (https, one label of words, *.trycloudflare.com, no path):
+// /live/ never sends anyone anywhere else. Rate limited per IP and per id (`attempts`).
+// Blocking a link (abuse): UPDATE streamdaw_live SET status = 'blocked' WHERE id = '…'.
+// Schema: schema-streamdaw-live.sql. Route: wrangler.toml snowstar.company/live/*.
+
+const LIVE_ID = /^[a-hjkmnp-z2-9]{10}$/;
+const LIVE_URL = /^https:\/\/[a-z0-9]+(?:-[a-z0-9]+)+\.trycloudflare\.com$/;
+const LIVE_MACHINE = /^[0-9a-f]{64}$/;
+const LIVE_REST = /^(\/[A-Za-z0-9._~%!$&'()*+,;=:@-]*)*$/;
+const LIVE_KEEP_DAYS = 180;
+const liveProbes = new Map();          // id -> { url, ok, at }: one look at a Mac per 2 s per isolate
+
+async function liveThrottle(env, bucket, max, windowSec) {
+  const t = now();
+  const row = await env.DB.prepare('SELECT count, reset_at FROM attempts WHERE bucket = ?').bind(bucket).first();
+  if (row && row.reset_at > t) {
+    if (row.count >= max) return row.reset_at - t;
+    await env.DB.prepare('UPDATE attempts SET count = count + 1 WHERE bucket = ?').bind(bucket).run();
+  } else {
+    await env.DB.prepare('INSERT INTO attempts (bucket, count, reset_at) VALUES (?, 1, ?) '
+      + 'ON CONFLICT(bucket) DO UPDATE SET count = 1, reset_at = excluded.reset_at').bind(bucket, t + windowSec).run();
+  }
+  return 0;
+}
+
+/** POST /api/streamdaw/live/register  {id, machine, url|null, app?, relay?}, Authorization: Bearer <secret>.
+ *  From a relay (no Origin, no cookie: CSRF-exempt in index.js). */
+export async function streamdawLiveRegister(req, env) {
+  let b = {};
+  try { b = await req.json(); } catch {}
+  const id = String(b.id || ''), machine = String(b.machine || '');
+  const secret = (String(req.headers.get('authorization') || '').match(/^Bearer ([A-Za-z0-9_-]{40,100})$/) || [])[1] || '';
+  const url = b.url === null || b.url === undefined || b.url === '' ? null : String(b.url).replace(/\/+$/, '');
+  if (!LIVE_ID.test(id)) return json({ error: 'bad_id' }, 400);
+  if (!LIVE_MACHINE.test(machine)) return json({ error: 'bad_machine' }, 400);
+  if (!secret) return json({ error: 'no_secret' }, 401);
+  if (url !== null && (url.length > 120 || !LIVE_URL.test(url))) return json({ error: 'bad_url', hint: 'https://<name>.trycloudflare.com only' }, 400);
+  const ver = (v) => (typeof v === 'string' && /^[0-9A-Za-z.+-]{1,32}$/.test(v) ? v : null);
+
+  const ip = req.headers.get('cf-connecting-ip') || '';
+  const ipHash = ip ? (await sha256b64('sdlive:' + ip)).slice(0, 24) : 'none';
+  let wait = await liveThrottle(env, 'sdlive-ip:' + ipHash, 120, 3600);
+  if (wait) return json({ error: 'slow_down', retryAfter: wait }, 429);
+
+  const secretHash = await sha256b64(secret);
+  const t = now();
+  let row = await env.DB.prepare('SELECT id, secret_hash, machine_hash, status FROM streamdaw_live WHERE id = ?').bind(id).first();
+  if (!row) {
+    wait = await liveThrottle(env, 'sdlive-new:' + ipHash, 10, 3600);       // new ids per network
+    if (wait) return json({ error: 'slow_down', retryAfter: wait }, 429);
+    const ins = await env.DB.prepare(
+      `INSERT INTO streamdaw_live (id, secret_hash, machine_hash, url, url_at, status, app_version, relay_version, created_at, updated_at, ip_hash)
+       VALUES (?, ?, ?, ?, ?, 'ok', ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING`
+    ).bind(id, secretHash, machine, url, url ? t : null, ver(b.app), ver(b.relay), t, t, ipHash).run();
+    if (ins.meta && ins.meta.changes === 1) { liveProbes.delete(id); return json({ ok: true, id, link: `${SITE}/live/${id}`, created: true }); }
+    row = await env.DB.prepare('SELECT id, secret_hash, machine_hash, status FROM streamdaw_live WHERE id = ?').bind(id).first();   // lost a race
+    if (!row) return json({ error: 'server_error' }, 500);
+  }
+  if (!safeEqual(secretHash, row.secret_hash)) return json({ error: 'taken' }, 403);
+  if (machine !== row.machine_hash) return json({ error: 'machine' }, 409);
+  if (row.status === 'blocked') return json({ error: 'blocked' }, 403);
+  wait = await liveThrottle(env, 'sdlive-id:' + id, 60, 3600);
+  if (wait) return json({ error: 'slow_down', retryAfter: wait }, 429);
+  await env.DB.prepare(
+    `UPDATE streamdaw_live SET url = ?, url_at = ?, app_version = COALESCE(?, app_version), relay_version = COALESCE(?, relay_version),
+       updated_at = ?, ip_hash = ? WHERE id = ?`
+  ).bind(url, url ? t : null, ver(b.app), ver(b.relay), t, ipHash, id).run();
+  liveProbes.delete(id);
+  return json({ ok: true, id, link: `${SITE}/live/${id}` });
+}
+
+/* Is the Mac there? Its relay answers /info on the tunnel (JSON with a publicBase). A tunnel
+   that is gone answers with Cloudflare's error page (530/1033), or not at all. */
+async function liveOnline(id, url) {
+  const c = liveProbes.get(id);
+  if (c && c.url === url && Date.now() - c.at < 2000) return c.ok;
+  let ok = false;
+  try {
+    const r = await fetch(url + '/info', { headers: { accept: 'application/json' }, redirect: 'manual', signal: AbortSignal.timeout(2500) });
+    if (r.ok) { const j = await r.json(); ok = !!j && typeof j.publicBase === 'string'; }
+  } catch {}
+  if (liveProbes.size > 500) liveProbes.clear();
+  liveProbes.set(id, { url, ok, at: Date.now() });
+  return ok;
+}
+
+async function liveRow(env, id) {
+  if (!LIVE_ID.test(id)) return null;
+  return env.DB.prepare('SELECT id, url, status FROM streamdaw_live WHERE id = ?').bind(id).first();
+}
+
+/** GET /api/streamdaw/live/<id>: {ok, online, url?} — what the waiting page asks. */
+export async function streamdawLiveStatus(req, env, id) {
+  const row = await liveRow(env, id);
+  if (!row) return json({ error: 'not_found' }, 404);
+  if (row.status === 'blocked') return json({ error: 'gone' }, 410);
+  const online = !!row.url && await liveOnline(id, row.url);
+  return json(online ? { ok: true, online, url: row.url } : { ok: true, online: false });
+}
+
+function livePage(status, title, text, wait) {
+  const nonce = urlToken(16);
+  const js = (v) => JSON.stringify(v).replace(/</g, '\\u003c');
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  const body = '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">'
+    + `<title>${esc(title)} · StreamDAW</title><style>html,body{margin:0;min-height:100%;background:#12110e;color:#f3eddc;`
+    + 'font:400 16px/1.5 Inter,system-ui,-apple-system,sans-serif}body{display:grid;place-content:center;text-align:center;padding:28px;min-height:100vh;box-sizing:border-box}'
+    + 'h1{font:600 22px/1.3 Georgia,serif;margin:0 0 10px}p{margin:0 auto 8px;max-width:30em;color:#cfc7b2}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;'
+    + 'background:#c8f04a;margin-right:8px;animation:p 1.6s ease-in-out infinite}@keyframes p{50%{opacity:.25}}small{color:#8d8572}</style></head><body>'
+    + `<h1>${wait ? '<span class="dot" aria-hidden="true"></span>' : ''}${esc(title)}</h1><p>${esc(text)}</p>`
+    + (wait ? '<p><small id="s">Checking…</small></p>' : '')
+    + (wait ? `<script nonce="${nonce}">(function(){var w=${js(wait)},n=0,s=document.getElementById('s');`
+      + 'function go(u){location.replace(u+w.rest+w.q+location.hash);}'
+      + 'function look(){fetch(w.api,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){'
+      + 'if(j&&j.online&&/^https:\\/\\/[a-z0-9-]+\\.trycloudflare\\.com$/.test(j.url))return go(j.url);'
+      + 'if(j&&j.error==="gone"){s.textContent="This link has been switched off.";return;}'
+      + 's.textContent="Still waiting · checked "+new Date().toLocaleTimeString();next();})'
+      + '.catch(function(){s.textContent="No answer · trying again";next();});}'
+      + 'function next(){n++;setTimeout(look,n<75?4000:15000);}look();})();</script>' : '')
+    + '</body></html>';
+  return new Response(body, {
+    status,
+    headers: {
+      'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'referrer-policy': 'no-referrer',
+      'x-content-type-options': 'nosniff', 'x-frame-options': 'DENY',
+      'content-security-policy': `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; connect-src 'self'; `
+        + "frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
+    },
+  });
+}
+
+/** GET /live/<id>[/<path>][?query]: on to the Mac's tunnel, or a page that waits for it. */
+export async function streamdawLivePage(req, env, url) {
+  const m = url.pathname.match(/^\/live\/([^/]+)(\/.*)?$/);
+  const id = m ? m[1].toLowerCase() : '';
+  const rest = (m && m[2] ? m[2] : '').replace(/\/{2,}/g, '/');
+  const q = url.search.length <= 1024 ? url.search : '';
+  const row = m && rest.length <= 512 && LIVE_REST.test(rest) ? await liveRow(env, id) : null;
+  if (!row) return livePage(404, 'No such StreamDAW link', 'Check the link you were sent, or ask the studio for a new one.', null);
+  if (row.status === 'blocked') return livePage(410, 'This link is switched off', 'Ask the studio for a new one.', null);
+  if (row.url && await liveOnline(id, row.url)) {
+    return new Response(null, { status: 302, headers: { location: row.url + (rest || '/') + q, 'cache-control': 'no-store', 'referrer-policy': 'no-referrer' } });
+  }
+  return livePage(200, 'The studio is not on air yet', 'Keep this page open: it opens the session by itself as soon as the studio is back.',
+    { api: `/api/streamdaw/live/${id}`, rest: rest || '/', q });
+}
+
+/** The daily cron: links unseen for half a year, and their rate-limit rows. */
+export async function streamdawLiveCleanup(env) {
+  await env.DB.prepare('DELETE FROM streamdaw_live WHERE updated_at < ?').bind(now() - LIVE_KEEP_DAYS * 86400).run();
+  await env.DB.prepare("DELETE FROM attempts WHERE bucket LIKE 'sdlive%' AND reset_at < ?").bind(now()).run();
+}

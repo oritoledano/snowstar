@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-product="streamdaw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Install StreamDAW on your Mac | Snowstar</title>
+<meta name="description" content="How to install StreamDAW: open the installer, allow it once in System Settings › Privacy & Security › Open Anyway, then say yes to the microphone. Every screen you'll see, step by step.">
+<link rel="canonical" href="https://snowstar.company/apps/streamdaw-install.html">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/assets/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#efe9da">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/account.css?v=19">
+<link rel="stylesheet" href="../css/streamdaw.css?v=4">
+</head>
+<body>
+
+<!-- The install guide (2026-10-13). StreamDAW is not signed with a Developer ID or notarized
+     yet, so macOS stops the downloaded .pkg once and the buyer allows it in System Settings.
+     Facts and sources: STREAMDAW/wip/install-guide-2026-10-13.md. Both pictures are real captures
+     (macOS Tahoe 26.4, dark mode); the green ring on Open Anyway is ours. When the installers are
+     notarized, steps 02 and 03 and the "Why macOS asks" panel go. -->
+
+<header class="nav">
+  <div class="wrap">
+    <a href="streamdaw.html" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW" width="149" height="15"></a>
+    <div class="nav-tools solo">
+      <a class="back" href="streamdaw.html">About StreamDAW</a>
+      <span class="nav-acct" data-account-mount></span>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="ul-main in-main" id="install">
+  <div class="wrap">
+    <p class="kicker" data-txt="streamdaw-install.kicker">Install</p>
+    <h1 data-txt="streamdaw-install.title">Install StreamDAW.</h1>
+    <p class="ul-lead" data-txt="streamdaw-install.lead">About five minutes, once. The first time, macOS asks you to allow StreamDAW, because Apple hasn't notarized it yet. Here is every screen you'll see, and what to press.</p>
+
+    <div class="panel in-why">
+      <h2 data-txt="streamdaw-install.why.title">Why macOS asks.</h2>
+      <p data-txt="streamdaw-install.why.text">Apple notarizes software from developers in its paid developer programme. StreamDAW is new and made by a small studio, and we'll join once enough of you use it. Until then macOS can't vouch for the installer, so it asks you to confirm it yourself.</p>
+      <p data-txt="streamdaw-install.why.what">The installer puts these on your Mac, and nothing else:</p>
+      <ul class="in-places">
+        <li><span><b>The StreamDAW app</b></span> <code>/Applications</code></li>
+        <li><span><b>The plug-in</b>, Audio Units and VST3</span> <code>/Library/Audio/Plug-Ins</code></li>
+        <li><span><b>StreamDAW Audio</b>, the audio device your DAW sends stems to</span> <code>/Library/Audio/Plug-Ins/HAL</code></li>
+      </ul>
+      <p data-txt="streamdaw-install.why.more">It also removes older copies of StreamDAW. Nothing starts when you log in. Download it only from snowstar.company.</p>
+    </div>
+
+    <ol class="in-steps">
+      <li class="in-step">
+        <h2 data-txt="streamdaw-install.s1.title">Download.</h2>
+        <p data-txt="streamdaw-install.s1.text">Get StreamDAW from the <a href="streamdaw.html">StreamDAW page</a> (free, with a Snowstar account) or from the link in your purchase email. One file lands in your Downloads folder: <b>StreamDAW-0.5.x.pkg</b>.</p>
+      </li>
+
+      <li class="in-step">
+        <h2 data-txt="streamdaw-install.s2.title">Open the installer.</h2>
+        <p data-txt="streamdaw-install.s2.text">Quit your DAW first. Then double-click the .pkg file. macOS answers with this:</p>
+        <figure class="in-shot">
+          <div class="in-frame"><img src="../media/streamdaw/install/gatekeeper-not-opened.png" width="260" height="300" alt="macOS dialog: “StreamDAW-0.5.3.pkg” Not Opened. Apple could not verify “StreamDAW-0.5.3.pkg” is free of malware that may harm your Mac or compromise your privacy. Buttons: Move to Trash, Done."></div>
+          <figcaption><span class="in-tag">Screenshot · macOS Tahoe 26</span> <span data-txt="streamdaw-install.s2.cap">On macOS Sequoia 15 it says the same, with the two buttons side by side.</span></figcaption>
+        </figure>
+        <p class="in-do" data-txt="streamdaw-install.s2.do">Click <b>Done</b>. Not Move to Trash: that throws the file away.</p>
+      </li>
+
+      <li class="in-step">
+        <h2 data-txt="streamdaw-install.s3.title">Allow it, once.</h2>
+        <p data-txt="streamdaw-install.s3.text">Open the Apple menu › <b>System Settings</b> › <b>Privacy &amp; Security</b> and scroll down to <b>Security</b>. Next to “StreamDAW-0.5.x.pkg” was blocked to protect your Mac, click <b>Open Anyway</b>.</p>
+        <figure class="in-shot">
+          <div class="in-frame wide"><img src="../media/streamdaw/install/open-anyway.png" width="723" height="209" alt="System Settings, Privacy &amp; Security selected. Under Security: “StreamDAW-0.5.3.pkg” was blocked to protect your Mac, with the Open Anyway button ringed in green."></div>
+          <figcaption><span class="in-tag">Screenshot · macOS Tahoe 26</span> <span data-txt="streamdaw-install.s3.cap">The green ring is ours. The button stays there for about an hour after you try to open the file. Gone? Double-click the .pkg again.</span></figcaption>
+        </figure>
+        <p class="in-do" data-txt="streamdaw-install.s3.do">Type your Mac's login password (or use Touch ID). macOS asks one more time: click <b>Open</b>. It remembers your answer for this file.</p>
+      </li>
+
+      <li class="in-step">
+        <h2 data-txt="streamdaw-install.s4.title">Install.</h2>
+        <p data-txt="streamdaw-install.s4.text">The installer shows the parts it will put on your Mac. Keep them all ticked, click <b>Install</b> and type your password. At the end Core Audio restarts, so sound stops for about a second. When it offers to move the installer to the Trash, either answer is fine.</p>
+      </li>
+
+      <li class="in-step">
+        <h2 data-txt="streamdaw-install.s5.title">Open StreamDAW.</h2>
+        <p data-txt="streamdaw-install.s5.text">Open your DAW, rescan plug-ins if it asks, put StreamDAW on your master bus and press <b>Go live</b>. The StreamDAW app opens by itself (it's in Applications too). macOS checked the installer in step 03, so it shouldn't ask about the app again. If it ever does, allow it the same way.</p>
+      </li>
+
+      <li class="in-step">
+        <h2 data-txt="streamdaw-install.s6.title">Say yes to what you use.</h2>
+        <p data-txt="streamdaw-install.s6.text">StreamDAW asks for each permission the first time it needs it, and never before. Click <b>Allow</b>. Here is why each one is asked:</p>
+        <dl class="in-perms">
+          <div>
+            <dt data-txt="streamdaw-install.p1.name">Microphone</dt>
+            <dd><b data-txt="streamdaw-install.p1.when">When StreamDAW first opens.</b> <span data-txt="streamdaw-install.p1.why">Your DAW's stems reach StreamDAW through StreamDAW Audio, which macOS counts as a microphone: without this, every stem is silent. It's also your own mic, when you talk to your listeners.</span></dd>
+          </div>
+          <div>
+            <dt data-txt="streamdaw-install.p2.name">Camera</dt>
+            <dd><b data-txt="streamdaw-install.p2.when">When you switch your camera on (Pro).</b> <span data-txt="streamdaw-install.p2.why">Your listeners see you only while it's on.</span></dd>
+          </div>
+          <div>
+            <dt data-txt="streamdaw-install.p3.name">Screen</dt>
+            <dd><b data-txt="streamdaw-install.p3.when">When you share a window or a screen (Pro).</b> <span data-txt="streamdaw-install.p3.why">macOS shows its own picker and you choose exactly which window. If it also asks about Screen &amp; System Audio Recording, allow it.</span></dd>
+          </div>
+          <div>
+            <dt data-txt="streamdaw-install.p4.name">System audio</dt>
+            <dd><b data-txt="streamdaw-install.p4.when">When you play another app into your stream (Pro, macOS 14.2 or later).</b> <span data-txt="streamdaw-install.p4.why">Spotify or Music, for example. macOS calls it System Audio Recording Only. StreamDAW takes the sound of the app you pick, and only that app.</span></dd>
+          </div>
+        </dl>
+        <p class="in-do" data-txt="streamdaw-install.s6.do">Said no by mistake? System Settings › Privacy &amp; Security › Microphone (or Camera, or Screen &amp; System Audio Recording), then switch StreamDAW on. After an update macOS may ask again: click Allow again.</p>
+      </li>
+    </ol>
+
+    <div class="panel in-end">
+      <h2 data-txt="streamdaw-install.end.title">That's it.</h2>
+      <p data-txt="streamdaw-install.end.text">Bought Pro? Next, <a href="streamdaw-unlock.html">unlock your Mac</a>: it takes a minute. Stuck on any step? Write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a> with a screenshot of what you see.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="StreamDAW">
+      <a href="streamdaw.html">StreamDAW</a>
+      <a href="streamdaw-unlock.html">Unlock your Mac</a>
+      <a href="streamdaw-terms.html">Licence terms</a>
+      <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+
+<script src="../js/money.js?v=3"></script>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=28"></script>
+<script src="../js/site-edit.js?v=9"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>
