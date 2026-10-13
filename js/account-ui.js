@@ -57,6 +57,29 @@
     }
   }
 
+  /* The sign-up speaks for the product page it opens on (<html data-product>). Mutra's words
+     are the default. The newsletter box is consent under Israel's anti-spam law: never ticked
+     in advance, its label says what they will get, and what it records is users.newsletter. */
+  const SELL = {
+    mutra: {
+      top: ['Save tracks and build shortlists', 'Download watermarked previews for your edit',
+            '<b>10% off</b> your first licence', 'First listen to unreleased music'],
+      bot: ['Clean, un-watermarked files', 'Cleared for commercial use, worldwide',
+            'Your channels whitelisted \u2014 no Content ID claims'],
+      price: 'Licences from <b>\u20aa99</b> per track',
+      news: 'Email me occasionally about new tracks and releases',
+    },
+    streamdaw: {
+      top: ['Download StreamDAW for Mac', '7 days of every Pro feature, no card',
+            'Free on your master bus after that', 'Your downloads and keys in one place'],
+      bot: ['Stems, a mix for every listener', 'Every phone in time', 'Record anyone into your DAW'],
+      price: 'StreamDAW Pro <b data-ils="249">$81</b> once',
+      news: 'Send me news about StreamDAW updates and new Snowstar apps',
+    },
+  };
+  const sell = SELL[M.product] || SELL.mutra;
+  const li = (a) => a.map((x) => `<li>${x}</li>`).join('');
+
   // ── modal ──
   const modal = document.createElement('div');
   modal.className = 'auth-modal';
@@ -67,21 +90,12 @@
       <aside class="auth-sell" hidden aria-hidden="true">
         <div class="auth-sell-top">
           <div class="auth-sell-kicker">Free account</div>
-          <ul class="auth-perks">
-            <li>Save tracks and build shortlists</li>
-            <li>Download watermarked previews for your edit</li>
-            <li><b>10% off</b> your first licence</li>
-            <li>First listen to unreleased music</li>
-          </ul>
+          <ul class="auth-perks">${li(sell.top)}</ul>
         </div>
         <div class="auth-sell-bot">
           <div class="auth-sell-kicker">When you're ready</div>
-          <ul class="auth-perks auth-perks-dim">
-            <li>Clean, un-watermarked files</li>
-            <li>Cleared for commercial use, worldwide</li>
-            <li>Your channels whitelisted \u2014 no Content ID claims</li>
-          </ul>
-          <p class="auth-sell-price">Licences from <b>\u20aa99</b> per track</p>
+          <ul class="auth-perks auth-perks-dim">${li(sell.bot)}</ul>
+          <p class="auth-sell-price">${sell.price}</p>
         </div>
       </aside>
       <div class="auth-body">
@@ -102,7 +116,7 @@
         </label>
         <label class="auth-check auth-news" hidden>
           <input type="checkbox" name="newsletter">
-          <span>Email me occasionally about new tracks and releases</span>
+          <span>${sell.news}</span>
         </label>
         <p class="auth-error" role="alert" hidden></p>
         <button type="submit" class="mbtn mbtn-solid auth-submit">Sign in</button>

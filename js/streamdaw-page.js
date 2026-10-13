@@ -4,7 +4,8 @@
    3. buying: coupons (typed or ?c=), the Mac from the app (?buy=1&machine=), checkout
       through the shared sign-in, the return from the payment page (?bought / ?pay=)
    4. an owner on this page: the header button and a line above the plans point to
-      the unlock page (apps/streamdaw-unlock.html), where keys are requested now. */
+      the unlock page (apps/streamdaw-unlock.html), where keys are requested now.
+   5. the free download: a Snowstar account first (the shared sign-up), then the file. */
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
@@ -201,14 +202,30 @@
     if (MACHINE_RE.test(m)) { try { sessionStorage.setItem('sd_machine', m); } catch (e) {} }
     const mac = forMac(), box = $('forMac');
     if (mac && box) { box.textContent = 'For this Mac (' + mac + '): the key is made for it after you pay, and arrives by email.'; box.hidden = false; }
-    if (q.get('buy') === '1') toPricing(300);
-    // From the app's "7-day pass" button: the pass line, ready to press.
-    if (q.get('plan') === 'pass') setTimeout(() => { const p = document.querySelector('.pass-btn'); if (p) p.focus({ preventScroll: true }); }, 700);
+    // ?buy=1 (the app's "Upgrade", or "7-day pass" with &plan=pass): the checkout lightbox opens
+    // on that plan by itself, with the page behind it at the price. Signed out, the lightbox asks
+    // for the sign-in on its own button rather than throwing the sign-up form at them on arrival.
+    if (q.get('buy') === '1') {
+      toPricing(300);
+      setTimeout(() => buy(q.get('plan') === 'pass' ? 'pass' : 'lifetime', { landing: true }), 450);
+    } else if (q.get('plan') === 'pass') {
+      // ?plan=pass alone: the pass line, ready to press.
+      setTimeout(() => { const p = document.querySelector('.pass-btn'); if (p) p.focus({ preventScroll: true }); }, 700);
+    }
   })();
 
   // ── success (a free grant, or back from a paid HYP checkout) ──
-  function success(downloadUrl, free, pass) {
-    const t = $('ticket'); if (!t) return;
+  // The Pro card turns into the ticket, and the checkout lightbox shows the result (from the
+  // full-page return, ?bought=1); `quiet` when the lightbox itself reported it.
+  function success(downloadUrl, free, pass, quiet) {
+    const t = $('ticket');
+    if (!quiet) {
+      // The Pro list goes along before the card below is rewritten: the lightbox lists it too.
+      const features = t ? Array.from(t.querySelectorAll('.list li:not(.plus)'))
+        .map((li) => (li.firstChild && li.firstChild.nodeType === 3 ? li.firstChild.textContent : li.textContent).trim()).filter(Boolean) : null;
+      checkoutUI().then((ui) => { if (ui) ui.result({ bought: true, free: !!free, plan: pass ? 'pass' : 'lifetime', download: downloadUrl || null }, checkoutOpts(pass ? 'pass' : 'lifetime', { features })); });
+    }
+    if (!t) return;
     const what = pass ? 'pass key' : 'Pro key';
     t.innerHTML = '<span class="tag lime">You’re in</span>'
       + '<div class="price">' + (pass ? 'Pro for 7 days.' : 'Unlocked.') + '</div>'
@@ -227,9 +244,50 @@
   const signedIn = () => { const M = acct(); return !!(M && M.user); };
   async function ready() { const M = acct(); if (!M || M.ready) return; await new Promise((r) => { const off = M.onChange(() => { off(); r(); }); }); }
 
-  async function doCheckout(plan) {
+  // ── checkout: the lightbox (js/streamdaw-checkout.js, loaded from next to this file) ──
+  // What you get on the left, HYP's payment page in a frame on the right; the result comes back
+  // into it. If its script cannot load, the whole tab goes to HYP as it always did.
+  const CHECKOUT_JS = (function () {
+    try { return new URL('streamdaw-checkout.js?v=1', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=1'; }
+  })();
+  // Switched off until a payment has gone through it on HYP's test terminal (2026-10-13): `?lb=1`
+  // turns it on for this tab, to test. Off, every purchase goes to HYP's page as before.
+  const LIGHTBOX = (function () {
+    try { if (q.get('lb') === '1') sessionStorage.setItem('sd_lb', '1'); return sessionStorage.getItem('sd_lb') === '1'; }
+    catch (e) { return q.get('lb') === '1'; }
+  })();
+  let checkoutLoad = null;
+  function checkoutUI() {
+    if (!LIGHTBOX) return Promise.resolve(null);
+    if (window.SDCheckout) return Promise.resolve(window.SDCheckout);
+    if (!checkoutLoad) checkoutLoad = new Promise((res) => {
+      const s = document.createElement('script');
+      const t = setTimeout(() => res(window.SDCheckout || null), 8000);
+      s.src = CHECKOUT_JS; s.async = true;
+      s.onload = () => { clearTimeout(t); res(window.SDCheckout || null); };
+      s.onerror = () => { clearTimeout(t); checkoutLoad = null; res(null); };
+      document.head.appendChild(s);
+    });
+    return checkoutLoad;
+  }
+  if (LIGHTBOX) window.addEventListener('load', () => setTimeout(checkoutUI, 600));   // ready before the first click
+  function checkoutOpts(plan, extra) {
+    return Object.assign({
+      plan, machine: forMac(), signedIn,
+      coupon: plan === 'lifetime' && coupon ? coupon : null,
+      signIn: (resume) => openAuth(plan, resume),
+      onCoupon: (c) => { if (cIn && c && c.code && (!coupon || coupon.code !== c.code)) { cIn.value = c.code; applyCoupon(); } },
+      onBought: (r) => success(r.download || null, !!r.free, r.plan === 'pass', true),
+    }, extra || {});
+  }
+
+  async function doCheckout(plan, o) {
     plan = plan === 'pass' ? 'pass' : 'lifetime';
-    try { sessionStorage.setItem('sd_plan', plan); } catch (e) {}   // read back on the return from HYP
+    try { sessionStorage.setItem('sd_plan', plan); } catch (e) {}   // read back on a return from HYP's own page
+    const ui = await checkoutUI();
+    if (ui) { ui.open(checkoutOpts(plan, o)); return; }
+    // No lightbox: straight to HYP's page in this tab, signed in first.
+    if (!signedIn()) { openAuth(plan); return; }
     // Signed in → the server reads the email from the session; no prompt, no typing.
     const btns = document.querySelectorAll('[data-buy]'); btns.forEach((b) => { b.disabled = true; b.style.opacity = 0.6; });
     try {
@@ -246,22 +304,40 @@
     } catch (err) { alert('Network error starting checkout. Please try again.'); }
     finally { btns.forEach((b) => { b.disabled = false; b.style.opacity = 1; }); }
   }
-  function openAuth(plan) {
+  function openAuth(plan, resume) {
     const open = window.SnowstarOpenAuth || window.MutraOpenAuth;
     if (!open) { alert('Sign-in is loading. One moment, then try again.'); return; }
-    if (window.SnowstarAuthResume) window.SnowstarAuthResume(() => doCheckout(plan)); // resume the purchase after sign-in
+    if (window.SnowstarAuthResume) window.SnowstarAuthResume(resume || (() => doCheckout(plan))); // resume the purchase after sign-in
     open('signup', 'Create your Snowstar account to get StreamDAW Pro: one login for Mutra and everything by Snowstar.');
   }
-  async function buy(plan) {
+  // The checkout lightbox, signed in or not: signed out, the shared sign-in opens over it at once
+  // (after a click) and the payment form follows; `landing` (from the app) waits for their press.
+  async function buy(plan, o) {
     await ready();
-    if (signedIn()) return doCheckout(plan);   // straight to HYP (or a free grant)
-    openAuth(plan);                            // the shared lightbox; resumes to checkout after
+    return doCheckout(plan, { askSignIn: !(o && o.landing) });
   }
   document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); buy(el.getAttribute('data-buy')); }));
 
   // Back from the payment page. The Worker sends ?bought=1 (paid, or a free grant),
   // ?pay=failed&reason=… or ?pay=confirming (charged, still being verified).
-  if (q.get('bought') === '1') {
+  // Inside the lightbox's payment frame (a browser that did not tell the Worker it was framed
+  // got the 302, so this whole page loaded in the frame): the result goes to the page around it,
+  // our own origin only, and this copy stays out of sight.
+  const framedReturn = (function () {
+    if (!(q.get('bought') === '1' || q.get('pay'))) return false;
+    let top = null; try { top = window.parent !== window && window.parent.location.origin === location.origin ? window.parent : null; } catch (e) { top = null; }
+    if (!top) return false;
+    let plan = ''; try { plan = sessionStorage.getItem('sd_plan') || ''; } catch (e) {}
+    top.postMessage({ type: 'sd-checkout', bought: q.get('bought') === '1', ref: q.get('ref'), plan: plan === 'pass' ? 'pass' : 'lifetime',
+      pay: q.get('pay'), reason: q.get('reason') }, location.origin);
+    document.documentElement.style.visibility = 'hidden';
+    return true;
+  })();
+  const showResult = (r) => checkoutUI().then((ui) => { if (ui) ui.result(r, checkoutOpts(r.plan)); });
+  const lastPlan = () => { try { return sessionStorage.getItem('sd_plan') === 'pass' ? 'pass' : 'lifetime'; } catch (e) { return 'lifetime'; } };
+  if (framedReturn) {
+    /* the lightbox around this frame shows it */
+  } else if (q.get('bought') === '1') {
     toPricing(0);
     let plan = ''; try { plan = sessionStorage.getItem('sd_plan') || ''; } catch (e) {}
     success(null, q.get('free') === '1', plan === 'pass');
@@ -270,9 +346,11 @@
       ? 'The card was declined, so nothing went through. Try again, or use another card.'
       : 'The payment did not go through. Try again, or write to hello@snowstar.company and we will sort it out.', false);
     toPricing(300);
+    showResult({ bought: false, pay: 'failed', reason: q.get('reason'), plan: lastPlan() });
   } else if (q.get('pay') === 'confirming' && cMsg) {
     showMsg('Your payment is being confirmed. We will email you as soon as it is, with your download. Nothing to do now.', true);
     toPricing(300);
+    showResult({ bought: false, pay: 'confirming', plan: lastPlan() });
   }
 
   // ── 4. an owner on the sale page ───────────────────────────────────────
@@ -291,10 +369,11 @@
       if (!r.ok) return;
       const d = await r.json();
       // Pass money paid recently comes off Pro: show this buyer their price.
+      // In the visitor's currency like every price here ($ by default); ₪ is what is charged.
       if (d && d.proPrice && d.proPrice < 24900) {
-        const big = $('bigPrice'), sub = $('priceSub');
-        if (big) big.innerHTML = '<span data-ils="' + d.proPrice / 100 + '">₪' + (d.proPrice / 100) + '</span><small>for you: your pass comes off · VAT included</small>';
-        if (sub) sub.textContent = 'Was ₪249. What you paid for your pass is taken off.';
+        const big = $('bigPrice'), sub = $('priceSub'), sh = d.proPrice / 100;
+        if (big) big.innerHTML = '<span data-ils="' + sh + '">' + ils(d.proPrice) + '</span><small>for you: your pass comes off · VAT included</small>';
+        if (sub) sub.textContent = 'Was ' + ils(24900) + ', charged as ₪' + sh + ' incl. VAT. What you paid for your pass is taken off.';
       }
       if (!d || !d.owned) return;
       if (d.plan === 'pass') {                      // a pass: keep the buy buttons, say until when
@@ -309,4 +388,46 @@
   }
   ownerCheck();
   (function () { const M = acct(); if (M && M.onChange) M.onChange(() => { ownerCheck(); }); })();
+
+  // ── 5. the free download: a Snowstar account first (2026-10-13) ─────────
+  // Every [data-free-dl] link. Signed in: the file. Signed out: the shared sign-up (its
+  // newsletter box unticked: consent is theirs to give), and the file once they are in. The
+  // Worker sends a signed-out visitor who opens the URL itself back here with ?get=free.
+  // A Google sign-in reloads the page, so the wish is kept in this tab for a while
+  // (sessionStorage) and honoured once the account shows up; pressing a buy button drops it.
+  const FREE_DL = '/api/streamdaw/download/free', FREE_KEY = 'sd_free_dl', FREE_FOR = 15 * 60 * 1000;
+  const wantFree = () => { try { const t = +sessionStorage.getItem(FREE_KEY) || 0; return t > 0 && Date.now() - t < FREE_FOR; } catch (e) { return false; } };
+  const keepFree = (on) => { try { if (on) sessionStorage.setItem(FREE_KEY, String(Date.now())); else sessionStorage.removeItem(FREE_KEY); } catch (e) {} };
+  // Once per wish: the sign-in's resume and the account's change can both call this.
+  function startFree() { keepFree(false); location.href = FREE_DL; }
+  function freeIfWanted() { if (wantFree() && signedIn()) startFree(); }
+  function askFree() {
+    const open = window.SnowstarOpenAuth;
+    if (!open) { alert('Sign-in is loading. One moment, then try again.'); return; }
+    keepFree(true);
+    if (window.SnowstarAuthResume) window.SnowstarAuthResume(freeIfWanted);
+    open('signup', 'Your free Snowstar account, then the download starts. It includes 7 days of every Pro feature, no card.', 'app');
+  }
+  async function freeDownload() {
+    await ready();
+    if (signedIn()) return startFree();
+    askFree();
+  }
+  document.querySelectorAll('[data-free-dl]').forEach((a) => a.addEventListener('click', (e) => {
+    if (!a.hasAttribute('data-free-dl')) return;      // an owner's header button points elsewhere now
+    e.preventDefault(); freeDownload();
+  }));
+  document.querySelectorAll('[data-buy]').forEach((b) => b.addEventListener('click', () => keepFree(false)));
+  (async function () {
+    const direct = q.get('get') === 'free';
+    if (direct) {                                       // tidy the address; the wish is kept above
+      keepFree(true);
+      const u = new URL(location.href); u.searchParams.delete('get');
+      history.replaceState(null, '', u.pathname + (u.searchParams.toString() ? '?' + u.searchParams : '') + u.hash);
+    }
+    if (!wantFree()) return;
+    await ready();
+    const M = acct(); if (M && M.onChange) M.onChange(freeIfWanted);   // e.g. back from Google
+    if (signedIn()) startFree(); else if (direct) askFree();
+  })();
 })();

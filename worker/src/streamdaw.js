@@ -253,9 +253,61 @@ export async function streamdawCheckout(req, env) {
 }
 
 // ── 2. The verified return (dispatched from hyp.js by the SD- prefix) ───────
+//
+// The sale page opens HYP's payment page in an iframe inside its checkout lightbox
+// (js/streamdaw-checkout.js). HYP sends the buyer back to the ONE success URL set in its portal,
+// so a payment made in the lightbox comes back here inside that iframe. The browser says so
+// (Sec-Fetch-Dest: iframe), or ?frame=1 says it by hand; then the answer is a small page that
+// tells the lightbox (postMessage to snowstar.company only) instead of a 302 that would load the
+// whole sale page inside the frame. A top-level return keeps its 302, word for word.
+const inFrame = (req, q) => q.frame === '1' || (req.headers.get('sec-fetch-dest') || '') === 'iframe';
+
+/** The return page for a payment made in the lightbox: posts {type, bought, ref, plan} (or
+ *  {pay, reason}) to the parent at `origin` and nowhere else, and only if it is framed; loaded
+ *  as a whole page it goes on to `dest`, the same place the 302 sends a full-page buyer. Only our
+ *  own site may frame it. */
+export function checkoutFramePage(msg, dest, origin = SITE) {
+  const nonce = urlToken(16);
+  const js = (v) => JSON.stringify(v).replace(/</g, '\\u003c');
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  const say = msg.bought ? 'Payment received. Back to StreamDAW…'
+    : msg.pay === 'confirming' ? 'Your payment is being confirmed. Back to StreamDAW…'
+    : 'The payment did not go through. Back to StreamDAW…';
+  const body = '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">'
+    + '<title>StreamDAW checkout</title><style>html,body{margin:0;height:100%;background:#f7f3e8;color:#17140d;'
+    + 'font:500 15px/1.5 Inter,system-ui,-apple-system,sans-serif}body{display:grid;place-content:center;text-align:center;padding:24px}'
+    + 'a{color:#1c2be0}</style></head><body>'
+    + `<p>${esc(say)}</p><p><a href="${esc(dest)}" target="_top">Continue</a></p>`
+    + `<script nonce="${nonce}">(function(){var m=${js(msg)},o=${js(origin)},d=${js(dest)};`
+    + 'if(window.parent&&window.parent!==window){window.parent.postMessage(m,o);return;}location.replace(d);})();</script>'
+    + '</body></html>';
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'referrer-policy': 'no-referrer',
+      'x-content-type-options': 'nosniff',
+      'content-security-policy': `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; `
+        + `frame-ancestors ${origin}; base-uri 'none'; form-action 'none'`,
+    },
+  });
+}
+
 export async function streamdawReturn(req, env, raw, q) {
   const ref = String(q.Order || '');
-  const fail = (why) => Response.redirect(`${SITE}/apps/streamdaw.html?pay=failed&reason=${encodeURIComponent(why)}`, 302);
+  // ?frame=1 is ours, not HYP's: VERIFY compares the parameter set HYP sent, so it never goes along.
+  raw = String(raw || '').split('&').filter((kv) => kv.split('=')[0] !== 'frame').join('&');
+  const framed = inFrame(req, q);
+  // Where a full-page buyer goes, unchanged; in the lightbox, the same answer as a message.
+  const back = (query, msg) => {
+    const dest = `${SITE}/apps/streamdaw.html?${query}`;
+    if (!framed) return Response.redirect(dest, 302);
+    const okRef = /^SD-[A-Z0-9]{4,20}$/.test(ref) ? ref : null;   // the query is anyone's to type
+    return checkoutFramePage({ type: 'sd-checkout', ref: okRef, ...msg }, dest);
+  };
+  const planOf = (o) => (o && o.plan === 'pass' ? 'pass' : 'lifetime');
+  const fail = (why, o) => back(`pay=failed&reason=${encodeURIComponent(why)}`, { bought: false, pay: 'failed', reason: why, plan: o ? planOf(o) : null });
+  const bought = (o) => back(`bought=1&ref=${encodeURIComponent(ref)}`, { bought: true, plan: planOf(o) });
 
   if (q.CCode !== '0') {
     await env.DB.prepare(`UPDATE streamdaw_orders SET status='declined' WHERE ref=?`).bind(ref).run().catch(() => {});
@@ -264,7 +316,7 @@ export async function streamdawReturn(req, env, raw, q) {
   const v = await verifyReturn(env, raw);
   const order = await env.DB.prepare(`SELECT * FROM streamdaw_orders WHERE ref=?`).bind(ref).first();
   if (!order) return fail('unknown_ref');
-  if (order.status === 'granted') return Response.redirect(`${SITE}/apps/streamdaw.html?bought=1&ref=${encodeURIComponent(ref)}`, 302);
+  if (order.status === 'granted') return bought(order);
 
   if (!v.ok) {
     const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
@@ -273,15 +325,15 @@ export async function streamdawReturn(req, env, raw, q) {
       await env.DB.prepare(`UPDATE streamdaw_orders SET status='charged_unverified', hyp_id=? WHERE ref=?`).bind(String(q.Id || ''), ref).run().catch(() => {});
       await sendMail(env, { to: env.ALERT_TO || 'oritoledano@gmail.com', subject: 'StreamDAW: card charged but not verified',
         text: `Order ${ref}: HYP Id ${q.Id || ''}, auth ${q.ACode || ''}, ${q.Amount || ''} ILS.\nCharged but VERIFY did not confirm — entitlement NOT granted automatically. Reconcile in HYP.` }).catch(() => {});
-      return Response.redirect(`${SITE}/apps/streamdaw.html?pay=confirming&ref=${encodeURIComponent(ref)}`, 302);
+      return back(`pay=confirming&ref=${encodeURIComponent(ref)}`, { bought: false, pay: 'confirming', plan: planOf(order) });
     }
     await env.DB.prepare(`UPDATE streamdaw_orders SET status='verify_failed', hyp_id=? WHERE ref=?`).bind(String(q.Id || ''), ref).run().catch(() => {});
-    return fail('unverified');
+    return fail('unverified', order);
   }
 
   const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
-  if (paid !== order.amount) return fail('amount_mismatch');
-  if (q.Coin && q.Coin !== '1') return fail('bad_currency');
+  if (paid !== order.amount) return fail('amount_mismatch', order);
+  if (q.Coin && q.Coin !== '1') return fail('bad_currency', order);
 
   const plan = order.plan || 'lifetime';
   const ent = await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: paid, plan, source: 'hyp' });
@@ -293,7 +345,7 @@ export async function streamdawReturn(req, env, raw, q) {
     { ref, amount: paid, coupon: order.coupon || null, plan, expiresAt: ent.expires_at }).catch(() => {});
   await env.DB.prepare(`UPDATE streamdaw_orders SET status='granted', hyp_id=?, entitlement_id=?, settled_at=? WHERE ref=?`)
     .bind(String(q.Id || ''), ent.id, now(), ref).run().catch(() => {});
-  return Response.redirect(`${SITE}/apps/streamdaw.html?bought=1&ref=${encodeURIComponent(ref)}`, 302);
+  return bought(order);
 }
 
 // ── 3. Download: serve the installer to an entitled buyer ──────────────────
@@ -337,23 +389,38 @@ export async function streamdawDownload(req, env) {
   });
 }
 
-/** GET /streamdaw/download/free — the free version: the same installer, for anyone.
- *  Pro switches on later with a key made for one Mac, so the build itself is not the thing
- *  being sold, and a free user who cannot download is a customer who never starts.
- *  Counted from req_log (route + status 200) for the dashboard's funnel. */
+/** GET /streamdaw/download/free — the free version: the same installer, for anyone with a
+ *  Snowstar account (2026-10-13, Ori). Pro switches on later with a key made for one Mac, so
+ *  the build itself is not the thing being sold; the account is how we know who has it.
+ *  Signed out: back to the sale page with the sign-up open (?get=free; js/streamdaw-page.js
+ *  starts the download once they are in), or a 401 for a caller that asks for JSON.
+ *  Each download is filed with who took it (streamdaw_free_downloads,
+ *  schema-streamdaw-free-downloads.sql); req_log still counts route + 200 for the funnel. */
+const FREE_SIGNUP_URL = `${SITE}/apps/streamdaw.html?get=free`;
 export async function streamdawDownloadFree(req, env) {
+  const user = await currentUser(req, env).catch(() => null);
+  if (!user) {
+    if (/application\/json/.test(req.headers.get('accept') || '')) return json({ error: 'sign_in_required', signup: FREE_SIGNUP_URL }, 401);
+    return new Response(null, { status: 302, headers: { location: FREE_SIGNUP_URL, 'cache-control': 'no-store' } });
+  }
   const rel = await env.DB.prepare(
     'SELECT * FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
   ).bind(ASSET).first();
   if (!rel) return json({ error: 'no_release' }, 404);
   const obj = await env.APPS.get(rel.r2_key);
   if (!obj) return json({ error: 'file_missing' }, 404);
+  // Who took it (a HEAD takes nothing). Soft: before the migration the file is still served.
+  if (req.method !== 'HEAD') {
+    await env.DB.prepare('INSERT INTO streamdaw_free_downloads (user_id, version, created_at) VALUES (?, ?, ?)')
+      .bind(user.id, rel.version || null, now()).run().catch(() => {});
+  }
   return new Response(req.method === 'HEAD' ? null : obj.body, {
     headers: {
       'content-type': 'application/octet-stream',
       'content-disposition': `attachment; filename="${rel.filename}"`,
       'content-length': String(rel.bytes || obj.size || ''),
-      'cache-control': 'public, max-age=300',
+      // one person's download now, not a public file: no shared cache may keep it
+      'cache-control': 'private, no-store',
     },
   });
 }

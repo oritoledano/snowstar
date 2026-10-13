@@ -55,6 +55,7 @@ const ID_TABLES = [
   ['handoffs', 'user_id'], ['artist_managers', 'user_id'], ['events', 'user_id'],
   ['snowstash_scans', 'user_id'], ['snowstash_registrations', 'user_id'],
   ['snowstash_unlocks', 'user_id'],
+  ['streamdaw_free_downloads', 'user_id'],   // who took the free installer (2026-10-13)
   /* Request health. The FK is ON DELETE SET NULL like the rest, but D1 only
      enforces that when the connection has foreign_keys ON and nothing here
      guarantees it — so clear it by hand like every other table in this list.

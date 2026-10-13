@@ -139,7 +139,8 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .hero .lead{font-size:clamp(18px,1.7vw,22px);line-height:1.5;color:var(--ink-2);max-width:31em;margin:26px auto 0}
 .hero .cta{justify-content:center;margin:34px 0 14px}
 .hero-reel{margin-top:clamp(48px,6vw,84px);box-shadow:var(--lift)}
-.works{display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;justify-content:center;font-size:14px;color:var(--muted);margin-top:clamp(28px,3vw,40px)}
+/* "Tested in" names only what sessions have run in; the AU/VST3 hosts follow, quieter. */
+.works{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:center;font-size:14px;color:var(--muted);margin-top:clamp(28px,3vw,40px)}
 .works b{font-weight:600;color:var(--ink-2)}
 
 /* ── section heads ──────────────────────────────────────── */
@@ -248,10 +249,17 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .plan .btn{margin-top:auto;align-self:flex-start}
 .plan .after{margin-top:14px;font-size:13px;color:rgba(239,233,218,.66)}
 .plan .after a{text-decoration:underline}
-.plan .pass{margin-top:16px;padding-top:14px;border-top:1px solid rgba(239,233,218,.16);font-size:14px;color:rgba(239,233,218,.86)}
-.plan .pass .pass-btn{margin-left:4px;padding:0;border:0;background:none;color:var(--lime);font:600 14px/1.4 var(--sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.plan .pass .pass-btn:disabled{opacity:.6;cursor:default}
-.plan .pass small{display:block;margin-top:4px;font-size:12.5px;color:rgba(239,233,218,.6)}
+/* the 7-day pass: one row under the plans, the width of both, quieter than either card */
+.pass-strip{max-width:1040px;margin:20px auto 0;display:flex;align-items:center;justify-content:space-between;gap:16px 32px;flex-wrap:wrap;
+  padding:20px clamp(22px,3vw,34px);border:1.5px dashed var(--line-2);border-radius:22px;background:transparent}
+.pass-copy{display:grid;gap:6px;flex:1 1 420px;min-width:0}
+.pass-copy .tag{justify-self:start;margin-bottom:4px}
+.pass-q{font:600 clamp(18px,1.6vw,21px)/1.25 var(--serif);color:var(--ink)}
+.pass-fine{font-size:14px;line-height:1.5;color:var(--muted);max-width:44em}
+.pass-buy{display:flex;align-items:center;gap:18px;flex:none}
+.pass-price{font:600 32px/1 var(--serif);letter-spacing:-.02em;color:var(--ink);display:flex;align-items:baseline;gap:6px}
+.pass-price small{font:500 13px var(--sans);letter-spacing:0;color:var(--muted)}
+.pass-strip .btn{height:44px}
 .coupon{display:flex;gap:8px;margin:auto 0 12px;max-width:360px}
 .coupon input{flex:1;min-width:0;height:42px;padding:0 14px;border-radius:999px;border:1px solid rgba(239,233,218,.28);background:rgba(239,233,218,.06);color:var(--paper);font:500 14px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;outline:none}
 .coupon input::placeholder{color:rgba(239,233,218,.5);text-transform:none;letter-spacing:0}
@@ -275,6 +283,7 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .versus div{display:grid;gap:2px}
 .versus div>span{font-size:13px;color:var(--muted)}
 .versus b{font:600 18px/1.2 var(--serif);color:var(--ink)}
+.versus div>small{font-size:13px;color:var(--ink-2)}
 .versus .us b{background:var(--lime);color:var(--lime-ink);padding:1px 8px;border-radius:6px;justify-self:start}
 .vs-fine{grid-column:1/-1;font-size:13px;color:var(--muted)}
 .reqs{margin-top:30px;text-align:center;font-size:14px;color:var(--muted)}
@@ -294,6 +303,7 @@ details a{text-decoration:underline}
 .last{text-align:center}
 .last h2{font-size:clamp(40px,5.6vw,80px);letter-spacing:-.03em}
 .last .cta{justify-content:center;margin-top:34px}
+.last .fine{margin-top:14px}
 
 footer{border-top:1px solid var(--line);padding:30px 0 44px;font-size:13px;color:var(--muted)}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px 24px;flex-wrap:wrap}
@@ -364,8 +374,11 @@ footer b{color:var(--ink);font-weight:600}
   .menu-cur{display:block}
   .nav-tools .btn .long{display:none}
   .back{display:none}
-  .hero h1{font-size:10.6vw}
+  .hero h1{font-size:9.8vw}   /* 10.6vw clipped the period of "DAW." at 390 px */
   .hero .cta .btn{flex:1 1 100%}
+  .works .dot{display:none}
+  .works{flex-direction:column;gap:4px}
+  .pass-buy{width:100%;justify-content:space-between}
   .versus{grid-template-columns:1fr}
   footer .wrap{flex-direction:column;align-items:flex-start}
 }
@@ -377,3 +390,90 @@ footer b{color:var(--ink);font-weight:600}
 /* The owner's text editor (js/site-edit.js): a card's title sits in a layer that lets clicks
    through to the clip; in Texts mode the outlined words take the click. */
 .feat-top .se-editable{pointer-events:auto}
+
+/* ── the checkout lightbox (js/streamdaw-checkout.js, which makes its markup) ──
+   Left, on the Pro card's leather: what you get. Right, on paper: HYP's payment page in a
+   frame, or the step around it (sign in, loading, the result). Phones (≤760px) stack it as
+   one sheet: the price, then the card details, then the rest of what you get. */
+html.sdco-lock,html.sdco-lock body{overflow:hidden}
+.sdco{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:16px;overflow-y:auto;overscroll-behavior:contain;
+  background:rgba(18,16,12,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.sdco[hidden]{display:none}
+.sdco-card{position:relative;width:min(1100px,100%);height:min(800px,calc(100svh - 32px));display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);border-radius:30px;overflow:hidden;background:var(--card);
+  box-shadow:0 50px 120px -40px rgba(0,0,0,.6);animation:sdcoIn .22s ease-out}
+@keyframes sdcoIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sdco-x{position:absolute;top:14px;right:14px;z-index:3;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;
+  display:grid;place-items:center;font:400 26px/1 var(--sans);padding:0 0 3px;color:#f7f3e8;background:rgba(18,16,12,.62);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.sdco-x:hover{background:var(--ink)}
+
+/* left: what you get */
+.sdco-left{min-height:0;overflow-y:auto;padding:clamp(28px,3vw,42px);color:var(--paper);
+  background:linear-gradient(rgba(23,20,13,.5),rgba(23,20,13,.5)),var(--leather) center/330px,var(--ink)}
+.sdco-sum h2{font-size:clamp(34px,3.4vw,46px);letter-spacing:-.025em;margin:16px 0 8px;color:var(--paper)}
+.sdco-what{font-size:15px;line-height:1.5;color:rgba(239,233,218,.74);max-width:30em}
+.sdco-rows{display:grid;gap:7px;margin-top:20px;padding-top:14px;border-top:1px solid rgba(239,233,218,.16);font-size:14px}
+.sdco-rows div{display:flex;justify-content:space-between;gap:16px;color:rgba(239,233,218,.8)}
+.sdco-rows b{font-weight:600;color:var(--paper);white-space:nowrap}
+.sdco-rows .cut b{color:var(--lime)}
+.sdco-price{font:600 clamp(44px,4.4vw,60px)/1 var(--serif);letter-spacing:-.02em;margin:18px 0 8px}
+.sdco-price small{font:500 15px var(--sans);letter-spacing:0;color:rgba(239,233,218,.66);margin-left:8px}
+.sdco-ils{font-size:13.5px;color:rgba(239,233,218,.74);margin-bottom:16px}
+.sdco-sum .coupon{margin:4px 0 8px}
+.sdco-sum .msg{margin:2px 0 0}
+.sdco-more{margin-top:24px;padding-top:22px;border-top:1px solid rgba(239,233,218,.16)}
+.sdco-h{font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(239,233,218,.6);margin:0 0 14px}
+.sdco-list{gap:9px;margin-bottom:24px}
+.sdco-list li{font-size:14.5px;color:rgba(239,233,218,.9)}
+.sdco-next{list-style:none;counter-reset:n;display:grid;gap:11px}
+.sdco-next li{counter-increment:n;position:relative;padding-left:32px;font-size:14px;line-height:1.5;color:rgba(239,233,218,.82)}
+.sdco-next li::before{content:counter(n);position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;
+  border:1.5px solid rgba(239,233,218,.32);font:600 11px/19px var(--sans);text-align:center;color:rgba(239,233,218,.74)}
+.sdco-next b{color:var(--paper);font-weight:600}
+.sdco-next a,.sdco-fine a{text-decoration:underline;text-underline-offset:3px}
+.sdco-fine{margin-top:20px;font-size:12.5px;line-height:1.55;color:rgba(239,233,218,.62)}
+
+/* right: the card details */
+.sdco-pay{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:24px 26px 18px;color:var(--ink)}
+.sdco-pay-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-right:52px;margin-bottom:14px}
+.sdco-secure{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-2)}
+.sdco-secure svg{width:14px;height:14px;color:var(--ok);flex:none}
+.sdco-amt{margin-left:8px;padding:3px 9px;border-radius:999px;background:var(--ink);color:var(--paper);font:600 13px/1.2 var(--sans)}
+.sdco-frame{position:relative;min-height:0;border-radius:18px;background:#fff;border:1px solid var(--line);overflow:hidden}
+.sdco-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#fff}
+.sdco-frame .sdco-spin{position:absolute;left:50%;top:40%;margin:-17px 0 0 -17px}
+.sdco-frame.ready .sdco-spin{display:none}
+.sdco-spin{display:block;width:34px;height:34px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--ink);animation:sdcoSpin .9s linear infinite}
+@keyframes sdcoSpin{to{transform:rotate(360deg)}}
+.sdco-wait{display:grid;place-items:center;align-content:center;gap:14px;color:var(--muted);font-size:15px;text-align:center}
+.sdco-step,.sdco-done{display:grid;align-content:center;justify-items:start;gap:12px;max-width:30em;padding:8px 6px}
+.sdco-step h3,.sdco-done h3{font-size:clamp(28px,2.6vw,36px);letter-spacing:-.02em}
+.sdco-step p,.sdco-done p{color:var(--ink-2);font-size:15.5px}
+.sdco-step .btn,.sdco-done .cta{margin-top:8px}
+.sdco-pay>.sdco-done:first-child{grid-row:1/-1}
+.sdco-done .kicker{margin-top:6px}
+.sdco-done.bad .kicker{color:#b3123f}
+.sdco-check{width:58px;height:58px;border-radius:50%;background:var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d2a00' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E") center/28px no-repeat}
+.sdco-alt{margin-top:12px;font-size:13px;color:var(--muted)}
+.sdco-alt button{padding:0;border:0;background:none;cursor:pointer;font:600 13px/1.4 var(--sans);color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+
+@media (max-width:760px){
+  .sdco{padding:0;display:block}
+  .sdco[hidden]{display:none}
+  .sdco-card{width:100%;height:auto;min-height:100%;border-radius:0;display:flex;flex-direction:column;overflow:visible;box-shadow:none;animation:none}
+  .sdco-left{display:contents}
+  .sdco-sum,.sdco-more{color:var(--paper);background:linear-gradient(rgba(23,20,13,.5),rgba(23,20,13,.5)),var(--leather) center/330px,var(--ink)}
+  .sdco-sum{order:1;padding:58px 20px 22px}
+  .sdco-pay{order:2;display:block;min-height:auto;padding:20px 16px 22px;background:var(--card)}
+  .sdco-more{order:3;flex:1 0 auto;margin:0;border-top:0;padding:26px 20px 40px}
+  .sdco-x{position:fixed;top:10px;right:10px}
+  .sdco-pay-h{padding-right:0}
+  .sdco-frame{height:760px}
+  .sdco-step,.sdco-done{padding:18px 4px 8px}
+  .sdco-wait{min-height:220px}
+}
+@media (prefers-reduced-motion:reduce){
+  .sdco-card{animation:none}
+  .sdco-spin{animation-duration:2.4s}
+}
