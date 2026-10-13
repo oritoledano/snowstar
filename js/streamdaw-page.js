@@ -142,15 +142,17 @@
   // ── 3. buying ───────────────────────────────────────────────────────────
   // Checkout asks the Worker to sign a HYP pay page, then sends the buyer to it.
   let coupon = null; // {code, free, amount, label}
-  const cIn = $('couponInput'), cMsg = $('couponMsg');
+  // No coupon field on the page (2026-10-13, Ori): a code arrives in a link (?c=, below) or is typed
+  // behind the lightbox's "Have a code?". Either way it is checked here and shown on the Pro card.
+  const cMsg = $('couponMsg');
   const bigPrice = $('bigPrice'), priceSub = $('priceSub'), stamp = $('stamp'), buyBtn = $('buyBtn');
   const pricing = () => $('pricing');
   const toPricing = (ms) => { const pr = pricing(); if (pr) setTimeout(() => pr.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' }), ms || 0); };
   function showMsg(t, ok) { cMsg.textContent = t; cMsg.className = 'msg ' + (ok ? 'ok' : 'bad'); cMsg.hidden = false; }
   // Money is loaded on this page; the fallback keeps the price readable if it is not.
   function ils(a) { return window.Money ? Money.fmt(a / 100) : '₪' + (a / 100).toFixed(0); }
-  async function applyCoupon() {
-    const code = (cIn.value || '').trim();
+  async function applyCoupon(raw) {
+    const code = String(raw || '').trim().toUpperCase();
     if (!code) { coupon = null; resetPrice(); cMsg.hidden = true; return; }
     try {
       const r = await fetch('/api/streamdaw/coupon/check', { method: 'POST', headers: { 'content-type': 'application/json' },
@@ -176,21 +178,15 @@
     priceSub.textContent = 'No subscription. Every StreamDAW 1 update included.';
     buyBtn.textContent = 'Get StreamDAW Pro';
   }
-  if (cIn) {
-    $('couponApply').addEventListener('click', applyCoupon);
-    cIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); } });
-  }
-
   // A coupon can arrive IN THE LINK (snowstar.company/apps/streamdaw.html?c=FRIEND100), so a
-  // code can be handed out without asking anyone to type it. Applied on load, and the page
-  // lands on the price, the only place the code means something.
+  // code can be handed out without asking anyone to type it. Applied on load, the page lands on
+  // the price, and the code rides into checkout (HYP's page in this tab, or the lightbox).
   const q = new URLSearchParams(location.search);
-  (function () {
+  const couponFromLink = (function () {
     const code = (q.get('c') || q.get('coupon') || '').trim();
-    if (!code || !cIn) return;
-    cIn.value = code.toUpperCase();
-    applyCoupon();
+    if (!code) return Promise.resolve();
     toPricing(400);
+    return applyCoupon(code);
   })();
 
   // Bought from inside the app: "Upgrade" opens this page with ?buy=1&machine=SD…. The Mac
@@ -250,13 +246,20 @@
   // What you get on the left, HYP's payment page in a frame on the right; the result comes back
   // into it. If its script cannot load, the whole tab goes to HYP as it always did.
   const CHECKOUT_JS = (function () {
-    try { return new URL('streamdaw-checkout.js?v=2', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=2'; }
+    try { return new URL('streamdaw-checkout.js?v=3', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=3'; }
   })();
-  // Switched off until a payment has gone through it on HYP's test terminal (2026-10-13): `?lb=1`
-  // turns it on for this tab, to test. Off, every purchase goes to HYP's page as before.
+  // THE SWITCH. false: every purchase goes to HYP's own page in this tab, as before, and `?lb=1`
+  // turns the lightbox on for one tab, to test. true: the lightbox for everyone (`?lb=0` turns it
+  // off for one tab). Off until a live payment has gone through it on HYP's terminal (2026-10-13:
+  // Ori's ₪1 test with a coupon); flip this one constant, nothing else.
+  const LIGHTBOX_FOR_EVERYONE = false;
   const LIGHTBOX = (function () {
-    try { if (q.get('lb') === '1') sessionStorage.setItem('sd_lb', '1'); return sessionStorage.getItem('sd_lb') === '1'; }
-    catch (e) { return q.get('lb') === '1'; }
+    let tab = null;                        // this tab's own choice, kept through HYP and back
+    try {
+      if (q.get('lb') === '1' || q.get('lb') === '0') sessionStorage.setItem('sd_lb', q.get('lb'));
+      tab = sessionStorage.getItem('sd_lb');
+    } catch (e) { tab = q.get('lb'); }
+    return tab === '1' ? true : tab === '0' ? false : LIGHTBOX_FOR_EVERYONE;
   })();
   let checkoutLoad = null;
   function checkoutUI() {
@@ -278,14 +281,24 @@
       plan, machine: forMac(), signedIn,
       coupon: plan === 'lifetime' && coupon ? coupon : null,
       signIn: (resume) => openAuth(plan, resume),
-      onCoupon: (c) => { if (cIn && c && c.code && (!coupon || coupon.code !== c.code)) { cIn.value = c.code; applyCoupon(); } },
+      onCoupon: (c) => { if (!c) { if (coupon) applyCoupon(''); return; } if (c.code && (!coupon || coupon.code !== c.code)) applyCoupon(c.code); },
       onBought: (r) => success(r.download || null, !!r.free, r.plan === 'pass', true),
     }, extra || {});
   }
 
+  // Every purchase needs a Snowstar account first (2026-10-13, Ori). Signed out, a buy button opens
+  // the shared sign-up and the purchase carries on once they are in; the Worker refuses a checkout
+  // without a session too (sign_in_required). A Google sign-in reloads the page, so the wish is
+  // kept in this tab for a while and honoured once the account shows up (section 5 below).
+  const BUY_KEY = 'sd_buy_wish', BUY_FOR = 15 * 60 * 1000;
+  const wantBuy = () => { try { const w = JSON.parse(sessionStorage.getItem(BUY_KEY) || 'null'); return w && Date.now() - w.t < BUY_FOR ? w.plan : null; } catch (e) { return null; } };
+  const keepBuy = (plan) => { try { if (plan) sessionStorage.setItem(BUY_KEY, JSON.stringify({ plan, t: Date.now() })); else sessionStorage.removeItem(BUY_KEY); } catch (e) {} };
+  const needsSignIn = (d) => !!d && (d.error === 'sign_in_required' || d.error === 'email_required');
+
   async function doCheckout(plan, o) {
     plan = plan === 'pass' ? 'pass' : 'lifetime';
     try { sessionStorage.setItem('sd_plan', plan); } catch (e) {}   // read back on a return from HYP's own page
+    if (signedIn()) keepBuy(null);
     const ui = await checkoutUI();
     if (ui) { ui.open(checkoutOpts(plan, o)); return; }
     // No lightbox: straight to HYP's page in this tab, signed in first.
@@ -298,7 +311,7 @@
       const d = await r.json();
       if (d && d.free) { success(d.download, true, plan === 'pass'); toPricing(0); return; }
       if (d && d.url) { location.href = d.url; return; }               // → HYP payment page
-      if (d && d.error === 'email_required') { openAuth(); return; }   // session lost: sign in again
+      if (needsSignIn(d)) { openAuth(plan); return; }                 // session lost: sign in again
       if (d && d.error === 'coupon') { showMsg(d.reason || 'That coupon can’t be used.', false); return; }
       alert(d && d.error === 'hyp_not_configured'
         ? 'Checkout isn’t switched on yet: the payment terminal still needs its keys.'
@@ -309,16 +322,38 @@
   function openAuth(plan, resume) {
     const open = window.SnowstarOpenAuth || window.MutraOpenAuth;
     if (!open) { alert('Sign-in is loading. One moment, then try again.'); return; }
-    if (window.SnowstarAuthResume) window.SnowstarAuthResume(resume || (() => doCheckout(plan))); // resume the purchase after sign-in
-    open('signup', 'Create your Snowstar account to get StreamDAW Pro: one login for Mutra and everything by Snowstar.');
+    keepBuy(plan === 'pass' ? 'pass' : 'lifetime'); keepFree(false);
+    if (wishOff) { wishOff(); wishOff = null; }       // this press is the wish now
+    // Resume the purchase after sign-in, once: the kept wish goes with it.
+    if (window.SnowstarAuthResume) window.SnowstarAuthResume(() => { keepBuy(null); (resume || (() => doCheckout(plan)))(); });
+    open('signup', plan === 'pass'
+      ? 'A free Snowstar account first, then the 7-day pass. Your key and receipt go to its email.'
+      : 'A free Snowstar account first, then StreamDAW Pro. Your key and receipt go to its email.', 'app');
   }
   // The checkout lightbox, signed in or not: signed out, the shared sign-in opens over it at once
   // (after a click) and the payment form follows; `landing` (from the app) waits for their press.
   async function buy(plan, o) {
     await ready();
+    await couponFromLink;                 // a ?c= code is checked before checkout starts
     return doCheckout(plan, { askSignIn: !(o && o.landing) });
   }
   document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); buy(el.getAttribute('data-buy')); }));
+
+  // Back from a Google sign-in (the page reloaded on the way): the purchase they pressed carries on.
+  // Honoured only if the account is there on arrival or within 20 s (the sign-in's own code
+  // redemption); otherwise the wish is dropped, so a later sign-in never opens a payment by surprise.
+  // The app's ?buy=1 carries itself through the reload in the address.
+  let wishOff = null;
+  (async function () {
+    if (!wantBuy()) return;
+    if (q.get('buy') === '1') { keepBuy(null); return; }
+    await ready();
+    const go = () => { const p = wantBuy(); if (p && signedIn()) { keepBuy(null); toPricing(0); buy(p); } };
+    if (signedIn()) { go(); return; }
+    const M = acct(); if (!M || !M.onChange) { keepBuy(null); return; }
+    wishOff = M.onChange(() => { if (!signedIn()) return; if (wishOff) { wishOff(); wishOff = null; } go(); });
+    setTimeout(() => { if (wishOff) { wishOff(); wishOff = null; keepBuy(null); } }, 20000);
+  })();
 
   // Back from the payment page. The Worker sends ?bought=1 (paid, or a free grant),
   // ?pay=failed&reason=… or ?pay=confirming (charged, still being verified).
@@ -416,7 +451,8 @@
   function askFree() {
     const open = window.SnowstarOpenAuth;
     if (!open) { alert('Sign-in is loading. One moment, then try again.'); return; }
-    keepFree(true);
+    keepFree(true); keepBuy(null);
+    if (wishOff) { wishOff(); wishOff = null; }
     if (window.SnowstarAuthResume) window.SnowstarAuthResume(freeIfWanted);
     open('signup', 'Your free Snowstar account, then the download starts. It includes 7 days of every Pro feature, no card.', 'app');
   }

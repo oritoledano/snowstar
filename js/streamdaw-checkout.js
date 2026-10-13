@@ -56,6 +56,7 @@
   let result = null;      // {bought, free, plan, download, pay, reason}
   let back = null;        // focus to return to on close
   let busy = 0;           // a checkout in flight; a newer one wins
+  let codeOpen = false;   // the coupon field, behind a small "Have a code?" until asked for (2026-10-13, Ori)
 
   // ── the markup ─────────────────────────────────────────────────────────────
   let box = null, el = {};
@@ -116,11 +117,19 @@
       + (settled ? '' : (rows.length ? '<div class="sdco-rows">' + rows.join('') + '</div>' : '')
       + '<div class="sdco-price">' + (d === 0 ? 'Free' : cur(d)) + '<small>' + (d === 0 ? 'nothing to pay' : pass ? 'for 7 days' : 'once') + '</small></div>'
       + (d > 0 ? '<p class="sdco-ils">' + (shekelsShown() ? 'Incl. VAT. HYP charges in shekels.' : 'Charged ' + ils(d) + ' incl. VAT. HYP charges in shekels.') + '</p>' : ''))
-      + (pass || settled ? '' :
-        '<form class="coupon sdco-coupon" novalidate><input type="text" name="code" placeholder="Coupon code" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Coupon code" value="' + esc(coupon ? coupon.code : '') + '">'
+      // A code: a small link, not a field, so nobody goes hunting for one. Open when a code is on
+      // (a ?c= link brought it, or they typed one) or once they ask for it.
+      + (pass || settled ? '' : !(coupon || codeOpen)
+        ? '<button type="button" class="sdco-code-link" aria-expanded="false">Have a code?</button><p class="msg" hidden></p>'
+        : '<form class="coupon sdco-coupon" novalidate><input type="text" name="code" placeholder="Coupon code" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Coupon code" value="' + esc(coupon ? coupon.code : '') + '">'
         + '<button type="submit">' + (coupon ? 'Change' : 'Apply') + '</button></form><p class="msg" hidden></p>');
     const f = el.sum.querySelector('.sdco-coupon');
     if (f) f.addEventListener('submit', (e) => { e.preventDefault(); applyCode(f.code.value); });
+    const link = el.sum.querySelector('.sdco-code-link');
+    if (link) link.addEventListener('click', () => {
+      codeOpen = true; paintSum();
+      const i = el.sum.querySelector('.sdco-coupon input'); if (i) i.focus({ preventScroll: true });
+    });
   }
 
   function paintMore() {
@@ -241,7 +250,10 @@
     const code = String(raw || '').trim().toUpperCase();
     const msg = el.sum.querySelector('.msg');
     const say = (t, good) => { if (!msg) return; msg.textContent = t; msg.className = 'msg ' + (good ? 'ok' : 'bad'); msg.hidden = false; };
-    if (!code) { if (coupon) { coupon = null; live = null; total = null; paintSum(); if (ready()) start(); } return; }
+    if (!code) {
+      if (coupon) { coupon = null; live = null; total = null; paintSum(); if (typeof opts.onCoupon === 'function') opts.onCoupon(null); if (ready()) start(); }
+      return;
+    }
     if (coupon && coupon.code === code) return;
     try {
       const r = await fetch('/api/streamdaw/coupon/check', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code }) });
@@ -279,7 +291,7 @@
       set(EMBED ? 'frame' : 'away');
       return;
     }
-    if (d && d.error === 'email_required') { set('signin'); return; }
+    if (d && (d.error === 'sign_in_required' || d.error === 'email_required')) { set('signin'); return; }   // no session: the Worker refuses
     if (d && d.error === 'coupon') { result = { title: 'That code can’t be used', text: d.reason || 'Remove it, or try another.', drop: true }; set('error'); return; }
     result = d && d.error === 'hyp_not_configured'
       ? { title: 'Checkout isn’t switched on yet', text: 'The payment terminal still needs its keys. Nothing was charged.' }
@@ -338,7 +350,7 @@
     // The same purchase, still signed and in the frame: show it again rather than start over.
     const same = live && live.plan === nextPlan && (live.code || null) === (code ? code.code : null) && Date.now() - live.at < FRESH && state === 'frame';
     if (!same) {
-      plan = nextPlan; coupon = code; total = null; result = null; live = null; credit = 0;
+      plan = nextPlan; coupon = code; total = null; result = null; live = null; credit = 0; codeOpen = false;
       const f = frame(); if (f) f.remove();
       state = ready() ? 'loading' : 'signin';
     }

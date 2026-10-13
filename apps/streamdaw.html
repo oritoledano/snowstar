@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=4">
+<link rel="stylesheet" href="../css/streamdaw.css?v=5">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
 {
@@ -141,16 +141,20 @@
   <!-- ── hero: the line, the buttons, the app at work ── -->
   <section class="hero" id="hero" aria-labelledby="heroTitle">
     <div class="wrap">
-      <p class="kicker" data-txt="streamdaw.hero.kicker">For Mac · AU and VST3</p>
+      <p class="kicker" data-txt="streamdaw.hero.kicker">For Apple silicon Macs · AU and VST3</p>
       <h1 id="heroTitle" data-txt="streamdaw.hero.title"><span class="nb">Stream your DAW.</span><br><em>Live. Lossless.</em></h1>
       <p class="lead" data-txt="streamdaw.hero.sub">Anyone with the link hears your session as you play it, lossless. Nothing for them to install.</p>
+      <!-- The 7-day trial is the main door (2026-10-13, Ori). It is the free download: a Snowstar
+           account, then the installer, and the app starts the trial by itself on first launch. One
+           button for both, since two buttons doing the same thing read as two different offers.
+           The line under it says what happens after day 7, so it never feels like a trap. Its keys
+           are new (cta-trial, trial-*): the old streamdaw.hero.fine override no longer applies.
+           2026-10-13 (Ori): no buy button up here; buying lives in #pricing and in the app. -->
       <div class="cta">
-        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-free">Download free</span></a>
-        <!-- 2026-10-13 (Ori): no buy button up here. People learn what it is first; buying
-             lives in #pricing and in the app. -->
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-trial">Try Pro free for 7 days</span></a>
         <a class="btn ghost" href="#pricing" data-txt="streamdaw.hero.cta-more">See what Pro adds</a>
       </div>
-      <p class="fine" data-txt="streamdaw.hero.fine">Includes 7 days of every Pro feature, no card. Mac with Apple silicon, macOS 11 or later.</p>
+      <p class="fine trial-fine"><span data-txt="streamdaw.hero.trial-fine">No card. After the 7 days, your master bus streams free forever. Or keep Pro for</span>&nbsp;<span data-ils="249">$81</span>&nbsp;<span data-txt="streamdaw.hero.trial-once">once.</span></p>
 
       <!-- media/streamdaw/hero.*: the app on a Mac and a listener's phone, looping. Hydrated and
            played by js/streamdaw-page.js (only while on screen; posters only for reduced motion). -->
@@ -241,9 +245,9 @@
     </ul>
   </section>
 
-  <!-- ── the two stories the product is built for (the plan's Story 1 and Story 2).
+  <!-- ── the three stories the product is built for (Ori's title: "One app, Three use cases").
        Each frame plays media/streamdaw/review.* or band.* once those exist; until then the
-       drawn still under the video is what shows. ── -->
+       drawn still under the video is what shows. The third has only its still for now. ── -->
   <section class="stories" id="stories" aria-labelledby="storiesTitle">
     <div class="wrap">
       <div class="sec-head"><h2 id="storiesTitle" data-txt="streamdaw.stories.title">One app, Three use cases</h2></div>
@@ -304,6 +308,40 @@
             <li data-txt="streamdaw.stories.band.l1">Everyone scans one QR code. No app to install, no account.</li>
             <li data-txt="streamdaw.stories.band.l2">Wired in-ears in, press Play. Each player sets their own level, solo, mute and pan.</li>
             <li data-txt="streamdaw.stories.band.l3">Phones on the music stands. On the count-in, the whole room plays together.</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Story 3, the silent disco (2026-10-13). The app's "Silent disco" preset is built (no
+           microphone; tap along for Bluetooth) but not yet tried at a party on real phones
+           (wip/earphone-sync-2026-10-13.md §6), so the copy says what it does and promises no
+           counts and no exact timing on Bluetooth. A drawn still, no clip yet: once
+           media/streamdaw/party.* exists, add data-media="party", the <video> and the .vbtn
+           like the two above. Not .flip, so the three alternate left, right, left. -->
+      <article class="story">
+        <figure class="reel wide" aria-label="A row of phones on different earphones, on the same beat">
+          <div class="still band party" aria-hidden="true">
+            <span class="count">124 BPM</span>
+            <div class="phones">
+              <div class="ph"><span class="scr"><i></i></span><b>Wired</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Earbuds</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Over-ear</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>In-ear</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Wired</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Earbuds</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Over-ear</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Buds</b></div>
+            </div>
+            <span class="synced">Synced, no microphone</span>
+          </div>
+        </figure>
+        <div>
+          <p class="kicker" data-txt="streamdaw.stories.party.kicker">Silent disco</p>
+          <h3 data-txt="streamdaw.stories.party.title">The party, in everyone's ears</h3>
+          <ul class="lines">
+            <li data-txt="streamdaw.stories.party.l1">Guests scan one QR code at the door and press Play. The Silent disco preset has no waiting room.</li>
+            <li data-txt="streamdaw.stories.party.l2">Everyone wears their own earphones. Each phone syncs itself in a few seconds, without asking for the microphone.</li>
+            <li data-txt="streamdaw.stories.party.l3">On Bluetooth, a few taps along to a tick line that phone up. Then you play the set from your DAW.</li>
           </ul>
         </div>
       </article>
@@ -379,10 +417,9 @@
             <li data-txt="streamdaw.pricing.pro.f7">Your Mac's speakers in time with the phones, presets and sign-in-only sessions</li>
             <li data-txt="streamdaw.pricing.pro.f8">No 60-minute limit</li>
           </ul>
-          <div class="coupon">
-            <input id="couponInput" type="text" placeholder="Coupon code" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Coupon code">
-            <button type="button" id="couponApply">Apply</button>
-          </div>
+          <!-- No coupon field here (2026-10-13, Ori): a visible field sends visitors off to hunt for
+               codes. A link with ?c=CODE still applies one (the price here shows it, checkout uses
+               it), and the checkout lightbox has a small "Have a code?" link. -->
           <p class="msg" id="couponMsg" hidden></p>
           <p class="msg ok" id="forMac" hidden></p>
           <button class="btn lime" data-buy="lifetime" id="buyBtn">Get StreamDAW Pro</button>
@@ -452,10 +489,10 @@
     <div class="wrap">
       <h2 data-txt="streamdaw.last.title">Stop sending mixes.<br><em>Let them hear the session.</em></h2>
       <div class="cta">
-        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.last.cta-free">Download free</a>
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.last.cta-trial">Try Pro free for 7 days</a>
         <button class="btn ghost" data-buy="lifetime"><span><span data-txt="streamdaw.last.cta-pro">Get Pro ·</span> <span data-ils="249">$81</span> <span data-txt="streamdaw.last.cta-once">once</span></span></button>
       </div>
-      <p class="fine" data-txt="streamdaw.last.fine">Free on your master bus. Includes 7 days of every Pro feature, no card.</p>
+      <p class="fine trial-fine"><span data-txt="streamdaw.last.trial-fine">No card. After the 7 days, your master bus streams free forever. Or keep Pro for</span>&nbsp;<span data-ils="249">$81</span>&nbsp;<span data-txt="streamdaw.last.trial-once">once.</span></p>
     </div>
   </section>
 </main>
@@ -499,7 +536,7 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=28"></script>
 <script src="../js/site-edit.js?v=9"></script>
-<script src="../js/streamdaw-page.js?v=4"></script>
+<script src="../js/streamdaw-page.js?v=5"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/studio.js?v=1435ed44" defer></script>

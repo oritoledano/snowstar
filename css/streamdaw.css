@@ -160,15 +160,22 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
   padding:4px var(--edge) 12px;scrollbar-width:none;list-style:none}
 .rail::-webkit-scrollbar{display:none}
 .rail:focus-visible{outline-offset:-2px}
-.feat{scroll-snap-align:start}
-.feat-top{position:absolute;inset:0 0 auto;z-index:2;padding:22px 22px 72px;color:#f7f3e8;pointer-events:none;
-  background:linear-gradient(180deg,rgba(12,11,8,.74) 0%,rgba(12,11,8,.38) 55%,rgba(12,11,8,0) 100%)}
+.feat{scroll-snap-align:start;--feat-h:clamp(26px,2.3vw,34px)}
+/* The kicker and the title have their own band at the top of the frame, and the clip sits under
+   it at its full 4:5, so the words never cover the phones at any width (2026-10-13, Ori: "SYNC
+   PRO / In time, every phone" was drawn over them). The band is two title lines tall, so the
+   clips stay level across the rail; a longer title grows its own band, never into the clip. */
+.feat .reel.tall{aspect-ratio:auto;display:flex;flex-direction:column}
+.feat .reel.tall video{position:relative;inset:auto;flex:none;width:100%;height:auto;aspect-ratio:4/5}
+.feat-top{order:-1;position:relative;z-index:2;flex:none;padding:22px 22px 6px;color:#f7f3e8;pointer-events:none}
+.feat-top .lab{min-height:18px}                       /* with or without the PRO tag */
+.feat-top h3{min-height:2.08em}                       /* two lines, one-line titles too */
 .lab{display:flex;align-items:center;gap:8px;font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(247,243,232,.78)}
 .lab .pro{background:var(--lime);color:var(--lime-ink);padding:4px 6px 3px;border-radius:5px;letter-spacing:.08em}
-.feat h3{font-size:clamp(26px,2.3vw,34px);line-height:1.04;margin-top:12px;color:#fff;max-width:9em}
+.feat h3{font-size:var(--feat-h);line-height:1.04;margin-top:12px;color:#fff;max-width:9em}
 .feat-cap{margin-top:16px;font-size:15px;line-height:1.5;color:var(--ink-2);max-width:26em;padding-right:8px}
 
-/* ── the two stories ────────────────────────────────────── */
+/* ── the three stories ──────────────────────────────────── */
 .stories{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .story{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:clamp(28px,5vw,80px);align-items:center}
 .story + .story{margin-top:clamp(80px,10vw,140px)}
@@ -209,6 +216,10 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .still .synced{justify-self:center;margin-top:5%;display:inline-flex;align-items:center;gap:9px;background:var(--lime);color:var(--lime-ink);
   border-radius:999px;padding:8px 14px 8px 10px;font:600 clamp(10px,1vw,14px)/1 var(--sans)}
 .still .synced::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--lime-ink)}
+/* The silent disco's still: the band's phones, each on its own earphones, every beat dot lit. */
+.still.party .count{font-style:normal;font:600 clamp(13px,1.5vw,20px)/1 var(--sans);letter-spacing:.14em;color:rgba(247,243,232,.8)}
+.still.party .scr::before{box-shadow:0 0 0 clamp(3px,.5vw,7px) rgba(200,242,58,.22),0 0 clamp(10px,1.6vw,22px) rgba(200,242,58,.55)}
+.still.party .scr i::after{inset:0 62% 0 0}
 
 /* ── try it: the studio on a computer, the phone page on a phone ── */
 .demo{background:var(--paper-2);border-bottom:1px solid var(--line)}
@@ -267,6 +278,9 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .coupon button{height:42px;padding:0 16px;border-radius:999px;border:1px solid rgba(239,233,218,.4);background:transparent;color:var(--paper);font:600 14px/1 var(--sans);cursor:pointer}
 .coupon button:hover{border-color:var(--lime);color:var(--lime)}
 #buyBtn{margin-top:0}
+/* No coupon field above the button now: the list takes the spare height, so a message and the
+   button still sit at the foot of the card, level with Free's. */
+.plan.pro .list{flex:1 0 auto;align-content:start}
 .msg{font-size:14px;font-weight:500;margin:0 0 14px}
 .msg.ok{color:var(--lime)}
 .msg.bad{color:#ff9db4}
@@ -304,6 +318,7 @@ details a{text-decoration:underline}
 .last h2{font-size:clamp(40px,5.6vw,80px);letter-spacing:-.03em}
 .last .cta{justify-content:center;margin-top:34px}
 .last .fine{margin-top:14px}
+.trial-fine{text-wrap:balance;max-width:34em;margin-inline:auto}
 
 footer{border-top:1px solid var(--line);padding:30px 0 44px;font-size:13px;color:var(--muted)}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:14px 24px;flex-wrap:wrap}
@@ -473,6 +488,9 @@ html.sdco-lock,html.sdco-lock body{overflow:hidden}
 .sdco-price small{font:500 15px var(--sans);letter-spacing:0;color:rgba(239,233,218,.66);margin-left:8px}
 .sdco-ils{font-size:13.5px;color:rgba(239,233,218,.74);margin-bottom:16px}
 .sdco-sum .coupon{margin:4px 0 8px}
+.sdco-code-link{display:inline-block;margin:0 0 8px;padding:4px 0;border:0;background:none;cursor:pointer;
+  font:500 13.5px/1.3 var(--sans);color:rgba(239,233,218,.7);text-decoration:underline;text-underline-offset:3px}
+.sdco-code-link:hover,.sdco-code-link:focus-visible{color:var(--lime)}
 .sdco-sum .msg{margin:2px 0 0}
 .sdco-more{margin-top:24px;padding-top:22px;border-top:1px solid rgba(239,233,218,.16)}
 .sdco-h{font:600 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:rgba(239,233,218,.6);margin:0 0 14px}

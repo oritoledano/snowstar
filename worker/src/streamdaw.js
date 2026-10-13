@@ -186,10 +186,14 @@ export async function streamdawCouponCreate(req, env, user) {
 
 // ── 1. Checkout: apply any coupon, then free-grant or send to HYP ───────────
 export async function streamdawCheckout(req, env) {
+  // A Snowstar account first, always (2026-10-13, Ori): no session, no order and no HYP page.
+  // The email is the account's, never the body's: a typed email used to be enough to reach HYP.
+  // The sale page answers sign_in_required by opening the shared sign-up, then comes back here.
   const user = await currentUser(req, env).catch(() => null);
+  if (!user || !user.id) return json({ error: 'sign_in_required' }, 401);
   const body = await req.json().catch(() => ({}));
-  const email = lc(user?.email || body.email);
-  if (!validEmail(email)) return json({ error: 'email_required' }, 400);
+  const email = lc(user.email);
+  if (!validEmail(email)) return json({ error: 'sign_in_required' }, 401);
 
   // Pro (once) or the 7-day pass. A pass is never discounted; Pro takes the buyer's recent
   // pass money off first, then a coupon on what is left.
@@ -211,12 +215,12 @@ export async function streamdawCheckout(req, env) {
   // carries that Mac, and the key request files itself once the money is in. No sign-in
   // to the page afterwards, no machine ID to copy and paste.
   const machine = normMachine(body.machine);
-  const ownerName = String(user?.name || body.name || '').trim().slice(0, 60) || null;
+  const ownerName = String(user.name || body.name || '').trim().slice(0, 60) || null;
 
   // ── free (a coupon covered the whole price): grant now, no HYP ──
   if (amount <= 0) {
     if (!hypConfigured(env)) { /* free path needs no gateway, continue */ }
-    await insertOrder(env, { ref, userId: user?.id || null, email, plan, amount: 0, status: 'granted', coupon: couponCode, machine, ownerName });
+    await insertOrder(env, { ref, userId: user.id, email, plan, amount: 0, status: 'granted', coupon: couponCode, machine, ownerName });
     const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, plan, source: credit ? 'pass-credit' : 'coupon' });
     if (couponCode) await burnSdawCoupon(env, couponCode);
     const link = await mintDownloadLink(env, ent.id, email);
@@ -230,7 +234,7 @@ export async function streamdawCheckout(req, env) {
   // ── paid (full price, or partially discounted): send to HYP ──
   if (!hypConfigured(env)) return json({ error: 'hyp_not_configured' }, 503);
   const shekels = (amount / 100).toFixed(2);
-  await insertOrder(env, { ref, userId: user?.id || null, email, plan, amount, status: 'started', coupon: couponCode, machine, ownerName });
+  await insertOrder(env, { ref, userId: user.id, email, plan, amount, status: 'started', coupon: couponCode, machine, ownerName });
 
   // APISign — mirrors the music checkout's signing, including the gotchas the
   // comments in hyp.js were written in blood for: signMe=1, and using HYP's
