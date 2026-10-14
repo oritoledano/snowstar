@@ -235,15 +235,15 @@
     if (MACHINE_RE.test(m)) { try { sessionStorage.setItem('sd_machine', m); } catch (e) {} }
     const mac = forMac(), box = $('forMac');
     if (mac && box) { box.textContent = 'For this Mac (' + mac + '): the key is made for it after you pay, and arrives by email.'; box.hidden = false; }
-    // ?buy=1 (the app's "Get Pro", or "Pro Monthly" with &plan=monthly): the checkout lightbox
-    // opens on that plan by itself, with the page behind it at the price. Signed out, the lightbox
-    // asks for the sign-in on its own button rather than throwing the sign-up form at them on arrival.
+    // ?buy=1 (the app's "Get Pro", or "Pro Monthly" with &plan=monthly): the checkout opens on that
+    // plan by itself, with the page behind it at the price. Signed out, the shared sign-up opens first,
+    // lightbox or not (2026-10-15), and the purchase carries on with this plan and this Mac once they are in.
     // &plan=pass is what apps up to 0.5.5 send for the 7-day pass, which is gone: the plans, with
     // Pro Monthly ready to press, and nothing opened for them.
     const asked = q.get('plan');
     if (q.get('buy') === '1' && asked !== 'pass') {
       toPricing(300);
-      setTimeout(() => buy(asked === 'monthly' ? 'monthly' : 'lifetime', { landing: true }), 450);
+      setTimeout(() => buy(asked === 'monthly' ? 'monthly' : 'lifetime'), 450);
     } else if (asked === 'monthly' || asked === 'pass') {
       toPricing(300);
       setTimeout(() => { const p = $('buyMonthly'); if (p) p.focus({ preventScroll: true }); }, 700);
@@ -295,7 +295,7 @@
   // turns the lightbox on for one tab, to test. true: the lightbox for everyone (`?lb=0` turns it
   // off for one tab). Off until a live payment has gone through it on HYP's terminal (2026-10-13:
   // Ori's ₪1 test with a coupon); flip this one constant, nothing else.
-  const LIGHTBOX_FOR_EVERYONE = false;
+  const LIGHTBOX_FOR_EVERYONE = true;    // on 2026-10-15, after a ₪1 live payment verified on its own (SD-8DUODDH1XG)
   const LIGHTBOX = (function () {
     let tab = null;                        // this tab's own choice, kept through HYP and back
     try {
@@ -375,12 +375,12 @@
       ? 'A free Snowstar account first, then Pro Monthly. Your key and receipts go to its email, and you cancel from it any time.'
       : 'A free Snowstar account first, then StreamDAW Pro. Your key and receipt go to its email.', 'app');
   }
-  // The checkout lightbox, signed in or not: signed out, the shared sign-in opens over it at once
-  // (after a click) and the payment form follows; `landing` (from the app) waits for their press.
-  async function buy(plan, o) {
+  // The checkout lightbox, signed in or not: signed out, the shared sign-up opens over it at once
+  // (a click, or the app's ?buy=1 on arrival, as with the lightbox off) and the payment form follows.
+  async function buy(plan) {
     await ready();
     await couponFromLink;                 // a ?c= code is checked before checkout starts
-    return doCheckout(plan, { askSignIn: !(o && o.landing) });
+    return doCheckout(plan, { askSignIn: true });
   }
   document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => {
     e.preventDefault();
