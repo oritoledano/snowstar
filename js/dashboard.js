@@ -53,7 +53,7 @@
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
-      { key: 'sdaw', label: 'App', tabs: ['orders', 'health', 'people', 'keys', 'reports', 'codes', 'releases'] },
+      { key: 'sdaw', label: 'App', tabs: ['orders', 'subscriptions', 'health', 'people', 'keys', 'reports', 'codes', 'releases'] },
     ] },
     { key: 'snowstar', label: 'Snowstar', pages: [
       { key: 'jobs',      label: 'Jobs' },
@@ -245,6 +245,7 @@
     'snowstash/stash/scans':       () => paintStashScans(),
     'snowstash/stash/codes':       () => paintStashCodes(),
     'streamdaw/sdaw/orders':       () => paintStreamdaw('orders'),
+    'streamdaw/sdaw/subscriptions': () => paintStreamdaw('subscriptions'),
     'streamdaw/sdaw/people':       () => paintStreamdaw('people'),
     'streamdaw/sdaw/keys':         () => paintStreamdaw('keys'),
     'streamdaw/sdaw/reports':      () => paintStreamdawReports(),
@@ -1278,7 +1279,14 @@
       </div>`;
 
     if (view === 'orders') {
-      return paint(`${blocked}${kpis}
+      /* Charged but not verified: the card paid and nothing was granted. Reconcile asks HYP again
+         (the return it kept) and grants exactly as a verified return; when HYP cannot be asked (a
+         return without a signature), it asks for the transaction Id from the HYP portal instead. */
+      const owed = (o) => o.status === 'charged_unverified' || o.status === 'verify_failed';
+      const stuck = (d.orders || []).filter((o) => o.status === 'charged_unverified');
+      const out = paint(`${blocked}${kpis}
+        ${stuck.length ? `<div class="db-warn warn" style="margin-bottom:16px"><b>${stuck.length} order(s) charged and not granted.</b>
+          The card paid, HYP's check did not confirm it. Press Reconcile on each.</div>` : ''}
         <div class="db-panel"><h2>Orders <span class="pill">${(d.orders || []).length}</span></h2>
           <p class="db-empty" style="padding-top:0"><b>Started</b> means they reached the card page
             and did not come back — not a sale, and not counted as one. ${st.abandoned || 0} of
@@ -1290,9 +1298,84 @@
             { label: 'Amount', num: true, get: (o) => (o.amount ? money(o.amount, 0) : 'free') },
             { label: 'Code', get: (o) => esc(o.coupon || '') },
             { label: 'State', get: (o) => `<span class="pill ${
-                o.status === 'granted' ? 'good' : o.status === 'started' ? 'warn' : ''}">${esc(o.status)}</span>` },
+                o.status === 'granted' ? 'good' : o.status === 'started' || owed(o) ? 'warn' : ''}">${esc(o.status)}</span>`
+                + (o.hyp_id ? `<br><small>HYP ${esc(o.hyp_id)}</small>` : '') },
             { label: 'When', num: true, get: (o) => dt(o.created_at) },
+            { label: '', get: (o) => (owed(o) ? `<button class="chip sd-recon" data-ref="${esc(o.ref)}">Reconcile</button>` : '') },
           ])}</div>`);
+      document.querySelectorAll('.sd-recon').forEach((b) => b.addEventListener('click', async () => {
+        const ref = b.dataset.ref;
+        if (!window.confirm(`Ask HYP about ${ref}? If HYP confirms it, the order is granted like a verified return: Pro, the download link, the key request and the receipt email.`)) return;
+        b.disabled = true;
+        let r = await post('/streamdaw/reconcile', { ref }).catch(() => null);
+        if (r && r.error === 'confirm_in_portal') {
+          const typed = window.prompt(`${r.says}\n\nIf it does, type that transaction Id here to grant the order:`, '');
+          if (!typed || !typed.trim()) { paintStreamdaw('orders'); return; }
+          r = await post('/streamdaw/reconcile', { ref, hyp_id: typed.trim(), portal_checked: true }).catch(() => null);
+        }
+        window.alert(r && r.ok
+          ? (r.already ? `${ref} was already granted.` : `${ref} granted (${r.via === 'verify' ? 'HYP confirmed it' : 'checked in the HYP portal'}). The receipt is on its way.`)
+          : r && r.error === 'confirm_in_portal' ? `Not granted: that is not transaction ${r.hyp_id}.`
+          : `Not granted: ${r ? r.error + (r.ccode ? ` (HYP CCode ${r.ccode})` : '') : 'no answer'}.`);
+        paintStreamdaw('orders');
+      }));
+      return out;
+    }
+
+    /* Pro Monthly (worker/src/streamdaw-subs.js). The cron charges each card token on its day; a
+       charge HYP never answered locks that subscription until it is settled here by hand (find the
+       ref in HYP's report first), and an "end now" cancel leaves a refund to make in HYP. */
+    if (view === 'subscriptions') {
+      const subs = d.subscriptions || [], ss = d.subStats || {};
+      const stuck = subs.filter((x) => x.charging_at), owed = subs.filter((x) => x.refund_status === 'owed');
+      const out = paint(`
+        <div class="db-kpis">
+          <div class="db-kpi"><b>${ss.active || 0}</b><span>running</span></div>
+          <div class="db-kpi"><b>${money(ss.mrr || 0, 2)}</b><span>a month (MRR)</span></div>
+          <div class="db-kpi"><b>${ss.pastDue || 0}</b><span>payment due</span></div>
+          <div class="db-kpi"><b>${money(ss.refundsOwed || 0, 2)}</b><span>refunds to make</span></div>
+        </div>
+        ${stuck.length ? `<div class="db-warn warn" style="margin-bottom:16px"><b>${stuck.length} charge(s) got no answer from HYP.</b>
+          Find the ref (SDR-…) in HYP's transaction report, then press Paid or Not charged. Nothing is charged on these until you do.</div>` : ''}
+        ${owed.length ? `<div class="db-warn warn" style="margin-bottom:16px"><b>${owed.length} refund(s) to make</b> (cancelled with "end now"):
+          refund the amount on the last charge in the HYP portal, then press Refunded.</div>` : ''}
+        <div class="db-panel"><h2>Pro Monthly <span class="pill">${subs.length}</span></h2>
+          ${table(subs, [
+            { label: 'Who', get: (x) => `<b>${esc(x.user_name || '—')}</b><br><small>${esc(x.email)}</small>` },
+            { label: 'State', get: (x) => `<span class="pill ${x.status === 'active' ? 'good' : x.status === 'past_due' ? 'warn' : ''}">${esc(x.status)}</span>`
+                + (x.cancel_when ? `<br><small>cancelled (${esc(x.cancel_when)}, ${esc(x.cancel_via || '')})</small>` : '') },
+            { label: 'A month', num: true, get: (x) => money(x.amount, 2) },
+            { label: 'Months', num: true, get: (x) => x.periods },
+            { label: 'Paid to', num: true, get: (x) => when(x.paid_through) },
+            { label: 'Next charge', num: true, get: (x) => (x.next_charge_at ? when(x.next_charge_at) : '—') + (x.attempts ? `<br><small>${x.attempts} failed</small>` : '') },
+            { label: 'Card', get: (x) => (x.card_last4 ? '•' + esc(x.card_last4) : '') + (x.has_token ? '' : ' <small>no token</small>') },
+            { label: 'Note', get: (x) => esc(x.last_error || '') + (x.refund_due ? `<br><small>refund ${money(x.refund_due, 2)} ${esc(x.refund_status || '')}</small>` : '') },
+            { label: '', get: (x) => (x.charging_at ? `<button class="chip sd-sub" data-id="${x.id}" data-act="paid">Paid</button> <button class="chip sd-sub" data-id="${x.id}" data-act="notcharged">Not charged</button>` : '')
+                + (x.refund_status === 'owed' ? ` <button class="chip sd-sub" data-id="${x.id}" data-act="refunded">Refunded</button>` : '')
+                + (x.status === 'active' || x.status === 'past_due' ? ` <button class="chip sd-sub" data-id="${x.id}" data-act="cancel">Cancel</button>` : '') },
+          ])}</div>
+        <div class="db-panel"><h2>Charges <span class="pill">${(d.subCharges || []).length}</span></h2>
+          ${table(d.subCharges || [], [
+            { label: 'Ref', get: (c) => `<code>${esc(c.ref)}</code>` },
+            { label: 'Who', get: (c) => esc(c.email) },
+            { label: 'Month', num: true, get: (c) => c.period_no + (c.attempt > 1 ? ` <small>try ${c.attempt}</small>` : '') },
+            { label: 'Amount', num: true, get: (c) => money(c.amount, 2) },
+            { label: 'State', get: (c) => `<span class="pill ${c.status === 'paid' ? 'good' : c.status === 'unknown' || c.status === 'charging' ? 'warn' : ''}">${esc(c.status)}</span>`
+                + (c.ccode && c.ccode !== '0' ? ` <small>CCode ${esc(c.ccode)}</small>` : '') + (c.error ? `<br><small>${esc(c.error)}</small>` : '') },
+            { label: 'HYP Id', get: (c) => esc(c.hyp_id || '') },
+            { label: 'When', num: true, get: (c) => dt(c.created_at) },
+          ])}</div>`);
+      document.querySelectorAll('.sd-sub').forEach((b) => b.addEventListener('click', async () => {
+        const act = b.dataset.act;
+        const ask = { paid: 'HYP shows this charge as approved? It is recorded as paid and the month moves on.', notcharged: 'HYP has no such charge? It will be tried again at the next run.',
+          refunded: 'Refunded in the HYP portal?', cancel: 'Cancel this subscription at the end of its paid month? The customer is emailed.' }[act];
+        if (!window.confirm(ask)) return;
+        const hyp_id = act === 'paid' ? (window.prompt('HYP transaction Id (optional):') || '') : '';
+        const r = await post('/streamdaw/subscription/admin', { id: Number(b.dataset.id), action: act, hyp_id });
+        if (r && r.error) window.alert(r.error);
+        paintStreamdaw('subscriptions');
+      }));
+      return out;
     }
 
     if (view === 'people') {
@@ -1321,9 +1404,11 @@
       /* The name is what listeners see as the host; the email rides in the key for the
          buyer's own licence panel. Same command as the "[Admin] Mint…" email. */
       const clean = (t) => String(t || '').replace(/["$`\\]/g, '');
-      const cmd = (a) => `~/.cache/streamdaw/bin/streamdaw-keygen --keyfile ~/.cache/streamdaw/license-keypair.txt `
+      // The Worker's own command (the v2 pair, and --expires for a key with an end: Pro Monthly);
+      // this one only for a Worker from before 2026-10-14 that does not send it.
+      const cmd = (a) => a.mint || (`~/.cache/streamdaw/bin/streamdaw-keygen --keyfile ~/.cache/streamdaw/license-keypair-v2.txt `
         + `--name "${clean(a.owner_name)}" `
-        + `--email "${clean(a.email).toLowerCase()}" --machines ${a.machine_id}`;
+        + `--email "${clean(a.email).toLowerCase()}" --machines ${a.machine_id}`);
       return paint(`${kpis}
         ${pending.length ? `<div class="db-warn warn" style="margin-bottom:16px">
           <b>${pending.length} ${pending.length === 1 ? 'person has' : 'people have'} paid and cannot
@@ -1340,8 +1425,9 @@
             { label: 'State', get: (a) => a.status === 'issued'
                 ? `<span class="pill">issued ${dt(a.issued_at)}</span>`
                 : a.status === 'rejected' ? '<span class="pill">rejected</span>'
+                : a.status === 'renewing' ? `<span class="pill warn">next month's key, to ${when(a.expires_at)}</span>`
                 : '<b style="color:#e8b04b">waiting</b>' },
-            { label: '', get: (a) => a.status === 'issued' ? '' :
+            { label: '', get: (a) => a.status === 'issued' || a.status === 'rejected' ? '' :
                 `<button class="chip sd-cmd" data-cmd="${esc(cmd(a))}">Copy command</button>
                  <button class="chip sd-key" data-id="${a.id}">Paste key…</button>` },
           ])}</div>`);

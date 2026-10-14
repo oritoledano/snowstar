@@ -4,8 +4,10 @@
    window.SDCheckout.open() from its buy buttons; every bit of markup is made here.
 
    Left, what you get: the plan, the price in the visitor's currency with the shekel amount HYP
-   actually charges, a pass's credit toward Pro, the coupon (Pro only), the features, what
-   happens after paying, the terms and the refund line. Right, the card details: HYP's own
+   actually charges, credit toward Pro from a pass bought before 2026-10-14, the coupon (Pro
+   only), the features, what happens after paying, the terms and the refund line. Pro Monthly
+   (2026-10-14, the 7-day pass gone): $8.99 a month, the shekels charged today and every month,
+   that it renews until cancelled, how to cancel, the 14 days. Right, the card details: HYP's own
    payment page in an iframe. Hyp Pay documents its page in an iframe (developers.hyp.co.il/pay,
    checked 2026-10-13; see wip/checkout-lightbox-2026-10-13.md in the StreamDAW project).
 
@@ -23,7 +25,8 @@
   // HYP's page sits in the frame. false = the "Pay securely on HYP" step instead (the whole tab
   // goes to HYP and comes back): the fallback if HYP ever stops serving its page in a frame.
   const EMBED = true;
-  const PRO = 24900, PASS = 4900;              // agorot incl. VAT; the Worker's PRICE_GROSS, PASS_GROSS
+  const PRO = 24900;                           // agorot incl. VAT; the Worker's PRICE_GROSS
+  const MONTH_USD = 8.99;                      // Pro Monthly, a month (worker/src/streamdaw-subs.js)
   const FRESH = 9 * 60 * 1000;                 // a signed HYP page is good for about ten minutes
   const MACHINE_RE = /^SD[0-9A-F]{12,20}$/;
 
@@ -45,6 +48,13 @@
   const cur = (a) => (M() ? M().fmt(a / 100) : '₪' + Math.round(a / 100));                   // the visitor's currency
   const ils = (a) => (M() ? M().ils(a / 100) : '₪' + Math.round(a / 100));                   // what the card is charged
   const shekelsShown = () => !M() || M().isSettlement();
+  // Pro Monthly: exactly $8.99 in dollars; in shekels the Worker's figure (opts.monthly, from
+  // /api/streamdaw/prices), else the page's rate, until checkout answers with the amount itself.
+  const monthAgorot = () => (total != null ? total : opts.monthly && opts.monthly.amount > 0 ? opts.monthly.amount
+    : Math.round(MONTH_USD * 100 / ((M() && M().rates.USD) || 0.3252)));
+  const monthCur = () => (!M() || M().code === 'USD' ? '$' + MONTH_USD.toFixed(2) : M().fmt(monthAgorot() / 100, { decimals: 2 }));
+  const ils2 = (a) => (M() ? M().ils(a / 100, { decimals: 2 }) : '₪' + (a / 100).toFixed(2));
+  const dayN = (d) => d + ([, 'st', 'nd', 'rd'][d % 100 >> 3 ^ 1 && d % 10] || 'th');
 
   let opts = {};          // from the page: plan, coupon, machine, signedIn(), signIn(resume), onBought(info)
   let plan = 'lifetime';
@@ -89,37 +99,38 @@
     return page.length >= 4 ? page : FEATURES;
   }
   const machine = () => (MACHINE_RE.test(opts.machine || '') ? opts.machine : null);
-  const list = () => (plan === 'pass' ? PASS : PRO);
-  // Before the Worker answers: the list price, less a pass, less a code (its check priced it
+  const isMonthly = () => plan === 'monthly';
+  // Before the Worker answers: the list price, less an old pass's credit, less a code (its check priced it
   // against the full price). After: the Worker's own figure, which is what HYP will charge.
   function due() {
     if (total != null) return total;
-    if (plan === 'pass') return PASS;
+    if (isMonthly()) return monthAgorot();
     if (coupon && coupon.free) return 0;
     return Math.max(0, (coupon ? coupon.amount : PRO) - credit);
   }
 
   // ── left: what you get ─────────────────────────────────────────────────────
   function paintSum() {
-    const pass = plan === 'pass', d = due();
+    if (isMonthly()) return paintSumMonthly();
+    const d = due();
     const settled = state === 'done' && result && (result.bought || result.pay === 'confirming');   // no price or code to change now
-    const cut = pass ? 0 : Math.max(0, PRO - credit - d);       // what the code took off
+    const cut = Math.max(0, PRO - credit - d);                  // what the code took off
     const rows = [];
-    if (!pass && (credit || (coupon && cut))) {
+    if (credit || (coupon && cut)) {
       rows.push('<div><span>StreamDAW Pro</span><b>' + cur(PRO) + '</b></div>');
       if (credit) rows.push('<div class="cut"><span>Your pass</span><b>−' + cur(credit) + ' from your pass</b></div>');
       if (coupon && cut) rows.push('<div class="cut"><span>' + esc(coupon.label || 'Coupon') + ' · ' + esc(coupon.code) + '</span><b>−' + cur(cut) + '</b></div>');
     }
     el.sum.innerHTML =
-      '<span class="tag lime">' + (pass ? '7-day pass' : 'StreamDAW Pro') + '</span>'
-      + '<h2 id="sdcoTitle">' + (pass ? 'Pro for 7 days.' : 'Pro, once.') + '</h2>'
-      + '<p class="sdco-what">' + (pass ? 'Every Pro feature for a week. No renewal.' : 'One payment. No subscription. Every StreamDAW 1 update included.') + '</p>'
+      '<span class="tag lime">StreamDAW Pro</span>'
+      + '<h2 id="sdcoTitle">Pro, once.</h2>'
+      + '<p class="sdco-what"><b>One payment. Yours forever.</b> No subscription. Every StreamDAW 1 update included.</p>'
       + (settled ? '' : (rows.length ? '<div class="sdco-rows">' + rows.join('') + '</div>' : '')
-      + '<div class="sdco-price">' + (d === 0 ? 'Free' : cur(d)) + '<small>' + (d === 0 ? 'nothing to pay' : pass ? 'for 7 days' : 'once') + '</small></div>'
+      + '<div class="sdco-price">' + (d === 0 ? 'Free' : cur(d)) + '<small>' + (d === 0 ? 'nothing to pay' : 'once') + '</small></div>'
       + (d > 0 ? '<p class="sdco-ils">' + (shekelsShown() ? 'Incl. VAT. HYP charges in shekels.' : 'Charged ' + ils(d) + ' incl. VAT. HYP charges in shekels.') + '</p>' : ''))
       // A code: a small link, not a field, so nobody goes hunting for one. Open when a code is on
       // (a ?c= link brought it, or they typed one) or once they ask for it.
-      + (pass || settled ? '' : !(coupon || codeOpen)
+      + (settled ? '' : !(coupon || codeOpen)
         ? '<button type="button" class="sdco-code-link" aria-expanded="false">Have a code?</button><p class="msg" hidden></p>'
         : '<form class="coupon sdco-coupon" novalidate><input type="text" name="code" placeholder="Coupon code" autocomplete="off" spellcheck="false" autocapitalize="characters" aria-label="Coupon code" value="' + esc(coupon ? coupon.code : '') + '">'
         + '<button type="submit">' + (coupon ? 'Change' : 'Apply') + '</button></form><p class="msg" hidden></p>');
@@ -132,20 +143,49 @@
     });
   }
 
+  function paintSumMonthly() {
+    const settled = state === 'done' && result && (result.bought || result.pay === 'confirming');
+    const a = monthAgorot(), today = new Date().getDate();
+    el.sum.innerHTML =
+      '<span class="tag lime">Pro Monthly</span>'
+      + '<h2 id="sdcoTitle">Pro, monthly.</h2>'
+      + '<p class="sdco-what">Every Pro feature. Renews every month until you cancel; cancel any time in your account, no fee.</p>'
+      + (settled ? '' : '<div class="sdco-price">' + esc(monthCur()) + '<small>a month</small></div>'
+        + '<p class="sdco-ils">Charged <b>' + esc(ils2(a)) + '</b> today, then ' + esc(ils2(a)) + ' on the ' + dayN(today)
+        + ' of every month until you cancel. VAT included; HYP charges in shekels.</p>');
+  }
+
   function paintMore() {
-    const pass = plan === 'pass', mac = machine();
+    if (isMonthly()) return paintMoreMonthly();
+    const mac = machine();
     el.more.innerHTML =
-      '<p class="sdco-h">' + (pass ? 'Every Pro feature, for 7 days' : 'Everything in Free, plus') + '</p>'
+      '<p class="sdco-h">Everything in Free, plus</p>'
       + '<ul class="list sdco-list">' + features().map((t) => '<li>' + esc(t) + '</li>').join('') + '</ul>'
       + '<p class="sdco-h">After you pay</p>'
       + '<ol class="sdco-next">'
       +   '<li><b>Your download link</b>, right here and in your inbox.</li>'
       +   (mac ? '<li><b>The key for this Mac</b> (' + esc(mac) + ') by email, within minutes: paste it into StreamDAW › Settings › Licence.</li>'
                : '<li><b>The key for your Mac</b>: request it on the <a href="streamdaw-unlock.html">unlock page</a>, it takes a minute. It arrives by email.</li>')
-      +   (pass ? '<li>The pass ends 7 days after you pay, and needs StreamDAW 0.5.2 or newer. Buy Pro within 30 days and what you paid comes off.</li>' : '')
       + '</ol>'
       + '<p class="sdco-fine">Buying means you accept the <a href="streamdaw-terms.html">StreamDAW licence terms</a>. '
       + 'Once your key is issued it isn’t refundable, except for a double charge or a key that never arrives. <a href="streamdaw-terms.html#refunds">Refunds</a>.</p>';
+  }
+
+  function paintMoreMonthly() {
+    const mac = machine();
+    el.more.innerHTML =
+      '<p class="sdco-h">Every Pro feature, every month</p>'
+      + '<ul class="list sdco-list">' + features().map((t) => '<li>' + esc(t) + '</li>').join('') + '</ul>'
+      + '<p class="sdco-h">After you pay</p>'
+      + '<ol class="sdco-next">'
+      +   '<li><b>Your download link</b>, right here and in your inbox, with the receipt.</li>'
+      +   (mac ? '<li><b>The key for this Mac</b> (' + esc(mac) + ') by email, within minutes: paste everything in its box, the key and its Renewal line, into StreamDAW › Settings › Licence.</li>'
+               : '<li><b>The key for your Mac</b>: request it on the <a href="streamdaw-unlock.html">unlock page</a>, it takes a minute. It arrives by email.</li>')
+      +   '<li>Each month StreamDAW fetches its new key by itself while it is online, and you get a receipt for every charge.</li>'
+      +   '<li>Cancel any time in <a href="../account.html#apps">your account</a> (Apps): nothing more is charged, and Pro stays on to the end of the month you paid for.</li>'
+      + '</ol>'
+      + '<p class="sdco-fine">Not sure yet? <a href="/api/streamdaw/download/free" data-free-dl>The 7-day trial</a> in the app needs no card and no subscription. '
+      + 'Starting Pro Monthly means you accept the <a href="streamdaw-terms.html#monthly">StreamDAW licence terms</a>. Within 14 days you can cancel and get back what you paid for the days you did not use.</p>';
   }
 
   // ── right: the card details ────────────────────────────────────────────────
@@ -153,7 +193,7 @@
   function head(t) {
     const d = due();
     return '<header class="sdco-pay-h"><p class="kicker">' + esc(t || 'Card details') + '</p>'
-      + '<p class="sdco-secure">' + lock + '<span>Secure payment by <b>HYP</b></span>' + (d > 0 ? '<b class="sdco-amt">' + ils(d) + '</b>' : '') + '</p></header>';
+      + '<p class="sdco-secure">' + lock + '<span>Secure payment by <b>HYP</b></span>' + (d > 0 ? '<b class="sdco-amt">' + (isMonthly() ? ils2(d) : ils(d)) + '</b>' : '') + '</p></header>';
   }
   function paintPay() {
     const p = el.pay; p.dataset.state = state;
@@ -171,7 +211,7 @@
         + '<button type="button" class="btn lime" data-go="start">Get StreamDAW Pro free</button></div>';
     } else if (state === 'away') {               // the fallback: HYP's page in this tab
       p.innerHTML = head('Pay') + '<div class="sdco-step"><h3>Pay securely on HYP</h3><p>Card details are typed on HYP’s own payment page (pay.hyp.co.il), then you come back here to your download.</p>'
-        + '<button type="button" class="btn lime" data-go="away">Pay securely on HYP · ' + ils(due()) + '</button></div>';
+        + '<button type="button" class="btn lime" data-go="away">Pay securely on HYP · ' + (isMonthly() ? ils2(due()) : ils(due())) + '</button></div>';
     } else if (state === 'error') {
       p.innerHTML = head() + '<div class="sdco-step"><h3>' + esc(result && result.title || 'Checkout didn’t open') + '</h3><p>' + esc(result && result.text || 'Please try again.') + '</p>'
         + '<div class="cta"><button type="button" class="btn lime" data-go="start">Try again</button>'
@@ -196,14 +236,15 @@
   const frame = () => (el.pay ? el.pay.querySelector('iframe') : null);
 
   function doneView() {
-    const r = result || {}, pass = r.plan === 'pass', mac = machine();
+    const r = result || {}, monthly = r.plan === 'monthly', mac = machine();
     if (r.bought) {
       const dl = r.download || '/api/streamdaw/download';
       return '<div class="sdco-done ok"><span class="sdco-check" aria-hidden="true"></span>'
-        + '<p class="kicker">You’re in</p><h3>' + (pass ? 'Pro for 7 days.' : 'StreamDAW Pro is yours.') + '</h3>'
+        + '<p class="kicker">You’re in</p><h3>' + (monthly ? 'Pro Monthly is on.' : 'StreamDAW Pro is yours.') + '</h3>'
         + '<p>' + (r.free ? 'No charge. Enjoy.' : 'Payment received. Thank you.') + ' The download link is in your inbox too.</p>'
-        + '<p>' + (mac ? 'The ' + (pass ? 'pass key' : 'Pro key') + ' for this Mac is being made and arrives by email within minutes: paste it into StreamDAW › Settings › Licence.'
+        + '<p>' + (mac ? 'The key for this Mac is being made and arrives by email within minutes: paste everything in its box into StreamDAW › Settings › Licence.'
                        : 'Next, get the key for your Mac on the unlock page: it takes a minute.') + '</p>'
+        + (monthly ? '<p>It renews every month until you cancel in <a href="../account.html#apps">your account</a>.</p>' : '')
         + '<div class="cta"><a class="btn lime" href="' + esc(dl) + '">Download StreamDAW</a>'
         + '<a class="btn ghost" href="streamdaw-unlock.html">Unlock your Mac</a></div>'
         + '<p class="sdco-alt">Signed in? It is in your Snowstar account too: download it again any time. '
@@ -237,7 +278,7 @@
 
   // Pass money that comes off Pro, for the buyer who is signed in.
   async function mine() {
-    if (plan === 'pass' || !(opts.signedIn && opts.signedIn())) return;
+    if (plan !== 'lifetime' || !(opts.signedIn && opts.signedIn())) return;
     try {
       const r = await fetch('/api/streamdaw/mine', { credentials: 'include' });
       if (!r.ok) return;
@@ -293,6 +334,10 @@
     }
     if (d && (d.error === 'sign_in_required' || d.error === 'email_required')) { set('signin'); return; }   // no session: the Worker refuses
     if (d && d.error === 'coupon') { result = { title: 'That code can’t be used', text: d.reason || 'Remove it, or try another.', drop: true }; set('error'); return; }
+    if (d && d.error === 'already_subscribed') { result = { title: 'You have Pro Monthly already', text: 'Manage or cancel it in your account, under Apps. Nothing was charged.' }; set('error'); return; }
+    if (d && d.error === 'resume_instead') { result = { title: 'Your Pro Monthly is still running', text: 'It is cancelled but runs to the end of the month you paid for: resume it in your account instead. Nothing was charged.' }; set('error'); return; }
+    if (d && d.error === 'owns_pro') { result = { title: 'You own StreamDAW Pro', text: 'Pro is yours for good: there is nothing to subscribe to. Nothing was charged.' }; set('error'); return; }
+    if (d && d.error === 'monthly_not_ready') { result = { title: 'Pro Monthly isn’t switched on yet', text: 'Nothing was charged. Pro (once) works now.' }; set('error'); return; }
     result = d && d.error === 'hyp_not_configured'
       ? { title: 'Checkout isn’t switched on yet', text: 'The payment terminal still needs its keys. Nothing was charged.' }
       : d && d.error === 'network'
@@ -311,7 +356,7 @@
     const m = e.data;
     if (!m || typeof m !== 'object' || m.type !== 'sd-checkout') return;
     live = null;
-    done({ bought: m.bought === true, plan: m.plan === 'pass' ? 'pass' : m.plan === 'lifetime' ? 'lifetime' : plan,
+    done({ bought: m.bought === true, plan: m.plan === 'monthly' || m.plan === 'lifetime' ? m.plan : plan,
            pay: m.pay === 'confirming' ? 'confirming' : m.bought === true ? null : 'failed',
            reason: typeof m.reason === 'string' ? m.reason.slice(0, 40) : null, ref: typeof m.ref === 'string' ? m.ref.slice(0, 40) : null });
   }
@@ -344,7 +389,7 @@
 
   async function open(o) {
     opts = o || {};
-    const nextPlan = opts.plan === 'pass' ? 'pass' : 'lifetime';
+    const nextPlan = opts.plan === 'monthly' ? 'monthly' : 'lifetime';
     const code = nextPlan === 'lifetime' && opts.coupon && opts.coupon.code ? opts.coupon : null;
     build();
     // The same purchase, still signed and in the frame: show it again rather than start over.
@@ -368,7 +413,7 @@
     open,
     close,
     /** A result from outside the frame: the full-page return (?bought=1 / ?pay=…). */
-    result(r, o) { if (o) opts = o; plan = r && r.plan === 'pass' ? 'pass' : 'lifetime'; build(); done(r || {}); },
+    result(r, o) { if (o) opts = o; plan = r && r.plan === 'monthly' ? 'monthly' : 'lifetime'; build(); done(r || {}); },
     get state() { return state; },
   };
 })();

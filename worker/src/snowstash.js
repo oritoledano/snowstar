@@ -540,7 +540,8 @@ export async function stashCheckout(req, env, user) {
     Masof: env.HYP_TERMINAL, KEY: env.HYP_API_KEY, PassP: env.HYP_PASSP,
     Amount: shekels, Coin: '1',
     Info: `Snowstash report — ${scan.artist_name}`.slice(0, 60), Order: ref,
-    UTF8: 'True', UTF8out: 'True', signMe: '1', MoreData: 'True',
+    // Sign=True, not signMe: without it the redirect has no Sign and VERIFY answers CCode=200 (hyp.js).
+    UTF8: 'True', UTF8out: 'True', Sign: 'True', MoreData: 'True',
     PageLang: 'ENG', tmp: '1', ClientName: email, email,
     SendHesh: 'True', Postpone: 'False', J5: 'False',
   });

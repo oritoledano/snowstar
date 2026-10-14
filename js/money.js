@@ -119,6 +119,24 @@
         const dp = el.getAttribute('data-dp');
         el.textContent = fmt(v, dp == null ? undefined : { decimals: +dp });
       });
+      /* A price SET in dollars (2026-10-14, StreamDAW Pro Monthly, $8.99): exactly that in dollars,
+         and in shekels or euros at the rate. data-cur pins the currency ("ILS" for "charged ₪…");
+         data-ils-fixed is the shekel figure the server itself charges, when the page has it, so
+         the shekels shown are never an agora off what the card is charged. */
+      (root || document).querySelectorAll('[data-usd]').forEach((el) => {
+        const usd = parseFloat(el.getAttribute('data-usd'));
+        if (!Number.isFinite(usd)) return;
+        const to = META[el.getAttribute('data-cur')] ? el.getAttribute('data-cur') : code;
+        const dp = el.getAttribute('data-dp'), decimals = dp == null ? 2 : +dp;
+        if (to === 'USD') {
+          try { el.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(usd); }
+          catch { el.textContent = '$' + usd.toFixed(decimals); }
+          return;
+        }
+        const fixed = parseFloat(el.getAttribute('data-ils-fixed'));
+        const shekels = Number.isFinite(fixed) ? fixed : usd / (rates.USD || FALLBACK.USD);
+        el.textContent = fmt(shekels, { in: to, decimals });
+      });
     },
 
     /** Live rates. Resolves either way — a price list must not hang on a rate. */

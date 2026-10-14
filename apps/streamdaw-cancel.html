@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-product="streamdaw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancel a subscription | StreamDAW</title>
+<meta name="description" content="Cancel StreamDAW Pro Monthly: signed in, or with a link sent to your email. No fee; nothing more is charged.">
+<!-- The cancel page (2026-10-14, Consumer Protection Law §14ט: a plain way to cancel a subscription
+     made online, asking for no more than a name and an email). Linked from the site's home page,
+     the StreamDAW page's footer, the account page and every Pro Monthly email. js/streamdaw-cancel.js. -->
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://snowstar.company/apps/streamdaw-cancel.html">
+<link rel="icon" href="/apps/streamdaw-favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/apps/streamdaw-icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apps/streamdaw-apple-touch-icon.png">
+<meta name="theme-color" content="#efe9da">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/account.css?v=19">
+<link rel="stylesheet" href="../css/streamdaw.css?v=6">
+<style>
+  .cx-sum{margin:0 0 14px;font-size:16px}
+  .cx-choice{display:grid;gap:10px;margin:0 0 16px}
+  .cx-choice label{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line-2);border-radius:14px;background:var(--card);cursor:pointer;font-size:15px;line-height:1.45}
+  .cx-choice input{margin-top:3px}
+  .cx-done{font-size:17px}
+  .cx-he{direction:rtl;unicode-bidi:isolate}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="streamdaw.html" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW" width="149" height="15"></a>
+    <div class="nav-tools solo">
+      <a class="back" href="streamdaw.html">About StreamDAW</a>
+      <span class="nav-acct" data-account-mount></span>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="ul-main" id="cancel">
+  <div class="wrap">
+    <p class="kicker">StreamDAW Pro Monthly · <span class="cx-he" lang="he">ביטול מנוי</span></p>
+    <h1>Cancel a subscription.</h1>
+    <p class="ul-lead">Cancelling stops every further charge at once. There is no fee.</p>
+
+    <div class="panel" id="cxWait"><p>Checking…</p></div>
+
+    <!-- signed in, or a link from the email: the subscription and the two ways it can end -->
+    <div class="panel" id="cxSub" hidden>
+      <p class="cx-sum" id="cxSum"></p>
+      <div class="cx-choice" role="radiogroup" aria-label="How it ends">
+        <label><input type="radio" name="cxWhen" value="end" checked><span id="cxEnd">At the end of the month you paid for.</span></label>
+        <label><input type="radio" name="cxWhen" value="now"><span id="cxNow">Now: Pro ends today, and we refund the unused days.</span></label>
+      </div>
+      <div class="cta"><button class="btn ink" type="button" id="cxGo">Cancel Pro Monthly</button><a class="btn ghost" href="streamdaw.html">Keep it</a></div>
+      <p class="lmsg" id="cxMsg" role="status" aria-live="polite"></p>
+    </div>
+
+    <!-- signed out, no link: sign in, or have a link sent to the email it is under -->
+    <div class="panel" id="cxAnon" hidden>
+      <h2>Sign in, or get a link by email.</h2>
+      <p>Signed in, it takes two clicks. No password to hand? Type the email you subscribed with: we send a link that cancels it.</p>
+      <div class="cta"><button class="btn ink" type="button" id="cxSignin">Sign in</button></div>
+      <div class="field" style="margin-top:18px">
+        <label for="cxEmail">Email you subscribed with</label>
+        <input id="cxEmail" type="email" maxlength="254" autocomplete="email" placeholder="you@example.com">
+      </div>
+      <div class="cta"><button class="btn ghost" type="button" id="cxSend">Email me a cancel link</button></div>
+      <p class="lmsg" id="cxSent" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="panel" id="cxNone" hidden>
+      <h2>Nothing to cancel here.</h2>
+      <p id="cxNoneText">There is no running Pro Monthly on this account.</p>
+      <p>Subscribed with another email? Sign out from the account menu, top right, or <a href="#" id="cxUseEmail">get a link by email</a>.</p>
+    </div>
+
+    <div class="panel" id="cxDone" hidden>
+      <h2>Cancelled.</h2>
+      <p class="cx-done" id="cxDoneText"></p>
+      <p>A confirmation is on its way to your email. <a href="../account.html#apps">Your account</a></p>
+    </div>
+
+    <p class="ul-fine">You can also cancel by email to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a> (your name and the email you subscribed with are enough) or by registered mail to Ori Toledano, Snowstar.Company, 22 Eilat Street, Tel Aviv. We stop the charges within 3 business days and confirm by email. <a href="streamdaw-terms.html#monthly">Terms</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="StreamDAW">
+      <a href="streamdaw.html">StreamDAW</a>
+      <a href="streamdaw-terms.html">Licence terms</a>
+      <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+
+<script src="../js/money.js?v=4"></script>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=28"></script>
+<script src="../js/streamdaw-cancel.js?v=1"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>

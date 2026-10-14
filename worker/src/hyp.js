@@ -101,10 +101,12 @@ export function decodeValue(s) {
   } catch { return String(s); }
 }
 
-/** Parse a HYP response body: URL-encoded key=value pairs, cp1255-tolerant. */
+/** Parse a HYP response body: URL-encoded key=value pairs, cp1255-tolerant.
+ *  Trimmed first: HYP ends its answers with a newline ("CCode=200\n" in admin_log), so the last
+ *  value came back as "0\n", and a VERIFY answering CCode=0 would have read as a failure. */
 export function parseHyp(body) {
   const out = {};
-  for (const part of String(body).split('&')) {
+  for (const part of String(body).trim().split('&')) {
     if (!part) continue;
     const i = part.indexOf('=');
     const k = i < 0 ? part : part.slice(0, i);
@@ -181,11 +183,16 @@ export async function startCheckout(req, env, user) {
     Order: ref,                                      // comes back on the redirect
     UTF8: 'True',
     UTF8out: 'True',
-    /* Without this the redirect comes back carrying no Sign parameter, and
-       What=VERIFY has nothing to check — it answers CCode=200 and every real
-       payment is read as a failure. Two customers were charged and told
-       nothing had happened. */
-    signMe: '1',
+    /* Sign=True makes HYP put a `Sign` parameter on the redirect. Without it
+       What=VERIFY has nothing to check and answers CCode=200, "Missing one or
+       more parameters from the payment completion redirect"
+       (developers.hyp.co.il/pay/reference/actions, "Validate a transaction":
+       prerequisite "You must have included Sign=True in the initial APISign
+       request"). This used to send `signMe=1`, which is not a HYP parameter:
+       HYP signed it with the rest and ignored it, so no redirect ever carried
+       Sign and no payment ever verified (MUTRA-…-0025/0036/0041, then
+       StreamDAW SD-JQYOOWJOEP on 2026-10-14). */
+    Sign: 'True',
     MoreData: 'True',                                // makes HYP return Coin etc.
     // Buyers are agencies and producers; the catalogue and terms are in English,
     // so the card page should not switch language mid-purchase.
@@ -210,7 +217,7 @@ export async function startCheckout(req, env, user) {
   ).bind(ref, r.id, gross, now()).run().catch(() => {});
 
   /* What HYP signed, minus the credentials. Verification has been failing and
-     there was no way to tell whether signMe survived into the signed URL —
+     there was no way to tell whether Sign survived into the signed URL —
      which decides whether the fault is at this end or in how the return is
      checked. Keys only for anything sensitive; the point is which parameters
      exist, not their values. */
@@ -260,12 +267,27 @@ export async function verifyReturn(env, rawQuery) {
     + `&KEY=${encodeURIComponent(env.HYP_API_KEY)}`
     + `&PassP=${encodeURIComponent(env.HYP_PASSP)}`
     + `&${kept}`;
-  const res = await fetch(url);
-  const text = await res.text();
-  if (/^\s*</.test(text)) return { ok: false, error: 'hyp_system_error', raw: text.slice(0, 200) };
+  // Whether the redirect carried HYP's signature at all: without it VERIFY can only say CCode=200.
+  const signed = kept.split('&').some((kv) => kv.split('=')[0] === 'Sign');
+  /* `transient`: HYP did not answer (network, timeout, its HTML error page). Only then is asking
+     again worth it; a CCode is HYP's answer and asking again gets the same one. A throw here used
+     to escape into the return handler, after the card was charged. */
+  let text;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    text = await res.text();
+  } catch (e) {
+    return { ok: false, transient: true, error: 'hyp_unreachable', raw: String(e && e.message || e).slice(0, 200), sent: kept, signed };
+  }
+  if (/^\s*</.test(text) || !String(text).trim())
+    return { ok: false, transient: true, error: 'hyp_system_error', raw: String(text).slice(0, 200), sent: kept, signed };
   const d = parseHyp(text);
-  return { ok: d.CCode === '0', ccode: d.CCode, data: d, raw: text.slice(0, 400), sent: kept };
+  const ccode = String(d.CCode == null ? '' : d.CCode).trim();
+  return { ok: ccode === '0', ccode, data: d, raw: redactHyp(text).slice(0, 400), sent: kept, signed };
 }
+
+/** For logs: HYP's text with any credential blanked. */
+export const redactHyp = (s) => String(s || '').replace(/(KEY|PassP)=[^&]*/gi, '$1=***');
 
 /**
  * The buyer's browser lands here after paying.

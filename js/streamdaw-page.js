@@ -1,8 +1,10 @@
 /* ═══════════ StreamDAW sale page (apps/streamdaw.html) ══════════════════════
    1. the clips: hero, feature cards, stories (play on screen, pause off it)
    2. the feature rail's arrows, the burger menu, the drawn take on the review still
-   3. buying: coupons (typed or ?c=), the Mac from the app (?buy=1&machine=), checkout
-      through the shared sign-in, the return from the payment page (?bought / ?pay=)
+   3. buying: Pro (once) and Pro Monthly (2026-10-14; the 7-day pass is gone), coupons (typed or
+      ?c=, Pro only), the Mac from the app (?buy=1&machine=, &plan=monthly), checkout through the
+      shared sign-in, the return from the payment page (?bought / ?pay=), the month's price in
+      shekels from the Worker (/api/streamdaw/prices)
    4. an owner on this page: the header button and a line above the plans point to
       the unlock page (apps/streamdaw-unlock.html), where keys are requested now.
    5. the free download: a Snowstar account first (the shared sign-up), then the file, then
@@ -142,6 +144,40 @@
   // ── 3. buying ───────────────────────────────────────────────────────────
   // Checkout asks the Worker to sign a HYP pay page, then sends the buyer to it.
   let coupon = null; // {code, free, amount, label}
+  const escT = (t) => String(t == null ? '' : t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // Pro Monthly in shekels, as the Worker charges it today ($8.99 at the day's rate, fixed for a
+  // subscriber once they start): every "₪…" of the month, and its big price in shekels, show the
+  // server's own figure, never an agora off the card's.
+  let monthPrice = null;   // {amount (agorot), usdCents}
+  fetch('/api/streamdaw/prices', { credentials: 'omit' }).then((r) => (r.ok ? r.json() : null)).then((d) => {
+    if (!d || !d.monthly || !(d.monthly.amount > 0)) return;
+    monthPrice = d.monthly;
+    // Not taking monthly payments yet (HYP's card tokens not switched on): the card offers the
+    // free trial as its button, and says monthly billing opens soon.
+    if (d.monthly.open === false) {
+      const b = $('buyMonthly'), t = document.querySelector('#monthlyCard .trial-link');
+      if (b) b.hidden = true;
+      if (t) { t.className = 'btn ink'; t.textContent = 'Try Pro free for 7 days'; }
+      const n = document.createElement('p'); n.className = 'after'; n.textContent = 'Monthly billing opens in a few days. Start the free week now.';
+      if (t && t.parentNode) t.parentNode.insertBefore(n, t.nextSibling);
+    }
+    document.querySelectorAll('[data-usd="8.99"]').forEach((el) => el.setAttribute('data-ils-fixed', (d.monthly.amount / 100).toFixed(2)));
+    if (window.Money) window.Money.paint();
+  }).catch(() => {});
+  const monthBox = $('monthMsg');
+  function monthMsg(html, good) { if (!monthBox) return; monthBox.innerHTML = html; monthBox.className = 'msg ' + (good ? 'ok' : 'bad'); monthBox.hidden = false; }
+  // What the Worker says when a month cannot be started for this account (worker/src/streamdaw-subs.js).
+  function monthlyWhy(d) {
+    const manage = ' <a href="../account.html#apps">Your account</a>.';
+    if (!d || !d.error) return '';
+    if (d.error === 'already_subscribed') return 'You have Pro Monthly already: manage or cancel it in your account.' + manage;
+    if (d.error === 'resume_instead') return 'Your Pro Monthly is cancelled but runs until ' + escT(new Date(d.until * 1000).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }))
+      + (d.canResume ? ': resume it instead, nothing is charged before then.' : '.') + manage;
+    if (d.error === 'owns_pro') return 'You own StreamDAW Pro: there is nothing to subscribe to.';
+    if (d.error === 'monthly_not_ready') return 'Pro Monthly isn’t switched on yet. Nothing was charged.';
+    if (d.error === 'plan_retired') return escT(d.reason || 'That plan is no longer sold.');
+    return '';
+  }
   // No coupon field on the page (2026-10-13, Ori): a code arrives in a link (?c=, below) or is typed
   // behind the lightbox's "Have a code?". Either way it is checked here and shown on the Pro card.
   const cMsg = $('couponMsg');
@@ -175,7 +211,7 @@
   }
   function resetPrice() {
     bigPrice.innerHTML = '<span data-ils="249">' + ils(24900) + '</span><small>one payment · VAT included</small>'; stamp.textContent = 'StreamDAW Pro';
-    priceSub.textContent = 'No subscription. Every StreamDAW 1 update included.';
+    priceSub.innerHTML = '<b>One payment. Yours forever.</b> No subscription. Every StreamDAW 1 update included.';
     buyBtn.textContent = 'Get StreamDAW Pro';
   }
   // A coupon can arrive IN THE LINK (snowstar.company/apps/streamdaw.html?c=FRIEND100), so a
@@ -199,39 +235,46 @@
     if (MACHINE_RE.test(m)) { try { sessionStorage.setItem('sd_machine', m); } catch (e) {} }
     const mac = forMac(), box = $('forMac');
     if (mac && box) { box.textContent = 'For this Mac (' + mac + '): the key is made for it after you pay, and arrives by email.'; box.hidden = false; }
-    // ?buy=1 (the app's "Upgrade", or "7-day pass" with &plan=pass): the checkout lightbox opens
-    // on that plan by itself, with the page behind it at the price. Signed out, the lightbox asks
-    // for the sign-in on its own button rather than throwing the sign-up form at them on arrival.
-    if (q.get('buy') === '1') {
+    // ?buy=1 (the app's "Get Pro", or "Pro Monthly" with &plan=monthly): the checkout lightbox
+    // opens on that plan by itself, with the page behind it at the price. Signed out, the lightbox
+    // asks for the sign-in on its own button rather than throwing the sign-up form at them on arrival.
+    // &plan=pass is what apps up to 0.5.5 send for the 7-day pass, which is gone: the plans, with
+    // Pro Monthly ready to press, and nothing opened for them.
+    const asked = q.get('plan');
+    if (q.get('buy') === '1' && asked !== 'pass') {
       toPricing(300);
-      setTimeout(() => buy(q.get('plan') === 'pass' ? 'pass' : 'lifetime', { landing: true }), 450);
-    } else if (q.get('plan') === 'pass') {
-      // ?plan=pass alone: the pass line, ready to press.
-      setTimeout(() => { const p = document.querySelector('.pass-btn'); if (p) p.focus({ preventScroll: true }); }, 700);
+      setTimeout(() => buy(asked === 'monthly' ? 'monthly' : 'lifetime', { landing: true }), 450);
+    } else if (asked === 'monthly' || asked === 'pass') {
+      toPricing(300);
+      setTimeout(() => { const p = $('buyMonthly'); if (p) p.focus({ preventScroll: true }); }, 700);
     }
   })();
 
   // ── success (a free grant, or back from a paid HYP checkout) ──
   // The Pro card turns into the ticket, and the checkout lightbox shows the result (from the
   // full-page return, ?bought=1); `quiet` when the lightbox itself reported it.
-  function success(downloadUrl, free, pass, quiet) {
-    const t = $('ticket');
+  const planOf = (p) => (p === 'monthly' ? 'monthly' : 'lifetime');
+  function success(downloadUrl, free, plan, quiet) {
+    plan = planOf(plan);
+    const monthly = plan === 'monthly';
+    // The paid card turns into the ticket: Pro Monthly's or Pro's.
+    const t = monthly ? $('monthlyCard') : $('ticket');
     if (!quiet) {
       // The Pro list goes along before the card below is rewritten: the lightbox lists it too.
-      const features = t ? Array.from(t.querySelectorAll('.list li:not(.plus)'))
+      const pro = $('ticket');
+      const features = pro ? Array.from(pro.querySelectorAll('.list li:not(.plus)'))
         .map((li) => (li.firstChild && li.firstChild.nodeType === 3 ? li.firstChild.textContent : li.textContent).trim()).filter(Boolean) : null;
-      checkoutUI().then((ui) => { if (ui) ui.result({ bought: true, free: !!free, plan: pass ? 'pass' : 'lifetime', download: downloadUrl || null }, checkoutOpts(pass ? 'pass' : 'lifetime', { features })); });
+      checkoutUI().then((ui) => { if (ui) ui.result({ bought: true, free: !!free, plan, download: downloadUrl || null }, checkoutOpts(plan, { features })); });
     }
     if (!t) return;
-    const what = pass ? 'pass key' : 'Pro key';
     t.innerHTML = '<span class="tag lime">You’re in</span>'
-      + '<div class="price">' + (pass ? 'Pro for 7 days.' : 'Unlocked.') + '</div>'
+      + '<div class="price">' + (monthly ? 'Pro Monthly is on.' : 'Unlocked.') + '</div>'
       + '<p class="note">' + (free ? 'No charge. Enjoy.' : 'Payment received. Thank you.') + ' Your private download link is in your inbox too.'
-      + (forMac() ? ' The ' + what + ' for this Mac is being made and arrives by email: paste it into StreamDAW › Settings › Licence.' : ' Next, get the key for your Mac: it takes a minute.')
-      + (pass ? ' Buy Pro within 30 days and what you paid comes off.' : '') + '</p>'
+      + (forMac() ? ' The key for this Mac is being made and arrives by email: paste everything in its box into StreamDAW › Settings › Licence.' : ' Next, get the key for your Mac: it takes a minute.')
+      + (monthly ? ' It renews every month until you cancel in <a href="../account.html#apps">your account</a>.' : '') + '</p>'
       + '<div class="cta">'
       + (downloadUrl ? '<a class="btn lime" href="' + downloadUrl + '">Download StreamDAW</a>' : '')
-      + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your Mac</a>'
+      + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl && !monthly ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your Mac</a>'
       + '</div>'
       + '<p class="after">Signed in? It is in your Snowstar account too: download it again any time. '
       + 'macOS asks you to allow the installer once: <a href="streamdaw-install.html">how to install</a>.</p>';
@@ -246,7 +289,7 @@
   // What you get on the left, HYP's payment page in a frame on the right; the result comes back
   // into it. If its script cannot load, the whole tab goes to HYP as it always did.
   const CHECKOUT_JS = (function () {
-    try { return new URL('streamdaw-checkout.js?v=3', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=3'; }
+    try { return new URL('streamdaw-checkout.js?v=4', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=4'; }
   })();
   // THE SWITCH. false: every purchase goes to HYP's own page in this tab, as before, and `?lb=1`
   // turns the lightbox on for one tab, to test. true: the lightbox for everyone (`?lb=0` turns it
@@ -278,11 +321,11 @@
   if (LIGHTBOX) window.addEventListener('load', () => setTimeout(checkoutUI, 600));   // ready before the first click
   function checkoutOpts(plan, extra) {
     return Object.assign({
-      plan, machine: forMac(), signedIn,
+      plan, machine: forMac(), signedIn, monthly: monthPrice,
       coupon: plan === 'lifetime' && coupon ? coupon : null,
       signIn: (resume) => openAuth(plan, resume),
       onCoupon: (c) => { if (!c) { if (coupon) applyCoupon(''); return; } if (c.code && (!coupon || coupon.code !== c.code)) applyCoupon(c.code); },
-      onBought: (r) => success(r.download || null, !!r.free, r.plan === 'pass', true),
+      onBought: (r) => success(r.download || null, !!r.free, r.plan, true),
     }, extra || {});
   }
 
@@ -296,7 +339,7 @@
   const needsSignIn = (d) => !!d && (d.error === 'sign_in_required' || d.error === 'email_required');
 
   async function doCheckout(plan, o) {
-    plan = plan === 'pass' ? 'pass' : 'lifetime';
+    plan = planOf(plan);
     try { sessionStorage.setItem('sd_plan', plan); } catch (e) {}   // read back on a return from HYP's own page
     if (signedIn()) keepBuy(null);
     const ui = await checkoutUI();
@@ -309,10 +352,12 @@
       const r = await fetch('/api/streamdaw/checkout', { method: 'POST', headers: { 'content-type': 'application/json' },
         credentials: 'include', body: JSON.stringify({ plan, coupon: plan === 'lifetime' && coupon ? coupon.code : null, machine: forMac() }) });
       const d = await r.json();
-      if (d && d.free) { success(d.download, true, plan === 'pass'); toPricing(0); return; }
+      if (d && d.free) { success(d.download, true, plan); toPricing(0); return; }
       if (d && d.url) { location.href = d.url; return; }               // → HYP payment page
       if (needsSignIn(d)) { openAuth(plan); return; }                 // session lost: sign in again
       if (d && d.error === 'coupon') { showMsg(d.reason || 'That coupon can’t be used.', false); return; }
+      const why = monthlyWhy(d);
+      if (why) { monthMsg(why, false); toPricing(0); return; }
       alert(d && d.error === 'hyp_not_configured'
         ? 'Checkout isn’t switched on yet: the payment terminal still needs its keys.'
         : 'Could not start checkout' + (d && d.error ? ': ' + d.error : '') + '. Please try again.');
@@ -322,12 +367,12 @@
   function openAuth(plan, resume) {
     const open = window.SnowstarOpenAuth || window.MutraOpenAuth;
     if (!open) { alert('Sign-in is loading. One moment, then try again.'); return; }
-    keepBuy(plan === 'pass' ? 'pass' : 'lifetime'); keepFree(false);
+    keepBuy(planOf(plan)); keepFree(false);
     if (wishOff) { wishOff(); wishOff = null; }       // this press is the wish now
     // Resume the purchase after sign-in, once: the kept wish goes with it.
     if (window.SnowstarAuthResume) window.SnowstarAuthResume(() => { keepBuy(null); (resume || (() => doCheckout(plan)))(); });
-    open('signup', plan === 'pass'
-      ? 'A free Snowstar account first, then the 7-day pass. Your key and receipt go to its email.'
+    open('signup', planOf(plan) === 'monthly'
+      ? 'A free Snowstar account first, then Pro Monthly. Your key and receipts go to its email, and you cancel from it any time.'
       : 'A free Snowstar account first, then StreamDAW Pro. Your key and receipt go to its email.', 'app');
   }
   // The checkout lightbox, signed in or not: signed out, the shared sign-in opens over it at once
@@ -337,7 +382,11 @@
     await couponFromLink;                 // a ?c= code is checked before checkout starts
     return doCheckout(plan, { askSignIn: !(o && o.landing) });
   }
-  document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => { e.preventDefault(); buy(el.getAttribute('data-buy')); }));
+  document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (el.dataset.manage) { location.href = '../account.html#apps'; return; }   // a subscriber's "Manage subscription"
+    buy(el.getAttribute('data-buy'));
+  }));
 
   // Back from a Google sign-in (the page reloaded on the way): the purchase they pressed carries on.
   // Honoured only if the account is there on arrival or within 20 s (the sign-in's own code
@@ -365,19 +414,18 @@
     let top = null; try { top = window.parent !== window && window.parent.location.origin === location.origin ? window.parent : null; } catch (e) { top = null; }
     if (!top) return false;
     let plan = ''; try { plan = sessionStorage.getItem('sd_plan') || ''; } catch (e) {}
-    top.postMessage({ type: 'sd-checkout', bought: q.get('bought') === '1', ref: q.get('ref'), plan: plan === 'pass' ? 'pass' : 'lifetime',
+    top.postMessage({ type: 'sd-checkout', bought: q.get('bought') === '1', ref: q.get('ref'), plan: planOf(plan),
       pay: q.get('pay'), reason: q.get('reason') }, location.origin);
     document.documentElement.style.visibility = 'hidden';
     return true;
   })();
   const showResult = (r) => checkoutUI().then((ui) => { if (ui) ui.result(r, checkoutOpts(r.plan)); });
-  const lastPlan = () => { try { return sessionStorage.getItem('sd_plan') === 'pass' ? 'pass' : 'lifetime'; } catch (e) { return 'lifetime'; } };
+  const lastPlan = () => { try { return planOf(sessionStorage.getItem('sd_plan')); } catch (e) { return 'lifetime'; } };
   if (framedReturn) {
     /* the lightbox around this frame shows it */
   } else if (q.get('bought') === '1') {
     toPricing(0);
-    let plan = ''; try { plan = sessionStorage.getItem('sd_plan') || ''; } catch (e) {}
-    success(null, q.get('free') === '1', plan === 'pass');
+    success(null, q.get('free') === '1', lastPlan());
   } else if (q.get('pay') === 'failed' && cMsg) {
     showMsg(q.get('reason') === 'declined'
       ? 'The card was declined, so nothing went through. Try again, or use another card.'
@@ -412,7 +460,22 @@
         if (big) big.innerHTML = '<span data-ils="' + sh + '">' + ils(d.proPrice) + '</span><small>for you: your pass comes off · VAT included</small>';
         if (sub) sub.textContent = 'Was ' + ils(24900) + ', charged as ₪' + sh + ' incl. VAT. What you paid for your pass is taken off.';
       }
+      // Pro Monthly: a line above the plans, and its card's button manages it instead of selling it.
+      const sub = d && d.subscription;
+      if (sub && ['active', 'past_due', 'cancelled'].includes(sub.status)) {
+        const when = (t) => new Date(t * 1000).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+        const line = sub.status === 'active' ? 'You have StreamDAW Pro Monthly. It renews on ' + when(sub.renewsAt) + '.'
+          : sub.status === 'past_due' ? 'Your Pro Monthly payment didn’t go through: we try again on ' + when(sub.nextTryAt) + '.'
+          : 'Your Pro Monthly is cancelled: Pro until ' + when(sub.paidThrough) + '.';
+        const o = $('owned');
+        if (o) { o.innerHTML = escT(line) + ' <a href="../account.html#apps">Manage subscription</a> <a href="streamdaw-unlock.html">Unlock a Mac</a>'; o.hidden = false; }
+        const b = $('buyMonthly'); if (b) { b.textContent = 'Manage subscription'; b.dataset.manage = '1'; }
+        const cta = $('navCta');
+        if (cta && sub.status !== 'cancelled') { cta.href = 'streamdaw-unlock.html'; cta.removeAttribute('data-free-dl'); cta.innerHTML = 'Unlock<span class="long">a Mac</span>'; }
+        return;
+      }
       if (!d || !d.owned) return;
+      if (d.plan === 'lifetime') { const b = $('buyMonthly'); if (b) { b.disabled = true; b.textContent = 'You own Pro'; } }
       if (d.plan === 'pass') {                      // a pass: keep the buy buttons, say until when
         const o = $('owned');
         if (o) { o.innerHTML = 'You have a Pro pass until ' + new Date(d.expiresAt * 1000).toISOString().slice(0, 10) + '. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="/api/streamdaw/download">Download the installer</a>'; o.hidden = false; }

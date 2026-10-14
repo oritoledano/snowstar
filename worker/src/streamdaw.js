@@ -36,16 +36,19 @@ const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 day
 // ₪249 ≈ $69. Change here and on the buy page together.
 const PRICE_GROSS = 24900;
 
-// The 7-day Pro pass (2026-10-12, Ori: a middle tier that pushes buyers to Pro). Every Pro
-// feature for PASS_DAYS, no renewal; what was paid for passes in the PASS_CREDIT_DAYS before a
-// Pro purchase comes off Pro, so a pass is a step toward buying it once. Its key is format 3
-// (an end date the app enforces offline), which apps before PASS_MIN_APP refuse.
-const PASS_GROSS = 4900;
+// The 7-day Pro pass (2026-10-12) is RETIRED (2026-10-14, Ori): checkout refuses plan 'pass', and
+// Pro Monthly (streamdaw-subs.js) is the middle card now. What stays is only what passes already
+// sold are owed: a pass order paid after this change is still granted, its key still ends with it
+// (format 3), and what was paid for a pass in the PASS_CREDIT_DAYS before a Pro purchase still
+// comes off Pro, as its emails promised (nothing left to honour after 2026-11-13).
 const PASS_DAYS = 7;
 const PASS_CREDIT_DAYS = 30;
 const PASS_MIN_APP = '0.5.2';
 const isPass = (plan) => plan === 'pass';
+const isMonthly = (plan) => plan === 'monthly';
+const ends = (plan) => isPass(plan) || isMonthly(plan);       // a plan whose key has an end
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
+const subsMod = () => import('./streamdaw-subs.js');           // Pro Monthly (imports this file: no static cycle)
 
 /* Pass money paid by this buyer that a Pro purchase now may use: passes settled in the last
    PASS_CREDIT_DAYS and after their last Pro purchase (a credit is used once). */
@@ -72,6 +75,12 @@ const lc = (e) => (e || '').trim().toLowerCase();
 const validEmail = (e) => typeof e === 'string' && e.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
 const urlToken = (n = 32) => randB64(n).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const hypConfigured = (env) => !!(env.HYP_TERMINAL && env.HYP_API_KEY && env.HYP_PASSP);
+// HYP's text for a log: credentials blanked (HYP does not echo them; this is so it never can).
+const redactHyp = (s) => String(s || '').replace(/(KEY|PassP)=[^&]*/gi, '$1=***');
+// A row in admin_log. Never throws: a log that fails must not unwind a payment.
+const sdLog = (env, actor, action, subject, detail) => env.DB.prepare(
+  'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
+).bind(actor, action, subject, JSON.stringify(detail), now()).run().catch(() => null);
 
 // ── presence tokens (listener identity for the relay) ───────────────────────
 // A signed-in listener exchanges their Snowstar session for a short-lived
@@ -195,13 +204,15 @@ export async function streamdawCheckout(req, env) {
   const email = lc(user.email);
   if (!validEmail(email)) return json({ error: 'sign_in_required' }, 401);
 
-  // Pro (once) or the 7-day pass. A pass is never discounted; Pro takes the buyer's recent
-  // pass money off first, then a coupon on what is left.
-  const plan = isPass(body.plan) ? 'pass' : 'lifetime';
-  const credit = plan === 'pass' ? 0 : await passCredit(env, email);
-  let amount = plan === 'pass' ? PASS_GROSS : PRICE_GROSS - credit, couponCode = null;
+  // Pro (once), or Pro Monthly (streamdaw-subs.js). The 7-day pass is no longer sold. Pro takes
+  // the buyer's recent pass money off first (passes sold before 2026-10-14), then a coupon.
+  if (isPass(body.plan))
+    return json({ error: 'plan_retired', reason: 'The 7-day pass is no longer sold. Try Pro free for 7 days in the app, or take Pro Monthly.' }, 410);
+  if (isMonthly(body.plan)) return (await subsMod()).monthlyCheckout(env, user, body);
+  const plan = 'lifetime';
+  const credit = await passCredit(env, email);
+  let amount = PRICE_GROSS - credit, couponCode = null;
   if (body.coupon && String(body.coupon).trim()) {
-    if (plan === 'pass') return json({ error: 'coupon', reason: 'coupons are for StreamDAW Pro, not the 7-day pass' }, 400);
     // Coupon (optional). Invalid code entered → tell them, don't silently charge full.
     const c = await findSdawCoupon(env, body.coupon);
     const problem = couponProblem(c, amount);
@@ -228,32 +239,69 @@ export async function streamdawCheckout(req, env) {
     await emailReceipt(env, email, link, machine, { ref, amount: 0, coupon: couponCode, plan, credit, expiresAt: ent.expires_at }).catch(() => {});
     await env.DB.prepare('UPDATE streamdaw_orders SET entitlement_id = ?, settled_at = ? WHERE ref = ?')
       .bind(ent.id, now(), ref).run().catch(() => {});
+    await (await subsMod()).cancelForUpgrade(env, email, user.id).catch(() => {});   // Pro for good: a Pro Monthly stops
     return json({ ok: true, free: true, ref, download: link, redirect: `${SITE}/apps/streamdaw.html?bought=1&free=1` });
   }
 
   // ── paid (full price, or partially discounted): send to HYP ──
   if (!hypConfigured(env)) return json({ error: 'hyp_not_configured' }, 503);
-  const shekels = (amount / 100).toFixed(2);
   await insertOrder(env, { ref, userId: user.id, email, plan, amount, status: 'started', coupon: couponCode, machine, ownerName });
 
   // APISign — mirrors the music checkout's signing, including the gotchas the
-  // comments in hyp.js were written in blood for: signMe=1, and using HYP's
+  // comments in hyp.js were written in blood for: Sign=True, and using HYP's
   // response VERBATIM as the pay URL.
-  const p = new URLSearchParams({
-    action: 'APISign', What: 'SIGN',
-    Masof: env.HYP_TERMINAL, KEY: env.HYP_API_KEY, PassP: env.HYP_PASSP,
-    Amount: shekels, Coin: '1',
-    Info: `StreamDAW ${plan === 'pass' ? '7-day pass' : 'Pro'} ${ref}`, Order: ref,
-    UTF8: 'True', UTF8out: 'True', signMe: '1', MoreData: 'True',
-    PageLang: 'ENG', tmp: '1', ClientName: email, email,
-    SendHesh: 'True', Postpone: 'False', J5: 'False',
-  });
+  const p = payPageParams(env, { ref, amount, user, email, item: 'StreamDAW Pro (one payment)', info: `StreamDAW Pro ${ref}` });
   const res = await fetch(`${BASE}?${p.toString()}`);
   const text = await res.text();
   if (/^\s*</.test(text)) return json({ error: 'hyp_system_error' }, 502);
   const d = parseHyp(text);
   if (!d.signature) return json({ error: 'hyp_sign_failed', ccode: d.CCode || null }, 502);
+  // A page whose return cannot be verified is never handed out: HYP echoes what it signed, so a
+  // signed page without Sign=True would charge a card that nothing here could then confirm.
+  if (d.Sign !== 'True') {
+    await sdLog(env, 'system:hyp', 'sd.sign_unverifiable', ref, { hypReturned: redactHyp(text).slice(0, 900) });
+    return json({ error: 'hyp_sign_failed', reason: 'no_sign' }, 502);
+  }
   return json({ ok: true, url: `${BASE}?${text.trim()}`, ref, plan, amount_gross: amount, credit });
+}
+
+/* HYP's payment page, as both checkouts ask for it (Pro once here, Pro Monthly in
+   streamdaw-subs.js). The look, from developers.hyp.co.il/pay/common-use-cases/customizing-payment-page-design
+   (read 2026-10-14):
+   - Pritim=True + heshDesc: the page lists what is bought ([code~description~quantity~unit price],
+     the sum equal to Amount; no ~ [ ] in a description). The same lines go on HYP's invoice.
+   - PageLang=ENG: English, left to right; the Israeli ID field shows only for an Israeli card.
+   - tmp, the template (1–15; the docs show each):
+       1, 2  name, surname, phone, email, address, card; the cart on the left
+       3     name, surname, phone, email, card; the cart on the left
+       4     the cart on the left, the card only: no name fields   ← HYP_TEMPLATE
+       5     the card only, the business name and amount, no cart
+       6, 7  the card only, no amount (for a frame that says the rest itself)
+       8–15  the same layouts worded as donations ("donor"): not for a sale
+     4 is the cleanest with the cart: an account already knows the name and email, so they are
+     sent (ClientName, ClientLName, email) instead of asked for again. Ori can switch it here; the
+     names are sent whatever the template, so a template without name fields never errors.
+   - Apple Pay / Google Pay stay visible (no hideBtns). */
+const HYP_TEMPLATE = '4';
+function payPageParams(env, { ref, amount, user, email, item, info }) {
+  const shekels = (amount / 100).toFixed(2);
+  const words = String((user && user.name) || '').replace(/[~\[\]]/g, ' ').trim().split(/\s+/).filter(Boolean);
+  const first = (words[0] || lc(email).split('@')[0] || 'StreamDAW').slice(0, 40), last = words.slice(1).join(' ').slice(0, 60);
+  const p = new URLSearchParams({
+    action: 'APISign', What: 'SIGN',
+    Masof: env.HYP_TERMINAL, KEY: env.HYP_API_KEY, PassP: env.HYP_PASSP,
+    Amount: shekels, Coin: '1',
+    Info: info, Order: ref,
+    // Sign=True (not the old signMe=1, which HYP ignores): the redirect then carries Sign, which
+    // VERIFY needs (hyp.js, startCheckout).
+    UTF8: 'True', UTF8out: 'True', Sign: 'True', MoreData: 'True',
+    PageLang: 'ENG', tmp: HYP_TEMPLATE,
+    Pritim: 'True', heshDesc: `[0~${String(item).replace(/[~\[\]]/g, ' ')}~1~${shekels}]`,
+    ClientName: first, email,
+    SendHesh: 'True', Postpone: 'False', J5: 'False',
+  });
+  if (last) p.set('ClientLName', last);
+  return p;
 }
 
 // ── 2. The verified return (dispatched from hyp.js by the SD- prefix) ───────
@@ -309,7 +357,7 @@ export async function streamdawReturn(req, env, raw, q) {
     const okRef = /^SD-[A-Z0-9]{4,20}$/.test(ref) ? ref : null;   // the query is anyone's to type
     return checkoutFramePage({ type: 'sd-checkout', ref: okRef, ...msg }, dest);
   };
-  const planOf = (o) => (o && o.plan === 'pass' ? 'pass' : 'lifetime');
+  const planOf = (o) => (o && (o.plan === 'pass' || o.plan === 'monthly') ? o.plan : 'lifetime');
   const fail = (why, o) => back(`pay=failed&reason=${encodeURIComponent(why)}`, { bought: false, pay: 'failed', reason: why, plan: o ? planOf(o) : null });
   const bought = (o) => back(`bought=1&ref=${encodeURIComponent(ref)}`, { bought: true, plan: planOf(o) });
 
@@ -317,39 +365,166 @@ export async function streamdawReturn(req, env, raw, q) {
     await env.DB.prepare(`UPDATE streamdaw_orders SET status='declined' WHERE ref=?`).bind(ref).run().catch(() => {});
     return fail('declined');
   }
-  const v = await verifyReturn(env, raw);
   const order = await env.DB.prepare(`SELECT * FROM streamdaw_orders WHERE ref=?`).bind(ref).first();
   if (!order) return fail('unknown_ref');
-  if (order.status === 'granted') return bought(order);
+  // Granted, or being granted by a return a moment ago (the frame and a reload): nothing to ask.
+  if (order.status === 'granted' || order.status === 'granting') return bought(order);
+
+  // HYP is asked once more only when it did not answer at all (network, its HTML error page).
+  let v = await verifyReturn(env, raw);
+  if (!v.ok && v.transient) v = await verifyReturn(env, raw);
+  const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
+  const looksCharged = /^[0-9]{4,}$/.test(String(q.ACode || '')) && paid === order.amount;
+  const outcome = v.ok ? (paid !== order.amount ? 'amount_mismatch' : q.Coin && q.Coin !== '1' ? 'bad_currency' : 'verified')
+    : looksCharged ? 'charged_unverified' : 'verify_failed';
+  await logVerify(env, ref, raw, v, outcome);
 
   if (!v.ok) {
-    const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
-    const looksCharged = /^[0-9]{4,}$/.test(String(q.ACode || '')) && paid === order.amount;
     if (looksCharged) {
       await env.DB.prepare(`UPDATE streamdaw_orders SET status='charged_unverified', hyp_id=? WHERE ref=?`).bind(String(q.Id || ''), ref).run().catch(() => {});
       await sendMail(env, { to: env.ALERT_TO || 'oritoledano@gmail.com', subject: 'StreamDAW: card charged but not verified',
-        text: `Order ${ref}: HYP Id ${q.Id || ''}, auth ${q.ACode || ''}, ${q.Amount || ''} ILS.\nCharged but VERIFY did not confirm — entitlement NOT granted automatically. Reconcile in HYP.` }).catch(() => {});
+        text: `Order ${ref}: HYP Id ${q.Id || ''}, auth ${q.ACode || ''}, ${q.Amount || ''} ILS.\n`
+            + `Charged, but HYP's VERIFY did not confirm it (CCode ${v.ccode || v.error || '?'}${v.signed ? '' : ', the return carried no Sign'}), `
+            + `so nothing was granted yet.\n\nPress Reconcile on this order: ${SITE}/dashboard.html#streamdaw/sdaw/orders\n`
+            + `It asks HYP again when it can; otherwise it asks you to confirm the transaction in the HYP portal first.` }).catch(() => {});
       return back(`pay=confirming&ref=${encodeURIComponent(ref)}`, { bought: false, pay: 'confirming', plan: planOf(order) });
     }
     await env.DB.prepare(`UPDATE streamdaw_orders SET status='verify_failed', hyp_id=? WHERE ref=?`).bind(String(q.Id || ''), ref).run().catch(() => {});
     return fail('unverified', order);
   }
 
-  const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
   if (paid !== order.amount) return fail('amount_mismatch', order);
   if (q.Coin && q.Coin !== '1') return fail('bad_currency', order);
-
-  const plan = order.plan || 'lifetime';
-  const ent = await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: paid, plan, source: 'hyp' });
-  if (order.coupon) await burnSdawCoupon(env, order.coupon);
-  const link = await mintDownloadLink(env, ent.id, order.email);
-  if (order.machine_id)
-    await requestKey(env, { entId: ent.id, email: order.email, machine: order.machine_id, name: order.owner_name || order.email, via: 'checkout' }).catch(() => {});
-  await emailReceipt(env, order.email, link, order.machine_id || null,
-    { ref, amount: paid, coupon: order.coupon || null, plan, expiresAt: ent.expires_at }).catch(() => {});
-  await env.DB.prepare(`UPDATE streamdaw_orders SET status='granted', hyp_id=?, entitlement_id=?, settled_at=? WHERE ref=?`)
-    .bind(String(q.Id || ''), ent.id, now(), ref).run().catch(() => {});
+  try {
+    await fulfilPaid(env, order, q, 'hyp');
+  } catch {
+    // Verified and paid, and the grant broke: the honest answer is "being confirmed", and the owner hears.
+    await sendMail(env, { to: env.ALERT_TO || 'oritoledano@gmail.com', subject: 'StreamDAW: paid and verified, but the grant failed',
+      text: `Order ${ref}: HYP Id ${q.Id || ''}, ${q.Amount || ''} ILS. HYP verified it; granting then failed (admin_log sd.grant_failed).\n`
+          + `Press Reconcile on this order: ${SITE}/dashboard.html#streamdaw/sdaw/orders` }).catch(() => {});
+    return back(`pay=confirming&ref=${encodeURIComponent(ref)}`, { bought: false, pay: 'confirming', plan: planOf(order) });
+  }
   return bought(order);
+}
+
+/* Every StreamDAW return leaves HYP's VERIFY answer in admin_log ('sd.verify'): CCode, HYP's reply
+   (credentials blanked), whether the redirect carried Sign, and the names of what it carried.
+   SD-JQYOOWJOEP (2026-10-14) was charged, VERIFY said no, and nothing recorded why.
+   It also keeps the redirect itself (`ret`) until the order is granted: Reconcile sends it to
+   VERIFY again (HYP checks it only byte for byte), and fulfilPaid removes it once granted. */
+async function logVerify(env, ref, raw, v, outcome) {
+  const keys = String(raw || '').split('&').map((kv) => kv.split('=')[0]).filter(Boolean);
+  const detail = { outcome, ccode: v.ccode == null ? null : String(v.ccode), error: v.error || null,
+    reply: redactHyp(v.raw).slice(0, 300), signed: !!v.signed, keys };
+  if (raw.length <= 3000) detail.ret = raw;
+  await sdLog(env, 'system:hyp', 'sd.verify', ref, detail);
+}
+
+/** The redirect a failed return kept, newest first. */
+async function keptReturn(env, ref) {
+  const rows = (await env.DB.prepare(
+    `SELECT detail FROM admin_log WHERE action = 'sd.verify' AND subject = ? ORDER BY id DESC LIMIT 5`
+  ).bind(ref).all().catch(() => ({ results: [] }))).results || [];
+  for (const r of rows) { try { const d = JSON.parse(r.detail); if (d && d.ret) return d.ret; } catch { /* not ours */ } }
+  return null;
+}
+
+/* What a paid order gets, from a verified return or from Reconcile, the same either way: the
+   entitlement (Pro Monthly: its subscription first, streamdaw-subs.js), the coupon burnt, a
+   download link, the key request when the order came from the app, the receipt. The order is
+   claimed first ('granting', one UPDATE), so two at once (the frame and a reload, a return and
+   Reconcile) grant it once. */
+async function fulfilPaid(env, order, q, source) {
+  const ref = order.ref;
+  const claim = await env.DB.prepare(
+    `UPDATE streamdaw_orders SET status='granting' WHERE ref=? AND status NOT IN ('granted','granting')`
+  ).bind(ref).run();
+  if (!claim.meta || claim.meta.changes !== 1) return { already: true };
+  try {
+    const plan = order.plan || 'lifetime';
+    const subs = await subsMod();
+    const monthly = isMonthly(plan) ? await subs.monthlyGranted(env, order, q, ref) : null;
+    const ent = monthly ? monthly.ent : await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: order.amount, plan, source });
+    if (order.coupon) await burnSdawCoupon(env, order.coupon);
+    const link = await mintDownloadLink(env, ent.id, order.email);
+    if (order.machine_id)
+      await requestKey(env, { entId: ent.id, email: order.email, machine: order.machine_id, name: order.owner_name || order.email, via: 'checkout' }).catch(() => {});
+    if (monthly) await subs.mailWelcome(env, monthly.sub, { link, machine: order.machine_id || null, ref }).catch(() => {});
+    else await emailReceipt(env, order.email, link, order.machine_id || null,
+      { ref, amount: order.amount, coupon: order.coupon || null, plan, expiresAt: ent.expires_at }).catch(() => {});
+    // Granted from here on: the receipt has gone, so nothing below may send the order back.
+    await env.DB.prepare(`UPDATE streamdaw_orders SET status='granted', hyp_id=COALESCE(?, hyp_id), entitlement_id=?, settled_at=? WHERE ref=?`)
+      .bind(q && q.Id ? String(q.Id) : null, ent.id, now(), ref).run().catch(() => {});
+    // Settled: the kept redirect (card details, the buyer's ID) has done its job.
+    await env.DB.prepare(`UPDATE admin_log SET detail = json_remove(detail, '$.ret') WHERE action = 'sd.verify' AND subject = ?`)
+      .bind(ref).run().catch(() => {});
+    if (plan === 'lifetime') await subs.cancelForUpgrade(env, order.email, order.user_id).catch(() => {});   // Pro for good: a Pro Monthly stops
+    return { ok: true, ent };
+  } catch (e) {
+    // Paid and not granted: charged_unverified, which Reconcile finishes (the kept redirect, or the portal).
+    await env.DB.prepare(`UPDATE streamdaw_orders SET status='charged_unverified', hyp_id=COALESCE(hyp_id, ?) WHERE ref=? AND status='granting'`)
+      .bind(q && q.Id ? String(q.Id) : null, ref).run().catch(() => {});
+    await sdLog(env, 'system:hyp', 'sd.grant_failed', ref, { error: String(e && e.message || e).slice(0, 300), source });
+    throw e;
+  }
+}
+
+/**
+ * POST /streamdaw/reconcile {ref, hyp_id?, portal_checked?} — the owner, for an order that was
+ * charged and not verified (charged_unverified, verify_failed). Grants exactly as a verified
+ * return does, or not at all.
+ *
+ * 1. HYP's own answer when it can be asked: the redirect the return kept goes to What=VERIFY
+ *    again. Its CCode decides; when HYP says no, nothing here overrides it.
+ * 2. Hyp Pay has no API that looks a transaction up by Id or Order (its actions are APISign,
+ *    CancelTrans, commitTrans, getToken, HKStatus, payRequest, soft, zikoyAPI:
+ *    developers.hyp.co.il/pay/reference/actions). So for a return that carried no Sign (every
+ *    order signed before Sign=True, SD-JQYOOWJOEP among them) HYP's portal is the record: the
+ *    owner finds the transaction there and confirms with its Id, which must equal the Id the
+ *    return recorded, on an order whose amount and authorisation code already matched ours.
+ */
+export async function streamdawReconcile(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const ref = String(b.ref || '').trim();
+  if (!/^SD-[A-Z0-9]{4,20}$/.test(ref)) return json({ error: 'bad_ref' }, 400);
+  const order = await env.DB.prepare('SELECT * FROM streamdaw_orders WHERE ref = ?').bind(ref).first();
+  if (!order) return json({ error: 'not_found' }, 404);
+  if (order.status === 'granted') return json({ ok: true, already: true, ref, entitlement_id: order.entitlement_id || null });
+  if (order.status !== 'charged_unverified' && order.status !== 'verify_failed')
+    return json({ error: 'not_reconcilable', status: order.status }, 409);
+  const actor = `admin:${user.id || user.email || '?'}`;
+  const done = (out, via) => json({ ok: true, via, ref, already: !!out.already,
+    entitlement_id: out.ent ? out.ent.id : null });
+
+  const kept = await keptReturn(env, ref);
+  if (kept && kept.split('&').some((kv) => kv.split('=')[0] === 'Sign')) {
+    const q = parseHyp(kept);
+    const v = await verifyReturn(env, kept);
+    await sdLog(env, actor, 'sd.reconcile', ref, { via: 'verify', ccode: v.ccode == null ? null : String(v.ccode),
+      error: v.error || null, reply: redactHyp(v.raw).slice(0, 300) });
+    if (!v.ok) return json({ error: v.transient ? 'hyp_unreachable' : 'hyp_says_no', ccode: v.ccode || null }, v.transient ? 502 : 409);
+    const paid = Math.round(parseFloat(String(q.Amount || '0')) * 100);
+    if (String(q.Order || '') !== ref || q.CCode !== '0') return json({ error: 'not_this_order' }, 409);
+    if (paid !== order.amount) return json({ error: 'amount_mismatch', paid, expected: order.amount }, 409);
+    if (q.Coin && q.Coin !== '1') return json({ error: 'bad_currency' }, 409);
+    return done(await fulfilPaid(env, order, q, 'hyp'), 'verify');
+  }
+
+  // No signed redirect to show HYP: only an order whose return already looked charged (our amount,
+  // an authorisation code, HYP's transaction Id), confirmed by the owner in HYP's portal.
+  if (order.status !== 'charged_unverified' || !/^\d{1,20}$/.test(String(order.hyp_id || '')))
+    return json({ error: 'cannot_confirm', status: order.status }, 409);
+  const shekels = (order.amount / 100).toFixed(2);
+  if (b.portal_checked !== true || String(b.hyp_id || '').trim() !== String(order.hyp_id)) {
+    return json({ error: 'confirm_in_portal', ref, hyp_id: order.hyp_id, amount: order.amount,
+      says: `HYP cannot be asked about ${ref} by API: its return carried no signature, and Hyp Pay has no `
+          + `transaction lookup. In the HYP portal (Transactions), find transaction ${order.hyp_id}: `
+          + `it must show approved, ₪${shekels}, order ${ref}.` }, 409);
+  }
+  const out = await fulfilPaid(env, order, { Id: order.hyp_id, CCode: '0', Amount: shekels, Order: ref, Coin: '1' }, 'hyp-portal');
+  await sdLog(env, actor, 'sd.reconcile', ref, { via: 'portal', hyp_id: order.hyp_id, amount: order.amount, already: !!out.already });
+  return done(out, 'portal');
 }
 
 // ── 3. Download: serve the installer to an entitled buyer ──────────────────
@@ -438,10 +613,12 @@ export async function myStreamdaw(env, user) {
   ).bind(PRODUCT, user.id, lc(user.email), now()).first();
   // What Pro costs this buyer now: less what their recent passes paid (the page shows it).
   const proPrice = PRICE_GROSS - await passCredit(env, user.email);
-  if (!ent) return json({ owned: false, proPrice });
+  // Pro Monthly: its state (renews / cancelled / payment due), for the account page and the sale page.
+  const subscription = await (await subsMod()).subFor(env, user).catch(() => null);
+  if (!ent) return json({ owned: false, proPrice, subscription });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();
-  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice,
+  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice, subscription,
                 release: rel, download: `${SITE}/api/streamdaw/download` });
 }
 
@@ -552,7 +729,7 @@ function licenceMail({ title, intro, steps, key, footer, button }) {
    them (and the key request is then made the old way, on the page), so a deploy before
    the migration cannot break checkout. */
 async function insertOrder(env, { ref, userId, email, plan, amount, status, coupon, machine, ownerName }) {
-  plan = isPass(plan) ? 'pass' : 'lifetime';
+  plan = isPass(plan) || isMonthly(plan) ? plan : 'lifetime';
   try {
     await env.DB.prepare(
       `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, machine_id, owner_name, created_at)
@@ -580,11 +757,13 @@ async function requestKey(env, { entId, email, machine, name, via }) {
   ).bind(entId, machine).first();
   if (prior && prior.status === 'issued' && prior.key_text) return { status: 'issued', key: keyLines(prior.key_text) };
 
-  // A pass: its key ends when the pass does (seconds, as every table here; the minter turns it
-  // into the keygen's --expires in ms, and issueKey refuses a key whose end differs).
+  // A plan with an end (Pro Monthly; a pass sold before 2026-10-14): its key ends when the
+  // entitlement does (seconds, as every table here; the minter turns it into the keygen's
+  // --expires in ms, and issueKey refuses a key whose end differs). For Pro Monthly that is the
+  // paid month plus 3 days, moved on by each renewal (streamdaw-subs.js).
   const ent = await env.DB.prepare('SELECT plan, expires_at FROM entitlements WHERE id = ?').bind(entId).first().catch(() => null);
-  const expiresAt = ent && isPass(ent.plan) && ent.expires_at ? Number(ent.expires_at) : null;
-  if (ent && isPass(ent.plan) && (!expiresAt || expiresAt <= now())) return { status: 'expired' };
+  const expiresAt = ent && ends(ent.plan) && ent.expires_at ? Number(ent.expires_at) : null;
+  if (ent && ends(ent.plan) && (!expiresAt || expiresAt <= now())) return { status: 'expired' };
   try {
     await env.DB.prepare(
       `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at, expires_at)
@@ -639,7 +818,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
     try {
       await sendMail(env, {
         to: email,
-        subject: expiresAt ? 'We got your StreamDAW Pro pass request' : 'We got your StreamDAW key request',
+        subject: 'We got your StreamDAW key request',
         text: `${hi ? `Hi ${hi},\n\n` : ''}We got your request for a StreamDAW Pro key for this Mac:\n${machine}\n\n`
             + `What happens next:\n`
             + `1. We make your key, ${auto ? 'usually within minutes' : 'usually within a day'}.\n`
@@ -697,10 +876,17 @@ export async function streamdawActivationStatus(env, user) {
   if (!ent) return json({ owned: false });
 
   const rows = (await env.DB.prepare(
-    `SELECT machine_id, status, key_text, serial, requested_at, issued_at
+    `SELECT machine_id, status, key_text, serial, requested_at, issued_at, renew_code
        FROM streamdaw_activations WHERE entitlement_id = ? ORDER BY requested_at DESC LIMIT 10`
-  ).bind(ent.id).all()).results || [];
-  for (const r of rows) if (r.key_text) r.key_text = keyLines(r.key_text);
+  ).bind(ent.id).all().catch(() => env.DB.prepare(
+    `SELECT machine_id, status, key_text, serial, requested_at, issued_at
+       FROM streamdaw_activations WHERE entitlement_id = ? ORDER BY requested_at DESC LIMIT 10`).bind(ent.id).all())).results || [];
+  // A Pro Monthly key is shown with its Renewal line: copied together, the app renews it by itself.
+  for (const r of rows) {
+    if (r.key_text) r.key_text = withRenewal(keyLines(r.key_text), r.renew_code);
+    if (r.status === 'renewing') r.status = 'issued';           // the key it has still works; the next one is on its way
+    delete r.renew_code;
+  }
   return json({ owned: true, activations: rows });
 }
 
@@ -735,51 +921,67 @@ async function issueKey(env, row, key, onlyPending) {
   // format-2 key for this request's Mac with a good signature: storing anything else would tell
   // the buyer their licence is ready when it is not. The serial is read from the signed payload.
   const hex = keyHex(key);
-  const checked = await checkKey(hex, row.machine_id, row.expires_at);   // a pass row carries its end
+  const checked = await checkKey(hex, row.machine_id, row.expires_at);   // a row with an end carries it
   if (checked.error) return { error: checked.error };
   const lines = keyLines(hex);
   const serial = checked.serial;
+  const ent = await env.DB.prepare('SELECT plan FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
+  const monthly = !!ent && isMonthly(ent.plan);
+  // Pro Monthly: the renewal code goes out with the first key and stays the same after (the app
+  // keeps it, and fetches every later key with it).
+  const code = monthly ? (row.renew_code || (await subsMod()).newRenewCode()) : null;
+  const renewal = row.status === 'renewing';
   const res = await env.DB.prepare(
-    "UPDATE streamdaw_activations SET status = 'issued', key_text = ?, serial = ?, issued_at = ? WHERE id = ?"
-    + (onlyPending ? " AND status = 'pending'" : '')
-  ).bind(lines, serial, now(), row.id).run();
+    "UPDATE streamdaw_activations SET status = 'issued', key_text = ?, serial = ?, issued_at = ?" + (monthly ? ', renew_code = ?' : '') + ' WHERE id = ?'
+    + (onlyPending ? " AND status IN ('pending','renewing')" : '')
+  ).bind(...[lines, serial, now(), ...(monthly ? [code] : []), row.id]).run();
   if (onlyPending && !(res.meta && res.meta.changes)) return { error: 'not pending any more', code: 409 };
+  // A month renewed: the app picks the key up by itself, and the month's receipt already went out.
+  if (monthly && renewal && row.renew_code) return { ok: true, quiet: true };
 
   const hi = firstName(row.owner_name);
-  const n = lines.split('\n').length;
-  // A pass: says until when, and needs the app that reads format-3 keys.
+  const box = withRenewal(lines, code);
+  const n = box.split('\n').filter(Boolean).length;
   const until = row.expires_at ? dayOf(row.expires_at) : '';
-  const what = until ? `StreamDAW Pro pass key (until ${until})` : 'StreamDAW Pro key';
+  const subs = monthly ? await subsMod() : null;
+  const what = monthly ? 'StreamDAW Pro Monthly key' : until ? `StreamDAW Pro key (until ${until})` : 'StreamDAW Pro key';
   const minApp = until ? PASS_MIN_APP : MIN_APP;
+  const copy = monthly ? `Copy everything in the box below (all ${n} lines: the key and its Renewal line) and paste it into the box.`
+                       : `Copy the key below (all ${n} lines) and paste it into the box.`;
+  const renewText = monthly ? `Pro Monthly: this key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
+    : until ? `Every Pro feature until ${until}; then StreamDAW goes back to Free.\n` : '';
+  const renewHtml = monthly ? `This key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
+    : until ? `After ${until} StreamDAW goes back to Free.<br>` : '';
   try {
     await sendMail(env, {
       to: row.email,
-      subject: until ? `Your StreamDAW Pro pass key, until ${until}` : 'Your StreamDAW Pro key',
+      subject: monthly ? 'Your StreamDAW Pro Monthly key' : until ? `Your StreamDAW Pro key, until ${until}` : 'Your StreamDAW Pro key',
       text: `${hi ? `Hi ${hi}, your` : 'Your'} ${what} is ready.\n\n`
           + `1. Open StreamDAW › Settings › Licence.\n`
-          + `2. Copy the key below (all ${n} lines) and paste it into the box.\n`
+          + `2. ${copy}\n`
           + `3. Press Unlock.\n\n`
-          + `${lines}\n\n`
+          + `${box}\n\n`
           + `Registered to: ${row.owner_name || row.email} · ${row.email}\n`
           + (serial ? `Serial: ${serial}\n` : '')
           + `Works on this Mac only: ${row.machine_id}\n`
-          + (until ? `Every Pro feature until ${until}; then StreamDAW goes back to Free. Buy Pro within ${PASS_CREDIT_DAYS} days of the pass and what you paid for it comes off: ${SITE}/apps/streamdaw.html#pricing\n` : '')
+          + renewText
           + `Needs StreamDAW ${minApp} or newer. Older copy? Download the latest from your account first: ${ACCOUNT_URL}\n`
           + `Another Mac? Get a key for it here: ${UNLOCK_URL}\n`
           + `Keep this email: it is your licence. Lost it? The same page shows your keys when you sign in.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
       html: licenceMail({
-        title: until ? 'Your StreamDAW Pro pass' : 'Your StreamDAW Pro key',
+        title: monthly ? 'Your Pro Monthly key' : 'Your StreamDAW Pro key',
         intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready${until ? `: every Pro feature until <b>${until}</b>` : ''}.`,
         steps: [
           'Open <b>StreamDAW › Settings › Licence</b>.',
-          `Copy the key below (all ${n} lines) and paste it into the box.`,
+          monthly ? `Copy everything in the box below (all ${n} lines: the key <b>and its Renewal line</b>) and paste it into the box.`
+                  : `Copy the key below (all ${n} lines) and paste it into the box.`,
           'Press <b>Unlock</b>.',
         ],
-        key: lines,
+        key: box,
         footer: `Registered to <b>${escHtml(row.owner_name || row.email)}</b> · ${escHtml(row.email)}<br>`
           + (serial ? `Serial <code>${escHtml(serial)}</code><br>` : '')
           + `Works on this Mac only: <code>${escHtml(row.machine_id)}</code><br>`
-          + (until ? `After ${until} StreamDAW goes back to Free. Buy Pro within ${PASS_CREDIT_DAYS} days of the pass and what you paid comes off: <a href="${SITE}/apps/streamdaw.html#pricing">get Pro</a>.<br>` : '')
+          + renewHtml
           + `Needs StreamDAW ${minApp} or newer. Older copy? <a href="${ACCOUNT_URL}">Download the latest</a> from your account first.<br>`
           + `Another Mac? <a href="${UNLOCK_URL}">Get a key for it</a>.<br>`
           + `Keep this email: it is your licence. Lost it? <a href="${UNLOCK_URL}">Sign in</a> to see your keys.`,
@@ -788,6 +990,11 @@ async function issueKey(env, row, key, onlyPending) {
   } catch {}
   return { ok: true };
 }
+
+/* A Pro Monthly key as it is shown and pasted: the key, then its Renewal line. The line starts
+   with a letter that is not hex ("R"), so every app version's paste cleaning (the longest stretch
+   of hex) still finds the key alone; 0.5.6 on also keeps the code. */
+const withRenewal = (lines, code) => (code ? `${lines}\n\nRenewal: ${code}` : lines);
 
 // ── the minter: keys made on the owner's Mac, within a minute ─────────────
 //
@@ -807,15 +1014,18 @@ function minterAuthorised(req, env) {
   return want.length >= 32 && safeEqual(got, want);
 }
 
-/** GET /streamdaw/minter/pending — the requests the minter may sign now. */
+/** GET /streamdaw/minter/pending — the requests the minter may sign now: a buyer's first
+ *  AUTO_MACS Macs, and every Pro Monthly key that a paid renewal moved on ('renewing': a Mac
+ *  that already had a key, so no new Mac and no owner to ask). */
 export async function streamdawMinterPending(req, env) {
   if (!minterAuthorised(req, env)) return json({ error: 'forbidden' }, 403);
   const rows = (await env.DB.prepare(
     `SELECT a.id, a.email, a.machine_id, a.owner_name, a.expires_at
        FROM streamdaw_activations a
-      WHERE a.status = 'pending'
-        AND (SELECT COUNT(*) FROM streamdaw_activations b
-              WHERE b.entitlement_id = a.entitlement_id AND b.status = 'issued') < ?
+      WHERE a.status = 'renewing'
+         OR (a.status = 'pending'
+             AND (SELECT COUNT(*) FROM streamdaw_activations b
+                   WHERE b.entitlement_id = a.entitlement_id AND b.status IN ('issued','renewing')) < ?)
       ORDER BY a.requested_at ASC LIMIT 20`
   ).bind(AUTO_MACS).all()).results || [];
   return json({ requests: rows });
@@ -908,11 +1118,13 @@ export async function streamdawReports(req, env, user) {
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
-async function grantEntitlement(env, { email, ext_ref, amount, plan, source }) {
+async function grantEntitlement(env, { email, ext_ref, amount, plan, source, expiresAt }) {
   const existing = await env.DB.prepare('SELECT * FROM entitlements WHERE ext_ref = ?').bind(ext_ref).first();
   if (existing) return existing;
   const u = await env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(lc(email)).first();
-  const expiresAt = isPass(plan) ? now() + PASS_DAYS * 86400 : null;   // a pass ends; Pro does not
+  // Pro does not end. Pro Monthly ends with its key (the caller says when); a pass sold before
+  // 2026-10-14 ends 7 days after its payment.
+  if (expiresAt == null) expiresAt = isPass(plan) ? now() + PASS_DAYS * 86400 : null;
   const ins = await env.DB.prepare(
     `INSERT INTO entitlements (user_id, email, product, plan, status, source, ext_ref, amount, currency, created_at, expires_at)
      VALUES (?, ?, ?, ?, 'active', ?, ?, ?, 'ILS', ?, ?)`
@@ -934,24 +1146,25 @@ function emailReceipt(env, to, link, machine, order) {
   const o = order || {};
   const pass = isPass(o.plan);
   const until = pass && o.expiresAt ? dayOf(o.expiresAt) : '';
-  const subject = pass ? 'Your StreamDAW 7-day pass: receipt and download' : 'Your StreamDAW Pro receipt and download';
+  // Only a pass ordered before 2026-10-14 and paid after it can still land here: a plain receipt.
+  const subject = pass ? 'Your StreamDAW Pro (7 days): receipt and download' : 'Your StreamDAW Pro receipt and download';
   const soon = env.MINTER_TOKEN ? 'usually within minutes' : 'usually within a day';
   const paid = typeof o.amount === 'number' ? (o.amount > 0 ? `₪${(o.amount / 100).toFixed(2)}` : (o.credit ? 'nothing more (your pass covered it)' : 'free (coupon)')) : '';
   const when = new Date().toISOString().slice(0, 10);
   const lines = [
     o.ref ? `Order: ${o.ref}` : '',
-    pass ? `Product: StreamDAW Pro 7-day pass, every Pro feature until ${until}, no renewal`
+    pass ? `Product: StreamDAW Pro for 7 days, every Pro feature until ${until}, no renewal`
          : `Product: StreamDAW Pro, one payment, every StreamDAW 1 update included`,
     paid ? `Paid: ${paid}${o.coupon ? ` (coupon ${o.coupon})` : ''}${o.credit ? ` (₪${(o.credit / 100).toFixed(2)} from your pass taken off)` : ''}` : '',
     `Date: ${when}`,
   ].filter(Boolean);
-  const keyWord = pass ? 'pass key' : 'Pro key';
+  const keyWord = 'Pro key';
   const keyLine = machine
     ? `Your ${keyWord} for this Mac (${machine}) is being made now. It arrives in a second email, ${soon}: paste it into StreamDAW › Settings › Licence and press Unlock.`
     : `Get your ${keyWord} for each Mac you use on ${UNLOCK_URL} (sign in with this email).`;
-  const upgrade = pass ? `Want to keep Pro? Buy it within ${PASS_CREDIT_DAYS} days and what you paid for this pass comes off: ${SITE}/apps/streamdaw.html#pricing` : '';
+  const upgrade = '';
   const text =
-`Thanks for getting ${pass ? 'a StreamDAW Pro 7-day pass' : 'StreamDAW Pro'}.
+`Thanks for getting ${pass ? 'StreamDAW Pro for 7 days' : 'StreamDAW Pro'}.
 
 ${lines.join('\n')}
 
@@ -967,7 +1180,7 @@ ${mailLinksText()}
 — Snowstar.Company`;
   const html = licenceMail({
     title: pass ? `StreamDAW Pro until ${until}` : 'Welcome to StreamDAW Pro',
-    intro: pass ? `Thanks for getting a 7-day pass: every Pro feature until <b>${until}</b>. Your download is below; your key follows.`
+    intro: pass ? `Thanks: every Pro feature until <b>${until}</b>. Your download is below; your key follows.`
                 : 'Thanks for getting StreamDAW Pro. Your download is below; your key follows.',
     steps: [
       'Download StreamDAW and install the .pkg.',
@@ -975,8 +1188,7 @@ ${mailLinksText()}
       'Open your DAW, put StreamDAW on the master bus, press <b>GO LIVE</b>.',
     ],
     button: { href: link, label: 'Download StreamDAW' },
-    footer: lines.map(escHtml).join('<br>') + '<br>The download link is private to you and good for 7 days; after that, download from <a href="' + ACCOUNT_URL + '">your account</a>.'
-      + (pass ? `<br>Want to keep Pro? <a href="${SITE}/apps/streamdaw.html#pricing">Buy it within ${PASS_CREDIT_DAYS} days</a> and what you paid for this pass comes off.` : ''),
+    footer: lines.map(escHtml).join('<br>') + '<br>The download link is private to you and good for 7 days; after that, download from <a href="' + ACCOUNT_URL + '">your account</a>.',
   });
   return sendMail(env, { to, subject, text, html });
 }
@@ -1044,11 +1256,17 @@ export async function streamdawAdmin(env, user) {
     orders, entitlements, coupons, releases, stats,
     /* Licence keys waiting to be minted. Oldest first: these are people who have
        paid and cannot use what they bought until someone runs the keygen. */
-    activations: await soft(
+    activations: (await soft(
       `SELECT a.id, a.email, a.machine_id, a.owner_name, a.status, a.serial,
-              a.requested_at, a.issued_at
+              a.requested_at, a.issued_at, a.expires_at
          FROM streamdaw_activations a
-        ORDER BY (a.status = 'pending') DESC, a.requested_at ASC LIMIT 100`),
+        ORDER BY (a.status IN ('pending','renewing')) DESC, a.requested_at ASC LIMIT 100`))
+      // The command for "by hand", the same as the [Admin] email's: the v2 pair, and the end a key
+      // must carry (Pro Monthly, a pass), which the Worker checks before emailing it.
+      .map((a) => ({ ...a, mint: mintCommand({ name: a.owner_name || a.email, email: a.email, machine: a.machine_id, expiresAt: a.expires_at }) })),
+
+    /* Pro Monthly: every subscription, its charges, MRR, charges HYP never answered, refunds owed. */
+    ...(await (await subsMod()).subsAdmin(env).catch(() => ({}))),
 
     /* The one blocking fact, stated rather than implied. */
     blocked: releases.some((r) => r.is_latest)
@@ -1286,3 +1504,8 @@ export async function streamdawLiveCleanup(env) {
   await env.DB.prepare('DELETE FROM streamdaw_live WHERE updated_at < ?').bind(now() - LIVE_KEEP_DAYS * 86400).run();
   await env.DB.prepare("DELETE FROM attempts WHERE bucket LIKE 'sdlive%' AND reset_at < ?").bind(now()).run();
 }
+
+// For streamdaw-subs.js (Pro Monthly), which builds on the same orders, keys and emails.
+export { licenceMail, mailLinksText, escHtml, firstName, grantEntitlement, mintDownloadLink, requestKey, insertOrder,
+         keyHex, keyLines, normMachine, hypConfigured, liveThrottle, payPageParams,
+         SITE, ACCOUNT_URL, UNLOCK_URL, TERMS_URL, HELP_MAIL, BASE as HYP_PAGE, PRICE_GROSS, MIN_APP };

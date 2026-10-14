@@ -76,7 +76,9 @@
       downloads: (dl && (dl.downloads || dl.items)) || [],
       uploads: (up && up.uploads) || [],
       isArtist: !!(up && (up.artist || (up.uploads || []).length)),
-      apps: apps && apps.owned ? apps : null,
+      // Pro Monthly counts too, also once it is cancelled or its payment failed: that is where it is
+      // managed (the sale page, the emails and the app all link to #apps).
+      apps: apps && (apps.owned || apps.subscription) ? apps : null,
     };
   }
 
@@ -193,8 +195,51 @@
       </div></div>`;
   }
 
+  /* StreamDAW Pro Monthly (2026-10-14): what it costs, when it renews, the card, every receipt, and
+     cancelling in two clicks. The person chooses how it ends (Consumer Protection Law §13ד: unless
+     they name a later date, a cancellation takes effect within days): Pro to the end of the month
+     paid for, or now with the unused days refunded. Either way nothing more is charged. */
+  function subBlock(s) {
+    const amt = ils(s.amount);
+    const head = s.status === 'active' ? `${amt} a month · renews on <b>${day(s.renewsAt)}</b>`
+      : s.status === 'past_due' ? `the last payment didn’t go through · we try again on <b>${day(s.nextTryAt)}</b>`
+      : s.status === 'cancelled' ? `cancelled on ${day(s.cancelledAt)} · ${s.cancelWhen === 'now' ? 'ended' : `Pro until <b>${day(s.paidThrough)}</b>`}`
+      : 'ended';
+    const live = s.status === 'active' || s.status === 'past_due';
+    const receipts = (s.charges || []).map((c) => `<tr><td>${day(c.at)}</td><td>${c.status === 'paid' ? ils(c.amount) : 'declined'}</td>
+      <td>${c.from ? `${day(c.from)} – ${day(c.to)}` : ''}</td><td><code>${esc(c.ref)}</code></td></tr>`).join('');
+    return `<div class="sd-sub" style="border:1px solid var(--line,rgba(0,0,0,.15));border-radius:14px;padding:16px 18px;margin:0 0 18px">
+      <p style="margin:0 0 6px"><b>StreamDAW Pro Monthly</b> · ${head}</p>
+      <p class="ac-note" style="margin:0 0 10px">${ils(s.amount)} a month incl. VAT, the same every month${s.cardLast4 ? ` · card ending ${esc(s.cardLast4)}` : ''}.
+        ${s.refundDue ? ` Refund of ${ils(s.refundDue)} for the unused days: ${s.refundStatus === 'refunded' ? 'done' : 'on its way (within 14 days)'}.` : ''}</p>
+      <div class="ac-acts" style="justify-content:flex-start">
+        ${live ? '<button class="mbtn mbtn-ghost" id="sdCancel">Cancel subscription</button>' : ''}
+        ${s.status === 'past_due' ? '<a class="mbtn mbtn-solid" href="/apps/streamdaw.html?buy=1&plan=monthly#pricing">Use another card</a>' : ''}
+        ${s.canResume ? '<button class="mbtn mbtn-solid" id="sdResume">Resume Pro Monthly</button>' : ''}
+        ${s.status === 'ended' || (s.status === 'cancelled' && !s.canResume) ? '<a class="mbtn mbtn-solid" href="/apps/streamdaw.html?plan=monthly#pricing">Start Pro Monthly again</a>' : ''}
+      </div>
+      <div id="sdCancelBox" hidden style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line,rgba(0,0,0,.15))">
+        <p style="margin:0 0 8px"><b>Cancel Pro Monthly?</b> Nothing more will be charged. You choose how it ends:</p>
+        <label style="display:block;margin:0 0 6px"><input type="radio" name="sdWhen" value="end" checked>
+          At the end of the month you paid for: Pro stays on until <b>${day(s.paidThrough)}</b>.</label>
+        <label style="display:block;margin:0 0 10px"><input type="radio" name="sdWhen" value="now">
+          Now: Pro ends today${s.refundIfNow ? `, and we refund <b>${ils(s.refundIfNow)}</b> for the unused days within 14 days` : ''}.</label>
+        <div class="ac-acts" style="justify-content:flex-start">
+          <button class="mbtn mbtn-solid" id="sdCancelGo">Cancel subscription</button>
+          <button class="mbtn mbtn-ghost" id="sdCancelKeep">Keep Pro Monthly</button>
+        </div>
+        <p class="ac-note" id="sdCancelSaid" style="margin-top:8px"></p>
+      </div>
+      ${receipts ? `<details style="margin-top:12px"><summary>Receipts (${(s.charges || []).length})</summary>
+        <table style="width:100%;margin-top:8px;font-size:14px;border-collapse:collapse">${receipts}</table>
+        <p class="ac-note">HYP emails the tax receipt for each charge.</p></details>` : ''}
+    </div>`;
+  }
+
   function apps() {
+    const s = data.apps && data.apps.subscription;
     return `<div class="ac-panel"><h2>StreamDAW</h2>
+      ${s ? subBlock(s) : ''}
       <p class="ac-note">Your Pro licence is kept with this account. Each Mac gets its own key:
         request one for a new Mac on the unlock page.</p>
       <div class="ac-acts" style="justify-content:flex-start">
@@ -213,9 +258,30 @@
     </div>`;
   }
 
+  function wireApps() {
+    const box = document.getElementById('sdCancelBox'), said = document.getElementById('sdCancelSaid');
+    const open = document.getElementById('sdCancel'), keep = document.getElementById('sdCancelKeep'), go = document.getElementById('sdCancelGo');
+    const resume = document.getElementById('sdResume');
+    if (open) open.addEventListener('click', () => { box.hidden = false; open.hidden = true; });
+    if (keep) keep.addEventListener('click', () => { box.hidden = true; if (open) open.hidden = false; });
+    if (go) go.addEventListener('click', async () => {
+      const when = (root.querySelector('input[name="sdWhen"]:checked') || {}).value === 'now' ? 'now' : 'end';
+      go.disabled = true; said.textContent = 'Cancelling…';
+      const r = await post('/streamdaw/subscription/cancel', { when });
+      if (r && r.ok) { data.apps.subscription = r.subscription; render(); }
+      else { go.disabled = false; said.textContent = 'That didn’t go through. Try again, or write to hello@snowstar.company: we cancel within 3 business days and confirm by email.'; }
+    });
+    if (resume) resume.addEventListener('click', async () => {
+      resume.disabled = true;
+      const r = await post('/streamdaw/subscription/resume', {});
+      if (r && r.ok) { data.apps.subscription = r.subscription; render(); } else resume.disabled = false;
+    });
+  }
+
   function render() {
     const body = { licences, messages, downloads, artist, apps, profile }[tab] || licences;
     shell(body());
+    if (tab === 'apps') wireApps();
     if (tab === 'messages') {
       root.querySelectorAll('.ac-msg').forEach((el) => el.addEventListener('click', async () => {
         const wasUnread = el.classList.contains('unread');

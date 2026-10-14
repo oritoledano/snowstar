@@ -138,6 +138,10 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .hero h1 .nb{white-space:nowrap}
 .hero .lead{font-size:clamp(18px,1.7vw,22px);line-height:1.5;color:var(--ink-2);max-width:31em;margin:26px auto 0}
 .hero .cta{justify-content:center;margin:34px 0 14px}
+/* The app icon beside the kicker (2026-10-14): small, the squircle fills the PNG. */
+.hero-kicker{display:flex;align-items:center;justify-content:center;gap:10px}
+.hero-kicker .app-ic{flex:none;width:26px;height:26px;filter:drop-shadow(0 3px 5px rgba(23,20,13,.28))}
+@media (max-width:560px){.hero-kicker{flex-direction:column;gap:12px}.hero-kicker .app-ic{width:34px;height:34px}}
 .hero-reel{margin-top:clamp(48px,6vw,84px);box-shadow:var(--lift)}
 /* "Tested in" names only what sessions have run in; the AU/VST3 hosts follow, quieter. */
 .works{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:center;font-size:14px;color:var(--muted);margin-top:clamp(28px,3vw,40px)}
@@ -260,17 +264,24 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .plan .btn{margin-top:auto;align-self:flex-start}
 .plan .after{margin-top:14px;font-size:13px;color:rgba(239,233,218,.66)}
 .plan .after a{text-decoration:underline}
-/* the 7-day pass: one row under the plans, the width of both, quieter than either card */
-.pass-strip{max-width:1040px;margin:20px auto 0;display:flex;align-items:center;justify-content:space-between;gap:16px 32px;flex-wrap:wrap;
-  padding:20px clamp(22px,3vw,34px);border:1.5px dashed var(--line-2);border-radius:22px;background:transparent}
-.pass-copy{display:grid;gap:6px;flex:1 1 420px;min-width:0}
-.pass-copy .tag{justify-self:start;margin-bottom:4px}
-.pass-q{font:600 clamp(18px,1.6vw,21px)/1.25 var(--serif);color:var(--ink)}
-.pass-fine{font-size:14px;line-height:1.5;color:var(--muted);max-width:44em}
-.pass-buy{display:flex;align-items:center;gap:18px;flex:none}
-.pass-price{font:600 32px/1 var(--serif);letter-spacing:-.02em;color:var(--ink);display:flex;align-items:baseline;gap:6px}
-.pass-price small{font:500 13px var(--sans);letter-spacing:0;color:var(--muted)}
-.pass-strip .btn{height:44px}
+/* Three cards (2026-10-14): Free, Pro Monthly (the "7-day free trial" badge sits on its frame and
+   is the free download), Pro once (the dark one). */
+.plans.three{grid-template-columns:repeat(3,minmax(0,1fr));max-width:1180px;gap:30px 18px}
+.plan.monthly{position:relative;border:2px solid var(--ink);background:var(--card)}
+.frame-badge{position:absolute;top:0;left:50%;transform:translate(-50%,-50%);white-space:nowrap;display:inline-flex;align-items:center;
+  padding:8px 15px;border-radius:999px;background:var(--lime);color:var(--lime-ink);border:2px solid var(--ink);
+  font:700 12px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;box-shadow:0 8px 18px -10px rgba(23,20,13,.55)}
+.frame-badge:hover{background:#d8ff52}
+.frame-badge:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.plan.monthly .note b{color:var(--ink-2);font-weight:600}
+.plan.monthly .msg.bad{color:#b0123b}
+.plan.monthly .msg.ok{color:var(--ok)}
+.trial-link{margin-top:14px;align-self:flex-start;font-weight:600;font-size:15px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.plan.monthly .after{color:var(--muted)}
+.plan.pro .note.once b{display:block;color:var(--lime);font-weight:600;font-size:16px;margin-bottom:2px}
+.manage-cta{margin-top:8px}
+/* three across: "a month · VAT included" under the price, not wrapped beside it */
+@media (min-width:981px){.plans.three .price small{display:block;margin:12px 0 0}}
 .coupon{display:flex;gap:8px;margin:auto 0 12px;max-width:360px}
 .coupon input{flex:1;min-width:0;height:42px;padding:0 14px;border-radius:999px;border:1px solid rgba(239,233,218,.28);background:rgba(239,233,218,.06);color:var(--paper);font:500 14px/1 var(--sans);letter-spacing:.04em;text-transform:uppercase;outline:none}
 .coupon input::placeholder{color:rgba(239,233,218,.5);text-transform:none;letter-spacing:0}
@@ -379,6 +390,9 @@ footer b{color:var(--ink);font-weight:600}
 .in-step p{color:var(--ink-2);font-size:16px;margin-top:10px;max-width:40em}
 .in-step b{color:var(--ink);font-weight:600}
 .in-step .in-do{color:var(--ink)}
+.in-app{display:flex;align-items:center;gap:16px;margin-top:20px}
+.in-app img{flex:none;width:64px;height:64px;filter:drop-shadow(0 8px 14px rgba(23,20,13,.3))}
+.in-step .in-app p{margin-top:0;font-size:14.5px;color:var(--muted);max-width:30em}
 .in-shot{margin:22px 0 6px}
 .in-frame{display:grid;place-items:center;border-radius:clamp(18px,2.2vw,26px);padding:clamp(28px,5vw,56px) 16px;
   background:linear-gradient(rgba(18,16,12,.55),rgba(18,16,12,.55)),var(--night) var(--leather) center/330px}
@@ -407,7 +421,8 @@ footer b{color:var(--ink);font-weight:600}
   padding:14px 16px 14px 20px;border-radius:18px;background:var(--ink);color:var(--paper);font-size:15px;line-height:1.45;
   box-shadow:0 24px 60px -24px rgba(0,0,0,.6)}
 .dl-hint[hidden]{display:none}
-.dl-hint p{flex:1 1 260px}
+.dl-hint p{flex:1 1 0%;min-width:0}
+.dl-hint .dl-ic{flex:none;width:40px;height:40px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45))}
 .dl-hint b{font-weight:600}
 .dl-hint a{color:var(--lime);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .dl-hint button{flex:none;width:32px;height:32px;border-radius:50%;border:0;cursor:pointer;background:rgba(239,233,218,.14);color:var(--paper);font:400 20px/1 var(--sans);padding:0 0 2px}
@@ -416,7 +431,8 @@ footer b{color:var(--ink);font-weight:600}
 @media (max-width:980px){
   header.nav nav{display:none}
   .nav-tools{margin-left:auto}
-  .story,.story.flip,.plans,.demo-in{grid-template-columns:1fr}
+  .story,.story.flip,.plans,.plans.three,.demo-in{grid-template-columns:1fr}
+  .plans.three{max-width:560px}
   .story.flip .reel{order:0}
   .versus{grid-template-columns:repeat(3,minmax(0,1fr))}
   .vs-h{grid-column:1/-1}
@@ -445,7 +461,6 @@ footer b{color:var(--ink);font-weight:600}
   .hero .cta .btn{flex:1 1 100%}
   .works .dot{display:none}
   .works{flex-direction:column;gap:4px}
-  .pass-buy{width:100%;justify-content:space-between}
   .versus{grid-template-columns:1fr}
   footer .wrap{flex-direction:column;align-items:flex-start}
 }

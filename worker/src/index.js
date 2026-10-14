@@ -48,11 +48,13 @@ import { stashArtists, stashScanStart, stashScanGet, stashMine,
          stashRegistrations, stashRegistrationSet } from './snowstash.js';
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
-         streamdawAdmin, streamdawRelease,
+         streamdawAdmin, streamdawRelease, streamdawReconcile,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
          streamdawMinterPending, streamdawMinterIssue,
          streamdawReport, streamdawReports, streamdawDownloadFree,
          streamdawLiveRegister, streamdawLiveStatus, streamdawLivePage, streamdawLiveCleanup } from './streamdaw.js';
+import { streamdawPrices, streamdawSubCancel, streamdawSubResume, streamdawSubCancelLink, streamdawSubByToken,
+         streamdawSubAdmin, streamdawLicenceRefresh, streamdawRenewals } from './streamdaw-subs.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -442,8 +444,20 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/download/free' && (method === 'GET' || method === 'HEAD')) return streamdawDownloadFree(req, env);
   if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
   if (path === '/streamdaw/coupon/check' && method === 'POST') return streamdawCouponCheck(req, env);
+  // Pro Monthly (streamdaw-subs.js): the prices the page shows, cancelling (signed in, or by a
+  // link sent to the email), resuming, the owner's settling, and the app asking for its renewed key
+  // (no cookie and no Origin: its machine id and the renewal code it was given with the first key).
+  if (path === '/streamdaw/prices' && method === 'GET') return streamdawPrices(env);
+  if (path === '/streamdaw/subscription/cancel' && method === 'POST') return streamdawSubCancel(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/subscription/resume' && method === 'POST') return streamdawSubResume(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/subscription/cancel-link' && method === 'POST') return streamdawSubCancelLink(req, env);
+  if (path === '/streamdaw/subscription/by-token' && method === 'POST') return streamdawSubByToken(req, env);
+  if (path === '/streamdaw/subscription/admin' && method === 'POST') return streamdawSubAdmin(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/licence/refresh' && method === 'POST') return streamdawLicenceRefresh(req, env);
   if (path === '/streamdaw/coupon' && method === 'POST') return streamdawCouponCreate(req, env, await currentUser(req, env));
   if (path === '/streamdaw/admin' && method === 'GET') return streamdawAdmin(env, await currentUser(req, env));
+  // The owner settles an order charged but not verified (StreamDAW › App › Orders › Reconcile).
+  if (path === '/streamdaw/reconcile' && method === 'POST') return streamdawReconcile(req, env, await currentUser(req, env));
   if (path === '/streamdaw/release' && method === 'POST') return streamdawRelease(req, env, await currentUser(req, env));
   // Licence keys: the buyer sends the machine id their plug-in shows, the owner
   // mints it on their own Mac and pastes it back here.
@@ -772,6 +786,8 @@ export default {
     ctx.waitUntil(streamdawLiveCleanup(env).catch(() => {}));
     /* What the privacy policy promises to forget, and when (retention.js, 2026-10-14). */
     ctx.waitUntil(privacyCleanup(env).catch(() => {}));
+    /* StreamDAW Pro Monthly: every subscription due today is charged (once), retries, ends. */
+    ctx.waitUntil(streamdawRenewals(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },
