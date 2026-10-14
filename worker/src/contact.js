@@ -18,6 +18,8 @@
  * dispute, the project brief for a quote.
  */
 
+import { ipTag } from './crypto.js';
+
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -80,7 +82,10 @@ export async function submitContact(req, env) {
   const dwell = Number(b.t) ? (Date.now() - Number(b.t)) / 1000 : 99;
   if (dwell < 3) return json({ ok: true, ref: makeRef() });
 
-  const ip = req.headers.get('cf-connecting-ip') || '';
+  // `messages.ip` holds a keyed tag of the address (crypto.js ipTag, 2026-10-14), never the
+  // address itself: it only has to tell one sender's five an hour from another's.
+  const rawIp = req.headers.get('cf-connecting-ip') || '';
+  const ip = rawIp ? await ipTag(env, rawIp, 'contact') : '';
   try {
     const recent = await env.DB.prepare(
       'SELECT COUNT(*) n FROM messages WHERE ip = ? AND created_at > ?'

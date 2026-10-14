@@ -1,8 +1,10 @@
 -- ═══════════ StreamDAW: stream health and usage (the dashboard's Health monitor) ═══════════
 --
 -- Written by the relay on each StreamDAW user's Mac (server/telemetry.js in the StreamDAW
--- repo), every 30 s while a stream is on air, and once more when it ends. Nothing here can
--- name a person: ids are hashes, never a session name, a listener's name or an address.
+-- repo), every 30 s while a stream is on air, and once more when it ends. No session name, no
+-- listener's name, no address: ids are hashes. Pseudonymous, not anonymous (2026-10-14): the
+-- machine hash can be recomputed from a machine ID in streamdaw_activations. Kept: samples 14
+-- days, stream rows 90 days, usage records 24 months (streamdawTelemetryCleanup, daily cron).
 --
 -- Apply once:  npx wrangler d1 execute snowstar-members --remote --file=schema-streamdaw-telemetry.sql
 --

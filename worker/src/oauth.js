@@ -381,8 +381,10 @@ export async function facebookDataDeletion(req, env) {
     ).bind('facebook', fbId).first();
 
     if (row) {
-      // ON DELETE CASCADE clears sessions, favorites and identities with it
-      await env.DB.prepare('DELETE FROM users WHERE id = ?').bind(row.user_id).run();
+      // The whole person, as the privacy policy promises (reset.js erasePerson, 2026-10-14):
+      // the account, its sign-ins and everything about them; orders stay stripped for tax.
+      const { erasePerson } = await import('./reset.js');
+      await erasePerson(env, { uid: row.user_id });
     }
     const code = fbId + '-' + now();
     return json({ url: 'https://snowstar.company/privacy.html#data-deletion', confirmation_code: code });

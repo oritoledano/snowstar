@@ -32,6 +32,8 @@
  * every honest listener their playback.
  */
 
+import { ipTag } from './crypto.js';
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -109,7 +111,10 @@ export async function handleStream(req, env) {
   // A 403 would be a dead end for the one browser whose headers we guessed
   // wrong about, and silence on a music site is worse than any watermark. The
   // wrong actor still gets a marked file, which is the outcome that matters.
-  const ip = req.headers.get('cf-connecting-ip') || '';
+  // stream_breadth keeps a keyed tag of the address (crypto.js ipTag), never the address; its
+  // rows go a day later (retention.js).
+  const rawIp = req.headers.get('cf-connecting-ip') || '';
+  const ip = rawIp ? await ipTag(env, rawIp, 'breadth') : '';
   if (!looksLikePlayback(req) || (await breadthExceeded(env, ip, slug))) {
     const range = parseRange(req.headers.get('range'));
     const pre = await env.MEDIA.get(row.audio_key, range ? { range } : undefined);

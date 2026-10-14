@@ -74,11 +74,12 @@ import { listEarnings, settleEarnings, myEarnings, saveTerms } from './earnings.
 import { certificate } from './certificate.js';
 import { submitContact, listMessages, setMessageStatus } from './contact.js';
 import { publicUser } from './user.js';
-import { pbkdf2, safeEqual, randB64, sha256b64, PBKDF2_ITERS } from './crypto.js';
+import { pbkdf2, safeEqual, randB64, sha256b64, ipTag, PBKDF2_ITERS } from './crypto.js';
 import { currentUser, readCookies, peekUser } from './session.js';
 import { recordRequest, healthReport, pruneReqLog } from './health.js';
 import { fxEndpoint, refreshRates } from './fx.js';
 import { DemoRoom, streamdawDemoSocket } from './streamdaw-demo-room.js';
+import { privacyCleanup } from './retention.js';
 // The demo's studio rooms are Durable Objects: the runtime finds their class among the exports.
 export { DemoRoom };
 
@@ -114,24 +115,27 @@ const favoritesFor = async (env, userId, prod) => {
   return (r.results || []).map((row) => row.slug);
 };
 
-/** Rate limiter keyed on IP + action + email, backed by D1. */
+/** Rate limiter keyed on IP + action + email, backed by D1. The bucket is stored as a keyed
+ *  tag of that key (crypto.js ipTag, 2026-10-14): `attempts` holds no IP and no email, and
+ *  its rows go a day after their window (retention.js). */
+const bucketOf = async (env, key) => 'k:' + await ipTag(env, key, 'attempt');
 async function throttle(env, key) {
-  const t = now();
-  const row = await env.DB.prepare('SELECT count, reset_at FROM attempts WHERE bucket = ?').bind(key).first();
+  const t = now(), bucket = await bucketOf(env, key);
+  const row = await env.DB.prepare('SELECT count, reset_at FROM attempts WHERE bucket = ?').bind(bucket).first();
   if (row && row.reset_at > t) {
     if (row.count >= MAX_ATTEMPTS) return false;
-    await env.DB.prepare('UPDATE attempts SET count = count + 1 WHERE bucket = ?').bind(key).run();
+    await env.DB.prepare('UPDATE attempts SET count = count + 1 WHERE bucket = ?').bind(bucket).run();
   } else {
     await env.DB.prepare(
       'INSERT INTO attempts (bucket, count, reset_at) VALUES (?, 1, ?) ' +
       'ON CONFLICT(bucket) DO UPDATE SET count = 1, reset_at = excluded.reset_at'
-    ).bind(key, t + ATTEMPT_WINDOW).run();
+    ).bind(bucket, t + ATTEMPT_WINDOW).run();
   }
   return true;
 }
 
 async function clearThrottle(env, key) {
-  await env.DB.prepare('DELETE FROM attempts WHERE bucket = ?').bind(key).run();
+  await env.DB.prepare('DELETE FROM attempts WHERE bucket = ?').bind(await bucketOf(env, key)).run();
 }
 
 /**
@@ -762,10 +766,12 @@ export default {
        Past that it is rows nobody reads, and this is the only cadence there is
        to drop them on. */
     ctx.waitUntil(pruneReqLog(env).catch(() => 0));
-    /* StreamDAW's health graphs keep a fortnight too. */
+    /* StreamDAW's health graphs keep a fortnight too; per-stream rows 90 days, usage 24 months. */
     ctx.waitUntil(streamdawTelemetryCleanup(env).catch(() => {}));
     /* StreamDAW live links unseen for half a year. */
     ctx.waitUntil(streamdawLiveCleanup(env).catch(() => {}));
+    /* What the privacy policy promises to forget, and when (retention.js, 2026-10-14). */
+    ctx.waitUntil(privacyCleanup(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },

@@ -2,14 +2,18 @@
  * Owner-only member management from the dashboard: edit a member's name and
  * newsletter flag, or delete the account outright.
  *
- * Deletion is deliberately conservative. Sessions, favorites and identities
- * disappear with the account — nobody needs those once it's gone. But a
+ * Deletion is deliberately conservative about rights, and complete about the
+ * person (2026-10-14): it is reset.js erasePerson, the same erasure the privacy
+ * policy promises — everything about them goes, their orders stay stripped for
+ * tax. But a
  * member with a submission, a signed rights declaration, or a collaborator
  * credit has a footprint that matters after they're deleted (an artist's
  * upload history, a legal signature, someone else's royalty split) — so
  * deletion is refused rather than silently destroying that record. Editing
  * (rename, opt them out of the newsletter) always works regardless.
  */
+
+import { erasePerson } from './reset.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
@@ -55,17 +59,14 @@ export async function deleteMember(req, env, user) {
     return json({ error: 'has_rights_history', footprint }, 409);
   }
 
-  await env.DB.batch([
-    env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
-    env.DB.prepare('DELETE FROM favorites WHERE user_id = ?').bind(id),
-    env.DB.prepare('DELETE FROM identities WHERE user_id = ?').bind(id),
-    env.DB.prepare('DELETE FROM downloads WHERE user_id = ?').bind(id),
-    env.DB.prepare('DELETE FROM password_resets WHERE user_id = ?').bind(id),
-    // the ghost profile survives — it just becomes unclaimed again
-    env.DB.prepare('UPDATE managed_artists SET claimed_user_id = NULL WHERE claimed_user_id = ?').bind(id),
-    env.DB.prepare('DELETE FROM users WHERE id = ?').bind(id),
-  ]);
-  return json({ ok: true });
+  // Sessions, favorites, identities, downloads, resets, and since 2026-10-14 everything else
+  // about them (erasePerson); the ghost profile survives, unclaimed again.
+  const r = await erasePerson(env, { uid: id });
+  try {
+    await env.DB.prepare('INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)')
+      .bind(user.email || 'owner', 'member_delete', 'erased:' + id, r.done.join(', ').slice(0, 400), now()).run();
+  } catch { /* the deletion happened either way */ }
+  return json({ ok: true, done: r.done });
 }
 
 /**

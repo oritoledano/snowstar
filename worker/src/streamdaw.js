@@ -22,7 +22,7 @@
 
 import { sendMail } from './mail.js';
 import { currentUser } from './session.js';
-import { sha256b64, randB64, safeEqual } from './crypto.js';
+import { sha256b64, randB64, safeEqual, ipTag } from './crypto.js';
 import { parseHyp, verifyReturn } from './hyp.js';
 import { applyCoupon, couponProblem, normCode } from './coupons.js';
 
@@ -861,8 +861,9 @@ export async function streamdawReport(req, env) {
   let context = null;
   try { context = JSON.stringify(b.context || {}).slice(0, 4000); } catch {}
 
+  // A keyed tag of the address (crypto.js ipTag), never the address or a plain hash of it.
   const ip = req.headers.get('cf-connecting-ip') || '';
-  const ipHash = ip ? (await sha256b64(ip)).slice(0, 24) : null;
+  const ipHash = ip ? await ipTag(env, ip, 'sdreport') : null;
 
   if (ipHash) {
     const recent = await env.DB.prepare(
@@ -1172,7 +1173,7 @@ export async function streamdawLiveRegister(req, env) {
   const ver = (v) => (typeof v === 'string' && /^[0-9A-Za-z.+-]{1,32}$/.test(v) ? v : null);
 
   const ip = req.headers.get('cf-connecting-ip') || '';
-  const ipHash = ip ? (await sha256b64('sdlive:' + ip)).slice(0, 24) : 'none';
+  const ipHash = ip ? await ipTag(env, ip, 'sdlive') : 'none';     // keyed (crypto.js), never reversible
   let wait = await liveThrottle(env, 'sdlive-ip:' + ipHash, 120, 3600);
   if (wait) return json({ error: 'slow_down', retryAfter: wait }, 429);
 

@@ -4,9 +4,13 @@
  * Every StreamDAW Mac runs its own relay (zero server cost: the audio never touches
  * Snowstar). What does reach Snowstar is small: every 30 s while a stream is on air, the
  * relay POSTs one heartbeat with each live stream's health, and once more when it ends;
- * at the end of each sitting it also POSTs a usage record. Both are anonymous by design
- * (hashed machine and stream ids, counts, durations, line measurements) and only sent
- * while the host's Settings › Usage switch is on.
+ * at the end of each sitting it also POSTs a usage record. Neither carries a name, an
+ * address or any audio (hashed machine and stream ids, counts, durations, line
+ * measurements), but both are PSEUDONYMOUS, not anonymous: the machine hash is SHA-256 of a
+ * machine ID that streamdaw_activations holds next to a buyer's email. Health is sent while
+ * the host's Settings › Usage › Stream health switch is on (the default); usage only after
+ * the host said yes to the app's question (2026-10-14). The relay decides; this end keeps
+ * them for a limited time (streamdawTelemetryCleanup).
  *
  * Ingest is PUBLIC (a key inside an app is no secret), so it is shaped instead: a size cap,
  * a stream count cap, hex-only ids, every number clamped, one row per stream at most every
@@ -16,7 +20,8 @@
  *   POST /streamdaw/usage              relay → one sitting's usage  (public)
  *   GET  /streamdaw/health             dashboard: live + recent + totals   (admin)
  *   GET  /streamdaw/health/stream?id=  dashboard: one stream, its people and samples (admin)
- *   streamdawTelemetryCleanup(env)     the daily cron: samples older than 14 days go
+ *   streamdawTelemetryCleanup(env)     the daily cron: samples older than 14 days go, stream
+ *                                      rows unseen for 90 days, usage records after 24 months
  *
  * The format is the relay's (server/telemetry.js in the StreamDAW repo), versioned by `v`.
  * Schema: schema-streamdaw-telemetry.sql.
@@ -26,6 +31,8 @@ const MAX_BODY = 64 * 1024;
 const MAX_STREAMS = 20;
 const LIVE_WINDOW_MS = 90 * 1000;        // three missed heartbeats and a stream is "no signal"
 const KEEP_SAMPLES_MS = 14 * 24 * 3600 * 1000;
+const KEEP_STREAMS_MS = 90 * 24 * 3600 * 1000;      // the privacy policy's numbers (2026-10-14)
+const KEEP_USAGE_MS = 730 * 24 * 3600 * 1000;
 const HEX = /^[0-9a-f]{8,32}$/;
 
 const json = (data, status = 200) =>
@@ -201,7 +208,10 @@ export async function streamdawHealthStream(req, env, user, url) {
   return json({ now, stream: shape(row, now), people, samples });
 }
 
-/** The daily cron: graphs keep 14 days. */
-export async function streamdawTelemetryCleanup(env) {
-  await env.DB.prepare('DELETE FROM sd_samples WHERE at < ?').bind(Date.now() - KEEP_SAMPLES_MS).run();
+/** The daily cron: graphs keep 14 days, a stream's row 90 days after its last heartbeat,
+ *  a usage record 24 months. `t` (ms) for the tests. */
+export async function streamdawTelemetryCleanup(env, t = Date.now()) {
+  await env.DB.prepare('DELETE FROM sd_samples WHERE at < ?').bind(t - KEEP_SAMPLES_MS).run();
+  await env.DB.prepare('DELETE FROM sd_streams WHERE last_at < ?').bind(t - KEEP_STREAMS_MS).run();
+  await env.DB.prepare('DELETE FROM sd_usage WHERE at < ?').bind(t - KEEP_USAGE_MS).run();
 }

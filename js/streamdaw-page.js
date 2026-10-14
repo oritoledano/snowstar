@@ -479,3 +479,23 @@
     if (signedIn()) startFree(); else if (direct) askFree();
   })();
 })();
+
+// The feature cards' clips sit level whatever a title's length (2026-10-14): a title the site
+// editor made longer wraps to a third line at some widths, so every card's caption band takes
+// the tallest one's height. Again after the editor's texts, the fonts, and on resize.
+(function () {
+  function level() {
+    const tops = Array.from(document.querySelectorAll('#featRail .feat-top'));
+    if (!tops.length) return;
+    tops.forEach((t) => { t.style.minHeight = ''; });
+    const h = Math.max.apply(null, tops.map((t) => t.getBoundingClientRect().height));
+    tops.forEach((t) => { t.style.minHeight = Math.ceil(h) + 'px'; });
+  }
+  let pend = 0;
+  const soon = () => { cancelAnimationFrame(pend); pend = requestAnimationFrame(level); };
+  window.addEventListener('resize', soon);
+  window.addEventListener('load', () => { soon(); setTimeout(soon, 800); setTimeout(soon, 2500); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
+  const rail = document.getElementById('featRail');
+  if (rail && window.MutationObserver) new MutationObserver(soon).observe(rail, { subtree: true, characterData: true, childList: true });
+})();

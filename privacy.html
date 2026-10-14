@@ -26,6 +26,7 @@
   .wrap{max-width:760px;margin:0 auto;padding:70px clamp(20px,5vw,40px) 90px}
   h1{font-family:var(--font-display);font-size:clamp(2rem,4vw,2.8rem);margin-bottom:8px;letter-spacing:-.02em}
   h2{font-family:var(--font-display);font-size:1.15rem;margin:38px 0 10px;letter-spacing:-.01em}
+  h3{font-family:var(--font-display);font-size:1rem;margin:26px 0 8px;letter-spacing:-.01em}
   .lede{color:var(--muted);margin-bottom:6px}
   .upd{color:var(--muted);font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:34px}
   p,li{color:#c8d2e4;margin-bottom:10px}
@@ -39,17 +40,24 @@
 <div class="wrap">
   <h1>Privacy</h1>
   <p class="lede">Snowstar.Company — Tel Aviv</p>
-  <p class="upd">Last updated 14 August 2026</p>
+  <p class="upd">Last updated 14 October 2026</p>
 
   <p>This page explains what Snowstar.Company collects when you use
-  <a href="https://snowstar.company">snowstar.company</a> and the Mutra music catalog, why, and how
-  to get rid of it. We have deliberately kept the collection small.</p>
+  <a href="https://snowstar.company">snowstar.company</a>, the Mutra music catalog and
+  <a href="#streamdaw">StreamDAW</a>, why, and how to get rid of it. We have deliberately kept the
+  collection small.</p>
 
   <h2>Visiting the site</h2>
-  <p>We count page views and track plays so we know what people listen to. This is anonymous:
-  a random id held only for the current browser tab, the country your request arrived from, and
-  the site that referred you. We do not store IP addresses, we do not use advertising cookies, and
-  we honour “Do Not Track” and Global Privacy Control — if either is on, we record nothing at all.</p>
+  <p>We count page views and track plays so we know what people listen to: a random id held only
+  for the current browser tab, the country your request arrived from, and the site that referred
+  you. If you are signed in, these counts also carry your account; that link is removed after 24
+  months, or as soon as you delete your account. We do not use advertising cookies, and we honour
+  “Do Not Track” and Global Privacy Control — if either is on, we record nothing at all.</p>
+  <p>We do not keep IP addresses in readable form. Where we need one to stop abuse (repeated
+  sign-in attempts, contact messages, problem reports, StreamDAW live links), we keep a keyed,
+  shortened code made from it, which cannot be turned back into the address. Records used to slow
+  down repeated sign-in attempts are deleted a day later. Our hosting provider, Cloudflare, sees
+  your IP address in order to deliver the site, as any host does.</p>
 
   <h2>Accounts</h2>
   <p>If you create an account we store your email address, your name if you give one, and your
@@ -61,16 +69,221 @@
   email you except about something you asked for, such as a password reset.</p>
 
   <h2>Who we share it with</h2>
-  <p>Nobody. We do not sell, rent or trade personal data. The only third parties involved are the
-  services that run the site — Cloudflare (hosting, storage and delivery), GitHub Pages (the pages
-  themselves), and Resend (sending account emails such as password resets). They process data on
-  our behalf, not for their own purposes.</p>
+  <p>We do not sell, rent or trade personal data. The third parties involved are the services that
+  run the site: Cloudflare (hosting, database, storage, delivery and receiving our email), GitHub
+  Pages (the pages themselves), Resend (sending our emails, such as receipts and password resets)
+  and, if you buy something, HYP (card payments and tax invoices). They process data on our
+  behalf, not for their own purposes. Our pages load their typefaces from Google Fonts, so your
+  browser asks Google for them and Google sees your IP address and browser. Google or Facebook
+  are involved only if you choose to sign in with them. Our own notifications (a new order, a new
+  account, a problem report) reach us in a Gmail inbox. More on StreamDAW
+  <a href="#streamdaw-others">below</a>.</p>
+
+  <h2 id="streamdaw">StreamDAW</h2>
+  <p>StreamDAW is our Mac app that streams your DAW to people's browsers. This part covers what it
+  collects on our website, inside the app on your Mac, and from the people who join your streams.</p>
+
+  <div class="card">
+    <p><strong>The short version.</strong> Your audio, your video and what anyone says in a session
+    never reach us. They go from your Mac to the people you invite, and nowhere else. What reaches us
+    is what any shop needs (your email, your order, the Mac your licence is for), stream-health
+    figures unless you switch them off, usage statistics only if you agree, and problem reports if
+    you write one.</p>
+    <p style="margin-bottom:0">No law requires you to give us any of this. Without an email address
+    we cannot give you an account, sell you Pro or send you a key, and without your Mac's machine ID we
+    cannot make a key. Everything else is optional.</p>
+  </div>
+
+  <h3>Who is responsible</h3>
+  <p>Ori Toledano, sole trader, trading as Snowstar.Company, 22 Eilat Street, Tel Aviv, Israel, is
+  responsible for the data described here (the "controller"). Write to
+  <a href="mailto:hello@snowstar.company">hello@snowstar.company</a> about anything in this section.</p>
+  <p>When you run a stream, the session runs on <em>your</em> Mac. What your listeners send to it
+  (their names, voices and cameras) stays between you and them. We never receive it. If you record
+  someone in your DAW, that recording is yours, and so is the duty to tell them.</p>
+
+  <h3>Your account, the download and buying Pro</h3>
+  <ul>
+    <li><strong>Downloading StreamDAW</strong> needs a Snowstar account: your email address, your name
+    if you give one, and either a password (stored only as a salted, peppered hash) or a Google or
+    Facebook sign-in. We note which version you downloaded and when.</li>
+    <li><strong>Buying Pro or the 7-day pass:</strong> we keep your email, what you bought, the
+    price, any coupon, the order number, and the payment processor's reference for the payment. If
+    you buy from inside the app, the order also carries your Mac's machine ID and the name for your
+    licence.</li>
+    <li><strong>Card details</strong> are typed into the page of our payment processor, HYP, and go
+    only to HYP. We never see or store your card number. HYP issues the tax invoice and emails it to
+    you.</li>
+    <li><strong>Your licence key</strong> is made for one Mac's machine ID (a code derived from that
+    Mac's hardware, shown in StreamDAW › Settings › Licence). The key carries your licence name, your
+    email and that machine ID. We keep a copy so we can send it again.</li>
+    <li><strong>Emails.</strong> We send receipts, a private download link (good for 7 days) and your
+    key. We keep a copy of each one for 2 years, so you can find it again in your account.</li>
+    <li><strong>Newsletter:</strong> only if you tick the box when you sign up. It is never ticked in
+    advance. Every newsletter has a one-click unsubscribe. Receipts and keys are not
+    marketing.</li>
+  </ul>
+
+  <h3>What the app sends us</h3>
+  <p>StreamDAW checks your licence on your Mac, offline. It does not phone home to do it.</p>
+  <p><strong>Stream health, while you are live.</strong> Every 30 seconds: connection quality
+  (jitter, packet loss, dropouts, bit rate, frame rate), how many people are connected, and for
+  each of them their type of device (iPhone, Android, Mac…), how long they have been connected, and
+  their connection quality. It is how we keep streams working, so it is on unless you switch it off
+  in StreamDAW › Settings › Usage.</p>
+  <p><strong>Usage statistics, only if you agree.</strong> The first time StreamDAW starts it asks
+  whether to share them, and sends none until you say yes. After each session: how long it ran,
+  how many people and devices joined, which features were used (camera, screen, talkback, in-ear
+  mode…), your app version and whether you are on Free, the trial or Pro. You can change your mind
+  at any time in StreamDAW › Settings › Usage.</p>
+  <ul>
+    <li>Neither contains audio, video, chat, names, the session's name, track names or IP
+    addresses, and we do not keep the address they come from.</li>
+    <li>Both are labelled with a code derived from your machine ID. We can link that code to your
+    licence, so we treat them as personal data (pseudonymous), not as anonymous.</li>
+  </ul>
+  <p><strong>Your live link.</strong> If you use a <em>snowstar.company/live/…</em> link, your Mac
+  tells us the current address of its Cloudflare tunnel each time it changes, so the link keeps
+  working. We store the link's id, one-way codes of your Mac's machine ID and of its secret, the app
+  version, and a keyed code made from the IP address it came from (to stop abuse; it cannot be
+  turned back into the address). A link unused for 180 days is deleted.</p>
+  <p><strong>Problem reports.</strong> If you or a listener press "Report a problem", we receive what
+  was written, an email address only if one is given, and technical context: app or browser version,
+  connection figures, and the session's name. No logs are attached. A keyed code made from the IP
+  address limits how many reports one connection can send. Reports are kept for 2 years.</p>
+
+  <h3>What stays on your Mac</h3>
+  <p>StreamDAW keeps the following on your Mac. We cannot see any of it, and it reaches us only if
+  you send it to us yourself.</p>
+  <ul>
+    <li><strong>The rewind buffer:</strong> a recording of your master output during the session,
+    so listeners can go back while you are live. It is deleted when the session ends (and, if StreamDAW stopped
+    unexpectedly, the next time it starts). If your DAW mixes a listener's voice into the master,
+    the voice is in it too.</li>
+    <li><strong>Logs</strong> in <code>~/Library/Logs/StreamDAW</code>, for fixing problems. They
+    include the names people type, the names of devices, and the network each person connects from,
+    shortened (the first three parts of an IPv4 address, the first three groups of an IPv6 one),
+    never a whole IP address. The daily logs are deleted after 15 days; two running logs are cut
+    back as they grow.</li>
+    <li><strong>A copy of each usage summary</strong> (<code>usage.jsonl</code>), only if you agreed
+    to usage statistics.</li>
+    <li><strong>Your settings and presets</strong>, including which device plays into which input and
+    the names you gave them.</li>
+    <li><strong>Your licence file and live-link identity</strong> in
+    <code>~/Library/Application Support/StreamDAW</code>.</li>
+  </ul>
+
+  <h3>If you join a StreamDAW stream</h3>
+  <p>This part is for listeners: anyone who opens a stream link or scans its QR code.</p>
+  <ul>
+    <li><strong>No account is needed.</strong> The name you type is seen by the host and by the
+    other people in the session. If the host has turned on Snowstar sign-in and you are signed in,
+    your account name is used instead. To find out, the page asks snowstar.company whether you are
+    signed in.</li>
+    <li><strong>Your connection.</strong> The page and its sound come from the host's Mac, through
+    Cloudflare's network. For sound and video your browser connects directly to the host's Mac
+    (WebRTC), so each side can see the other's IP address. To find that route, your browser asks a
+    Google server (STUN) for its own public address. The host's Mac writes the name you type and a
+    shortened form of your IP address in its logs (see "What stays on your Mac").</li>
+    <li><strong>Microphone, camera and screen</strong> are used only after your browser asks you and
+    you turn them on. They go to the host's Mac and are never stored by StreamDAW or sent to us. If
+    the host records your microphone in their DAW, that recording belongs to the host: ask them if
+    you want it removed. In sync mode on a phone, the microphone is used briefly to measure your
+    phone's delay. That measurement happens in your browser, and only the resulting number is
+    sent.</li>
+    <li><strong>Your browser remembers</strong> your name, your mix, the devices you picked and a
+    random device code, so the next visit picks up where you left off. Clearing the site's data in
+    your browser removes it.</li>
+    <li><strong>Connection quality</strong> (not your name and not your IP address) is sent to us by
+    the host's app, as described above, unless the host switched stream health off.</li>
+  </ul>
+
+  <h3 id="streamdaw-others">Who else is involved</h3>
+  <p>We do not sell, rent or trade personal data, and there are no advertising or analytics
+  tools in StreamDAW. These services handle data for us:</p>
+  <ul>
+    <li><strong>Cloudflare</strong> (USA): runs our server, database and file storage, receives our
+    email, and provides the tunnels that carry streams to listeners.</li>
+    <li><strong>GitHub Pages</strong> (USA): serves the website's pages.</li>
+    <li><strong>Resend</strong> (USA): sends our emails.</li>
+    <li><strong>HYP</strong> (Israel): takes card payments and issues invoices.</li>
+    <li><strong>Google</strong> (USA): supplies the typefaces on our pages and on StreamDAW's pages
+    (it sees your IP address and browser when they load), helps browsers find a route to the host's
+    Mac (STUN), and hosts the Gmail inbox where our own notifications reach us.</li>
+    <li><strong>Google and Facebook</strong>: sign-in, only if you choose to sign in with them.</li>
+  </ul>
+
+  <h3>Data outside Israel</h3>
+  <p>Some of these services store or process data outside Israel, mainly in the USA. For visitors
+  from the EU: Israel is recognised by the European Commission as protecting personal data
+  adequately, and our US providers Cloudflare and Resend are certified under the EU-US Data Privacy
+  Framework.</p>
+  <!-- [NEED, Ori/lawyer] a DPA (the Reg. 3 written undertaking) with Cloudflare, Resend and GitHub;
+       GitHub, Google and Meta on dataprivacyframework.gov. Add "Each is bound by a written agreement
+       to protect it" only once that is so. -->
+
+  <h3>Why we use it (for visitors from the EU and UK)</h3>
+  <ul>
+    <li><strong>To provide what you asked for</strong> (a contract): your account, downloads,
+    purchases, licence keys, the emails that deliver them, and replies to you.</li>
+    <li><strong>Because the law requires it:</strong> order and payment records for tax.</li>
+    <li><strong>Legitimate interests:</strong> keeping the service working and secure (stream
+    health, which you can switch off; rate limits; a short request log), keeping live links working
+    and stopping their abuse, binding a licence to one Mac, and fixing the problems people
+    report.</li>
+    <li><strong>Your consent:</strong> the newsletter, site analytics, and the app's usage
+    statistics. You can withdraw it at any time. That does not affect what was done before.</li>
+  </ul>
+
+  <h3>How long we keep it</h3>
+  <ul>
+    <li>Your account and licence keys: until you ask us to delete them.</li>
+    <li>Orders and payment records: 7 years after the end of the tax year, because Israeli tax law
+    requires it. This is true even if you ask us to delete everything else: we then strip them of
+    your name, email and Mac, and delete them when the 7 years are up.</li>
+    <li>Copies of the emails we sent you: 2 years, or until your account is deleted.</li>
+    <li>Problem reports: 2 years.</li>
+    <li>Stream-health graphs: 14 days. Per-stream summaries: 90 days. Usage statistics: 24
+    months.</li>
+    <li>Live links: 180 days after they were last used.</li>
+    <li>Our request log: 14 days. Sign-in breadcrumbs: 30 days. Records used to slow down repeated
+    sign-in attempts: one day.</li>
+    <li>On your Mac: the rewind buffer until the session ends; logs 15 days.</li>
+  </ul>
+
+  <h3>Your rights</h3>
+  <p>You can ask us what we hold about you and for a copy of it, and ask us to correct it, delete
+  it or stop using it. EU and UK residents can also ask us to restrict it, to hand it over in a
+  portable form, and object to uses based on our legitimate interests. Write to
+  <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>. We answer within 30
+  days.</p>
+  <p>When we delete a StreamDAW account, we keep only the order records the tax law requires,
+  without your name or email. A deleted licence key cannot be sent again, but the app on your Mac
+  keeps working with the key it already has.</p>
+  <p>If you think we have handled your data wrongly, you can complain to Israel's
+  <a href="https://www.gov.il/en/departments/the_privacy_protection_authority">Privacy Protection
+  Authority</a>. In the EU or UK, you can complain to your
+  <a href="https://www.edpb.europa.eu/about-edpb/about-edpb/members_en">local data protection
+  authority</a>.</p>
+  <p>No decision about you is made automatically.</p>
+
+  <h3>Security</h3>
+  <p>Passwords and sign-in sessions are stored only as one-way hashes, and so are download and
+  password-reset links, except in the copy of the email that carried them (in your account's
+  Messages; those links stop working after 7 days and 45 minutes). Licence keys are signed on our
+  own computer, and the signing key never goes online. Everything travels over HTTPS, and card
+  details never touch our systems.</p>
+
+  <p class="upd">StreamDAW section added 14 October 2026</p>
 
   <h2 id="data-deletion">Deleting your data</h2>
   <div class="card">
     <p><strong>Email <a href="mailto:hello@snowstar.company?subject=Delete%20my%20data" target="_blank" rel="noopener">hello@snowstar.company</a></strong>
-    and we will delete your account and everything attached to it — email address, name, favorites
-    and sessions — within 30 days, usually the same day.</p>
+    and we will delete your account and everything attached to it — email address, name, favorites,
+    sign-ins, StreamDAW key requests and keys, problem reports and the copies of the emails we sent
+    you — within 30 days, usually the same day. What the law makes us keep stays: orders and payment
+    records, stripped of your name and email, for 7 years after the end of the tax year, and music
+    licences we granted, which are agreements with other people.</p>
     <p style="margin-bottom:0">If you signed up through Facebook you can also use
     <em>Settings → Apps and Websites → Snowstar → Remove</em>. Facebook then notifies us
     automatically and the account is deleted on the spot.</p>

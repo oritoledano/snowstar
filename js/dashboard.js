@@ -1034,9 +1034,11 @@
           <b>Activity</b> takes what they did — requests, messages, tracked events — and leaves the
           account and its music alone. <b>Uploads</b> adds their tracks, with the audio moved to
           trash rather than destroyed. <b>Account</b> adds the login itself.
-          <b>An email is never lost</b>: every account is written to the archive below before it goes.
-          Payments are marked as tests and hidden, never deleted — the card was charged at HYP
-          whether or not we keep a row for it.</p>
+          Since 14 October 2026 <b>Account</b> erases the person everywhere, as the privacy policy
+          promises: nothing is archived. Their orders and payments stay for tax, stripped of the
+          person. <b>Erase this person</b> is the same for someone who asked to be deleted: owning
+          StreamDAW does not stop it. Payments are marked as tests and hidden, never deleted — the
+          card was charged at HYP whether or not we keep a row for it.</p>
         <div class="sd-new">
           <input id="rs-email" list="dl-reset" placeholder="Which account?" value="${esc(resetEmail)}" style="flex:2 1 260px">
           <button class="rv-btn" id="rs-look">Show me what would go</button>
@@ -1056,18 +1058,22 @@
               as tests and hidden, not deleted.</p>` : ''}
             ${pre.published && pre.published.length ? `<p class="rv-note">Live in the catalogue:
               ${pre.published.map((x) => esc(x)).join(', ')} — these come out too.</p>` : ''}
-            ${rows.length && !pre.blocked ? `<div class="rs-acts">
-              ${[['activity', 'Clear activity'], ['uploads', 'Clear activity + uploads'],
-                 ['account', 'Clear everything, archive the email']].map(([t, label]) =>
-                `<button class="rv-btn ${t === 'account' ? 'rv-no' : ''} rs-go" data-tier="${t}"
+            ${pre.kept && Object.keys(pre.kept).length ? `<p class="rv-note">Kept if the account goes (tax, agreements):
+              ${Object.entries(pre.kept).map(([t, n]) => `${n} ${esc(t.replace(/_/g, ' '))}`).join(', ')}.</p>` : ''}
+            ${rows.length && (!pre.blocked || !pre.eraseBlocked) ? `<div class="rs-acts">
+              ${[...(!pre.blocked ? [['activity', 'Clear activity'], ['uploads', 'Clear activity + uploads'],
+                 ['account', 'Clear everything (erases the person)']] : []),
+                 ...(!pre.eraseBlocked ? [['erase', 'Erase this person (they asked)']] : [])].map(([t, label]) =>
+                `<button class="rv-btn ${t === 'account' || t === 'erase' ? 'rv-no' : ''} rs-go" data-tier="${t}"
                          data-confirm="${pre.confirm}">${label}</button>`).join('')}
             </div>` : ''}
           </div>`}
       </div>
 
       <div class="db-panel"><h2>Archived people <span class="pill">${archive.length}</span></h2>
-        <p class="db-empty" style="padding-top:0">Accounts that were cleared. The address stays here
-          so a demo tidied up in a hurry never costs you a contact.</p>
+        <p class="db-empty" style="padding-top:0">Accounts cleared before 14 October 2026, under the
+          old rule that kept the address. Nothing is added here any more, and erasing a person
+          removes their row.</p>
         ${table(archive, [
           { label: 'Email', get: (p) => esc(p.email) },
           { label: 'Name', get: (p) => esc(p.artist_name || p.name || '') },
@@ -1084,10 +1090,11 @@
     document.querySelectorAll('.rs-go').forEach((b) => b.addEventListener('click', async () => {
       const tier = b.dataset.tier;
       const label = { activity: 'their activity', uploads: 'their activity and uploads',
-                      account: 'EVERYTHING, including the account' }[tier];
+                      account: 'EVERYTHING, including the account', erase: 'EVERYTHING about this person' }[tier];
       if (!confirm(`Clear ${label} for ${resetEmail}?\n\n`
-        + (tier === 'account' ? 'The email is archived first, so you keep the contact. ' : '')
-        + 'Payments are hidden, not deleted. Audio goes to trash. This cannot be undone.')) return;
+        + (tier === 'account' || tier === 'erase' ? 'Nothing is archived: the person is erased. Orders stay for tax, without them. ' : '')
+        + (tier === 'erase' ? 'Their payments stay in the books (real, not marked as tests). ' : 'Payments are hidden, not deleted. ')
+        + 'Audio goes to trash. This cannot be undone.')) return;
       b.disabled = true; b.textContent = 'Clearing…';
       const r = await post('/reset/apply',
         { email: resetEmail, tier, confirm: Number(b.dataset.confirm) });
@@ -1098,7 +1105,7 @@
         load();
         return;
       }
-      alert('Cleared: ' + (r.done || []).join(', ') + (r.archived ? '. Email archived.' : '.'));
+      alert('Cleared: ' + (r.done || []).join(', ') + '.');
       resetEmail = '';
       load();
     }));

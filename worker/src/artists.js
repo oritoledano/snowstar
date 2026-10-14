@@ -803,10 +803,13 @@ export async function deleteArtist(req, env, user) {
     stmts.push(env.DB.prepare('DELETE FROM managed_artists WHERE id = ?').bind(mid));
   }
   await env.DB.batch(stmts);
+  // And the rest of the person, as the privacy policy promises (reset.js erasePerson,
+  // 2026-10-14): key requests, reports, email copies, orders stripped for tax, the trail.
+  if (uid) { const { erasePerson } = await import('./reset.js'); await erasePerson(env, { email: who.email, uid }); }
   try {
     await env.DB.prepare(
       'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'
-    ).bind(user.email || 'owner', 'artist_delete', String(who.email || who.id),
+    ).bind(user.email || 'owner', 'artist_delete', uid ? 'erased:' + uid : String(who.email || who.id),
            `${r.deleted} uploads, ${fp.decls} declarations`, Math.floor(Date.now() / 1000)).run();
   } catch { /* the delete happened either way */ }
   return json({ ok: true, who: who.name || who.email, ...r, decls: fp.decls });
