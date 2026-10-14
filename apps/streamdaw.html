@@ -28,7 +28,7 @@
 "name": "How good is the sound?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Lossless by default: uncompressed 16-bit at your session's sample rate, about 1.6 Mbit/s a listener. In sync mode, or when a listener's connection can't keep up, that listener gets high-quality Opus so nobody drops out."
+"text": "Lossless by default: uncompressed 16-bit at your session's sample rate, about 1.6 Mbit/s a listener for the full mix at 44.1 or 48 kHz, twice that at 88.2 or 96. In sync mode, or when a listener's connection can't keep up, that listener gets Opus at 128 kbit/s. iPhones on iOS 18 or older can't play Opus, so they stay uncompressed."
 }
 },
  {
@@ -36,7 +36,7 @@
 "name": "How many people can listen?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Each listener gets their own stream from your Mac, so your upload sets the limit. A lossless listener takes about 1.6 Mbit/s, a phone in sync mode about 0.15: a 20 Mbit/s upload carries a review session of 10, or a band of 20 with room to spare. Up to 6 guests on camera."
+"text": "Each listener gets their own stream from your Mac, so your upload sets the limit. At 44.1 or 48 kHz, a listener on the full mix takes about 1.6 Mbit/s, so a 20 Mbit/s upload carries about 10 with room to spare. Outside sync mode, a listener on the track mixer takes about 1.5 Mbit/s for every stem you send. With 8 stems, that is about 12 Mbit/s for one person. In sync mode a phone takes about 0.15 Mbit/s, or about 1.5 on an iPhone with iOS 18 or older. Up to 6 guests on camera."
 }
 },
  {
@@ -49,7 +49,7 @@
 },
  {
 "@type": "Question",
-"name": "Which DAWs does it work in?",
+"name": "Which DAWs has it been tested in?",
 "acceptedAnswer": {
 "@type": "Answer",
 "text": "We have streamed sessions from Ableton Live and from the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig, which we have not tested yet. Pro Tools is on the way."
@@ -68,7 +68,7 @@
 "name": "Who can get into my session?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first."
+"text": "Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. You can switch it off. The Silent disco preset starts with it off."
 }
 },
  {
@@ -236,7 +236,7 @@
         <p class="feat-cap" data-txt="streamdaw.features.anyapp.sub">Spotify, Music, YouTube, a browser or an interface, mixed into the stream.</p>
       </li>
       <li class="feat">
-        <figure class="reel tall" data-media="analytics">
+        <figure class="reel tall" data-media="analytics" data-v="2">
           <video muted loop playsinline preload="none" width="1080" height="1350"></video>
           <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.analytics.label">Analytics</span></span><h3 data-txt="streamdaw.features.analytics.title">Know it's working</h3></figcaption>
           <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
@@ -284,7 +284,9 @@
       </article>
 
       <article class="story flip">
-        <figure class="reel wide" data-media="band" aria-label="Eight phones at a rehearsal, all at the same point in the song">
+        <!-- 2026-10-15: no count of phones on this still or its label ("8 phones in time" was never done
+             with people; the most in sync at once so far is 4, which is what the clip shows). -->
+        <figure class="reel wide" data-media="band" aria-label="Phones at a rehearsal, each on its own mix, in sync mode">
           <div class="still band" aria-hidden="true">
             <span class="count">1, 2, 3, 4!</span>
             <div class="phones">
@@ -297,7 +299,7 @@
               <div class="ph"><span class="scr"><i></i></span><b>Horns</b></div>
               <div class="ph"><span class="scr"><i></i></span><b>Perc</b></div>
             </div>
-            <span class="synced">8 phones in time</span>
+            <span class="synced">Sync mode on</span>
           </div>
           <video muted loop playsinline preload="none" width="1920" height="1080"></video>
           <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
@@ -318,7 +320,9 @@
            (wip/earphone-sync-2026-10-13.md §6), so the copy says what it does and promises no
            counts and no exact timing on Bluetooth. A drawn still, no clip yet: once
            media/streamdaw/party.* exists, add data-media="party", the <video> and the .vbtn
-           like the two above. Not .flip, so the three alternate left, right, left. -->
+           like the two above. Not .flip, so the three alternate left, right, left.
+           2026-10-15: no "syncs itself" or "line that phone up" either: the lines say what the
+           phone does (the browser's reported delay, the tap-along), not how close it gets. -->
       <article class="story">
         <figure class="reel wide" aria-label="A row of phones on different earphones, on the same beat">
           <div class="still band party" aria-hidden="true">
@@ -333,7 +337,7 @@
               <div class="ph"><span class="scr"><i></i></span><b>Over-ear</b></div>
               <div class="ph"><span class="scr"><i></i></span><b>Buds</b></div>
             </div>
-            <span class="synced">Synced, no microphone</span>
+            <span class="synced">No microphone</span>
           </div>
         </figure>
         <div>
@@ -341,8 +345,8 @@
           <h3 data-txt="streamdaw.stories.party.title">The party, in everyone's ears</h3>
           <ul class="lines">
             <li data-txt="streamdaw.stories.party.l1">Guests scan one QR code at the door and press Play. The Silent disco preset has no waiting room.</li>
-            <li data-txt="streamdaw.stories.party.l2">Everyone wears their own earphones. Each phone syncs itself in a few seconds, without asking for the microphone.</li>
-            <li data-txt="streamdaw.stories.party.l3">On Bluetooth, a few taps along to a tick line that phone up. Then you play the set from your DAW.</li>
+            <li data-txt="streamdaw.stories.party.l2">Everyone wears their own earphones. Each phone times itself from the delay its browser reports, and never asks for the microphone.</li>
+            <li data-txt="streamdaw.stories.party.l3">On Bluetooth, the guest taps along to a tick to correct that phone's delay. Then you play the set from your DAW.</li>
           </ul>
         </div>
       </article>
@@ -438,7 +442,10 @@
             <li data-txt="streamdaw.pricing.pro.f4">Camera, up to three screens (a window or an app) and talkback</li>
             <li data-txt="streamdaw.pricing.pro.f5">Record up to 16 people into your DAW, in time</li>
             <li data-txt="streamdaw.pricing.pro.f6">Any app or input into the stream <small>Spotify, Music, YouTube, a browser, an interface</small></li>
-            <li data-txt="streamdaw.pricing.pro.f7">Your Mac's speakers in time with the phones, presets and sign-in-only sessions</li>
+            <!-- 2026-10-15: "and sign-in-only sessions" off this line until customer sign-in ships (being
+                 built now): on a customer's Mac Require sign-in cannot switch on yet. Put it back then,
+                 here, in FAQ a7 + its JSON-LD twin, and in js/streamdaw-checkout.js FEATURES. -->
+            <li data-txt="streamdaw.pricing.pro.f7">Presets, and your Mac's speakers in time with the phones</li>
             <li data-txt="streamdaw.pricing.pro.f8">No 60-minute limit</li>
           </ul>
           <!-- No coupon field here (2026-10-13, Ori): a visible field sends visitors off to hunt for
@@ -474,17 +481,22 @@
       <div class="sec-head center"><h2 data-txt="streamdaw.faq.title">Questions.</h2></div>
       <div class="faq">
         <details><summary><span data-txt="streamdaw.faq.q1">How good is the sound?</span></summary>
-          <p data-txt="streamdaw.faq.a1">Lossless by default: uncompressed 16-bit at your session's sample rate, about 1.6 Mbit/s a listener. In sync mode, or when a listener's connection can't keep up, that listener gets high-quality Opus so nobody drops out.</p></details>
+          <p data-txt="streamdaw.faq.a1">Lossless by default: uncompressed 16-bit at your session's sample rate, about 1.6 Mbit/s a listener for the full mix at 44.1 or 48 kHz, twice that at 88.2 or 96. In sync mode, or when a listener's connection can't keep up, that listener gets Opus at 128 kbit/s. iPhones on iOS 18 or older can't play Opus, so they stay uncompressed.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q2">How many people can listen?</span></summary>
-          <p data-txt="streamdaw.faq.a2">Each listener gets their own stream from your Mac, so your upload sets the limit. A lossless listener takes about 1.6 Mbit/s, a phone in sync mode about 0.15: a 20 Mbit/s upload carries a review session of 10, or a band of 20 with room to spare. Up to 6 guests on camera.</p></details>
+          <p data-txt="streamdaw.faq.a2">Each listener gets their own stream from your Mac, so your upload sets the limit. At 44.1 or 48 kHz, a listener on the full mix takes about 1.6 Mbit/s, so a 20 Mbit/s upload carries about 10 with room to spare. Outside sync mode, a listener on the track mixer takes about 1.5 Mbit/s for every stem you send. With 8 stems, that is about 12 Mbit/s for one person. In sync mode a phone takes about 0.15 Mbit/s, or about 1.5 on an iPhone with iOS 18 or older. Up to 6 guests on camera.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q3">Is everyone really in time?</span></summary>
           <p data-txt="streamdaw.faq.a3">Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest; Bluetooth adds its own delay.</p></details>
-        <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs does it work in?</span></summary>
+        <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs has it been tested in?</span></summary>
           <p data-txt="streamdaw.faq.a4">We have streamed sessions from Ableton Live and from the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig, which we have not tested yet. Pro Tools is on the way.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q9">Why does macOS ask me to allow StreamDAW?</span></summary>
           <p data-txt="streamdaw.faq.a9">StreamDAW isn't notarized by Apple yet, so the first time you open the installer macOS says it can't verify it. Allow it once in System Settings › Privacy &amp; Security › Open Anyway. The installer adds only the StreamDAW app, its plug-ins and the StreamDAW Audio device. <a href="streamdaw-install.html">The install guide</a> shows every screen.</p></details>
+        <!-- 2026-10-15: "With Pro you can also require sign-in, so each listener registers first." taken
+             out here and in the JSON-LD twin: Require sign-in cannot be switched on on a customer's
+             Mac yet (the app's relay has no sign-in secret). Put it back when customer sign-in ships
+             (being built now, with customer TURN). Same for the Pro list (pro.f7) and
+             js/streamdaw-checkout.js FEATURES. -->
         <details><summary><span data-txt="streamdaw.faq.q7">Who can get into my session?</span></summary>
-          <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first.</p></details>
+          <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. You can switch it off. The Silent disco preset starts with it off.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q8">Is there a monthly plan?</span></summary>
           <p data-txt="streamdaw.faq.a8">Yes: Pro Monthly, <span data-usd="8.99" data-dp="2">$8.99</span> a month with every Pro feature. It is charged in shekels at the day's rate when you start (<span data-usd="8.99" data-cur="ILS" data-dp="2">₪27.62</span> today, VAT included) and stays that amount every month. Cancel any time in your account, no fee: nothing more is charged, and Pro stays on to the end of the month you paid for. Or buy Pro once and keep it.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q5">How does the licence work?</span></summary>
@@ -548,7 +560,7 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=28"></script>
 <script src="../js/site-edit.js?v=9"></script>
-<script src="../js/streamdaw-page.js?v=20261015"></script>
+<script src="../js/streamdaw-page.js?v=20261015b"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/studio.js?v=1435ed44" defer></script>

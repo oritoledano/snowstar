@@ -23,6 +23,8 @@
   const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)');
   const calm = () => !!(still && still.matches);
   const reels = Array.from(document.querySelectorAll('.reel[data-media]'));
+  // A remade clip: its figure's data-v becomes ?v=… on its poster and sources (the cache-buster).
+  const ver = (fig) => (fig.dataset.v ? '?v=' + encodeURIComponent(fig.dataset.v) : '');
 
   // Near the screen: the poster only, through an Image first and set once it has loaded, so a
   // missing poster never paints a broken frame over the background.
@@ -33,7 +35,7 @@
     if (!v) return;
     const img = new Image();
     img.onload = () => { v.poster = img.src; fig.classList.add('has-poster'); showBtn(fig); };
-    img.src = MEDIA + name + '-poster.jpg';
+    img.src = MEDIA + name + '-poster.jpg' + ver(fig);
     v.addEventListener('playing', () => { fig.classList.add('playing'); showBtn(fig); paint(fig); });
     v.addEventListener('pause', () => paint(fig));
   }
@@ -46,7 +48,7 @@
     const v = fig.querySelector('video'), name = fig.dataset.media;
     [['webm', 'video/webm'], ['mp4', 'video/mp4']].forEach(([ext, type]) => {
       const s = document.createElement('source');
-      s.src = MEDIA + name + '.' + ext; s.type = type;
+      s.src = MEDIA + name + '.' + ext + ver(fig); s.type = type;
       v.appendChild(s);
     });
     // The last <source> failing means no clip at all: say so, and keep the button away.
