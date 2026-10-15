@@ -47,7 +47,7 @@ import { stashArtists, stashScanStart, stashScanGet, stashMine,
          stashDeezerSearch, stashDeezerImport, stashCatalogScan,
          stashRegistrations, stashRegistrationSet } from './snowstash.js';
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
-         streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken,
+         streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken, streamdawTurn,
          streamdawAdmin, streamdawRelease, streamdawReconcile,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
          streamdawMinterPending, streamdawMinterIssue,
@@ -203,7 +203,8 @@ async function handle(req, env, ctx) {
   // worst a forged post achieves is a junk stream row that ages out of the 24-hour view.
   // /streamdaw/live/register is posted by the same relays (no Origin, no cookie): it carries the
   // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/n/u']);
+  // /streamdaw/turn: the same relays, the same bearer secret; it only hands that Mac TURN credentials.
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -480,6 +481,8 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/health/stream' && method === 'GET') return streamdawHealthStream(req, env, await currentUser(req, env), url);
   // Live links (snowstar.company/live/<id>): a relay says where its Mac is now; the waiting page asks.
   if (path === '/streamdaw/live/register' && method === 'POST') return streamdawLiveRegister(req, env);
+  // TURN for a customer's Mac: credentials of its own, from Ori's Cloudflare keys held here (streamdaw.js).
+  if (path === '/streamdaw/turn' && method === 'POST') return streamdawTurn(req, env);
   const liveId = path.match(/^\/streamdaw\/live\/([a-z0-9]{1,32})$/);
   if (liveId && method === 'GET') return streamdawLiveStatus(req, env, liveId[1]);
 

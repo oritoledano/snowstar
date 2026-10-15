@@ -83,12 +83,29 @@ const sdLog = (env, actor, action, subject, detail) => env.DB.prepare(
 ).bind(actor, action, subject, JSON.stringify(detail), now()).run().catch(() => null);
 
 // ── presence tokens (listener identity for the relay) ───────────────────────
-// A signed-in listener exchanges their Snowstar session for a short-lived
-// HMAC-signed token {name, sub, exp}. The relay (a separate Node process) shares
-// PRESENCE_SECRET and verifies it, so it can trust the listener's name without
-// touching the account DB. The player is on stream.snowstar.company (a different
-// origin), so this endpoint is the ONLY one that needs CORS + credentials.
+// A signed-in listener exchanges their Snowstar session for a short-lived token
+// {name, sub, aud, exp} the relay trusts without touching the account DB.
+//
+// Since 2026-10-15 the token is SIGNED (ES256) with PRESENCE_SIGNING_KEY, a private key only
+// this Worker holds (a Worker secret, a JWK); every StreamDAW relay checks it with the public
+// key the app carries (server/presence.js in the StreamDAW repo). So "Require sign-in" works on
+// a customer's Mac too, and no secret of ours is on anyone's Mac. `aud` names the relay a token
+// is for, so a token handed to one studio is refused by every other:
+//   - Ori's relay: the player is on stream.snowstar.company, SAME SITE as this Worker, so its
+//     credentialed fetch carries the SameSite=Lax session cookie: POST /presence-token below,
+//     aud = the page's host, 5 minutes (the page refreshes it every 90 s).
+//   - a customer's Mac: the player is on https://<words>.trycloudflare.com, ANOTHER site. No
+//     cross-site fetch carries a Lax cookie (and Safari sends no third-party cookie at all), so
+//     CORS cannot do it. The page goes to snowstar.company/live/<id>/signin instead (a top-level
+//     page: the cookie goes), the listener says yes, and comes back through /live/<id>/… with the
+//     token in the URL fragment (never sent to any server). aud = the live-link id, 12 hours
+//     (one sitting: there is no way to refresh it from the tunnel's page), and `sub` is a tag of
+//     the account for that id only, so two studios cannot match up their listeners.
+// The old HMAC token (PRESENCE_SECRET, shared with Ori's relay only) is still what `token` holds
+// while that secret is set, so an old relay and an old player go on working; `signed` is the new
+// one. Remove PRESENCE_SECRET once Ori's relay runs presence.js, and `token` becomes the signed one.
 const PRESENCE_ORIGINS = ['https://stream.snowstar.company', 'http://localhost:8787', 'http://127.0.0.1:8787'];
+const PRESENCE_SITTING_S = 12 * 3600;
 function presenceCors(origin) {
   const allow = PRESENCE_ORIGINS.includes(origin) ? origin : PRESENCE_ORIGINS[0];
   return {
@@ -109,19 +126,53 @@ async function signPresence(secret, payload) {
   const sig = await crypto.subtle.sign('HMAC', key, enc.encode(body));
   return body + '.' + b64urlBytes(sig);
 }
+// The signing key, imported once per isolate (and again if the secret changes).
+let presenceSigner = null;
+async function presenceKey(env) {
+  const src = env.PRESENCE_SIGNING_KEY;
+  if (!src) return null;
+  if (presenceSigner && presenceSigner.src === src) return presenceSigner;
+  let jwk = null;
+  try { jwk = JSON.parse(src); } catch {}
+  if (!jwk || jwk.kty !== 'EC' || jwk.crv !== 'P-256' || !jwk.d || !jwk.x || !jwk.y) return null;
+  try {
+    const key = await crypto.subtle.importKey('jwk', { kty: 'EC', crv: 'P-256', x: jwk.x, y: jwk.y, d: jwk.d },
+      { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+    presenceSigner = { src, key, kid: String(jwk.kid || '') };
+    return presenceSigner;
+  } catch { return null; }
+}
+/** A compact JWS (ES256): header.payload.signature. null without a signing key. */
+async function signPresenceJwt(env, claims) {
+  const k = await presenceKey(env);
+  if (!k) return null;
+  const enc = new TextEncoder();
+  const head = b64urlBytes(enc.encode(JSON.stringify({ alg: 'ES256', typ: 'JWT', kid: k.kid })));
+  const body = b64urlBytes(enc.encode(JSON.stringify({ iss: 'snowstar.company', ...claims, iat: now() })));
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, k.key, enc.encode(head + '.' + body));
+  return head + '.' + body + '.' + b64urlBytes(sig);
+}
+const presenceName = (user) => ((user.name && user.name.trim()) || lc(user.email).split('@')[0] || 'Listener').slice(0, 40);
 
-/** POST /streamdaw/presence-token — signed-in listener → short-lived HMAC token
- *  the relay verifies to trust the listener's name. CORS + credentials for the
- *  stream.snowstar.company player. */
+/** POST /streamdaw/presence-token — signed-in listener → short-lived token the relay verifies
+ *  to trust the listener's name. CORS + credentials for the stream.snowstar.company player.
+ *  {token, signed, name}: `token` the old HMAC one while PRESENCE_SECRET is set (else the signed
+ *  one), `signed` the ES256 one for the page's own host. */
 export async function streamdawPresenceToken(req, env) {
-  const cors = presenceCors(req.headers.get('origin') || '');
+  const origin = req.headers.get('origin') || '';
+  const cors = presenceCors(origin);
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-  if (!env.PRESENCE_SECRET) return json({ error: 'presence not configured' }, 501, cors);
+  if (!env.PRESENCE_SECRET && !env.PRESENCE_SIGNING_KEY) return json({ error: 'presence not configured' }, 501, cors);
   const user = await currentUser(req, env);
   if (!user) return json({ error: 'sign in required' }, 401, cors);
-  const name = ((user.name && user.name.trim()) || lc(user.email).split('@')[0] || 'Listener').slice(0, 40);
-  const token = await signPresence(env.PRESENCE_SECRET, { name, sub: String(user.id), exp: now() + 300 });
-  return json({ token, name }, 200, cors);
+  const name = presenceName(user);
+  const exp = now() + 300;
+  const aud = PRESENCE_ORIGINS.includes(origin) ? new URL(origin).host : null;
+  const signed = aud ? await signPresenceJwt(env, { name, sub: String(user.id), aud, exp }) : null;
+  const legacy = env.PRESENCE_SECRET ? await signPresence(env.PRESENCE_SECRET, { name, sub: String(user.id), exp }) : null;
+  const token = legacy || signed;
+  if (!token) return json({ error: 'origin not allowed' }, 403, cors);
+  return json({ token, signed, name }, 200, cors);
 }
 
 // ── coupons (streamdaw_coupons table; math reused from coupons.js) ──────────
@@ -1483,11 +1534,13 @@ function livePage(status, title, text, wait) {
   });
 }
 
-/** GET /live/<id>[/<path>][?query]: on to the Mac's tunnel, or a page that waits for it. */
+/** GET /live/<id>[/<path>][?query]: on to the Mac's tunnel, or a page that waits for it.
+ *  /live/<id>/signin: a listener's sign-in for that Mac's sessions (liveSignin). */
 export async function streamdawLivePage(req, env, url) {
   const m = url.pathname.match(/^\/live\/([^/]+)(\/.*)?$/);
   const id = m ? m[1].toLowerCase() : '';
   const rest = (m && m[2] ? m[2] : '').replace(/\/{2,}/g, '/');
+  if (m && rest === '/signin') return liveSignin(req, env, url, id);
   const q = url.search.length <= 1024 ? url.search : '';
   const row = m && rest.length <= 512 && LIVE_REST.test(rest) ? await liveRow(env, id) : null;
   if (!row) return livePage(404, 'No such StreamDAW link', 'Check the link you were sent, or ask the studio for a new one.', null);
@@ -1499,10 +1552,182 @@ export async function streamdawLivePage(req, env, url) {
     { api: `/api/streamdaw/live/${id}`, rest: rest || '/', q });
 }
 
-/** The daily cron: links unseen for half a year, and their rate-limit rows. */
+/** The daily cron: links unseen for half a year, and their rate-limit rows; TURN credentials past their end. */
 export async function streamdawLiveCleanup(env) {
   await env.DB.prepare('DELETE FROM streamdaw_live WHERE updated_at < ?').bind(now() - LIVE_KEEP_DAYS * 86400).run();
   await env.DB.prepare("DELETE FROM attempts WHERE bucket LIKE 'sdlive%' AND reset_at < ?").bind(now()).run();
+  await env.DB.prepare('DELETE FROM streamdaw_turn WHERE expires_at < ?').bind(now()).run().catch(() => null);   // before its migration: no table
+}
+
+// ── Sign-in for a customer's sessions: /live/<id>/signin (2026-10-15) ──
+// The listener's page is on the Mac's tunnel (another site), so it sends the listener here, a
+// top-level page on snowstar.company where the session cookie goes. Signed in, they are asked
+// once ("Join as <name>": the studio will see the name; nothing goes to a studio without that
+// click, and no other page can click it: same-origin POST, no framing). Then back through the
+// live link, /live/<id><to>#sdaw_pt=<token>: the fragment rides the 302 to the tunnel (or the
+// waiting page) and is never sent to a server; the page takes it out of the address bar. `to` is
+// only ever a path on this live link: nobody is sent anywhere else. The POST answers with a page
+// that goes there (location.replace), not a 303: a redirect chain started by a form is held to
+// the form-action of the page (CSP 'self'), and the chain ends on the tunnel, another origin.
+function liveBack(raw) {
+  const s = String(raw || '/');
+  if (s.length > 1600 || s[0] !== '/' || s.startsWith('//') || /[\\\s#]/.test(s)) return '/';
+  let u;
+  try { u = new URL(s, 'https://back.invalid'); } catch { return '/'; }
+  if (u.origin !== 'https://back.invalid' || u.pathname.length > 512 || !LIVE_REST.test(u.pathname) || u.search.length > 1024) return '/';
+  const p = u.pathname.replace(/\/{2,}/g, '/');
+  return (p === '/signin' ? '/' : p) + u.search;
+}
+// referrer-policy same-origin, not no-referrer: with no-referrer a browser sends "Origin: null" on
+// the page's own form post (Fetch: serializing a request origin), and the check below needs it.
+function signinPage(status, { title, text, name = null, action = null, back = null, wait = false, go = null }) {
+  const nonce = urlToken(16);
+  const esc = (v) => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  const body = '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">'
+    + `<title>${esc(title)} · StreamDAW</title><style>html,body{margin:0;min-height:100%;background:#12110e;color:#f3eddc;`
+    + 'font:400 16px/1.5 Inter,system-ui,-apple-system,sans-serif}body{display:grid;place-content:center;text-align:center;padding:28px;min-height:100vh;box-sizing:border-box}'
+    + 'h1{font:600 22px/1.3 Georgia,serif;margin:0 0 10px}p{margin:0 auto 12px;max-width:30em;color:#cfc7b2}'
+    + '.btn{display:inline-block;font:600 16px/1 Inter,system-ui,sans-serif;background:#c8f04a;color:#12110e;border:0;border-radius:999px;padding:14px 22px;cursor:pointer;text-decoration:none;margin:6px}'
+    + 'a.alt{color:#cfc7b2;display:inline-block;margin-top:10px}small{color:#8d8572}</style></head><body>'
+    + `<h1>${esc(title)}</h1><p>${esc(text)}</p>`
+    + (action ? `<form method="post" action="${esc(action)}"><button class="btn" type="submit">Continue as ${esc(name)}</button></form>` : '')
+    + (wait ? '<p><a class="btn" id="go" href="/apps/streamdaw.html?signin=1" target="_blank" rel="opener">Sign in or create an account</a></p>'
+      + '<p><small id="s">Signed in? Come back to this tab: it goes on by itself.</small></p>' : '')
+    + (back ? `<p><a class="alt" href="${esc(back)}">Not now: back to the session</a></p>` : '')
+    + (go ? `<p><a class="btn" id="go" href="${esc(go)}">Back to the session</a></p><script nonce="${nonce}">location.replace(document.getElementById('go').href);</script>` : '')
+    + (wait ? `<script nonce="${nonce}">(function(){var busy=false;function look(){if(busy)return;busy=true;`
+      + 'fetch("/api/me",{cache:"no-store",credentials:"same-origin"}).then(function(r){return r.json();}).then(function(j){busy=false;if(j&&j.user)location.reload();})'
+      + '.catch(function(){busy=false;});}setInterval(look,2500);document.addEventListener("visibilitychange",function(){if(!document.hidden)look();});'
+      + 'window.addEventListener("focus",look);})();</script>' : '')
+    + '</body></html>';
+  return new Response(body, {
+    status,
+    headers: {
+      'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'referrer-policy': 'same-origin',
+      'x-content-type-options': 'nosniff', 'x-frame-options': 'DENY',
+      'content-security-policy': `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; connect-src 'self'; `
+        + "frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+    },
+  });
+}
+async function liveSignin(req, env, url, id) {
+  const row = await liveRow(env, id);
+  if (!row) return livePage(404, 'No such StreamDAW link', 'Check the link you were sent, or ask the studio for a new one.', null);
+  if (row.status === 'blocked') return livePage(410, 'This link is switched off', 'Ask the studio for a new one.', null);
+  const to = liveBack(url.searchParams.get('to'));
+  const back = `/live/${id}${to}`;
+  const action = `/live/${id}/signin?to=${encodeURIComponent(to)}`;
+  if (!env.PRESENCE_SIGNING_KEY) return signinPage(501, { title: 'Sign-in is not available yet', text: 'Join the session without signing in, or ask the studio.', back });
+  const user = await currentUser(req, env);
+  if (req.method === 'POST') {
+    // Only this page's own button: a form posted from anywhere else is refused (and carries no
+    // Lax cookie anyway). Its Origin, or (a browser that sends "null") Sec-Fetch-Site.
+    const origin = req.headers.get('origin') || '';
+    const mine = origin === url.origin || ((origin === '' || origin === 'null') && req.headers.get('sec-fetch-site') === 'same-origin');
+    if (!mine) return signinPage(403, { title: 'Start again from the session', text: 'This sign-in did not come from this page.', back });
+    if (!user) return signinPage(200, { title: 'Sign in to join', text: 'This studio asks listeners to sign in with Snowstar.', back, wait: true });
+    const wait = await liveThrottle(env, 'sdlive-signin:' + user.id, 60, 3600);
+    if (wait) return signinPage(429, { title: 'Too many sign-ins', text: 'Wait a few minutes, then try again.', back });
+    const token = await signPresenceJwt(env, {
+      name: presenceName(user), sub: 'p' + await ipTag(env, String(user.id) + '|' + id, 'sdpresence'), aud: id, exp: now() + PRESENCE_SITTING_S });
+    if (!token) return signinPage(501, { title: 'Sign-in is not available yet', text: 'Join the session without signing in, or ask the studio.', back });
+    return signinPage(200, { title: 'Signed in', text: 'Going back to the session…', go: `${url.origin}${back}#sdaw_pt=${token}` });
+  }
+  if (!user) return signinPage(200, { title: 'Sign in to join', text: 'This studio asks listeners to sign in with Snowstar.', back, wait: true });
+  return signinPage(200, { title: 'Join this session', text: 'The studio running this StreamDAW session will see your name. Your email stays with Snowstar.',
+                           name: presenceName(user), action, back });
+}
+
+// ── TURN for a customer's Mac: POST /api/streamdaw/turn (2026-10-15) ──
+// Video and talkback between a studio and a guest on cellular or behind a carrier's NAT need a
+// TURN relay. Ori's relay mints Cloudflare TURN credentials from his own keys (turn.env); a
+// customer's Mac has no keys and must never get them. So the Mac's relay asks here, proving which
+// Mac it is with its live link (id + secret as the bearer + machine, the way a registration does:
+// every Mac has one, Free or Pro). The keys are Worker secrets, STREAMDAW_TURN_KEY_ID and
+// STREAMDAW_TURN_API_TOKEN (the names Ori's turn.env uses). The answer: credentials made for this
+// Mac by Cloudflare's generate-ice-servers (developers.cloudflare.com/realtime/turn/generate-credentials,
+// read 2026-10-15: POST, ttl in seconds, at most 48 h; an allocation is cut soon after its
+// credential ends), 24 h, and the SAME ones again while they have 9 h or more left (cached per Mac
+// for 15 of their 24 h, streamdaw_turn: schema-streamdaw-turn.sql). refreshAt (8 h before the
+// end) is when the relay asks again, so a peer made just before still has 8 h. Port 53 URLs are
+// dropped (browsers block them: Cloudflare's note). Rate limited per Mac and per network.
+const TURN_TTL_S = 24 * 3600;
+const TURN_REUSE_S = 9 * 3600;
+const TURN_REFRESH_S = 8 * 3600;
+const CF_RTC = 'https://rtc.live.cloudflare.com/v1';
+
+function iceList(v) {
+  const arr = Array.isArray(v) ? v : (v && typeof v === 'object' ? [v] : []);
+  const out = [];
+  for (const s of arr) {
+    if (!s || typeof s !== 'object') continue;
+    const urls = (Array.isArray(s.urls) ? s.urls : [s.urls])
+      .filter((u) => typeof u === 'string' && u.length < 200 && /^(stun|turns?):/.test(u) && !/:53(\?|$)/.test(u));
+    if (!urls.length) continue;
+    const e = { urls };
+    if (s.username) { e.username = String(s.username); e.credential = String(s.credential || ''); }
+    out.push(e);
+  }
+  return out.slice(0, 4);
+}
+
+/** POST /api/streamdaw/turn {id, machine}, Authorization: Bearer <live secret> → {ok, iceServers,
+ *  expiresAt, refreshAt, cached}. From a relay (no Origin, no cookie: CSRF-exempt in index.js). */
+export async function streamdawTurn(req, env) {
+  let b = {};
+  try { b = await req.json(); } catch {}
+  const id = String(b.id || ''), machine = String(b.machine || '');
+  const secret = (String(req.headers.get('authorization') || '').match(/^Bearer ([A-Za-z0-9_-]{40,100})$/) || [])[1] || '';
+  if (!LIVE_ID.test(id)) return json({ error: 'bad_id' }, 400);
+  if (!LIVE_MACHINE.test(machine)) return json({ error: 'bad_machine' }, 400);
+  if (!secret) return json({ error: 'no_secret' }, 401);
+  if (!env.STREAMDAW_TURN_KEY_ID || !env.STREAMDAW_TURN_API_TOKEN) return json({ error: 'turn_not_configured' }, 501);
+
+  const ip = req.headers.get('cf-connecting-ip') || '';
+  const ipHash = ip ? await ipTag(env, ip, 'sdlive') : 'none';
+  let wait = await liveThrottle(env, 'sdlive-turnip:' + ipHash, 240, 3600);
+  if (wait) return json({ error: 'slow_down', retryAfter: wait }, 429);
+  const row = await env.DB.prepare('SELECT id, secret_hash, machine_hash, status FROM streamdaw_live WHERE id = ?').bind(id).first();
+  if (!row) return json({ error: 'unknown' }, 403);
+  if (!safeEqual(await sha256b64(secret), row.secret_hash)) return json({ error: 'auth' }, 403);
+  if (machine !== row.machine_hash) return json({ error: 'machine' }, 409);
+  if (row.status === 'blocked') return json({ error: 'blocked' }, 403);
+  wait = await liveThrottle(env, 'sdlive-turn:' + id, 30, 3600);
+  if (wait) return json({ error: 'slow_down', retryAfter: wait }, 429);
+
+  const t = now();
+  const kept = await env.DB.prepare('SELECT ice_json, expires_at FROM streamdaw_turn WHERE id = ?').bind(id).first().catch(() => null);
+  if (kept && kept.expires_at - t >= TURN_REUSE_S) {
+    let ice = [];
+    try { ice = iceList(JSON.parse(kept.ice_json)); } catch {}
+    if (ice.length) return json({ ok: true, iceServers: ice, expiresAt: kept.expires_at, refreshAt: kept.expires_at - TURN_REFRESH_S, cached: true });
+  }
+  // New credentials: a handful a day per Mac at most (the cache makes it one every 15 h).
+  wait = await liveThrottle(env, 'sdlive-turnmint:' + id, 6, 86400);
+  if (wait) return json({ error: 'slow_down', retryAfter: Math.min(wait, 3600) }, 429);
+  let r;
+  try {
+    r = await fetch(`${CF_RTC}/turn/keys/${encodeURIComponent(env.STREAMDAW_TURN_KEY_ID)}/credentials/generate-ice-servers`, {
+      method: 'POST',
+      headers: { authorization: 'Bearer ' + env.STREAMDAW_TURN_API_TOKEN, 'content-type': 'application/json' },
+      body: JSON.stringify({ ttl: TURN_TTL_S }),
+      signal: AbortSignal.timeout(6000),
+    });
+  } catch { return json({ error: 'turn_upstream', status: 0 }, 502); }
+  if (!r.ok) return json({ error: 'turn_upstream', status: r.status }, 502);
+  let j = {};
+  try { j = await r.json(); } catch {}
+  const ice = iceList(j && j.iceServers);
+  if (!ice.some((x) => x.username)) return json({ error: 'turn_upstream', status: r.status }, 502);
+  const expiresAt = t + TURN_TTL_S;
+  const username = (ice.find((x) => x.username) || {}).username || null;
+  await env.DB.prepare(
+    `INSERT INTO streamdaw_turn (id, ice_json, username, expires_at, minted_at, mints) VALUES (?, ?, ?, ?, ?, 1)
+     ON CONFLICT(id) DO UPDATE SET ice_json = excluded.ice_json, username = excluded.username, expires_at = excluded.expires_at,
+       minted_at = excluded.minted_at, mints = mints + 1`
+  ).bind(id, JSON.stringify(ice), username, expiresAt, t).run().catch(() => null);
+  return json({ ok: true, iceServers: ice, expiresAt, refreshAt: expiresAt - TURN_REFRESH_S, cached: false });
 }
 
 // For streamdaw-subs.js (Pro Monthly), which builds on the same orders, keys and emails.

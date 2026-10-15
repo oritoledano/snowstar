@@ -68,7 +68,7 @@
 "name": "Who can get into my session?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. You can switch it off. The Silent disco preset starts with it off."
+"text": "Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first. You can switch the waiting room off: the Silent disco preset starts with it off."
 }
 },
  {
@@ -442,10 +442,7 @@
             <li data-txt="streamdaw.pricing.pro.f4">Camera, up to three screens (a window or an app) and talkback</li>
             <li data-txt="streamdaw.pricing.pro.f5">Record up to 16 people into your DAW, in time</li>
             <li data-txt="streamdaw.pricing.pro.f6">Any app or input into the stream <small>Spotify, Music, YouTube, a browser, an interface</small></li>
-            <!-- 2026-10-15: "and sign-in-only sessions" off this line until customer sign-in ships (being
-                 built now): on a customer's Mac Require sign-in cannot switch on yet. Put it back then,
-                 here, in FAQ a7 + its JSON-LD twin, and in js/streamdaw-checkout.js FEATURES. -->
-            <li data-txt="streamdaw.pricing.pro.f7">Presets, and your Mac's speakers in time with the phones</li>
+            <li data-txt="streamdaw.pricing.pro.f7">Presets, sign-in-only sessions, and your Mac's speakers in time with the phones</li>
             <li data-txt="streamdaw.pricing.pro.f8">No 60-minute limit</li>
           </ul>
           <!-- No coupon field here (2026-10-13, Ori): a visible field sends visitors off to hunt for
@@ -490,13 +487,8 @@
           <p data-txt="streamdaw.faq.a4">We have streamed sessions from Ableton Live and from the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig, which we have not tested yet. Pro Tools is on the way.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q9">Why does macOS ask me to allow StreamDAW?</span></summary>
           <p data-txt="streamdaw.faq.a9">StreamDAW isn't notarized by Apple yet, so the first time you open the installer macOS says it can't verify it. Allow it once in System Settings › Privacy &amp; Security › Open Anyway. The installer adds only the StreamDAW app, its plug-ins and the StreamDAW Audio device. <a href="streamdaw-install.html">The install guide</a> shows every screen.</p></details>
-        <!-- 2026-10-15: "With Pro you can also require sign-in, so each listener registers first." taken
-             out here and in the JSON-LD twin: Require sign-in cannot be switched on on a customer's
-             Mac yet (the app's relay has no sign-in secret). Put it back when customer sign-in ships
-             (being built now, with customer TURN). Same for the Pro list (pro.f7) and
-             js/streamdaw-checkout.js FEATURES. -->
         <details><summary><span data-txt="streamdaw.faq.q7">Who can get into my session?</span></summary>
-          <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. You can switch it off. The Silent disco preset starts with it off.</p></details>
+          <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first. You can switch the waiting room off: the Silent disco preset starts with it off.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q8">Is there a monthly plan?</span></summary>
           <p data-txt="streamdaw.faq.a8">Yes: Pro Monthly, <span data-usd="8.99" data-dp="2">$8.99</span> a month with every Pro feature. It is charged in shekels at the day's rate when you start (<span data-usd="8.99" data-cur="ILS" data-dp="2">₪27.62</span> today, VAT included) and stays that amount every month. Cancel any time in your account, no fee: nothing more is charged, and Pro stays on to the end of the month you paid for. Or buy Pro once and keep it.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q5">How does the licence work?</span></summary>
