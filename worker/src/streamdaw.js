@@ -1389,6 +1389,9 @@ export async function streamdawAdmin(env, user) {
     /* Pro Monthly: every subscription, its charges, MRR, charges HYP never answered, refunds owed. */
     ...(await (await subsMod()).subsAdmin(env).catch(() => ({}))),
 
+    /* Who took the free installer or connected a Mac (the trial), with what their Macs did (2026-10-15). */
+    onTrial: await (await import('./streamdaw-macs.js')).peopleOnTrial(env).catch(() => ({ ok: false, people: [] })),
+
     /* The one blocking fact, stated rather than implied. */
     blocked: releases.some((r) => r.is_latest)
       ? null

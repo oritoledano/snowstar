@@ -57,6 +57,7 @@ import { streamdawPrices, streamdawSubCancel, streamdawSubResume, streamdawSubCa
          streamdawSubAdmin, streamdawLicenceRefresh, streamdawRenewals } from './streamdaw-subs.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
+import { streamdawMacLink, streamdawMacStatus } from './streamdaw-macs.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
          streamdawUpdatesCleanup } from './streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -206,7 +207,8 @@ async function handle(req, env, ctx) {
   // /streamdaw/live/register is posted by the same relays (no Origin, no cookie): it carries the
   // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
   // /streamdaw/turn: the same relays, the same bearer secret; it only hands that Mac TURN credentials.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/n/u']);
+  // /streamdaw/macs/status: the same relays; it answers only whether that machine ID is connected to an account.
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -489,6 +491,9 @@ async function handle(req, env, ctx) {
   // Remote updates (streamdaw-updates.js): every app asks at launch and daily (a GET: versions and a
   // random install id); the signed relay + pages bundles; the dashboard's Updates tab.
   if (path === '/streamdaw/update' && method === 'GET') return streamdawUpdateCheck(req, env, url);
+  // A Mac tied to its account (streamdaw-macs.js, 2026-10-15): the connect page, and the app's relay asking.
+  if (path === '/streamdaw/macs/link' && method === 'POST') return streamdawMacLink(req, env);
+  if (path === '/streamdaw/macs/status' && method === 'POST') return streamdawMacStatus(req, env);
   const bundleFile = path.match(/^\/streamdaw\/bundles\/([0-9.]{14})\.tgz$/);
   if (bundleFile && (method === 'GET' || method === 'HEAD')) return streamdawBundleFile(req, env, bundleFile[1]);
   if (path === '/streamdaw/updates/admin' && (method === 'GET' || method === 'POST')) return streamdawUpdatesAdmin(req, env, await currentUser(req, env));

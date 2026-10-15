@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-product="streamdaw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect your Mac | StreamDAW</title>
+<meta name="description" content="Connect the Mac running StreamDAW to your Snowstar account.">
+<!-- Opened by the StreamDAW app at its first start (2026-10-15): an owner's page, out of search results. -->
+<meta name="robots" content="noindex">
+<link rel="icon" href="/apps/streamdaw-favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/apps/streamdaw-icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apps/streamdaw-apple-touch-icon.png">
+<meta name="theme-color" content="#efe9da">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/account.css?v=19">
+<link rel="stylesheet" href="../css/streamdaw.css?v=1">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a href="streamdaw.html" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW" width="149" height="15"></a>
+    <div class="nav-tools solo">
+      <a class="back" href="streamdaw.html">About StreamDAW</a>
+      <span class="nav-acct" data-account-mount></span>
+    </div>
+  </div>
+</header>
+<main>
+<section class="ul-main" id="connect">
+  <div class="wrap">
+    <p class="kicker" data-txt="streamdaw-connect.kicker">Your Mac</p>
+    <h1 data-txt="streamdaw-connect.title">Connect StreamDAW.</h1>
+    <p class="ul-lead" data-txt="streamdaw-connect.lead">One step: this Mac goes on your Snowstar account, so your trial, your licence and any help you ask for are in one place.</p>
+    <!-- One panel at a time (js/streamdaw-connect.js): checking, signed out, done, a problem. -->
+    <div class="panel" id="cnWait"><p data-txt="streamdaw-connect.wait">Checking your account…</p></div>
+    <div class="panel" id="cnAnon" hidden>
+      <h2 data-txt="streamdaw-connect.anon.title">Sign in first.</h2>
+      <p data-txt="streamdaw-connect.anon.text">Use the account you downloaded StreamDAW with.</p>
+      <div class="cta"><button class="btn ink" type="button" id="cnSignin"><span data-txt="streamdaw-connect.anon.signin">Sign in</span></button></div>
+    </div>
+    <div class="panel" id="cnDone" hidden>
+      <h2 data-txt="streamdaw-connect.done.title">Connected.</h2>
+      <p><span data-txt="streamdaw-connect.done.text">This Mac is on the account of</span> <b id="cnWho"></b>. <span data-txt="streamdaw-connect.done.close">You can close this tab and go back to StreamDAW.</span></p>
+    </div>
+    <div class="panel" id="cnBad" hidden>
+      <h2 data-txt="streamdaw-connect.bad.title">This link is not from StreamDAW.</h2>
+      <p id="cnBadText" data-txt="streamdaw-connect.bad.text">Open it from StreamDAW › Settings › Licence › Connect this Mac.</p>
+    </div>
+    <p class="ul-fine" data-txt="streamdaw-connect.fine">What it means for your data: stream health and, if you allowed it, usage statistics from this Mac are linked to your account. <a href="../privacy.html#streamdaw">Privacy</a>.</p>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="StreamDAW">
+      <a href="streamdaw.html">StreamDAW</a>
+      <a href="streamdaw-terms.html">Licence terms</a>
+      <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=29"></script>
+<script src="../js/site-edit.js?v=9"></script>
+<script src="../js/streamdaw-connect.js?v=1"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>

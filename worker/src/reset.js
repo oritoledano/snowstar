@@ -75,6 +75,7 @@ const ID_TABLES = [
   ['snowstash_scans', 'user_id'], ['snowstash_registrations', 'user_id'],
   ['snowstash_unlocks', 'user_id'],
   ['streamdaw_free_downloads', 'user_id'],   // who took the free installer (2026-10-13)
+  ['streamdaw_macs', 'user_id'],             // the Macs they connected (2026-10-15; erasePerson reads them first)
   ['user_messages', 'user_id'],              // copies of what we emailed them (2026-10-14)
   ['sessions_seen', 'user_id'],              // signed-in visits, where the column exists
   /* Request health. The FK is ON DELETE SET NULL like the rest, but D1 only
@@ -332,7 +333,7 @@ const hex = async (s) => [...new Uint8Array(await crypto.subtle.digest('SHA-256'
  * stand. Everything else goes: the account and its sign-ins, entitlements, key requests and
  * keys, download links, free downloads, bug reports, the copies of our emails, contact
  * messages, the archive row, tracked events, the request log, and the stream-health, usage
- * and live-link rows of the Macs their keys were for.
+ * and live-link rows of the Macs their keys were for or that they connected.
  *
  * Every statement is soft: a table this database does not have yet is skipped, never a
  * failure halfway. Order matters where a foreign key points at a row about to go.
@@ -362,6 +363,8 @@ export async function erasePerson(env, { email, uid } = {}) {
   const machines = new Set();
   for (const r of await soft(env, 'SELECT machine_id FROM streamdaw_activations WHERE lower(email) = ?', E)) if (r.machine_id) machines.add(r.machine_id);
   for (const r of await soft(env, 'SELECT machine_id FROM streamdaw_orders WHERE lower(email) = ? OR user_id = ?', E, U)) if (r.machine_id) machines.add(r.machine_id);
+  // A Mac connected to the account (streamdaw-macs.js, 2026-10-15): its rows go too (the tie: ID_TABLES).
+  for (const r of await soft(env, 'SELECT machine_id FROM streamdaw_macs WHERE user_id = ?', U)) if (r.machine_id) machines.add(r.machine_id);
   for (const m of machines) {
     const h = (await hex(m)).slice(0, 16), live = await hex('streamdaw-live:' + m);
     await softRun(env, 'DELETE FROM sd_samples WHERE stream_id IN (SELECT id FROM sd_streams WHERE machine = ?)', h);

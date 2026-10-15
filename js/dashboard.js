@@ -1479,7 +1479,29 @@
             { label: 'State', get: (e) => `<span class="pill ${
                 e.revoked_at ? 'warn' : 'good'}">${e.revoked_at ? 'revoked' : esc(e.status)}</span>` },
             { label: 'Since', num: true, get: (e) => when(e.created_at) },
-          ])}</div>`);
+          ])}</div>
+        ${trialPanel(d.onTrial)}`);
+    }
+
+    /* Downloaded it, or on the trial (2026-10-15): everyone who took the free installer or connected a
+       Mac, and what their connected Macs did. A Mac shows up once the app's first start connected it
+       (apps/streamdaw-connect.html); an installer from before 0.5.9 never asks, so "—". */
+    function trialPanel(t) {
+      const rows = (t && t.people) || [];
+      const mins = (m) => (m >= 60 ? Math.floor(m / 60) + ' h ' + (m % 60) + ' min' : m + ' min');
+      return `<div class="db-panel"><h2>Downloaded or on the trial <span class="pill">${rows.length}</span></h2>
+        <p class="db-empty" style="padding-top:0">${t && t.ok === false ? 'The table for connected Macs is not there yet (worker/schema-streamdaw-macs.sql).'
+          : 'Everyone who downloaded the free installer or connected a Mac. Use is what their connected Macs sent (stream health); a Mac is connected at the app\'s first start from 0.5.9 on.'}</p>
+        ${table(rows, [
+          { label: 'Who', get: (p) => esc(p.name || '—') + (p.email ? '<br><span class="db-note">' + esc(p.email) + '</span>' : '') },
+          { label: 'Downloaded', num: true, get: (p) => (p.lastDownload ? when(p.lastDownload, { time: true }) + (p.version ? ' · ' + esc(p.version) : '') : '—') },
+          { label: 'Macs', num: true, get: (p) => p.macs || '—' },
+          { label: 'Now', get: (p) => (p.tier ? `<span class="pill ${p.tier === 'pro' ? 'good' : ''}">${esc(p.tier)}</span>` + (p.app ? ' ' + esc(p.app) : '') : '—') },
+          { label: 'Sittings', num: true, get: (p) => (p.macs ? p.sittings : '—') },
+          { label: 'On air', num: true, get: (p) => (p.macs ? mins(p.onAirMin || 0) : '—') },
+          { label: 'Most people', num: true, get: (p) => (p.macs ? p.peak : '—') },
+          { label: 'Last stream', num: true, get: (p) => (p.lastStream ? when(Math.floor(p.lastStream / 1000), { time: true }) : '—') },
+        ])}</div>`;
     }
 
     /* Licence keys. These are people who have PAID and cannot use what they
