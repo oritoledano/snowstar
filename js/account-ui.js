@@ -171,6 +171,13 @@
     invalid_email: 'That doesn’t look like a valid email.',
     rate_limited: 'Too many attempts. Please wait a few minutes and try again.',
     server_error: 'Something went wrong on our end. Please try again.',
+    /* The origin guard refused the request before it was read. "Please try
+       again" was the old answer and it was a dead end — the same browser in
+       the same state will be refused every time. Say what would change it. */
+    bad_origin: 'Your browser didn\u2019t send the details we need to accept this. '
+      + 'That usually means a privacy extension, or a preview window inside another app. '
+      + 'Open snowstar.company directly in Safari or Chrome and try there.',
+    forbidden: 'This account isn\u2019t allowed to do that.',
   };
 
   const SUB = {

@@ -53,7 +53,7 @@
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
-      { key: 'sdaw', label: 'App', tabs: ['orders', 'subscriptions', 'health', 'people', 'keys', 'reports', 'codes', 'releases'] },
+      { key: 'sdaw', label: 'App', tabs: ['orders', 'subscriptions', 'health', 'people', 'keys', 'reports', 'codes', 'releases', 'updates'] },
     ] },
     { key: 'snowstar', label: 'Snowstar', pages: [
       { key: 'jobs',      label: 'Jobs' },
@@ -252,6 +252,7 @@
     'streamdaw/sdaw/health':       () => paintStreamdawHealth(),
     'streamdaw/sdaw/codes':        () => paintStreamdaw('codes'),
     'streamdaw/sdaw/releases':     () => paintStreamdaw('releases'),
+    'streamdaw/sdaw/updates':      () => paintStreamdawUpdates(),
     'snowstar/jobs':               () => paintJobs(),
     'system/health/routes':        () => paintHealth('routes'),
     'system/health/people':        () => paintHealth('people'),
@@ -1249,6 +1250,92 @@
     sdHealthTimer = setTimeout(() => { if (href() === 'streamdaw/sdaw/health' && !document.hidden) load(); }, 10000);
   }
 
+  /* StreamDAW › App › updates (2026-10-15, worker/src/streamdaw-updates.js). Every StreamDAW app
+     asks at launch and once a day, with its version, the relay + pages bundle it runs, and a random
+     install id (never its machine id): that is what "in use" counts. Bundles are published from the
+     StreamDAW repo (scripts/publish-bundle.sh); here they can be pulled (every app stops using one
+     within a day, when nobody is in a session). An app version can be marked:
+       nag        a stronger banner on its control page ("please update"), closed for 4 hours at a time
+       dangerous  GO LIVE refused with your message and the download link (a session already on air is not cut)
+     Offline, a Mac never blocks. The notes of the version marked latest (Releases) are its "what's new". */
+  async function paintStreamdawUpdates() {
+    const d = await get('/streamdaw/updates/admin');
+    const t = d.totals || {}, apps = d.apps || [], bundles = d.bundles || [], relays = d.relays || [];
+    const attr = (v) => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const POL = { ok: ['ok', ''], nag: ['nag', 'warn'], dangerous: ['dangerous', 'warn'] };
+    const pol = (p) => { const [l, c] = POL[p] || POL.ok; return `<span class="pill ${c}"${p === 'dangerous' ? ' style="color:#ef4444;border-color:rgba(239,68,68,.5)"' : ''}>${l}</span>`; };
+    const relayName = (v) => (v === '0' || !v ? "the app's own" : esc(v));
+    paint(`
+      <div class="db-kpis">
+        <div class="db-kpi"><b>${t.installs7d || 0}</b><span>Macs seen, 7 days</span></div>
+        <div class="db-kpi"><b>${t.installs30d || 0}</b><span>Macs seen, 30 days</span></div>
+        <div class="db-kpi"><b>${t.onLatest7d || 0}</b><span>On the latest (${esc(d.latest || '—')}), 7 days</span></div>
+        <div class="db-kpi"><b>${bundles.filter((b) => b.status === 'active').length}</b><span>Bundles live</span></div>
+      </div>
+      <div class="db-panel" style="margin-top:16px"><h2>App versions <span class="pill">${apps.length}</span></h2>
+        <p class="db-empty" style="padding-top:0">Counted from the daily update check. <b>nag</b>: a stronger banner on that
+          version's control page. <b>dangerous</b>: GO LIVE refused there, with your message and the download link.
+          The latest's notes are its "what's new". Offline Macs are never blocked.</p>
+        ${table(apps, [
+          { label: 'Version', get: (a) => `<b>${esc(a.version)}</b>${a.version === d.latest ? ' <span class="pill good">latest</span>' : ''}` },
+          { label: 'Macs 1 d', num: true, get: (a) => a.installs1d || 0 },
+          { label: '7 d', num: true, get: (a) => a.installs7d || 0 },
+          { label: '30 d', num: true, get: (a) => a.installs30d || 0 },
+          { label: 'Word', get: (a) => pol(a.policy) },
+          { label: 'Set', get: (a) => `<div class="sd-new" style="margin:0;padding:6px 8px" data-ver="${attr(a.version)}">
+              <select class="sdu-pol">${['ok', 'nag', 'dangerous'].map((p) => `<option value="${p}"${p === a.policy ? ' selected' : ''}>${p}</option>`).join('')}</select>
+              <input class="sdu-msg" placeholder="Message (nag / dangerous)" maxlength="400" value="${attr(a.message)}">
+              <input class="sdu-notes" placeholder="What's new (while latest)" maxlength="1200" value="${attr(a.notes)}">
+              <button class="rv-btn rv-ok sdu-save">Save</button></div>` },
+        ])}
+        <div class="sd-new" id="sdu-add" style="margin-top:10px">
+          <input id="sdu-ver" placeholder="Another version, e.g. 0.5.8" style="width:160px">
+          <select id="sdu-pol"><option value="nag">nag</option><option value="dangerous">dangerous</option><option value="ok">ok</option></select>
+          <input id="sdu-msg" placeholder="Message" maxlength="400">
+          <button class="rv-btn rv-ok" id="sdu-addbtn">Set</button>
+        </div>
+        <p class="rv-note" id="sdu-said"></p></div>
+      <div class="db-panel"><h2>Relay + pages bundles <span class="pill">${bundles.length}</span></h2>
+        <p class="db-empty" style="padding-top:0">Published from the StreamDAW repo: <code>bash scripts/publish-bundle.sh --min-app &lt;first app with updates&gt; --notes "…" --upload</code>.
+          Signed on your Mac; each app checks the signature and every file, switches only when nobody is in a session,
+          and rolls a bundle back by itself if its relay crashes at start twice (<b>crashed</b>). Pulled: every app leaves it within a day.</p>
+        ${table(bundles, [
+          { label: 'Bundle', get: (b) => `<b>${esc(b.version)}</b><br><small style="opacity:.6">${esc((b.notes || '').slice(0, 140))}</small>` },
+          { label: 'For apps', get: (b) => esc(b.min_app_version) + '+' },
+          { label: 'Size', num: true, get: (b) => human(b.bytes) },
+          { label: 'Running 7 d', num: true, get: (b) => b.running || 0 },
+          { label: 'Crashed', num: true, get: (b) => (b.crashed ? `<b style="color:#ef4444">${b.crashed}</b>` : 0) },
+          { label: 'State', get: (b) => (b.status === 'active' ? '<span class="pill good">live</span>' : '<span class="pill warn">pulled</span>') },
+          { label: '', get: (b) => `<button class="chip sdu-bundle" data-ver="${attr(b.version)}" data-to="${b.status === 'active' ? 'pulled' : 'active'}">${b.status === 'active' ? 'pull' : 'put back'}</button>` },
+          { label: 'Published', num: true, get: (b) => when(b.created_at, { time: true }) },
+        ])}</div>
+      <div class="db-panel"><h2>Relays running, 7 days</h2>
+        ${table(relays, [
+          { label: 'Relay + pages', get: (r) => relayName(r.version) },
+          { label: 'Macs', num: true, get: (r) => r.installs7d || 0 },
+        ])}</div>`);
+    const said = (m) => { const el = document.getElementById('sdu-said'); if (el) el.textContent = m; };
+    const setPolicy = async (version, policy, message, notes) => {
+      if (policy === 'dangerous' && !confirm(`Mark ${version} dangerous? Every Mac on it will refuse GO LIVE (with your message) until it updates.`)) return;
+      const r = await post('/streamdaw/updates/admin', { op: 'policy', version, policy, message, notes });
+      if (!r || !r.ok) { said(r && r.error === 'bad_version' ? 'That is not a version (like 0.5.8).' : 'Not saved.'); return; }
+      load();
+    };
+    document.querySelectorAll('.sdu-save').forEach((b) => b.addEventListener('click', () => {
+      const row = b.closest('[data-ver]');
+      setPolicy(row.dataset.ver, row.querySelector('.sdu-pol').value, row.querySelector('.sdu-msg').value.trim(), row.querySelector('.sdu-notes').value.trim());
+    }));
+    const add = document.getElementById('sdu-addbtn');
+    if (add) add.addEventListener('click', () => setPolicy((document.getElementById('sdu-ver').value || '').trim(),
+      document.getElementById('sdu-pol').value, (document.getElementById('sdu-msg').value || '').trim(), ''));
+    document.querySelectorAll('.sdu-bundle').forEach((b) => b.addEventListener('click', async () => {
+      if (b.dataset.to === 'pulled' && !confirm(`Pull bundle ${b.dataset.ver}? Every app running it goes back to the previous one, when nobody is in a session.`)) return;
+      const r = await post('/streamdaw/updates/admin', { op: 'bundle', version: b.dataset.ver, status: b.dataset.to });
+      if (!r || !r.ok) { alert('That did not go through.'); return; }
+      load();
+    }));
+  }
+
   /* ── StreamDAW ────────────────────────────────────────────────────────
      The app has had a checkout, entitlements, download tokens and an
      admin-gated coupon endpoint for weeks with nothing on this side calling
@@ -1426,9 +1513,12 @@
                 ? `<span class="pill">issued ${dt(a.issued_at)}</span>`
                 : a.status === 'rejected' ? '<span class="pill">rejected</span>'
                 : a.status === 'renewing' ? `<span class="pill warn">next month's key, to ${when(a.expires_at)}</span>`
+                : a.status === 'deactivated' ? '<span class="pill">deactivated</span>'
+                : a.status === 'limit' ? '<b style="color:#e8b04b">over the 2-Mac limit</b>'
                 : '<b style="color:#e8b04b">waiting</b>' },
-            { label: '', get: (a) => a.status === 'issued' || a.status === 'rejected' ? '' :
-                `<button class="chip sd-cmd" data-cmd="${esc(cmd(a))}">Copy command</button>
+            { label: '', get: (a) => a.status === 'issued' || a.status === 'rejected' || a.status === 'deactivated' ? '' :
+                `<button class="chip sd-sign" data-id="${a.id}">Sign here</button>
+                 <button class="chip sd-cmd" data-cmd="${esc(cmd(a))}">Copy command</button>
                  <button class="chip sd-key" data-id="${a.id}">Paste key…</button>` },
           ])}</div>`);
       return wireStreamdaw();
@@ -1499,6 +1589,14 @@
       try { await navigator.clipboard.writeText(b.dataset.cmd); b.textContent = 'Copied'; }
       catch { window.prompt('Copy this command:', b.dataset.cmd); }
       setTimeout(() => { b.textContent = 'Copy command'; }, 1600);
+    }));
+    // "Sign here": the Worker signs this request with its own pair now, past the Mac limit too.
+    document.querySelectorAll('.sd-sign').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm('Sign and send this key now?')) return;
+      b.disabled = true; b.textContent = 'Signing…';
+      const r = await post('/streamdaw/activation/issue', { id: Number(b.dataset.id), mint: true });
+      if (!r || !r.ok) { b.disabled = false; b.textContent = 'Sign here'; alert((r && r.error) || 'That did not go through.'); return; }
+      load();          // the row flips to "issued" and the buyer has their email
     }));
     document.querySelectorAll('.sd-key').forEach((b) => b.addEventListener('click', async () => {
       // Everything keygen printed is fine: the Worker keeps the key's hex and reads the serial.

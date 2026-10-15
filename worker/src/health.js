@@ -60,9 +60,14 @@ export async function recordRequest(env, { url, method, status, ms, userId, ray,
       status | 0,
       userId == null ? null : userId,
       ray ? String(ray).slice(0, 40) : null,
-      // Only a 5xx earns a detail. A 404 explains itself by its route, and
-      // keeping a body for every one of them would make the table mostly noise.
-      status >= 500 && detail ? String(detail).slice(0, 2000) : null
+      /* A 5xx earns its stack. A 403 earns the Origin it was refused for —
+         without it a refused sign-up is a bare number, which is exactly how a
+         real one arrived: two 403s at 0ms and nothing at all to say which
+         browser or which page sent them. A 404 still explains itself by its
+         route, and a body for every one of those would be noise. */
+      status >= 500 && detail ? String(detail).slice(0, 2000)
+        : (status === 403 || status === 401) ? String(detail || '').slice(0, 200) || null
+        : null
     ).run();
   } catch {
     /* Deliberately silent. There is nowhere left to report to — the reporting

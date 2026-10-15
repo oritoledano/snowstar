@@ -50,13 +50,15 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken, streamdawTurn,
          streamdawAdmin, streamdawRelease, streamdawReconcile,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
-         streamdawMinterPending, streamdawMinterIssue,
+         streamdawMinterPending, streamdawMinterIssue, streamdawDeactivate, mintWaiting,
          streamdawReport, streamdawReports, streamdawDownloadFree,
          streamdawLiveRegister, streamdawLiveStatus, streamdawLivePage, streamdawLiveCleanup } from './streamdaw.js';
 import { streamdawPrices, streamdawSubCancel, streamdawSubResume, streamdawSubCancelLink, streamdawSubByToken,
          streamdawSubAdmin, streamdawLicenceRefresh, streamdawRenewals } from './streamdaw-subs.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
+import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
+         streamdawUpdatesCleanup } from './streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
          grantFromDashboard, revokeLicence, declineRequest , remindExpiring} from './licensing.js';
 import { handleStream } from './stream.js';
@@ -465,6 +467,7 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/activate' && method === 'POST') return streamdawActivate(req, env, await currentUser(req, env));
   if (path === '/streamdaw/activations' && method === 'GET') return streamdawActivationStatus(env, await currentUser(req, env));
   if (path === '/streamdaw/activation/issue' && method === 'POST') return streamdawActivationIssue(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/deactivate' && method === 'POST') return streamdawDeactivate(req, env, await currentUser(req, env));
   // The minter on the owner's Mac (a bearer token, no session): what to sign, and the signed key.
   if (path === '/streamdaw/minter/pending' && method === 'GET') return streamdawMinterPending(req, env);
   if (path === '/streamdaw/minter/issue' && method === 'POST') return streamdawMinterIssue(req, env);
@@ -483,6 +486,12 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/live/register' && method === 'POST') return streamdawLiveRegister(req, env);
   // TURN for a customer's Mac: credentials of its own, from Ori's Cloudflare keys held here (streamdaw.js).
   if (path === '/streamdaw/turn' && method === 'POST') return streamdawTurn(req, env);
+  // Remote updates (streamdaw-updates.js): every app asks at launch and daily (a GET: versions and a
+  // random install id); the signed relay + pages bundles; the dashboard's Updates tab.
+  if (path === '/streamdaw/update' && method === 'GET') return streamdawUpdateCheck(req, env, url);
+  const bundleFile = path.match(/^\/streamdaw\/bundles\/([0-9.]{14})\.tgz$/);
+  if (bundleFile && (method === 'GET' || method === 'HEAD')) return streamdawBundleFile(req, env, bundleFile[1]);
+  if (path === '/streamdaw/updates/admin' && (method === 'GET' || method === 'POST')) return streamdawUpdatesAdmin(req, env, await currentUser(req, env));
   const liveId = path.match(/^\/streamdaw\/live\/([a-z0-9]{1,32})$/);
   if (liveId && method === 'GET') return streamdawLiveStatus(req, env, liveId[1]);
 
@@ -787,10 +796,14 @@ export default {
     ctx.waitUntil(streamdawTelemetryCleanup(env).catch(() => {}));
     /* StreamDAW live links unseen for half a year. */
     ctx.waitUntil(streamdawLiveCleanup(env).catch(() => {}));
+    /* StreamDAW update checks: installs unseen for half a year, crash reports after 90 days. */
+    ctx.waitUntil(streamdawUpdatesCleanup(env).catch(() => {}));
     /* What the privacy policy promises to forget, and when (retention.js, 2026-10-14). */
     ctx.waitUntil(privacyCleanup(env).catch(() => {}));
     /* StreamDAW Pro Monthly: every subscription due today is charged (once), retries, ends. */
     ctx.waitUntil(streamdawRenewals(env).catch(() => {}));
+    /* StreamDAW keys the Worker signs: anything a failure left waiting (streamdaw.js, mintWaiting). */
+    ctx.waitUntil(mintWaiting(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },
@@ -835,7 +848,13 @@ export default {
         // peekUser reads the WeakMap currentUser fills and never queries.
         userId: (peekUser(req) || {}).id ?? null,
         ray: req.headers.get('cf-ray'),
-        detail: stack,
+        /* For a refused request the Origin IS the diagnosis: the guard turns
+           one away for no other reason, and without it the log says 403 and
+           stops. Not personal data — it is a scheme and a host. */
+        detail: stack || ((res && (res.status === 403 || res.status === 401))
+          ? 'origin=' + (req.headers.get('origin') || '(none)')
+            + ' ref=' + String(req.headers.get('referer') || '(none)').slice(0, 90)
+          : null),
       }));
     } catch { /* the log is the expendable half of this pair */ }
     return res;

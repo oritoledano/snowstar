@@ -25,6 +25,7 @@ import { currentUser } from './session.js';
 import { sha256b64, randB64, safeEqual, ipTag } from './crypto.js';
 import { parseHyp, verifyReturn } from './hyp.js';
 import { applyCoupon, couponProblem, normCode } from './coupons.js';
+import { checkKey, mintKey } from './streamdaw-keys.js';
 
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 const SITE = 'https://snowstar.company';
@@ -43,7 +44,7 @@ const PRICE_GROSS = 24900;
 // comes off Pro, as its emails promised (nothing left to honour after 2026-11-13).
 const PASS_DAYS = 7;
 const PASS_CREDIT_DAYS = 30;
-const PASS_MIN_APP = '0.5.2';
+const PASS_MIN_APP = '0.5.8';   // keys the Worker signs (its own pair): 0.5.8 on trusts it
 const isPass = (plan) => plan === 'pass';
 const isMonthly = (plan) => plan === 'monthly';
 const ends = (plan) => isPass(plan) || isMonthly(plan);       // a plan whose key has an end
@@ -676,10 +677,11 @@ export async function myStreamdaw(env, user) {
 // ── licence activation: machine id in, key file out ────────────────────────
 //
 // The paid features are unlocked by a signed key bound to ONE machine (P-256 since
-// StreamDAW 0.5.0; see checkKey), and signing needs the private key — which stays on
-// the owner's Mac and never comes near a Worker. So this is a queue with a human at the end: the buyer submits the
-// id their plug-in shows, the owner mints with `streamdaw-keygen`, and pastes the
-// key back through /streamdaw/activation/issue, which emails it on.
+// StreamDAW 0.5.0; streamdaw-keys.js). Since 2026-10-15 the Worker signs them itself, with its
+// own pair (STREAMDAW_SIGNING_KEY; the app trusts it next to the offline pair on Ori's Mac): a
+// request within the purchase's MAX_MACS Macs gets its key in the answer and by email, at once.
+// The exceptions (a third Mac, a failure) wait in the dashboard, where the owner signs here or
+// pastes a key minted by hand with `streamdaw-keygen` (/streamdaw/activation/issue).
 //
 // The machine id format is fixed by the plug-in (License.cpp): "SD" + 16 hex.
 const MACHINE_ID_RE = /^SD[0-9A-F]{12,20}$/;
@@ -698,45 +700,8 @@ function keyHex(k) {
 }
 const keyLines = (k) => (keyHex(k).match(/.{1,64}/g) || []).join('\n');
 
-/* Keys are format 2 (StreamDAW 0.5.0 on, plugin/Source/LicenceKey.h): hex of "SD", 2, then the
-   payload — product, serial|name, email, machines, issued, one a line — then a 64-byte P-256
-   signature (r, s) over everything before it. Checked here before a key is stored or emailed:
-   a key that would not unlock never reaches a buyer. Format 1 (JUCE's 512-bit RSA) is refused:
-   512 bits can be factored, so those keys are no longer minted (the app still accepts the ones
-   already issued, on the Macs they were issued for).
-   The PUBLIC half of the signing pair — the same value as kPublicKey in plugin/Source/License.cpp.
-   The private half stays on the owner's Mac. */
-const STREAMDAW_KEY_PUBLIC = '0450e5706281c210bfaaa3e901c9d0b0a289bb6f93643bb8edca91800436164a070dadbfee3ad6bbbe641bdad21c946bb1e568671d5a0f8b46a4cbb93f1a77c2a4';
-const MIN_APP = '0.5.0';
-const fromHex = (h) => Uint8Array.from(String(h).match(/../g) || [], (x) => parseInt(x, 16));
-/* A Pro pass is format 3: magic 534403 and a sixth line, the end (hex ms). `expiresAt` is what the
-   order says (SECONDS, as in every table here; null/undefined: permanent), and the key's end must be
-   exactly that: a pass never goes out as a permanent key, nor a permanent order as a pass. */
-const isoOf = (ms) => new Date(ms).toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
-async function checkKey(hex, machine, expiresAt) {
-  const magic = /^5344(02|03)(?:[0-9a-f]{2})+$/.exec(hex);
-  if (!magic) return { error: 'that is not a StreamDAW key — paste everything streamdaw-keygen printed (keys from the old 512-bit pair are no longer accepted)' };
-  const pass = magic[1] === '03';
-  const b = fromHex(hex);
-  if (b.length < 3 + 16 + 64) return { error: 'that key looks truncated — paste everything keygen printed' };
-  const signed = b.subarray(0, b.length - 64);
-  let ok = false;
-  try {
-    const pub = await crypto.subtle.importKey('raw', fromHex(STREAMDAW_KEY_PUBLIC), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
-    ok = await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, pub, b.subarray(b.length - 64), signed);
-  } catch {}
-  if (!ok) return { error: 'that key does not carry the StreamDAW signature (damaged in the paste, or signed with another pair)' };
-  const f = new TextDecoder().decode(signed.subarray(3)).split('\n');
-  if (f.length !== (pass ? 6 : 5) || f[0] !== 'StreamDAW') return { error: 'that key is not for StreamDAW' };
-  if (!f[3].split(',').map((m) => m.trim().toUpperCase()).includes(machine)) return { error: `that key is for ${f[3]}, not ${machine}` };
-  const ends = pass ? parseInt(f[5], 16) : 0, want = expiresAt ? Number(expiresAt) * 1000 : 0;
-  if (ends !== want) {
-    if (!want) return { error: `that is a Pro pass (until ${isoOf(ends)}), but this order is permanent Pro — mint it without --days/--expires` };
-    if (!ends) return { error: `that is a permanent key, but this order is a Pro pass until ${isoOf(want)} — mint it with --expires ${want}` };
-    return { error: `that pass ends ${isoOf(ends)}, but the order says ${isoOf(want)} — mint it with --expires ${want}` };
-  }
-  return { serial: f[1].split('|')[0].trim() || null, expiresAt: ends ? ends / 1000 : null };
-}
+/* Keys: format, check and signing live in streamdaw-keys.js (checkKey, mintKey). */
+const MIN_APP = '0.5.8';        // keys the Worker signs (its own pair): 0.5.8 on trusts it
 const firstName = (n) => String(n || '').trim().split(/\s+/)[0] || '';
 const escHtml = (t) => String(t || '').replace(/[<>&"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]));
 /* The mint command, ready to paste in Terminal on the owner's Mac. The name is what listeners
@@ -802,7 +767,8 @@ async function requestKey(env, { entId, email, machine, name, via }) {
   // made in the app may come without one; then the part before the @ stands in.
   if (!name || name.includes('@')) name = String(email || '').split('@')[0] || 'StreamDAW user';
   // Already issued for this machine? Hand back the same key rather than queueing a
-  // duplicate — re-installing must not need a new request.
+  // duplicate — re-installing must not need a new request. (A Mac deactivated on the unlock page
+  // asks again like a new one: it takes a place again.)
   const prior = await env.DB.prepare(
     'SELECT status, key_text FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id = ?'
   ).bind(entId, machine).first();
@@ -815,33 +781,62 @@ async function requestKey(env, { entId, email, machine, name, via }) {
   const ent = await env.DB.prepare('SELECT plan, expires_at FROM entitlements WHERE id = ?').bind(entId).first().catch(() => null);
   const expiresAt = ent && ends(ent.plan) && ent.expires_at ? Number(ent.expires_at) : null;
   if (ent && ends(ent.plan) && (!expiresAt || expiresAt <= now())) return { status: 'expired' };
+  // At most MAX_MACS Macs per purchase (Ori, 2026-10-15): another is refused until one is
+  // deactivated on the unlock page. It is still filed, as 'limit', so the owner can let it through
+  // from the dashboard (the exception, by hand).
+  const others = ((await env.DB.prepare(
+    `SELECT COUNT(*) AS n FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id != ?
+        AND status IN ('issued','renewing','pending')`
+  ).bind(entId, machine).first()) || {}).n || 0;
+  const full = others >= MAX_MACS;
+  const status = full ? 'limit' : 'pending';
   try {
     await env.DB.prepare(
       `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at, expires_at)
-       VALUES (?, ?, ?, ?, 'pending', ?, ?)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
          owner_name = excluded.owner_name, requested_at = excluded.requested_at, expires_at = excluded.expires_at,
-         status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
-    ).bind(entId, lc(email), machine, name, now(), expiresAt).run();
+         status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE excluded.status END`
+    ).bind(entId, lc(email), machine, name, status, now(), expiresAt).run();
   } catch (e) {
     // Before schema-streamdaw-pass.sql ran: Pro requests still file; a pass waits (never permanent).
     if (expiresAt || !/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
     await env.DB.prepare(
       `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at)
-       VALUES (?, ?, ?, ?, 'pending', ?)
+       VALUES (?, ?, ?, ?, ?, ?)
        ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
          owner_name = excluded.owner_name, requested_at = excluded.requested_at,
-         status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE 'pending' END`
-    ).bind(entId, lc(email), machine, name, now()).run();
+         status = CASE WHEN streamdaw_activations.status = 'issued' THEN 'issued' ELSE excluded.status END`
+    ).bind(entId, lc(email), machine, name, status, now()).run();
   }
 
-  // Will the minter on the owner's Mac sign this one by itself? Only for a purchase's first
-  // AUTO_MACS Macs (see the minter, below).
-  const others = ((await env.DB.prepare(
-    "SELECT COUNT(*) AS n FROM streamdaw_activations WHERE entitlement_id = ? AND status = 'issued' AND machine_id != ?"
-  ).bind(entId, machine).first()) || {}).n || 0;
-  const auto = !!env.MINTER_TOKEN && others < AUTO_MACS;
+  if (full) {
+    try {
+      await sendMail(env, {
+        to: env.ALERT_TO || 'oritoledano@gmail.com',
+        subject: `[Admin] StreamDAW: ${name} asked for a key for Mac number ${others + 1} (refused)`,
+        text: `ADMIN NOTE, NOT A KEY. ${name} <${email}> asked for a key for ${machine}, but the purchase already has keys for ${others} Macs (the limit is ${MAX_MACS}).
+`
+            + `They were told to deactivate one of their Macs first (${UNLOCK_URL}).
 
+`
+            + `To let it through anyway: ${SITE}/dashboard (StreamDAW › Keys), "Sign here" on this row.`,
+      });
+    } catch {}
+    return { status: 'limit', macs: others, error: `This purchase already has keys for ${others} Macs. Deactivate one of your Macs first, then ask again.` };
+  }
+
+  // Signed here, now, with the Worker's pair: the key is in this answer and in the buyer's email.
+  const row = await env.DB.prepare('SELECT * FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id = ?').bind(entId, machine).first();
+  const signed = row ? await autoIssue(env, row) : { error: 'the request was not filed' };
+  if (signed.ok) {
+    const done = await env.DB.prepare('SELECT * FROM streamdaw_activations WHERE id = ?').bind(row.id).first();
+    return { status: 'issued', key: withRenewal(keyLines(done.key_text), done.renew_code) };
+  }
+
+  // Not signed here (no secret, or an error): the old way — the minter on the owner's Mac if it
+  // runs, else the owner by hand.
+  const auto = !!env.MINTER_TOKEN;
   // Tell the owner. Never fail the request over mail. The subject says ADMIN: the owner is
   // often the buyer too (testing), and this is not a key.
   const byHand = `Run this in Terminal on your Mac:\n\n${mintCommand({ name, email, machine, expiresAt })}\n\n`
@@ -853,12 +848,12 @@ async function requestKey(env, { entId, email, machine, name, via }) {
       subject: auto ? `[Admin] StreamDAW key request: ${name} (sent automatically)`
                     : `[Admin] Mint a StreamDAW key for ${name}${via === 'checkout' ? ' (bought in the app)' : ''}`,
       text: `ADMIN NOTE, NOT A KEY. ${name} <${email}> ${via === 'checkout' ? 'bought StreamDAW from inside the app; their Mac came with the order.' : 'asked for a licence key.'}\n`
-          + `Machine ID: ${machine}\n\n`
+          + `Machine ID: ${machine}\n`
+          + `The Worker could not sign it: ${signed.error}\n\n`
           + (auto
             ? `The minter on your Mac signs and sends it within a minute while your Mac is awake. Nothing to do.\n\n`
               + `If the dashboard (StreamDAW › Keys) still says "waiting" later, do it by hand. ${byHand}`
-            : (others >= AUTO_MACS ? `This purchase already has keys for ${others} Macs, so the minter leaves this one to you. Send it, or reject it in the dashboard.\n\n` : '')
-              + byHand),
+            : byHand),
     });
   } catch {}
 
@@ -960,6 +955,12 @@ export async function streamdawActivationIssue(req, env, user) {
     return json({ ok: true, status: 'rejected' });
   }
 
+  // "Sign here": the Worker signs this one now, whatever the Mac limit says (the owner's exception).
+  if (body.mint) {
+    const r = await autoIssue(env, row, true);
+    return json(r.error ? { error: r.error } : { ok: true, status: 'issued' }, r.error ? (r.code || 400) : 200);
+  }
+
   const r = await issueKey(env, row, key, false);
   return json(r.error ? { error: r.error } : { ok: true, status: 'issued' }, r.error ? (r.code || 400) : 200);
 }
@@ -1047,6 +1048,71 @@ async function issueKey(env, row, key, onlyPending) {
    of hex) still finds the key alone; 0.5.6 on also keeps the code. */
 const withRenewal = (lines, code) => (code ? `${lines}\n\nRenewal: ${code}` : lines);
 
+/* Sign one request here, with the Worker's pair (streamdaw-keys.js), and send it as issueKey does
+   (checked again there like every key). `override`: the owner letting a request through by hand
+   (a Mac over the limit), which may also replace a key already sent. No secret: nothing happens,
+   the request waits for the minter or the owner. */
+async function autoIssue(env, row, override = false) {
+  if (!env.STREAMDAW_SIGNING_KEY) return { error: 'no STREAMDAW_SIGNING_KEY in this Worker' };
+  const name = row.owner_name || String(row.email || '').split('@')[0] || 'StreamDAW user';
+  const minted = await mintKey(env.STREAMDAW_SIGNING_KEY, { name, email: row.email, machine: row.machine_id, expiresAt: row.expires_at });
+  if (minted.error) return minted;
+  return issueKey(env, row, minted.hex, !override);
+}
+
+/** Everything that may go out by itself and still waits — a Mac within MAX_MACS, a Pro Monthly key
+ *  a paid renewal moved on ('renewing') — signed now: for one purchase after its renewal
+ *  (streamdaw-subs.js, monthPaid), and for all once a day (the cron) for anything a failure left. */
+export async function mintWaiting(env, entitlementId = null) {
+  if (!env.STREAMDAW_SIGNING_KEY) return { signed: 0, errors: [] };
+  const rows = (await env.DB.prepare(
+    `SELECT a.* FROM streamdaw_activations a
+      WHERE (?1 IS NULL OR a.entitlement_id = ?1)
+        AND (a.status = 'renewing'
+             OR (a.status = 'pending'
+                 AND (SELECT COUNT(*) FROM streamdaw_activations b
+                       WHERE b.entitlement_id = a.entitlement_id AND b.status IN ('issued','renewing')) < ?2))
+      ORDER BY a.requested_at ASC LIMIT 50`
+  ).bind(entitlementId, MAX_MACS).all()).results || [];
+  let signed = 0;
+  const errors = [];
+  for (const row of rows) {
+    const r = await autoIssue(env, row);
+    if (r.ok) signed++; else errors.push(`#${row.id} ${row.machine_id}: ${r.error}`);
+  }
+  if (errors.length) {
+    try {
+      await sendMail(env, { to: env.ALERT_TO || 'oritoledano@gmail.com', subject: `[Admin] StreamDAW: ${errors.length} key(s) the Worker could not sign`,
+        text: `ADMIN NOTE. These wait in the dashboard (StreamDAW › Keys):\n\n${errors.join('\n')}` });
+    } catch {}
+  }
+  return { signed, errors };
+}
+
+/** POST /streamdaw/deactivate {machineId} — the buyer frees one of their MAX_MACS places, to put
+ *  StreamDAW on another Mac. The key on that Mac cannot be recalled (keys work offline): a
+ *  permanent key goes on working there, a key with an end runs to its end; a Pro Monthly key is
+ *  not renewed any more (its renewal code goes). */
+export async function streamdawDeactivate(req, env, user) {
+  if (!user) return json({ error: 'sign in first' }, 401);
+  let body = {};
+  try { body = await req.json(); } catch {}
+  const machine = normMachine(body.machineId);
+  if (!machine) return json({ error: 'That does not look like a machine ID.' }, 400);
+  const sql = (renew) =>
+    `UPDATE streamdaw_activations SET status = 'deactivated'${renew ? ', renew_code = NULL' : ''}
+      WHERE machine_id = ? AND status IN ('issued','renewing','pending','limit')
+        AND entitlement_id IN (SELECT id FROM entitlements WHERE product = ? AND (user_id = ? OR email = ?))`;
+  let res;
+  try { res = await env.DB.prepare(sql(true)).bind(machine, PRODUCT, user.id, lc(user.email)).run(); }
+  catch (e) {
+    if (!/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
+    res = await env.DB.prepare(sql(false)).bind(machine, PRODUCT, user.id, lc(user.email)).run();
+  }
+  if (!(res.meta && res.meta.changes)) return json({ error: 'That Mac has no key on this account.' }, 404);
+  return json({ ok: true, status: 'deactivated' });
+}
+
 // ── the minter: keys made on the owner's Mac, within a minute ─────────────
 //
 // The private key never leaves the owner's Mac, so a Worker cannot sign. Instead a small job
@@ -1055,9 +1121,13 @@ const withRenewal = (lines, code) => (code ? `${lines}\n\nRenewal: ${code}` : li
 // emailed at once. It authenticates with MINTER_TOKEN (a Worker secret, the same value in
 // ~/.cache/streamdaw/minter.env on the Mac). Without the secret these routes are closed.
 //
-// Automatic only for a buyer's first AUTO_MACS Macs: a purchase asking for more keys waits for
-// the owner, in the dashboard, so one payment cannot quietly unlock a classroom.
-const AUTO_MACS = 2;
+// Since 2026-10-15 the Worker signs (autoIssue, below); the minter stays usable until it is
+// retired, and finds nothing waiting while the Worker signs.
+//
+// At most MAX_MACS Macs per purchase, a hard limit (Ori, 2026-10-15): a further Mac is refused
+// ('limit') until one is deactivated, so one payment cannot quietly unlock a classroom; the owner
+// may let one through from the dashboard.
+const MAX_MACS = 2;
 
 function minterAuthorised(req, env) {
   const want = String(env.MINTER_TOKEN || '');
@@ -1066,7 +1136,7 @@ function minterAuthorised(req, env) {
 }
 
 /** GET /streamdaw/minter/pending — the requests the minter may sign now: a buyer's first
- *  AUTO_MACS Macs, and every Pro Monthly key that a paid renewal moved on ('renewing': a Mac
+ *  MAX_MACS Macs, and every Pro Monthly key that a paid renewal moved on ('renewing': a Mac
  *  that already had a key, so no new Mac and no owner to ask). */
 export async function streamdawMinterPending(req, env) {
   if (!minterAuthorised(req, env)) return json({ error: 'forbidden' }, 403);
@@ -1078,7 +1148,7 @@ export async function streamdawMinterPending(req, env) {
              AND (SELECT COUNT(*) FROM streamdaw_activations b
                    WHERE b.entitlement_id = a.entitlement_id AND b.status IN ('issued','renewing')) < ?)
       ORDER BY a.requested_at ASC LIMIT 20`
-  ).bind(AUTO_MACS).all()).results || [];
+  ).bind(MAX_MACS).all()).results || [];
   return json({ requests: rows });
 }
 
@@ -1311,7 +1381,7 @@ export async function streamdawAdmin(env, user) {
       `SELECT a.id, a.email, a.machine_id, a.owner_name, a.status, a.serial,
               a.requested_at, a.issued_at, a.expires_at
          FROM streamdaw_activations a
-        ORDER BY (a.status IN ('pending','renewing')) DESC, a.requested_at ASC LIMIT 100`))
+        ORDER BY (a.status IN ('pending','renewing','limit')) DESC, a.requested_at ASC LIMIT 100`))
       // The command for "by hand", the same as the [Admin] email's: the v2 pair, and the end a key
       // must carry (Pro Monthly, a pass), which the Worker checks before emailing it.
       .map((a) => ({ ...a, mint: mintCommand({ name: a.owner_name || a.email, email: a.email, machine: a.machine_id, expiresAt: a.expires_at }) })),

@@ -52,8 +52,8 @@ import * as SD from './streamdaw.js';
 export const MONTHLY_USD_CENTS = 899;          // $8.99 a month, VAT included
 export const GRACE_DAYS = 3;                   // a key runs this long past the paid month
 const RETRY_DAYS = [1, 3, 7];                  // after the due day: 3 retries over 7 days, then it stops
-const SUB_MIN_APP = '0.5.2';                   // reads a key with an end (format 3)
-const RENEW_APP = '0.5.6';                     // fetches the next month's key by itself
+const SUB_MIN_APP = '0.5.8';                   // reads a key with an end (format 3), signed by the Worker's pair
+const RENEW_APP = '0.5.8';                     // fetches the next month's key by itself (0.5.6), and trusts the Worker's pair (0.5.8)
 const HYP_API = 'https://pay.hyp.co.il/p/';    // server-to-server actions (getToken, soft), as the docs give them
 const MANAGE_URL = `${SD.SITE}/account.html#apps`;
 const CANCEL_URL = `${SD.SITE}/apps/streamdaw-cancel.html`;
@@ -407,6 +407,7 @@ async function monthPaid(env, s, charge, t) {
     `UPDATE streamdaw_activations SET expires_at = ?, status = CASE WHEN status IN ('issued','renewing') THEN 'renewing' ELSE status END
       WHERE entitlement_id = ? AND status IN ('issued','renewing','pending')`
   ).bind(keyEnd, s.entitlement_id).run();
+  await SD.mintWaiting(env, s.entitlement_id).catch(() => {});   // the Worker signs the new month's keys now
   const s2 = await env.DB.prepare('SELECT * FROM streamdaw_subscriptions WHERE id = ?').bind(s.id).first();
   await mailRenewed(env, s2, { ref: charge.ref, from: s.paid_through, to }).catch(() => {});
 }

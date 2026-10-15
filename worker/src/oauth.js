@@ -202,7 +202,7 @@ export async function finishOAuth(req, env, provider) {
     const profile = await cfg.profile(tok.access_token);
     if (!profile.id) throw new Error('no_provider_id');
 
-    const userId = await linkAndSignIn(env, provider, profile);
+    const userId = await linkAndSignIn(env, provider, profile, back);
     const cookie = await issueSession(env, userId);
 
     // belt and braces: a code the page can exchange if the cookie above is lost
@@ -229,8 +229,16 @@ export async function finishOAuth(req, env, provider) {
 /**
  * Find the identity, or the matching verified email, or make a new account —
  * then hand back a session cookie.
+ *
+ * `back` is the return path the sign-in started from, and it has to be passed
+ * in: the attribution work below reads it to record which property somebody
+ * arrived through, and it is declared in finishOAuth, not here. Without the
+ * parameter this function threw "back is not defined" — but only down the
+ * new-account branch, so every returning user signed in fine and every FIRST
+ * sign-in failed. That is the worst shape such a bug can take: invisible to
+ * anyone who already has an account, fatal for everyone who does not.
  */
-async function linkAndSignIn(env, provider, profile) {
+async function linkAndSignIn(env, provider, profile, back) {
   const t = now();
   let userId;
 
