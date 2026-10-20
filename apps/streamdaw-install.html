@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=6">
+<link rel="stylesheet" href="../css/streamdaw.css?v=8">
 </head>
 <body>
 
@@ -41,6 +41,12 @@
   <div class="wrap">
     <p class="kicker" data-txt="streamdaw-install.kicker">Install</p>
     <h1 data-txt="streamdaw-install.title">Install StreamDAW.</h1>
+    <!-- (2026-10-18) Every download button lands here: this page starts the file (?dl=free: the free
+         download, ?dl=pro: an owner's), so the steps are in front of the buyer while it downloads. -->
+    <div class="in-dl" id="inDl" role="status" hidden>
+      <img src="streamdaw-icon-128.png?v=2" width="44" height="44" alt="">
+      <p><b data-txt="streamdaw-install.dl.title">StreamDAW is downloading.</b> <span data-txt="streamdaw-install.dl.text">Follow the steps below while it does.</span> <a id="inDlAgain" href="/api/streamdaw/download/free" data-txt="streamdaw-install.dl.again">Didn't start? Download again</a></p>
+    </div>
     <p class="ul-lead" data-txt="streamdaw-install.lead">About five minutes, once. The first time, macOS asks you to allow StreamDAW, because Apple hasn't notarized it yet. Here is every screen you'll see, and what to press.</p>
 
     <div class="panel in-why">
@@ -58,7 +64,7 @@
     <ol class="in-steps">
       <li class="in-step">
         <h2 data-txt="streamdaw-install.s1.title">Download.</h2>
-        <p data-txt="streamdaw-install.s1.text">Get StreamDAW from the <a href="streamdaw.html">StreamDAW page</a> (free, with a Snowstar account) or from the link in your purchase email. One file lands in your Downloads folder: <b>StreamDAW-0.5.x.pkg</b>.</p>
+        <p data-txt="streamdaw-install.s1.text">Get StreamDAW from the <a href="streamdaw.html">StreamDAW page</a> (free, with a Snowstar account) or from the link in your purchase email. One file lands in your Downloads folder: <b>StreamDAW-0.7.x.pkg</b>.</p>
       </li>
 
       <li class="in-step">
@@ -73,7 +79,7 @@
 
       <li class="in-step">
         <h2 data-txt="streamdaw-install.s3.title">Allow it, once.</h2>
-        <p data-txt="streamdaw-install.s3.text">Open the Apple menu › <b>System Settings</b> › <b>Privacy &amp; Security</b> and scroll down to <b>Security</b>. Next to “StreamDAW-0.5.x.pkg” was blocked to protect your Mac, click <b>Open Anyway</b>.</p>
+        <p data-txt="streamdaw-install.s3.text">Open the Apple menu › <b>System Settings</b> › <b>Privacy &amp; Security</b> and scroll down to <b>Security</b>. Next to “StreamDAW-0.7.x.pkg” was blocked to protect your Mac, click <b>Open Anyway</b>.</p>
         <figure class="in-shot">
           <div class="in-frame wide"><img src="../media/streamdaw/install/open-anyway.png" width="723" height="209" alt="System Settings, Privacy &amp; Security selected. Under Security: “StreamDAW-0.5.3.pkg” was blocked to protect your Mac, with the Open Anyway button ringed in green."></div>
           <figcaption><span class="in-tag">Screenshot · macOS Tahoe 26</span> <span data-txt="streamdaw-install.s3.cap">The green ring is ours. The button stays there for about an hour after you try to open the file. Gone? Double-click the .pkg again.</span></figcaption>
@@ -83,7 +89,7 @@
 
       <li class="in-step">
         <h2 data-txt="streamdaw-install.s4.title">Install.</h2>
-        <p data-txt="streamdaw-install.s4.text">The installer shows the parts it will put on your Mac. Keep them all ticked, click <b>Install</b> and type your password. At the end Core Audio restarts, so sound stops for about a second. When it offers to move the installer to the Trash, either answer is fine.</p>
+        <p data-txt="streamdaw-install.s4.text">The installer opens with a short welcome: click <b>Continue</b>. It shows the parts it will put on your Mac. Keep them all ticked, click <b>Install</b> and type your password. At the end Core Audio restarts, so sound stops for about a second. When it offers to move the installer to the Trash, either answer is fine.</p>
       </li>
 
       <li class="in-step">
@@ -146,5 +152,19 @@
 <script src="../js/account-ui.js?v=29"></script>
 <script src="../js/site-edit.js?v=9"></script>
 <script src="../js/consent.js?v=1"></script>
+<script>
+// (2026-10-18) ?dl=free | ?dl=pro: start that download from here, once; the file comes as an attachment,
+// so this page stays. Signed out, the Worker sends the free one back to the sale page to sign up first.
+(function () {
+  var q = new URLSearchParams(location.search), k = q.get('dl');
+  var url = k === 'free' ? '/api/streamdaw/download/free' : k === 'pro' ? '/api/streamdaw/download' : '';
+  if (!url) return;
+  var box = document.getElementById('inDl'), again = document.getElementById('inDlAgain');
+  if (again) again.href = url;
+  if (box) box.hidden = false;
+  history.replaceState(null, '', location.pathname + location.hash);
+  setTimeout(function () { location.href = url; }, 350);
+})();
+</script>
 </body>
 </html>

@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=6">
+<link rel="stylesheet" href="../css/streamdaw.css?v=8">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
 {
@@ -169,6 +169,25 @@
     </div>
   </section>
 
+  <!-- ── remote production (2026-10-18, Ori: "a new use case to promote: remote music production
+       collaboration; sell it fast and simple"). Every line is true in 0.6.0: the clean take replaces the
+       live one by itself in Live 12 (Live 11: drag it in, StreamDAW says where). Goes live with 0.6.0. ── -->
+  <section class="collab" id="collab" aria-labelledby="collabTitle">
+    <div class="wrap">
+      <p class="kicker" data-txt="streamdaw.collab.kicker">Remote production</p>
+      <h2 id="collabTitle" class="big" data-txt="streamdaw.collab.title">Make music with someone in another city, as if they were in the room.</h2>
+      <ul class="lines">
+        <li data-txt="streamdaw.collab.l1">They hear your session as you play it, lossless, on their phone or laptop.</li>
+        <li data-txt="streamdaw.collab.l2">They sing or play, and the take lands on your track, on the beat. A clean copy replaces it after every take.</li>
+        <li data-txt="streamdaw.collab.l3">They can press Play, loop a part and leave a note on your timeline. A keyboard player sends MIDI from their own keys.</li>
+      </ul>
+      <div class="cta" style="margin-top:28px">
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><span data-txt="streamdaw.collab.cta">Start a session</span></a>
+      </div>
+      <p class="fine" style="margin-top:12px" data-txt="streamdaw.collab.fine">Free on your master bus. Every Pro feature free for 7 days, no card.</p>
+    </div>
+  </section>
+
   <!-- ── what you can do: one tall card per feature, a clip each ── -->
   <section class="feats" id="features" aria-labelledby="featTitle">
     <div class="wrap sec-head">
@@ -305,12 +324,14 @@
           <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
         </figure>
         <div>
-          <p class="kicker" data-txt="streamdaw.stories.band.kicker">Rehearsal</p>
-          <h3 data-txt="streamdaw.stories.band.title">The band, in their ears</h3>
+          <!-- 2026-10-18: StreamDAW carries the tracks half of a stage (Ori: live instruments still need
+               a stage mixer), so the promise is click, guide and tracks in every ear. New keys. -->
+          <p class="kicker" data-txt="streamdaw.stories.stage.kicker">On stage</p>
+          <h3 data-txt="streamdaw.stories.stage.title">Click and guide in every ear</h3>
           <ul class="lines">
-            <li data-txt="streamdaw.stories.band.l1">Everyone scans one QR code. No app to install, no account.</li>
-            <li data-txt="streamdaw.stories.band.l2">Wired in-ears in, press Play. Each player sets their own level, solo, mute and pan.</li>
-            <li data-txt="streamdaw.stories.band.l3">Phones on the music stands. On the count-in, the whole room plays together.</li>
+            <li data-txt="streamdaw.stories.stage.l1">Your backing tracks, click and guide go to every player's phone. Each sets their own level.</li>
+            <li data-txt="streamdaw.stories.stage.l2">The PA and the earphones play the same beat. Only the players hear the count.</li>
+            <li data-txt="streamdaw.stories.stage.l3">Live instruments stay on your stage mix. StreamDAW carries the tracks.</li>
           </ul>
         </div>
       </article>
@@ -324,7 +345,7 @@
            2026-10-15: no "syncs itself" or "line that phone up" either: the lines say what the
            phone does (the browser's reported delay, the tap-along), not how close it gets. -->
       <article class="story">
-        <figure class="reel wide" aria-label="A row of phones on different earphones, on the same beat">
+        <figure class="reel wide" aria-label="Phones on earphones and speakers, on the same beat">
           <div class="still band party" aria-hidden="true">
             <span class="count">124 BPM</span>
             <div class="phones">
@@ -334,19 +355,19 @@
               <div class="ph"><span class="scr"><i></i></span><b>In-ear</b></div>
               <div class="ph"><span class="scr"><i></i></span><b>Wired</b></div>
               <div class="ph"><span class="scr"><i></i></span><b>Earbuds</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Over-ear</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Buds</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Speaker</b></div>
+              <div class="ph"><span class="scr"><i></i></span><b>Speaker</b></div>
             </div>
-            <span class="synced">No microphone</span>
+            <span class="synced">One beat</span>
           </div>
         </figure>
         <div>
-          <p class="kicker" data-txt="streamdaw.stories.party.kicker">Silent disco</p>
-          <h3 data-txt="streamdaw.stories.party.title">The party, in everyone's ears</h3>
+          <p class="kicker" data-txt="streamdaw.stories.unison.kicker">Unison</p>
+          <h3 data-txt="streamdaw.stories.unison.title">Every phone, one beat</h3>
           <ul class="lines">
-            <li data-txt="streamdaw.stories.party.l1">Guests scan one QR code at the door and press Play. The Silent disco preset has no waiting room.</li>
-            <li data-txt="streamdaw.stories.party.l2">Everyone wears their own earphones. Each phone times itself from the delay its browser reports, and never asks for the microphone.</li>
-            <li data-txt="streamdaw.stories.party.l3">On Bluetooth, the guest taps along to a tick to correct that phone's delay. Then you play the set from your DAW.</li>
+            <li data-txt="streamdaw.stories.unison.l1">Guests scan one QR code and press Play. No waiting room.</li>
+            <li data-txt="streamdaw.stories.unison.l2">On their own earphones it's a silent disco. On their speakers, the whole place plays as one sound system.</li>
+            <li data-txt="streamdaw.stories.unison.l3">On Bluetooth, a guest taps along to a tick to correct that phone's delay.</li>
           </ul>
         </div>
       </article>
@@ -398,7 +419,7 @@
       </div>
 
       <!-- Shown to someone signed in who owns Pro or Pro Monthly (js/streamdaw-page.js). -->
-      <p class="owned" id="owned" hidden>You have StreamDAW Pro. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="/api/streamdaw/download">Download the installer</a></p>
+      <p class="owned" id="owned" hidden>You have StreamDAW Pro. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="streamdaw-install.html?dl=pro">Download the installer</a></p>
 
       <div class="plans three">
         <div class="plan">
@@ -516,6 +537,7 @@
     <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
     <nav aria-label="StreamDAW">
       <a href="streamdaw-unlock.html">Unlock your Mac</a>
+      <a href="streamdaw-changes.html">What's new</a>
       <a href="streamdaw-terms.html">Licence terms</a>
       <a href="streamdaw-cancel.html">Cancel a subscription</a>
       <a href="mailto:hello@snowstar.company">Something not working? hello@snowstar.company</a>
@@ -552,7 +574,7 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
 <script src="../js/site-edit.js?v=9"></script>
-<script src="../js/streamdaw-page.js?v=20261015b"></script>
+<script src="../js/streamdaw-page.js?v=20261018"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/studio.js?v=1435ed44" defer></script>

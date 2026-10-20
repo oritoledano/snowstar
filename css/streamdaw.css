@@ -563,3 +563,15 @@ html.sdco-lock,html.sdco-lock body{overflow:hidden}
   .sdco-card{animation:none}
   .sdco-spin{animation-duration:2.4s}
 }
+/* Remote production, right after the hero (2026-10-18) */
+.collab{border-top:1px solid var(--line)}
+.collab .big{margin-top:14px;max-width:18em;font-size:clamp(30px,4.2vw,60px);text-wrap:balance}
+.collab .lines{max-width:40em}
+
+/* The install guide's "downloading" strip (2026-10-18): every download button lands on the guide */
+.in-dl{display:flex;align-items:center;gap:14px;margin:22px 0 4px;padding:14px 18px;border-radius:18px;background:var(--night);color:var(--paper);box-shadow:var(--lift)}
+.in-dl[hidden]{display:none}
+.in-dl img{flex:none;width:44px;height:44px}
+.in-dl p{margin:0;line-height:1.45}
+.in-dl b{font-weight:600}
+.in-dl a{color:var(--lime);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}

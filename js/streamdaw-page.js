@@ -500,9 +500,10 @@
   const FREE_DL = '/api/streamdaw/download/free', FREE_KEY = 'sd_free_dl', FREE_FOR = 15 * 60 * 1000;
   const wantFree = () => { try { const t = +sessionStorage.getItem(FREE_KEY) || 0; return t > 0 && Date.now() - t < FREE_FOR; } catch (e) { return false; } };
   const keepFree = (on) => { try { if (on) sessionStorage.setItem(FREE_KEY, String(Date.now())); else sessionStorage.removeItem(FREE_KEY); } catch (e) {} };
-  // Once per wish: the sign-in's resume and the account's change can both call this. The file
-  // comes as an attachment, so this page stays, and a strip points to the install guide.
-  function startFree() { keepFree(false); location.href = FREE_DL; setTimeout(installHint, 600); }
+  // Once per wish: the sign-in's resume and the account's change can both call this. (2026-10-18)
+  // The install guide opens at once and starts the file itself, so the steps (and Open Anyway) are
+  // in front of the buyer while it downloads. installHint stays for a page that cannot leave.
+  function startFree() { keepFree(false); location.href = 'streamdaw-install.html?dl=free'; }
   function installHint() {
     const h = $('dlHint'), x = $('dlHintX');
     if (!h) return;
