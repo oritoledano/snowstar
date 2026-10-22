@@ -1,0 +1,247 @@
+{
+  "films": [
+    {
+      "id": "song",
+      "dir": "song",
+      "source": "/Users/kayma/Dropbox/KAYMA/NEW TRYING OUTS (ALBUM)/KAYMA - NEW TRYING OUTS - ALBUM  230913 (MC MSTR) APPROVED/24BIT/01 On Site Lover (C plus MB) - (MC MSTR2) - (FIXED FADEOUT) 44_24.wav",
+      "display": "On Site Lover (master).wav",
+      "cardIcon": "wave",
+      "seconds": 182.43,
+      "mode": "song",
+      "bandwidthHz": 24000,
+      "parts": "instruments",
+      "channels": [
+        "Voice",
+        "Drums",
+        "Bass",
+        "Other",
+        "Guitars",
+        "Keys",
+        "Background"
+      ],
+      "hidden": [
+        "Keys"
+      ],
+      "took": 54,
+      "quality": "best",
+      "stepFlags": {
+        "quality": "best",
+        "separate": true,
+        "clean": true,
+        "studio": false,
+        "highs": false
+      },
+      "drop": 0.85,
+      "steps": [
+        [
+          "decode",
+          0.85,
+          1.0
+        ],
+        [
+          "separate",
+          1.0,
+          2.35
+        ],
+        [
+          "clean",
+          2.35,
+          3.75
+        ]
+      ],
+      "ready": 3.75,
+      "playFrom": 36.0,
+      "duration": 20.0,
+      "fadeOut": [
+        19.3,
+        20.0
+      ],
+      "gains": {
+        "Voice": 0,
+        "Drums": 0,
+        "Bass": 0,
+        "Other": 0,
+        "Guitars": 0,
+        "Keys": 0,
+        "Background": -40
+      },
+      "automation": [
+        {
+          "t": 7.0,
+          "move": {
+            "from": 6.2,
+            "target": "solo:Voice"
+          },
+          "solo": "Voice"
+        },
+        {
+          "t": 7.9,
+          "move": {
+            "from": 7.1,
+            "target": "fader:Voice"
+          },
+          "ramp": {
+            "Voice": 4
+          },
+          "rampFrom": 7.3
+        },
+        {
+          "t": 11.4,
+          "move": {
+            "from": 11.0,
+            "target": "solo:Voice"
+          },
+          "solo": null
+        },
+        {
+          "t": 12.8,
+          "move": {
+            "from": 11.45,
+            "target": "fader:Voice"
+          },
+          "ramp": {
+            "Voice": -60
+          },
+          "rampFrom": 11.8
+        },
+        {
+          "t": 17.0,
+          "ramp": {
+            "Voice": 0
+          },
+          "rampFrom": 16.2
+        }
+      ]
+    },
+    {
+      "id": "video",
+      "dir": "vid",
+      "source": "/Users/kayma/Dropbox/KAYMA/CONTENT/2024-11-14 08.16.06.mov",
+      "display": "2024-11-14 08.16.06.mov",
+      "cardIcon": "film",
+      "seconds": 11.41,
+      "mode": "song",
+      "bandwidthHz": 13750,
+      "parts": "voice",
+      "channels": [
+        "Voice",
+        "Music",
+        "Background"
+      ],
+      "hidden": [],
+      "took": 6,
+      "quality": "best",
+      "stepFlags": {
+        "quality": "best",
+        "separate": true,
+        "clean": true,
+        "studio": false,
+        "highs": false
+      },
+      "drop": 0.85,
+      "steps": [
+        [
+          "decode",
+          0.85,
+          0.95
+        ],
+        [
+          "separate",
+          0.95,
+          2.35
+        ],
+        [
+          "clean",
+          2.35,
+          3.5
+        ]
+      ],
+      "ready": 3.5,
+      "playFrom": 0.5,
+      "duration": 14.2,
+      "fadeOut": [
+        13.8,
+        14.2
+      ],
+      "gains": {
+        "Voice": 0,
+        "Music": 0,
+        "Background": -40
+      },
+      "automation": [
+        {
+          "t": 5.1,
+          "move": {
+            "from": 4.6,
+            "target": "ab:before"
+          },
+          "ab": "before"
+        },
+        {
+          "t": 7.2,
+          "move": {
+            "from": 6.7,
+            "target": "ab:after"
+          },
+          "ab": "after"
+        },
+        {
+          "t": 8.2,
+          "move": {
+            "from": 7.7,
+            "target": "solo:Voice"
+          },
+          "solo": "Voice"
+        },
+        {
+          "t": 9.0,
+          "move": {
+            "from": 8.2,
+            "target": "fader:Voice"
+          },
+          "ramp": {
+            "Voice": 4
+          },
+          "rampFrom": 8.5
+        },
+        {
+          "t": 11.0,
+          "ramp": {
+            "Voice": 0
+          },
+          "rampFrom": 10.6
+        },
+        {
+          "t": 11.5,
+          "move": {
+            "from": 11.1,
+            "target": "solo:Background"
+          },
+          "solo": "Background"
+        },
+        {
+          "t": 12.3,
+          "move": {
+            "from": 11.5,
+            "target": "fader:Background"
+          },
+          "ramp": {
+            "Background": 6
+          },
+          "rampFrom": 11.7
+        },
+        {
+          "t": 13.7,
+          "ramp": {
+            "Background": -40
+          },
+          "rampFrom": 13.2
+        },
+        {
+          "t": 13.7,
+          "solo": null
+        }
+      ]
+    }
+  ]
+}

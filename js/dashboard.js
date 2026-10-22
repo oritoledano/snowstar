@@ -4019,6 +4019,9 @@
     { key: '/artist.html',  name: 'Mutra · artist page' },
     { key: '/snowstash.html', name: 'Snowstash' },
     { key: '/apps/streamdaw.html', name: 'StreamDAW' },
+    { key: '/apps/audioctor.html', name: 'Audioctor' },
+    { key: '/apps/',        name: 'Apps' },
+    { key: '/apps/index.html', name: 'Apps' },
     { key: '/index.html',   name: 'Snowstar' },
     { key: '/',             name: 'Snowstar' },
   ];

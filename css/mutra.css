@@ -2120,6 +2120,7 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 .menu-word[alt="Mutra"]    {height:calc(var(--slot) * .500)}
 .menu-word[alt="StreamDAW"]{height:calc(var(--slot) * .312)}
 .menu-word[alt="Snowstar"] {height:calc(var(--slot) * .296)}
+.menu-word[alt="Audioctor"]{height:calc(var(--slot) * .447)}
 
 /* The row that holds one. :has() rather than a class, so a mark dropped into
    any menu is framed correctly without the markup having to say so. */

@@ -60,6 +60,12 @@
       mark: 'assets/mutra-word-trim.png?v=1',    product: true },
     { id: 'streamdaw', label: 'StreamDAW',   page: 'streamdaw.html', dir: 'apps/',
       mark: 'assets/sdaw-word-trim.png?v=1',     product: true },
+    { id: 'audioctor', label: 'Audioctor',   page: 'audioctor.html', dir: 'apps/',
+      mark: 'assets/audioctor-word-trim.png?v=1', product: true },
+    // The apps' own front door, listed straight after the two apps it holds. page is the
+    // directory, not its index.html: pointsAt() is a bare endsWith, so 'index.html' here
+    // would match Snowstar's row in every menu.
+    { id: 'apps',      label: 'Apps',        page: 'apps/',          product: true },
     { id: 'snowstash', label: 'Snowstash',   page: 'snowstash.html', product: true },
     // Not a product row — it is a door for artists, listed with the page links.
     { id: 'artists',   label: 'For artists', page: 'artists.html' },

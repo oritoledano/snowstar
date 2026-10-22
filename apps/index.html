@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-product="streamdaw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apps | Snowstar</title>
+<meta name="description" content="Snowstar's apps for people who make sound: StreamDAW streams your DAW live and lossless; Audioctor takes any recording apart and cleans every part. Mac, Apple silicon.">
+<link rel="canonical" href="https://snowstar.company/apps/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/assets/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0c0c0d">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Snowstar">
+<meta property="og:url" content="https://snowstar.company/apps/">
+<meta property="og:title" content="Snowstar apps">
+<meta property="og:description" content="StreamDAW streams your DAW live and lossless. Audioctor takes any recording apart and cleans every part.">
+<!-- Deliberate: there is no assets/og-apps.jpg yet (the five verticals each have one, all 1200x630).
+     The house card stands in until one is cut to match. -->
+<meta property="og:image" content="https://snowstar.company/assets/og-snowstar.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Snowstar apps">
+<meta name="twitter:description" content="StreamDAW streams your DAW live and lossless. Audioctor takes any recording apart and cleans every part.">
+<meta name="twitter:image" content="https://snowstar.company/assets/og-snowstar.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- the shared Snowstar account UI (the same sign-in lightbox as every other page) -->
+<link rel="stylesheet" href="../css/account.css?v=19">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"CollectionPage","name":"Snowstar apps","url":"https://snowstar.company/apps/","mainEntity":{"@type":"ItemList","itemListOrder":"https://schema.org/ItemListOrderAscending","numberOfItems":2,"itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"SoftwareApplication","name":"StreamDAW","url":"https://snowstar.company/apps/streamdaw.html","applicationCategory":"MultimediaApplication","operatingSystem":"macOS 12 or later (Apple silicon)","offers":[{"@type":"Offer","name":"StreamDAW","price":"0","priceCurrency":"ILS"},{"@type":"Offer","name":"StreamDAW Pro Monthly","price":"8.99","priceCurrency":"USD"},{"@type":"Offer","name":"StreamDAW Pro","price":"249","priceCurrency":"ILS"}]}},{"@type":"ListItem","position":2,"item":{"@type":"SoftwareApplication","name":"Audioctor","url":"https://snowstar.company/apps/audioctor.html","applicationCategory":"MultimediaApplication","operatingSystem":"macOS 14 or later (Apple silicon)","offers":[{"@type":"Offer","name":"Audioctor Monthly","price":"5.99","priceCurrency":"USD"},{"@type":"Offer","name":"Audioctor","price":"49","priceCurrency":"USD"}]}}]}}
+</script>
+<style>
+/* ═══════════ The apps' front door (/apps/) ═══════════════════════════════════════
+   One corridor, two doors. The page keeps its OWN dark palette; each door takes its
+   identity from axis (text beside media, or media over text), from its crop, and from
+   ONE accent used in exactly two slots (the rule above its spec sheet, and the dot on
+   its badge). Palette is a parameter, never an override: nothing inside .hub-door reads
+   a global colour, only the five --door-* names, redeclared per [data-app].
+
+   Four things are identical on both doors, and they are what make two panels read as one
+   system: the frame, the type scale, the content contract (lockup -> promise -> one line
+   -> exactly three spec rows in the same order -> one lime pill), and the button.
+
+   A new app = one <section class="hub-door split|stack" data-app="x" id="x"> plus one
+   five-line [data-app="x"] block. Site-wide it also costs its PROPERTIES row in
+   js/site-edit.js, a 404.html card, and a dashboard.js VERTICALS key.
+
+   Every page-local class is prefixed .hub-. The UNPREFIXED names are house names that
+   shared code reads and must not be renamed: .menu, .menu-div, .menu-word, .now, .lbl,
+   .ss-foot, body.menu-open, [data-account-mount], [data-usd], [data-ils], [data-txt].
+   Never put .reveal on anything here: css/style.css holds it at opacity:0 and only
+   js/main.js adds .in — and main.js is not loaded on this page. */
+:root{
+  --bg:#0c0c0d; --bg-2:#121213;
+  --ink:#f3eddc; --ink-2:rgba(243,237,220,.78); --muted:rgba(243,237,220,.55);
+  --line:rgba(243,237,220,.12); --line-2:rgba(243,237,220,.26);
+  --lime:#c8f23a; --lime-ink:#1d2a00; --pink:#ff5c8a;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,sans-serif;
+  --cond:"Barlow Condensed","Avenir Next Condensed","Arial Narrow",sans-serif;
+  --maxw:1120px; --gut:clamp(16px,4vw,40px);
+  /* css/account.css and js/account-ui.js are written against the Snowstar token names.
+     Keep these aliases or the sign-in lightbox renders with no background at all. */
+  --panel:#151514; --panel-2:#1c1c1a; --text:var(--ink); --dim:var(--muted);
+  --font-body:var(--sans); --font-display:var(--serif); --tint:rgba(243,237,220,.06);
+  --amber:var(--lime); --coral:var(--pink); --ice:#8fd3ff;
+  --grad:linear-gradient(96deg,#c8f23a,#a9e21c);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+/* without this the native widgets inside the shared sign-in lightbox render light on a dark page */
+html{color-scheme:dark;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;
+  min-height:100vh;display:flex;flex-direction:column;overflow-x:clip}
+img,video{display:block;max-width:100%}
+img{height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+main{flex:1}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);width:100%}
+:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+/* ── the bar. It sells nothing: no download, no price, no checkout — the doors are the
+      decision, and every Audioctor CTA is still an early-access mailto anyway. ── */
+header.hub-nav{position:sticky;top:0;z-index:30;background:rgba(12,12,13,.84);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header.hub-nav .wrap{display:flex;align-items:center;gap:18px;height:64px}
+header.hub-nav .hub-home img{height:16px;width:auto}
+.hub-tools{margin-left:auto;display:flex;align-items:center;gap:14px}
+.hub-tools .nav-acct{display:inline-flex;align-items:center;white-space:nowrap}
+.hub-burger{display:grid;place-content:center;gap:5px;width:40px;height:40px;flex:none;
+  border:0;background:none;cursor:pointer;padding:0}
+.hub-burger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;
+  transition:transform .3s ease,opacity .2s ease}
+body.menu-open .hub-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+body.menu-open .hub-burger span:nth-child(2){opacity:0}
+body.menu-open .hub-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ── the hero. Every line is count-free, so a third app costs no copy edit. ── */
+.hub-intro{padding:clamp(48px,7vw,96px) 0 0}
+.hub-kicker{font:700 13px/1 var(--cond);letter-spacing:.22em;text-transform:uppercase;color:var(--lime)}
+.hub-intro h1{font:600 clamp(40px,6vw,76px)/1.03 var(--serif);letter-spacing:-.02em;margin:16px 0 14px}
+.hub-intro h1 em{font-style:italic;font-weight:500;color:var(--ink-2)}
+.hub-lead{font-size:clamp(17px,1.8vw,20px);color:var(--ink-2);max-width:620px}
+.hub-tally{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:22px;
+  font:700 12px/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.hub-tally b{color:var(--ink-2);font-weight:700}
+
+/* ── the corridor ── */
+.hub-corridor{padding:clamp(40px,6vw,76px) 0 clamp(44px,5vw,64px)}
+.hub-doors{display:grid;gap:clamp(22px,3vw,34px)}
+
+/* the frame: identical on every door, so the page's dark gutter rings each panel on all
+   four sides and two surfaces never touch */
+.hub-door{--pad:clamp(26px,3.4vw,52px);position:relative;display:grid;overflow:hidden;
+  border:1px solid var(--door-line);border-radius:26px;background:var(--door-bg);
+  box-shadow:0 30px 70px -40px rgba(0,0,0,.9)}
+.hub-door .say{padding:var(--pad);display:flex;flex-direction:column;min-width:0;position:relative}
+.hub-door .say > *{position:relative;z-index:1}
+/* the door's glow, inside the panel only — it never bleeds onto the page or the other door */
+.hub-door .say::after{content:"";position:absolute;right:-14%;bottom:-38%;width:54%;height:120%;z-index:0;
+  pointer-events:none;background:radial-gradient(closest-side,var(--door-glow),transparent)}
+.hub-door .see{position:relative;background:var(--door-well);overflow:hidden;min-width:0}
+
+/* the only two geometry variants: text beside media, or media over text */
+.hub-door.split{grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);align-items:stretch}
+.hub-door.stack{grid-template-columns:1fr}
+.hub-door.stack .see{aspect-ratio:1600/710}
+
+/* the content contract */
+.hub-door .lockup{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.hub-door .lockup .ic{width:40px;height:40px;border-radius:10px;flex:none;
+  box-shadow:0 10px 24px -10px rgba(0,0,0,.8)}
+/* the wordmarks at equal optical area — the same ratios every menu on the site uses */
+.hub-door .lockup .mark{--slot:54px;width:auto;max-width:none;display:block}
+.hub-door .lockup .mark[alt="StreamDAW"]{height:calc(var(--slot) * .312)}
+.hub-door .lockup .mark[alt="Audioctor"]{height:calc(var(--slot) * .447)}
+.hub-door h2{font:600 clamp(28px,3.4vw,44px)/1.05 var(--serif);letter-spacing:-.02em}
+.hub-door h2 em{font-style:italic;font-weight:500;color:var(--ink-2)}
+.hub-door .line{margin-top:14px;font-size:clamp(15px,1.5vw,16.5px);color:var(--ink-2);max-width:46ch}
+
+/* THE fact carrier. Exactly three rows per door, same labels, same order, same place —
+   that cap is what lets two different-looking panels be compared at a glance, and it is
+   why this page needs no comparison table. Do not add a fourth row to one door only. */
+.hub-door .spec{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 20px;align-items:baseline;
+  margin-top:auto;padding-top:26px;position:relative}
+.hub-door .spec::before{content:"";position:absolute;top:0;left:0;width:38px;height:2px;background:var(--door-key)}
+.hub-door .spec dt{font:700 11.5px/1.5 var(--cond);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap}
+.hub-door .spec dd{font-size:14.5px;color:var(--ink-2)}
+.hub-door .spec dd b{color:var(--ink);font-weight:600}
+
+/* the pill: same geometry and same colour on every door — lime is this family's
+   "press this". A door's accent never colours a button. */
+.hub-door .go{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;margin-top:28px;
+  height:50px;padding:0 26px;border-radius:999px;font:600 15.5px/1 var(--sans);
+  background:linear-gradient(#d6f55c,#b9df2f);color:var(--lime-ink);
+  box-shadow:0 0 22px rgba(200,242,58,.26);transition:transform .15s ease,box-shadow .15s ease}
+.hub-door .go svg{width:17px;height:17px;flex:none}
+.hub-door .go:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(200,242,58,.42)}
+
+/* the badge on the media: the door's accent, its second and last slot */
+/* top-RIGHT, not left: both screenshots carry their app's own wordmark in their top-left
+   corner, and a badge there sits on top of it. */
+.hub-door .badge{position:absolute;right:16px;top:16px;z-index:2;display:inline-flex;align-items:center;gap:7px;
+  padding:6px 12px;border-radius:999px;background:rgba(0,0,0,.58);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);
+  font:700 11px/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;color:#fff}
+.hub-door .badge i{width:7px;height:7px;border-radius:50%;background:var(--door-key);
+  box-shadow:0 0 10px var(--door-key)}
+
+/* ── door one: StreamDAW. Five declarations — the whole per-app cost. ── */
+.hub-door[data-app="streamdaw"]{
+  --door-bg:linear-gradient(168deg,#17170f,#0e0e0b);
+  --door-well:#0a0a08;
+  --door-line:rgba(243,237,220,.13);
+  --door-key:var(--lime);
+  --door-glow:rgba(200,242,58,.13);
+}
+.hub-door[data-app="streamdaw"] .see{min-height:clamp(320px,34vw,460px)}
+/* the v2 screen is 1920x885 and the phone covers its right edge, so the crop keeps the left:
+   the sidebar, the stream list and the meters */
+.hub-door[data-app="streamdaw"] .shot{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:0% 22%}
+.hub-door[data-app="streamdaw"] .phone{position:absolute;right:5%;bottom:7%;width:26%;max-width:184px;
+  height:auto;border-radius:16px;
+  box-shadow:0 26px 54px -22px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.1)}
+
+/* ── door two: Audioctor ── */
+.hub-door[data-app="audioctor"]{
+  --door-bg:linear-gradient(168deg,#181713,#100f0c);
+  --door-well:#000;
+  --door-line:rgba(243,237,220,.14);
+  --door-key:var(--pink);
+  --door-glow:rgba(255,92,138,.13);
+}
+.hub-door[data-app="audioctor"] .see{border-bottom:1px solid var(--door-line)}
+.hub-door[data-app="audioctor"] .shot{width:100%;height:100%;object-fit:cover}
+/* where there is room, the stacked door sets its spec sheet beside the words rather than
+   under them — the second axis difference, and it keeps the panel from growing too tall */
+@media (min-width:881px){
+  .hub-door.stack .say{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
+    column-gap:clamp(28px,4vw,64px);align-items:end}
+  .hub-door.stack .lockup,.hub-door.stack h2,.hub-door.stack .line{grid-column:1}
+  .hub-door.stack .spec{grid-column:2;grid-row:1 / span 3;margin-top:0;align-content:end}
+  .hub-door.stack .go{grid-column:1;justify-self:start;margin-top:26px}
+}
+
+/* ── what both apps share, said once, instead of twice inside the doors ── */
+.hub-shared{padding:0 0 clamp(48px,6vw,80px)}
+.hub-shared dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px 32px;
+  padding-top:clamp(28px,4vw,40px);border-top:1px solid var(--line)}
+.hub-shared dt{font:700 11.5px/1.5 var(--cond);letter-spacing:.2em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:8px}
+.hub-shared dd{color:var(--muted);font-size:14.5px}
+.hub-sep{margin-top:28px;font-size:14.5px;color:var(--ink-2)}
+.hub-else{margin-top:10px;max-width:74ch;font-size:14px;color:var(--muted)}
+.hub-else a{color:var(--ink-2);border-bottom:1px solid var(--line-2);padding-bottom:1px}
+.hub-else a:hover{color:var(--ink);border-color:var(--ink)}
+
+footer{border-top:1px solid var(--line);padding:30px 0 40px;font-size:13.5px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center;justify-content:space-between}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 18px}
+footer a:hover{color:var(--ink-2)}
+footer b{color:var(--ink-2)}
+
+/* ── the full-screen menu: the Products block is what js/site-edit.js looks for ── */
+.menu{position:fixed;inset:0;z-index:40;background:var(--bg);display:none;flex-direction:column;
+  justify-content:center;padding:40px var(--gut);overflow-y:auto}
+body.menu-open{overflow:hidden}
+body.menu-open .menu{display:flex}
+.menu nav{display:flex;flex-direction:column;gap:14px}
+.menu nav a{font:600 clamp(24px,3.4vw,30px)/1.1 var(--serif)}
+.menu .menu-div{margin-top:4px;font:700 12px var(--cond);letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.menu .x{position:absolute;top:18px;right:var(--gut);width:40px;height:40px;border:0;background:none;
+  color:var(--ink);font-size:30px;cursor:pointer}
+/* the four optical heights. This page links neither css/style.css nor apps/audioctor.css,
+   so without these lines sdaw-word-trim.png renders at its natural 1076px wide. */
+.menu .menu-word{--slot:clamp(34px,3.8vw,52px);width:auto;max-width:none;display:block;flex:none}
+.menu .menu-word[alt="Mutra"]    {height:calc(var(--slot) * .500)}
+.menu .menu-word[alt="StreamDAW"]{height:calc(var(--slot) * .312)}
+.menu .menu-word[alt="Snowstar"] {height:calc(var(--slot) * .296)}
+.menu .menu-word[alt="Audioctor"]{height:calc(var(--slot) * .447)}
+.menu nav a:has(.menu-word){align-items:center;min-height:clamp(34px,3.8vw,52px)}
+.menu nav a:has(.menu-word):hover{background:color-mix(in srgb,currentColor 9%,transparent);
+  padding:0 14px;margin-left:-14px;border-radius:12px;width:max-content}
+/* the page you are on is marked by being quiet; .now is declared in css/style.css and
+   css/streamdaw.css, neither of which is linked here */
+.menu nav a.now{opacity:.55;pointer-events:none}
+/* .ss-foot, .ss-mail, .ss-tel, .ss-soc and .cur-btn need no rules here: js/site-edit.js
+   injects both the contact block and its stylesheet, and mounts the currency switcher. */
+
+/* ── phones: the split door folds media-first, the spec stacks, the pill goes full width ── */
+@media (max-width:880px){
+  .hub-door.split{grid-template-columns:1fr}
+  .hub-door.split .see{order:-1;aspect-ratio:16/10}
+  .hub-door[data-app="streamdaw"] .see{min-height:0}
+  .hub-door[data-app="streamdaw"] .phone{width:23%;bottom:6%}
+}
+@media (max-width:520px){
+  .hub-door .spec{grid-template-columns:1fr;gap:3px}
+  .hub-door .spec dt{margin-top:12px}
+  .hub-door .go{width:100%;justify-content:center}
+}
+@media (max-width:460px){
+  header.hub-nav .wrap{gap:12px}
+  .hub-tools .nav-acct,.hub-tools .nav-acct *{white-space:nowrap;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<header class="hub-nav">
+  <div class="wrap">
+    <button class="hub-burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+    <a class="hub-home" href="../index.html" aria-label="Snowstar"><img src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar" width="540" height="45"></a>
+    <div class="hub-tools"><span class="nav-acct" data-account-mount></span></div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hub-intro">
+    <div class="wrap">
+      <p class="hub-kicker" data-txt="apps.kicker">Apps</p>
+      <h1 data-txt="apps.title">Tools for people<br><em>who make sound.</em></h1>
+      <p class="hub-lead" data-txt="apps.lead">Every app here started as something missing from our own sessions, then got finished properly. Each one runs on your Mac — in its own window and inside your DAW — and each has a page of its own with the films, the fine print and the prices.</p>
+      <p class="hub-tally"><b>Mac, Apple silicon</b><span aria-hidden="true">·</span><b>App and plug-in</b><span aria-hidden="true">·</span><b>A free way in</b></p>
+    </div>
+  </section>
+
+  <section class="hub-corridor" id="apps" aria-label="Snowstar apps">
+    <div class="wrap">
+      <div class="hub-doors">
+
+        <section class="hub-door split" data-app="streamdaw" id="streamdaw" aria-labelledby="sdTitle">
+          <div class="say">
+            <p class="lockup">
+              <img class="ic" src="streamdaw-icon-128.png?v=2" width="128" height="128" alt="">
+              <img class="mark" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW" width="1076" height="99">
+            </p>
+            <h2 id="sdTitle" data-txt="apps.streamdaw.title">Stream your DAW.<br><em>Live. Lossless.</em></h2>
+            <p class="line" data-txt="apps.streamdaw.line">Anyone with the link or the QR code hears your session as you play it, lossless, with nothing for them to install — and each listener keeps a mix of their own.</p>
+            <dl class="spec">
+              <dt>Runs on</dt><dd>Mac with <b>Apple silicon</b>, macOS 12 or later</dd>
+              <dt>Comes as</dt><dd>App <b>and</b> AU / VST3 plug-in</dd>
+              <dt>Price</dt><dd><b>Free</b> on your master mix — a link, a QR code, up to 60 minutes a session. Pro <b><span data-usd="8.99" data-dp="2">$8.99</span></b> a month, or <b><span data-ils="249">$81</span></b> once.</dd>
+            </dl>
+            <a class="go" href="streamdaw.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13m0 0l-5.5-5.5M18 12l-5.5 5.5"/></svg>
+              Open StreamDAW</a>
+          </div>
+          <div class="see">
+            <span class="badge"><i aria-hidden="true"></i>On air</span>
+            <img class="shot" src="sdaw-v2-studio.jpg" width="1920" height="885" loading="lazy" decoding="async"
+                 alt="StreamDAW on air: the session's stems, the VU meters, and the listeners by name">
+            <img class="phone" src="sdaw-v2-phone.jpg" width="880" height="1715" loading="lazy" decoding="async"
+                 alt="A listener's phone playing the session live, in time">
+          </div>
+        </section>
+
+        <section class="hub-door stack" data-app="audioctor" id="audioctor" aria-labelledby="adTitle">
+          <div class="see">
+            <span class="badge"><i aria-hidden="true"></i>On your Mac</span>
+            <img class="shot" src="../media/audioctor/song.jpg?v=3" width="1600" height="710" loading="lazy" decoding="async"
+                 alt="A finished master opened in Audioctor: six parts on six faders">
+          </div>
+          <div class="say">
+            <p class="lockup">
+              <img class="ic" src="audioctor-icon-128.png" width="128" height="128" alt="">
+              <img class="mark" src="../assets/audioctor-word-trim.png?v=1" alt="Audioctor" width="522" height="99">
+            </p>
+            <h2 id="adTitle" data-txt="apps.audioctor.title">Every part, apart.<br><em>Clean. Local.</em></h2>
+            <p class="line" data-txt="apps.audioctor.line">Drop in any recording and it comes apart — voice, drums, bass, guitars, keys — each part repaired, mixed and exported without ever leaving your Mac.</p>
+            <dl class="spec">
+              <dt>Runs on</dt><dd>Mac with <b>Apple silicon</b>, macOS 14 or later</dd>
+              <dt>Comes as</dt><dd>App <b>and</b> AU / VST3 plug-in</dd>
+              <dt>Price</dt><dd><b>7 days free</b>, no card. Then <b><span data-usd="5.99" data-dp="2">$5.99</span></b> a month, or <b><span data-usd="49" data-dp="0">$49</span></b> once.</dd>
+            </dl>
+            <a class="go" href="audioctor.html">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13m0 0l-5.5-5.5M18 12l-5.5 5.5"/></svg>
+              Open Audioctor</a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="hub-shared" aria-label="What the apps share">
+    <div class="wrap">
+      <dl>
+        <div><dt>One account</dt><dd>One Snowstar sign-in covers both — your downloads, keys and licences in one place.</dd></div>
+        <div><dt>Your machine</dt><dd>Both run on your Mac. Audioctor uploads nothing; StreamDAW sends only the stream you start.</dd></div>
+        <div><dt>Your currency</dt><dd>Prices read in the currency you pick in the menu. Cards are charged in shekels, and every screen that takes a payment says so.</dd></div>
+      </dl>
+      <p class="hub-sep" data-txt="apps.separate">They are separate apps at separate prices. Neither one needs the other to work.</p>
+      <p class="hub-else" data-txt="apps.else">Not apps, but also ours: <a href="../mutra.html">Mutra</a> licenses our music for your project, and <a href="../snowstash.html">Snowstash</a> finds music royalties you are owed. Something else? <a href="mailto:hello@snowstar.company?subject=A%20job%20your%20apps%20don%27t%20do%20yet">Tell us the job</a> — if we have built it we will send the link, and if we have not, you have told us what to build next.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="Snowstar">
+      <a href="streamdaw.html">StreamDAW</a>
+      <a href="audioctor.html">Audioctor</a>
+      <a href="../mutra.html">Mutra</a>
+      <a href="../snowstash.html">Snowstash</a>
+      <!-- a subscription sold online gets a plain cancel link; both apps sell one -->
+      <a href="streamdaw-cancel.html">Cancel a subscription · <span lang="he" dir="rtl">ביטול מנוי</span></a>
+      <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+
+<!-- Both of site-edit.js's menu injectors bail on any nav without a .menu-div child, so until
+     this existed the page had no Products rows, no contact block and no currency switcher —
+     while printing prices that depend on that switcher. The rows below are the no-JS baseline;
+     syncProducts corrects them from PROPERTIES, marks the current one .now, and removes hidden
+     verticals. Their hrefs are root-relative to match what syncProducts generates. Do not
+     hand-place a currency switcher: site-edit.js removes any outside the canonical footer. -->
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <button class="x" id="menuX" aria-label="Close">×</button>
+  <nav aria-label="Main">
+    <span class="menu-div">Products</span>
+    <a href="/index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
+    <a href="/mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
+    <a href="/apps/streamdaw.html"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
+    <a href="/apps/audioctor.html"><img class="menu-word" src="../assets/audioctor-word-trim.png?v=1" alt="Audioctor"></a>
+    <a href="/apps/" class="now"><span class="lbl">Apps</span></a>
+    <a href="/snowstash.html"><span class="lbl">Snowstash</span></a>
+  </nav>
+</div>
+
+<script>
+(function () {
+  const b = document.getElementById('burger'), m = document.getElementById('menu');
+  const set = (o) => {
+    document.body.classList.toggle('menu-open', o);
+    b.setAttribute('aria-expanded', o); m.setAttribute('aria-hidden', !o);
+  };
+  b.addEventListener('click', () => set(!document.body.classList.contains('menu-open')));
+  document.getElementById('menuX').addEventListener('click', () => set(false));
+  m.addEventListener('click', (e) => { if (e.target.closest('a')) set(false); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') set(false); });
+  document.getElementById('yr').textContent = new Date().getFullYear();
+})();
+</script>
+<!-- the same five files, in the same order, as every other page -->
+<script src="../js/money.js?v=4"></script>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=29"></script>
+<script src="../js/site-edit.js?v=10"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>
