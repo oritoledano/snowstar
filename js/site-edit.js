@@ -29,7 +29,11 @@
   /** 01/02/03 closes ranks so the menu never counts something it is not
    *  showing. Called by both the section sync and the property sync. */
   function renumberMenus() {
-    document.querySelectorAll('nav').forEach((nav) => {
+    /* Per panel, not per menu: each vertical's pages are their own 01, 02, 03. A menu with no
+       rail (the artist pages' own, say) is still numbered as one list. */
+    const boxes = [...document.querySelectorAll('.ss-pane')];
+    document.querySelectorAll('nav').forEach((n) => { if (!n.dataset.ssRail) boxes.push(n); });
+    boxes.forEach((nav) => {
       let n = 0;
       nav.querySelectorAll('a').forEach((a) => {
         const num = a.querySelector('i');
@@ -53,24 +57,33 @@
      hydration every visitor already runs. Section and menu are separate because
      they answer different questions: "stop advertising this" and "stop showing
      this", and the owner may well want the first without the second. */
+  /* One row per vertical. `role` is the word under its mark in the menu's rail (Studio,
+     Catalog, Shop); `links` is what the rail opens beside it — written here so that ANY page
+     can show ANY vertical's menu without loading it. The page you are actually on ignores
+     this list and uses its own markup, so its wording, numbering and anchors stay the page's
+     own. An href starting with # is relative to that vertical's page. */
   const PROPERTIES = [
-    { id: 'snowstar',  label: 'Snowstar',    page: 'index.html',
-      mark: 'assets/snowstar-word-trim.png?v=1', product: true },
-    { id: 'mutra',     label: 'Mutra',       page: 'mutra.html',
-      mark: 'assets/mutra-word-trim.png?v=1',    product: true },
-    /* One door for the software (Ori, 2026-10-23: "all the apps under Apps, not each on its
-       own in the menu"). Apps is a group: pressing it opens the apps, it does not navigate.
-       Its own page is the last row inside it. page is the directory, not its index.html —
-       pointsAt() is a bare endsWith, so 'index.html' would match Snowstar's row everywhere. */
-    { id: 'apps',      label: 'Apps',        page: 'apps/', inLabel: 'All apps',
+    { id: 'snowstar',  label: 'Snowstar',  role: 'Studio',  page: 'index.html',
+      mark: 'assets/snowstar-word-trim.png?v=1', product: true,
+      links: [['Work', '#work'], ['Services', '#services'], ['Clients', '#clients'],
+              ['About', '#about'], ['Contact', '#contact']] },
+    { id: 'mutra',     label: 'Mutra',     role: 'Catalog', page: 'mutra.html',
+      mark: 'assets/mutra-word-trim.png?v=1',    product: true,
+      links: [['Browse', '#catalog'], ['How licensing works', '#faq'],
+              ['Submit music', '/artists.html'], ['Get in touch', '#contact']] },
+    /* The shop. Its panel is the apps themselves (the two rows below), and a small crumb
+       leads to /apps/ for anyone who wants to see the shop itself — no "All apps" row. */
+    { id: 'apps',      label: 'Apps',      role: 'Shop',    page: 'apps/',
       product: true, group: true },
-    { id: 'streamdaw', label: 'StreamDAW',   page: 'streamdaw.html', dir: 'apps/',
+    { id: 'streamdaw', label: 'StreamDAW', page: 'streamdaw.html', dir: 'apps/',
       mark: 'assets/sdaw-word-trim.png?v=1',     product: true, under: 'apps' },
-    { id: 'audioctor', label: 'Audioctor',   page: 'audioctor.html', dir: 'apps/',
+    { id: 'audioctor', label: 'Audioctor', page: 'audioctor.html', dir: 'apps/',
       mark: 'assets/audioctor-word-trim.png?v=1', product: true, under: 'apps' },
-    { id: 'snowstash', label: 'Snowstash',   page: 'snowstash.html', product: true },
-    // Not a product row — it is a door for artists, listed with the page links.
-    { id: 'artists',   label: 'For artists', page: 'artists.html' },
+    { id: 'snowstash', label: 'Snowstash', role: 'Royalties', page: 'snowstash.html',
+      product: true,
+      links: [['Overview', '#hero'], ['How it works', '#how'], ['Run a check', '#cand']] },
+    // Not a vertical of its own — the artists' door into Mutra, listed with Mutra's pages.
+    { id: 'artists',   label: 'For artists', page: 'artists.html', ofVert: 'mutra' },
   ];
   const PROP_KEY = 'config.properties';
 
@@ -107,124 +120,142 @@
      Hidden verticals are the same rule from the other side: a vertical switched
      off in the menu loses its row everywhere, its own page included. Static
      markup stays as the no-JS baseline; this only corrects it. */
-  function rowMark(p, label) {
+  /* ── the menu: a rail of verticals, a panel of pages ───────────────────────
+     Ori, 2026-10-23, with Waves' menu as the reference: "clicking a vertical shows that
+     vertical's menu beside it". So the Products list is gone. In its place the rail carries
+     one button per vertical — its mark, and the word for what it is — and beside it stands
+     that vertical's own pages. Pressing a vertical shows what is inside it; it does not take
+     you there. The links do that.
+
+     The page you are on keeps ITS OWN markup as its panel, so the wording, the numbering and
+     the anchors are the page's, not a copy of them here. Every other vertical's panel is
+     built from PROPERTIES.links. With no JavaScript the static list in the markup is what
+     shows, which is why it stays in all nine pages. */
+
+  const ROOT_OF = { mutra: ['/mutra.html', '/artists.html', '/artist.html'] };
+
+  /** Which vertical does this page belong to? */
+  function vertHere() {
+    const path = location.pathname;
+    if (path.startsWith('/apps/')) return 'apps';
+    if (ROOT_OF.mutra.some((x) => path === x || path.endsWith(x))) return 'mutra';
+    if (path.endsWith('/snowstash.html')) return 'snowstash';
+    return 'snowstar';
+  }
+
+  /** The mark, or the label set in the menu's own type when a vertical has no wordmark. */
+  function vertFace(p) {
     return p.mark
-      ? `<img class="menu-word" src="/${p.mark}" alt="${p.label}">`
-      : `<span class="lbl">${label || p.label}</span>`;
+      ? `<img class="menu-word ss-mark" src="/${p.mark}" alt="${p.label}">`
+      : `<span class="ss-name">${p.label}</span>`;
   }
 
-  /* A <details> rather than a scripted dropdown: it opens with no JavaScript, it is a
-     disclosure to a screen reader without a line of ARIA, and Escape and the keyboard
-     already work. Its label has to be dressed at runtime because the type of a menu row
-     lives on each page's own selector (.menu-nav a, .mmenu-nav a, .menu nav a, .sd-menu a),
-     which a <summary> does not match — so the row's computed type is copied onto it. */
-  function dressGroup(box, nav) {
-    const kin = [...nav.querySelectorAll('a')].find((a) => !a.closest('details.menu-group'));
-    const sum = box.querySelector('summary');
-    if (!kin || !sum) return;
-    const c = getComputedStyle(kin);
-    sum.style.font = `${c.fontStyle} ${c.fontWeight} ${c.fontSize}/${c.lineHeight} ${c.fontFamily}`;
-    sum.style.letterSpacing = c.letterSpacing;
-    sum.style.textTransform = c.textTransform;
-    /* and the box itself, so the indent and the small print below are measured against the
-       menu's own row size: a <nav> inherits 16px, which has nothing to do with how big a
-       row is on that page (30px here, smaller on the phone, larger on the homepage). */
-    box.style.fontSize = c.fontSize;
-    const navGap = getComputedStyle(nav).rowGap;
-    const sub = box.querySelector('.menu-sub');
-    if (sub) {
-      sub.style.gap = navGap && navGap !== 'normal' ? navGap : '.3em';
-      sub.style.paddingTop = navGap && navGap !== 'normal' ? navGap : '.3em';
-    }
+  /** '#faq' on the vertical's page, '/artists.html' as it stands, from any depth. */
+  function hrefIn(p, href, onIt) {
+    if (!href.startsWith('#')) return href;
+    return onIt ? href : '/' + (p.dir || '') + p.page + href;
   }
 
-  function syncProducts(hidden) {
+  function buildMenu(hidden) {
+    const here = vertHere();
+    const verts = PROPERTIES.filter((p) => p.product && !p.under && !(hidden[p.id] || {}).menu);
+    const kids = (id) => PROPERTIES.filter((p) => p.under === id && !(hidden[p.id] || {}).menu);
+
     document.querySelectorAll('nav').forEach((nav) => {
       const div = [...nav.children].find((n) => n.classList && n.classList.contains('menu-div'));
-      if (!div) return;                         // not a menu with a Products block
-      /* Only the rows AFTER the divider. Searching the whole nav would find
-         "Browse the catalogue" on the artist pages — which points at mutra.html
-         and is not the Mutra product row. A grouped app sits inside its <details>,
-         so both levels are collected. */
-      const rows = [];
-      for (let n = div.nextElementSibling; n; n = n.nextElementSibling) {
-        if (n.tagName === 'A') rows.push(n);
-        else if (n.tagName === 'DETAILS') rows.push(...n.querySelectorAll('a'));
+      if (!div || nav.dataset.ssRail) return;        // not a menu, or already built
+      nav.dataset.ssRail = '1';
+      if (nav.parentElement) nav.parentElement.dataset.ssMenu = '1';
+
+      // the page's own links are everything before the divider; the old product list goes
+      const own = [];
+      for (let n = nav.firstElementChild; n && n !== div; ) {
+        const next = n.nextElementSibling;
+        if (n.tagName === 'A') own.push(n);
+        n = next;
       }
-      const rowFor = (page) => rows.find((x) => pointsAt(x.getAttribute('href'), page));
-      const groups = {};
-      let after = div;
+      for (let n = div; n; ) { const next = n.nextElementSibling; n.remove(); n = next; }
 
-      PROPERTIES.filter((p) => p.product).forEach((p) => {
-        const off = (hidden[p.id] || {}).menu;
+      const rail = document.createElement('div');
+      rail.className = 'ss-rail';
+      rail.setAttribute('role', 'tablist');
+      rail.setAttribute('aria-label', 'Snowstar');
+      const panes = document.createElement('div');
+      panes.className = 'ss-panes';
 
-        if (p.group) {
-          let own = rowFor(p.page);
-          let box = [...nav.querySelectorAll('details.menu-group')].find((d) => d.dataset.group === p.id)
-                 || (own && own.closest('details.menu-group')) || null;
-          if (off) { if (box) box.remove(); else if (own) own.remove(); groups[p.id] = null; return; }
-          if (!box) {
-            box = document.createElement('details');
-            box.className = 'menu-group';
-            box.innerHTML = `<summary>${rowMark(p)}<span class="caret" aria-hidden="true"></span></summary>`
-              + '<div class="menu-sub"></div>';
-          }
-          box.dataset.group = p.id;
-          if (after.nextElementSibling !== box) after.insertAdjacentElement('afterend', box);
-          let sub = box.querySelector('.menu-sub');
-          if (!sub) {
-            sub = document.createElement('div');
-            sub.className = 'menu-sub';
-            box.appendChild(sub);
-          }
-          if (!own) {
-            own = document.createElement('a');
-            own.href = '/' + (p.dir || '') + p.page;
-            own.innerHTML = rowMark(p, p.inLabel);
-          }
-          own.classList.add('menu-all');
-          own.classList.toggle('now', isCurrent(p));
-          // the own row is appended last, once the apps inside are in place
-          groups[p.id] = { box, sub, own };
-          after = box;
-          dressGroup(box, nav);
-          return;
-        }
+      verts.forEach((p) => {
+        const onIt = p.id === here;
+        const tab = document.createElement('button');
+        tab.type = 'button';
+        tab.className = 'ss-vert' + (onIt ? ' ss-at' : '');
+        tab.dataset.vert = p.id;
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-selected', onIt ? 'true' : 'false');
+        tab.innerHTML = vertFace(p)
+          + `<span class="ss-role">${p.role || p.label}${onIt ? '<i class="ss-dot" aria-hidden="true"></i>' : ''}</span>`;
+        rail.appendChild(tab);
 
-        const g = p.under ? groups[p.under] : undefined;
-        if (p.under && !g) return;                // its door is switched off: so is it
-        let a = rowFor(p.page);
-        if (off) { if (a) a.remove(); return; }
-        if (!a) {
-          a = document.createElement('a');
-          // Root-relative, so one href is right from every directory depth.
-          a.href = '/' + (p.dir || '') + p.page;
-          a.innerHTML = rowMark(p);
-        }
-        if (g) {
-          g.sub.appendChild(a);                   // in PROPERTIES order, the own row after them
+        const pane = document.createElement('div');
+        pane.className = 'ss-pane';
+        pane.dataset.vert = p.id;
+        if (!onIt) pane.hidden = true;
+        pane.setAttribute('role', 'tabpanel');
+
+        /* the crumb: small, and the only way to the vertical's own front page from here.
+           On an app's page it reads APPS > AUDIOCTOR, which is what it is. */
+        const inside = PROPERTIES.find((x) => x.under === p.id && isCurrent(x));
+        pane.innerHTML = `<a class="ss-crumb" href="/${(p.dir || '') + p.page}">`
+          + `<span>${p.role || p.label}</span>`
+          + (inside ? `<b>${inside.label}</b>` : '<em aria-hidden="true">&rsaquo;</em>') + '</a>';
+
+        if (onIt && own.length) {
+          own.forEach((a) => pane.appendChild(a));   // the page's own, moved across
+        } else if (p.group) {
+          kids(p.id).forEach((k) => {                // the shop: the apps themselves
+            const a = document.createElement('a');
+            a.href = '/' + (k.dir || '') + k.page;
+            a.innerHTML = vertFace(k).replace(' ss-mark', '');
+            a.classList.toggle('now', isCurrent(k));
+            pane.appendChild(a);
+          });
         } else {
-          if (after.nextElementSibling !== a) after.insertAdjacentElement('afterend', a);
-          after = a;
+          (p.links || []).forEach(([label, href]) => {
+            const a = document.createElement('a');
+            a.href = hrefIn(p, href, false);
+            a.innerHTML = `<i></i><span class="lbl">${label}</span>`;
+            pane.appendChild(a);
+          });
         }
-        a.classList.toggle('now', isCurrent(p));
+        panes.appendChild(pane);
       });
 
-      // the door you are standing behind opens itself; an empty one is no door at all
-      Object.keys(groups).forEach((id) => {
-        const g = groups[id];
-        if (!g) return;
-        const hasApps = !!g.sub.querySelector('a');
-        g.sub.appendChild(g.own);
-        if (!hasApps) {                           // every app behind it is switched off
-          g.box.replaceWith(g.own);               // the door becomes a plain row to /apps/
-          g.own.classList.remove('menu-all');
-          g.own.innerHTML = rowMark({ label: 'Apps' });
-          return;
-        }
-        g.box.open = !!g.box.querySelector('a.now');
+      nav.classList.add('ss-doors');
+      nav.append(rail, panes);
+      dressRail(nav);
+
+      rail.addEventListener('click', (e) => {
+        const tab = e.target.closest('.ss-vert');
+        if (!tab) return;
+        rail.querySelectorAll('.ss-vert').forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+        panes.querySelectorAll('.ss-pane').forEach((x) => { x.hidden = x.dataset.vert !== tab.dataset.vert; });
+        renumberMenus();
       });
     });
+  }
+
+  /* The rail's own type: a menu row's size lives on each page's own selector (.menu-nav a,
+     .mmenu-nav a, .menu nav a, .sd-menu a), which a <button> matches in none of the six
+     stylesheets. So the row's computed type is copied onto the rail, and every em inside it
+     — the role word, the crumb, the wordmark slot — is measured against that. */
+  function dressRail(nav) {
+    // a real row, not the crumb: the crumb's own size is an em of this very measurement
+    const kin = nav.querySelector('.ss-pane a:not(.ss-crumb)');
+    if (!kin) return;
+    const c = getComputedStyle(kin);
+    nav.style.setProperty('--ss-row', `${c.fontStyle} ${c.fontWeight} ${c.fontSize}/${c.lineHeight} ${c.fontFamily}`);
+    nav.style.setProperty('--ss-size', c.fontSize);
+    nav.style.setProperty('--ss-track', c.letterSpacing === 'normal' ? '0' : c.letterSpacing);
+    nav.style.setProperty('--ss-case', c.textTransform);
   }
 
   /* ── the menu footer, from one definition ──────────────────────────────────
@@ -265,8 +296,8 @@
 
   function syncMenuFoot() {
     document.querySelectorAll('nav').forEach((nav) => {
-      // only the real menus — the ones carrying a Products block
-      if (![...nav.children].some((n) => n.classList && n.classList.contains('menu-div'))) return;
+      // only the real menus — the ones the rail was built into (buildMenu marks them)
+      if (!nav.dataset.ssRail) return;
       const menu = nav.parentElement;
       if (!menu) return;
       let foot = menu.querySelector('[class*="menu-foot"], .ss-foot');
@@ -301,35 +332,67 @@
      group are still <a> inside the menu's container, so every page's own type, colour and
      hover already reach them — only the disclosure itself needs dressing, and it inherits
      colour so one block serves a night menu and a paper one. */
-  function groupCss() {
-    if (document.getElementById('ss-group-css')) return;
+  /* The rail's own styling, injected for the same reason the footer's is: the menu appears in
+     six stylesheets, two of them inside their own page. Everything here inherits colour and
+     type from the menu it lands in — one block serves a night menu and a paper one — and the
+     links inside a panel are still <a> inside that menu's container, so each page's own row
+     styling reaches them untouched. */
+  function railCss() {
+    if (document.getElementById('ss-rail-css')) return;
     const st = document.createElement('style');
-    st.id = 'ss-group-css';
+    st.id = 'ss-rail-css';
     st.textContent = `
-      /* css/streamdaw.css:320-325 styles bare details and summary elements for its FAQ accordion —
-         a rule above every one, 22px of padding, and a "+" on the right. A menu door is not an
-         FAQ, so those are turned off here rather than in that stylesheet, which is not ours to
-         retune. Two selectors deep so this wins on specificity and not on being injected last. */
-      .menu-group{display:block;border:0;padding:0 0 0 .58em;margin:0;background:none}
-      .menu-group > summary{justify-content:flex-start}
-      .menu-group > summary::after,.menu-group > summary::before{content:none;display:none}
-      .menu-group[open] > summary::after{content:none;display:none;transform:none}
-      .menu-sub{display:flex;flex-direction:column;align-items:flex-start}
-      .menu-group > summary{display:flex;align-items:center;gap:.42em;cursor:pointer;
-        list-style:none;color:inherit;width:max-content;-webkit-tap-highlight-color:transparent}
-      .menu-group > summary::-webkit-details-marker{display:none}
-      .menu-group > summary::marker{content:""}
-      .menu-group > summary:focus-visible{outline:2px solid currentColor;outline-offset:4px}
-      .menu-group .caret{width:.34em;height:.34em;flex:none;margin-top:-.16em;
-        border-right:.1em solid currentColor;border-bottom:.1em solid currentColor;
-        transform:rotate(45deg);opacity:.45;transition:transform .22s ease,opacity .22s ease}
-      .menu-group > summary:hover .caret{opacity:.95}
-      .menu-group[open] > summary .caret{transform:rotate(225deg);margin-top:.1em}
-      /* the apps sit a step in from their door, and the door's own page closes the list */
-      .menu-group > summary{margin-left:-.58em}
-      .menu-group .menu-sub > a.menu-all{font-size:.42em;letter-spacing:.14em;
-        text-transform:uppercase;opacity:.55}
-      .menu-group .menu-sub > a.menu-all:hover{opacity:1}
+      .ss-doors.ss-doors{display:grid;grid-template-columns:max-content minmax(0,1fr);
+        gap:clamp(20px,3.4vw,60px);align-items:start;flex-direction:row}
+      .ss-rail{display:flex;flex-direction:column;gap:.34em;align-self:start;
+        padding-right:clamp(14px,1.8vw,26px);
+        border-right:1px solid color-mix(in srgb,currentColor 13%,transparent)}
+      .ss-vert{display:flex;flex-direction:column;align-items:flex-start;gap:.1em;
+        position:relative;padding:.12em .5em .14em .42em;margin:0;border:0;background:none;
+        cursor:pointer;color:inherit;border-radius:.2em;text-align:left;opacity:.4;
+        font:var(--ss-row,inherit);
+        transition:opacity .22s ease,background-color .22s ease}
+      .ss-vert:hover{opacity:.8}
+      .ss-vert:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+      /* the one whose menu is showing: lit, washed, and marked by a bar rather than a box */
+      .ss-vert[aria-selected="true"]{opacity:1}
+      .ss-vert[aria-selected="true"]::before{content:"";position:absolute;left:0;top:12%;bottom:12%;
+        width:2px;border-radius:2px;background:currentColor;
+        box-shadow:0 0 12px color-mix(in srgb,currentColor 55%,transparent)}
+      .ss-vert[aria-selected="true"] .ss-role{opacity:1}
+      .ss-rail .ss-mark{display:block;width:auto;max-width:none;--slot:calc(var(--ss-size,30px) * .62)}
+      /* a vertical with no wordmark is set in the menu's own face, at the size the wordmarks
+         actually come out at — .62em of the row would be twice as big as the marks beside it */
+      .ss-rail .ss-name{display:block;font:inherit;font-size:.3em;line-height:1;letter-spacing:.01em;
+        text-transform:var(--ss-case,none)}
+      .ss-rail .ss-role{display:flex;align-items:center;gap:.6em;font-size:.2em;
+        letter-spacing:.24em;text-transform:uppercase;opacity:.7;font-weight:600;font-style:normal}
+      /* and the one you are actually on keeps a dot, whichever panel is open */
+      .ss-vert .ss-dot{width:.5em;height:.5em;border-radius:50%;background:currentColor;
+        opacity:.9;flex:none}
+      .ss-panes{min-width:0}
+      .ss-pane{display:flex;flex-direction:column;gap:inherit}
+      .ss-pane[hidden]{display:none}
+      /* the crumb: small, quiet, and the only way from here to the vertical's own page */
+      .ss-panes a.ss-crumb{display:inline-flex;align-items:baseline;gap:.55em;width:max-content;
+        font-size:.22em;font-weight:600;letter-spacing:.24em;text-transform:uppercase;opacity:.45;
+        line-height:1.2;margin:0 0 1.1em;padding:0;min-height:0;transition:opacity .2s ease}
+      .ss-panes a.ss-crumb:hover{opacity:.95}
+      .ss-panes a.ss-crumb span{border-bottom:1px solid color-mix(in srgb,currentColor 45%,transparent);
+        padding-bottom:.2em}
+      .ss-panes a.ss-crumb b{font-weight:600;opacity:.8}
+      .ss-panes a.ss-crumb b::before{content:"\u203A";margin-right:.55em;opacity:.55;font-weight:400}
+      .ss-panes a.ss-crumb em{font-style:normal;opacity:.55}
+      /* a phone has no room for a rail beside a panel: the verticals become a row above it */
+      @media (max-width:720px){
+        .ss-doors.ss-doors{grid-template-columns:1fr;gap:1em}
+        .ss-rail{flex-direction:row;align-items:stretch;gap:.2em;border-right:0;padding-right:0;
+          padding-bottom:.5em;overflow-x:auto;
+          border-bottom:1px solid color-mix(in srgb,currentColor 13%,transparent)}
+        .ss-vert{padding:.3em .5em;flex:0 0 auto}
+        .ss-vert[aria-selected="true"]::before{left:0;right:0;top:auto;bottom:0;width:auto;
+          height:.055em;min-height:2px}
+      }
     `;
     document.head.appendChild(st);
   }
@@ -394,7 +457,7 @@
      static menu door showed a browser's own disclosure triangle and a 16px label, and the
      contact block had no styling at all. Neither block depends on the answer. */
   footCss();
-  groupCss();
+  railCss();
 
   // ── 1. hydration — runs for everyone, fails silent ──
   const hydrate = fetch('/api/texts')
@@ -428,12 +491,12 @@
       }
       /* Always, not only when a config exists — the home page needs its own
          Snowstar row inserted whether or not anything has ever been hidden. */
-      syncProducts(props);
+      buildMenu(props);
       syncMenuFoot();
       renumberMenus();
       return texts;
     })
-    .catch(() => { syncProducts({}); syncMenuFoot(); renumberMenus(); return {}; });
+    .catch(() => { buildMenu({}); syncMenuFoot(); renumberMenus(); return {}; });
 
   // ── 2. editor — only ever wakes up for the admin ──
   const M = window.SnowstarAccount;
@@ -920,12 +983,15 @@
           /* Showing something again needs a reload: these only ever set
              display:none, so there is nothing to put back without re-reading
              the page's own markup. Hiding is live; unhiding says so. */
-          /* syncProducts first: it is the one that knows the door — it removes the whole
-             group, drops the apps inside it, and collapses one left empty. applyProperties
-             only sets display:none on a matching href, which on a group would hide its own
-             link and leave the door and its apps standing. */
-          syncProducts(next);
+          /* The rail is built once per load from the list of visible verticals, so a vertical
+             switched off now is removed by hand rather than rebuilt: applyProperties hides any
+             link to it, and its rail button and panel go with it. */
           applyProperties(next);
+          Object.keys(next).forEach((id) => {
+            if (!(next[id] || {}).menu) return;
+            document.querySelectorAll(`.ss-vert[data-vert="${id}"], .ss-pane[data-vert="${id}"]`)
+              .forEach((el) => el.remove());
+          });
           toast('Saved — hiding is live, showing again needs a reload');
           pop.remove();
         } catch (err) { toast('Couldn’t save: ' + err.message); }
