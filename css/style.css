@@ -96,6 +96,11 @@ body.menu-open{overflow:hidden}
   font-size:clamp(1.4rem,min(7.2vw,8.2vh),5rem);color:var(--text);
   opacity:0;transform:translateY(42px);transition:opacity .5s ease,transform .5s ease;
 }
+/* the Apps door's label is a <summary>, not an <a>: without this it skipped the animation
+   above and appeared at once while its neighbours were still fading up */
+.menu-nav .menu-group > summary{opacity:0;transform:translateY(42px);
+  transition:opacity .5s ease,transform .5s ease}
+body.menu-open .menu-nav .menu-group > summary{opacity:1;transform:none}
 .menu-nav a i{
   font-style:normal;font-size:clamp(.68rem,1vw,.95rem);font-weight:500;color:var(--ice);
   letter-spacing:.12em;width:2.6ch;flex:none;transform:translateY(-.55em);

@@ -77,8 +77,12 @@
   /** Is this page the property's own page? */
   function isCurrent(p) {
     const path = location.pathname;
-    if (p.page === 'index.html') return path === '/' || /\/index\.html$/.test(path);
-    return path.endsWith('/' + p.page) || path === '/' + (p.dir || '') + p.page;
+    const own = '/' + (p.dir || '') + p.page;
+    // a directory page and its index.html are the same page
+    if (p.page.endsWith('/')) return path === own || path === own + 'index.html';
+    // and only the site root is the Snowstar page: /apps/index.html is not
+    if (p.page === 'index.html') return path === '/' || path === '/index.html';
+    return path.endsWith('/' + p.page) || path === own;
   }
 
   /** Does this href point at that property's page? Matches 'snowstash.html',
@@ -210,8 +214,14 @@
       Object.keys(groups).forEach((id) => {
         const g = groups[id];
         if (!g) return;
+        const hasApps = !!g.sub.querySelector('a');
         g.sub.appendChild(g.own);
-        if (!g.sub.querySelector('a')) { g.box.remove(); return; }
+        if (!hasApps) {                           // every app behind it is switched off
+          g.box.replaceWith(g.own);               // the door becomes a plain row to /apps/
+          g.own.classList.remove('menu-all');
+          g.own.innerHTML = rowMark({ label: 'Apps' });
+          return;
+        }
         g.box.open = !!g.box.querySelector('a.now');
       });
     });
@@ -317,8 +327,9 @@
       .menu-group[open] > summary .caret{transform:rotate(225deg);margin-top:.1em}
       /* the apps sit a step in from their door, and the door's own page closes the list */
       .menu-group > summary{margin-left:-.58em}
-      .menu-sub > a.menu-all{font-size:.42em;letter-spacing:.14em;text-transform:uppercase;opacity:.55}
-      .menu-sub > a.menu-all:hover{opacity:1}
+      .menu-group .menu-sub > a.menu-all{font-size:.42em;letter-spacing:.14em;
+        text-transform:uppercase;opacity:.55}
+      .menu-group .menu-sub > a.menu-all:hover{opacity:1}
     `;
     document.head.appendChild(st);
   }
@@ -378,6 +389,13 @@
     renumberMenus();
   }
 
+  /* The two injected stylesheets go in before anything is fetched. They used to ride on the
+     /api/texts promise, which left a window — first paint to the network settling — where the
+     static menu door showed a browser's own disclosure triangle and a 16px label, and the
+     contact block had no styling at all. Neither block depends on the answer. */
+  footCss();
+  groupCss();
+
   // ── 1. hydration — runs for everyone, fails silent ──
   const hydrate = fetch('/api/texts')
     .then((r) => (r.ok ? r.json() : { texts: {} }))
@@ -411,13 +429,11 @@
       /* Always, not only when a config exists — the home page needs its own
          Snowstar row inserted whether or not anything has ever been hidden. */
       syncProducts(props);
-      footCss();
-      groupCss();
       syncMenuFoot();
       renumberMenus();
       return texts;
     })
-    .catch(() => { syncProducts({}); footCss(); groupCss(); syncMenuFoot(); renumberMenus(); return {}; });
+    .catch(() => { syncProducts({}); syncMenuFoot(); renumberMenus(); return {}; });
 
   // ── 2. editor — only ever wakes up for the admin ──
   const M = window.SnowstarAccount;
@@ -904,6 +920,11 @@
           /* Showing something again needs a reload: these only ever set
              display:none, so there is nothing to put back without re-reading
              the page's own markup. Hiding is live; unhiding says so. */
+          /* syncProducts first: it is the one that knows the door — it removes the whole
+             group, drops the apps inside it, and collapses one left empty. applyProperties
+             only sets display:none on a matching href, which on a group would hide its own
+             link and leave the door and its apps standing. */
+          syncProducts(next);
           applyProperties(next);
           toast('Saved — hiding is live, showing again needs a reload');
           pop.remove();
