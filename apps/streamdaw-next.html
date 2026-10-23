@@ -851,7 +851,7 @@
 <script src="../js/money.js?v=3"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=10"></script>
+<script src="../js/site-edit.js?v=11"></script>
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
@@ -1038,7 +1038,17 @@
     <span class="menu-div">Products</span>
     <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
-    <a href="streamdaw.html" class="now"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
+    <!-- One door for the software: the apps live inside it, not beside it. A <details> so it
+         opens with no JavaScript; js/site-edit.js fills it from PROPERTIES and opens the one
+         you are standing behind. -->
+    <details class="menu-group" data-group="apps" open>
+      <summary><span class="lbl">Apps</span><span class="caret" aria-hidden="true"></span></summary>
+      <div class="menu-sub">
+        <a href="/apps/streamdaw.html" class="now"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
+        <a href="/apps/audioctor.html"><img class="menu-word" src="../assets/audioctor-word-trim.png?v=1" alt="Audioctor"></a>
+        <a class="menu-all" href="/apps/"><span class="lbl">All apps</span></a>
+      </div>
+    </details>
     <a href="../snowstash.html">Snowstash</a>
   </nav>
 </div>

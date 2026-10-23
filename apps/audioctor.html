@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=4">
+<link rel="stylesheet" href="audioctor.css?v=5">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -293,8 +293,17 @@
     <span class="menu-div">Products</span>
     <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
-    <a href="streamdaw.html"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
-    <a href="audioctor.html" class="now"><img class="menu-word" src="../assets/audioctor-word-trim.png?v=1" alt="Audioctor"></a>
+    <!-- One door for the software: the apps live inside it, not beside it. A <details> so it
+         opens with no JavaScript; js/site-edit.js fills it from PROPERTIES and opens the one
+         you are standing behind. -->
+    <details class="menu-group" data-group="apps" open>
+      <summary><span class="lbl">Apps</span><span class="caret" aria-hidden="true"></span></summary>
+      <div class="menu-sub">
+        <a href="/apps/streamdaw.html"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
+        <a href="/apps/audioctor.html" class="now"><img class="menu-word" src="../assets/audioctor-word-trim.png?v=1" alt="Audioctor"></a>
+        <a class="menu-all" href="/apps/"><span class="lbl">All apps</span></a>
+      </div>
+    </details>
     <a href="../snowstash.html">Snowstash</a>
   </nav>
 </div>
@@ -356,7 +365,7 @@
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=10"></script>
+<script src="../js/site-edit.js?v=11"></script>
 <script src="../js/consent.js?v=1"></script>
 </body>
 </html>

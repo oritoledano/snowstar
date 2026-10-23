@@ -58,14 +58,16 @@
       mark: 'assets/snowstar-word-trim.png?v=1', product: true },
     { id: 'mutra',     label: 'Mutra',       page: 'mutra.html',
       mark: 'assets/mutra-word-trim.png?v=1',    product: true },
+    /* One door for the software (Ori, 2026-10-23: "all the apps under Apps, not each on its
+       own in the menu"). Apps is a group: pressing it opens the apps, it does not navigate.
+       Its own page is the last row inside it. page is the directory, not its index.html —
+       pointsAt() is a bare endsWith, so 'index.html' would match Snowstar's row everywhere. */
+    { id: 'apps',      label: 'Apps',        page: 'apps/', inLabel: 'All apps',
+      product: true, group: true },
     { id: 'streamdaw', label: 'StreamDAW',   page: 'streamdaw.html', dir: 'apps/',
-      mark: 'assets/sdaw-word-trim.png?v=1',     product: true },
+      mark: 'assets/sdaw-word-trim.png?v=1',     product: true, under: 'apps' },
     { id: 'audioctor', label: 'Audioctor',   page: 'audioctor.html', dir: 'apps/',
-      mark: 'assets/audioctor-word-trim.png?v=1', product: true },
-    // The apps' own front door, listed straight after the two apps it holds. page is the
-    // directory, not its index.html: pointsAt() is a bare endsWith, so 'index.html' here
-    // would match Snowstar's row in every menu.
-    { id: 'apps',      label: 'Apps',        page: 'apps/',          product: true },
+      mark: 'assets/audioctor-word-trim.png?v=1', product: true, under: 'apps' },
     { id: 'snowstash', label: 'Snowstash',   page: 'snowstash.html', product: true },
     // Not a product row — it is a door for artists, listed with the page links.
     { id: 'artists',   label: 'For artists', page: 'artists.html' },
@@ -101,32 +103,116 @@
      Hidden verticals are the same rule from the other side: a vertical switched
      off in the menu loses its row everywhere, its own page included. Static
      markup stays as the no-JS baseline; this only corrects it. */
+  function rowMark(p, label) {
+    return p.mark
+      ? `<img class="menu-word" src="/${p.mark}" alt="${p.label}">`
+      : `<span class="lbl">${label || p.label}</span>`;
+  }
+
+  /* A <details> rather than a scripted dropdown: it opens with no JavaScript, it is a
+     disclosure to a screen reader without a line of ARIA, and Escape and the keyboard
+     already work. Its label has to be dressed at runtime because the type of a menu row
+     lives on each page's own selector (.menu-nav a, .mmenu-nav a, .menu nav a, .sd-menu a),
+     which a <summary> does not match — so the row's computed type is copied onto it. */
+  function dressGroup(box, nav) {
+    const kin = [...nav.querySelectorAll('a')].find((a) => !a.closest('details.menu-group'));
+    const sum = box.querySelector('summary');
+    if (!kin || !sum) return;
+    const c = getComputedStyle(kin);
+    sum.style.font = `${c.fontStyle} ${c.fontWeight} ${c.fontSize}/${c.lineHeight} ${c.fontFamily}`;
+    sum.style.letterSpacing = c.letterSpacing;
+    sum.style.textTransform = c.textTransform;
+    /* and the box itself, so the indent and the small print below are measured against the
+       menu's own row size: a <nav> inherits 16px, which has nothing to do with how big a
+       row is on that page (30px here, smaller on the phone, larger on the homepage). */
+    box.style.fontSize = c.fontSize;
+    const navGap = getComputedStyle(nav).rowGap;
+    const sub = box.querySelector('.menu-sub');
+    if (sub) {
+      sub.style.gap = navGap && navGap !== 'normal' ? navGap : '.3em';
+      sub.style.paddingTop = navGap && navGap !== 'normal' ? navGap : '.3em';
+    }
+  }
+
   function syncProducts(hidden) {
     document.querySelectorAll('nav').forEach((nav) => {
       const div = [...nav.children].find((n) => n.classList && n.classList.contains('menu-div'));
       if (!div) return;                         // not a menu with a Products block
       /* Only the rows AFTER the divider. Searching the whole nav would find
          "Browse the catalogue" on the artist pages — which points at mutra.html
-         and is not the Mutra product row. */
-      const block = [];
+         and is not the Mutra product row. A grouped app sits inside its <details>,
+         so both levels are collected. */
+      const rows = [];
       for (let n = div.nextElementSibling; n; n = n.nextElementSibling) {
-        if (n.tagName === 'A') block.push(n);
+        if (n.tagName === 'A') rows.push(n);
+        else if (n.tagName === 'DETAILS') rows.push(...n.querySelectorAll('a'));
       }
+      const rowFor = (page) => rows.find((x) => pointsAt(x.getAttribute('href'), page));
+      const groups = {};
       let after = div;
+
       PROPERTIES.filter((p) => p.product).forEach((p) => {
-        let a = block.find((x) => pointsAt(x.getAttribute('href'), p.page));
-        if ((hidden[p.id] || {}).menu) { if (a) a.remove(); return; }
+        const off = (hidden[p.id] || {}).menu;
+
+        if (p.group) {
+          let own = rowFor(p.page);
+          let box = [...nav.querySelectorAll('details.menu-group')].find((d) => d.dataset.group === p.id)
+                 || (own && own.closest('details.menu-group')) || null;
+          if (off) { if (box) box.remove(); else if (own) own.remove(); groups[p.id] = null; return; }
+          if (!box) {
+            box = document.createElement('details');
+            box.className = 'menu-group';
+            box.innerHTML = `<summary>${rowMark(p)}<span class="caret" aria-hidden="true"></span></summary>`
+              + '<div class="menu-sub"></div>';
+          }
+          box.dataset.group = p.id;
+          if (after.nextElementSibling !== box) after.insertAdjacentElement('afterend', box);
+          let sub = box.querySelector('.menu-sub');
+          if (!sub) {
+            sub = document.createElement('div');
+            sub.className = 'menu-sub';
+            box.appendChild(sub);
+          }
+          if (!own) {
+            own = document.createElement('a');
+            own.href = '/' + (p.dir || '') + p.page;
+            own.innerHTML = rowMark(p, p.inLabel);
+          }
+          own.classList.add('menu-all');
+          own.classList.toggle('now', isCurrent(p));
+          // the own row is appended last, once the apps inside are in place
+          groups[p.id] = { box, sub, own };
+          after = box;
+          dressGroup(box, nav);
+          return;
+        }
+
+        const g = p.under ? groups[p.under] : undefined;
+        if (p.under && !g) return;                // its door is switched off: so is it
+        let a = rowFor(p.page);
+        if (off) { if (a) a.remove(); return; }
         if (!a) {
           a = document.createElement('a');
           // Root-relative, so one href is right from every directory depth.
           a.href = '/' + (p.dir || '') + p.page;
-          a.innerHTML = p.mark
-            ? `<img class="menu-word" src="/${p.mark}" alt="${p.label}">`
-            : `<span class="lbl">${p.label}</span>`;
-          after.insertAdjacentElement('afterend', a);
+          a.innerHTML = rowMark(p);
+        }
+        if (g) {
+          g.sub.appendChild(a);                   // in PROPERTIES order, the own row after them
+        } else {
+          if (after.nextElementSibling !== a) after.insertAdjacentElement('afterend', a);
+          after = a;
         }
         a.classList.toggle('now', isCurrent(p));
-        after = a;
+      });
+
+      // the door you are standing behind opens itself; an empty one is no door at all
+      Object.keys(groups).forEach((id) => {
+        const g = groups[id];
+        if (!g) return;
+        g.sub.appendChild(g.own);
+        if (!g.sub.querySelector('a')) { g.box.remove(); return; }
+        g.box.open = !!g.box.querySelector('a.now');
       });
     });
   }
@@ -200,6 +286,43 @@
      their own page. Everything inherits colour, so one block serves a night
      menu and a paper one. No flash to worry about: a menu footer is only ever
      seen after somebody opens the menu. */
+  /* The one door's own styling, injected for the same reason the footer's is: the Products
+     block appears in six stylesheets, two of them inside their own page. The rows inside a
+     group are still <a> inside the menu's container, so every page's own type, colour and
+     hover already reach them — only the disclosure itself needs dressing, and it inherits
+     colour so one block serves a night menu and a paper one. */
+  function groupCss() {
+    if (document.getElementById('ss-group-css')) return;
+    const st = document.createElement('style');
+    st.id = 'ss-group-css';
+    st.textContent = `
+      /* css/streamdaw.css:320-325 styles bare details and summary elements for its FAQ accordion —
+         a rule above every one, 22px of padding, and a "+" on the right. A menu door is not an
+         FAQ, so those are turned off here rather than in that stylesheet, which is not ours to
+         retune. Two selectors deep so this wins on specificity and not on being injected last. */
+      .menu-group{display:block;border:0;padding:0 0 0 .58em;margin:0;background:none}
+      .menu-group > summary{justify-content:flex-start}
+      .menu-group > summary::after,.menu-group > summary::before{content:none;display:none}
+      .menu-group[open] > summary::after{content:none;display:none;transform:none}
+      .menu-sub{display:flex;flex-direction:column;align-items:flex-start}
+      .menu-group > summary{display:flex;align-items:center;gap:.42em;cursor:pointer;
+        list-style:none;color:inherit;width:max-content;-webkit-tap-highlight-color:transparent}
+      .menu-group > summary::-webkit-details-marker{display:none}
+      .menu-group > summary::marker{content:""}
+      .menu-group > summary:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+      .menu-group .caret{width:.34em;height:.34em;flex:none;margin-top:-.16em;
+        border-right:.1em solid currentColor;border-bottom:.1em solid currentColor;
+        transform:rotate(45deg);opacity:.45;transition:transform .22s ease,opacity .22s ease}
+      .menu-group > summary:hover .caret{opacity:.95}
+      .menu-group[open] > summary .caret{transform:rotate(225deg);margin-top:.1em}
+      /* the apps sit a step in from their door, and the door's own page closes the list */
+      .menu-group > summary{margin-left:-.58em}
+      .menu-sub > a.menu-all{font-size:.42em;letter-spacing:.14em;text-transform:uppercase;opacity:.55}
+      .menu-sub > a.menu-all:hover{opacity:1}
+    `;
+    document.head.appendChild(st);
+  }
+
   function footCss() {
     if (document.getElementById('ss-foot-css')) return;
     const st = document.createElement('style');
@@ -289,11 +412,12 @@
          Snowstar row inserted whether or not anything has ever been hidden. */
       syncProducts(props);
       footCss();
+      groupCss();
       syncMenuFoot();
       renumberMenus();
       return texts;
     })
-    .catch(() => { syncProducts({}); footCss(); syncMenuFoot(); renumberMenus(); return {}; });
+    .catch(() => { syncProducts({}); footCss(); groupCss(); syncMenuFoot(); renumberMenus(); return {}; });
 
   // ── 2. editor — only ever wakes up for the admin ──
   const M = window.SnowstarAccount;
