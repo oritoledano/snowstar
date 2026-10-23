@@ -78,7 +78,9 @@ header.nav nav + .nav-tools{margin-left:4px}
 .cta{display:flex;flex-wrap:wrap;gap:12px}
 
 /* burger: the same 44px box and viewport offset as the other Snowstar pages */
-.sd-burger{position:absolute;left:clamp(20px,5vw,56px);top:50%;transform:translateY(-50%);
+/* top:13px rather than centred in a 70px bar: that is where it sits on all six other pages,
+   and the point is that it never moves between them */
+.sd-burger{position:fixed;left:clamp(20px,5vw,56px);top:13px;
   display:grid;place-content:center;gap:5px;width:44px;height:44px;z-index:90;background:none;border:0;cursor:pointer;padding:0}
 .sd-burger span{display:block;width:22px;height:2px;background:var(--ink);transition:transform .3s,opacity .2s}
 body.sd-menu-open .sd-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}

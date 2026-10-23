@@ -64,23 +64,23 @@
      own. An href starting with # is relative to that vertical's page. */
   const PROPERTIES = [
     { id: 'snowstar',  label: 'Snowstar',  role: 'Studio',  page: 'index.html',
-      mark: 'assets/snowstar-round.png?v=1', round: true, product: true,
+      lock: 'assets/rail-snowstar.png?v=1', lockW: 62, lockH: 102, product: true,
       links: [['Work', '#work'], ['Services', '#services'], ['Clients', '#clients'],
               ['About', '#about'], ['Contact', '#contact']] },
     { id: 'mutra',     label: 'Mutra',     role: 'Catalog', page: 'mutra.html',
-      mark: 'assets/mutra-word-trim.png?v=1',    product: true,
+      lock: 'assets/rail-mutra.png?v=1', lockW: 112, lockH: 48, product: true,
       links: [['Browse', '#catalog'], ['How licensing works', '#faq'],
               ['Submit music', '/artists.html'], ['Get in touch', '#contact']] },
     /* The shop. Its panel is the apps themselves (the two rows below), and a small crumb
        leads to /apps/ for anyone who wants to see the shop itself — no "All apps" row. */
     { id: 'apps',      label: 'Apps',      role: 'Shop',    page: 'apps/',
-      product: true, group: true },
+      lock: 'assets/rail-apps.png?v=1', lockW: 68, lockH: 51, product: true, group: true },
     { id: 'streamdaw', label: 'StreamDAW', page: 'streamdaw.html', dir: 'apps/',
       mark: 'assets/sdaw-word-trim.png?v=1',     product: true, under: 'apps' },
     { id: 'audioctor', label: 'Audioctor', page: 'audioctor.html', dir: 'apps/',
       mark: 'assets/audioctor-word-trim.png?v=1', product: true, under: 'apps' },
     { id: 'snowstash', label: 'Snowstash', role: 'Royalties', page: 'snowstash.html',
-      product: true,
+      lock: 'assets/rail-snowstash.png?v=1', lockW: 156, lockH: 51, product: true,
       links: [['Overview', '#hero'], ['How it works', '#how'], ['Run a check', '#cand']] },
     // Not a vertical of its own — the artists' door into Mutra, listed with Mutra's pages.
     { id: 'artists',   label: 'For artists', page: 'artists.html', ofVert: 'mutra' },
@@ -144,11 +144,15 @@
   }
 
   /** The mark, or the label set in the menu's own type when a vertical has no wordmark. */
+  /* One baked image per vertical: the mark and the word under it are a single PNG, so their
+     relationship is fixed, it is the same on every page whatever that page's fonts are, and
+     there is no text in the rail to select, re-flow or mis-set. Drawn at 4x in
+     scratchpad/lock/make.js, shown at a quarter of that. menu-word so that StreamDAW's paper
+     menu inverts it to ink like every other mark. */
   function vertFace(p) {
-    if (!p.mark) return `<span class="ss-name">${p.label}</span>`;
-    /* menu-word on both, so the paper menu's invert reaches them; ss-round carries its own
-       height because a round badge and a 12:1 wordmark share no ratio. */
-    return `<img class="menu-word ${p.round ? 'ss-round' : 'ss-mark'}" src="/${p.mark}" alt="${p.label}">`;
+    if (!p.lock) return `<span class="ss-name">${p.label}</span>`;
+    return `<img class="menu-word ss-lock" src="/${p.lock}" alt="${p.label}"`
+      + ` width="${p.lockW}" height="${p.lockH}" style="--w:${p.lockW}px">`;
   }
 
   /** '#faq' on the vertical's page, '/artists.html' as it stands, from any depth. */
@@ -192,8 +196,7 @@
         tab.href = '/' + (p.dir || '') + p.page;
         tab.dataset.vert = p.id;
         if (onIt) tab.setAttribute('aria-current', 'page');
-        tab.innerHTML = vertFace(p)
-          + `<span class="ss-role">${p.role || p.label}${onIt ? '<i class="ss-dot" aria-hidden="true"></i>' : ''}</span>`;
+        tab.innerHTML = vertFace(p) + (onIt ? '<i class="ss-dot" aria-hidden="true"></i>' : '');
         rail.appendChild(tab);
 
         const pane = document.createElement('div');
@@ -349,30 +352,27 @@
       .ss-rail{display:flex;flex-direction:column;gap:22px;align-self:start;
         padding-right:clamp(16px,2vw,30px);
         border-right:1px solid color-mix(in srgb,currentColor 13%,transparent)}
-      .ss-vert{display:flex;flex-direction:column;align-items:flex-start;gap:5px;
-        position:relative;padding:2px 10px 3px 14px;margin:0;border:0;background:none;
-        cursor:pointer;color:inherit;text-align:left;opacity:.4;font:var(--ss-row,inherit);
+      .ss-doors .ss-rail .ss-vert{display:flex;flex-direction:column;align-items:flex-start;gap:5px;
+        position:relative;padding:2px 10px 3px 14px;margin:0;border:0;background:none;width:auto;
+        min-height:0;max-width:none;cursor:pointer;color:inherit;text-align:left;opacity:.4;
+        text-transform:none;letter-spacing:normal;text-decoration:none;
         transition:opacity .22s ease}
-      .ss-vert:hover{opacity:.8}
+      .ss-doors .ss-rail .ss-vert:hover{opacity:.8}
       .ss-vert:focus-visible{outline:2px solid currentColor;outline-offset:3px}
       /* the one whose menu is showing: lit, washed, and marked by a bar rather than a box */
-      .ss-vert.on{opacity:1}
+      .ss-doors .ss-rail .ss-vert.on{opacity:1}
       .ss-vert.on::before{content:"";position:absolute;left:0;top:2px;bottom:3px;
         width:2px;border-radius:2px;background:currentColor;
         box-shadow:0 0 12px color-mix(in srgb,currentColor 55%,transparent)}
-      .ss-vert.on .ss-role{opacity:1}
-      .ss-rail .ss-mark{display:block;width:auto;max-width:none;--slot:42px}
-      .ss-rail .ss-round{display:block;width:auto;max-width:none;height:46px}
-      /* a vertical with no wordmark is set in the menu's own face, at the size the wordmarks
-         actually come out at — .62em of the row would be twice as big as the marks beside it */
-      .ss-rail .ss-name{display:block;font:inherit;font-size:19px;line-height:1;letter-spacing:.01em;
+      /* the lockup is the whole item: a fixed-size image, so a rail opened on any page at any
+         width is the same object. The per-alt height rules in five stylesheets would resize it
+         by its name, which is why it carries its own width and height. */
+      .ss-doors .ss-rail .ss-vert img.ss-lock{display:block;height:auto;max-width:none;width:var(--w)}
+      .ss-doors .ss-rail .ss-name{display:block;font:inherit;font-size:19px;line-height:1;letter-spacing:.01em;
         text-transform:var(--ss-case,none)}
-      /* long-hand on purpose: 'font: 600 11px/1.4 inherit' is not a legal shorthand, so the whole
-         declaration was dropped and the word inherited a 73px headline */
-      .ss-rail .ss-role{display:flex;align-items:center;gap:7px;font-weight:600;font-size:11px;
-        line-height:1.4;font-style:normal;letter-spacing:.2em;text-transform:uppercase;opacity:.55}
-      /* and the one you are actually on keeps a dot, whichever panel is open */
-      .ss-vert .ss-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.9;flex:none}
+      /* the vertical you are actually on keeps a dot, whichever panel is open */
+      .ss-vert .ss-dot{position:absolute;right:-2px;bottom:3px;width:5px;height:5px;border-radius:50%;
+        background:currentColor;opacity:.9}
       .ss-panes{min-width:0}
       .ss-pane{display:flex;flex-direction:column;gap:inherit}
       .ss-pane[hidden]{display:none}

@@ -62,8 +62,18 @@ header.nav nav a:hover{color:var(--ink)}
 /* always there, at every width — the burger is the way to the Products menu, the contact
    block and the currency switcher, and every other page on the site shows it at all sizes.
    It was display:none above 900px, so on a desktop window there was no way into the menu. */
-.burger{display:flex;width:38px;height:38px;border:0;background:none;cursor:pointer;flex-direction:column;justify-content:center;gap:5px;padding:9px}
-.burger span{display:block;height:2px;background:var(--ink);border-radius:2px}
+/* The burger sits where it sits on every other page on the site: fixed at the top left,
+   44x44, above the menu it opens, and it becomes the X that closes it. Five pages already
+   did this; these two had it inside a centred wrap (so it landed at 160px instead of 56px)
+   with a separate close button at the far right. Measured, not guessed. */
+.burger{position:fixed;left:clamp(20px,5vw,56px);top:13px;z-index:60;display:flex;width:44px;height:44px;
+  border:0;background:none;cursor:pointer;flex-direction:column;justify-content:center;align-items:center;
+  gap:5px;padding:0}
+.burger span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px;
+  transition:transform .3s ease,opacity .2s ease}
+body.menu-open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+body.menu-open .burger span:nth-child(2){opacity:0}
+body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 @media (max-width:900px){header.nav nav{display:none}}
 /* at phone width the bar holds a burger, the mark, sign-in and one button: nothing may wrap */
 @media (max-width:460px){
@@ -97,7 +107,7 @@ body.menu-open .menu{display:flex}
 /* the page you are on is marked by being quiet (css/style.css and css/streamdaw.css carry the
    same rule; neither is linked here, so audioctor.html's class="now" styled nothing) */
 .menu nav a.now{opacity:.55;pointer-events:none}
-.menu .x{position:absolute;top:18px;right:var(--gut);width:40px;height:40px;border:0;background:none;color:var(--ink);font-size:30px;cursor:pointer}
+/* no separate close button: the burger above is the X */
 
 /* the app's window around a film */
 .mac{position:relative;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 50px 100px -40px rgba(0,0,0,.9),0 0 120px -40px rgba(200,242,58,.18)}

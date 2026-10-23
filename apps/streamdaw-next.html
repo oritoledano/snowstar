@@ -51,7 +51,8 @@
   .draft-bar b{font-family:var(--poster);font-weight:400;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem}
 
   /* burger + full-screen menu — same as streamdaw.html */
-  .sd-burger{position:absolute;left:clamp(16px,5vw,56px);top:50%;transform:translateY(-50%);
+  /* fixed at 56,13 like every other page on the site — it never moves between them */
+  .sd-burger{position:fixed;left:clamp(20px,5vw,56px);top:13px;
     display:grid;place-content:center;gap:5px;width:44px;height:44px;z-index:90;
     background:none;border:0;cursor:pointer;padding:0}
   .sd-burger span{display:block;width:24px;height:2px;background:var(--ink);transition:transform .3s,opacity .2s}
@@ -852,7 +853,7 @@
 <script src="../js/money.js?v=3"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=16"></script>
+<script src="../js/site-edit.js?v=18"></script>
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 

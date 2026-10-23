@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=6">
+<link rel="stylesheet" href="audioctor.css?v=7">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -282,7 +282,6 @@
 </footer>
 
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
-  <button class="x" id="menuX" aria-label="Close">×</button>
   <nav aria-label="Main">
     <a href="#video"><i>01</i>On a video</a>
     <a href="#how"><i>02</i>How it works</a>
@@ -314,7 +313,6 @@
   const b = document.getElementById('burger'), m = document.getElementById('menu');
   const set = (o) => { document.body.classList.toggle('menu-open', o); b.setAttribute('aria-expanded', o); m.setAttribute('aria-hidden', !o); };
   b.addEventListener('click', () => set(!document.body.classList.contains('menu-open')));
-  document.getElementById('menuX').addEventListener('click', () => set(false));
   m.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => set(false)));
   document.getElementById('yr').textContent = new Date().getFullYear();
 })();
@@ -365,7 +363,7 @@
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=16"></script>
+<script src="../js/site-edit.js?v=18"></script>
 <script src="../js/consent.js?v=1"></script>
 </body>
 </html>
