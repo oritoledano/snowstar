@@ -204,7 +204,7 @@
         /* the crumb: small, and the only way to the vertical's own front page from here.
            On an app's page it reads APPS > AUDIOCTOR, which is what it is. */
         const inside = PROPERTIES.find((x) => x.under === p.id && isCurrent(x));
-        pane.innerHTML = `<a class="ss-crumb" href="/${(p.dir || '') + p.page}">`
+        const crumb = `<a class="ss-crumb" href="/${(p.dir || '') + p.page}">`
           + `<span>${p.role || p.label}</span>`
           + (inside ? `<b>${inside.label}</b>` : '<em aria-hidden="true">&rsaquo;</em>') + '</a>';
 
@@ -226,6 +226,9 @@
             pane.appendChild(a);
           });
         }
+        /* last in the DOM, first on screen (order:-1): the menu's own script focuses the first
+           link it finds, and that should be somewhere to go, not the legend above them. */
+        pane.insertAdjacentHTML('beforeend', crumb);
         panes.appendChild(pane);
       });
 
@@ -375,8 +378,9 @@
       .ss-pane[hidden]{display:none}
       /* the crumb: small, quiet, and the only way from here to the vertical's own page */
       .ss-panes a.ss-crumb{display:inline-flex;align-items:baseline;gap:.55em;width:max-content;
-        font-size:.22em;font-weight:600;letter-spacing:.24em;text-transform:uppercase;opacity:.45;
-        line-height:1.2;margin:0 0 1.1em;padding:0;min-height:0;transition:opacity .2s ease}
+        font-size:calc(var(--ss-size,30px) * .26);font-weight:600;letter-spacing:.24em;
+        text-transform:uppercase;opacity:.45;line-height:1.2;padding:0;min-height:0;
+        margin:0 0 1.1em;order:-1;transition:opacity .2s ease}
       .ss-panes a.ss-crumb:hover{opacity:.95}
       .ss-panes a.ss-crumb span{border-bottom:1px solid color-mix(in srgb,currentColor 45%,transparent);
         padding-bottom:.2em}
