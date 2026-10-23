@@ -64,7 +64,7 @@
      own. An href starting with # is relative to that vertical's page. */
   const PROPERTIES = [
     { id: 'snowstar',  label: 'Snowstar',  role: 'Studio',  page: 'index.html',
-      mark: 'assets/snowstar-word-trim.png?v=1', product: true,
+      mark: 'assets/snowstar-round.png?v=1', round: true, product: true,
       links: [['Work', '#work'], ['Services', '#services'], ['Clients', '#clients'],
               ['About', '#about'], ['Contact', '#contact']] },
     { id: 'mutra',     label: 'Mutra',     role: 'Catalog', page: 'mutra.html',
@@ -145,9 +145,10 @@
 
   /** The mark, or the label set in the menu's own type when a vertical has no wordmark. */
   function vertFace(p) {
-    return p.mark
-      ? `<img class="menu-word ss-mark" src="/${p.mark}" alt="${p.label}">`
-      : `<span class="ss-name">${p.label}</span>`;
+    if (!p.mark) return `<span class="ss-name">${p.label}</span>`;
+    /* menu-word on both, so the paper menu's invert reaches them; ss-round carries its own
+       height because a round badge and a 12:1 wordmark share no ratio. */
+    return `<img class="menu-word ${p.round ? 'ss-round' : 'ss-mark'}" src="/${p.mark}" alt="${p.label}">`;
   }
 
   /** '#faq' on the vertical's page, '/artists.html' as it stands, from any depth. */
@@ -178,19 +179,19 @@
 
       const rail = document.createElement('div');
       rail.className = 'ss-rail';
-      rail.setAttribute('role', 'tablist');
       rail.setAttribute('aria-label', 'Snowstar');
       const panes = document.createElement('div');
       panes.className = 'ss-panes';
 
       verts.forEach((p) => {
         const onIt = p.id === here;
-        const tab = document.createElement('button');
-        tab.type = 'button';
-        tab.className = 'ss-vert' + (onIt ? ' ss-at' : '');
+        /* A link, not a button: hovering shows what is inside the vertical, pressing it goes
+           to the vertical's own page — apple.com's rule, which is what Ori asked for. */
+        const tab = document.createElement('a');
+        tab.className = 'ss-vert' + (onIt ? ' ss-at on' : '');
+        tab.href = '/' + (p.dir || '') + p.page;
         tab.dataset.vert = p.id;
-        tab.setAttribute('role', 'tab');
-        tab.setAttribute('aria-selected', onIt ? 'true' : 'false');
+        if (onIt) tab.setAttribute('aria-current', 'page');
         tab.innerHTML = vertFace(p)
           + `<span class="ss-role">${p.role || p.label}${onIt ? '<i class="ss-dot" aria-hidden="true"></i>' : ''}</span>`;
         rail.appendChild(tab);
@@ -199,14 +200,8 @@
         pane.className = 'ss-pane';
         pane.dataset.vert = p.id;
         if (!onIt) pane.hidden = true;
-        pane.setAttribute('role', 'tabpanel');
-
-        /* the crumb: small, and the only way to the vertical's own front page from here.
-           On an app's page it reads APPS > AUDIOCTOR, which is what it is. */
-        const inside = PROPERTIES.find((x) => x.under === p.id && isCurrent(x));
-        const crumb = `<a class="ss-crumb" href="/${(p.dir || '') + p.page}">`
-          + `<span>${p.role || p.label}</span>`
-          + (inside ? `<b>${inside.label}</b>` : '<em aria-hidden="true">&rsaquo;</em>') + '</a>';
+        /* No heading inside the panel: the rail already says which vertical this is, and the
+           name of it is a link in the rail rather than a line of type in here. */
 
         if (onIt && own.length) {
           own.forEach((a) => pane.appendChild(a));   // the page's own, moved across
@@ -226,9 +221,6 @@
             pane.appendChild(a);
           });
         }
-        /* last in the DOM, first on screen (order:-1): the menu's own script focuses the first
-           link it finds, and that should be somewhere to go, not the legend above them. */
-        pane.insertAdjacentHTML('beforeend', crumb);
         panes.appendChild(pane);
       });
 
@@ -236,12 +228,20 @@
       nav.append(rail, panes);
       dressRail(nav);
 
-      rail.addEventListener('click', (e) => {
-        const tab = e.target.closest('.ss-vert');
-        if (!tab) return;
-        rail.querySelectorAll('.ss-vert').forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
-        panes.querySelectorAll('.ss-pane').forEach((x) => { x.hidden = x.dataset.vert !== tab.dataset.vert; });
+      const show = (id) => {
+        rail.querySelectorAll('.ss-vert').forEach((t) => t.classList.toggle('on', t.dataset.vert === id));
+        panes.querySelectorAll('.ss-pane').forEach((x) => { x.hidden = x.dataset.vert !== id; });
         renumberMenus();
+      };
+      const over = (e) => { const t = e.target.closest('.ss-vert'); if (t) show(t.dataset.vert); };
+      rail.addEventListener('mouseover', over);
+      rail.addEventListener('focusin', over);
+      /* With a mouse the panel is already open by the time the click lands, so the link goes
+         where it says. With a finger there is no hover, so the first tap opens it and the
+         second one goes — one rule covering both. */
+      rail.addEventListener('click', (e) => {
+        const t = e.target.closest('.ss-vert');
+        if (t && !t.classList.contains('on')) { e.preventDefault(); show(t.dataset.vert); }
       });
     });
   }
@@ -251,8 +251,7 @@
      stylesheets. So the row's computed type is copied onto the rail, and every em inside it
      — the role word, the crumb, the wordmark slot — is measured against that. */
   function dressRail(nav) {
-    // a real row, not the crumb: the crumb's own size is an em of this very measurement
-    const kin = nav.querySelector('.ss-pane a:not(.ss-crumb)');
+    const kin = nav.querySelector('.ss-pane a');
     if (!kin) return;
     const c = getComputedStyle(kin);
     nav.style.setProperty('--ss-row', `${c.fontStyle} ${c.fontWeight} ${c.fontSize}/${c.lineHeight} ${c.fontFamily}`);
@@ -347,55 +346,44 @@
     st.textContent = `
       .ss-doors.ss-doors{display:grid;grid-template-columns:max-content minmax(0,1fr);
         gap:clamp(20px,3.4vw,60px);align-items:start;flex-direction:row}
-      .ss-rail{display:flex;flex-direction:column;gap:.34em;align-self:start;
-        padding-right:clamp(14px,1.8vw,26px);
+      .ss-rail{display:flex;flex-direction:column;gap:22px;align-self:start;
+        padding-right:clamp(16px,2vw,30px);
         border-right:1px solid color-mix(in srgb,currentColor 13%,transparent)}
-      .ss-vert{display:flex;flex-direction:column;align-items:flex-start;gap:.1em;
-        position:relative;padding:.12em .5em .14em .42em;margin:0;border:0;background:none;
-        cursor:pointer;color:inherit;border-radius:.2em;text-align:left;opacity:.4;
-        font:var(--ss-row,inherit);
-        transition:opacity .22s ease,background-color .22s ease}
+      .ss-vert{display:flex;flex-direction:column;align-items:flex-start;gap:5px;
+        position:relative;padding:2px 10px 3px 14px;margin:0;border:0;background:none;
+        cursor:pointer;color:inherit;text-align:left;opacity:.4;font:var(--ss-row,inherit);
+        transition:opacity .22s ease}
       .ss-vert:hover{opacity:.8}
       .ss-vert:focus-visible{outline:2px solid currentColor;outline-offset:3px}
       /* the one whose menu is showing: lit, washed, and marked by a bar rather than a box */
-      .ss-vert[aria-selected="true"]{opacity:1}
-      .ss-vert[aria-selected="true"]::before{content:"";position:absolute;left:0;top:12%;bottom:12%;
+      .ss-vert.on{opacity:1}
+      .ss-vert.on::before{content:"";position:absolute;left:0;top:2px;bottom:3px;
         width:2px;border-radius:2px;background:currentColor;
         box-shadow:0 0 12px color-mix(in srgb,currentColor 55%,transparent)}
-      .ss-vert[aria-selected="true"] .ss-role{opacity:1}
-      .ss-rail .ss-mark{display:block;width:auto;max-width:none;--slot:calc(var(--ss-size,30px) * .62)}
+      .ss-vert.on .ss-role{opacity:1}
+      .ss-rail .ss-mark{display:block;width:auto;max-width:none;--slot:42px}
+      .ss-rail .ss-round{display:block;width:auto;max-width:none;height:46px}
       /* a vertical with no wordmark is set in the menu's own face, at the size the wordmarks
          actually come out at — .62em of the row would be twice as big as the marks beside it */
-      .ss-rail .ss-name{display:block;font:inherit;font-size:.3em;line-height:1;letter-spacing:.01em;
+      .ss-rail .ss-name{display:block;font:inherit;font-size:19px;line-height:1;letter-spacing:.01em;
         text-transform:var(--ss-case,none)}
-      .ss-rail .ss-role{display:flex;align-items:center;gap:.6em;font-size:.2em;
-        letter-spacing:.24em;text-transform:uppercase;opacity:.7;font-weight:600;font-style:normal}
+      /* long-hand on purpose: 'font: 600 11px/1.4 inherit' is not a legal shorthand, so the whole
+         declaration was dropped and the word inherited a 73px headline */
+      .ss-rail .ss-role{display:flex;align-items:center;gap:7px;font-weight:600;font-size:11px;
+        line-height:1.4;font-style:normal;letter-spacing:.2em;text-transform:uppercase;opacity:.55}
       /* and the one you are actually on keeps a dot, whichever panel is open */
-      .ss-vert .ss-dot{width:.5em;height:.5em;border-radius:50%;background:currentColor;
-        opacity:.9;flex:none}
+      .ss-vert .ss-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.9;flex:none}
       .ss-panes{min-width:0}
       .ss-pane{display:flex;flex-direction:column;gap:inherit}
       .ss-pane[hidden]{display:none}
-      /* the crumb: small, quiet, and the only way from here to the vertical's own page */
-      .ss-panes a.ss-crumb{display:inline-flex;align-items:baseline;gap:.55em;width:max-content;
-        font-size:calc(var(--ss-size,30px) * .26);font-weight:600;letter-spacing:.24em;
-        text-transform:uppercase;opacity:.45;line-height:1.2;padding:0;min-height:0;
-        margin:0 0 1.1em;order:-1;transition:opacity .2s ease}
-      .ss-panes a.ss-crumb:hover{opacity:.95}
-      .ss-panes a.ss-crumb span{border-bottom:1px solid color-mix(in srgb,currentColor 45%,transparent);
-        padding-bottom:.2em}
-      .ss-panes a.ss-crumb b{font-weight:600;opacity:.8}
-      .ss-panes a.ss-crumb b::before{content:"\u203A";margin-right:.55em;opacity:.55;font-weight:400}
-      .ss-panes a.ss-crumb em{font-style:normal;opacity:.55}
       /* a phone has no room for a rail beside a panel: the verticals become a row above it */
       @media (max-width:720px){
         .ss-doors.ss-doors{grid-template-columns:1fr;gap:1em}
-        .ss-rail{flex-direction:row;align-items:stretch;gap:.2em;border-right:0;padding-right:0;
-          padding-bottom:.5em;overflow-x:auto;
+        .ss-rail{flex-direction:row;align-items:stretch;gap:18px;border-right:0;padding-right:0;
+          padding-bottom:10px;overflow-x:auto;
           border-bottom:1px solid color-mix(in srgb,currentColor 13%,transparent)}
-        .ss-vert{padding:.3em .5em;flex:0 0 auto}
-        .ss-vert[aria-selected="true"]::before{left:0;right:0;top:auto;bottom:0;width:auto;
-          height:.055em;min-height:2px}
+        .ss-vert{padding:2px 4px 8px;flex:0 0 auto}
+        .ss-vert.on::before{left:0;right:0;top:auto;bottom:0;width:auto;height:2px}
       }
     `;
     document.head.appendChild(st);
