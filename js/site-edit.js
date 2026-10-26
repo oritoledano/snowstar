@@ -64,23 +64,23 @@
      own. An href starting with # is relative to that vertical's page. */
   const PROPERTIES = [
     { id: 'snowstar',  label: 'Snowstar',  role: 'Studio',  page: 'index.html',
-      lock: 'assets/rail-snowstar.png?v=1', lockW: 62, lockH: 102, product: true,
+      lock: 'assets/rail-snowstar.png?v=3', lockW: 47, lockH: 63, product: true,
       links: [['Work', '#work'], ['Services', '#services'], ['Clients', '#clients'],
               ['About', '#about'], ['Contact', '#contact']] },
     { id: 'mutra',     label: 'Mutra',     role: 'Catalog', page: 'mutra.html',
-      lock: 'assets/rail-mutra.png?v=1', lockW: 112, lockH: 48, product: true,
+      lock: 'assets/rail-mutra.png?v=3', lockW: 112, lockH: 63, product: true,
       links: [['Browse', '#catalog'], ['How licensing works', '#faq'],
               ['Submit music', '/artists.html'], ['Get in touch', '#contact']] },
     /* The shop. Its panel is the apps themselves (the two rows below), and a small crumb
        leads to /apps/ for anyone who wants to see the shop itself — no "All apps" row. */
     { id: 'apps',      label: 'Apps',      role: 'Shop',    page: 'apps/',
-      lock: 'assets/rail-apps.png?v=1', lockW: 68, lockH: 51, product: true, group: true },
+      lock: 'assets/rail-apps.png?v=3', lockW: 68, lockH: 63, product: true, group: true },
     { id: 'streamdaw', label: 'StreamDAW', page: 'streamdaw.html', dir: 'apps/',
       mark: 'assets/sdaw-word-trim.png?v=1',     product: true, under: 'apps' },
     { id: 'audioctor', label: 'Audioctor', page: 'audioctor.html', dir: 'apps/',
       mark: 'assets/audioctor-word-trim.png?v=1', product: true, under: 'apps' },
     { id: 'snowstash', label: 'Snowstash', role: 'Royalties', page: 'snowstash.html',
-      lock: 'assets/rail-snowstash.png?v=1', lockW: 156, lockH: 51, product: true,
+      lock: 'assets/rail-snowstash.png?v=3', lockW: 156, lockH: 63, product: true,
       links: [['Overview', '#hero'], ['How it works', '#how'], ['Run a check', '#cand']] },
     // Not a vertical of its own — the artists' door into Mutra, listed with Mutra's pages.
     { id: 'artists',   label: 'For artists', page: 'artists.html', ofVert: 'mutra' },
@@ -147,11 +147,11 @@
   /* One baked image per vertical: the mark and the word under it are a single PNG, so their
      relationship is fixed, it is the same on every page whatever that page's fonts are, and
      there is no text in the rail to select, re-flow or mis-set. Drawn at 4x in
-     scratchpad/lock/make.js, shown at a quarter of that. menu-word so that StreamDAW's paper
-     menu inverts it to ink like every other mark. */
+     scratchpad/lock/make.js, shown at a quarter of that. The art is white, so a light menu
+     inverts it — dressRail decides that from the menu's own background. */
   function vertFace(p) {
     if (!p.lock) return `<span class="ss-name">${p.label}</span>`;
-    return `<img class="menu-word ss-lock" src="/${p.lock}" alt="${p.label}"`
+    return `<img class="ss-lock" src="/${p.lock}" alt="${p.label}"`
       + ` width="${p.lockW}" height="${p.lockH}" style="--w:${p.lockW}px">`;
   }
 
@@ -212,7 +212,7 @@
           kids(p.id).forEach((k) => {                // the shop: the apps themselves
             const a = document.createElement('a');
             a.href = '/' + (k.dir || '') + k.page;
-            a.innerHTML = vertFace(k).replace(' ss-mark', '');
+            a.innerHTML = `<i></i><span class="lbl">${k.label}</span>`;
             a.classList.toggle('now', isCurrent(k));
             pane.appendChild(a);
           });
@@ -253,6 +253,18 @@
      .mmenu-nav a, .menu nav a, .sd-menu a), which a <button> matches in none of the six
      stylesheets. So the row's computed type is copied onto the rail, and every em inside it
      — the role word, the crumb, the wordmark slot — is measured against that. */
+  /** White art on a light menu would vanish, so the rail asks the menu what colour it is. */
+  function inkOrSnow(nav) {
+    for (let el = nav; el && el !== document.documentElement; el = el.parentElement) {
+      const bg = getComputedStyle(el).backgroundColor;
+      const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/.exec(bg);
+      if (!m || (m[4] !== undefined && +m[4] < 0.5)) continue;
+      const lum = (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
+      return lum > 0.55 ? 'ink' : 'snow';
+    }
+    return 'snow';
+  }
+
   function dressRail(nav) {
     const kin = nav.querySelector('.ss-pane a');
     if (!kin) return;
@@ -261,6 +273,7 @@
     nav.style.setProperty('--ss-size', c.fontSize);
     nav.style.setProperty('--ss-track', c.letterSpacing === 'normal' ? '0' : c.letterSpacing);
     nav.style.setProperty('--ss-case', c.textTransform);
+    nav.classList.toggle('ss-ink', inkOrSnow(nav) === 'ink');
   }
 
   /* ── the menu footer, from one definition ──────────────────────────────────
@@ -344,46 +357,67 @@
      styling reaches them untouched. */
   function railCss() {
     if (document.getElementById('ss-rail-css')) return;
+    /* the menu's own two faces, so every page's menu is set the same whatever that page
+       otherwise loads (Anton for the pages, Barlow Condensed for their numbers) */
+    const pre = document.createElement('link');
+    pre.rel = 'preconnect'; pre.href = 'https://fonts.gstatic.com'; pre.crossOrigin = '';
+    const f = document.createElement('link');
+    f.rel = 'stylesheet';
+    f.href = 'https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@700&display=swap';
+    document.head.append(pre, f);
     const st = document.createElement('style');
     st.id = 'ss-rail-css';
     st.textContent = `
-      .ss-doors.ss-doors{display:grid;grid-template-columns:max-content minmax(0,1fr);
-        gap:clamp(20px,3.4vw,60px);align-items:start;flex-direction:row}
-      .ss-rail{display:flex;flex-direction:column;gap:22px;align-self:start;
-        padding-right:clamp(16px,2vw,30px);
-        border-right:1px solid color-mix(in srgb,currentColor 13%,transparent)}
-      .ss-doors .ss-rail .ss-vert{display:flex;flex-direction:column;align-items:flex-start;gap:5px;
-        position:relative;padding:2px 10px 3px 14px;margin:0;border:0;background:none;width:auto;
-        min-height:0;max-width:none;cursor:pointer;color:inherit;text-align:left;opacity:.4;
-        text-transform:none;letter-spacing:normal;text-decoration:none;
-        transition:opacity .22s ease}
-      .ss-doors .ss-rail .ss-vert:hover{opacity:.8}
-      .ss-vert:focus-visible{outline:2px solid currentColor;outline-offset:3px}
-      /* the one whose menu is showing: lit, washed, and marked by a bar rather than a box */
+      /* A row across the top, a panel underneath. Every vertical sits in a cell of the same
+         width, so nothing moves when another one opens, and the row and the pages below share
+         one left edge and one centre. No rules, no bars, no plates: what is open is lit, and
+         the page you are on keeps a dot. */
+      .ss-doors.ss-doors{display:flex;flex-direction:column;align-items:stretch;gap:0;
+        width:100%;max-width:min(920px,100%);margin:0 auto}
+      .ss-rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);
+        width:100%;gap:0;padding:0;margin:0;border:0;justify-items:center}
+      .ss-doors .ss-rail .ss-vert{display:flex;flex-direction:column;align-items:center;
+        justify-content:flex-end;gap:0;position:relative;width:100%;min-width:0;max-width:none;
+        min-height:0;padding:4px 2px 15px;margin:0;border:0;border-radius:0;background:none;
+        box-shadow:none;cursor:pointer;color:inherit;text-align:center;opacity:.62;
+        text-decoration:none;text-transform:none;letter-spacing:normal;outline:none;
+        transform:none;transition:opacity .25s ease}
+      .ss-doors .ss-rail .ss-vert:hover{opacity:.9;background:none;transform:none}
       .ss-doors .ss-rail .ss-vert.on{opacity:1}
-      .ss-vert.on::before{content:"";position:absolute;left:0;top:2px;bottom:3px;
-        width:2px;border-radius:2px;background:currentColor;
-        box-shadow:0 0 12px color-mix(in srgb,currentColor 55%,transparent)}
-      /* the lockup is the whole item: a fixed-size image, so a rail opened on any page at any
-         width is the same object. The per-alt height rules in five stylesheets would resize it
-         by its name, which is why it carries its own width and height. */
-      .ss-doors .ss-rail .ss-vert img.ss-lock{display:block;height:auto;max-width:none;width:var(--w)}
-      .ss-doors .ss-rail .ss-name{display:block;font:inherit;font-size:19px;line-height:1;letter-spacing:.01em;
-        text-transform:var(--ss-case,none)}
-      /* the vertical you are actually on keeps a dot, whichever panel is open */
-      .ss-vert .ss-dot{position:absolute;right:-2px;bottom:3px;width:5px;height:5px;border-radius:50%;
-        background:currentColor;opacity:.9}
-      .ss-panes{min-width:0}
-      .ss-pane{display:flex;flex-direction:column;gap:inherit}
+      .ss-doors .ss-rail .ss-vert:focus-visible{outline:2px solid currentColor;outline-offset:1px}
+      /* the mark and its word are one image, centred: fixed, and nothing to re-flow */
+      .ss-doors .ss-rail .ss-vert img.ss-lock{display:block;height:auto;width:var(--w);
+        max-width:100%;filter:none}
+      .ss-doors.ss-ink .ss-rail .ss-vert img.ss-lock{filter:invert(1)}
+      .ss-doors .ss-rail .ss-name{display:block;font-size:19px;line-height:1}
+      /* the page you are actually on, marked without a line */
+      .ss-doors .ss-rail .ss-vert .ss-dot{position:absolute;left:50%;bottom:5px;width:4px;height:4px;
+        margin-left:-2px;border-radius:50%;background:currentColor;opacity:.8}
+      .ss-panes{width:100%;padding:clamp(26px,3.2vw,44px) 0 0}
+      .ss-pane{display:flex;flex-direction:column;gap:clamp(2px,.5vw,8px)}
       .ss-pane[hidden]{display:none}
-      /* a phone has no room for a rail beside a panel: the verticals become a row above it */
-      @media (max-width:720px){
-        .ss-doors.ss-doors{grid-template-columns:1fr;gap:1em}
-        .ss-rail{flex-direction:row;align-items:stretch;gap:18px;border-right:0;padding-right:0;
-          padding-bottom:10px;overflow-x:auto;
-          border-bottom:1px solid color-mix(in srgb,currentColor 13%,transparent)}
-        .ss-vert{padding:2px 4px 8px;flex:0 0 auto}
-        .ss-vert.on::before{left:0;right:0;top:auto;bottom:0;width:auto;height:2px}
+      /* One face for the pages, on every page: a menu row used to be set in whatever display
+         font that page happened to load, so Apps read differently from Mutra and from the
+         studio. Three selectors deep, because each page styles its own menu links. */
+      .ss-doors .ss-panes .ss-pane a{display:flex;align-items:baseline;gap:clamp(10px,1.2vw,18px);
+        width:max-content;max-width:100%;min-height:0;padding:0;margin:0;border:0;border-radius:0;
+        background:none;box-shadow:none;transform:none;
+        font-family:Anton,"Arial Narrow",Impact,sans-serif;font-weight:400;font-style:normal;
+        font-size:clamp(26px,3.8vw,48px);line-height:1.12;letter-spacing:.012em;
+        text-transform:uppercase;text-decoration:none;color:inherit;opacity:.88;
+        transition:opacity .2s ease,transform .25s ease}
+      .ss-doors .ss-panes .ss-pane a:hover{opacity:1;transform:translateX(5px);background:none}
+      .ss-doors .ss-panes .ss-pane a.now{opacity:.42}
+      .ss-doors .ss-panes .ss-pane a i{font-style:normal;font-weight:700;line-height:1;flex:none;
+        font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:.26em;
+        letter-spacing:.2em;opacity:.5;min-width:2.6em;color:inherit}
+      .ss-doors .ss-panes .ss-pane a .lbl{display:block;transform:none}
+      /* a phone: two by two, so nothing is cut and nothing moves */
+      @media (max-width:640px){
+        .ss-rail{grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr));
+          grid-auto-columns:auto;gap:2px 8px}
+        .ss-doors .ss-rail .ss-vert{padding:8px 2px 14px}
+        .ss-panes{padding-top:20px}
       }
     `;
     document.head.appendChild(st);

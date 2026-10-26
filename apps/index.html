@@ -181,9 +181,14 @@ body.menu-open .menu{display:flex}
 </head>
 <body>
 
+<!-- Outside the header on purpose: that header carries a backdrop-filter, which makes it the
+     containing block for any fixed child AND its own stacking context — so the burger was
+     painted under the menu it opens and could not be pressed to close it. As a child of body
+     it is fixed to the viewport, above the overlay, exactly where the other pages put it. -->
+<button class="hub-burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+
 <header class="hub-nav">
   <div class="wrap">
-    <button class="hub-burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
     <a class="hub-home" href="../index.html" aria-label="Snowstar"><img src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar" width="540" height="45"></a>
     <div class="hub-tools"><span class="nav-acct" data-account-mount></span></div>
   </div>
@@ -289,7 +294,7 @@ body.menu-open .menu{display:flex}
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=18"></script>
+<script src="../js/site-edit.js?v=22"></script>
 <script src="../js/consent.js?v=1"></script>
 </body>
 </html>

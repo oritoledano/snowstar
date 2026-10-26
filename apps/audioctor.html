@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=7">
+<link rel="stylesheet" href="audioctor.css?v=8">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -37,9 +37,14 @@
 </head>
 <body>
 
+<!-- Outside the header on purpose: that header carries a backdrop-filter, which makes it the
+     containing block for any fixed child AND its own stacking context — so the burger was
+     painted under the menu it opens and could not be pressed to close it. As a child of body
+     it is fixed to the viewport, above the overlay, exactly where the other pages put it. -->
+<button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+
 <header class="nav">
   <div class="wrap">
-    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
     <a class="logo" href="#top" aria-label="Audioctor"><img src="audioctor-logo.png?v=1" alt="Audioctor" width="137" height="26"></a>
     <nav aria-label="Page">
       <a href="#video">On a video</a>
@@ -363,7 +368,7 @@
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=18"></script>
+<script src="../js/site-edit.js?v=22"></script>
 <script src="../js/consent.js?v=1"></script>
 </body>
 </html>
