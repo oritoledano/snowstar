@@ -1,0 +1,113 @@
+/* ═══════════ StreamDAW products: the hub's cards and the seven product pages ═══════
+   (2026-10-25, the product split: Master, Splits, Station, Record, Compare, Party, Screens.)
+   Loaded after css/streamdaw.css, so the paper, ink, lime, header, menu, buttons, plans and FAQ
+   are that sheet's. This one adds only what the new pages need. Light only, like streamdaw.css. */
+
+/* ── the hub: one card per product ─────────────────────────── */
+.products{border-top:1px solid var(--line)}
+.products .sec-head{margin-bottom:clamp(28px,3.6vw,44px)}
+.products .sec-head h2{font-size:clamp(34px,4.6vw,64px);max-width:16em;text-wrap:balance}
+.prod-note{font-size:15px;color:var(--ink-2);max-width:40em;margin:-8px 0 clamp(28px,3.4vw,40px)}
+.prod-note b{color:var(--ink);font-weight:600}
+.prod-grid{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.pcard{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:26px;background:var(--card);overflow:hidden;
+  transition:transform .18s,box-shadow .18s}
+.pcard:hover{transform:translateY(-2px);box-shadow:var(--lift)}
+.pcard>a{display:flex;flex-direction:column;height:100%;color:inherit}
+.pcard .thumb{position:relative;aspect-ratio:4/3;background:var(--night) var(--leather) center/330px;overflow:hidden}
+.pcard .thumb img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.pcard .body{display:flex;flex-direction:column;gap:10px;padding:20px 22px 22px;flex:1}
+.pcard h3{font-size:clamp(28px,2.4vw,34px);letter-spacing:-.02em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pcard p{font-size:15px;line-height:1.5;color:var(--ink-2)}
+.pcard .pr{margin-top:auto;padding-top:8px;font:600 15px/1.35 var(--sans);color:var(--ink)}
+.pcard .pr small{display:block;font-weight:500;font-size:13px;color:var(--muted)}
+.pcard .go{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:15px;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.ptag{display:inline-flex;align-items:center;font:600 12px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:999px;
+  border:1px solid var(--line-2);color:var(--ink-2)}
+.ptag.lime{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
+.ptag.soon{background:transparent;border-style:dashed}
+.pcard.soon{background:transparent;border-style:dashed;border-color:var(--line-2)}
+.bundle{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;justify-content:space-between;
+  padding:18px 22px;border-radius:20px;background:var(--ink);color:var(--paper)}
+.bundle b{font:600 clamp(19px,1.8vw,23px)/1.2 var(--serif)}
+.bundle span{font-size:15px;color:rgba(239,233,218,.8)}
+
+/* ── the placeholder frame: where a clip of its own is still to be recorded ── */
+.ph-frame{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;text-align:center;padding:16px;
+  color:rgba(247,243,232,.82);font:600 13px/1.3 var(--sans);letter-spacing:.12em;text-transform:uppercase}
+.ph-frame::before{content:"";position:absolute;inset:12px;border:2px dashed rgba(200,242,58,.45);border-radius:clamp(12px,1.6vw,20px)}
+.ph-frame i{display:block;width:44px;height:44px;border-radius:50%;background:rgba(200,242,58,.16);border:1.5px solid rgba(200,242,58,.6);
+  -webkit-mask:none;position:relative}
+.ph-frame i::after{content:"";position:absolute;left:17px;top:13px;border-left:13px solid var(--lime);border-top:9px solid transparent;border-bottom:9px solid transparent}
+.ph-frame span{position:relative;display:block}
+.ph-frame small{display:block;font:500 13px/1.4 var(--sans);letter-spacing:0;text-transform:none;color:rgba(247,243,232,.6)}
+
+/* ── a product page ─────────────────────────────────────── */
+.p-hero{padding:clamp(48px,7vw,96px) 0 0;text-align:center}
+.p-hero h1{font-size:clamp(42px,7.4vw,104px);line-height:.98;letter-spacing:-.035em;margin:20px auto 0;max-width:11em;text-wrap:balance}
+.p-hero .lead{font-size:clamp(17px,1.6vw,21px);line-height:1.5;color:var(--ink-2);max-width:33em;margin:24px auto 0}
+.p-hero .cta{justify-content:center;margin:30px 0 12px}
+.p-hero .fine{max-width:36em;margin-inline:auto}
+.p-media{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(12px,1.6vw,22px);margin-top:clamp(40px,5vw,72px)}
+.p-media .reel{box-shadow:var(--lift)}
+.p-media .reel.wide{flex:1 1 100%;max-width:1100px}
+.p-media .reel.tall{flex:0 1 calc(50% - 11px);max-width:380px}
+.p-media .reel.solo{flex-basis:min(380px,100%)}
+
+.p-steps{list-style:none;counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px 22px}
+.p-steps li{counter-increment:s;border-top:1.5px solid var(--ink);padding-top:16px;font-size:16px;line-height:1.5;color:var(--ink-2)}
+.p-steps li::before{content:"0" counter(s);display:block;font:600 12px/1 var(--sans);letter-spacing:.14em;color:var(--muted);margin-bottom:10px}
+.p-steps b{color:var(--ink);font-weight:600}
+
+.p-block{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+.p-needs{display:grid;max-width:900px;margin:0 auto}
+.p-needs div{display:grid;grid-template-columns:220px minmax(0,1fr);gap:4px 22px;padding:16px 0;border-top:1px solid var(--line)}
+.p-needs div:last-child{border-bottom:1px solid var(--line)}
+.p-needs dt{font:600 18px/1.4 var(--serif);color:var(--ink)}
+.p-needs dd{font-size:15.5px;line-height:1.5;color:var(--ink-2)}
+.p-needs dd b{color:var(--ink);font-weight:600}
+.yes,.no{display:inline-block;margin-right:8px;padding:3px 9px 2px;border-radius:999px;font:600 12px/1.4 var(--sans);letter-spacing:.06em;text-transform:uppercase}
+.yes{background:var(--lime);color:var(--lime-ink)}
+.no{border:1px solid var(--line-2);color:var(--ink-2)}
+
+.p-price{max-width:900px;margin:0 auto;border:2px solid var(--ink);border-radius:30px;background:var(--card);padding:clamp(26px,3.4vw,44px);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px 40px;align-items:start}
+.p-price .tag{margin-bottom:16px}
+.p-price .amounts{display:grid;gap:14px}
+.p-price .amt{font:600 clamp(40px,4.6vw,58px)/1 var(--serif);letter-spacing:-.02em}
+.p-price .amt small{display:block;margin-top:8px;font:500 15px/1.3 var(--sans);letter-spacing:0;color:var(--muted)}
+.p-price .or{font-size:14px;color:var(--muted)}
+.p-price .list{margin-bottom:24px}
+.p-price .cta{margin-top:4px}
+.p-price .after{margin-top:14px;font-size:13px;color:var(--muted)}
+.p-price .after a{text-decoration:underline;text-underline-offset:3px}
+
+.p-others{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.p-others a{display:flex;flex-direction:column;gap:4px;height:100%;padding:16px 18px;border:1px solid var(--line-2);border-radius:18px;background:var(--card);transition:border-color .15s,transform .15s}
+.p-others a:hover{border-color:var(--ink);transform:translateY(-1px)}
+.p-others b{font:600 21px/1.2 var(--serif)}
+.p-others span{font-size:14px;line-height:1.45;color:var(--ink-2)}
+.p-others em{font-style:normal;font-size:13px;color:var(--muted)}
+
+/* Screens: "tell me when" */
+.notify{display:flex;flex-wrap:wrap;gap:10px;max-width:520px;margin:28px auto 0}
+.notify input{flex:1 1 240px;min-width:0;height:48px;padding:0 18px;border-radius:999px;border:1.5px solid var(--line-2);background:#fff;color:var(--ink);font:500 16px/1 var(--sans);outline:none}
+.notify input:focus{border-color:var(--ink)}
+.notify .btn{flex:0 0 auto}
+.notify-said{margin-top:12px;font-size:14px;color:var(--ink-2);min-height:1.4em;text-align:center}
+.notify-said a{text-decoration:underline}
+
+@media (max-width:980px){
+  .prod-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .p-price{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .prod-grid{grid-template-columns:1fr}
+  .p-needs div{grid-template-columns:1fr}
+  .p-hero .cta .btn{flex:1 1 100%}
+  .notify .btn{flex:1 1 100%}
+}
+@media (prefers-reduced-motion:reduce){
+  .pcard,.p-others a{transition:none}
+}

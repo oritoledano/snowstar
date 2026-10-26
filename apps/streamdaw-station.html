@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-product="streamdaw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- StreamDAW product page (2026-10-25, the product split: wip/product-split-2026-10-25.md in the StreamDAW repo).
+     Every claim here is in the app's CHANGELOG or docs/PRODUCT.md; check there before adding one. -->
+<title>StreamDAW Station: your radio station in a browser | by Snowstar</title>
+<meta name="description" content="Two decks, a crossfader and your voice over the music. Bring guests on air, record the show, send one link. $14.99 a month or $119 a year.">
+<link rel="icon" href="/apps/streamdaw-favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/apps/streamdaw-icon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/apps/streamdaw-icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apps/streamdaw-apple-touch-icon.png">
+<link rel="manifest" href="/apps/streamdaw.webmanifest">
+<meta name="theme-color" content="#efe9da">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/account.css?v=19">
+<link rel="stylesheet" href="../css/streamdaw.css?v=11">
+<link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
+<style>/* the product stills (2026-10-26): real screenshots, STREAMDAW tools/site-shots/shoot.js */
+.reel.shot{aspect-ratio:auto;background:#141210}.reel.shot img{display:block;width:100%;height:auto}
+.p-media .reel.shot.wide{max-width:960px}.p-media .reel.shot.tall{flex-basis:min(340px,72%);max-width:340px}</style>
+<link rel="canonical" href="https://snowstar.company/apps/streamdaw-station.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Snowstar">
+<meta property="og:url" content="https://snowstar.company/apps/streamdaw-station.html">
+<meta property="og:title" content="StreamDAW Station: your radio station in a browser">
+<meta property="og:description" content="Two decks, a crossfader and your voice over the music. Bring guests on air, record the show, send one link. $14.99 a month or $119 a year.">
+<meta property="og:image" content="https://snowstar.company/assets/og-streamdaw.jpg?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<!-- mirrors the questions at the bottom of the page: change one, change the other -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Who handles the music licence?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "You do. Playing music to an audience can need a licence where you broadcast, usually from the rights societies there. StreamDAW carries the sound and holds no licence for the music you play."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Do my guests hear the music?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Guests on air hear the music without the voices, so they never hear themselves a second late."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Where does the recording go?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The red button saves the whole show, the music and the conversation, to Music › StreamDAW › Session. A REC key on Stream also records exactly what your listeners hear as a 24-bit WAV."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Do I need a DAW?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. Station plays the apps on your Mac. If you work in a DAW, you can still put it on a deck."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I hear one deck before it goes out?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. Press Cue on one side of the crossfader to hear that program alone, while your listeners keep hearing the blend."
+   }
+  }
+ ]
+}
+</script>
+</head>
+<body data-sd-product="station">
+
+<header class="nav has-burger">
+  <div class="wrap">
+    <button class="sd-burger" id="sdBurger" aria-label="Menu" aria-expanded="false" aria-controls="sdMenu"><span></span><span></span><span></span></button>
+    <a href="streamdaw.html" aria-label="StreamDAW, all products"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW" width="149" height="15"></a>
+    <nav aria-label="Page">
+      <a href="streamdaw.html#products">All products</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">Questions</a>
+    </nav>
+    <div class="nav-tools">
+      <span class="nav-acct" data-account-mount></span>
+      <a class="btn ink sm" id="navCta" href="/api/streamdaw/download/free" data-free-dl>Download<span class="long">free</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="p-hero" id="hero" aria-labelledby="heroTitle">
+    <div class="wrap">
+      <p class="kicker hero-kicker"><img class="app-ic" src="streamdaw-icon-128.png?v=2" width="26" height="26" alt=""><span>StreamDAW Station</span></p>
+      <h1 id="heroTitle">Your radio station <em>in a browser.</em></h1>
+      <p class="lead">Two decks, a crossfader and your voice over the music. Bring guests on air, record the show, and send your listeners one link.</p>
+      <div class="cta">
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span>Try Station free for 7 days</span></a>
+        <a class="btn ghost" href="#pricing">$14.99 a month</a>
+      </div>
+      <p class="fine">One download for every StreamDAW product. No card for the 7 days.</p>
+      <div class="p-media">
+        <figure class="reel wide shot"><img src="../media/streamdaw/products/station.webp" alt="Station on air: Spotify on deck A, Chrome on deck B, the crossfader and Cue between them" width="1600" height="1380" decoding="async"></figure>
+        <figure class="reel tall shot"><img src="../media/streamdaw/products/phone-station.webp" alt="A listener's phone: the station live and lossless, with the track on air" width="780" height="1390" decoding="async"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="how" aria-labelledby="howTitle">
+    <div class="wrap">
+      <div class="sec-head"><h2 id="howTitle">How it works.</h2></div>
+      <ol class="p-steps">
+        <li>Pick an app for <b>deck A</b>: Spotify, Music, YouTube, Chrome or any other app.</li>
+        <li>Add <b>deck B</b> beside it. The <b>crossfader</b> blends the two, and <b>Cue</b> lets you hear one side alone.</li>
+        <li><b>Talk over</b> the music. Guests you put on a Record input go out with it.</li>
+        <li>Press the red button to <b>record the show</b> to Music › StreamDAW › Session.</li>
+        <li>Press <b>Go Live</b> and send the link.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="needs" aria-labelledby="needsTitle" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head center"><h2 id="needsTitle">What you need.</h2></div>
+      <dl class="p-needs">
+        <div><dt>Your Mac</dt><dd>A <b>Mac with Apple silicon</b> and <b>macOS 12</b> (Monterey) or later. Playing an app on a deck needs <b>macOS 14.2</b> or later; macOS asks once to let StreamDAW hear that app.</dd></div>
+        <div><dt>StreamDAW Audio driver</dt><dd><span class="no">Not needed</span></dd></div>
+        <div><dt>A DAW</dt><dd><span class="no">Not needed</span>Station plays apps on your Mac.</dd></div>
+        <div><dt>A microphone</dt><dd>Your Mac's own, or one on your audio interface.</dd></div>
+        <div><dt>Your listeners</dt><dd><b>Any recent browser</b> on iPhone, Android, Mac or PC. Nothing to install.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="pricing" class="p-block" aria-labelledby="priceTitle">
+    <div class="wrap">
+      <div class="sec-head center"><p class="kicker">Monthly, yearly</p><h2 id="priceTitle">Price.</h2></div>
+      <div class="p-price">
+        <div>
+          <span class="tag lime">Station</span>
+          <div class="amounts"><div class="amt">$14.99<small>a month</small></div><p class="or">or</p><div class="amt">$119<small>a year</small></div></div>
+        </div>
+        <div>
+          <ul class="list"><li>Two decks with a crossfader and Cue</li><li>Your microphone on air, with its own level</li><li>Guests on air with the music</li><li>The whole show recorded to a file</li><li>No 60-minute limit</li></ul>
+          <!-- TODO (2026-10-25): per-product checkout is NOT live yet. This button goes to the existing checkout
+             (streamdaw.html#pricing, today's StreamDAW Pro, which unlocks every product) with ?product=station.
+             Point it at the product's own checkout once the Worker sells products (phase B). -->
+          <div class="cta">
+            <a class="btn ink" href="streamdaw.html?product=station#pricing">Get Station</a>
+            <a class="btn ghost" href="/api/streamdaw/download/free" data-free-dl>Try free for 7 days</a>
+          </div>
+          <p class="after">Each product has its own checkout soon. Until then, <a href="streamdaw.html?product=station#pricing">StreamDAW Pro</a> unlocks every product. Every StreamDAW product together: $199 a year or $19.99 a month. <a href="streamdaw-terms.html">Licence terms</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" aria-labelledby="faqTitle">
+    <div class="wrap">
+      <div class="sec-head center"><h2 id="faqTitle">Questions.</h2></div>
+      <div class="faq">
+        <details><summary><span>Who handles the music licence?</span></summary>
+          <p>You do. Playing music to an audience can need a licence where you broadcast, usually from the rights societies there. StreamDAW carries the sound and holds no licence for the music you play.</p></details>
+        <details><summary><span>Do my guests hear the music?</span></summary>
+          <p>Yes. Guests on air hear the music without the voices, so they never hear themselves a second late.</p></details>
+        <details><summary><span>Where does the recording go?</span></summary>
+          <p>The red button saves the whole show, the music and the conversation, to Music › StreamDAW › Session. A REC key on Stream also records exactly what your listeners hear as a 24-bit WAV.</p></details>
+        <details><summary><span>Do I need a DAW?</span></summary>
+          <p>No. Station plays the apps on your Mac. If you work in a DAW, you can still put it on a deck.</p></details>
+        <details><summary><span>Can I hear one deck before it goes out?</span></summary>
+          <p>Yes. Press Cue on one side of the crossfader to hear that program alone, while your listeners keep hearing the blend.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="others" style="padding-top:0" aria-labelledby="othersTitle">
+    <div class="wrap">
+      <div class="sec-head"><h2 id="othersTitle">The other products.</h2></div>
+      <ul class="p-others">
+        <li><a href="streamdaw-master.html"><b>Master</b><span>Your master, or everything your Mac plays, on a link.</span><em>Free</em></a></li>
+        <li><a href="streamdaw-splits.html"><b>Splits</b><span>Every track to every listener, each with a mix of their own.</span><em>$12 a month · $99 a year</em></a></li>
+        <li><a href="streamdaw-record.html"><b>Record</b><span>Remote Inputs: record anyone in the world into your DAW.</span><em>$15 a month · $129 a year</em></a></li>
+        <li><a href="streamdaw-compare.html"><b>Compare</b><span>A/B your versions with a client through one link.</span><em>$49 once · or $5 a month</em></a></li>
+        <li><a href="streamdaw-party.html"><b>Party</b><span>Every phone in the room on one beat, in the browser.</span><em>$9 a month · $79 a year</em></a></li>
+        <li><a href="streamdaw-screens.html"><b>Screens</b><span>A silent screen, with a language track on each visitor's phone.</span><em>Coming soon</em></a></li>
+      </ul>
+      <p class="unlock-cta"><a href="streamdaw.html">All of StreamDAW</a> · <a href="streamdaw-install.html">How to install</a> · <a href="streamdaw-changes.html">What's new</a></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="StreamDAW">
+      <a href="./">All apps</a>
+      <a href="streamdaw.html">StreamDAW</a>
+      <a href="streamdaw-unlock.html">Unlock your Mac</a>
+      <a href="streamdaw-changes.html">What's new</a>
+      <a href="streamdaw-terms.html">Licence terms</a>
+      <a href="streamdaw-cancel.html">Cancel a subscription</a>
+      <a href="mailto:hello@snowstar.company">Something not working? hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+
+<div class="sd-menu" id="sdMenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <nav aria-label="Main">
+    <a href="streamdaw.html#products"><i>01</i>All products</a>
+    <a href="#how"><i>02</i>How it works</a>
+    <a href="#pricing"><i>03</i>Pricing</a>
+    <a href="#faq"><i>04</i>Questions</a>
+    <span class="menu-div">StreamDAW</span>
+    <details class="menu-group" data-group="sdaw-products">
+      <summary><span class="lbl">Products</span><span class="caret" aria-hidden="true"></span></summary>
+      <div class="menu-sub">
+        <a href="/apps/streamdaw-master.html">Master</a>
+        <a href="/apps/streamdaw-splits.html">Splits</a>
+        <a href="/apps/streamdaw-station.html" class="now">Station</a>
+        <a href="/apps/streamdaw-record.html">Record</a>
+        <a href="/apps/streamdaw-compare.html">Compare</a>
+        <a href="/apps/streamdaw-party.html">Party</a>
+        <a href="/apps/streamdaw-screens.html">Screens</a>
+      </div>
+    </details>
+    <span class="menu-div">Products</span>
+    <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
+    <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
+    <details class="menu-group" data-group="apps" open>
+      <summary><span class="lbl">Apps</span><span class="caret" aria-hidden="true"></span></summary>
+      <div class="menu-sub">
+        <a href="/apps/streamdaw.html" class="now"><img class="menu-word" src="../assets/sdaw-word-trim.png?v=1" alt="StreamDAW"></a>
+        <a href="/apps/audioctor.html"><img class="menu-word" src="../assets/audioctor-word-trim.png?v=1" alt="Audioctor"></a>
+        <a class="menu-all" href="/apps/"><span class="lbl">All apps</span></a>
+      </div>
+    </details>
+    <a href="../snowstash.html">Snowstash</a>
+  </nav>
+  <div class="menu-cur"><span data-currency-switcher aria-label="Currency"></span></div>
+</div>
+
+<div class="dl-hint" id="dlHint" role="status" hidden>
+  <img class="dl-ic" src="streamdaw-icon-128.png?v=2" width="40" height="40" alt="">
+  <p><b>StreamDAW is downloading.</b> macOS asks you to allow it once: <a href="streamdaw-install.html">see how, step by step</a>.</p>
+  <button type="button" id="dlHintX" aria-label="Close">×</button>
+</div>
+
+<!-- the same scripts as the sale page: the clips, the menu, the free download through the shared sign-up -->
+<script src="../js/money.js?v=4"></script>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=29"></script>
+<script src="../js/site-edit.js?v=19"></script>
+<script src="../js/streamdaw-page.js?v=20261018"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>

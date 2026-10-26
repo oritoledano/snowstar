@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StreamDAW: Stream your DAW. Live. Lossless. | by Snowstar</title>
-<meta name="description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Free on your master bus; Pro is $8.99 a month, or one payment.">
+<meta name="description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Master is free. Splits, Station, Record, Compare and Party add what you came to do.">
 <link rel="icon" href="/apps/streamdaw-favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/apps/streamdaw-icon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="/apps/streamdaw-icon-192.png" sizes="192x192">
@@ -17,6 +17,7 @@
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
 <link rel="stylesheet" href="../css/streamdaw.css?v=11">
+<link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
 {
@@ -103,14 +104,14 @@
 <meta property="og:site_name" content="Snowstar">
 <meta property="og:url" content="https://snowstar.company/apps/streamdaw.html">
 <meta property="og:title" content="StreamDAW: Stream your DAW. Live. Lossless.">
-<meta property="og:description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Free on your master bus; Pro is $8.99 a month, or one payment.">
+<meta property="og:description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Master is free. Splits, Station, Record, Compare and Party add what you came to do.">
 <meta property="og:image" content="https://snowstar.company/assets/og-streamdaw.jpg?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/jpeg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="StreamDAW: Stream your DAW. Live. Lossless.">
-<meta name="twitter:description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Free on your master bus; Pro is $8.99 a month, or one payment.">
+<meta name="twitter:description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Master is free. Splits, Station, Record, Compare and Party add what you came to do.">
 <meta name="twitter:image" content="https://snowstar.company/assets/og-streamdaw.jpg?v=2">
 <script type="application/ld+json">
 {"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 12 or later (Apple silicon)", "description": "Stream your DAW to anyone with a link or a QR code, live and lossless. Remote studio sessions with camera, screen and talkback; in-ear sync for bands on their phones.", "offers": [{"@type": "Offer", "name": "StreamDAW", "price": "0", "priceCurrency": "ILS"}, {"@type": "Offer", "name": "StreamDAW Pro Monthly", "description": "Every Pro feature, renews monthly until cancelled; 7-day free trial in the app, no card", "price": "8.99", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "8.99", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M", "unitCode": "MON", "referenceQuantity": {"@type": "QuantitativeValue", "value": "1", "unitCode": "MON"}}}, {"@type": "Offer", "name": "StreamDAW Pro", "description": "One payment, yours forever, no subscription", "price": "249", "priceCurrency": "ILS", "priceSpecification": {"@type": "PriceSpecification", "price": "249", "priceCurrency": "ILS", "valueAddedTaxIncluded": true}}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
@@ -123,6 +124,7 @@
     <button class="sd-burger" id="sdBurger" aria-label="Menu" aria-expanded="false" aria-controls="sdMenu"><span></span><span></span><span></span></button>
     <a href="#top" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW" width="149" height="15"></a>
     <nav aria-label="Page">
+      <a href="#products">Products</a>
       <a href="#features">Features</a>
       <a href="#stories">Stories</a>
       <a href="#demo">Try it</a>
@@ -153,7 +155,7 @@
            2026-10-13 (Ori): no buy button up here; buying lives in #pricing and in the app. -->
       <div class="cta">
         <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-trial">Try Pro free for 7 days</span></a>
-        <a class="btn ghost" href="#pricing" data-txt="streamdaw.hero.cta-more">See what Pro adds</a>
+        <a class="btn ghost" href="#products" data-txt="streamdaw.hero.cta-more">See the products</a>
       </div>
       <p class="fine trial-fine"><span data-txt="streamdaw.hero.trial-fine">No card. After the 7 days, your master bus streams free forever. Or keep Pro for</span>&nbsp;<span data-ils="249">$81</span>&nbsp;<span data-txt="streamdaw.hero.trial-once">once.</span></p>
 
@@ -166,6 +168,87 @@
       <!-- Only what has been streamed from goes after "Tested in" (2026-10-13: Live and the app).
            Move a DAW up once a session has run in it. -->
       <p class="works" data-txt="streamdaw.hero.works"><span>Tested in <b>Ableton Live</b> and <b>the StreamDAW app</b></span><span class="dot" aria-hidden="true">·</span><span>Loads as AU/VST3 in Logic, Cubase, Studio One, Reaper, Bitwig</span></p>
+    </div>
+  </section>
+
+
+  <!-- ── the products (2026-10-25, the product split; STREAMDAW wip/product-split-2026-10-25.md DECIDED):
+       one app, six products and Screens coming soon, each with its own page. Prices as decided.
+       TODO: per-product checkout is not live yet; until the Worker sells products, the plans in #pricing
+       (StreamDAW Pro, which unlocks every product) are what is sold. ── -->
+  <section class="products" id="products" aria-labelledby="prodTitle">
+    <div class="wrap">
+      <div class="sec-head"><div><p class="kicker">One app, six products</p>
+        <h2 id="prodTitle">For producers, engineers, hosts and venues. Pick what you came to do.</h2></div></div>
+      <p class="prod-note">One download for all of them. <b>Master is free.</b> Until each product has its own checkout, <a href="#pricing" style="text-decoration:underline">StreamDAW Pro</a> unlocks every product.</p>
+      <!-- the cards' stills (2026-10-26): real screenshots of the 0.7.1 pages, STREAMDAW tools/site-shots/shoot.js -->
+      <ul class="prod-grid">
+        <li class="pcard"><a href="streamdaw-master.html">
+            <div class="thumb"><img src="../media/streamdaw/products/master-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
+            <div class="body">
+              <h3>Master <span class="ptag lime">Free</span></h3>
+              <p>Your master, or everything your Mac plays, on a link. Listeners need only a browser.</p>
+              <span class="pr">Free</span>
+              <span class="go">See Master <span aria-hidden="true">→</span></span>
+            </div>
+          </a></li>
+        <li class="pcard"><a href="streamdaw-splits.html">
+            <div class="thumb"><img src="../media/streamdaw/products/splits-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
+            <div class="body">
+              <h3>Splits </h3>
+              <p>Every track to every listener, each with a mix of their own. On stage too: click and guide in every ear.</p>
+              <span class="pr">$12 a month<small>or $99 a year</small></span>
+              <span class="go">See Splits <span aria-hidden="true">→</span></span>
+            </div>
+          </a></li>
+        <li class="pcard"><a href="streamdaw-station.html">
+            <div class="thumb"><img src="../media/streamdaw/products/station-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
+            <div class="body">
+              <h3>Station </h3>
+              <p>Your radio station in a browser: two decks, a crossfader, your voice and your guests.</p>
+              <span class="pr">$14.99 a month<small>or $119 a year</small></span>
+              <span class="go">See Station <span aria-hidden="true">→</span></span>
+            </div>
+          </a></li>
+        <li class="pcard"><a href="streamdaw-record.html">
+            <div class="thumb"><img src="../media/streamdaw/products/record-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
+            <div class="body">
+              <h3>Record </h3>
+              <p>Remote Inputs: record anyone in the world. Their take lands on your DAW's track, in time.</p>
+              <span class="pr">$15 a month<small>or $129 a year</small></span>
+              <span class="go">See Record <span aria-hidden="true">→</span></span>
+            </div>
+          </a></li>
+        <li class="pcard"><a href="streamdaw-compare.html">
+            <div class="thumb"><img src="../media/streamdaw/products/compare-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
+            <div class="body">
+              <h3>Compare </h3>
+              <p>A/B your mixes, cuts and pictures with a client through one link, with notes on the moment.</p>
+              <span class="pr">$49 once<small>or $5 a month</small></span>
+              <span class="go">See Compare <span aria-hidden="true">→</span></span>
+            </div>
+          </a></li>
+        <li class="pcard"><a href="streamdaw-party.html">
+            <div class="thumb"><img src="../media/streamdaw/products/party-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
+            <div class="body">
+              <h3>Party </h3>
+              <p>Every phone in the room on one beat: a silent disco, or the whole place as one sound system.</p>
+              <span class="pr">$9 a month<small>or $79 a year</small></span>
+              <span class="go">See Party <span aria-hidden="true">→</span></span>
+            </div>
+          </a></li>
+        <li class="pcard soon"><a href="streamdaw-screens.html">
+            <!-- PLACEHOLDER: no clip of Screens yet (STREAMDAW/wip/sale-pages-clips-2026-10-25.md) -->
+            <div class="thumb"><span class="ph-frame"><i aria-hidden="true"></i><span>New clip coming</span></span></div>
+            <div class="body">
+              <h3>Screens <span class="ptag soon">Coming soon</span></h3>
+              <p>A silent screen's video, with a language track on each visitor's phone by QR code.</p>
+              <span class="pr">Coming soon<small>Tell me when</small></span>
+              <span class="go">See Screens <span aria-hidden="true">→</span></span>
+            </div>
+          </a></li>
+      </ul>
+      <div class="bundle"><b>Every paid product together</b><span>$199 a year, or $19.99 a month</span></div>
     </div>
   </section>
 
@@ -549,11 +632,12 @@
 
 <div class="sd-menu" id="sdMenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <nav aria-label="Main">
-    <a href="#features"><i>01</i>Features</a>
-    <a href="#stories"><i>02</i>Stories</a>
-    <a href="#demo"><i>03</i>Try it</a>
-    <a href="#pricing"><i>04</i>Pricing</a>
-    <a href="#faq"><i>05</i>Questions</a>
+    <a href="#products"><i>01</i>Products</a>
+    <a href="#features"><i>02</i>Features</a>
+    <a href="#stories"><i>03</i>Stories</a>
+    <a href="#demo"><i>04</i>Try it</a>
+    <a href="#pricing"><i>05</i>Pricing</a>
+    <a href="#faq"><i>06</i>Questions</a>
     <span class="menu-div">Products</span>
     <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
@@ -584,7 +668,7 @@
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=18"></script>
+<script src="../js/site-edit.js?v=19"></script>
 <script src="../js/streamdaw-page.js?v=20261018"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
