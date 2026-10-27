@@ -98,7 +98,9 @@ export async function monthlyPrice(env) {
 /** GET /streamdaw/prices — what the sale page shows: Pro once, and a month at today's rate. */
 export async function streamdawPrices(env) {
   const m = await monthlyPrice(env);
-  return json({ pro: { amount: SD.PRICE_GROSS }, monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate, open: await monthlyOpen(env) } });
+  // The products (streamdaw-products.js): each one's price today, and whether checkout sells them yet.
+  const products = await (await import('./streamdaw-products.js')).catalogFor(env);
+  return json({ pro: { amount: SD.PRICE_GROSS }, monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate, open: await monthlyOpen(env) }, products });
 }
 
 /* Pro Monthly takes money only once HYP has switched on card tokens and server charges for the

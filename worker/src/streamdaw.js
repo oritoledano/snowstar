@@ -26,6 +26,7 @@ import { sha256b64, randB64, safeEqual, ipTag } from './crypto.js';
 import { parseHyp, verifyReturn } from './hyp.js';
 import { applyCoupon, couponProblem, normCode } from './coupons.js';
 import { checkKey, mintKey } from './streamdaw-keys.js';
+import * as P from './streamdaw-products.js';
 
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 const SITE = 'https://snowstar.company';
@@ -261,9 +262,21 @@ export async function streamdawCheckout(req, env) {
   if (isPass(body.plan))
     return json({ error: 'plan_retired', reason: 'The 7-day pass is no longer sold. Try Pro free for 7 days in the app, or take Pro Monthly.' }, 410);
   if (isMonthly(body.plan)) return (await subsMod()).monthlyCheckout(env, user, body);
-  const plan = 'lifetime';
-  const credit = await passCredit(env, email);
-  let amount = PRICE_GROSS - credit, couponCode = null;
+  // StreamDAW sold as products (streamdaw-products.js), once STREAMDAW_PRODUCTS_OPEN=1: then a
+  // product and its period ({product: 'splits', period: 'year'}), and Pro as one thing is no longer sold.
+  const want = body.product ? `${String(body.product).toLowerCase()}:${String(body.period || 'year').toLowerCase()}` : null;
+  if (want && !P.productsOpen(env)) return json({ error: 'products_not_open', reason: 'StreamDAW is not sold by product yet.' }, 410);
+  if (!want && P.productsOpen(env)) return json({ error: 'plan_retired', reason: 'StreamDAW is sold by product now: pick Splits, Station, Record, Compare, Party or All.' }, 410);
+  if (want) {
+    const pp = P.parsePlan(want);
+    if (!pp) return json({ error: 'no_such_product', reason: 'There is no such product.' }, 400);
+    if (pp.period === 'month') return json({ error: 'period_closed', reason: `${P.NAMES[pp.id]} by the month is not sold yet. Take the year.` }, 410);
+    const why = P.cannotBuy(want, await accountRows(env, email, user.id), now());
+    if (why) return json({ error: 'owned', reason: why }, 409);
+  }
+  const plan = want || 'lifetime';
+  const credit = want ? 0 : await passCredit(env, email);
+  let amount = want ? (await P.priceOf(env, P.parsePlan(want).id, P.parsePlan(want).period)).amount : PRICE_GROSS - credit, couponCode = null;
   if (body.coupon && String(body.coupon).trim()) {
     // Coupon (optional). Invalid code entered → tell them, don't silently charge full.
     const c = await findSdawCoupon(env, body.coupon);
@@ -284,14 +297,16 @@ export async function streamdawCheckout(req, env) {
   if (amount <= 0) {
     if (!hypConfigured(env)) { /* free path needs no gateway, continue */ }
     await insertOrder(env, { ref, userId: user.id, email, plan, amount: 0, status: 'granted', coupon: couponCode, machine, ownerName });
-    const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, plan, source: credit ? 'pass-credit' : 'coupon' });
+    const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, plan, source: credit ? 'pass-credit' : 'coupon',
+      expiresAt: want ? P.endFor(plan, await accountRows(env, email, user.id), now()) : undefined });
     if (couponCode) await burnSdawCoupon(env, couponCode);
     const link = await mintDownloadLink(env, ent.id, email);
-    if (machine) await requestKey(env, { entId: ent.id, email, machine, name: ownerName || email, via: 'checkout' }).catch(() => {});
+    if (want) await keysForAccount(env, ent, machine, ownerName).catch(() => {});
+    else if (machine) await requestKey(env, { entId: ent.id, email, machine, name: ownerName || email, via: 'checkout' }).catch(() => {});
     await emailReceipt(env, email, link, machine, { ref, amount: 0, coupon: couponCode, plan, credit, expiresAt: ent.expires_at }).catch(() => {});
     await env.DB.prepare('UPDATE streamdaw_orders SET entitlement_id = ?, settled_at = ? WHERE ref = ?')
       .bind(ent.id, now(), ref).run().catch(() => {});
-    await (await subsMod()).cancelForUpgrade(env, email, user.id).catch(() => {});   // Pro for good: a Pro Monthly stops
+    if (!want) await (await subsMod()).cancelForUpgrade(env, email, user.id).catch(() => {});   // Pro for good: a Pro Monthly stops
     return json({ ok: true, free: true, ref, download: link, redirect: `${SITE}/apps/streamdaw.html?bought=1&free=1` });
   }
 
@@ -302,7 +317,8 @@ export async function streamdawCheckout(req, env) {
   // APISign — mirrors the music checkout's signing, including the gotchas the
   // comments in hyp.js were written in blood for: Sign=True, and using HYP's
   // response VERBATIM as the pay URL.
-  const p = payPageParams(env, { ref, amount, user, email, item: 'StreamDAW Pro (one payment)', info: `StreamDAW Pro ${ref}` });
+  const item = want ? P.itemName(want) : 'StreamDAW Pro (one payment)';
+  const p = payPageParams(env, { ref, amount, user, email, item, info: `${want ? P.itemName(want) : 'StreamDAW Pro'} ${ref}` });
   const res = await fetch(`${BASE}?${p.toString()}`);
   const text = await res.text();
   if (/^\s*</.test(text)) return json({ error: 'hyp_system_error' }, 502);
@@ -409,7 +425,7 @@ export async function streamdawReturn(req, env, raw, q) {
     const okRef = /^SD-[A-Z0-9]{4,20}$/.test(ref) ? ref : null;   // the query is anyone's to type
     return checkoutFramePage({ type: 'sd-checkout', ref: okRef, ...msg }, dest);
   };
-  const planOf = (o) => (o && (o.plan === 'pass' || o.plan === 'monthly') ? o.plan : 'lifetime');
+  const planOf = (o) => (o && (o.plan === 'pass' || o.plan === 'monthly' || P.isProductPlan(o.plan)) ? o.plan : 'lifetime');
   const fail = (why, o) => back(`pay=failed&reason=${encodeURIComponent(why)}`, { bought: false, pay: 'failed', reason: why, plan: o ? planOf(o) : null });
   const bought = (o) => back(`bought=1&ref=${encodeURIComponent(ref)}`, { bought: true, plan: planOf(o) });
 
@@ -496,10 +512,13 @@ async function fulfilPaid(env, order, q, source) {
     const plan = order.plan || 'lifetime';
     const subs = await subsMod();
     const monthly = isMonthly(plan) ? await subs.monthlyGranted(env, order, q, ref) : null;
-    const ent = monthly ? monthly.ent : await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: order.amount, plan, source });
+    const product = P.isProductPlan(plan);
+    const ent = monthly ? monthly.ent : await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: order.amount, plan, source,
+      expiresAt: product ? P.endFor(plan, await accountRows(env, order.email, order.user_id), now()) : undefined });
     if (order.coupon) await burnSdawCoupon(env, order.coupon);
     const link = await mintDownloadLink(env, ent.id, order.email);
-    if (order.machine_id)
+    if (product) await keysForAccount(env, ent, order.machine_id, order.owner_name).catch(() => {});
+    else if (order.machine_id)
       await requestKey(env, { entId: ent.id, email: order.email, machine: order.machine_id, name: order.owner_name || order.email, via: 'checkout' }).catch(() => {});
     if (monthly) await subs.mailWelcome(env, monthly.sub, { link, machine: order.machine_id || null, ref }).catch(() => {});
     else await emailReceipt(env, order.email, link, order.machine_id || null,
@@ -667,10 +686,12 @@ export async function myStreamdaw(env, user) {
   const proPrice = PRICE_GROSS - await passCredit(env, user.email);
   // Pro Monthly: its state (renews / cancelled / payment due), for the account page and the sale page.
   const subscription = await (await subsMod()).subFor(env, user).catch(() => null);
-  if (!ent) return json({ owned: false, proPrice, subscription });
+  // The products this account holds (id → end in seconds, 0 = for good), for the account and sale pages.
+  const products = P.holdings(await accountRows(env, user.email, user.id), now());
+  if (!ent) return json({ owned: false, proPrice, subscription, products });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();
-  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice, subscription,
+  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice, subscription, products,
                 release: rel, download: `${SITE}/api/streamdaw/download` });
 }
 
@@ -745,7 +766,7 @@ function licenceMail({ title, intro, steps, key, footer, button }) {
    them (and the key request is then made the old way, on the page), so a deploy before
    the migration cannot break checkout. */
 async function insertOrder(env, { ref, userId, email, plan, amount, status, coupon, machine, ownerName }) {
-  plan = isPass(plan) || isMonthly(plan) ? plan : 'lifetime';
+  plan = isPass(plan) || isMonthly(plan) || P.isProductPlan(plan) ? plan : 'lifetime';
   try {
     await env.DB.prepare(
       `INSERT INTO streamdaw_orders (ref, user_id, email, plan, amount, currency, status, coupon, machine_id, owner_name, created_at)
@@ -769,18 +790,24 @@ async function requestKey(env, { entId, email, machine, name, via }) {
   // Already issued for this machine? Hand back the same key rather than queueing a
   // duplicate — re-installing must not need a new request. (A Mac deactivated on the unlock page
   // asks again like a new one: it takes a place again.)
+  // (A products key only while the account's list is the same: a product bought since needs a new one.)
+  const kl = P.keyList(await accountRows(env, email), now());
+  const products = kl && !kl.none ? kl.products : null;
   const prior = await env.DB.prepare(
-    'SELECT status, key_text FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id = ?'
+    `SELECT status, key_text${products ? ', products' : ''} FROM streamdaw_activations WHERE entitlement_id = ? AND machine_id = ?`
   ).bind(entId, machine).first();
-  if (prior && prior.status === 'issued' && prior.key_text) return { status: 'issued', key: keyLines(prior.key_text) };
+  if (prior && prior.status === 'issued' && prior.key_text && (!products || prior.products === products))
+    return { status: 'issued', key: keyLines(prior.key_text) };
 
   // A plan with an end (Pro Monthly; a pass sold before 2026-10-14): its key ends when the
   // entitlement does (seconds, as every table here; the minter turns it into the keygen's
   // --expires in ms, and issueKey refuses a key whose end differs). For Pro Monthly that is the
   // paid month plus 3 days, moved on by each renewal (streamdaw-subs.js).
   const ent = await env.DB.prepare('SELECT plan, expires_at FROM entitlements WHERE id = ?').bind(entId).first().catch(() => null);
-  const expiresAt = ent && ends(ent.plan) && ent.expires_at ? Number(ent.expires_at) : null;
-  if (ent && ends(ent.plan) && (!expiresAt || expiresAt <= now())) return { status: 'expired' };
+  // Products (streamdaw-products.js): the key names everything the account holds now, each with its own end.
+  if (kl && kl.none) return { status: 'expired' };
+  const expiresAt = !products && ent && ends(ent.plan) && ent.expires_at ? Number(ent.expires_at) : null;
+  if (!products && ent && ends(ent.plan) && (!expiresAt || expiresAt <= now())) return { status: 'expired' };
   // At most MAX_MACS Macs per purchase (Ori, 2026-10-15): another is refused until one is
   // deactivated on the unlock page. It is still filed, as 'limit', so the owner can let it through
   // from the dashboard (the exception, by hand).
@@ -791,6 +818,15 @@ async function requestKey(env, { entId, email, machine, name, via }) {
   const full = others >= MAX_MACS;
   const status = full ? 'limit' : 'pending';
   try {
+    // A products key needs the products column (schema-streamdaw-products.sql): no column, no request.
+    if (products) await env.DB.prepare(
+      `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at, expires_at, products)
+       VALUES (?, ?, ?, ?, ?, ?, NULL, ?)
+       ON CONFLICT (entitlement_id, machine_id) DO UPDATE SET
+         owner_name = excluded.owner_name, requested_at = excluded.requested_at, expires_at = NULL, products = excluded.products,
+         status = CASE WHEN streamdaw_activations.status = 'issued' AND streamdaw_activations.products IS excluded.products THEN 'issued' ELSE excluded.status END`
+    ).bind(entId, lc(email), machine, name, status, now(), products).run();
+    else
     await env.DB.prepare(
       `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at, expires_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -800,7 +836,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
     ).bind(entId, lc(email), machine, name, status, now(), expiresAt).run();
   } catch (e) {
     // Before schema-streamdaw-pass.sql ran: Pro requests still file; a pass waits (never permanent).
-    if (expiresAt || !/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
+    if (expiresAt || products || !/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
     await env.DB.prepare(
       `INSERT INTO streamdaw_activations (entitlement_id, email, machine_id, owner_name, status, requested_at)
        VALUES (?, ?, ?, ?, ?, ?)
@@ -921,12 +957,17 @@ export async function streamdawActivationStatus(env, user) {
   const ent = await activeEntitlement(env, user);
   if (!ent) return json({ owned: false });
 
-  const rows = (await env.DB.prepare(
+  // Every purchase of the account (products are bought one by one), one row per Mac: its newest key.
+  const ids = (await accountRows(env, user.email, user.id)).filter((r) => !r.expires_at || r.expires_at > now()).map((r) => Number(r.id));
+  if (!ids.includes(Number(ent.id))) ids.push(Number(ent.id));
+  const inIds = ids.map(() => '?').join(',');
+  const all = (await env.DB.prepare(
     `SELECT machine_id, status, key_text, serial, requested_at, issued_at, renew_code
-       FROM streamdaw_activations WHERE entitlement_id = ? ORDER BY requested_at DESC LIMIT 10`
-  ).bind(ent.id).all().catch(() => env.DB.prepare(
+       FROM streamdaw_activations WHERE entitlement_id IN (${inIds}) ORDER BY requested_at DESC, id DESC LIMIT 40`
+  ).bind(...ids).all().catch(() => env.DB.prepare(
     `SELECT machine_id, status, key_text, serial, requested_at, issued_at
-       FROM streamdaw_activations WHERE entitlement_id = ? ORDER BY requested_at DESC LIMIT 10`).bind(ent.id).all())).results || [];
+       FROM streamdaw_activations WHERE entitlement_id IN (${inIds}) ORDER BY requested_at DESC, id DESC LIMIT 40`).bind(...ids).all())).results || [];
+  const rows = all.filter((r, i) => all.findIndex((x) => x.machine_id === r.machine_id) === i).slice(0, 10);
   // A Pro Monthly key is shown with its Renewal line: copied together, the app renews it by itself.
   for (const r of rows) {
     if (r.key_text) r.key_text = withRenewal(keyLines(r.key_text), r.renew_code);
@@ -973,7 +1014,7 @@ async function issueKey(env, row, key, onlyPending) {
   // format-2 key for this request's Mac with a good signature: storing anything else would tell
   // the buyer their licence is ready when it is not. The serial is read from the signed payload.
   const hex = keyHex(key);
-  const checked = await checkKey(hex, row.machine_id, row.expires_at);   // a row with an end carries it
+  const checked = await checkKey(hex, row.machine_id, row.expires_at, row.products || null);   // a row with an end carries it; a products row, its list
   if (checked.error) return { error: checked.error };
   const lines = keyLines(hex);
   const serial = checked.serial;
@@ -996,18 +1037,19 @@ async function issueKey(env, row, key, onlyPending) {
   const n = box.split('\n').filter(Boolean).length;
   const until = row.expires_at ? dayOf(row.expires_at) : '';
   const subs = monthly ? await subsMod() : null;
-  const what = monthly ? 'StreamDAW Pro Monthly key' : until ? `StreamDAW Pro key (until ${until})` : 'StreamDAW Pro key';
-  const minApp = until ? PASS_MIN_APP : MIN_APP;
+  const listed = row.products ? P.describe(row.products) : '';
+  const what = listed ? `StreamDAW key (${listed})` : monthly ? 'StreamDAW Pro Monthly key' : until ? `StreamDAW Pro key (until ${until})` : 'StreamDAW Pro key';
+  const minApp = listed ? P.PRODUCTS_MIN_APP : until ? PASS_MIN_APP : MIN_APP;
   const copy = monthly ? `Copy everything in the box below (all ${n} lines: the key and its Renewal line) and paste it into the box.`
                        : `Copy the key below (all ${n} lines) and paste it into the box.`;
-  const renewText = monthly ? `Pro Monthly: this key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
+  const renewText = listed ? `This key gives ${listed}. A product bought later comes with a new key for every Mac.\n` : monthly ? `Pro Monthly: this key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
     : until ? `Every Pro feature until ${until}; then StreamDAW goes back to Free.\n` : '';
-  const renewHtml = monthly ? `This key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
+  const renewHtml = listed ? `This key gives ${escHtml(listed)}. A product bought later comes with a new key for every Mac.<br>` : monthly ? `This key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
     : until ? `After ${until} StreamDAW goes back to Free.<br>` : '';
   try {
     await sendMail(env, {
       to: row.email,
-      subject: monthly ? 'Your StreamDAW Pro Monthly key' : until ? `Your StreamDAW Pro key, until ${until}` : 'Your StreamDAW Pro key',
+      subject: listed ? 'Your StreamDAW key' : monthly ? 'Your StreamDAW Pro Monthly key' : until ? `Your StreamDAW Pro key, until ${until}` : 'Your StreamDAW Pro key',
       text: `${hi ? `Hi ${hi}, your` : 'Your'} ${what} is ready.\n\n`
           + `1. Open StreamDAW › Settings › Licence.\n`
           + `2. ${copy}\n`
@@ -1021,7 +1063,7 @@ async function issueKey(env, row, key, onlyPending) {
           + `Another Mac? Get a key for it here: ${UNLOCK_URL}\n`
           + `Keep this email: it is your licence. Lost it? The same page shows your keys when you sign in.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
       html: licenceMail({
-        title: monthly ? 'Your Pro Monthly key' : 'Your StreamDAW Pro key',
+        title: listed ? 'Your StreamDAW key' : monthly ? 'Your Pro Monthly key' : 'Your StreamDAW Pro key',
         intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready${until ? `: every Pro feature until <b>${until}</b>` : ''}.`,
         steps: [
           'Open <b>StreamDAW › Settings › Licence</b>.',
@@ -1055,7 +1097,16 @@ const withRenewal = (lines, code) => (code ? `${lines}\n\nRenewal: ${code}` : li
 async function autoIssue(env, row, override = false) {
   if (!env.STREAMDAW_SIGNING_KEY) return { error: 'no STREAMDAW_SIGNING_KEY in this Worker' };
   const name = row.owner_name || String(row.email || '').split('@')[0] || 'StreamDAW user';
-  const minted = await mintKey(env.STREAMDAW_SIGNING_KEY, { name, email: row.email, machine: row.machine_id, expiresAt: row.expires_at });
+  // The account's list as it is NOW (a product bought or ended since the request), kept on the row
+  // so the key is checked against it, and a hand-pasted one too.
+  const kl = P.keyList(await accountRows(env, row.email), now());
+  if (kl && kl.none) return { error: 'nothing on this account any more' };
+  if (kl && kl.products !== row.products) {
+    await env.DB.prepare('UPDATE streamdaw_activations SET products = ?, expires_at = NULL WHERE id = ?').bind(kl.products, row.id).run();
+    row = { ...row, products: kl.products, expires_at: null };
+  }
+  const minted = await mintKey(env.STREAMDAW_SIGNING_KEY, { name, email: row.email, machine: row.machine_id,
+    ...(row.products ? { products: row.products } : { expiresAt: row.expires_at }) });
   if (minted.error) return minted;
   return issueKey(env, row, minted.hex, !override);
 }
@@ -1239,6 +1290,28 @@ export async function streamdawReports(req, env, user) {
 }
 
 // ── helpers ────────────────────────────────────────────────────────────────
+/* Every StreamDAW entitlement of an account that is active (ended ones too: the products module
+   drops what has ended at the moment it asks). */
+async function accountRows(env, email, userId = null) {
+  return ((await env.DB.prepare(
+    `SELECT id, plan, expires_at FROM entitlements WHERE product = ? AND status = 'active' AND (email = ? OR (? IS NOT NULL AND user_id = ?))`
+  ).bind(PRODUCT, lc(email), userId, userId).all()) || {}).results || [];
+}
+
+/* A product was bought: a new key, with the account's whole list, for the Mac it was bought on and
+   for the account's other Macs with a key (the newest first), up to MAX_MACS under this purchase. */
+async function keysForAccount(env, ent, machine, ownerName) {
+  const prior = ((await env.DB.prepare(
+    `SELECT machine_id, owner_name FROM streamdaw_activations WHERE email = ? AND status IN ('issued','renewing')
+      ORDER BY issued_at DESC LIMIT 20`
+  ).bind(lc(ent.email)).all()) || {}).results || [];
+  const macs = [];
+  for (const m of [machine ? { machine_id: machine, owner_name: ownerName } : null, ...prior])
+    if (m && m.machine_id && !macs.some((x) => x.machine_id === m.machine_id)) macs.push(m);
+  for (const m of macs.slice(0, MAX_MACS))
+    await requestKey(env, { entId: ent.id, email: ent.email, machine: m.machine_id, name: m.owner_name || ownerName || ent.email, via: 'checkout' }).catch(() => {});
+}
+
 async function grantEntitlement(env, { email, ext_ref, amount, plan, source, expiresAt }) {
   const existing = await env.DB.prepare('SELECT * FROM entitlements WHERE ext_ref = ?').bind(ext_ref).first();
   if (existing) return existing;
@@ -1266,26 +1339,29 @@ async function mintDownloadLink(env, entitlementId, email) {
 function emailReceipt(env, to, link, machine, order) {
   const o = order || {};
   const pass = isPass(o.plan);
-  const until = pass && o.expiresAt ? dayOf(o.expiresAt) : '';
+  const product = P.parsePlan(o.plan);
+  const until = (pass || product) && o.expiresAt ? dayOf(o.expiresAt) : '';
+  const productName = product ? `StreamDAW ${P.NAMES[product.id]}` : '';
   // Only a pass ordered before 2026-10-14 and paid after it can still land here: a plain receipt.
-  const subject = pass ? 'Your StreamDAW Pro (7 days): receipt and download' : 'Your StreamDAW Pro receipt and download';
+  const subject = product ? `Your ${productName} receipt and download` : pass ? 'Your StreamDAW Pro (7 days): receipt and download' : 'Your StreamDAW Pro receipt and download';
   const soon = env.MINTER_TOKEN ? 'usually within minutes' : 'usually within a day';
   const paid = typeof o.amount === 'number' ? (o.amount > 0 ? `₪${(o.amount / 100).toFixed(2)}` : (o.credit ? 'nothing more (your pass covered it)' : 'free (coupon)')) : '';
   const when = new Date().toISOString().slice(0, 10);
   const lines = [
     o.ref ? `Order: ${o.ref}` : '',
-    pass ? `Product: StreamDAW Pro for 7 days, every Pro feature until ${until}, no renewal`
+    product ? `Product: ${productName}, ${until ? `one year, until ${until} (nothing is charged after it)` : 'for good, every StreamDAW 1 update included'}`
+    : pass ? `Product: StreamDAW Pro for 7 days, every Pro feature until ${until}, no renewal`
          : `Product: StreamDAW Pro, one payment, every StreamDAW 1 update included`,
     paid ? `Paid: ${paid}${o.coupon ? ` (coupon ${o.coupon})` : ''}${o.credit ? ` (₪${(o.credit / 100).toFixed(2)} from your pass taken off)` : ''}` : '',
     `Date: ${when}`,
   ].filter(Boolean);
-  const keyWord = 'Pro key';
+  const keyWord = product ? 'key' : 'Pro key';
   const keyLine = machine
     ? `Your ${keyWord} for this Mac (${machine}) is being made now. It arrives in a second email, ${soon}: paste it into StreamDAW › Settings › Licence and press Unlock.`
     : `Get your ${keyWord} for each Mac you use on ${UNLOCK_URL} (sign in with this email).`;
   const upgrade = '';
   const text =
-`Thanks for getting ${pass ? 'StreamDAW Pro for 7 days' : 'StreamDAW Pro'}.
+`Thanks for getting ${product ? productName : pass ? 'StreamDAW Pro for 7 days' : 'StreamDAW Pro'}.
 
 ${lines.join('\n')}
 
@@ -1294,14 +1370,15 @@ ${link}
 
 ${keyLine}
 ${upgrade ? `\n${upgrade}\n` : ''}
-Then: install the .pkg (StreamDAW ${pass ? PASS_MIN_APP : MIN_APP} or newer), open your DAW, put StreamDAW on the master bus, press GO LIVE.
+Then: install the .pkg (StreamDAW ${product ? P.PRODUCTS_MIN_APP : pass ? PASS_MIN_APP : MIN_APP} or newer), open your DAW, put StreamDAW on the master bus, press GO LIVE.
 
 ${mailLinksText()}
 
 — Snowstar.Company`;
   const html = licenceMail({
-    title: pass ? `StreamDAW Pro until ${until}` : 'Welcome to StreamDAW Pro',
-    intro: pass ? `Thanks: every Pro feature until <b>${until}</b>. Your download is below; your key follows.`
+    title: product ? `Welcome to ${productName}` : pass ? `StreamDAW Pro until ${until}` : 'Welcome to StreamDAW Pro',
+    intro: product ? `Thanks for getting ${productName}${until ? `, until <b>${until}</b>` : ''}. Your download is below; your key follows.`
+         : pass ? `Thanks: every Pro feature until <b>${until}</b>. Your download is below; your key follows.`
                 : 'Thanks for getting StreamDAW Pro. Your download is below; your key follows.',
     steps: [
       'Download StreamDAW and install the .pkg.',
