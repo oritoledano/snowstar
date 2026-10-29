@@ -2144,3 +2144,6 @@ body.ag-open .site,body.ag-open main,body.ag-open .cat-wrap{
 /* The marks are pure white with clean alpha, so inverting gives true black —
    the same trick .nav-word already uses when the overlay turns light. */
 [data-theme="light"] .menu-word{filter:invert(1)}
+
+/* 2026-10-29: the hero glow and the logo strip bleed past the edge; the page never scrolls sideways. */
+html{overflow-x:clip}

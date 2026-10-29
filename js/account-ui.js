@@ -70,10 +70,10 @@
       news: 'Email me occasionally about new tracks and releases',
     },
     streamdaw: {
-      top: ['Download StreamDAW for Mac', '7 days of every Pro feature, no card',
+      top: ['Download StreamDAW for Mac', '7 days of every product, no card',
             'Free on your master bus after that', 'Your downloads and keys in one place'],
       bot: ['Stems, a mix for every listener', 'Every phone in time', 'Record anyone into your DAW'],
-      price: 'StreamDAW Pro <b data-ils="249">$81</b> once',
+      price: 'StreamDAW products from <b>$5</b> a month',
       news: 'Send me news about StreamDAW updates and new Snowstar apps',
     },
   };
