@@ -5,6 +5,9 @@
       ?c=, Pro only), the Mac from the app (?buy=1&machine=, &plan=monthly), checkout through the
       shared sign-in, the return from the payment page (?bought / ?pay=), the month's price in
       shekels from the Worker (/api/streamdaw/prices)
+   3b. by product (2026-10-27): once the Worker sells by product (/api/streamdaw/prices →
+      products.open), every [data-product] button checks that product out on HYP's page,
+      [data-when="products"] shows and [data-when="pro"] hides; until then Pro sells as before
    4. an owner on this page: the header button and a line above the plans point to
       the unlock page (apps/streamdaw-unlock.html), where keys are requested now.
    5. the free download: a Snowstar account first (the shared sign-up), then the file, then
@@ -151,7 +154,23 @@
   // subscriber once they start): every "₪…" of the month, and its big price in shekels, show the
   // server's own figure, never an agora off the card's.
   let monthPrice = null;   // {amount (agorot), usdCents}
+  // ── 3b. by product (2026-10-27) ──
+  // One switch on the Worker (STREAMDAW_PRODUCTS_OPEN) flips every page: a product's button buys
+  // that product, the Pro plans step aside. A year is one payment (no card kept), so these go to
+  // HYP's own page in this tab, not the Pro lightbox; the way back lands on this page's #productMsg.
+  const PRODUCT_NAMES = { splits: 'Splits', station: 'Station', record: 'Record', compare: 'Compare', party: 'Party', all: 'All products' };
+  const isProductPlan = (p) => /^(splits|station|record|compare|party|all):(year|once)$/.test(String(p || ''));
+  const periodOf = (id) => (id === 'compare' ? 'once' : 'year');
+  let productsOpen = false, productsKnown = null;
+  const productsAsked = new Promise((r) => { productsKnown = r; });
+  function paintProducts(open) {
+    productsOpen = open;
+    document.querySelectorAll('[data-when="products"]').forEach((el) => { el.hidden = !open; });
+    document.querySelectorAll('[data-when="pro"]').forEach((el) => { el.hidden = open; });
+    productsKnown(open);
+  }
   fetch('/api/streamdaw/prices', { credentials: 'omit' }).then((r) => (r.ok ? r.json() : null)).then((d) => {
+    paintProducts(!!(d && d.products && d.products.open));
     if (!d || !d.monthly || !(d.monthly.amount > 0)) return;
     monthPrice = d.monthly;
     // Not taking monthly payments yet (HYP's card tokens not switched on): the card offers the
@@ -165,7 +184,7 @@
     }
     document.querySelectorAll('[data-usd="8.99"]').forEach((el) => el.setAttribute('data-ils-fixed', (d.monthly.amount / 100).toFixed(2)));
     if (window.Money) window.Money.paint();
-  }).catch(() => {});
+  }).catch(() => { productsKnown(false); });
   const monthBox = $('monthMsg');
   function monthMsg(html, good) { if (!monthBox) return; monthBox.innerHTML = html; monthBox.className = 'msg ' + (good ? 'ok' : 'bad'); monthBox.hidden = false; }
   // What the Worker says when a month cannot be started for this account (worker/src/streamdaw-subs.js).
@@ -243,9 +262,15 @@
     // &plan=pass is what apps up to 0.5.5 send for the 7-day pass, which is gone: the plans, with
     // Pro Monthly ready to press, and nothing opened for them.
     const asked = q.get('plan');
+    // &product= (the app's product picker, 2026-10-27): that product once the Worker sells by
+    // product; before that, Pro as always (it holds every product).
     if (q.get('buy') === '1' && asked !== 'pass') {
-      toPricing(300);
-      setTimeout(() => buy(asked === 'monthly' ? 'monthly' : 'lifetime'), 450);
+      const want = String(q.get('product') || '').toLowerCase();
+      productsAsked.then((open) => {
+        if (!open) { toPricing(300); setTimeout(() => buy(asked === 'monthly' ? 'monthly' : 'lifetime'), 450); return; }
+        toPricing(300);
+        if (PRODUCT_NAMES[want]) setTimeout(() => buyProduct(want), 450);
+      });
     } else if (asked === 'monthly' || asked === 'pass') {
       toPricing(300);
       setTimeout(() => { const p = $('buyMonthly'); if (p) p.focus({ preventScroll: true }); }, 700);
@@ -255,9 +280,10 @@
   // ── success (a free grant, or back from a paid HYP checkout) ──
   // The Pro card turns into the ticket, and the checkout lightbox shows the result (from the
   // full-page return, ?bought=1); `quiet` when the lightbox itself reported it.
-  const planOf = (p) => (p === 'monthly' ? 'monthly' : 'lifetime');
+  const planOf = (p) => (p === 'monthly' ? 'monthly' : isProductPlan(p) ? p : 'lifetime');
   function success(downloadUrl, free, plan, quiet) {
     plan = planOf(plan);
+    if (isProductPlan(plan)) { productDone({ bought: true, free, plan, download: downloadUrl }); return; }
     const monthly = plan === 'monthly';
     // The paid card turns into the ticket: Pro Monthly's or Pro's.
     const t = monthly ? $('monthlyCard') : $('ticket');
@@ -373,17 +399,68 @@
     if (wishOff) { wishOff(); wishOff = null; }       // this press is the wish now
     // Resume the purchase after sign-in, once: the kept wish goes with it.
     if (window.SnowstarAuthResume) window.SnowstarAuthResume(() => { keepBuy(null); (resume || (() => doCheckout(plan)))(); });
-    open('signup', planOf(plan) === 'monthly'
+    open('signup', isProductPlan(plan)
+      ? 'A free Snowstar account first, then StreamDAW ' + PRODUCT_NAMES[plan.split(':')[0]] + '. Your key and receipt go to its email.'
+      : planOf(plan) === 'monthly'
       ? 'A free Snowstar account first, then Pro Monthly. Your key and receipts go to its email, and you cancel from it any time.'
       : 'A free Snowstar account first, then StreamDAW Pro. Your key and receipt go to its email.', 'app');
   }
   // The checkout lightbox, signed in or not: signed out, the shared sign-up opens over it at once
   // (a click, or the app's ?buy=1 on arrival, as with the lightbox off) and the payment form follows.
   async function buy(plan) {
+    if (isProductPlan(plan)) { const [id, period] = plan.split(':'); return buyProduct(id, period); }
     await ready();
     await couponFromLink;                 // a ?c= code is checked before checkout starts
     return doCheckout(plan, { askSignIn: true });
   }
+  // A product, for a year (Compare: for good). Signed in first, then HYP's page in this tab.
+  async function buyProduct(id, period) {
+    const plan = id + ':' + (period || periodOf(id));
+    if (!isProductPlan(plan)) return;
+    await ready();
+    await couponFromLink;
+    try { sessionStorage.setItem('sd_plan', plan); } catch (e) {}   // read back on the way home from HYP
+    if (!signedIn()) { openAuth(plan, () => buyProduct(id, period)); return; }
+    keepBuy(null);
+    const btns = document.querySelectorAll('[data-product]'); btns.forEach((b) => { b.disabled = true; b.style.opacity = 0.6; });
+    try {
+      const r = await fetch('/api/streamdaw/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'include',
+        body: JSON.stringify({ product: id, period: plan.split(':')[1], coupon: coupon ? coupon.code : null, machine: forMac() }) });
+      const d = await r.json().catch(() => null);
+      if (d && d.free) { productDone({ bought: true, free: true, plan, download: d.download || null }); return; }
+      if (d && d.url) { location.href = d.url; return; }                 // → HYP's payment page
+      if (needsSignIn(d)) { openAuth(plan, () => buyProduct(id, period)); return; }
+      productDone({ bought: false, plan, text: (d && d.reason) || 'Checkout did not open' + (d && d.error ? ' (' + d.error + ')' : '') + '. Nothing was charged. Please try again.' });
+    } catch (err) { productDone({ bought: false, plan, text: 'No connection: checkout could not be reached. Nothing was charged.' }); }
+    finally { btns.forEach((b) => { b.disabled = false; b.style.opacity = 1; }); }
+  }
+  // What came of it, in #productMsg (the hub's prices); on a page without one, the hub's.
+  function productDone(r) {
+    const box = $('productMsg');
+    if (!box) { if (r.text) alert(r.text); return; }
+    const name = PRODUCT_NAMES[String(r.plan || '').split(':')[0]] || 'StreamDAW';
+    const once = /:once$/.test(r.plan || '');
+    let h;
+    if (r.bought) {
+      h = '<b>' + escT(name) + (name === 'All products' ? ' are yours ' : ' is yours ') + (once ? 'for good.' : 'for a year.') + '</b> '
+        + (r.free ? 'No charge. Enjoy.' : 'Payment received. Thank you.') + ' '
+        + (forMac() ? 'The key for this Mac is being made and arrives by email: paste everything in its box into StreamDAW › Settings › Licence.'
+                    : 'Next, get the key for your Mac on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.')
+        + (r.download ? ' <a href="' + escT(r.download) + '">Download StreamDAW</a>' : '');
+    } else if (r.pay === 'confirming') h = 'Your payment is being confirmed. We will email you as soon as it is, with your key. Nothing to do now.';
+    else if (r.pay === 'failed') h = r.reason === 'declined' ? 'The card was declined, so nothing went through. Try again, or use another card.'
+      : 'The payment did not go through. Try again, or write to hello@snowstar.company and we will sort it out.';
+    else h = escT(r.text || 'Checkout did not open. Nothing was charged.');
+    box.innerHTML = h;
+    box.className = 'msg ' + (r.bought || r.pay === 'confirming' ? 'ok' : 'bad');
+    box.hidden = false;
+    setTimeout(() => box.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'center' }), 300);
+  }
+  document.querySelectorAll('[data-product]').forEach((el) => el.addEventListener('click', (e) => {
+    if (!productsOpen) return;                    // not sold by product yet: the link goes to Pro, as before
+    e.preventDefault();
+    buyProduct(el.getAttribute('data-product'), el.getAttribute('data-period') || null);
+  }));
   document.querySelectorAll('[data-buy]').forEach((el) => el.addEventListener('click', (e) => {
     e.preventDefault();
     if (el.dataset.manage) { location.href = '../account.html#apps'; return; }   // a subscriber's "Manage subscription"
@@ -425,6 +502,9 @@
   const lastPlan = () => { try { return planOf(sessionStorage.getItem('sd_plan')); } catch (e) { return 'lifetime'; } };
   if (framedReturn) {
     /* the lightbox around this frame shows it */
+  } else if ((q.get('bought') === '1' || q.get('pay')) && isProductPlan(lastPlan())) {
+    toPricing(0);       // back from HYP with a product: the answer goes under the products' prices
+    productDone({ bought: q.get('bought') === '1', free: q.get('free') === '1', plan: lastPlan(), pay: q.get('pay'), reason: q.get('reason') });
   } else if (q.get('bought') === '1') {
     toPricing(0);
     success(null, q.get('free') === '1', lastPlan());
@@ -564,4 +644,47 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(soon);
   const rail = document.getElementById('featRail');
   if (rail && window.MutationObserver) new MutationObserver(soon).observe(rail, { subtree: true, characterData: true, childList: true });
+})();
+
+// The hero's use cases, typed one by one (2026-10-29, the founder): type a line, hold it, delete it, type the
+// next. The lines are #hero .tw-src (the site editor's streamdaw.hero.lines, one a line), read again before
+// each line so an edit shows at once. Each line gets the drawing its words point to (a mix, a voice, the
+// radio…), so a line written in the editor still finds one. Reduced motion: whole lines, no typing.
+(function () {
+  const box = document.querySelector('#hero .tw'), src = document.querySelector('#hero .tw-src');
+  if (!box || !src) return;
+  const t = box.querySelector('.tw-t'), ic = box.querySelector('.tw-ic');
+  const S = (d) => '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+  const ART = [
+    [/radio|station|broadcast|on air/i, S('<circle cx="12" cy="10" r="2"/><path d="M8.5 6.5a5 5 0 0 0 0 7M15.5 6.5a5 5 0 0 1 0 7M5.6 3.6a9 9 0 0 0 0 12.8M18.4 3.6a9 9 0 0 1 0 12.8M12 12v9"/>')],
+    [/voice|record|sing|take/i, S('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>')],
+    [/compare|a\/b|cuts|pictures|notes/i, S('<rect x="3" y="5" width="8" height="14" rx="1.5"/><rect x="13" y="5" width="8" height="14" rx="1.5"/><path d="M6 12h2M16 10.5l1.5 3 1.5-3"/>')],
+    [/click|metronome|count|stage/i, S('<path d="M9 3h6l3.5 18h-13z"/><path d="M12 15l4-9"/><circle cx="12" cy="15" r="1"/>')],
+    [/phone|sound system|party|disco|room/i, S('<rect x="2.5" y="6" width="5" height="10" rx="1"/><rect x="9.5" y="4" width="5" height="12" rx="1"/><rect x="16.5" y="6" width="5" height="10" rx="1"/><path d="M3 20c3-2 5-2 9 0s6 2 9 0"/>')],
+    [/fans|live|play your|track to/i, S('<circle cx="12" cy="12" r="4.5"/><path d="M11 10v4l3-2z"/><circle cx="4" cy="5" r="1.4"/><circle cx="20" cy="5" r="1.4"/><circle cx="4" cy="19" r="1.4"/><circle cx="20" cy="19" r="1.4"/>')],
+    [/mix|fader|team|player/i, S('<path d="M6 3v18M12 3v18M18 3v18"/><rect x="4" y="13" width="4" height="3" rx=".8"/><rect x="10" y="6" width="4" height="3" rx=".8"/><rect x="16" y="10" width="4" height="3" rx=".8"/>')],
+  ];
+  const artFor = (line, i) => { const hit = ART.find(([re]) => re.test(line)); return (hit || ART[i % ART.length])[1]; };
+  // From the markup, not innerText: the list is display:none, and a hidden element's innerText has no line breaks.
+  const tmp = document.createElement('div');
+  const lines = () => src.innerHTML.split(/<br\s*\/?>|<\/div>|<\/p>|\n|\s\/\s/i)
+    .map((x) => { tmp.innerHTML = x; return tmp.textContent.replace(/\s+/g, ' ').trim(); }).filter(Boolean);
+  const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  // A screen reader gets every line once, not a stream of letters.
+  const sr = document.createElement('p'); sr.className = 'sr-only'; sr.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)';
+  box.after(sr);
+  (async function run() {
+    for (let i = 0; ; i++) {
+      const all = lines(); if (!all.length) { await wait(1000); continue; }
+      sr.textContent = all.join(' ');
+      const line = all[i % all.length];
+      ic.classList.add('swap'); ic.innerHTML = artFor(line, i); requestAnimationFrame(() => ic.classList.remove('swap'));
+      if (calm) { t.textContent = line; await wait(3200); continue; }
+      for (let k = 1; k <= line.length; k++) { t.textContent = line.slice(0, k); await wait(38 + Math.random() * 40); }
+      await wait(1700);
+      for (let k = line.length; k >= 0; k--) { t.textContent = line.slice(0, k); await wait(18); }
+      await wait(260);
+    }
+  })();
 })();

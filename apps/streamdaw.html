@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=11">
+<link rel="stylesheet" href="../css/streamdaw.css?v=12">
 <link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
@@ -50,10 +50,10 @@
 },
  {
 "@type": "Question",
-"name": "Which DAWs has it been tested in?",
+"name": "Which DAWs does it work with?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "We have streamed sessions from Ableton Live and from the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig, which we have not tested yet. Pro Tools is on the way."
+"text": "Tested in Ableton Live and the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig. Pro Tools is on the way."
 }
 },
  {
@@ -125,8 +125,6 @@
     <a href="#top" aria-label="StreamDAW"><img class="wordmark" src="../assets/streamdaw-wordmark-black.png" alt="StreamDAW" width="149" height="15"></a>
     <nav aria-label="Page">
       <a href="#products">Products</a>
-      <a href="#features">Features</a>
-      <a href="#stories">Stories</a>
       <a href="#demo">Try it</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">Questions</a>
@@ -139,35 +137,23 @@
   </div>
 </header>
 
-<main id="top">
+<main id="top" data-autotxt>
 
   <!-- ── hero: the line, the buttons, the app at work ── -->
   <section class="hero" id="hero" aria-labelledby="heroTitle">
     <div class="wrap">
-      <p class="kicker hero-kicker"><img class="app-ic" src="streamdaw-icon-128.png?v=2" width="26" height="26" alt=""><span data-txt="streamdaw.hero.kicker">For Apple silicon Macs · AU and VST3</span></p>
+      <p class="kicker hero-kicker"><img class="app-ic" src="streamdaw-icon-128.png?v=2" width="26" height="26" alt=""><span data-txt="streamdaw.hero.kicker">Apple silicon Macs · AU and VST3</span></p>
       <h1 id="heroTitle" data-txt="streamdaw.hero.title"><span class="nb">Stream your DAW.</span><br><em>Live. Lossless.</em></h1>
-      <p class="lead" data-txt="streamdaw.hero.sub">Anyone with the link hears your session as you play it, lossless. Nothing for them to install.</p>
-      <!-- The 7-day trial is the main door (2026-10-13, Ori). It is the free download: a Snowstar
-           account, then the installer, and the app starts the trial by itself on first launch. One
-           button for both, since two buttons doing the same thing read as two different offers.
-           The line under it says what happens after day 7, so it never feels like a trap. Its keys
-           are new (cta-trial, trial-*): the old streamdaw.hero.fine override no longer applies.
-           2026-10-13 (Ori): no buy button up here; buying lives in #pricing and in the app. -->
+      <!-- The use cases, typed one by one (2026-10-29, the founder): js/streamdaw-page.js types each line, holds it,
+           deletes it and types the next, with its drawing beside it. The lines are the editable list under it
+           (streamdaw.hero.lines, one a line; the site editor shows it while editing texts). -->
+      <p class="tw" aria-hidden="true"><span class="tw-ic"></span><span class="tw-t"></span><i class="tw-caret"></i></p>
+      <p class="tw-src" data-txt="streamdaw.hero.lines">Share a mix with the team.<br>Record a voice-over artist across seas.<br>Start an online radio station.<br>Compare mixes, cuts and pictures with your band.<br>Put a click in every player's ear.<br>Turn every phone into one sound system.<br>Give every player a mix of their own.<br>Play your new track to fans, live.</p>
+      <p class="lead" data-txt="streamdaw.hero.link">They get a link. Nothing to install.</p>
       <div class="cta">
         <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-trial">Try Pro free for 7 days</span></a>
         <a class="btn ghost" href="#products" data-txt="streamdaw.hero.cta-more">See the products</a>
       </div>
-      <p class="fine trial-fine"><span data-txt="streamdaw.hero.trial-fine">No card. After the 7 days, your master bus streams free forever. Or keep Pro for</span>&nbsp;<span data-ils="249">$81</span>&nbsp;<span data-txt="streamdaw.hero.trial-once">once.</span></p>
-
-      <!-- media/streamdaw/hero.*: the app on a Mac and a listener's phone, looping. Hydrated and
-           played by js/streamdaw-page.js (only while on screen; posters only for reduced motion). -->
-      <figure class="reel wide mark hero-reel" data-media="hero" aria-label="StreamDAW on a Mac, and a phone playing the session">
-        <video muted loop playsinline preload="none" width="1920" height="1080"></video>
-        <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-      </figure>
-      <!-- Only what has been streamed from goes after "Tested in" (2026-10-13: Live and the app).
-           Move a DAW up once a session has run in it. -->
-      <p class="works" data-txt="streamdaw.hero.works"><span>Tested in <b>Ableton Live</b> and <b>the StreamDAW app</b></span><span class="dot" aria-hidden="true">·</span><span>Loads as AU/VST3 in Logic, Cubase, Studio One, Reaper, Bitwig</span></p>
     </div>
   </section>
 
@@ -178,21 +164,19 @@
        (StreamDAW Pro, which unlocks every product) are what is sold. ── -->
   <section class="products" id="products" aria-labelledby="prodTitle">
     <div class="wrap">
-      <div class="sec-head"><div><p class="kicker">One app, six products</p>
-        <h2 id="prodTitle">For producers, engineers, hosts and venues. Pick what you came to do.</h2></div></div>
-      <p class="prod-note">One download for all of them. <b>Master is free.</b> Until each product has its own checkout, <a href="#pricing" style="text-decoration:underline">StreamDAW Pro</a> unlocks every product.</p>
       <!-- the products in one video (2026-10-26, ≈ 64 s, silent, captions): STREAMDAW tools/site-shots/hub-video.js -->
       <figure class="reel wide prod-tour" style="margin-bottom:clamp(28px,3.4vw,40px);box-shadow:var(--lift)" data-media="products/tour" data-v="1" aria-label="StreamDAW in one minute: Master, Splits, Station, Record, Compare and Party, each doing what it does, and Screens coming soon">
         <video muted loop playsinline preload="none" width="1920" height="1080"></video>
         <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
       </figure>
+      <div class="sec-head"><h2 id="prodTitle" data-txt="streamdaw.products.title">Pick what you came to do.</h2></div>
       <!-- the cards' stills (2026-10-26): real screenshots of the 0.7.1 pages, STREAMDAW tools/site-shots/shoot.js -->
       <ul class="prod-grid">
         <li class="pcard"><a href="streamdaw-master.html">
             <div class="thumb"><img src="../media/streamdaw/products/master-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
             <div class="body">
               <h3>Master <span class="ptag lime">Free</span></h3>
-              <p>Your master, or everything your Mac plays, on a link. Listeners need only a browser.</p>
+              <p data-txt="streamdaw.products.master">Your master bus on a link. They only need a browser.</p>
               <span class="pr">Free</span>
               <span class="go">See Master <span aria-hidden="true">→</span></span>
             </div>
@@ -201,8 +185,8 @@
             <div class="thumb"><img src="../media/streamdaw/products/splits-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
             <div class="body">
               <h3>Splits </h3>
-              <p>Every track to every listener, each with a mix of their own. On stage too: click and guide in every ear.</p>
-              <span class="pr">$12 a month<small>or $99 a year</small></span>
+              <p data-txt="streamdaw.products.splits">Every track to every ear, in personal mixes. Click and guide on stage.</p>
+              <span class="pr">$99 a year</span>
               <span class="go">See Splits <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -210,8 +194,8 @@
             <div class="thumb"><img src="../media/streamdaw/products/station-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
             <div class="body">
               <h3>Station </h3>
-              <p>Your radio station in a browser: two decks, a crossfader, your voice and your guests.</p>
-              <span class="pr">$14.99 a month<small>or $119 a year</small></span>
+              <p data-txt="streamdaw.products.station">Your radio station in a browser: two decks, a crossfader, your voice and guests.</p>
+              <span class="pr">$119 a year</span>
               <span class="go">See Station <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -219,8 +203,8 @@
             <div class="thumb"><img src="../media/streamdaw/products/record-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
             <div class="body">
               <h3>Record </h3>
-              <p>Remote Inputs: record anyone in the world. Their take lands on your DAW's track, in time.</p>
-              <span class="pr">$15 a month<small>or $129 a year</small></span>
+              <p data-txt="streamdaw.products.record">Record anyone, anywhere. The take lands on your track, in time. Or hand them a channel to play and record on their own.</p>
+              <span class="pr">$129 a year</span>
               <span class="go">See Record <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -228,8 +212,8 @@
             <div class="thumb"><img src="../media/streamdaw/products/compare-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
             <div class="body">
               <h3>Compare </h3>
-              <p>A/B your mixes, cuts and pictures with a client through one link, with notes on the moment.</p>
-              <span class="pr">$49 once<small>or $5 a month</small></span>
+              <p data-txt="streamdaw.products.compare">A/B mixes, cuts and pictures with a client. Notes land on the moment.</p>
+              <span class="pr">$49 once</span>
               <span class="go">See Compare <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -237,228 +221,14 @@
             <div class="thumb"><img src="../media/streamdaw/products/party-card.webp" alt="" loading="lazy" decoding="async" width="1200" height="900"></div>
             <div class="body">
               <h3>Party </h3>
-              <p>Every phone in the room on one beat: a silent disco, or the whole place as one sound system.</p>
-              <span class="pr">$9 a month<small>or $79 a year</small></span>
+              <p data-txt="streamdaw.products.party">Every phone in the room on one beat. A silent disco, or one big sound system.</p>
+              <span class="pr">$79 a year</span>
               <span class="go">See Party <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
-        <li class="pcard soon"><a href="streamdaw-screens.html">
-            <!-- PLACEHOLDER: no clip of Screens yet (STREAMDAW/wip/sale-pages-clips-2026-10-25.md) -->
-            <div class="thumb"><span class="ph-frame"><i aria-hidden="true"></i><span>New clip coming</span></span></div>
-            <div class="body">
-              <h3>Screens <span class="ptag soon">Coming soon</span></h3>
-              <p>A silent screen's video, with a language track on each visitor's phone by QR code.</p>
-              <span class="pr">Coming soon<small>Tell me when</small></span>
-              <span class="go">See Screens <span aria-hidden="true">→</span></span>
-            </div>
-          </a></li>
       </ul>
-      <div class="bundle"><b>Every paid product together</b><span>$199 a year, or $19.99 a month</span></div>
-    </div>
-  </section>
-
-  <!-- ── remote production (2026-10-18, Ori: "a new use case to promote: remote music production
-       collaboration; sell it fast and simple"). Every line is true in 0.6.0: the clean take replaces the
-       live one by itself in Live 12 (Live 11: drag it in, StreamDAW says where). Goes live with 0.6.0. ── -->
-  <section class="collab" id="collab" aria-labelledby="collabTitle">
-    <div class="wrap">
-      <p class="kicker" data-txt="streamdaw.collab.kicker">Remote production</p>
-      <h2 id="collabTitle" class="big" data-txt="streamdaw.collab.title">Make music with someone in another city, as if they were in the room.</h2>
-      <ul class="lines">
-        <li data-txt="streamdaw.collab.l1">They hear your session as you play it, lossless, on their phone or laptop.</li>
-        <li data-txt="streamdaw.collab.l2">They sing or play, and the take lands on your track, on the beat. A clean copy replaces it after every take.</li>
-        <li data-txt="streamdaw.collab.l3">They can press Play, loop a part and leave a note on your timeline. A keyboard player sends MIDI from their own keys.</li>
-      </ul>
-      <div class="cta" style="margin-top:28px">
-        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><span data-txt="streamdaw.collab.cta">Start a session</span></a>
-      </div>
-      <p class="fine" style="margin-top:12px" data-txt="streamdaw.collab.fine">Free on your master bus. Every Pro feature free for 7 days, no card.</p>
-    </div>
-  </section>
-
-  <!-- ── what you can do: one tall card per feature, a clip each ── -->
-  <section class="feats" id="features" aria-labelledby="featTitle">
-    <div class="wrap sec-head">
-      <h2 id="featTitle" data-txt="streamdaw.features.title">What you can do.</h2>
-      <div class="arrows">
-        <button class="arrow" type="button" data-rail="-1" aria-label="Previous" aria-controls="featRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <button class="arrow" type="button" data-rail="1" aria-label="Next" aria-controls="featRail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-      </div>
-    </div>
-    <ul class="rail" id="featRail" tabindex="0" aria-label="StreamDAW features">
-      <li class="feat">
-        <figure class="reel tall" data-media="golive">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.golive.label">Share</span></span><h3 data-txt="streamdaw.features.golive.title">Go live</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.golive.sub">Press Go Live. Send the link or show the QR code. They press Play.</p>
-      </li>
-      <li class="feat">
-        <figure class="reel tall" data-media="ownmix">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.ownmix.label">Mix</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.ownmix.title">Their own mix</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.ownmix.sub">Send up to 32 stems. Each listener sets level, solo, mute and pan on their phone.</p>
-      </li>
-      <li class="feat">
-        <figure class="reel tall" data-media="intime">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.intime.label">Sync</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.intime.title">In time, every phone</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.intime.sub">Every phone plays the same instant, so a band can rehearse on in-ears. A few beeps line up the room's speakers.</p>
-      </li>
-      <li class="feat">
-        <figure class="reel tall" data-media="engineer">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.engineer.label">Control</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.engineer.title">You're the engineer</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.engineer.sub">Pick anyone and set their mix from your desk. Copy it, paste it to the next.</p>
-      </li>
-      <li class="feat">
-        <figure class="reel tall" data-media="pictures">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.pictures.label">Video</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.pictures.title">See each other</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.pictures.sub">Six guests on camera, up to three shared screens and talkback. Shared screens play in time with the music.</p>
-      </li>
-      <li class="feat">
-        <figure class="reel tall" data-media="record">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.record.label">Record</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.record.title">Record anyone</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.record.sub">Put up to 16 people on DAW inputs. With earphones in, each voice lands on its track in time.</p>
-      </li>
-      <li class="feat">
-        <figure class="reel tall" data-media="anyapp">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.anyapp.label">Sources</span> <span class="pro">Pro</span></span><h3 data-txt="streamdaw.features.anyapp.title">Any app, into the stream</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.anyapp.sub">Spotify, Music, YouTube, a browser or an interface, mixed into the stream.</p>
-      </li>
-      <li class="feat">
-        <figure class="reel tall" data-media="analytics" data-v="2">
-          <video muted loop playsinline preload="none" width="1080" height="1350"></video>
-          <figcaption class="feat-top"><span class="lab"><span data-txt="streamdaw.features.analytics.label">Analytics</span></span><h3 data-txt="streamdaw.features.analytics.title">Know it's working</h3></figcaption>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <p class="feat-cap" data-txt="streamdaw.features.analytics.sub">Who is listening, how loud it is, and how each connection is holding up.</p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- ── the three stories the product is built for (Ori's title: "One app, Three use cases").
-       Each frame plays media/streamdaw/review.* or band.* once those exist; until then the
-       drawn still under the video is what shows. The third has only its still for now. ── -->
-  <section class="stories" id="stories" aria-labelledby="storiesTitle">
-    <div class="wrap">
-      <div class="sec-head"><h2 id="storiesTitle" data-txt="streamdaw.stories.title">One app, Three use cases</h2></div>
-
-      <article class="story">
-        <figure class="reel wide" data-media="review" aria-label="A score review: six people on camera, a voice-over take recording on a track">
-          <div class="still" aria-hidden="true">
-            <div class="tiles">
-              <div class="tile"><div class="av" style="background:#f3e3a8">CD</div><span class="nm">Creative director</span></div>
-              <div class="tile"><div class="av" style="background:#c9cdfb">FD</div><span class="nm">Film director</span></div>
-              <div class="tile talk"><div class="av" style="background:var(--lime)">BM</div><span class="nm">Brand manager</span><span class="say">“Warmer on the last line.”</span></div>
-              <div class="tile"><div class="av" style="background:#f2c6d4">CW</div><span class="nm">Copywriter</span></div>
-              <div class="tile"><div class="av" style="background:#bfe8dc">PR</div><span class="nm">Producer</span></div>
-              <div class="tile"><div class="av" style="background:#ffd0b5">VO</div><span class="nm">Voice-over</span></div>
-            </div>
-            <div class="take">
-              <div class="take-h"><span>VO · Take 2</span><span class="rec">REC</span></div>
-              <div class="lane"><svg viewBox="0 0 400 60" preserveAspectRatio="none" id="wave"></svg></div>
-            </div>
-          </div>
-          <video muted loop playsinline preload="none" width="1920" height="1080"></video>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <div>
-          <p class="kicker" data-txt="streamdaw.stories.review.kicker">Remote studio session</p>
-          <h3 data-txt="streamdaw.stories.review.title">Meet &amp; Collab</h3>
-          <ul class="lines">
-            <li data-txt="streamdaw.stories.review.l1">The team hears the score as you play it, and watches the cut in time with it.</li>
-            <li data-txt="streamdaw.stories.review.l2">You let the voice-over artist in, earphones on. Her take lands on a track in your DAW, in time.</li>
-            <li data-txt="streamdaw.stories.review.l3">The brand manager solos her and asks for one change over talkback. Take two.</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="story flip">
-        <!-- 2026-10-15: no count of phones on this still or its label ("8 phones in time" was never done
-             with people; the most in sync at once so far is 4, which is what the clip shows). -->
-        <figure class="reel wide" data-media="band" aria-label="Phones at a rehearsal, each on its own mix, in sync mode">
-          <div class="still band" aria-hidden="true">
-            <span class="count">1, 2, 3, 4!</span>
-            <div class="phones">
-              <div class="ph"><span class="scr"><i></i></span><b>Drums</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Bass</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Guitar</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Keys</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Violin</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Cello</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Horns</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Perc</b></div>
-            </div>
-            <span class="synced">Sync mode on</span>
-          </div>
-          <video muted loop playsinline preload="none" width="1920" height="1080"></video>
-          <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
-        </figure>
-        <div>
-          <!-- 2026-10-18: StreamDAW carries the tracks half of a stage (Ori: live instruments still need
-               a stage mixer), so the promise is click, guide and tracks in every ear. New keys. -->
-          <p class="kicker" data-txt="streamdaw.stories.stage.kicker">On stage</p>
-          <h3 data-txt="streamdaw.stories.stage.title">Click and guide in every ear</h3>
-          <ul class="lines">
-            <li data-txt="streamdaw.stories.stage.l1">Your backing tracks, click and guide go to every player's phone. Each sets their own level.</li>
-            <li data-txt="streamdaw.stories.stage.l2">The PA and the earphones play the same beat. Only the players hear the count.</li>
-            <li data-txt="streamdaw.stories.stage.l3">Live instruments stay on your stage mix. StreamDAW carries the tracks.</li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- Story 3, the silent disco (2026-10-13). The app's "Silent disco" preset is built (no
-           microphone; tap along for Bluetooth) but not yet tried at a party on real phones
-           (wip/earphone-sync-2026-10-13.md §6), so the copy says what it does and promises no
-           counts and no exact timing on Bluetooth. A drawn still, no clip yet: once
-           media/streamdaw/party.* exists, add data-media="party", the <video> and the .vbtn
-           like the two above. Not .flip, so the three alternate left, right, left.
-           2026-10-15: no "syncs itself" or "line that phone up" either: the lines say what the
-           phone does (the browser's reported delay, the tap-along), not how close it gets. -->
-      <article class="story">
-        <figure class="reel wide" aria-label="Phones on earphones and speakers, on the same beat">
-          <div class="still band party" aria-hidden="true">
-            <span class="count">124 BPM</span>
-            <div class="phones">
-              <div class="ph"><span class="scr"><i></i></span><b>Wired</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Earbuds</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Over-ear</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>In-ear</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Wired</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Earbuds</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Speaker</b></div>
-              <div class="ph"><span class="scr"><i></i></span><b>Speaker</b></div>
-            </div>
-            <span class="synced">One beat</span>
-          </div>
-        </figure>
-        <div>
-          <p class="kicker" data-txt="streamdaw.stories.unison.kicker">Unison</p>
-          <h3 data-txt="streamdaw.stories.unison.title">Every phone, one beat</h3>
-          <ul class="lines">
-            <li data-txt="streamdaw.stories.unison.l1">Guests scan one QR code and press Play. No waiting room.</li>
-            <li data-txt="streamdaw.stories.unison.l2">On their own earphones it's a silent disco. On their speakers, the whole place plays as one sound system.</li>
-            <li data-txt="streamdaw.stories.unison.l3">On Bluetooth, a guest taps along to a tick to correct that phone's delay.</li>
-          </ul>
-        </div>
-      </article>
+      <div class="bundle"><b data-txt="streamdaw.products.bundle">Every paid product together</b><span>$199 a year</span></div>
+      <p class="prod-note" data-txt="streamdaw.products.note">One download. <b>Master is free.</b></p>
     </div>
   </section>
 
@@ -502,24 +272,50 @@
   <section id="pricing">
     <div class="wrap">
       <div class="sec-head center">
-        <p class="kicker" data-txt="streamdaw.pricing.kicker">Free, monthly or once</p>
-        <h2 data-txt="streamdaw.pricing.title">Try everything. Pay monthly, or once.</h2>
+        <p class="kicker" data-when="pro" data-txt="streamdaw.pricing.kicker">Free, monthly or once</p>
+        <h2 data-when="pro" data-txt="streamdaw.pricing.title">Try everything. Pay monthly, or once.</h2>
+        <p class="kicker" data-when="products" hidden>One payment a year</p>
+        <h2 data-when="products" hidden>Try everything. Pay for what you use.</h2>
       </div>
 
       <!-- Shown to someone signed in who owns Pro or Pro Monthly (js/streamdaw-page.js). -->
       <p class="owned" id="owned" hidden>You have StreamDAW Pro. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="streamdaw-install.html?dl=pro">Download the installer</a></p>
 
-      <div class="plans three">
+      <!-- By product (2026-10-27): shown once the Worker sells by product (STREAMDAW_PRODUCTS_OPEN=1,
+           js/streamdaw-page.js 3b); the Pro plans below step aside then. A year is one payment. -->
+      <p class="msg" id="productMsg" hidden></p>
+      <div class="plans three" data-when="products" hidden>
+        <div class="plan"><span class="tag">Splits</span><div class="price"><span data-usd="99">$99</span><small>a year · VAT included</small></div>
+          <p class="note">Every track to every listener, each with a mix of their own. On stage too.</p>
+          <button class="btn ink" data-product="splits">Get Splits</button></div>
+        <div class="plan"><span class="tag">Station</span><div class="price"><span data-usd="119">$119</span><small>a year · VAT included</small></div>
+          <p class="note">Your radio station in a browser: two decks, a crossfader, your voice and your guests.</p>
+          <button class="btn ink" data-product="station">Get Station</button></div>
+        <div class="plan"><span class="tag">Record</span><div class="price"><span data-usd="129">$129</span><small>a year · VAT included</small></div>
+          <p class="note">Record anyone in the world into your DAW, in time.</p>
+          <button class="btn ink" data-product="record">Get Record</button></div>
+        <div class="plan"><span class="tag">Compare</span><div class="price"><span data-usd="49">$49</span><small>once · VAT included</small></div>
+          <p class="note">Mix versions side by side for your client, through a link.</p>
+          <button class="btn ink" data-product="compare">Get Compare</button></div>
+        <div class="plan"><span class="tag">Party</span><div class="price"><span data-usd="79">$79</span><small>a year · VAT included</small></div>
+          <p class="note">Every phone in the room plays the music, in time.</p>
+          <button class="btn ink" data-product="party">Get Party</button></div>
+        <div class="plan pro"><span class="tag lime">All products</span><div class="price"><span data-usd="199">$199</span><small>a year · VAT included</small></div>
+          <p class="note">Splits, Station, Record, Compare and Party.</p>
+          <button class="btn lime" data-product="all">Get All products</button></div>
+      </div>
+      <p class="after" data-when="products" hidden style="text-align:center;max-width:46em;margin:22px auto 0">A year is one payment: nothing is charged after it, and buying again adds a year. Charged in shekels at the day's rate. Master is free. Bought StreamDAW Pro before? You have every product, for good. Try any product free for 7 days in the app. <a href="streamdaw-terms.html">Licence terms</a>.</p>
+
+      <div class="plans three" data-when="pro">
         <div class="plan">
           <span class="tag" data-txt="streamdaw.pricing.free.tag">StreamDAW</span>
           <div class="price" data-txt="streamdaw.pricing.free.price">Free</div>
           <p class="note" data-txt="streamdaw.pricing.free.note">For as long as you like.</p>
           <ul class="list">
-            <li data-txt="streamdaw.pricing.free.f1">Your master mix, straight from the plug-in</li>
-            <li data-txt="streamdaw.pricing.free.f2">A link and a QR code</li>
+            <li data-txt="streamdaw.pricing.free.f1">Your master mix on a link and a QR code</li>
             <li data-txt="streamdaw.pricing.free.f3">A waiting room: you let people in</li>
-            <li data-txt="streamdaw.pricing.free.f4">Up to 60 minutes a session</li>
-            <li data-txt="streamdaw.pricing.free.f5">Analytics: who is listening, loudness, connections</li>
+            <li data-txt="streamdaw.pricing.free.f4">60 minutes a session</li>
+            <li data-txt="streamdaw.pricing.free.f5">Who is listening, loudness, connections</li>
           </ul>
           <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.pricing.free.cta">Download for Mac</a>
         </div>
@@ -527,32 +323,31 @@
           <a class="frame-badge" href="/api/streamdaw/download/free" data-free-dl title="Try Pro free for 7 days: sign up and download. No card." aria-label="7-day free trial: try Pro free for 7 days, sign up and download, no card"><span data-txt="streamdaw.pricing.monthly.badge">7-day free trial</span></a>
           <span class="tag" data-txt="streamdaw.pricing.monthly.tag">StreamDAW Pro Monthly</span>
           <div class="price" id="monthPrice"><span data-usd="8.99" data-dp="2">$8.99</span><small>a month · VAT included</small></div>
-          <p class="note" id="monthSub">Charged <b><span data-usd="8.99" data-cur="ILS" data-dp="2" id="monthIls">₪27.62</span> a month</b> in shekels, the same every month. Cancel any time, no fee.</p>
+          <p class="note" id="monthSub"><b><span data-usd="8.99" data-cur="ILS" data-dp="2" id="monthIls">₪27.62</span> a month.</b> Cancel any time.</p>
           <ul class="list">
             <li data-txt="streamdaw.pricing.monthly.f1">Every Pro feature</li>
-            <li data-txt="streamdaw.pricing.monthly.f2">Renews every month until you cancel <small>Cancel in your account any time: Pro stays on to the end of the month you paid for</small></li>
-            <li data-txt="streamdaw.pricing.monthly.f3">Your key renews itself <small>StreamDAW fetches each month&rsquo;s key while it is online</small></li>
-            <li data-txt="streamdaw.pricing.monthly.f4">Billed from the day you start</li>
+            <li data-txt="streamdaw.pricing.monthly.f2">Cancel in your account: Pro runs to the end of the month</li>
+            <li data-txt="streamdaw.pricing.monthly.f3">The key renews itself</li>
           </ul>
           <p class="msg" id="monthMsg" hidden></p>
           <button class="btn ink" data-buy="monthly" id="buyMonthly" data-txt="streamdaw.pricing.monthly.cta">Start Pro Monthly</button>
           <a class="trial-link" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.pricing.monthly.trial">Try free for 7 days first</a>
-          <p class="after" data-txt="streamdaw.pricing.monthly.after">The 7-day trial is in the app: no card, no subscription. Starting Pro Monthly charges the first month today and the same every month after, until you cancel. <a href="streamdaw-terms.html#monthly">Terms</a>.</p>
+          <p class="after" data-txt="streamdaw.pricing.monthly.after">The 7-day trial is in the app. No card. <a href="streamdaw-terms.html#monthly">Terms</a>.</p>
         </div>
         <div class="plan pro" id="ticket">
           <span class="tag lime" id="stamp">StreamDAW Pro</span>
           <div class="price" id="bigPrice"><span data-ils="249">$81</span><small>one payment · VAT included</small></div>
-          <p class="note once" id="priceSub"><b>One payment. Yours forever.</b> No subscription. Every StreamDAW 1 update included.</p>
+          <p class="note once" id="priceSub"><b>Yours forever.</b> Every StreamDAW 1 update included.</p>
           <ul class="list">
             <li class="plus" data-txt="streamdaw.pricing.pro.plus">Everything in Free, plus:</li>
-            <li data-txt="streamdaw.pricing.pro.f1">Up to 32 stems, and a mix for every listener</li>
-            <li data-txt="streamdaw.pricing.pro.f2">Anyone's mix, set from your desk <small>Main or a listener; copy, paste, reset</small></li>
-            <li data-txt="streamdaw.pricing.pro.f3">Sync mode: every phone in time, the room lined up</li>
-            <li data-txt="streamdaw.pricing.pro.f4">Camera, up to three screens (a window or an app) and talkback</li>
-            <li data-txt="streamdaw.pricing.pro.f5">Record up to 16 people into your DAW, in time</li>
-            <li data-txt="streamdaw.pricing.pro.f6">Any app or input into the stream <small>Spotify, Music, YouTube, a browser, an interface</small></li>
-            <li data-txt="streamdaw.pricing.pro.f7">Presets, sign-in-only sessions, and your Mac's speakers in time with the phones</li>
-            <li data-txt="streamdaw.pricing.pro.f8">No 60-minute limit</li>
+            <li data-txt="streamdaw.pricing.pro.f1">Up to 32 stems, a mix for every listener</li>
+            <li data-txt="streamdaw.pricing.pro.f2">Anyone's mix, set from your desk</li>
+            <li data-txt="streamdaw.pricing.pro.f3">Sync: every phone in time, the room lined up</li>
+            <li data-txt="streamdaw.pricing.pro.f4">Camera, three shared screens and talkback</li>
+            <li data-txt="streamdaw.pricing.pro.f5">Record up to 16 people into your DAW</li>
+            <li data-txt="streamdaw.pricing.pro.f6">Any app or input into the stream</li>
+            <li data-txt="streamdaw.pricing.pro.f7">Presets and sign-in-only sessions</li>
+            <li data-txt="streamdaw.pricing.pro.f8">No time limit</li>
           </ul>
           <!-- No coupon field here (2026-10-13, Ori): a visible field sends visitors off to hunt for
                codes. A link with ?c=CODE still applies one (the price here shows it, checkout uses
@@ -560,24 +355,24 @@
           <p class="msg" id="couponMsg" hidden></p>
           <p class="msg ok" id="forMac" hidden></p>
           <button class="btn lime" data-buy="lifetime" id="buyBtn">Get StreamDAW Pro</button>
-          <p class="after" data-txt="streamdaw.pricing.pro.after">Or try every Pro feature for 7 days inside the app. No card.<br>Pro is charged as ₪249 incl. VAT. Buying means you accept the <a href="streamdaw-terms.html">StreamDAW licence terms</a>.</p>
+          <p class="after" data-txt="streamdaw.pricing.pro.after">Charged as ₪249. Buying accepts the <a href="streamdaw-terms.html">licence terms</a>.</p>
         </div>
       </div>
 
-      <p class="unlock-cta" data-txt="streamdaw.pricing.unlock">Bought Pro or Pro Monthly? <a href="streamdaw-unlock.html">Unlock StreamDAW on your Mac</a></p>
-      <p class="unlock-cta manage-cta">Subscribed? <a href="../account.html#apps">Manage or cancel Pro Monthly</a></p>
+      <p class="unlock-cta" data-when="pro" data-txt="streamdaw.pricing.unlock">Bought Pro or Pro Monthly? <a href="streamdaw-unlock.html">Unlock StreamDAW on your Mac</a></p>
+      <p class="unlock-cta manage-cta" data-when="pro">Subscribed? <a href="../account.html#apps">Manage or cancel Pro Monthly</a></p>
 
       <!-- Competitors' prices, as their own sites showed them (read 2026-10-12): keep the date
            in the footnote, and check again before changing a word. -->
-      <div class="versus">
-        <p class="vs-h" data-txt="streamdaw.pricing.vs.title">The others are yearly subscriptions.</p>
+      <div class="versus" data-when="pro">
+        <p class="vs-h" data-txt="streamdaw.pricing.vs.title">Theirs are yearly.</p>
         <div><span data-txt="streamdaw.pricing.vs.a-name">Waves Stream</span><b data-txt="streamdaw.pricing.vs.a-price">$88.88 a year</b><small data-txt="streamdaw.pricing.vs.a-note">One listener at a time</small></div>
         <div><span data-txt="streamdaw.pricing.vs.b-name">Audiomovers LISTENTO</span><b data-txt="streamdaw.pricing.vs.b-price">from $99.99 a year</b><small data-txt="streamdaw.pricing.vs.b-note">10 listeners on Basic</small></div>
         <div class="us"><span>StreamDAW Pro</span><b><span data-ils="249">$81</span> once</b><small data-txt="streamdaw.pricing.vs.us-note">A mix for every listener</small></div>
-        <p class="vs-fine" data-txt="streamdaw.pricing.vs.fine">Less than one year of either, then it's yours. Their prices are before tax; ours includes VAT. As listed on waves.com and audiomovers.com, 12 October 2026.</p>
+        <p class="vs-fine" data-txt="streamdaw.pricing.vs.fine">Less than one year of either. Then it's yours. Their prices before tax, as listed on waves.com and audiomovers.com, 12 October 2026.</p>
       </div>
 
-      <p class="reqs" data-txt="streamdaw.pricing.reqs">Needs a <b>Mac with Apple silicon</b> and macOS 12 (Monterey) or later. Listeners: <b>any recent browser</b> on iPhone, Android, Mac or PC.</p>
+      <p class="reqs" data-txt="streamdaw.pricing.reqs"><b>Mac with Apple silicon</b>, macOS 12 or later. Listeners: <b>any recent browser</b>.</p>
     </div>
   </section>
 
@@ -592,13 +387,13 @@
           <p data-txt="streamdaw.faq.a2">Each listener gets their own stream from your Mac, so your upload sets the limit. At 44.1 or 48 kHz, a listener on the full mix takes about 1.6 Mbit/s, so a 20 Mbit/s upload carries about 10 with room to spare. Outside sync mode, a listener on the track mixer takes about 1.5 Mbit/s for every stem you send. With 8 stems, that is about 12 Mbit/s for one person. In sync mode a phone takes about 0.15 Mbit/s, or about 1.5 on an iPhone with iOS 18 or older. Up to 6 guests on camera.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q3">Is everyone really in time?</span></summary>
           <p data-txt="streamdaw.faq.a3">Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest; Bluetooth adds its own delay.</p></details>
-        <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs has it been tested in?</span></summary>
-          <p data-txt="streamdaw.faq.a4">We have streamed sessions from Ableton Live and from the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig, which we have not tested yet. Pro Tools is on the way.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs does it work with?</span></summary>
+          <p data-txt="streamdaw.faq.a4">Tested in Ableton Live and the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig. Pro Tools is on the way.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q9">Why does macOS ask me to allow StreamDAW?</span></summary>
           <p data-txt="streamdaw.faq.a9">StreamDAW isn't notarized by Apple yet, so the first time you open the installer macOS says it can't verify it. Allow it once in System Settings › Privacy &amp; Security › Open Anyway. The installer adds only the StreamDAW app, its plug-ins and the StreamDAW Audio device. <a href="streamdaw-install.html">The install guide</a> shows every screen.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q7">Who can get into my session?</span></summary>
           <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first. You can switch the waiting room off: the Silent disco preset starts with it off.</p></details>
-        <details><summary><span data-txt="streamdaw.faq.q8">Is there a monthly plan?</span></summary>
+        <details data-when="pro"><summary><span data-txt="streamdaw.faq.q8">Is there a monthly plan?</span></summary>
           <p data-txt="streamdaw.faq.a8">Yes: Pro Monthly, <span data-usd="8.99" data-dp="2">$8.99</span> a month with every Pro feature. It is charged in shekels at the day's rate when you start (<span data-usd="8.99" data-cur="ILS" data-dp="2">₪27.62</span> today, VAT included) and stays that amount every month. Cancel any time in your account, no fee: nothing more is charged, and Pro stays on to the end of the month you paid for. Or buy Pro once and keep it.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q5">How does the licence work?</span></summary>
           <p data-txt="streamdaw.faq.a5">Pro: one payment, no subscription, and every StreamDAW 1 update included. Pro Monthly: the key runs to the end of each month you paid for, and StreamDAW fetches the next one by itself while it is online. Either way your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? <a href="streamdaw-unlock.html">Sign in on the unlock page</a> and request a key for it. <a href="streamdaw-terms.html">Read the licence terms</a>.</p></details>
@@ -613,9 +408,10 @@
       <h2 data-txt="streamdaw.last.title">Stop sending mixes.<br><em>Let them hear the session.</em></h2>
       <div class="cta">
         <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.last.cta-trial">Try Pro free for 7 days</a>
-        <button class="btn ghost" data-buy="lifetime"><span><span data-txt="streamdaw.last.cta-pro">Get Pro ·</span> <span data-ils="249">$81</span> <span data-txt="streamdaw.last.cta-once">once</span></span></button>
+        <a class="btn ghost" href="#pricing" data-when="products" hidden>See the prices</a>
+        <button class="btn ghost" data-when="pro" data-buy="lifetime"><span><span data-txt="streamdaw.last.cta-pro">Get Pro ·</span> <span data-ils="249">$81</span> <span data-txt="streamdaw.last.cta-once">once</span></span></button>
       </div>
-      <p class="fine trial-fine"><span data-txt="streamdaw.last.trial-fine">No card. After the 7 days, your master bus streams free forever. Or keep Pro for</span>&nbsp;<span data-ils="249">$81</span>&nbsp;<span data-txt="streamdaw.last.trial-once">once.</span></p>
+      <p class="fine" data-txt="streamdaw.last.fine">No card needed.</p>
     </div>
   </section>
 </main>
@@ -638,11 +434,9 @@
 <div class="sd-menu" id="sdMenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <nav aria-label="Main">
     <a href="#products"><i>01</i>Products</a>
-    <a href="#features"><i>02</i>Features</a>
-    <a href="#stories"><i>03</i>Stories</a>
-    <a href="#demo"><i>04</i>Try it</a>
-    <a href="#pricing"><i>05</i>Pricing</a>
-    <a href="#faq"><i>06</i>Questions</a>
+    <a href="#demo"><i>02</i>Try it</a>
+    <a href="#pricing"><i>03</i>Pricing</a>
+    <a href="#faq"><i>04</i>Questions</a>
     <span class="menu-div">Products</span>
     <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
@@ -673,11 +467,11 @@
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=22"></script>
-<script src="../js/streamdaw-page.js?v=20261018"></script>
+<script src="../js/site-edit.js?v=23"></script>
+<script src="../js/streamdaw-page.js?v=20261029"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
-<script src="demo/studio.js?v=1435ed44" defer></script>
+<script src="demo/studio.js?v=e73914c6" defer></script>
 <script src="demo/coach.js?v=f72e509d" defer></script>
 </body>
 </html>

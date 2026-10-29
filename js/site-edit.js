@@ -485,6 +485,38 @@
   footCss();
   railCss();
 
+  /* ── auto keys (2026-10-29): every text editable without naming it in the HTML ──
+     A page whose <main> carries data-autotxt (the StreamDAW pages) gets a key on each text block that has
+     none: "auto.<page>.<hash of its built-in words>". A key made from the words, not the block's place, so
+     moving a block keeps its edit, and rewriting the built-in words starts it clean (the old edit was for
+     other words). Blocks the page's own scripts fill or price (an id, data-usd/data-ils, a form field)
+     are left alone: an edit there would freeze a live number. Runs before the texts are applied. */
+  (function autoKeys() {
+    const main = document.querySelector('main[data-autotxt]');
+    if (!main) return;
+    const BLOCK = 'p,h1,h2,h3,h4,h5,h6,li,figcaption,summary,dt,dd,td,th,blockquote,a,button,label';
+    const LIVE = '[data-txt],[data-usd],[data-ils],[data-cur],[id],input,select,textarea,video,canvas,script';
+    const slug = PAGE.toLowerCase().replace(/\.html$/, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(-40) || 'home';
+    const hash = (str) => { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
+    const seen = new Map();
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+    const picked = new Set();
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (!n.nodeValue.trim()) continue;
+      const p = n.parentElement;
+      if (!p || p.closest('svg,script,style,[data-txt],[contenteditable]')) continue;
+      const el = p.closest(BLOCK) || p;
+      if (!main.contains(el) || el === main || picked.has(el) || el.id || el.querySelector(LIVE) || el.closest('[data-txt]')) continue;
+      picked.add(el);
+    }
+    picked.forEach((el) => {
+      const words = el.textContent.replace(/\s+/g, ' ').trim().slice(0, 400);
+      const base = 'auto.' + slug + '.' + hash(words);
+      const k = (seen.get(base) || 0) + 1; seen.set(base, k);
+      el.dataset.txt = k > 1 ? base + '-' + k : base;
+    });
+  })();
+
   // ── 1. hydration — runs for everyone, fails silent ──
   const hydrate = fetch('/api/texts')
     .then((r) => (r.ok ? r.json() : { texts: {} }))

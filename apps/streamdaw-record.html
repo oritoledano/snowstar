@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=11">
+<link rel="stylesheet" href="../css/streamdaw.css?v=12">
 <link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
 <style>/* the product stills (2026-10-26): real screenshots, STREAMDAW tools/site-shots/shoot.js */
 .reel.shot{aspect-ratio:auto;background:#141210}.reel.shot img{display:block;width:100%;height:auto}.reel.shot video{position:relative;inset:auto;display:block;width:100%;height:auto}
@@ -99,7 +99,7 @@
   </div>
 </header>
 
-<main id="top">
+<main id="top" data-autotxt>
 
   <section class="p-hero" id="hero" aria-labelledby="heroTitle">
     <div class="wrap">
@@ -168,22 +168,20 @@
 
   <section id="pricing" class="p-block" aria-labelledby="priceTitle">
     <div class="wrap">
-      <div class="sec-head center"><p class="kicker">Monthly, yearly</p><h2 id="priceTitle">Price.</h2></div>
+      <div class="sec-head center"><p class="kicker">One payment a year</p><h2 id="priceTitle">Price.</h2></div>
       <div class="p-price">
         <div>
           <span class="tag lime">Record</span>
-          <div class="amounts"><div class="amt">$15<small>a month</small></div><p class="or">or</p><div class="amt">$129<small>a year</small></div></div>
+          <div class="amounts"><div class="amt">$129<small>a year</small></div></div>
         </div>
         <div>
           <ul class="list"><li>Up to 16 people on your DAW's inputs, in time</li><li>Clean takes that replace the live ones in Ableton Live 12</li><li>Each guest to a file of their own, with or without a DAW</li><li>MIDI from a keyboard or a phone's screen into Ableton Live</li><li>No 60-minute limit</li></ul>
-          <!-- TODO (2026-10-25): per-product checkout is NOT live yet. This button goes to the existing checkout
-             (streamdaw.html#pricing, today's StreamDAW Pro, which unlocks every product) with ?product=record.
-             Point it at the product's own checkout once the Worker sells products (phase B). -->
+          <p class="msg" id="productMsg" hidden></p>
           <div class="cta">
-            <a class="btn ink" href="streamdaw.html?product=record#pricing">Get Record</a>
+            <a class="btn ink" href="streamdaw.html?product=record#pricing" data-product="record">Get Record</a>
             <a class="btn ghost" href="/api/streamdaw/download/free" data-free-dl>Try free for 7 days</a>
           </div>
-          <p class="after">Each product has its own checkout soon. Until then, <a href="streamdaw.html?product=record#pricing">StreamDAW Pro</a> unlocks every product. Every StreamDAW product together: $199 a year or $19.99 a month. <a href="streamdaw-terms.html">Licence terms</a>.</p>
+          <p class="after"><span data-when="pro">Each product has its own checkout soon. Until then, <a href="streamdaw.html?product=record#pricing">StreamDAW Pro</a> unlocks every product.</span><span data-when="products" hidden>A year is one payment: nothing is charged after it, and buying again adds a year. Charged in shekels at the day's rate. Bought StreamDAW Pro before? Record is yours already.</span> Every StreamDAW product together: <a href="streamdaw.html#pricing">$199 a year</a>. <a href="streamdaw-terms.html">Licence terms</a>.</p>
         </div>
       </div>
     </div>
@@ -284,8 +282,8 @@
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=19"></script>
-<script src="../js/streamdaw-page.js?v=20261018"></script>
+<script src="../js/site-edit.js?v=23"></script>
+<script src="../js/streamdaw-page.js?v=20261029"></script>
 <script src="../js/consent.js?v=1"></script>
 </body>
 </html>

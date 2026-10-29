@@ -876,6 +876,17 @@
     + '<div class="qtile" data-qr></div><div class="il">Listen live · in time · in your own mix</div><button class="qb" data-a="copy">Copy link</button></div></div>'
     + '<div class="sx-toast" role="status" aria-live="polite"></div>';
   const lanes = $('.sx-lanes'), cv = $('.sx-lanes canvas'), ph = $('.sx-ph'), center = $('.sx-center'), side = $('.sx-side');
+  // The studio under the DAW is a still of StreamDAW as it is now (2026-10-29, the founder: "the demo still shows the
+  // old mixer"): 0.7's On stage with the mixer on a player's own mix. The 0.5 drawing still runs, hidden: it keeps
+  // the phones' mixes and GO LIVE's state for the coach.
+  {
+    const st = document.createElement('style');
+    st.textContent = '.stu .sx-main,.stu .sx-bottom{display:none}.stu .sx-shot{margin:0;line-height:0;background:#151310}.stu .sx-shot img{width:100%;height:auto;display:block}';
+    document.head.appendChild(st);
+    const f = document.createElement('figure'); f.className = 'sx-shot';
+    f.innerHTML = '<img src="../media/streamdaw/products/splits.webp?v=1" width="1600" height="1380" alt="StreamDAW: On stage, every player\'s phone in time, and the mixer on one player\'s own mix" decoding="async">';
+    box.querySelector('.sx-main').before(f);
+  }
   const f1 = $('[data-f="bbs"]'), f2 = $('[data-f="time"]');
 
   const vu = window.SdawVU ? SdawVU.create($('.sx-vu canvas'), { pal: { dark: { f0: '#f3eddc', f1: '#d4cdb8', glow: 'rgba(200,242,58,.30)', vig: 'rgba(18,17,14,.32)',
