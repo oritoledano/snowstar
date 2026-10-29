@@ -287,3 +287,24 @@ main > section + section{padding-top:0}
 
 /* the burger (fixed at 56,13 on every page) sat on the logo: the header starts after it, as StreamDAW's does */
 @media (max-width:1330px){header.nav .wrap{padding-left:calc(clamp(20px,5vw,56px) + 48px)}}
+
+/* "Opening soon" (#soon): every [data-soon] opens it until the store sells Audioctor */
+.soon{margin:auto;width:min(480px,calc(100% - 32px));border:1px solid var(--line-2);border-radius:22px;background:var(--card);color:var(--ink);padding:34px 28px 24px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.soon::backdrop{background:rgba(5,5,4,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.soon[open]{animation:soonIn .22s ease-out}
+@keyframes soonIn{from{transform:translateY(14px) scale(.98)}to{transform:none}}
+.soon .kicker{margin-bottom:12px}
+.soon h2{font-size:clamp(30px,4.4vw,38px)}
+.soon p:not(.kicker){color:var(--ink-2);margin-top:10px;font-size:15.5px}
+.soon .x{position:absolute;top:12px;right:12px;width:38px;height:38px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:26px;line-height:1;cursor:pointer}
+.soon .x:hover{color:var(--ink);background:var(--tint)}
+.soon .notify{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.soon input{flex:1 1 220px;min-width:0;height:48px;padding:0 18px;border-radius:999px;border:1.5px solid var(--line-2);background:var(--bg-2);color:var(--ink);font:500 16px/1 var(--sans);outline:none}
+.soon input:focus{border-color:var(--lime)}
+.soon input:disabled{opacity:.6}
+.soon .notify .btn{flex:0 0 auto;justify-content:center}
+.soon .notify .btn:disabled{cursor:default;transform:none}
+.soon .said{min-height:1.5em;font-size:14px;margin-top:12px}
+.soon .said a{text-decoration:underline}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:520px){.soon{padding:32px 20px 20px}.soon .notify .btn{flex:1 1 100%}}

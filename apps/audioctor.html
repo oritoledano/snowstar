@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=9">
+<link rel="stylesheet" href="audioctor.css?v=10">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -62,8 +62,8 @@
 <main id="top" data-autotxt>
 
   <!-- ── hero: the line, the price, the lab at work. Until the Worker has Audioctor's routes (download,
-       checkout), every [data-soon] asks for early access by mail; then the trial button goes to
-       /api/audioctor/download/free and the plans to the checkout. ── -->
+       checkout), every [data-soon] opens #soon (the waitlist; its mailto href is only the no-JavaScript
+       fallback); then the trial button goes to /api/audioctor/download/free and the plans to the checkout. ── -->
   <section class="hero" aria-labelledby="heroTitle">
     <div class="wrap">
       <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">For Apple silicon Macs · App, AU and VST3</p>
@@ -182,6 +182,21 @@
       </div>
     </div>
   </section>
+
+  <!-- Until Audioctor opens, every [data-soon] opens this: the site's waitlist (worker/src/site.js joinWaitlist,
+       POST /api/waitlist, kind "audioctor"), as Screens' "Tell me when" does. An email link only if the save fails. -->
+  <dialog class="soon" id="soon" aria-labelledby="soonTitle">
+    <button class="x" type="button" aria-label="Close" data-close>&times;</button>
+    <p class="kicker">Opening soon</p>
+    <h2 id="soonTitle">Audioctor opens soon.</h2>
+    <p>Leave your email and we write once, the day it opens. The first 7 days are free.</p>
+    <form class="notify" id="soonForm" novalidate>
+      <label class="vh" for="soonEmail">Your email</label>
+      <input id="soonEmail" type="email" name="email" autocomplete="email" placeholder="you@example.com" required>
+      <button class="btn lime" type="submit">Tell me when</button>
+    </form>
+    <p class="said" id="soonSaid" role="status"></p>
+  </dialog>
 </main>
 
 <footer>
@@ -391,6 +406,43 @@
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: '600px 0px' });
     io.observe(sec);
   } else start();
+})();
+// "Opening soon": until the Worker sells Audioctor, every [data-soon] opens #soon and saves an email to the site's
+// waitlist (kind "audioctor"); the email link only when that save fails, or with no <dialog> at all.
+(function () {
+  const d = document.getElementById('soon'), f = document.getElementById('soonForm');
+  const i = document.getElementById('soonEmail'), said = document.getElementById('soonSaid');
+  if (!d || typeof d.showModal !== 'function') return;
+  const MAIL = 'mailto:hello@snowstar.company?subject=' + encodeURIComponent('Audioctor early access');
+  const track = (name, props) => {
+    try { dispatchEvent(new CustomEvent('audioctor:track', { detail: { name, props: Object.assign({ view: 'landing' }, props) } })); } catch (e) {}
+  };
+  document.querySelectorAll('[data-soon]').forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    d.showModal();
+    track('soon_open', { from: a.textContent.trim().slice(0, 40) });
+    if (!i.disabled) i.focus();
+  }));
+  // close: the × or a press outside the card (the backdrop is the dialog's own box)
+  d.addEventListener('click', (e) => {
+    const r = d.getBoundingClientRect();
+    const out = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    if (e.target.closest('[data-close]') || (e.target === d && out)) d.close();
+  });
+  f.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = (i.value || '').trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { said.textContent = 'That email does not look right.'; i.focus(); return; }
+    const b = f.querySelector('button'); b.disabled = true; said.textContent = 'Saving…';
+    fetch('/api/waitlist', { method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin',
+      body: JSON.stringify({ email, kind: 'audioctor' }) })
+      .then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      .then((res) => {
+        if (res && res.ok) { said.textContent = 'Got it. We write once, the day Audioctor opens.'; i.disabled = true; track('soon_saved', {}); return; }
+        b.disabled = false;
+        said.innerHTML = 'That did not save. <a href="' + MAIL + '">Email us instead</a>.';
+      });
+  });
 })();
 </script>
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
