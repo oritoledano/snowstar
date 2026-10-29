@@ -636,3 +636,37 @@ html.sdco-lock,html.sdco-lock body{overflow:hidden}
 .offer code{font:700 15px var(--sans);letter-spacing:.06em;background:var(--lime);color:var(--lime-ink);padding:4px 9px;border-radius:8px}
 @media (prefers-reduced-motion:reduce){.offer{transition:none}}
 @media (max-width:640px){.bill button{padding:11px 14px;font-size:14px}}
+
+/* The pay sheet (2026-10-29): Paddle's form inline in our card; what you buy on the left. The card moves, the page
+   behind is dimmed at once (transform only). */
+html.pay-open{overflow:hidden}
+.pay{position:fixed;inset:0;z-index:90;background:rgba(18,16,12,.62);display:flex;align-items:center;justify-content:center;padding:16px}
+.pay[hidden]{display:none}
+.pay-card{position:relative;width:min(960px,100%);max-height:calc(100vh - 32px);overflow:auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);
+  background:var(--card);color:var(--ink);border-radius:24px;box-shadow:var(--lift);transform:translateY(40px) scale(.98);transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+.pay.on .pay-card{transform:none}
+.pay-sum{background:var(--night);color:var(--paper);padding:36px 32px;border-radius:24px 0 0 24px;display:flex;flex-direction:column;gap:12px}
+.pay-kick{align-self:flex-start;font:700 12px/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;background:var(--lime);color:var(--lime-ink);padding:6px 10px;border-radius:999px}
+.pay-sum h3{font:600 clamp(28px,3vw,38px)/1.05 var(--serif);margin:4px 0 0}
+.pay-line{font-size:14px;line-height:1.45;color:rgba(239,233,218,.78);margin:0}
+.pay-price{margin:8px 0 0;font-size:14px;color:rgba(239,233,218,.78)}
+.pay-price b{font:600 40px/1 var(--serif);color:var(--paper);margin-right:4px}
+.pay-code{margin:0;font-size:13px;color:var(--lime)}
+.pay-code b{background:var(--lime);color:var(--lime-ink);padding:3px 8px;border-radius:7px;letter-spacing:.05em}
+.pay-pts{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px;font-size:13px;line-height:1.45}
+.pay-pts li{padding-left:22px;position:relative;color:rgba(239,233,218,.86)}
+.pay-pts li::before{content:"";position:absolute;left:0;top:5px;width:10px;height:10px;border-radius:50%;background:var(--lime)}
+.pay-fine{margin-top:auto;padding-top:18px;font-size:12px;line-height:1.45;color:rgba(239,233,218,.6)}
+.pay-form{padding:28px 28px 20px;min-height:460px;position:relative}
+.pay-wait{position:absolute;top:40px;left:28px;right:28px;font-size:14px;color:var(--muted)}
+.pay-wait[hidden]{display:none}
+.pay .x{position:absolute;top:14px;right:14px;z-index:2;width:40px;height:40px;border-radius:50%;border:0;background:var(--paper-2);color:var(--ink);font-size:20px;cursor:pointer}
+@media (max-width:760px){
+  .pay{padding:0;align-items:flex-end}
+  .pay-card{grid-template-columns:1fr;max-height:100vh;border-radius:20px 20px 0 0;transform:translateY(100%)}
+  .pay-sum{border-radius:20px 20px 0 0;padding:26px 20px 20px}
+  .pay-pts,.pay-fine{display:none}
+  .pay-form{padding:16px 16px 12px}
+  .pay .x{background:rgba(239,233,218,.14);color:var(--paper)}
+}
+@media (prefers-reduced-motion:reduce){.pay-card{transition:none}}

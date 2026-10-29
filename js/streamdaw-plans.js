@@ -1,7 +1,7 @@
 /* ═══════════ StreamDAW plans, through Paddle (2026-10-29) ═══════════════════
    apps/streamdaw.html #pricing: Free, One product (picked), All products; billed yearly (the default, shown as its
    monthly figure) or monthly. Paddle is the merchant of record: the Worker makes a Paddle transaction for the plan
-   (POST /api/streamdaw/checkout, worker/src/streamdaw-paddle.js) and Paddle.js opens it over the page. Nothing is
+   (POST /api/streamdaw/checkout, worker/src/streamdaw-paddle.js) and Paddle.js opens it inline, in our own pay sheet. Nothing is
    granted on the page's word: the key comes once Paddle tells the Worker the payment went through.
    Until Paddle sells (/api/streamdaw/prices → paddle.open false) every buy button starts the free week instead.
    Codes: ?c=CODE in the link, or "Have a code?". The offer: 15% off a first purchase (WELCOME15), shown once to a
@@ -104,10 +104,74 @@
     return paddleLoad;
   }
   let buying = null;
+
+  // ── the pay sheet: Paddle's form inline, inside our own card (what you buy beside it, in the page's language) ──
+  let sheet = null;
+  function money(n, cur) {
+    try { return new Intl.NumberFormat(navigator.language || 'en', { style: 'currency', currency: cur, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n); }
+    catch (e) { return cur + ' ' + n; }
+  }
+  function closeSheet() {
+    if (!sheet || !sheet.classList.contains('on')) return;
+    try { window.Paddle && window.Paddle.Checkout.close(); } catch (e) {}
+    sheet.classList.remove('on'); document.documentElement.classList.remove('pay-open');
+    const back = sheet._from; setTimeout(() => { sheet.hidden = true; if (back && back.focus) back.focus(); }, calm() ? 0 : 320);
+  }
+  function openSheet(id) {
+    if (!sheet) {
+      sheet = document.createElement('div');
+      sheet.className = 'pay'; sheet.hidden = true;
+      sheet.innerHTML = `<div class="pay-card" role="dialog" aria-modal="true" aria-labelledby="payName">
+        <button class="x" type="button" aria-label="Close the checkout">×</button>
+        <div class="pay-sum">
+          <span class="pay-kick">StreamDAW</span>
+          <h3 id="payName" data-p="name"></h3>
+          <p class="pay-line" data-p="line"></p>
+          <p class="pay-price"><b data-p="price"></b> <span data-p="per"></span></p>
+          <p class="pay-code" data-p="code" hidden></p>
+          <ul class="pay-pts">
+            <li>Your key comes by email the moment the payment goes through.</li>
+            <li>Cancel any time in your account: it runs to the end of what you paid for.</li>
+            <li>Changed your mind? The first payment comes back in full within 14 days.</li>
+          </ul>
+          <p class="pay-fine">Paddle.com is our reseller: it takes the payment, adds your country’s tax and emails the invoice.</p>
+        </div>
+        <div class="pay-form"><div class="sd-pay-frame"></div><p class="pay-wait" data-p="wait">Opening the secure checkout…</p></div>
+      </div>`;
+      document.body.appendChild(sheet);
+      sheet.querySelector('.x').addEventListener('click', closeSheet);
+      sheet.addEventListener('click', (e) => { if (e.target === sheet) closeSheet(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+    }
+    const p = plans[id] || plans.splits, f = (k) => sheet.querySelector(`[data-p="${k}"]`);
+    f('name').textContent = NAMES[id];
+    f('line').textContent = id === 'all' ? 'Splits, Station, Record, Compare and Party, on one key.' : LINES[id];
+    f('price').textContent = period === 'year' ? dollars(p.year) : dollars(p.month);
+    f('per').textContent = period === 'year' ? 'a year' : 'a month';
+    f('code').hidden = !code; if (code) f('code').innerHTML = `<b>${esc(code.code)}</b> · ${esc(code.label)}`;
+    f('wait').hidden = false;
+    sheet.querySelector('.sd-pay-frame').innerHTML = '';
+    sheet._from = document.activeElement;
+    sheet.hidden = false; document.documentElement.classList.add('pay-open');
+    requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('on')));
+    sheet.querySelector('.x').focus();
+  }
+  // Paddle's own figures (with the buyer's tax) replace ours once the form knows the country.
+  function sheetTotals(d) {
+    if (!sheet || !d) return;
+    const t = d.totals, cur = d.currency_code, f = (k) => sheet.querySelector(`[data-p="${k}"]`);
+    if (t && cur && typeof t.total === 'number') f('price').textContent = money(t.total, cur);
+    const it = d.items && d.items[0], cyc = it && it.billing_cycle;
+    if (cyc && cyc.interval) f('per').textContent = cyc.interval === 'year' ? 'a year' : 'a month';
+    if (d.discount && t && t.discount > 0 && cur) { const c = f('code'); c.hidden = false; c.innerHTML = `${esc(d.discount.code || 'Code')} · ${esc(money(t.discount, cur))} off`; }
+  }
+
   function onPaddle(ev) {
     if (!ev || !ev.name) return;
+    if (ev.name === 'checkout.loaded' && sheet) { const w = sheet.querySelector('[data-p="wait"]'); if (w) w.hidden = true; }
+    if (/^checkout\.(loaded|items\.updated|customer\.(created|updated)|payment\.selected|discount\.applied)$/.test(ev.name)) sheetTotals(ev.data);
     if (ev.name === 'checkout.completed') {
-      const P = window.Paddle; setTimeout(() => { try { P.Checkout.close(); } catch (e) {} }, 2600);
+      setTimeout(closeSheet, 2600);
       say(`<b>${esc(NAMES[buying] || 'StreamDAW')} is yours. Thank you.</b> Paddle emails your receipt. `
         + (forMac() ? 'The key for this Mac arrives by email within a minute: paste everything in its box into StreamDAW › Settings › Licence.'
                     : 'Next, get the key for your Mac on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.'), true);
@@ -140,9 +204,13 @@
       if (d.paddle.token || !paddleCfg) paddleCfg = { environment: d.paddle.environment, token: d.paddle.token || (paddleCfg && paddleCfg.token) };
       const P = await paddleJs();
       buying = id;
+      openSheet(id);
       P.Checkout.open({ transactionId: d.paddle.transactionId,
-        settings: { displayMode: 'overlay', theme: 'light', showAddDiscounts: false, allowLogout: false, locale: navigator.language || 'en' } });
+        settings: { displayMode: 'inline', frameTarget: 'sd-pay-frame', frameInitialHeight: 450, variant: 'one-page',
+          frameStyle: 'width:100%;min-width:286px;background-color:transparent;border:none;',
+          theme: 'light', showAddDiscounts: false, allowLogout: false, locale: (navigator.language || 'en').slice(0, 2) } });
     } catch (e) {
+      closeSheet();
       say('Checkout could not be reached. Nothing was charged. Please try again.', false);
     } finally { btns.forEach((b) => { b.disabled = false; }); }
   }
