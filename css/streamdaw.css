@@ -134,6 +134,16 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .reel:hover .vbtn,.vbtn:focus-visible,.vbtn.is-paused{opacity:1}
 .vbtn:hover{background:rgba(18,16,12,.8)}
 @media (hover:none){.vbtn{opacity:1}}
+/* Sound on (2026-10-29): only on a narrated reel; always shown while it plays, so the voice is one press away */
+.sbtn{position:absolute;left:14px;bottom:14px;z-index:3;height:42px;padding:0 16px 0 13px;border-radius:21px;border:0;cursor:pointer;
+  display:flex;align-items:center;gap:8px;font:600 14px/1 inherit;font-family:inherit;color:#f7f3e8;background:rgba(18,16,12,.58);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .2s}
+.sbtn[hidden]{display:none}
+.sbtn svg{width:18px;height:18px}
+.sbtn .i-on{display:none}
+.sbtn[aria-pressed="true"] .i-on{display:block}
+.sbtn[aria-pressed="true"] .i-off{display:none}
+.sbtn:hover{background:rgba(18,16,12,.8)}
 
 /* ── hero ───────────────────────────────────────────────── */
 .hero{padding:clamp(56px,8vw,112px) 0 0;text-align:center}

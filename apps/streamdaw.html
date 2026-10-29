@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=12">
+<link rel="stylesheet" href="../css/streamdaw.css?v=13">
 <link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
@@ -164,10 +164,12 @@
        (StreamDAW Pro, which unlocks every product) are what is sold. ── -->
   <section class="products" id="products" aria-labelledby="prodTitle">
     <div class="wrap">
-      <!-- the products in one video (2026-10-26, ≈ 64 s, silent, captions): STREAMDAW tools/site-shots/hub-video.js -->
-      <figure class="reel wide prod-tour" style="margin-bottom:clamp(28px,3.4vw,40px);box-shadow:var(--lift)" data-media="products/tour" data-v="1" aria-label="StreamDAW in one minute: Master, Splits, Station, Record, Compare and Party, each doing what it does, and Screens coming soon">
+      <!-- the products in one video (2026-10-29: the founder's cut, 51 s, narrated, his music; silent until Sound on;
+           STREAMDAW tools/site-shots/hub-video.js + wip/video-2026-10-29) -->
+      <figure class="reel wide prod-tour" style="margin-bottom:clamp(28px,3.4vw,40px);box-shadow:var(--lift)" data-media="products/tour-voice" data-v="1" aria-label="StreamDAW in under a minute: Master, Splits, Station, Record, Compare and Party, each doing what it does">
         <video muted loop playsinline preload="none" width="1920" height="1080"></video>
         <button class="vbtn" type="button" aria-label="Pause video" hidden><svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></button>
+        <button class="sbtn" type="button" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path class="i-on" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11"/><path class="i-off" d="M16 9.5l5 5m0-5l-5 5"/></svg><span>Sound on</span></button>
       </figure>
       <div class="sec-head"><h2 id="prodTitle" data-txt="streamdaw.products.title">Pick what you came to do.</h2></div>
       <!-- the cards' stills (2026-10-26): real screenshots of the 0.7.1 pages, STREAMDAW tools/site-shots/shoot.js -->
@@ -468,7 +470,7 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
 <script src="../js/site-edit.js?v=23"></script>
-<script src="../js/streamdaw-page.js?v=20261029"></script>
+<script src="../js/streamdaw-page.js?v=20261029b"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/dock.js?v=4e928290" defer></script>

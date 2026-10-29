@@ -103,6 +103,21 @@
       sync(fig);
     });
   });
+  // Sound on (2026-10-29): a narrated reel plays muted like the rest; the first press plays it from the start with
+  // its voice and music, the next one mutes it again. Shown once the video can play.
+  reels.forEach((fig) => {
+    const sb = fig.querySelector('.sbtn'), v = fig.querySelector('video'); if (!sb || !v) return;
+    const label = sb.querySelector('span');
+    v.addEventListener('playing', () => { if (!fig.dataset.noClip) sb.hidden = false; });
+    if (fig.classList.contains('has-poster')) sb.hidden = false;
+    sb.addEventListener('click', () => {
+      const on = v.muted;
+      v.muted = !on;
+      sb.setAttribute('aria-pressed', on ? 'true' : 'false');
+      label.textContent = on ? 'Sound off' : 'Sound on';
+      if (on) { try { v.currentTime = 0; } catch (e) {} fig._wanted = true; attach(fig); const p = v.play(); if (p && p.catch) p.catch(() => {}); paint(fig); }
+    });
+  });
 
   // ── 2. the rail, the menu, the take ────────────────────────────────────
   const rail = $('featRail');
