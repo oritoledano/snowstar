@@ -1558,7 +1558,7 @@
         const off = c.kind === 'amount' ? '$' + Math.round(c.value / 100) + ' off' : c.value + '% off';
         return off + (n === 0 ? ', every payment' : n === 1 ? ', first payment' : `, first ${n} payments`);
       };
-      return paint(`${kpis}
+      paint(`${kpis}
         <div class="db-panel"><h2>Paddle</h2>
           <p class="db-empty" style="padding-top:0">${pad.billing === 'paddle'
             ? (pad.open ? `<span class="pill good">selling</span> ${esc(pad.paddle && pad.paddle.environment === 'production' ? 'live' : 'sandbox')}: the products, their prices and the webhook are made.`
