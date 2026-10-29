@@ -876,16 +876,67 @@
     + '<div class="qtile" data-qr></div><div class="il">Listen live · in time · in your own mix</div><button class="qb" data-a="copy">Copy link</button></div></div>'
     + '<div class="sx-toast" role="status" aria-live="polite"></div>';
   const lanes = $('.sx-lanes'), cv = $('.sx-lanes canvas'), ph = $('.sx-ph'), center = $('.sx-center'), side = $('.sx-side');
-  // The studio under the DAW is a still of StreamDAW as it is now (2026-10-29, the founder: "the demo still shows the
-  // old mixer"): 0.7's On stage with the mixer on a player's own mix. The 0.5 drawing still runs, hidden: it keeps
-  // the phones' mixes and GO LIVE's state for the coach.
+  // The mixer is StreamDAW 0.7's own (2026-10-29, the founder: "control and view from both sides"): the app's dock
+  // (stage/web/dock.js, loaded beside this script as demo/dock.js, its pictures in demo/rec/), fed from this room: Main
+  // (this Mac), then each phone that scanned, called You, its pad picked and lit; the phone's own mix shows here as it
+  // moves, and a change here plays on the phone. Each pad says what that phone hears: Full mix or Track mixer. The 0.5
+  // drawing below still runs, hidden: it keeps the room's mixes and GO LIVE's state for the coach.
+  let DOCK = null;
   {
     const st = document.createElement('style');
-    st.textContent = '.stu .sx-main,.stu .sx-bottom{display:none}.stu .sx-shot{margin:0;line-height:0;background:#151310}.stu .sx-shot img{width:100%;height:auto;display:block}';
+    st.textContent = '.stu .sx-main,.stu .sx-bottom{display:none}.stu .sx-dock{position:relative;background:#151310}';
     document.head.appendChild(st);
-    const f = document.createElement('figure'); f.className = 'sx-shot';
-    f.innerHTML = '<img src="../media/streamdaw/products/splits.webp?v=1" width="1600" height="1380" alt="StreamDAW: On stage, every player\'s phone in time, and the mixer on one player\'s own mix" decoding="async">';
-    box.querySelector('.sx-main').before(f);
+    const host = document.createElement('div'); host.className = 'sx-dock'; host.setAttribute('data-dock-host', '');
+    host.innerHTML = '<div data-dock-slot></div>';
+    box.querySelector('.sx-main').before(host);
+  }
+  const youOf = (id) => { const k = phones.findIndex((p) => p.id === id); return k <= 0 ? 'You' : 'You ' + (k + 1); };
+  function dockView() {
+    const playing = !!(tr && tr.playing);
+    const stems = PAIRS.map((p, i) => (i === 0
+      ? { i: 0, out: true, pair: '1/2', name: 'OUT', kind: 'out', on: true, live: playing, src: null, title: 'OUT: channels 1/2, the full mix every phone can play' }
+      : { i, pair: p.pr, name: p.name, kind: p.id === 'click' ? 'click' : '', on: true, live: playing, src: null, title: p.name + ' from the DAW' }));
+    const tracks = {}; PAIRS.forEach((p, i) => { tracks[i] = { ...main[p.id] }; });
+    const mx = {};
+    for (const [id, m] of mixes) mx[id] = { mode: m.mode, tracks: STEMS.map((p) => { const x = m.t.get(p.name) || { v: 1, p: 0, m: false, s: false }; return { name: p.name, v: x.v, p: x.p, m: x.m, s: x.s }; }), out: { v: 1, has: false } };
+    return { stems, canAdd: false, people: phones.map((p) => ({ peer: p.id, name: youOf(p.id), you: true, state: p.listening ? 'ok' : 'off', model: nameOf(p.id) })),
+      main: { has: true, tracks }, mixes: mx, pa: { state: 'ok', device: 'This Mac' }, clip: clip ? { from: clip.from } : null, mainSub: 'this Mac' };
+  }
+  // a phone's channel, set from here: its own fader moves; a phone on Full mix goes to Track mixer to hear it (as in the app)
+  function phoneSet(id, pr, patch, final) {
+    const mx = mixes.get(id); if (!mx || pr.t == null) return;
+    let x = mx.t.get(pr.name); if (!x) { x = { v: 1, p: 0, m: false, s: false }; mx.t.set(pr.name, x); }
+    Object.assign(x, patch);
+    const toTracks = mx.mode === 'master'; if (toTracks) { mx.mode = 'tracks'; toast(youOf(id) + ': now on Track mixer, to hear your change'); }
+    const msg = () => ({ type: 'mixSet', id, ...(toTracks ? { mode: 'tracks' } : {}), t: [[pr.name, x.v, x.p, x.m ? 1 : 0, x.s ? 1 : 0]] });
+    const moving = 'v' in patch || 'p' in patch, k = id + ':' + pr.id;
+    if (!moving || toTracks) { say(msg()); dockPatch(); return; }
+    const P = pend[k] || (pend[k] = { at: 0, t: 0 });
+    clearTimeout(P.t);
+    const go = () => { P.at = Date.now(); say(msg()); };
+    if (final || Date.now() - P.at > 60) go(); else P.t = setTimeout(go, 60 - (Date.now() - P.at));
+  }
+  const asTarget = (who, fn) => { target = who === 'main' || who == null ? 'main' : String(who); picked = true; fn(); dockPatch(); };
+  function dockPatch() { if (DOCK) DOCK.patch(); }
+  function dockStart() {
+    if (!window.SdawDock) return;
+    DOCK = SdawDock.create({ view: dockView, esc, img: 'demo/rec/',
+      set: (who, x, val, final) => { const pr = PAIRS[x.i]; if (!pr) return;
+        if (who === 'main') { Object.assign(main[pr.id], val); patchRows(); dockPatch(); } else phoneSet(String(who), pr, val, final); },
+      all: (who, what) => asTarget(who, () => { const mx = mixes.get(target); if (mx && mx.mode === 'master') { mx.mode = 'tracks'; say({ type: 'mixSet', id: target, mode: 'tracks' }); } setAll(what === 'solo' ? 's' : 'm'); }),
+      copy: (who) => asTarget(who, mixCopy), paste: (who) => asTarget(who, mixPaste), reset: (who) => asTarget(who, mixReset),
+      lineUp: () => toast('In the app, Line up times this Mac’s speakers to the phones'),
+      onAir: () => toast('In the app, ON puts a pair on air'), source: () => {}, rename: () => {},
+      change: () => {} });
+    box.querySelector('[data-dock-slot]').innerHTML = DOCK.html();
+    DOCK.patch();
+  }
+  let dockYou = null;   // the first phone that scanned: its pad picked, once
+  function dockFollow() {
+    if (!DOCK) return;
+    const p = phones.find((x) => mixes.has(x.id));
+    if (p && dockYou !== p.id) { dockYou = p.id; DOCK.show(p.id, true); }
+    DOCK.patch();
   }
   const f1 = $('[data-f="bbs"]'), f2 = $('[data-f="time"]');
 
@@ -972,6 +1023,7 @@
     if (target !== 'main' && !mixes.has(target)) target = 'main';
     autoPick();
     paintAll();
+    dockFollow();
   }
   function nameOf(id) {
     const p = phones.find((x) => x.id === id); if (!p) return 'Phone';
@@ -988,6 +1040,7 @@
     for (const e of m.t) if (Array.isArray(e) && typeof e[0] === 'string') t.set(e[0], { v: +e[1] >= 0 ? +e[1] : 1, p: +e[2] || 0, m: !!e[3], s: !!e[4] });
     const was = mixes.get(id);
     mixes.set(id, { mode: m.mode, t });
+    dockFollow();
     if (quiet) return;
     if (autoPick()) { paintAll(); return; }
     if (id === target) { if (!was || was.mode !== m.mode) renderCenter(); else patchRows(); }
@@ -1321,11 +1374,12 @@
         const d = $('.dot', c.el); if (d) d.classList.toggle('on', !!on && l + r > 0.003);
       }
       if (on && vu) vu.feed(lin(lvByte(f, LVT * 2)), lin(lvByte(f, LVT * 2 + 1)));
+      if (DOCK) { const lv = {}; PAIRS.forEach((pr, i) => { const k = pr.t == null ? LVT * 2 : pr.t * 2; lv[i] = on ? [Math.min(1, lin(lvByte(f, k))), Math.min(1, lin(lvByte(f, k + 1)))] : [0, 0]; }); DOCK.meters(lv, lv[0]); }
       const lu = $('[data-lufs]');
       if (lu) { const L = on ? luNow() : null, t = L && L.s != null ? num(L.s) + ' LUFS · 48.0 kHz' : '48.0 kHz'; if (lu.textContent !== t) lu.textContent = t; }
       paintAnalytics(false);
     }
-    if (Date.now() - lastTop > 500) { lastTop = Date.now(); renderTop(); tickTimes(); }
+    if (Date.now() - lastTop > 500) { lastTop = Date.now(); renderTop(); tickTimes(); dockPatch(); }
     requestAnimationFrame(frame);
   }
   function run(on) { if (on === running) return; running = on; if (on) requestAnimationFrame(frame); }
@@ -1339,6 +1393,7 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden) run(false); else if (opened) run(true); });
   paintAll();
   drawQr();
+  dockStart();
 
   window.__studio = {
     room: ROOM, phoneUrl: PHONE_URL, get tr() { return tr; }, get phones() { return phones; }, get up() { return up; }, pos,
