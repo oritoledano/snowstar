@@ -57,6 +57,13 @@ ALERT_TO = "oritoledano@gmail.com"
 # Routing and must not be touched, or inbound mail to hello@ stops.
 MAIL_FROM = "SNOWSTAR.COMPANY <hello@snowstar.company>"
 
+# StreamDAW through Paddle, the merchant of record (src/streamdaw-paddle.js, 2026-10-29). On only once the secret
+# PADDLE_API_KEY is set (npx wrangler secret put PADDLE_API_KEY) and the owner pressed "Set up Paddle" in the
+# dashboard; until then StreamDAW stays as it was. PADDLE_ENV "live" takes real money; anything else is the sandbox.
+# PADDLE_CLIENT_TOKEN (public by design, for the page's Paddle.js) is a secret only so it changes without a deploy.
+STREAMDAW_BILLING = "paddle"
+PADDLE_ENV = "sandbox"
+
 # daily digest at 07:00 UTC
 [triggers]
 crons = ["0 7 * * *"]

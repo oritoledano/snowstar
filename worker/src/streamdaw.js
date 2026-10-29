@@ -50,7 +50,8 @@ const isPass = (plan) => plan === 'pass';
 const isMonthly = (plan) => plan === 'monthly';
 const ends = (plan) => isPass(plan) || isMonthly(plan);       // a plan whose key has an end
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
-const subsMod = () => import('./streamdaw-subs.js');           // Pro Monthly (imports this file: no static cycle)
+const subsMod = () => import('./streamdaw-subs.js');
+const paddleMod = () => import('./streamdaw-paddle.js');       // Paddle (imports this file too)           // Pro Monthly (imports this file: no static cycle)
 
 /* Pass money paid by this buyer that a Pro purchase now may use: passes settled in the last
    PASS_CREDIT_DAYS and after their last Pro purchase (a credit is used once). */
@@ -229,20 +230,25 @@ export async function streamdawCouponCreate(req, env, user) {
   if (b.remove) { await env.DB.prepare('DELETE FROM streamdaw_coupons WHERE id = ?').bind(Number(b.remove)).run(); return json({ ok: true }); }
   if (b.toggle) { await env.DB.prepare('UPDATE streamdaw_coupons SET active = 1 - active WHERE id = ?').bind(Number(b.toggle)).run(); return json({ ok: true }); }
 
-  const kind = b.kind === 'amount' ? 'amount' : 'percent';
-  let value = Math.round(Number(b.value));
+  // percent (1..100), amount (dollars in, US cents stored: Paddle sells in dollars), or free (the plan for `months`, no card).
+  const kind = ['amount', 'free'].includes(b.kind) ? b.kind : 'percent';
+  let value = kind === 'free' ? 100 : Math.round(Number(b.value));
   if (!Number.isFinite(value) || value <= 0) return json({ error: 'bad_value' }, 400);
   if (kind === 'percent' && value > 100) return json({ error: 'percent_over_100' }, 400);
-  if (kind === 'amount') value = value * 100;                 // shekels in, agorot stored
+  if (kind === 'amount') value = value * 100;
+  const months = Math.max(0, Math.min(36, Math.round(Number(b.months) || 0)));   // payments it applies to (0 = every one); free: months
+  if (kind === 'free' && !months) return json({ error: 'bad_months', reason: 'A free code needs a number of months.' }, 400);
+  const products = String(b.products || '').toLowerCase().split(',').map((x) => x.trim()).filter((x) => P.PAID.includes(x) || x === 'all').join(',');
+  const expiresAt = Number(b.expires_at) || null;
 
   const code = normCode(b.code) || ('SDAW-' + urlToken(6).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6));
   const exists = await env.DB.prepare('SELECT 1 FROM streamdaw_coupons WHERE code = ?').bind(code).first().catch(() => null);
   if (exists) return json({ error: 'code_taken', code }, 409);
   await env.DB.prepare(
-    `INSERT INTO streamdaw_coupons (code, kind, value, min_amount, max_uses, used, expires_at, active, note, created_at)
-     VALUES (?, ?, ?, 0, ?, 0, ?, 1, ?, ?)`
+    `INSERT INTO streamdaw_coupons (code, kind, value, min_amount, max_uses, used, expires_at, active, note, created_at, months, products, first_only)
+     VALUES (?, ?, ?, 0, ?, 0, ?, 1, ?, ?, ?, ?, ?)`
   ).bind(code, kind, value, Math.max(0, Math.round(Number(b.max_uses) || 0)),
-         Number(b.expires_at) || null, String(b.note || '').slice(0, 200), now()).run();
+         expiresAt, String(b.note || '').slice(0, 200), now(), months, products, b.first_only ? 1 : 0).run();
   return json({ ok: true, code, kind, value });
 }
 
@@ -256,6 +262,12 @@ export async function streamdawCheckout(req, env) {
   const body = await req.json().catch(() => ({}));
   const email = lc(user.email);
   if (!validEmail(email)) return json({ error: 'sign_in_required' }, 401);
+  // Sold through Paddle (2026-10-29): every product, by the month or the year (streamdaw-paddle.js).
+  const PD = await paddleMod();
+  if (PD.paddleOn(env)) {
+    if (!body.product) return json({ error: 'plan_retired', reason: 'StreamDAW is sold by product now: pick Splits, Station, Record, Compare, Party or All.' }, 410);
+    return PD.paddleCheckout(env, user, body);
+  }
 
   // Pro (once), or Pro Monthly (streamdaw-subs.js). The 7-day pass is no longer sold. Pro takes
   // the buyer's recent pass money off first (passes sold before 2026-10-14), then a coupon.
@@ -688,10 +700,12 @@ export async function myStreamdaw(env, user) {
   const subscription = await (await subsMod()).subFor(env, user).catch(() => null);
   // The products this account holds (id → end in seconds, 0 = for good), for the account and sale pages.
   const products = P.holdings(await accountRows(env, user.email, user.id), now());
-  if (!ent) return json({ owned: false, proPrice, subscription, products });
+  // Paddle subscriptions (2026-10-29): plan, status, the end of the paid period, a cancel to come.
+  const subscriptions = await (await paddleMod()).paddleSubsFor(env, user.email, user.id).catch(() => []);
+  if (!ent) return json({ owned: false, proPrice, subscription, subscriptions, products });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();
-  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice, subscription, products,
+  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice, subscription, subscriptions, products,
                 release: rel, download: `${SITE}/api/streamdaw/download` });
 }
 
@@ -1018,8 +1032,9 @@ async function issueKey(env, row, key, onlyPending) {
   if (checked.error) return { error: checked.error };
   const lines = keyLines(hex);
   const serial = checked.serial;
-  const ent = await env.DB.prepare('SELECT plan FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
-  const monthly = !!ent && isMonthly(ent.plan);
+  const ent = await env.DB.prepare('SELECT plan, source FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
+  // A Paddle subscription renews like Pro Monthly: the same Renewal line, each later key fetched by the app.
+  const monthly = !!ent && (isMonthly(ent.plan) || ent.source === 'paddle');
   // Pro Monthly: the renewal code goes out with the first key and stays the same after (the app
   // keeps it, and fetches every later key with it).
   const code = monthly ? (row.renew_code || (await subsMod()).newRenewCode()) : null;
@@ -1089,6 +1104,8 @@ async function issueKey(env, row, key, onlyPending) {
    with a letter that is not hex ("R"), so every app version's paste cleaning (the longest stretch
    of hex) still finds the key alone; 0.5.6 on also keeps the code. */
 const withRenewal = (lines, code) => (code ? `${lines}\n\nRenewal: ${code}` : lines);
+/** Is this stored key a format-4 (products) key? */
+const keyIsProducts = (text) => /^534404/.test(keyHex(text || ''));
 
 /* Sign one request here, with the Worker's pair (streamdaw-keys.js), and send it as issueKey does
    (checked again there like every key). `override`: the owner letting a request through by hand
@@ -1425,7 +1442,7 @@ export async function streamdawAdmin(env, user) {
       ORDER BY e.created_at DESC LIMIT 200`);
 
   const coupons = await soft(
-    `SELECT id, code, kind, value, max_uses, used, expires_at, active, note, created_at
+    `SELECT id, code, kind, value, max_uses, used, expires_at, active, note, created_at, months, products, first_only
        FROM streamdaw_coupons ORDER BY created_at DESC`);
 
   const releases = await soft(
@@ -1450,8 +1467,10 @@ export async function streamdawAdmin(env, user) {
       Math.floor(Date.now() / 1000) - 14 * 86400))[0] || {}).n || 0,
   };
 
+  // Paddle (2026-10-29): on or off, sandbox or live, set up or not (the codes view's "Set up Paddle").
+  const paddle = await (await paddleMod()).paddlePrices(env).catch(() => null);
   return json({
-    orders, entitlements, coupons, releases, stats,
+    orders, entitlements, coupons, releases, stats, paddle,
     /* Licence keys waiting to be minted. Oldest first: these are people who have
        paid and cannot use what they bought until someone runs the keygen. */
     activations: (await soft(
@@ -1881,6 +1900,6 @@ export async function streamdawTurn(req, env) {
 }
 
 // For streamdaw-subs.js (Pro Monthly), which builds on the same orders, keys and emails.
-export { licenceMail, mailLinksText, escHtml, firstName, grantEntitlement, mintDownloadLink, requestKey, insertOrder,
+export { licenceMail, mailLinksText, escHtml, firstName, grantEntitlement, mintDownloadLink, requestKey, insertOrder, keyIsProducts,
          keyHex, keyLines, normMachine, hypConfigured, liveThrottle, payPageParams,
          SITE, ACCOUNT_URL, UNLOCK_URL, TERMS_URL, HELP_MAIL, BASE as HYP_PAGE, PRICE_GROSS, MIN_APP };

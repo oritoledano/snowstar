@@ -100,7 +100,9 @@ export async function streamdawPrices(env) {
   const m = await monthlyPrice(env);
   // The products (streamdaw-products.js): each one's price today, and whether checkout sells them yet.
   const products = await (await import('./streamdaw-products.js')).catalogFor(env);
-  return json({ pro: { amount: SD.PRICE_GROSS }, monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate, open: await monthlyOpen(env) }, products });
+  // Paddle (2026-10-29): the plans by the month and the year, and whether they sell now.
+  const paddle = await (await import('./streamdaw-paddle.js')).paddlePrices(env).catch(() => null);
+  return json({ pro: { amount: SD.PRICE_GROSS }, monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate, open: await monthlyOpen(env) }, products, paddle });
 }
 
 /* Pro Monthly takes money only once HYP has switched on card tokens and server charges for the
@@ -578,9 +580,14 @@ export async function subsAdmin(env) {
 /* A key's end (ms), read from its payload (format 3's sixth line); 0 for any other key. */
 export function keyEndMs(text) {
   const hex = SD.keyHex(text);
-  if (!/^534403/.test(hex) || hex.length < 2 * (3 + 16 + 64)) return 0;
+  if (!/^53440[34]/.test(hex) || hex.length < 2 * (3 + 16 + 64)) return 0;
   const b = Uint8Array.from(hex.match(/../g), (x) => parseInt(x, 16));
   const f = new TextDecoder().decode(b.subarray(3, b.length - 64)).split('\n');
+  // Format 4 (products): the latest of its products' ends ("splits@<hex ms>,party@…"); one for good: none.
+  if (f.length === 7) {
+    const ends = String(f[6]).split(',').map((e) => (e.includes('@') ? parseInt(e.split('@')[1], 16) : 0));
+    return ends.length && ends.every((v) => Number.isFinite(v) && v > 0) ? Math.max(...ends) : 0;
+  }
   const v = f.length === 6 ? parseInt(f[5], 16) : 0;
   return Number.isFinite(v) ? v : 0;
 }
@@ -599,11 +606,17 @@ export async function streamdawLicenceRefresh(req, env) {
   if (await SD.liveThrottle(env, 'sdrenew-ip:' + tag, 300, 3600) || await SD.liveThrottle(env, 'sdrenew-m:' + machine, 60, 3600))
     return json({ error: 'slow_down' }, 429);
   const rows = ((await env.DB.prepare(
-    `SELECT id, entitlement_id, status, key_text, serial, renew_code FROM streamdaw_activations WHERE machine_id = ? AND renew_code IS NOT NULL`
+    `SELECT id, entitlement_id, status, key_text, serial, renew_code, issued_at FROM streamdaw_activations WHERE machine_id = ? AND renew_code IS NOT NULL`
   ).bind(machine).all()).results) || [];
   const row = rows.find((r) => safeEqual(String(r.renew_code), code));
   if (!row) return json({ error: 'unknown' }, 403);
-  const s = await env.DB.prepare('SELECT * FROM streamdaw_subscriptions WHERE entitlement_id = ?').bind(row.entitlement_id).first();
+  let s = await env.DB.prepare('SELECT * FROM streamdaw_subscriptions WHERE entitlement_id = ?').bind(row.entitlement_id).first();
+  // A Paddle subscription (2026-10-29): the same answer, from its own row (Paddle bills; nothing is charged here).
+  if (!s) {
+    const p = await (await import('./streamdaw-paddle.js')).paddleSubOfEntitlement(env, row.entitlement_id);
+    if (p) s = { status: p.status === 'canceled' ? 'ended' : p.cancel_at ? 'cancelled' : p.status === 'past_due' ? 'past_due' : 'active',
+                 paid_through: p.period_end, next_charge_at: p.cancel_at ? null : (p.next_billed_at || p.period_end), cancel_when: 'end' };
+  }
   const keyEnds = row.key_text ? keyEndMs(row.key_text) : 0;
   const out = {
     ok: true, plan: 'monthly', status: s ? s.status : 'ended', serial: row.serial || null, keyEnds,
@@ -612,7 +625,10 @@ export async function streamdawLicenceRefresh(req, env) {
     nextTryAt: s && s.status === 'past_due' && s.next_charge_at ? s.next_charge_at * 1000 : null,
     renewing: row.status === 'renewing', manage: MANAGE_URL,
   };
-  if (row.key_text && keyEnds > Number(b.have || 0)) out.key = SD.keyLines(row.key_text);
+  // A products key (Paddle): the app up to 0.7.1 sends have 0 for it (its key never ends itself), so the key goes
+  // out only in the two days after it was signed, not every day (each would say "renewed" again).
+  const fresh = !SD.keyIsProducts(row.key_text) || Number(b.have || 0) > 0 || Number(row.issued_at || 0) > now() - 2 * 86400;
+  if (row.key_text && keyEnds > Number(b.have || 0) && fresh) out.key = SD.keyLines(row.key_text);
   // Ended now with the unused days refunded: the app drops this key (it carries this serial).
   if (s && s.status === 'cancelled' && s.cancel_when === 'now') { out.revoke = true; delete out.key; }
   return json(out);

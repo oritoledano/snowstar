@@ -78,7 +78,7 @@
       isArtist: !!(up && (up.artist || (up.uploads || []).length)),
       // Pro Monthly counts too, also once it is cancelled or its payment failed: that is where it is
       // managed (the sale page, the emails and the app all link to #apps).
-      apps: apps && (apps.owned || apps.subscription) ? apps : null,
+      apps: apps && (apps.owned || apps.subscription || (apps.subscriptions || []).length) ? apps : null,
     };
   }
 
@@ -236,11 +236,28 @@
     </div>`;
   }
 
+  /* StreamDAW subscriptions through Paddle (2026-10-29): each one, when it renews or ends, and Paddle's own page to
+     cancel, change the card or get an invoice (POST /streamdaw/paddle/portal). */
+  function paddleBlock(list) {
+    const live = list.filter((x) => x.status !== 'canceled');
+    if (!live.length) return '';
+    const rows = live.map((x) => `<p style="margin:0 0 6px"><b>StreamDAW ${esc(x.name)}</b> · ${x.period === 'year' ? 'yearly' : 'monthly'} · ${
+      x.cancelAt ? `cancelled, yours until <b>${day(x.cancelAt)}</b>`
+      : x.status === 'past_due' ? 'the last payment didn’t go through: Paddle tries again'
+      : `renews on <b>${day(x.nextBilledAt || x.periodEnd)}</b>`}</p>`).join('');
+    return `<div class="sd-sub" style="border:1px solid var(--line,rgba(0,0,0,.15));border-radius:14px;padding:16px 18px;margin:0 0 18px">
+      ${rows}
+      <p class="ac-note" style="margin:0 0 10px">Paddle.com is our reseller: it takes the payments and emails your invoices.</p>
+      <div class="ac-acts" style="justify-content:flex-start"><button class="mbtn mbtn-ghost" id="sdPortal">Manage or cancel</button></div>
+      <p class="ac-note" id="sdPortalSaid" style="margin-top:8px"></p></div>`;
+  }
+
   function apps() {
     const s = data.apps && data.apps.subscription;
     return `<div class="ac-panel"><h2>StreamDAW</h2>
+      ${paddleBlock((data.apps && data.apps.subscriptions) || [])}
       ${s ? subBlock(s) : ''}
-      <p class="ac-note">Your Pro licence is kept with this account. Each Mac gets its own key:
+      <p class="ac-note">Your licence is kept with this account. Each Mac gets its own key:
         request one for a new Mac on the unlock page.</p>
       <div class="ac-acts" style="justify-content:flex-start">
         <a class="mbtn mbtn-solid" href="/apps/streamdaw-unlock.html">Unlock a Mac</a>
@@ -262,6 +279,14 @@
     const box = document.getElementById('sdCancelBox'), said = document.getElementById('sdCancelSaid');
     const open = document.getElementById('sdCancel'), keep = document.getElementById('sdCancelKeep'), go = document.getElementById('sdCancelGo');
     const resume = document.getElementById('sdResume');
+    const portal = document.getElementById('sdPortal');
+    if (portal) portal.addEventListener('click', async () => {
+      portal.disabled = true;
+      const r = await post('/streamdaw/paddle/portal', {});
+      if (r && r.url) { location.href = r.url; return; }
+      portal.disabled = false;
+      document.getElementById('sdPortalSaid').textContent = (r && r.reason) || 'Could not open it. Please try again.';
+    });
     if (open) open.addEventListener('click', () => { box.hidden = false; open.hidden = true; });
     if (keep) keep.addEventListener('click', () => { box.hidden = true; if (open) open.hidden = false; });
     if (go) go.addEventListener('click', async () => {

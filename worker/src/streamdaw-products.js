@@ -3,8 +3,9 @@
    prices were decided by Ori on 2026-10-25 (STREAMDAW repo: wip/product-split-2026-10-25.md):
 
      Master   free (no key needed)
-     Splits   $99 a year        Station  $119 a year      Record  $129 a year
-     Compare  $49 once          Party    $79 a year       All     $199 a year
+     Splits, Station, Record, Compare, Party   $7 a month or $60 a year each
+     All products                              $15 a month or $144 a year
+     (2026-10-29, the founder; sold through Paddle, streamdaw-paddle.js. The first prices were $79–$199 a year.)
 
    Prices are US dollars including VAT, charged in shekels at the site's daily rate (fx.js), as Pro
    Monthly is. A year is one payment for 365 days (no card kept, nothing charged by itself); buying
@@ -22,13 +23,13 @@ import { cachedRates, FALLBACK } from './fx.js';
 
 export const PAID = ['splits', 'station', 'record', 'compare', 'party'];     // in the app's order; master is free
 export const NAMES = { splits: 'Splits', station: 'Station', record: 'Record', compare: 'Compare', party: 'Party', all: 'All products' };
-export const CATALOG = {      // US cents, VAT included
-  splits:  { year: 9900, month: 1200 },
-  station: { year: 11900, month: 1499 },
-  record:  { year: 12900, month: 1500 },
-  compare: { once: 4900, month: 500 },
-  party:   { year: 7900, month: 900 },
-  all:     { year: 19900, month: 1999 },
+export const CATALOG = {      // US cents, tax included. 2026-10-29 (the founder): a product $7 a month or $60 a year,
+  splits:  { year: 6000, month: 700 },       // All products $15 a month or $144 a year; every product by the month or
+  station: { year: 6000, month: 700 },       // the year, sold through Paddle (streamdaw-paddle.js). Was $99–$129 a year.
+  record:  { year: 6000, month: 700 },
+  compare: { year: 6000, month: 700, once: 4900 },   // once (for good): only HYP's product checkout, which is closed
+  party:   { year: 6000, month: 700 },
+  all:     { year: 14400, month: 1500 },
 };
 export const PERIOD_WORDS = { year: 'one year', once: 'for good', month: 'a month' };
 export const PRODUCTS_MIN_APP = '0.7.1';       // the first app that reads a key naming its products

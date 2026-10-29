@@ -254,9 +254,11 @@
   // code can be handed out without asking anyone to type it. Applied on load, the page lands on
   // the price, and the code rides into checkout (HYP's page in this tab, or the lightbox).
   const q = new URLSearchParams(location.search);
+  // The plans through Paddle (2026-10-29, js/streamdaw-plans.js) take codes, ?buy=1 and checkout on a page with #plans.
+  const PLANS_PAGE = !!$('plans');
   const couponFromLink = (function () {
     const code = (q.get('c') || q.get('coupon') || '').trim();
-    if (!code) return Promise.resolve();
+    if (!code || PLANS_PAGE) return Promise.resolve();
     toPricing(400);
     return applyCoupon(code);
   })();
@@ -279,7 +281,8 @@
     const asked = q.get('plan');
     // &product= (the app's product picker, 2026-10-27): that product once the Worker sells by
     // product; before that, Pro as always (it holds every product).
-    if (q.get('buy') === '1' && asked !== 'pass') {
+    if (PLANS_PAGE) { if (q.get('buy') === '1' || asked) toPricing(300); }
+    else if (q.get('buy') === '1' && asked !== 'pass') {
       const want = String(q.get('product') || '').toLowerCase();
       productsAsked.then((open) => {
         if (!open) { toPricing(300); setTimeout(() => buy(asked === 'monthly' ? 'monthly' : 'lifetime'), 450); return; }

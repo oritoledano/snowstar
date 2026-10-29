@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=13">
+<link rel="stylesheet" href="../css/streamdaw.css?v=14">
 <link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
@@ -74,10 +74,10 @@
 },
  {
 "@type": "Question",
-"name": "Is there a monthly plan?",
+"name": "How much is it?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Yes: Pro Monthly, $8.99 a month with every Pro feature. It is charged in shekels at the day's rate when you start (VAT included) and stays that amount every month. Cancel any time in your account, no fee: nothing more is charged, and Pro stays on to the end of the month you paid for. Or buy Pro once and keep it."
+"text": "Master is free. Each product is $7 a month, or $60 a year ($5 a month). All products: $15 a month, or $144 a year ($12 a month). US dollars, tax included; you pay in your own currency. Try everything free for 7 days in the app first, no card."
 }
 },
  {
@@ -85,7 +85,7 @@
 "name": "How does the licence work?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Pro: one payment, no subscription, and every StreamDAW 1 update included. Pro Monthly: the key runs to the end of each month you paid for, and StreamDAW fetches the next one by itself while it is online. Either way your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? Sign in on the unlock page and request a key for it. Read the licence terms."
+"text": "Your key is made for your Mac and names what you have, until when. It usually arrives within minutes: paste it into StreamDAW › Settings › Licence. Each month or year you pay, StreamDAW fetches the next key by itself while it is online. New Mac? Sign in on the unlock page and request a key for it. Bought Pro before? It stays yours, every product, for good. Read the licence terms."
 }
 },
  {
@@ -93,7 +93,7 @@
 "name": "Can I get a refund?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Try before you buy: the free version and the 7-day Pro trial cost nothing. Pro Monthly: cancel any time; end it now instead and we refund the days you did not use. Once your Pro key is issued, Pro isn't refundable, except for a double charge or a key that never arrives. Details."
+"text": "Try before you buy: the free version and the 7-day trial cost nothing. Cancel any time in your account: nothing more is charged, and what you paid for runs to its end. Changed your mind? Ask within 14 days of your first payment and you get it all back."
 }
 }
 ]
@@ -114,7 +114,7 @@
 <meta name="twitter:description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Master is free. Splits, Station, Record, Compare and Party add what you came to do.">
 <meta name="twitter:image" content="https://snowstar.company/assets/og-streamdaw.jpg?v=2">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 12 or later (Apple silicon)", "description": "Stream your DAW to anyone with a link or a QR code, live and lossless. Remote studio sessions with camera, screen and talkback; in-ear sync for bands on their phones.", "offers": [{"@type": "Offer", "name": "StreamDAW", "price": "0", "priceCurrency": "ILS"}, {"@type": "Offer", "name": "StreamDAW Pro Monthly", "description": "Every Pro feature, renews monthly until cancelled; 7-day free trial in the app, no card", "price": "8.99", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "8.99", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M", "unitCode": "MON", "referenceQuantity": {"@type": "QuantitativeValue", "value": "1", "unitCode": "MON"}}}, {"@type": "Offer", "name": "StreamDAW Pro", "description": "One payment, yours forever, no subscription", "price": "249", "priceCurrency": "ILS", "priceSpecification": {"@type": "PriceSpecification", "price": "249", "priceCurrency": "ILS", "valueAddedTaxIncluded": true}}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
+{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 12 or later (Apple silicon)", "description": "Stream your DAW to anyone with a link or a QR code, live and lossless. Remote studio sessions with camera, screen and talkback; in-ear sync for bands on their phones.", "offers": [{"@type": "Offer", "name": "StreamDAW Master", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "StreamDAW, one product, monthly", "description": "Splits, Station, Record, Compare or Party; 7-day free trial in the app, no card", "price": "7", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "7", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M"}}, {"@type": "Offer", "name": "StreamDAW, one product, yearly", "description": "Splits, Station, Record, Compare or Party, billed yearly", "price": "60", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1Y"}}, {"@type": "Offer", "name": "StreamDAW All products, monthly", "description": "Every StreamDAW product", "price": "15", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "15", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M"}}, {"@type": "Offer", "name": "StreamDAW All products, yearly", "description": "Every StreamDAW product, billed yearly", "price": "144", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "144", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1Y"}}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
 </script>
 </head>
 <body>
@@ -151,7 +151,7 @@
       <p class="tw-src" data-txt="streamdaw.hero.lines">Share a mix with the team.<br>Record a voice-over artist across seas.<br>Start an online radio station.<br>Compare mixes, cuts and pix with the band.<br>Put a click in every player's ear.<br>Turn every phone into one sound system.<br>Give every player a mix of their own.<br>Play your new track to fans, live.</p>
       <p class="lead" data-txt="streamdaw.hero.link">They get a link. Nothing to install.</p>
       <div class="cta">
-        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-trial">Try Pro free for 7 days</span></a>
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-trial">Try it free for 7 days</span></a>
         <a class="btn ghost" href="#products" data-txt="streamdaw.hero.cta-more">See the products</a>
       </div>
     </div>
@@ -188,7 +188,7 @@
             <div class="body">
               <h3>Splits </h3>
               <p data-txt="streamdaw.products.splits">Every track to every ear, in personal mixes. Click and guide on stage.</p>
-              <span class="pr">$12 a month</span>
+              <span class="pr">from $5 a month</span>
               <span class="go">See Splits <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -197,7 +197,7 @@
             <div class="body">
               <h3>Station </h3>
               <p data-txt="streamdaw.products.station">Your radio station in a browser: two decks, a crossfader, your voice and guests.</p>
-              <span class="pr">$14.99 a month</span>
+              <span class="pr">from $5 a month</span>
               <span class="go">See Station <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -206,7 +206,7 @@
             <div class="body">
               <h3>Record </h3>
               <p data-txt="streamdaw.products.record">Record anyone, anywhere. The take lands on your track, in time. Or hand them a channel to play and record on their own.</p>
-              <span class="pr">$15 a month</span>
+              <span class="pr">from $5 a month</span>
               <span class="go">See Record <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -215,7 +215,7 @@
             <div class="body">
               <h3>Compare </h3>
               <p data-txt="streamdaw.products.compare">A/B mixes, cuts and pictures with a client. Notes land on the moment.</p>
-              <span class="pr">$5 a month</span>
+              <span class="pr">from $5 a month</span>
               <span class="go">See Compare <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
@@ -224,12 +224,12 @@
             <div class="body">
               <h3>Party </h3>
               <p data-txt="streamdaw.products.party">Every phone in the room on one beat. A silent disco, or one big sound system.</p>
-              <span class="pr">$9 a month</span>
+              <span class="pr">from $5 a month</span>
               <span class="go">See Party <span aria-hidden="true">→</span></span>
             </div>
           </a></li>
       </ul>
-      <div class="bundle"><b data-txt="streamdaw.products.bundle">Every paid product together</b><span>$19.99 a month</span></div>
+      <div class="bundle"><b data-txt="streamdaw.products.bundle">Every paid product together</b><span>$12 a month</span></div>
       <p class="prod-note" data-txt="streamdaw.products.note">One download. <b>Master is free.</b></p>
     </div>
   </section>
@@ -263,52 +263,27 @@
     </div>
   </section>
 
-  <!-- ── Free, Pro Monthly, Pro ── (2026-10-14, Ori, modelled on Auxfeed's pricing page): three
-       cards. The middle one is Pro Monthly with "7-day free trial" on its frame: that trial is the
-       app's own (every new Mac, no card), so the badge and the link under its button are the free
-       download, and subscribing bills from the day it starts (said on the card, in the lightbox and
-       on HYP's page). Pro (once) says "one payment, yours forever". The 7-day pass is gone.
-       The monthly price is $8.99 exactly (data-usd, js/money.js); in shekels it is the day's rate,
-       fixed for a subscriber once they start (worker/src/streamdaw-subs.js), and the page shows the
-       server's own figure (/api/streamdaw/prices, js/streamdaw-page.js). -->
+  <!-- ── Free, one product, all products ── (2026-10-29, the founder): sold through Paddle, by the month or the
+       year (the year shown as its monthly figure). Master stays free. The 7-day trial is the app's own (every new
+       Mac, no card). js/streamdaw-plans.js fills the prices from /api/streamdaw/prices and opens Paddle's checkout;
+       until Paddle sells (the Worker's paddle.open) the buttons start the free week instead. -->
   <section id="pricing">
     <div class="wrap">
       <div class="sec-head center">
-        <p class="kicker" data-when="pro" data-txt="streamdaw.pricing.kicker">Free, monthly or once</p>
-        <h2 data-when="pro" data-txt="streamdaw.pricing.title">Try everything. Pay monthly, or once.</h2>
-        <p class="kicker" data-when="products" hidden>One payment a year</p>
-        <h2 data-when="products" hidden>Try everything. Pay for what you use.</h2>
+        <p class="kicker" data-txt="streamdaw.plans.kicker">Free, then by the month</p>
+        <h2 data-txt="streamdaw.plans.title">Start free. Add what you need.</h2>
       </div>
 
-      <!-- Shown to someone signed in who owns Pro or Pro Monthly (js/streamdaw-page.js). -->
-      <p class="owned" id="owned" hidden>You have StreamDAW Pro. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="streamdaw-install.html?dl=pro">Download the installer</a></p>
+      <!-- Shown to someone signed in who owns a product or a subscription (js/streamdaw-page.js, js/streamdaw-plans.js). -->
+      <p class="owned" id="owned" hidden>You have StreamDAW. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="streamdaw-install.html?dl=pro">Download the installer</a></p>
 
-      <!-- By product (2026-10-27): shown once the Worker sells by product (STREAMDAW_PRODUCTS_OPEN=1,
-           js/streamdaw-page.js 3b); the Pro plans below step aside then. A year is one payment. -->
-      <p class="msg" id="productMsg" hidden></p>
-      <div class="plans three" data-when="products" hidden>
-        <div class="plan"><span class="tag">Splits</span><div class="price"><span data-usd="99">$99</span><small>a year · VAT included</small></div>
-          <p class="note">Every track to every listener, each with a mix of their own. On stage too.</p>
-          <button class="btn ink" data-product="splits">Get Splits</button></div>
-        <div class="plan"><span class="tag">Station</span><div class="price"><span data-usd="119">$119</span><small>a year · VAT included</small></div>
-          <p class="note">Your radio station in a browser: two decks, a crossfader, your voice and your guests.</p>
-          <button class="btn ink" data-product="station">Get Station</button></div>
-        <div class="plan"><span class="tag">Record</span><div class="price"><span data-usd="129">$129</span><small>a year · VAT included</small></div>
-          <p class="note">Record anyone in the world into your DAW, in time.</p>
-          <button class="btn ink" data-product="record">Get Record</button></div>
-        <div class="plan"><span class="tag">Compare</span><div class="price"><span data-usd="49">$49</span><small>once · VAT included</small></div>
-          <p class="note">Mix versions side by side for your client, through a link.</p>
-          <button class="btn ink" data-product="compare">Get Compare</button></div>
-        <div class="plan"><span class="tag">Party</span><div class="price"><span data-usd="79">$79</span><small>a year · VAT included</small></div>
-          <p class="note">Every phone in the room plays the music, in time.</p>
-          <button class="btn ink" data-product="party">Get Party</button></div>
-        <div class="plan pro"><span class="tag lime">All products</span><div class="price"><span data-usd="199">$199</span><small>a year · VAT included</small></div>
-          <p class="note">Splits, Station, Record, Compare and Party.</p>
-          <button class="btn lime" data-product="all">Get All products</button></div>
+      <div class="bill" id="bill" role="radiogroup" aria-label="Billing">
+        <button type="button" role="radio" aria-checked="true" data-bill="year"><span data-txt="streamdaw.plans.yearly">Yearly</span> <em data-txt="streamdaw.plans.save">save up to 28%</em></button>
+        <button type="button" role="radio" aria-checked="false" data-bill="month"><span data-txt="streamdaw.plans.monthly">Monthly</span></button>
       </div>
-      <p class="after" data-when="products" hidden style="text-align:center;max-width:46em;margin:22px auto 0">A year is one payment: nothing is charged after it, and buying again adds a year. Charged in shekels at the day's rate. Master is free. Bought StreamDAW Pro before? You have every product, for good. Try any product free for 7 days in the app. <a href="streamdaw-terms.html">Licence terms</a>.</p>
+      <p class="msg" id="planMsg" hidden></p>
 
-      <div class="plans three" data-when="pro">
+      <div class="plans three" id="plans">
         <div class="plan">
           <span class="tag" data-txt="streamdaw.pricing.free.tag">StreamDAW</span>
           <div class="price" data-txt="streamdaw.pricing.free.price">Free</div>
@@ -321,25 +296,30 @@
           </ul>
           <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.pricing.free.cta">Download for Mac</a>
         </div>
-        <div class="plan monthly" id="monthlyCard">
-          <a class="frame-badge" href="/api/streamdaw/download/free" data-free-dl title="Try Pro free for 7 days: sign up and download. No card." aria-label="7-day free trial: try Pro free for 7 days, sign up and download, no card"><span data-txt="streamdaw.pricing.monthly.badge">7-day free trial</span></a>
-          <span class="tag" data-txt="streamdaw.pricing.monthly.tag">StreamDAW Pro Monthly</span>
-          <div class="price" id="monthPrice"><span data-usd="8.99" data-dp="2">$8.99</span><small>a month · VAT included</small></div>
-          <p class="note" id="monthSub"><b><span data-usd="8.99" data-cur="ILS" data-dp="2" id="monthIls">₪27.62</span> a month.</b> Cancel any time.</p>
+        <div class="plan monthly" id="oneCard">
+          <a class="frame-badge" href="/api/streamdaw/download/free" data-free-dl title="Try every product free for 7 days: sign up and download. No card." aria-label="7-day free trial: sign up and download, no card"><span data-txt="streamdaw.plans.badge">7-day free trial</span></a>
+          <span class="tag" data-txt="streamdaw.plans.one.tag">One product</span>
+          <div class="price"><span data-plan-price="one">$5</span><small data-plan-per="one">a month, billed $60 a year</small></div>
+          <div class="picks" id="picks" role="radiogroup" aria-label="Product">
+            <button type="button" role="radio" aria-checked="true" data-pick="splits">Splits</button>
+            <button type="button" role="radio" aria-checked="false" data-pick="station">Station</button>
+            <button type="button" role="radio" aria-checked="false" data-pick="record">Record</button>
+            <button type="button" role="radio" aria-checked="false" data-pick="compare">Compare</button>
+            <button type="button" role="radio" aria-checked="false" data-pick="party">Party</button>
+          </div>
+          <p class="note" id="pickLine">Every track to every ear, in personal mixes. Click and guide on stage.</p>
           <ul class="list">
-            <li data-txt="streamdaw.pricing.monthly.f1">Every Pro feature</li>
-            <li data-txt="streamdaw.pricing.monthly.f2">Cancel in your account: Pro runs to the end of the month</li>
-            <li data-txt="streamdaw.pricing.monthly.f3">The key renews itself</li>
+            <li data-txt="streamdaw.plans.one.f1">Everything in Free, with no time limit</li>
+            <li data-txt="streamdaw.plans.one.f2">Presets and sign-in-only sessions</li>
+            <li data-txt="streamdaw.plans.one.f3">Cancel any time in your account</li>
           </ul>
-          <p class="msg" id="monthMsg" hidden></p>
-          <button class="btn ink" data-buy="monthly" id="buyMonthly" data-txt="streamdaw.pricing.monthly.cta">Start Pro Monthly</button>
-          <a class="trial-link" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.pricing.monthly.trial">Try free for 7 days first</a>
-          <p class="after" data-txt="streamdaw.pricing.monthly.after">The 7-day trial is in the app. No card. <a href="streamdaw-terms.html#monthly">Terms</a>.</p>
+          <button class="btn ink" data-plan-buy="one" id="buyOne">Get Splits</button>
+          <p class="after" data-txt="streamdaw.plans.one.after">Try it free for 7 days in the app first. No card.</p>
         </div>
-        <div class="plan pro" id="ticket">
-          <span class="tag lime" id="stamp">StreamDAW Pro</span>
-          <div class="price" id="bigPrice"><span data-ils="249">$81</span><small>one payment · VAT included</small></div>
-          <p class="note once" id="priceSub"><b>Yours forever.</b> Every StreamDAW 1 update included.</p>
+        <div class="plan pro" id="allCard">
+          <span class="tag lime" data-txt="streamdaw.plans.all.tag">All products</span>
+          <div class="price"><span data-plan-price="all">$12</span><small data-plan-per="all">a month, billed $144 a year</small></div>
+          <p class="note" data-txt="streamdaw.plans.all.note"><b>Splits, Station, Record, Compare and Party.</b> Every update included.</p>
           <ul class="list">
             <li class="plus" data-txt="streamdaw.pricing.pro.plus">Everything in Free, plus:</li>
             <li data-txt="streamdaw.pricing.pro.f1">Up to 32 stems, a mix for every listener</li>
@@ -348,30 +328,25 @@
             <li data-txt="streamdaw.pricing.pro.f4">Camera, three shared screens and talkback</li>
             <li data-txt="streamdaw.pricing.pro.f5">Record up to 16 people into your DAW</li>
             <li data-txt="streamdaw.pricing.pro.f6">Any app or input into the stream</li>
-            <li data-txt="streamdaw.pricing.pro.f7">Presets and sign-in-only sessions</li>
             <li data-txt="streamdaw.pricing.pro.f8">No time limit</li>
           </ul>
-          <!-- No coupon field here (2026-10-13, Ori): a visible field sends visitors off to hunt for
-               codes. A link with ?c=CODE still applies one (the price here shows it, checkout uses
-               it), and the checkout lightbox has a small "Have a code?" link. -->
-          <p class="msg" id="couponMsg" hidden></p>
-          <p class="msg ok" id="forMac" hidden></p>
-          <button class="btn lime" data-buy="lifetime" id="buyBtn">Get StreamDAW Pro</button>
-          <p class="after" data-txt="streamdaw.pricing.pro.after">Charged as ₪249. Buying accepts the <a href="streamdaw-terms.html">licence terms</a>.</p>
+          <button class="btn lime" data-plan-buy="all" id="buyAll">Get All products</button>
+          <p class="after" data-txt="streamdaw.plans.all.after">Cancel any time. <a href="streamdaw-terms.html">Terms</a>.</p>
         </div>
       </div>
 
-      <p class="unlock-cta" data-when="pro" data-txt="streamdaw.pricing.unlock">Bought Pro or Pro Monthly? <a href="streamdaw-unlock.html">Unlock StreamDAW on your Mac</a></p>
-      <p class="unlock-cta manage-cta" data-when="pro">Subscribed? <a href="../account.html#apps">Manage or cancel Pro Monthly</a></p>
+      <p class="plans-fine" data-txt="streamdaw.plans.fine">Prices in US dollars, tax included. Our order process is conducted by our online reseller Paddle.com, the merchant of record for all our orders. <a href="#" id="haveCode">Have a code?</a></p>
+      <p class="unlock-cta" data-txt="streamdaw.plans.unlock">Bought StreamDAW? <a href="streamdaw-unlock.html">Unlock it on your Mac</a></p>
+      <p class="unlock-cta manage-cta" id="manageCta" hidden>Subscribed? <a href="#" id="manageSub">Manage or cancel</a></p>
 
-      <!-- Competitors' prices, as their own sites showed them (read 2026-10-12): keep the date
-           in the footnote, and check again before changing a word. -->
-      <div class="versus" data-when="pro">
-        <p class="vs-h" data-txt="streamdaw.pricing.vs.title">Theirs are yearly.</p>
+      <!-- Competitors' prices, as their own sites showed them (read 2026-10-12): keep the date in the footnote, and
+           check again before changing a word. -->
+      <div class="versus">
+        <p class="vs-h" data-txt="streamdaw.plans.vs.title">Streaming a mix costs less here.</p>
         <div><span data-txt="streamdaw.pricing.vs.a-name">Waves Stream</span><b data-txt="streamdaw.pricing.vs.a-price">$88.88 a year</b><small data-txt="streamdaw.pricing.vs.a-note">One listener at a time</small></div>
         <div><span data-txt="streamdaw.pricing.vs.b-name">Audiomovers LISTENTO</span><b data-txt="streamdaw.pricing.vs.b-price">from $99.99 a year</b><small data-txt="streamdaw.pricing.vs.b-note">10 listeners on Basic</small></div>
-        <div class="us"><span>StreamDAW Pro</span><b><span data-ils="249">$81</span> once</b><small data-txt="streamdaw.pricing.vs.us-note">A mix for every listener</small></div>
-        <p class="vs-fine" data-txt="streamdaw.pricing.vs.fine">Less than one year of either. Then it's yours. Their prices before tax, as listed on waves.com and audiomovers.com, 12 October 2026.</p>
+        <div class="us"><span data-txt="streamdaw.plans.vs.us-name">StreamDAW</span><b data-txt="streamdaw.plans.vs.us-price">Master free · Splits $60 a year</b><small data-txt="streamdaw.plans.vs.us-note">A mix for every listener</small></div>
+        <p class="vs-fine" data-txt="streamdaw.plans.vs.fine">Their prices before tax, as listed on waves.com and audiomovers.com, 12 October 2026.</p>
       </div>
 
       <p class="reqs" data-txt="streamdaw.pricing.reqs"><b>Mac with Apple silicon</b>, macOS 12 or later. Listeners: <b>any recent browser</b>.</p>
@@ -395,12 +370,12 @@
           <p data-txt="streamdaw.faq.a9">StreamDAW isn't notarized by Apple yet, so the first time you open the installer macOS says it can't verify it. Allow it once in System Settings › Privacy &amp; Security › Open Anyway. The installer adds only the StreamDAW app, its plug-ins and the StreamDAW Audio device. <a href="streamdaw-install.html">The install guide</a> shows every screen.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q7">Who can get into my session?</span></summary>
           <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first. You can switch the waiting room off: the Silent disco preset starts with it off.</p></details>
-        <details data-when="pro"><summary><span data-txt="streamdaw.faq.q8">Is there a monthly plan?</span></summary>
-          <p data-txt="streamdaw.faq.a8">Yes: Pro Monthly, <span data-usd="8.99" data-dp="2">$8.99</span> a month with every Pro feature. It is charged in shekels at the day's rate when you start (<span data-usd="8.99" data-cur="ILS" data-dp="2">₪27.62</span> today, VAT included) and stays that amount every month. Cancel any time in your account, no fee: nothing more is charged, and Pro stays on to the end of the month you paid for. Or buy Pro once and keep it.</p></details>
+        <details><summary><span data-txt="streamdaw.plans.faq.q1">How much is it?</span></summary>
+          <p data-txt="streamdaw.plans.faq.a1">Master is free. Each product is $7 a month, or $60 a year ($5 a month). All products: $15 a month, or $144 a year ($12 a month). US dollars, tax included; you pay in your own currency. Try everything free for 7 days in the app first, no card.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q5">How does the licence work?</span></summary>
-          <p data-txt="streamdaw.faq.a5">Pro: one payment, no subscription, and every StreamDAW 1 update included. Pro Monthly: the key runs to the end of each month you paid for, and StreamDAW fetches the next one by itself while it is online. Either way your key is made for your Mac and usually arrives within minutes: paste it into StreamDAW › Settings › Licence. New Mac? <a href="streamdaw-unlock.html">Sign in on the unlock page</a> and request a key for it. <a href="streamdaw-terms.html">Read the licence terms</a>.</p></details>
+          <p data-txt="streamdaw.plans.faq.a5">Your key is made for your Mac and names what you have, until when. It usually arrives within minutes: paste it into StreamDAW › Settings › Licence. Each month or year you pay, StreamDAW fetches the next key by itself while it is online. New Mac? <a href="streamdaw-unlock.html">Sign in on the unlock page</a> and request a key for it. Bought Pro before? It stays yours, every product, for good. <a href="streamdaw-terms.html">Read the licence terms</a>.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q6">Can I get a refund?</span></summary>
-          <p data-txt="streamdaw.faq.a6">Try before you buy: the free version and the 7-day Pro trial cost nothing. Pro Monthly: cancel any time; end it now instead and we refund the days you did not use. Once your Pro key is issued, Pro isn't refundable, except for a double charge or a key that never arrives. <a href="streamdaw-terms.html#refunds">Details</a>.</p></details>
+          <p data-txt="streamdaw.plans.faq.a6">Try before you buy: the free version and the 7-day trial cost nothing. Cancel any time in your account: nothing more is charged, and what you paid for runs to its end. Changed your mind? Ask within 14 days of your first payment and you get it all back. <a href="streamdaw-terms.html#refunds">Details</a>.</p></details>
       </div>
     </div>
   </section>
@@ -409,9 +384,8 @@
     <div class="wrap">
       <h2 data-txt="streamdaw.last.title">Stop sending mixes.<br><em>Let them hear the session.</em></h2>
       <div class="cta">
-        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.last.cta-trial">Try Pro free for 7 days</a>
-        <a class="btn ghost" href="#pricing" data-when="products" hidden>See the prices</a>
-        <button class="btn ghost" data-when="pro" data-buy="lifetime"><span><span data-txt="streamdaw.last.cta-pro">Get Pro ·</span> <span data-ils="249">$81</span> <span data-txt="streamdaw.last.cta-once">once</span></span></button>
+        <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.last.cta-trial">Try it free for 7 days</a>
+        <a class="btn ghost" href="#pricing" data-txt="streamdaw.last.cta-prices">See the prices</a>
       </div>
       <p class="fine" data-txt="streamdaw.last.fine">No card needed.</p>
     </div>
@@ -426,7 +400,9 @@
       <a href="streamdaw-unlock.html">Unlock your Mac</a>
       <a href="streamdaw-changes.html">What's new</a>
       <a href="streamdaw-terms.html">Licence terms</a>
-      <a href="streamdaw-cancel.html">Cancel a subscription</a>
+      <a href="../account.html#apps">Manage or cancel a subscription</a>
+      <a href="../refund.html">Refunds</a>
+      <a href="../privacy.html">Privacy</a>
       <a href="mailto:hello@snowstar.company">Something not working? hello@snowstar.company</a>
     </nav>
     <a href="../index.html">powered by <b>snowstar.company</b></a>
@@ -470,7 +446,8 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
 <script src="../js/site-edit.js?v=23"></script>
-<script src="../js/streamdaw-page.js?v=20261029b"></script>
+<script src="../js/streamdaw-page.js?v=20261029c"></script>
+<script src="../js/streamdaw-plans.js?v=1"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/dock.js?v=4e928290" defer></script>

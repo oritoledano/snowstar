@@ -55,6 +55,7 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawLiveRegister, streamdawLiveStatus, streamdawLivePage, streamdawLiveCleanup } from './streamdaw.js';
 import { streamdawPrices, streamdawSubCancel, streamdawSubResume, streamdawSubCancelLink, streamdawSubByToken,
          streamdawSubAdmin, streamdawLicenceRefresh, streamdawRenewals } from './streamdaw-subs.js';
+import { paddleSetup, paddleWebhook, paddlePortal, paddleCouponCheck, paddleOn } from './streamdaw-paddle.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { streamdawMacLink, streamdawMacStatus } from './streamdaw-macs.js';
@@ -208,7 +209,7 @@ async function handle(req, env, ctx) {
   // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
   // /streamdaw/turn: the same relays, the same bearer secret; it only hands that Mac TURN credentials.
   // /streamdaw/macs/status: the same relays; it answers only whether that machine ID is connected to an account.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/n/u']);
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/streamdaw/paddle/webhook', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -448,7 +449,10 @@ async function handle(req, env, ctx) {
   // The free version: the same installer, for anyone (Pro is a key for one Mac).
   if (path === '/streamdaw/download/free' && (method === 'GET' || method === 'HEAD')) return streamdawDownloadFree(req, env);
   if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
-  if (path === '/streamdaw/coupon/check' && method === 'POST') return streamdawCouponCheck(req, env);
+  if (path === '/streamdaw/coupon/check' && method === 'POST') return paddleOn(env) ? paddleCouponCheck(req, env) : streamdawCouponCheck(req, env);
+  // StreamDAW through Paddle (2026-10-29, streamdaw-paddle.js): the owner's setup, the buyer's portal.
+  if (path === '/streamdaw/paddle/setup' && method === 'POST') return paddleSetup(req, env, await currentUser(req, env));
+  if (path === '/streamdaw/paddle/portal' && method === 'POST') return paddlePortal(req, env);
   // Pro Monthly (streamdaw-subs.js): the prices the page shows, cancelling (signed in, or by a
   // link sent to the email), resuming, the owner's settling, and the app asking for its renewed key
   // (no cookie and no Origin: its machine id and the renewal code it was given with the first key).
@@ -475,6 +479,8 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/minter/issue' && method === 'POST') return streamdawMinterIssue(req, env);
   // Bug reports: open to anyone, because the useful ones arrive the moment
   // something breaks and a sign-in wall loses them.
+  // Paddle's server, signed (Paddle-Signature, HMAC with the destination's secret): no cookie, no Origin.
+  if (path === '/streamdaw/paddle/webhook' && method === 'POST') return paddleWebhook(req, env);
   if (path === '/streamdaw/report' && (method === 'POST' || method === 'OPTIONS')) return streamdawReport(req, env);
   if (path === '/streamdaw/reports') return streamdawReports(req, env, await currentUser(req, env));
   if (path === '/streamdaw/presence-token' && (method === 'POST' || method === 'OPTIONS')) return streamdawPresenceToken(req, env);

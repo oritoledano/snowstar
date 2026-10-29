@@ -607,3 +607,32 @@ html.sdco-lock,html.sdco-lock body{overflow:hidden}
 .in-dl p{margin:0;line-height:1.45}
 .in-dl b{font-weight:600}
 .in-dl a{color:var(--lime);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+
+/* ── Plans by the month or the year (2026-10-29, js/streamdaw-plans.js) ── */
+.bill{display:flex;justify-content:center;gap:0;margin:0 auto 34px;width:max-content;max-width:100%;border:1.5px solid var(--ink);border-radius:999px;padding:4px;background:var(--card)}
+.bill button{font:600 15px/1 var(--sans);padding:12px 20px;border-radius:999px;border:0;background:transparent;color:var(--ink-2);cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.bill button[aria-checked="true"]{background:var(--ink);color:var(--paper)}
+.bill em{font-style:normal;font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;background:var(--lime);color:var(--lime-ink)}
+.bill button:focus-visible,.picks button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+#planMsg{text-align:center;max-width:46em;margin:-14px auto 22px}
+#planMsg.ok{color:var(--ok)} #planMsg.bad{color:#b0123b}
+.picks{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.picks button{font:600 13px/1 var(--sans);padding:9px 13px;border-radius:999px;border:1.5px solid var(--line-2);background:transparent;color:var(--ink-2);cursor:pointer}
+.picks button[aria-checked="true"]{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.plan .price [data-plan-was]{font-size:.5em;color:var(--muted);text-decoration:line-through;margin-right:8px}
+.plans-fine{text-align:center;max-width:46em;margin:24px auto 0;font-size:13px;color:var(--muted)}
+.plans-fine a{text-decoration:underline}
+.code-row{display:flex;gap:8px;justify-content:center;margin:12px auto 0;max-width:420px}
+.code-row input{flex:1;min-width:0;height:44px;border-radius:999px;border:1.5px solid var(--line-2);padding:0 16px;font:500 15px var(--sans);background:var(--card);color:var(--ink);text-transform:uppercase}
+.code-row .btn{height:44px}
+/* the 15% offer for someone weighing it up: once per visitor, a small card, never over the checkout */
+.offer{position:fixed;left:50%;bottom:24px;z-index:80;width:min(440px,calc(100vw - 32px));transform:translate(-50%,140%);transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  background:var(--ink);color:var(--paper);border-radius:24px;padding:22px 22px 20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.offer.on{transform:translate(-50%,0)}
+.offer h3{font:600 22px/1.15 var(--serif);margin:0 34px 8px 0}
+.offer p{font-size:14px;line-height:1.45;color:rgba(239,233,218,.8);margin:0 0 16px}
+.offer .btn{height:44px}
+.offer .x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(239,233,218,.12);color:var(--paper);font-size:18px;cursor:pointer}
+.offer code{font:700 15px var(--sans);letter-spacing:.06em;background:var(--lime);color:var(--lime-ink);padding:4px 9px;border-radius:8px}
+@media (prefers-reduced-motion:reduce){.offer{transition:none}}
+@media (max-width:640px){.bill button{padding:11px 14px;font-size:14px}}

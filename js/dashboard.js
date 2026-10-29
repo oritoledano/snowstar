@@ -1547,22 +1547,47 @@
     }
 
     if (view === 'codes') {
+      /* Codes for StreamDAW (2026-10-29, through Paddle): % or $ off for some payments, or free months with no card;
+         for some products or all; how many uses; until when; new customers only. A %/$ code becomes a Paddle discount
+         the first time someone uses it (worker/src/streamdaw-paddle.js); a free code never reaches Paddle. */
+      const pad = d.paddle || {};
+      const PRODS = [['all', 'All products'], ['splits', 'Splits'], ['station', 'Station'], ['record', 'Record'], ['compare', 'Compare'], ['party', 'Party']];
+      const worth = (c) => {
+        const n = Number(c.months || 0);
+        if (c.kind === 'free') return `${n} month${n === 1 ? '' : 's'} free`;
+        const off = c.kind === 'amount' ? '$' + Math.round(c.value / 100) + ' off' : c.value + '% off';
+        return off + (n === 0 ? ', every payment' : n === 1 ? ', first payment' : `, first ${n} payments`);
+      };
       return paint(`${kpis}
+        <div class="db-panel"><h2>Paddle</h2>
+          <p class="db-empty" style="padding-top:0">${pad.billing === 'paddle'
+            ? (pad.open ? `<span class="pill good">selling</span> ${esc(pad.paddle && pad.paddle.environment === 'production' ? 'live' : 'sandbox')}: the products, their prices and the webhook are made.`
+                        : `<span class="pill warn">not set up</span> The products, prices and webhook are not made yet in Paddle (${esc(pad.paddle && pad.paddle.environment === 'production' ? 'live' : 'sandbox')}).`)
+            : 'Off: set the PADDLE_API_KEY secret on the Worker first.'}</p>
+          ${pad.billing === 'paddle' && !pad.open ? '<button class="rv-btn rv-ok" id="sd-paddle-setup">Set up Paddle</button> <span class="rv-note" id="sd-paddle-said"></span>' : ''}
+        </div>
         <div class="db-panel"><h2>Discount codes <span class="pill">${(d.coupons || []).length}</span></h2>
-          <p class="db-empty" style="padding-top:0">Separate from Mutra's codes on purpose: a software
-            discount must never be redeemable against a music licence.</p>
-          <div class="sd-new">
-            <input id="sd-code" placeholder="Code — blank to generate" maxlength="40">
-            <select id="sd-kind"><option value="percent">% off</option><option value="amount">₪ off</option></select>
-            <input id="sd-val" type="number" min="1" placeholder="Value" style="width:90px">
-            <input id="sd-max" type="number" min="0" placeholder="Max uses" style="width:110px">
+          <p class="db-empty" style="padding-top:0">A code goes in a link (<code>snowstar.company/apps/streamdaw.html?c=CODE</code>)
+            or is typed behind "Have a code?" at checkout. Separate from Mutra's codes on purpose.</p>
+          <div class="sd-new" style="flex-wrap:wrap">
+            <input id="sd-code" placeholder="Code (blank: made up)" maxlength="40">
+            <select id="sd-kind"><option value="percent">% off</option><option value="amount">$ off</option><option value="free">Free months</option></select>
+            <input id="sd-val" type="number" min="1" placeholder="% or $" style="width:90px">
+            <input id="sd-months" type="number" min="0" max="36" placeholder="Payments" title="% or $ off: how many payments it applies to (0 = every one). Free: how many months." style="width:100px">
+            <select id="sd-prod" multiple size="3" title="Which products (none picked: all)" style="min-width:140px">${PRODS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
+            <input id="sd-max" type="number" min="0" placeholder="Max uses" style="width:100px">
+            <input id="sd-until" type="date" title="Last day it works (blank: no end)">
+            <label class="rv-quiet"><input type="checkbox" id="sd-first"><span>new customers only</span></label>
             <input id="sd-note" placeholder="What it is for" maxlength="200">
             <button class="rv-btn rv-ok" id="sd-make">Create</button>
           </div>
+          <p class="rv-note" id="sd-hint">% or $ off: Payments = how many payments get it (1 = the first only, 0 = every one). Free months: no card, granted at once.</p>
           ${table(d.coupons || [], [
             { label: 'Code', get: (c) => `<b>${esc(c.code)}</b>` },
-            { label: 'Worth', get: (c) => (c.kind === 'percent' ? c.value + '%' : money(c.value, 0)) },
+            { label: 'Worth', get: (c) => esc(worth(c)) },
+            { label: 'For', get: (c) => esc(c.products ? c.products.split(',').map((x) => (PRODS.find((p) => p[0] === x) || [x, x])[1]).join(', ') : 'everything') + (c.first_only ? ' · new customers' : '') },
             { label: 'Used', num: true, get: (c) => `${c.used || 0}${c.max_uses ? ' / ' + c.max_uses : ''}` },
+            { label: 'Until', get: (c) => (c.expires_at ? when(c.expires_at) : '—') },
             { label: 'Note', get: (c) => esc(c.note || '') },
             { label: '', get: (c) => `<button class="chip sd-tog" data-id="${c.id}">${
                 c.active ? 'on' : 'off'}</button> <button class="chip sd-del" data-id="${c.id}">✕</button>` },
@@ -1653,19 +1678,36 @@
     }));
     const make = document.getElementById('sd-make');
     if (make) make.addEventListener('click', async () => {
+      const kind = document.getElementById('sd-kind').value;
       const value = Number(document.getElementById('sd-val').value);
-      if (!Number.isFinite(value) || value <= 0) { document.getElementById('sd-val').focus(); return; }
+      if (kind !== 'free' && (!Number.isFinite(value) || value <= 0)) { document.getElementById('sd-val').focus(); return; }
+      if (kind === 'free' && !(Number(document.getElementById('sd-months').value) > 0)) { document.getElementById('sd-months').focus(); return; }
       make.disabled = true;
+      const until = document.getElementById('sd-until').value;
       const r = await post('/streamdaw/coupon', {
         code: (document.getElementById('sd-code').value || '').trim(),
-        kind: document.getElementById('sd-kind').value,
-        value,
+        kind,
+        value: kind === 'free' ? 100 : value,
+        months: Number(document.getElementById('sd-months').value) || 0,
+        products: [...document.getElementById('sd-prod').selectedOptions].map((o) => o.value).join(','),
         max_uses: Number(document.getElementById('sd-max').value) || 0,
+        expires_at: until ? Math.floor(Date.parse(until + 'T23:59:59') / 1000) : null,
+        first_only: document.getElementById('sd-first').checked ? 1 : 0,
         note: (document.getElementById('sd-note').value || '').trim(),
       });
       make.disabled = false;
-      if (!r || !r.ok) { alert(r && r.error === 'code_taken' ? 'That code is taken.' : 'Could not create it.'); return; }
+      if (!r || !r.ok) { alert(r && r.error === 'code_taken' ? 'That code is taken.' : r && r.reason ? r.reason : 'Could not create it.'); return; }
       load();
+    });
+    const setup = document.getElementById('sd-paddle-setup');
+    if (setup) setup.addEventListener('click', async () => {
+      setup.disabled = true;
+      const said = document.getElementById('sd-paddle-said');
+      said.textContent = 'Making the products, prices and webhook in Paddle…';
+      const r = await post('/streamdaw/paddle/setup', {});
+      setup.disabled = false;
+      if (r && r.ok && r.ready) { load(); return; }
+      said.textContent = (r && r.reason) || 'Paddle did not answer. Nothing half-made stays wrong: press again.';
     });
     document.querySelectorAll('.sd-tog').forEach((b) => b.addEventListener('click', async () => {
       await post('/streamdaw/coupon', { toggle: Number(b.dataset.id) }); load();
