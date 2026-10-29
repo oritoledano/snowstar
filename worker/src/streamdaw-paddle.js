@@ -43,6 +43,8 @@ const API = (env) => (live(env) ? 'https://api.paddle.com' : 'https://sandbox-ap
 const envName = (env) => (live(env) ? 'live' : 'sandbox');
 
 /** Is StreamDAW sold through Paddle (switched on, with a key)? Its prices may still be missing: see ready(). */
+// Only a client-side token (test_… / live_…) ever reaches a page: an API key pasted into the wrong secret stays home.
+const clientToken = (env) => /^(test|live)_[A-Za-z0-9]+$/.test(env.PADDLE_CLIENT_TOKEN || '') ? env.PADDLE_CLIENT_TOKEN : null;
 export const paddleOn = (env) => String(env.STREAMDAW_BILLING || '') === 'paddle' && !!env.PADDLE_API_KEY;
 
 // ── settings Paddle handed out (D1) ─────────────────────────────────────────
@@ -277,7 +279,7 @@ export async function paddleCheckout(env, user, body) {
       custom_data: { sd_ref: ref, user_id: String(user.id), email, plan, machine: machine || null, coupon: c ? c.code : null },
     });
     await SD.insertOrder(env, { ref, userId: user.id, email, plan, amount: 0, status: 'started', coupon: c ? c.code : null, machine, ownerName });
-    return json({ ok: true, paddle: { transactionId: t.data.id, environment: live(env) ? 'production' : 'sandbox', token: env.PADDLE_CLIENT_TOKEN || null },
+    return json({ ok: true, paddle: { transactionId: t.data.id, environment: live(env) ? 'production' : 'sandbox', token: clientToken(env) },
                   ref, plan, label: c ? couponWords(c) : null });
   } catch (e) {
     return json({ error: 'paddle', reason: 'Checkout could not open. Nothing was charged. Please try again.', detail: String(e.message || e).slice(0, 200) }, 502);
@@ -415,5 +417,5 @@ export async function paddleSubOfEntitlement(env, entId) {
 /** What /streamdaw/prices adds: the plans and whether they sell now. */
 export async function paddlePrices(env) {
   return { billing: paddleOn(env) ? 'paddle' : 'hyp', open: await ready(env), plans: catalog(),
-           paddle: paddleOn(env) ? { environment: live(env) ? 'production' : 'sandbox', token: env.PADDLE_CLIENT_TOKEN || null } : null };
+           paddle: paddleOn(env) ? { environment: live(env) ? 'production' : 'sandbox', token: clientToken(env) } : null };
 }
