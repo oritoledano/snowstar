@@ -32,6 +32,7 @@ STATIC = [
     ('/apps/',                'monthly', '0.8'),
     ('/apps/streamdaw.html',  'monthly', '0.8'),
     ('/apps/audioctor.html',  'monthly', '0.8'),
+    ('/apps/audioctor-demo/', 'monthly', '0.6'),
     ('/snowstash.html',       'monthly', '0.8'),
     ('/artists.html',         'monthly', '0.7'),
     ('/contact.html',         'yearly',  '0.4'),

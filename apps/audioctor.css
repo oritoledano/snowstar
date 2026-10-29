@@ -229,3 +229,61 @@ footer a:hover{color:var(--ink)}
 footer b{color:var(--ink-2)}
 
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
+/* ── 2026-10-29: the shorter page. Sections sit closer; the demo, three cards and two plans ── */
+main > section + section{padding-top:0}
+
+/* the demo: marketing/demo's engine and recordings (apps/audioctor-demo/), Before / After and the faders */
+.demo{max-width:860px;margin:28px auto 0;border:1px solid var(--line);border-radius:20px;padding:22px clamp(16px,3vw,28px) 20px;background:linear-gradient(180deg,var(--card),var(--bg-2))}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{font:600 14px/1 var(--sans);color:var(--ink-2);background:transparent;border:1px solid var(--line-2);border-radius:999px;padding:10px 15px;cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--ink-2)}
+.chip.sel{background:var(--lime);color:var(--lime-ink);border-color:transparent}
+.demo .blurb{text-align:center;color:var(--muted);font-size:14.5px;margin:14px 0 16px;min-height:1.6em}
+.ab{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.ab .side{font:700 16px/1 var(--cond);letter-spacing:.16em;text-transform:uppercase;padding:16px 10px;border-radius:12px;border:1px solid var(--line-2);background:transparent;color:var(--ink-2);cursor:pointer}
+.ab #dAfter.on{background:rgba(200,242,58,.12);border-color:var(--lime);color:var(--lime)}
+.ab #dBefore.on{background:rgba(255,211,138,.12);border-color:var(--amber);color:var(--amber)}
+.ab .play{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:132px;font:600 15px/1 var(--sans);padding:16px 22px;border-radius:999px;border:0;cursor:pointer;
+  background:linear-gradient(#d6f55c,#b9df2f);color:var(--lime-ink);box-shadow:0 0 22px rgba(200,242,58,.28)}
+.ab .play:disabled{opacity:.55;cursor:default;box-shadow:none}
+.ab .play svg{width:18px;height:18px;fill:currentColor}
+.ab .play .i-pause,.ab .play.on .i-play{display:none}
+.ab .play.on .i-pause{display:inline}
+#dWave{display:block;width:100%;height:96px;margin-top:18px;border-radius:12px;background:var(--bg);cursor:pointer}
+.dline{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+.dline #dLbl{font:700 12px var(--cond);letter-spacing:.16em;text-transform:uppercase}
+.faders{display:grid;gap:10px;margin-top:16px}
+.fd{display:grid;grid-template-columns:110px 1fr 64px;align-items:center;gap:12px}
+.fd .nm{font:700 13px var(--cond);letter-spacing:.14em;text-transform:uppercase}
+.fd input{width:100%;accent-color:var(--c)}
+.fd .db{font-size:12.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.demo .fine{text-align:center;margin-top:18px}
+.demo .fine a{color:var(--lime);text-decoration:none;white-space:nowrap}
+.demo .fine a:hover{text-decoration:underline}
+
+/* how: three cards */
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin-top:32px}
+.trio figure{margin:0}
+.trio .mac{box-shadow:0 0 0 1px rgba(255,255,255,.08),0 30px 60px -30px rgba(0,0,0,.9)}
+.trio figcaption{margin-top:14px;color:var(--ink-2);font-size:15.5px;line-height:1.5}
+.trio figcaption b{display:block;font:600 21px/1.2 var(--serif);color:var(--ink);margin-bottom:4px}
+
+/* pricing: two plans, $49 first */
+.plans.two{grid-template-columns:repeat(2,minmax(0,380px));justify-content:center}
+.plan.hot .btn,.plan .btn{margin-top:auto}
+.plan ul{margin-bottom:22px}
+.anchor{text-align:center;color:var(--ink-2);margin-top:26px;font-size:15.5px}
+
+@media (max-width:860px){
+  .trio{grid-template-columns:1fr;gap:28px}
+  .plans.two{grid-template-columns:minmax(0,420px)}
+}
+@media (max-width:560px){
+  .ab{grid-template-columns:1fr 1fr}
+  .ab .play{grid-column:1 / -1;order:-1}
+  .fd{grid-template-columns:86px 1fr 56px;gap:8px}
+}
+
+/* the burger (fixed at 56,13 on every page) sat on the logo: the header starts after it, as StreamDAW's does */
+@media (max-width:1330px){header.nav .wrap{padding-left:calc(clamp(20px,5vw,56px) + 48px)}}

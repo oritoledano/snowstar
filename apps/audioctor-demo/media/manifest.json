@@ -1,0 +1,453 @@
+{
+ "target_lufs": -16.0,
+ "examples": [
+  {
+   "id": "gig",
+   "name": "A gig, filmed on a phone.mov",
+   "blurb": "A phone video from the crowd: the singer, the band and the room.",
+   "seconds": 11.413,
+   "parts": "voice",
+   "before": {
+    "file": "gig-before.m4a",
+    "gain": 0.8544727778574734
+   },
+   "variants": {
+    "base": {
+     "gain": 0.8695158308366447,
+     "parts": "voice",
+     "quality": "best",
+     "mode": "song",
+     "bandwidthHz": 13750.0,
+     "chain": [
+      "separate",
+      "clean"
+     ],
+     "off": [
+      "studio"
+     ],
+     "took_s_per_min": 21.2,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "gig-base-voice.m4a"
+      },
+      {
+       "name": "Music",
+       "minor": false,
+       "file": "gig-base-music.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": false,
+       "file": "gig-base-background.m4a"
+      }
+     ]
+    },
+    "raw": {
+     "gain": 0.8558727673561601,
+     "parts": "voice",
+     "quality": "best",
+     "mode": "song",
+     "bandwidthHz": 13750.0,
+     "chain": [
+      "separate"
+     ],
+     "off": [
+      "clean",
+      "studio"
+     ],
+     "took_s_per_min": 10.8,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "gig-raw-voice.m4a"
+      },
+      {
+       "name": "Music",
+       "minor": false,
+       "file": "gig-base-music.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": false,
+       "file": "gig-raw-background.m4a"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "memo",
+   "name": "A voice memo.qta",
+   "blurb": "Speech recorded in Voice Memos, room and all.",
+   "seconds": 23.878,
+   "parts": "voice",
+   "before": {
+    "file": "memo-before.m4a",
+    "gain": 3.191862329953605
+   },
+   "variants": {
+    "base": {
+     "gain": 1.101753317662213,
+     "parts": "voice",
+     "quality": "b",
+     "mode": "speech",
+     "bandwidthHz": 17750.0,
+     "chain": [
+      "separate",
+      "clean",
+      "studio"
+     ],
+     "off": [],
+     "took_s_per_min": 41.9,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "memo-base-voice.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": true,
+       "file": "memo-base-background.m4a"
+      }
+     ]
+    },
+    "nostudio": {
+     "gain": 3.20205478045082,
+     "parts": "voice",
+     "quality": "b",
+     "mode": "speech",
+     "bandwidthHz": 17750.0,
+     "chain": [
+      "separate",
+      "clean"
+     ],
+     "off": [
+      "studio"
+     ],
+     "took_s_per_min": 38.1,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "memo-nostudio-voice.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": true,
+       "file": "memo-base-background.m4a"
+      }
+     ]
+    },
+    "raw": {
+     "gain": 3.201510216655876,
+     "parts": "voice",
+     "quality": "b",
+     "mode": "speech",
+     "bandwidthHz": 17750.0,
+     "chain": [
+      "separate"
+     ],
+     "off": [
+      "clean",
+      "studio"
+     ],
+     "took_s_per_min": 30.7,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "memo-raw-voice.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": true,
+       "file": "memo-raw-background.m4a"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "note",
+   "name": "A WhatsApp voice note.opus",
+   "blurb": "Sent on WhatsApp: 17 kbps, the top cut off at 12 kHz.",
+   "seconds": 18.393,
+   "parts": "voice",
+   "before": {
+    "file": "note-before.m4a",
+    "gain": 1.5191136879181018
+   },
+   "variants": {
+    "base": {
+     "gain": 1.1893934004533555,
+     "parts": "voice",
+     "quality": "b",
+     "mode": "speech",
+     "bandwidthHz": 12000.0,
+     "chain": [
+      "separate",
+      "clean",
+      "highs"
+     ],
+     "off": [
+      "studio"
+     ],
+     "took_s_per_min": 182.9,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "note-base-voice.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": true,
+       "file": "note-base-background.m4a"
+      }
+     ]
+    },
+    "nohighs": {
+     "gain": 1.1872542320353574,
+     "parts": "voice",
+     "quality": "b",
+     "mode": "speech",
+     "bandwidthHz": 12000.0,
+     "chain": [
+      "separate",
+      "clean"
+     ],
+     "off": [
+      "studio",
+      "highs"
+     ],
+     "took_s_per_min": 22.6,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "note-nohighs-voice.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": true,
+       "file": "note-base-background.m4a"
+      }
+     ]
+    },
+    "raw": {
+     "gain": 1.1877555999904807,
+     "parts": "voice",
+     "quality": "b",
+     "mode": "speech",
+     "bandwidthHz": 12000.0,
+     "chain": [
+      "separate"
+     ],
+     "off": [
+      "clean",
+      "studio",
+      "highs"
+     ],
+     "took_s_per_min": 14.1,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "note-raw-voice.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": true,
+       "file": "note-raw-background.m4a"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "id": "song",
+   "name": "On Site Lover (master).wav",
+   "blurb": "A finished master by KAYMA, taken apart.",
+   "seconds": 30.0,
+   "parts": "instruments",
+   "before": {
+    "file": "song-before.m4a",
+    "gain": 0.5594721936709602
+   },
+   "variants": {
+    "base": {
+     "gain": 0.5929164396467579,
+     "parts": "instruments",
+     "quality": "best",
+     "mode": "song",
+     "bandwidthHz": 24000.0,
+     "chain": [
+      "separate",
+      "clean"
+     ],
+     "off": [
+      "studio"
+     ],
+     "took_s_per_min": 9.5,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "song-base-voice.m4a"
+      },
+      {
+       "name": "Drums",
+       "minor": false,
+       "file": "song-base-drums.m4a"
+      },
+      {
+       "name": "Bass",
+       "minor": false,
+       "file": "song-base-bass.m4a"
+      },
+      {
+       "name": "Other",
+       "minor": false,
+       "file": "song-base-other.m4a"
+      },
+      {
+       "name": "Guitars",
+       "minor": false,
+       "file": "song-base-guitars.m4a"
+      },
+      {
+       "name": "Keys",
+       "minor": true,
+       "file": "song-base-keys.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": false,
+       "file": "song-base-background.m4a"
+      }
+     ]
+    },
+    "raw": {
+     "gain": 0.5587055769582403,
+     "parts": "instruments",
+     "quality": "best",
+     "mode": "song",
+     "bandwidthHz": 24000.0,
+     "chain": [
+      "separate"
+     ],
+     "off": [
+      "clean",
+      "studio"
+     ],
+     "took_s_per_min": 2.8,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "song-raw-voice.m4a"
+      },
+      {
+       "name": "Drums",
+       "minor": false,
+       "file": "song-base-drums.m4a"
+      },
+      {
+       "name": "Bass",
+       "minor": false,
+       "file": "song-base-bass.m4a"
+      },
+      {
+       "name": "Other",
+       "minor": false,
+       "file": "song-base-other.m4a"
+      },
+      {
+       "name": "Guitars",
+       "minor": false,
+       "file": "song-base-guitars.m4a"
+      },
+      {
+       "name": "Keys",
+       "minor": true,
+       "file": "song-base-keys.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": false,
+       "file": "song-raw-background.m4a"
+      }
+     ]
+    },
+    "voice": {
+     "gain": 0.607327804343181,
+     "parts": "voice",
+     "quality": "best",
+     "mode": "song",
+     "bandwidthHz": 24000.0,
+     "chain": [
+      "separate",
+      "clean"
+     ],
+     "off": [
+      "studio"
+     ],
+     "took_s_per_min": 13.7,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "song-voice-voice.m4a"
+      },
+      {
+       "name": "Music",
+       "minor": false,
+       "file": "song-voice-music.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": false,
+       "file": "song-voice-background.m4a"
+      }
+     ]
+    },
+    "voiceraw": {
+     "gain": 0.5747026296244638,
+     "parts": "voice",
+     "quality": "best",
+     "mode": "song",
+     "bandwidthHz": 24000.0,
+     "chain": [
+      "separate"
+     ],
+     "off": [
+      "clean",
+      "studio"
+     ],
+     "took_s_per_min": 7.6,
+     "channels": [
+      {
+       "name": "Voice",
+       "minor": false,
+       "file": "song-voiceraw-voice.m4a"
+      },
+      {
+       "name": "Music",
+       "minor": false,
+       "file": "song-voice-music.m4a"
+      },
+      {
+       "name": "Background",
+       "minor": false,
+       "file": "song-voiceraw-background.m4a"
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

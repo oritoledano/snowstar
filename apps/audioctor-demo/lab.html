@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Audioctor: the demo lab</title>
+<meta name="robots" content="noindex">
+<style>
+/* Audioctor, the Sound Lab (2026-10-20): StreamDAW's Monitor in another room. On top, a lab bench: the original in
+   a flask, one graduated cylinder per part (its liquid is its fader, the LEDs on the glass its meter), the scope on
+   the wall (the waveform). Under it StreamDAW's powder-coated faceplate. Left, the samples. The scene and the
+   faceplate are one 1100 x 590 drawing, scaled to the window: nothing scrolls. Pictures from app/art (drawn once). */
+:root {
+  --ink: #f3eddc; --sub: rgba(243,237,220,.72); --dim: rgba(243,237,220,.5); --lime: #c8f23a; --lime-ink: #1d2a00; --amber: #ffd38a; --hot: #ff5c8a;
+  --head: "Fraunces", "New York", Georgia, serif; --sans: "Inter", -apple-system, "Helvetica Neue", sans-serif;
+  --cond: "Barlow Condensed", "Avenir Next Condensed", "Arial Narrow", sans-serif; --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --marker: "Permanent Marker", "Marker Felt", cursive;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; }
+body { background: #0b0a08; color: var(--ink); font: 13px/1.4 var(--sans); -webkit-user-select: none; user-select: none; -webkit-font-smoothing: antialiased;
+  display: grid; grid-template-columns: 236px 1fr; gap: 12px; padding: 12px; }
+button { font: inherit; color: inherit; }
+
+/* ---- the samples rail */
+.rail { display: flex; flex-direction: column; min-height: 0; border-radius: 14px; padding: 14px 12px 12px;
+  background: linear-gradient(180deg, #1a1916, #121110); box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px #000; }
+/* the wordmark: Ori's Audioctor logo (2026-10-20), ink on transparent */
+.brand img { display: block; width: 178px; height: auto; margin: 0 0 0 2px; }
+.brand small { display: block; font: 500 11px/1 var(--sans); color: var(--dim); margin: 9px 0 0 2px; letter-spacing: .02em; }
+.brand small b { color: var(--sub); font-weight: 700; }
+.silk { font: 700 11px/1 var(--cond); letter-spacing: .16em; text-transform: uppercase; color: #e2ded2; }
+.rail .silk { margin: 18px 2px 8px; color: var(--dim); }
+.files { list-style: none; margin: 0; padding: 0; overflow: auto; flex: 1 1 auto; min-height: 0; }
+.files li { position: relative; display: grid; grid-template-columns: 18px 1fr 16px; gap: 8px; align-items: center; padding: 8px 6px 9px; border-radius: 9px; cursor: pointer; }
+.files li:hover { background: rgba(255,255,255,.03); }
+.files li.sel { background: linear-gradient(180deg, #2a2823, #201f1b); box-shadow: inset 0 0 0 1px rgba(200,242,58,.35); }
+.files .nm b { display: block; font: 600 12.5px/1.25 var(--sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.files .nm span { font: 500 11px/1.3 var(--sans); color: var(--dim); }
+.files .nm span.on { color: var(--lime); } .files .nm span.bad { color: var(--hot); }
+.files .x { border: 0; background: none; color: var(--dim); cursor: pointer; font-size: 15px; padding: 0; }
+.files .x:hover { color: var(--ink); }
+.files .bar { position: absolute; left: 32px; right: 28px; bottom: 3px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.07); overflow: hidden; }
+.files .bar i { display: block; height: 100%; background: var(--lime); box-shadow: 0 0 6px rgba(200,242,58,.6); }
+.box { appearance: none; width: 16px; height: 16px; border: 1.5px solid rgba(243,237,220,.4); border-radius: 4px; cursor: pointer; display: grid; place-content: center; background: transparent; margin: 0; }
+.box:checked { background: var(--lime); border-color: var(--lime); }
+.box:checked::after { content: "✓"; font: 700 11px var(--sans); color: var(--lime-ink); }
+.adder { border: 1.5px dashed rgba(243,237,220,.22); border-radius: 10px; padding: 12px 8px; text-align: center; color: var(--dim); font-size: 12px; margin: 10px 0; cursor: pointer; }
+.adder:hover { border-color: var(--lime); color: var(--ink); }
+.adder u { color: var(--ink); }
+.railbtn { width: 100%; border: 0; border-radius: 9px; padding: 10px; font: 700 12px/1 var(--cond); letter-spacing: .14em; text-transform: uppercase; cursor: pointer;
+  background: linear-gradient(#d6f55c, #b9df2f); color: var(--lime-ink); box-shadow: 0 0 12px rgba(200,242,58,.3); }
+.railbtn:disabled { background: #2a2925; color: var(--dim); box-shadow: none; cursor: default; }
+
+/* ---- the lab: one drawing, scaled */
+.labwrap { position: relative; min-width: 0; min-height: 0; display: grid; place-items: start center; }
+.lab { position: absolute; left: 0; top: 0; width: 1100px; height: 594px; transform-origin: 0 0; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 0 0 1px #000, 0 30px 60px -24px rgba(0,0,0,.95); }
+.scene { position: absolute; left: 0; top: 0; width: 1100px; height: 400px; background: #0a0f0e url(art/lab-room.webp) 0 0 / 1100px 400px no-repeat; }
+
+/* the scope: the waveform on a green screen */
+.scope { position: absolute; left: 236px; top: 14px; width: 728px; height: 84px; border-radius: 10px; padding: 7px;
+  background: linear-gradient(180deg, #3b3c38, #222320 60%, #191a18); box-shadow: 0 0 0 1px #000, inset 0 1px 0 rgba(255,255,255,.18), 0 8px 18px -6px rgba(0,0,0,.8); }
+.screen { position: relative; width: 100%; height: 100%; border-radius: 6px; overflow: hidden; cursor: pointer;
+  background: radial-gradient(120% 140% at 50% 50%, #0f1a0c, #060a05 70%); box-shadow: inset 0 0 0 1px rgba(0,0,0,.9), inset 0 2px 10px rgba(0,0,0,.9); }
+.screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.screen::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px), linear-gradient(162deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%); }
+.scope .read { position: absolute; right: 12px; top: 5px; font: 600 11px/1 var(--mono); color: var(--lime); text-shadow: 0 0 6px rgba(200,242,58,.7); pointer-events: none; }
+.scope .name { position: absolute; left: 12px; top: 5px; max-width: 60%; font: 600 11px/1 var(--mono); color: rgba(200,242,58,.75); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.scope .hint { position: absolute; inset: 0; display: grid; place-items: center; font: 600 13px var(--mono); color: rgba(200,242,58,.55); pointer-events: none; }
+
+/* the flask: the original */
+.flask { position: absolute; left: 22px; top: 62px; width: 170px; height: 230px; background: url(art/lab-flask.webp) 0 0 / 170px 230px no-repeat; cursor: pointer; }
+.flask .glow { position: absolute; left: 44px; top: 106px; width: 108px; height: 108px; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(closest-side, rgba(255,240,200,.5), rgba(255,200,120,.12) 60%, rgba(255,200,120,0)); mix-blend-mode: screen; }
+/* the glass from the flask to the cylinders (the page draws it: it depends on how many parts) */
+.pipes { position: absolute; inset: 0; pointer-events: none; }
+.pipes .glass { fill: none; stroke: rgba(220,236,255,.18); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+.pipes .shine { fill: none; stroke: rgba(255,255,255,.35); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.pipes .flow { fill: none; stroke: var(--lime); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 10 14; opacity: 0; filter: drop-shadow(0 0 3px rgba(200,242,58,.8)); }
+.lab.working .pipes .flow { opacity: .9; animation: flow 1s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -24; } }
+
+/* a cylinder per part: the liquid is the fader, the LEDs on the glass its meter */
+.cyl { position: absolute; top: 96px; width: 64px; height: 200px; cursor: ns-resize; touch-action: none; }
+.cyl .liq { position: absolute; left: 15px; width: 34px; bottom: 16px; height: 0; border-radius: 0 0 2px 2px;
+  background: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,0) 30%, rgba(0,0,0,.25)), linear-gradient(180deg, var(--c), color-mix(in srgb, var(--c) 55%, #000)); }
+.cyl .liq::before { content: ""; position: absolute; left: 0; right: 0; top: -2px; height: 4px; border-radius: 50%; background: color-mix(in srgb, var(--c) 60%, #fff); opacity: .85; }
+.cyl .liq.empty::before { display: none; }
+.cyl .glow { position: absolute; left: 6px; right: 6px; bottom: 10px; top: 20px; border-radius: 8px; pointer-events: none; opacity: 0;
+  background: radial-gradient(60% 50% at 50% 85%, var(--c), transparent 70%); mix-blend-mode: screen; }
+.cyl .glass { position: absolute; inset: 0; background: url(art/lab-cyl.webp) 0 0 / 64px 200px no-repeat; pointer-events: none; }
+.cyl .unity { position: absolute; left: 9px; width: 8px; height: 1.6px; background: var(--lime); box-shadow: 0 0 4px rgba(200,242,58,.8); pointer-events: none; }
+.cyl .led { position: absolute; left: 52px; width: 4px; bottom: 18px; top: 26px; border-radius: 2px; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 1px, rgba(0,0,0,.65) 1px 2.4px), linear-gradient(0deg, #44d36e 0 55%, #f4c430 55% 85%, #ff4b4b 85%); opacity: .14; }
+.cyl .ledon { position: absolute; left: 52px; width: 4px; bottom: 18px; height: 0; border-radius: 2px; overflow: hidden; pointer-events: none; }
+.cyl .ledon i { position: absolute; left: 0; bottom: 0; width: 4px; height: var(--full);
+  background: repeating-linear-gradient(0deg, transparent 0 1px, rgba(0,0,0,.65) 1px 2.4px), linear-gradient(0deg, #44d36e 0 55%, #f4c430 55% 85%, #ff4b4b 85%);
+  box-shadow: 0 0 6px rgba(68,211,110,.6); }
+.cyl .pk { position: absolute; left: 51px; width: 6px; height: 2px; border-radius: 1px; background: #fff; opacity: 0; pointer-events: none; box-shadow: 0 0 4px #fff; }
+.cyl.off .liq { filter: saturate(.15) brightness(.55); }
+.cyl .tip { position: absolute; left: 50%; top: -6px; transform: translate(-50%, -100%); padding: 3px 7px; border-radius: 999px; background: var(--ink); color: #12110e;
+  font: 600 11px/1.2 var(--mono); white-space: nowrap; pointer-events: none; display: none; }
+.cyl.drag .tip { display: block; }
+/* its plate on the bench's steel front: the name on tape, the level, ON · S · MONO · EQ */
+.plate { position: absolute; top: 306px; width: 112px; height: 86px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tape { position: relative; display: inline-block; max-width: 104px; padding: 4px 9px 2px; transform: rotate(-2deg); font: 400 13px/1 var(--marker); color: #1b1a20; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase;
+  background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,0) 45%), url(art/grain.webp) 0 0/120px, #e9e2cc; background-blend-mode: normal, multiply, normal;
+  clip-path: polygon(0 8%,4% 0,9% 6%,15% 1%,22% 5%,30% 0,40% 4%,52% 0,63% 5%,74% 1%,85% 5%,93% 0,100% 6%,98% 50%,100% 94%,94% 100%,86% 95%,76% 100%,64% 96%,52% 100%,40% 95%,28% 100%,17% 96%,8% 100%,2% 95%,0 60%); }
+.plate .db { font: 600 10.5px/1 var(--mono); color: var(--lime); text-shadow: 0 0 6px rgba(200,242,58,.55); padding: 3px 6px; border-radius: 3px; background: linear-gradient(#070905, #11150a);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.1); min-width: 58px; text-align: center; }
+.keys { display: flex; gap: 3px; }
+.mk { width: 25px; height: 20px; padding: 0; border: 0; border-radius: 4px; cursor: pointer; font: 700 9px/1 var(--cond); letter-spacing: .08em; color: #bdb6a4;
+  background: linear-gradient(180deg, #3a3833, #24231f); box-shadow: 0 0 0 1px #050505, inset 0 1px 0 rgba(255,255,255,.18), 0 2px 3px rgba(0,0,0,.6); }
+.mk.on { color: var(--lime-ink); background: linear-gradient(#e2fb7a, #b4d93a); box-shadow: 0 0 0 1px #050505, 0 0 9px rgba(200,242,58,.55); }
+.mk.on.pw { color: var(--lime-ink); }
+.mk:disabled { opacity: .3; cursor: default; }
+.mk.busy { animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.flaskplate { left: 51px; }
+
+/* ---- the faceplate (StreamDAW's: powder coat, screws, backlit keys, Nixie tubes, levers) */
+.deck { position: absolute; left: 0; top: 400px; width: 1100px; height: 194px; display: flex; align-items: stretch; padding: 16px 18px 12px; isolation: isolate;
+  background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,0) 16%, rgba(0,0,0,0) 80%, rgba(0,0,0,.22)), #4a4947 url(art/powder-deck.webp) 0 0/220px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 2px 0 rgba(0,0,0,.35), inset 0 -1px 0 rgba(0,0,0,.6); }
+.screw { position: absolute; width: 15px; height: 15px; background: url(art/screws.webp) 0 0/60px 15px no-repeat; pointer-events: none; z-index: 3; }
+.mod { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 0 14px; min-width: 0; }
+.mod + .mod::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 1px; background: rgba(243,240,230,.16); }
+.mod .body { flex: 1; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 0; }
+.mod > .silk { margin-top: 8px; font-size: 13px; color: #f4f2ea; }
+.win { display: inline-flex; align-items: center; justify-content: center; font: 600 12px/1.15 var(--mono); color: var(--lime); padding: 5px 8px; border-radius: 4px; white-space: nowrap; min-width: 0;
+  background: linear-gradient(#070905, #11150a); text-shadow: 0 0 7px rgba(200,242,58,.6);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.95), inset 0 0 0 1px rgba(200,242,58,.07), 0 1px 0 rgba(255,255,255,.14), 0 -1px 0 rgba(0,0,0,.4); }
+.win.dark { color: rgba(200,242,58,.35); text-shadow: none; }
+/* backlit keys */
+.ob { position: relative; display: block; padding: 3px; border: 0; border-radius: 9px; cursor: pointer; text-align: left; min-width: 0;
+  background: linear-gradient(180deg, #8d8a83, #4a4844 40%, #222120 75%, #3a3835); box-shadow: 0 0 0 1px #0b0b0a, 0 3px 5px rgba(0,0,0,.65); }
+.ob .cap { display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px; border-radius: 6px;
+  background: radial-gradient(140% 70% at 50% -8%, rgba(255,255,255,.2), rgba(255,255,255,0) 62%), linear-gradient(180deg, #363430, #22211e 62%, #191816);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24), inset 0 -3px 5px rgba(0,0,0,.55), inset 0 0 0 1px rgba(0,0,0,.55); }
+.ob b { font: 600 12px/1.05 var(--cond); letter-spacing: .06em; text-transform: uppercase; color: #ddd6c4; white-space: nowrap; }
+.ob .led { width: 9px; height: 9px; margin-left: auto; border-radius: 50%; flex: none; background: radial-gradient(circle at 50% 40%, #3a3a36, #121210);
+  box-shadow: 0 0 0 1px #0a0a09, 0 0 0 2px #6f6c66, 0 1px 2px 2px rgba(0,0,0,.5); }
+.ob.sel { background: linear-gradient(180deg, #eaff9c, #b4d93a 45%, #6d8c10); box-shadow: 0 0 0 1px #0b0b0a, 0 0 18px rgba(200,242,58,.45), 0 3px 5px rgba(0,0,0,.6); }
+.ob.sel .cap { transform: translateY(1px); background: radial-gradient(120% 80% at 50% 115%, rgba(200,242,58,.32), rgba(200,242,58,0) 62%), linear-gradient(180deg, #3a3933, #24231f); }
+.ob.sel b { color: #fff; }
+.ob.sel .led { background: radial-gradient(circle at 50% 55%, #f6ffd0 0, #c8f23a 35%, #6e8f12 75%); box-shadow: 0 0 0 1px #0a0a09, 0 0 0 2px #8a8780, 0 0 8px 3px rgba(200,242,58,.55); }
+.ob:disabled { opacity: .45; cursor: default; }
+.ob.na .led { opacity: .4; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* the big key */
+.bigkey { width: 104px; height: 78px; border: 0; border-radius: 14px; cursor: pointer; padding: 5px;
+  background: linear-gradient(180deg, #9a978f, #4a4844 40%, #222120 75%, #3a3835); box-shadow: 0 0 0 1px #0b0b0a, 0 4px 7px rgba(0,0,0,.7); }
+.bigkey span { display: grid; place-items: center; height: 100%; border-radius: 10px; font: 700 15px/1 var(--cond); letter-spacing: .16em; color: var(--lime-ink);
+  background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%), linear-gradient(180deg, #e7fb86, #b9df2f 60%, #93b81c);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -4px 7px rgba(60,80,0,.45), 0 0 18px rgba(200,242,58,.45); }
+.bigkey:disabled span { background: linear-gradient(180deg, #48463f, #2b2a26); color: rgba(243,237,220,.4); box-shadow: inset 0 1px 0 rgba(255,255,255,.15); }
+.bigkey.dark span { background: radial-gradient(120% 80% at 50% 0%, rgba(255,255,255,.2), rgba(255,255,255,0) 55%), linear-gradient(180deg, #3d3b36, #22211e); color: #ece6d4; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), inset 0 -4px 7px rgba(0,0,0,.5); }
+.bigkey.dark.playing span { color: var(--lime); text-shadow: 0 0 8px rgba(200,242,58,.8); }
+/* levers */
+.lever { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+.lever .pos { font: 700 11px/1 var(--cond); letter-spacing: .1em; color: rgba(244,242,234,.55); text-transform: uppercase; white-space: nowrap; }
+.lever .pos.on { color: var(--lime); text-shadow: 0 0 6px rgba(200,242,58,.6); }
+.lever img { width: 40px; height: 73px; display: block; }
+.lever.locked { cursor: default; opacity: .5; }
+/* Nixie tubes (StreamDAW's DELAY) */
+.nixwin { position: relative; padding: 8px 10px 7px; border-radius: 9px;
+  background: radial-gradient(90% 120% at 50% 120%, rgba(255,110,30,.10), transparent 60%), linear-gradient(#0a0807, #140f0b);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.16), 0 -1px 0 rgba(0,0,0,.45); }
+.nixrow { display: flex; align-items: flex-end; gap: 4px; }
+.nx { position: relative; width: 34px; height: 58px; border-radius: 16px 16px 5px 5px; overflow: hidden;
+  background: radial-gradient(70% 55% at 50% 52%, rgba(255,120,40,.12), rgba(255,120,40,0) 70%), linear-gradient(90deg, #16110d, #21170f 45%, #120d0a);
+  box-shadow: inset 0 0 0 1px rgba(255,230,200,.16), inset 0 0 8px rgba(0,0,0,.9), 0 0 0 1px #000; }
+.nx b { position: absolute; inset: 0; display: grid; place-items: center; font: 400 42px/1 var(--cond); color: #ffe0b8; transform: translateY(2%);
+  text-shadow: 0 0 1px #fff4e4, 0 0 3px #ffae5a, 0 0 7px #ff7a14, 0 0 14px rgba(255,100,10,.85), 0 0 26px rgba(255,80,0,.55); }
+.nx.dark b { color: transparent; -webkit-text-stroke: .7px rgba(150,110,80,.28); text-shadow: none; }
+.nixunit { font: 700 15px/1 var(--cond); color: #ffb169; text-shadow: 0 0 6px rgba(255,120,20,.7); margin: 0 0 6px 4px; }
+.nixunit.dark { color: rgba(150,110,80,.4); text-shadow: none; }
+.progline { margin-top: 8px; width: 210px; justify-content: center; }
+
+/* ---- the EQ: RX 12's processing range, on the lab's spectrometer */
+.eqwrap { position: fixed; inset: 0; background: rgba(5,5,4,.6); display: grid; place-items: center; z-index: 20; }
+.eqwrap[hidden], .ob[hidden] { display: none; }        /* .ob sets display: [hidden] must still win */
+.eqcard { width: min(760px, 92vw); border-radius: 16px; padding: 16px 18px; color: var(--ink);
+  background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,0) 16%, rgba(0,0,0,0) 80%, rgba(0,0,0,.22)), #4a4947 url(art/powder-deck.webp) 0 0/220px;
+  box-shadow: 0 0 0 1px #000, inset 0 1px 0 rgba(255,255,255,.22), 0 30px 60px -20px rgba(0,0,0,.9); }
+.eqhead { display: flex; align-items: center; justify-content: space-between; }
+.eqhead h2 { margin: 0; font: 700 15px/1 var(--cond); letter-spacing: .16em; text-transform: uppercase; }
+.eqcard p { margin: 6px 0 10px; color: #e2ded2; font-size: 12.5px; }
+#eqCanvas { width: 100%; height: 230px; display: block; border-radius: 8px; cursor: ew-resize; background: #070905; box-shadow: inset 0 2px 10px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.14); }
+.eqrow { display: flex; gap: 14px; align-items: center; margin-top: 12px; }
+.eqrow .silk { font-size: 11px; }
+.eqrow input[type=range] { flex: 1; accent-color: var(--lime); }
+.eqfoot { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; align-items: center; }
+.eqfoot .note { margin-right: auto; color: #e2ded2; font-size: 12px; }
+.round { border: 0; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; background: linear-gradient(180deg, #3a3833, #24231f); box-shadow: 0 0 0 1px #050505, inset 0 1px 0 rgba(255,255,255,.2); color: #ece6d4; }
+
+/* ---- the licence: a line in the rail, a panel to unlock */
+.lic { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; border: 0; cursor: pointer; text-align: left; margin: 0 0 8px;
+  padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,.03); box-shadow: inset 0 0 0 1px rgba(243,237,220,.08); color: var(--sub); font: 600 11px/1.2 var(--cond); letter-spacing: .12em; text-transform: uppercase; }
+.lic b { color: var(--ink); font-weight: 700; }
+.lic u { color: var(--lime); text-decoration: none; }
+.lic.free { box-shadow: inset 0 0 0 1px rgba(255,92,138,.45); }
+.lic.free u { color: var(--hot); }
+.licbox { display: grid; gap: 10px; margin-top: 6px; }
+.licbox .row2 { display: flex; gap: 10px; align-items: center; }
+.licbox textarea { width: 100%; height: 96px; resize: none; border: 0; border-radius: 8px; padding: 10px 12px; font: 500 12px/1.4 var(--mono); color: var(--lime);
+  background: linear-gradient(#070905, #11150a); box-shadow: inset 0 2px 8px rgba(0,0,0,.95), 0 1px 0 rgba(255,255,255,.14); }
+.licbox textarea::placeholder { color: rgba(200,242,58,.35); }
+.licmsg { min-height: 18px; font-size: 12.5px; color: var(--amber); }
+.licmsg.ok { color: var(--lime); }
+
+/* ---- drop, toast */
+.dropzone { position: fixed; inset: 10px; border: 3px dashed var(--lime); border-radius: 22px; background: rgba(11,10,8,.82); display: none; place-content: center; text-align: center;
+  font: 700 22px/1.3 var(--cond); letter-spacing: .2em; text-transform: uppercase; color: var(--lime); pointer-events: none; z-index: 30; }
+.dropzone.on { display: grid; }
+.toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: var(--hot); color: #fff; padding: 10px 16px; border-radius: 12px; font-weight: 600; display: none; max-width: 80%; z-index: 40; }
+.toast.ok { background: var(--ink); color: #12110e; }
+</style>
+</head>
+<body>
+<aside class="rail">
+  <div class="brand"><img src="art/logo-audioctor.webp" alt="Audioctor" draggable="false"><small>Powered by <b>snowstar</b></small></div>
+  <div class="silk">Samples</div>
+  <ul class="files" id="files"></ul>
+  <div class="adder" id="adder">＋ Drop files here or <u>add files</u></div>
+  <button class="lic" id="licLine" title="Licence"><span id="licText">Trial</span><u id="licGo">Unlock</u></button>
+  <button class="railbtn" id="exportChecked" disabled>Export checked</button>
+</aside>
+<main class="labwrap" id="labwrap">
+  <div class="lab" id="lab">
+    <section class="scene" id="scene">
+      <svg class="pipes" id="pipes" width="1100" height="400" viewBox="0 0 1100 400"></svg>
+      <div class="scope"><div class="screen" id="screen"><canvas id="wave" width="1428" height="140"></canvas><span class="name" id="scopeName"></span><span class="read" id="clock"></span><span class="hint" id="scopeHint">Drop a recording or a song</span></div></div>
+      <div class="flask" id="flask" title="The original: click to hear it (Before)"><div class="glow" id="flaskGlow"></div></div>
+      <div class="plate flaskplate"><span class="tape">Original</span><span class="db" id="flaskDb">BEFORE</span></div>
+      <div id="bench"></div>
+    </section>
+    <section class="deck">
+      <i class="screw" style="left:8px;top:8px"></i><i class="screw" style="right:8px;top:8px;background-position:-15px 0"></i>
+      <i class="screw" style="left:8px;bottom:8px;background-position:-30px 0"></i><i class="screw" style="right:8px;bottom:8px;background-position:-45px 0"></i>
+      <div class="mod" style="width:230px">
+        <div class="body">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="ob" id="before"><span class="cap"><b>Before</b><i class="led"></i></span></button>
+            <button class="ob sel" id="after"><span class="cap"><b>After</b><i class="led"></i></span></button>
+          </div>
+          <button class="bigkey dark" id="play" disabled><span>PLAY</span></button>
+        </div>
+        <div class="silk">Listen</div>
+      </div>
+      <div class="mod" style="width:300px">
+        <div class="body"><div class="grid2">
+          <button class="ob" id="s-separate" title="Splits the file into its parts: one cylinder each"><span class="cap"><b>Separate</b><i class="led"></i></span></button>
+          <button class="ob" id="s-clean" title="Noise around the voice goes to Background"><span class="cap"><b>Clean voice</b><i class="led"></i></span></button>
+          <button class="ob" id="s-studio" title="Rebuilds the voice without the room. It can change a voice: compare"><span class="cap"><b>Studio voice</b><i class="led"></i></span></button>
+          <button class="ob" id="s-highs" title="Voice only, when a codec cut the top off"><span class="cap"><b>Restore highs</b><i class="led"></i></span></button>
+        </div></div>
+        <div class="silk">Process</div>
+      </div>
+      <div class="mod" style="width:232px">
+        <div class="body">
+          <div class="lever" id="lvSep" title="Separator A: Audioctor's own, Best or Fast. Separator B: Mel-Band RoFormer, often cleaner on voices, slower (Voice + Music only)"><span class="pos" id="lsUp">A</span><img id="lsImg" src="art/toggle-on.webp" alt="" draggable="false"><span class="pos" id="lsDn">B</span></div>
+          <div class="lever" id="lvQuality" title="Best: the finest separation. Fast: about three times quicker"><span class="pos" id="lqUp">Best</span><img id="lqImg" src="art/toggle-on.webp" alt="" draggable="false"><span class="pos" id="lqDn">Fast</span></div>
+          <div class="lever" id="lvParts" title="Voice + Music, or every instrument on its own (songs)"><span class="pos" id="lpUp">Voice+Music</span><img id="lpImg" src="art/toggle-on.webp" alt="" draggable="false"><span class="pos" id="lpDn">Instruments</span></div>
+        </div>
+        <div class="silk">Engine</div>
+      </div>
+      <div class="mod" style="width:224px">
+        <div class="body" style="flex-direction:column;gap:0">
+          <div class="nixwin"><div class="nixrow" id="nixies"></div></div>
+          <span class="win dark progline" id="progline">NOTHING YET</span>
+        </div>
+        <div class="silk">Progress</div>
+      </div>
+      <div class="mod" style="flex:1">
+        <div class="body" style="flex-direction:column;gap:8px">
+          <button class="bigkey" id="exportThis" disabled><span>EXPORT</span></button>
+          <button class="ob" id="resetMix" disabled title="Every part to 0 dB, Background down, EQ off"><span class="cap" style="height:24px"><b style="font-size:11px">Reset mix</b></span></button>
+        </div>
+        <div class="silk">Export</div>
+      </div>
+    </section>
+  </div>
+</main>
+<div class="eqwrap" id="eq" hidden>
+  <div class="eqcard" role="dialog" aria-modal="true" aria-labelledby="eqTitle">
+    <div class="eqhead"><h2 id="eqTitle">EQ</h2><button class="round" id="eqClose" title="Close">×</button></div>
+    <p id="eqSub"></p>
+    <canvas id="eqCanvas" width="1440" height="460"></canvas>
+    <div class="eqrow">
+      <span class="silk">From</span><span class="win" id="eqLo">20 Hz</span>
+      <span class="silk">To</span><span class="win" id="eqHi">20 kHz</span>
+      <span class="silk">Amount</span><span class="win" id="eqAmtOut">100%</span>
+      <input type="range" id="eqAmt" min="0" max="100" value="100">
+    </div>
+    <div class="eqfoot">
+      <span class="note" id="eqNote">Drag the two edges on the picture.</span>
+      <button class="ob" id="eqReset"><span class="cap"><b>Full range</b></span></button>
+      <button class="ob sel" id="eqDone"><span class="cap"><b>Done</b><i class="led"></i></span></button>
+    </div>
+  </div>
+</div>
+<div class="eqwrap" id="licPanel" hidden>
+  <div class="eqcard" role="dialog" aria-modal="true" aria-labelledby="licTitle" style="width:min(560px,92vw)">
+    <div class="eqhead"><h2 id="licTitle">Licence</h2><button class="round" id="licClose" title="Close">×</button></div>
+    <p id="licSub"></p>
+    <div class="licbox">
+      <div class="row2"><span class="silk" style="font-size:11px">This Mac</span><span class="win" id="licMachine">AD…</span><button class="ob" id="licCopy"><span class="cap" style="height:24px"><b style="font-size:11px">Copy</b></span></button></div>
+      <textarea id="licKey" placeholder="Paste your licence key here: the whole block from the email" spellcheck="false"></textarea>
+      <div class="licmsg" id="licMsg"></div>
+    </div>
+    <div class="eqfoot">
+      <button class="ob" id="licRemove" hidden><span class="cap"><b>Remove from this Mac</b></span></button>
+      <span class="note"></span>
+      <button class="ob" id="licManage" hidden><span class="cap"><b>Manage</b></span></button>
+      <button class="ob" id="licBuy"><span class="cap"><b>Get Audioctor</b></span></button>
+      <button class="ob sel" id="licApply"><span class="cap"><b>Unlock</b><i class="led"></i></span></button>
+    </div>
+  </div>
+</div>
+<div class="dropzone" id="dropzone">Drop to add<br>to the lab</div>
+<div class="toast" id="toast"></div>
+<script src="engine.js"></script>
+<script>
+// The web demo (marketing/demo): the app's bridge, spoken by the web engine. Nothing below this line is changed.
+(function () {
+  const inFrame = window.parent !== window;
+  const up = m => { try { if (inFrame) window.parent.postMessage(Object.assign({ type: 'audioctor-demo' }, m), '*'); } catch (e) {} };
+  const hooks = {
+    buyUrl: '/apps/audioctor.html?from=demo#pricing',
+    cta: why => { up({ cta: why }); if (!inFrame) location.href = '/apps/audioctor.html?from=demo#pricing'; },
+    track: (name, props) => up({ event: name, props }),
+  };
+  window.__JUCE__ = { backend: AudioctorDemo.bridge(new AudioctorDemo.Engine('media/'), hooks) };
+})();
+</script>
+<script>
+// ---- the bridge to the engine (JUCE's native functions and events); without it (a browser), a demo
+const B = window.__JUCE__ ? window.__JUCE__.backend : null;
+let pid = 0; const pending = new Map(), handlers = {};
+if (B) B.addEventListener('__juce__complete', ({promiseId, result}) => { const r = pending.get(promiseId); if (r) { r(result); pending.delete(promiseId); } });
+function call(name, ...params) {
+  if (!B) return Promise.resolve(demoCall(name, params));
+  return new Promise(res => { const id = pid++; pending.set(id, res); B.emitEvent('__juce__invoke', {name, params, resultId: id}); });
+}
+const on = (ev, fn) => { (handlers[ev] = handlers[ev] || []).push(fn); if (B) B.addEventListener(ev, fn); };
+const fire = (ev, payload) => (handlers[ev] || []).forEach(fn => fn(payload));
+const $ = id => document.getElementById(id);
+const fmt = s => { s = Math.max(0, s || 0); return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0'); };
+const stepNames = {decode: 'Reading', separate: 'Separating', clean: 'Cleaning', studio: 'Studio voice', highs: 'Restoring highs', done: 'Ready'};
+
+// ---- the drawing scales to the window (the rail keeps its size)
+function fit() {
+  const w = $('labwrap').clientWidth, h = $('labwrap').clientHeight;
+  const k = Math.max(.45, Math.min(w / 1100, h / 594));
+  $('lab').style.transform = 'scale(' + k + ')';
+  $('lab').style.left = Math.max(0, (w - 1100 * k) / 2) + 'px';
+  $('lab').dataset.k = k;
+}
+addEventListener('resize', fit);
+const K = () => +$('lab').dataset.k || 1;
+
+// ---- state
+let files = [], sel = null, duration = 0, pos = 0, playing = false, before = [], after = [], showAfter = true, current = null;
+
+// ---- samples
+function etaText(s) { if (!(s > 0)) return ''; if (s < 60) return Math.max(5, Math.ceil(s / 5) * 5) + ' s left'; return Math.ceil(s / 60) + ' min left'; }
+function renderFiles() {
+  const ul = $('files'); ul.innerHTML = '';
+  files.forEach(f => {
+    const li = document.createElement('li'); if (f.selected) li.className = 'sel';
+    const box = document.createElement('input'); box.type = 'checkbox'; box.className = 'box'; box.checked = f.checked; box.title = 'Include in "Export checked"';
+    box.onclick = e => { e.stopPropagation(); f.checked = box.checked; call('setChecked', f.id, box.checked); renderFiles(); };
+    const nm = document.createElement('div'); nm.className = 'nm';
+    const b = document.createElement('b'); b.textContent = f.name;
+    const s = document.createElement('span');
+    const working = f.state === 'working' && f.step;
+    s.textContent = (f.seconds ? fmt(f.seconds) + ' · ' : '') + (working ? Math.round((f.progress || 0) * 100) + '%' + (f.eta > 0 ? ' · ' + etaText(f.eta) : '')
+      : f.state === 'ready' ? 'ready' : f.state === 'error' ? 'failed' : f.state === 'working' ? 'starting' : 'waiting');
+    s.className = working ? 'on' : f.state === 'error' ? 'bad' : '';
+    nm.append(b, s);
+    const x = document.createElement('button'); x.className = 'x'; x.textContent = '×'; x.title = 'Remove (stops its work)';
+    x.onclick = e => { e.stopPropagation(); call('remove', f.id); };
+    li.append(box, nm, x);
+    if (working) { const bar = document.createElement('div'); bar.className = 'bar'; bar.innerHTML = '<i style="width:' + Math.round((f.progress || 0) * 100) + '%"></i>'; li.appendChild(bar); }
+    li.onclick = () => call('select', f.id);
+    ul.appendChild(li);
+  });
+  $('exportChecked').disabled = !files.some(f => f.checked && f.state === 'ready');
+}
+$('adder').onclick = () => call('chooseFiles');
+
+// ---- the scope
+function draw() {
+  const c = $('wave'), g = c.getContext('2d'), W = c.width, H = c.height;
+  g.clearRect(0, 0, W, H);
+  g.strokeStyle = 'rgba(200,242,58,.08)'; g.lineWidth = 1;
+  for (let x = 0; x < W; x += W / 16) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+  const T = 30, mid = T + (H - T) / 2;              // the top strip carries the name and the time
+  g.beginPath(); g.moveTo(0, mid); g.lineTo(W, mid); g.stroke();
+  const lane = (pk, color) => {
+    if (!pk || !pk.length) return;
+    const mx = pk.reduce((m, v) => Math.max(m, v), 1e-4), w = W / pk.length;
+    g.fillStyle = color;
+    for (let i = 0; i < pk.length; i++) { const h = Math.min(1, pk[i] / mx) * ((H - T) / 2 - 5); g.fillRect(i * w, mid - h, Math.max(1, w * .8), 2 * h); }
+  };
+  if (showAfter && after.length) { lane(before, 'rgba(200,242,58,.16)'); lane(after, 'rgba(200,242,58,.85)'); }
+  else lane(before, showAfter ? 'rgba(200,242,58,.5)' : 'rgba(255,200,120,.8)');
+  if (duration > 0) { const x = pos / duration * W; g.fillStyle = '#fff'; g.shadowColor = '#c8f23a'; g.shadowBlur = 8; g.fillRect(x - 1, 0, 2.5, H); g.shadowBlur = 0; }
+  $('clock').textContent = duration ? fmt(pos) + ' / ' + fmt(duration) : '';
+  $('scopeHint').style.display = before.length ? 'none' : 'grid';
+}
+$('screen').addEventListener('click', e => { if (!duration) return; const r = $('screen').getBoundingClientRect(); const s = (e.clientX - r.left) / r.width * duration; call('transport', 'seek', s); pos = s; draw(); });
+
+// ---- the bench: a cylinder per part, the glass between them
+const COLORS = { Voice: '#c8f23a', Music: '#38d9a9', Drums: '#ffb547', Bass: '#9b7bff', Guitars: '#ff7a3d', Keys: '#4fd6e8', Other: '#ff6fa8', Background: '#8d8a80', Instrument: '#4fd6e8' };
+const LAYOUTS = { voice: ['Voice', 'Music', 'Background'], instruments: ['Voice', 'Drums', 'Bass', 'Other', 'Guitars', 'Keys', 'Background'] };
+// the fader's scale: StreamDAW's (-60 dB … 0 dB, -18 dB at 55 %), on up to +6 dB at the cylinder's brim
+const posOf = d => (d <= -60 ? 0 : d >= -18 ? 0.55 + (d + 18) / 18 * 0.45 : (d + 60) / 42 * 0.55);
+const unpos = p => (p <= 0 ? -120 : p >= 0.55 ? (p - 0.55) / 0.45 * 18 - 18 : p / 0.55 * 42 - 60);
+const TOPDB = 6, TOPP = posOf(TOPDB);
+const fillOf = db => Math.max(0, Math.min(1, posOf(db) / TOPP));
+const dbAt = f => (f < .004 ? -120 : Math.min(TOPDB, unpos(f * TOPP)));
+const dbShort = db => db <= -60 ? '−∞ dB' : (db > 0.05 ? '+' : db < -0.05 ? '−' : '') + Math.abs(db).toFixed(1) + ' dB';
+const eqActive = c => c.eq && !(c.amount >= 0.999 && c.loHz <= 20.5 && c.hiHz >= 19999);
+const LIQ_H = 164;            // the cylinder's usable height (art px)
+let strips = [], benchKey = '';
+function slotX(i, n) { const x0 = 228, x1 = 1084, w = (x1 - x0) / n; return x0 + w * (i + .5); }
+function pipesFor(n) {
+  if (!n) return '';
+  const y = 106, fx = 120, xs = [...Array(n)].map((_, i) => slotX(i, n));
+  let d = `M${fx} 84 L${fx} ${y - 8} Q${fx} ${y} ${fx + 8} ${y} L${xs[n - 1] - 8} ${y} Q${xs[n - 1]} ${y} ${xs[n - 1]} ${y + 8} L${xs[n - 1]} 118`;
+  for (let i = 0; i < n - 1; i++) d += ` M${xs[i]} ${y} L${xs[i]} 118`;
+  return `<path class="glass" d="${d}"/><path class="flow" d="${d}"/><path class="shine" d="${d}" transform="translate(-2.5 -2.5)"/>`;
+}
+function paintStrip(st) {
+  const c = st.ch, f = fillOf(c.gainDb);
+  st.liq.style.height = (f * LIQ_H) + 'px';
+  st.liq.classList.toggle('empty', f < .01);
+  st.el.classList.toggle('off', !c.on);
+  st.db.textContent = c.on ? dbShort(c.gainDb) : 'OFF';
+  st.tip.textContent = dbShort(c.gainDb);
+  st.kOn.classList.toggle('on', c.on);
+  st.kS.classList.toggle('on', !!c.solo);
+  st.kM.textContent = c.mono || !c.stereo ? 'MONO' : 'ST'; st.kM.classList.toggle('on', !!c.mono); st.kM.disabled = !c.stereo;
+  st.kEq.classList.toggle('on', eqActive(c)); st.kEq.disabled = !c.eq;
+}
+// placeholders while a file is processed: empty cylinders that fill with the progress
+function buildBench(all, id, placeholder) {
+  // the parts with next to nothing in them stay in the mix but not on the bench; each keeps its engine index
+  all.forEach((c, i) => { c.index = i; });
+  const chs = all.filter(c => !c.minor);
+  const key = id + ':' + chs.map(c => c.name).join(',') + (placeholder ? ':p' : '');
+  if (key === benchKey) {
+    if (!placeholder) chs.forEach((c, i) => { if (strips[i]) { strips[i].ch = c; paintStrip(strips[i]); } });
+    return;
+  }
+  benchKey = key; strips = [];
+  const bench = $('bench'); bench.innerHTML = '';
+  $('pipes').innerHTML = pipesFor(chs.length);
+  chs.forEach((c, i) => {
+    const x = slotX(i, chs.length);
+    const el = document.createElement('div'); el.className = 'cyl'; el.style.left = (x - 32) + 'px'; el.style.setProperty('--c', COLORS[c.name] || '#c8f23a');
+    el.innerHTML = '<div class="glow"></div><div class="liq"></div><div class="led"></div><div class="ledon"><i style="--full:' + (LIQ_H - 8) + 'px"></i></div><div class="pk"></div>'
+      + '<div class="unity" style="bottom:' + (16 + fillOf(0) * LIQ_H) + 'px" title="0 dB"></div><div class="glass"></div><span class="tip"></span>';
+    const plate = document.createElement('div'); plate.className = 'plate'; plate.style.left = (x - 56) + 'px';
+    plate.innerHTML = '<span class="tape"></span><span class="db"></span><span class="keys"><button class="mk pw" title="Part on / off">ON</button><button class="mk" title="Solo: hear only the soloed parts">S</button><button class="mk" title="Stereo / Mono">ST</button><button class="mk" title="EQ: where the processing acts, and how much">EQ</button></span>';
+    plate.querySelector('.tape').textContent = c.name;
+    bench.append(el, plate);
+    const st = { ch: c, el, liq: el.querySelector('.liq'), glow: el.querySelector('.glow'), ledon: el.querySelector('.ledon'), pk: el.querySelector('.pk'), tip: el.querySelector('.tip'),
+      db: plate.querySelector('.db'), kOn: plate.querySelectorAll('.mk')[0], kS: plate.querySelectorAll('.mk')[1], kM: plate.querySelectorAll('.mk')[2], kEq: plate.querySelectorAll('.mk')[3], peak: 0, peakAt: 0 };
+    if (placeholder) {
+      st.db.textContent = '…'; plate.querySelectorAll('.mk').forEach(b => b.disabled = true);
+      el.style.cursor = 'default'; el.querySelector('.unity').style.display = 'none';
+    } else {
+      // the liquid is the fader: drag it up or down; double-click for 0 dB
+      const setFrom = e => {
+        const r = el.getBoundingClientRect(), k = r.height / 200;
+        const f = (r.bottom - 16 * k - e.clientY) / (LIQ_H * k);
+        st.ch.gainDb = Math.round(dbAt(Math.max(0, Math.min(1, f))) * 10) / 10;
+        paintStrip(st); call('setChannel', st.ch.name, { gainDb: st.ch.gainDb });
+      };
+      el.addEventListener('pointerdown', e => { el.setPointerCapture(e.pointerId); el.classList.add('drag'); setFrom(e); });
+      el.addEventListener('pointermove', e => { if (el.classList.contains('drag')) setFrom(e); });
+      el.addEventListener('pointerup', () => el.classList.remove('drag'));
+      el.addEventListener('pointercancel', () => el.classList.remove('drag'));
+      el.addEventListener('dblclick', () => { st.ch.gainDb = 0; paintStrip(st); call('setChannel', st.ch.name, { gainDb: 0 }); });
+      el.title = c.name + ': drag the liquid to set its level · double-click for 0 dB';
+      st.kOn.onclick = () => { st.ch.on = !st.ch.on; paintStrip(st); call('setChannel', st.ch.name, { on: st.ch.on }); };
+      st.kS.onclick = () => { st.ch.solo = !st.ch.solo; paintStrip(st); call('setChannel', st.ch.name, { solo: st.ch.solo }); };
+      st.kM.onclick = () => { st.ch.mono = !st.ch.mono; paintStrip(st); call('setChannel', st.ch.name, { mono: st.ch.mono }); };
+      st.kEq.onclick = () => openEq(st);
+      paintStrip(st);
+    }
+    strips.push(st);
+  });
+}
+function fillPlaceholders(p) { strips.forEach(st => { if (st.ch.placeholder) { st.liq.style.height = (p * fillOf(0) * LIQ_H) + 'px'; st.liq.classList.toggle('empty', p < .01); } }); }
+// the meters: LEDs on the glass (peak held 1.5 s), the liquid glows with its part
+function meters(lv) {
+  const now = performance.now();
+  strips.forEach(st => {
+    const i = st.ch.index, p = playing && showAfter && lv[i] ? Math.max(lv[i][0], lv[i][1]) : 0;
+    const f = p > 0 ? Math.max(0, Math.min(1, posOf(20 * Math.log10(p)))) : 0;
+    st.ledon.style.height = (f * (LIQ_H - 8)) + 'px';
+    if (f >= st.peak) { st.peak = f; st.peakAt = now; } else if (now - st.peakAt > 1500) st.peak = Math.max(f, st.peak - .03);
+    st.pk.style.opacity = st.peak > .01 ? 1 : 0; st.pk.style.bottom = (18 + st.peak * (LIQ_H - 8) - 1) + 'px';
+    st.glow.style.opacity = (f * .75).toFixed(2);
+  });
+  const m = lv[lv.length - 1], mp = playing && !showAfter && m ? Math.max(m[0], m[1]) : 0;
+  $('flaskGlow').style.opacity = mp > 0 ? Math.min(1, posOf(20 * Math.log10(mp))).toFixed(2) : 0;
+}
+
+// ---- the faceplate
+function setAB(a) { showAfter = a; $('after').classList.toggle('sel', a); $('before').classList.toggle('sel', !a); $('flaskDb').textContent = a ? 'BEFORE' : 'PLAYING'; call('setAfter', a); draw(); }
+$('before').onclick = () => setAB(false);
+$('after').onclick = () => setAB(true);
+$('flask').onclick = () => setAB(!showAfter ? true : false);
+$('play').onclick = () => call('transport', playing ? 'pause' : 'play');
+$('exportThis').onclick = () => call('export', 'this');
+$('exportChecked').onclick = () => call('export', 'checked');
+$('resetMix').onclick = () => call('resetMixer');
+let steps = { quality: 'best', separate: true, clean: true, studio: false, highs: true }, parts = 'voice', lastA = 'best';
+// quality: best | fast (separator A) | b (separator B: Mel-Band RoFormer, one speed, Voice + Music only)
+const STEP_IDS = ['separate', 'clean', 'studio', 'highs'];
+function paintSteps(o) {
+  STEP_IDS.forEach(k => $('s-' + k).classList.toggle('sel', !!steps[k]));
+  $('s-highs').classList.toggle('na', o && o.highsApply === false);
+  const b = steps.quality === 'b', six = parts === 'instruments';
+  if (!b) lastA = steps.quality;
+  const qa = b ? lastA : steps.quality;
+  $('lsImg').src = 'art/' + (b && !six ? 'toggle-off' : 'toggle-on') + '.webp';
+  $('lsUp').classList.toggle('on', !b || six); $('lsDn').classList.toggle('on', b && !six);
+  $('lqImg').src = 'art/' + (qa === 'best' ? 'toggle-on' : 'toggle-off') + '.webp';
+  $('lqUp').classList.toggle('on', !b && qa === 'best'); $('lqDn').classList.toggle('on', !b && qa !== 'best');
+  $('lpImg').src = 'art/' + (parts === 'voice' ? 'toggle-on' : 'toggle-off') + '.webp';
+  $('lpUp').classList.toggle('on', parts === 'voice'); $('lpDn').classList.toggle('on', parts !== 'voice');
+  $('lvQuality').classList.toggle('locked', six || b || !steps.separate);   // Instruments runs its own model; B has one speed
+  $('lvSep').classList.toggle('locked', six || !steps.separate);              // B is a voice model: Voice + Music only
+  $('lvParts').classList.toggle('locked', !steps.separate);
+}
+STEP_IDS.forEach(k => $('s-' + k).onclick = () => { steps[k] = !steps[k]; paintSteps(); call('setSteps', steps); });
+$('lvQuality').onclick = () => { if ($('lvQuality').classList.contains('locked')) return; steps.quality = steps.quality === 'best' ? 'fast' : 'best'; paintSteps(); call('setSteps', steps); };
+$('lvSep').onclick = () => { if ($('lvSep').classList.contains('locked')) return; steps.quality = steps.quality === 'b' ? lastA : 'b'; paintSteps(); call('setSteps', steps); };
+$('lvParts').onclick = () => { if ($('lvParts').classList.contains('locked')) return; parts = parts === 'voice' ? 'instruments' : 'voice'; paintSteps(); call('setParts', parts); };
+// progress: three Nixie tubes and the line under them
+function nixies(text, unit, dark) {
+  text = String(text).padStart(3, ' ').slice(-3);
+  $('nixies').innerHTML = [...text].map(ch => '<span class="nx' + (dark || ch === ' ' ? ' dark' : '') + '"><b>' + (ch === ' ' ? '8' : ch) + '</b></span>').join('')
+    + '<span class="nixunit' + (dark ? ' dark' : '') + '">' + unit + '</span>';
+}
+function progress(text, pct, dark) {
+  nixies(pct == null ? '   ' : Math.round(pct), '%', dark || pct == null);
+  $('progline').textContent = text; $('progline').classList.toggle('dark', !!dark);
+}
+function showWork(step, fraction, eta) {
+  progress((stepNames[step] || step).toUpperCase() + ' · ' + (eta > 0 ? etaText(eta).toUpperCase() : 'TIMING IT'), (fraction || 0) * 100);
+  $('lab').classList.add('working');
+  fillPlaceholders(fraction || 0);
+}
+function toast(msg, ok) { const t = $('toast'); t.textContent = msg; t.className = 'toast' + (ok ? ' ok' : ''); t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', 6000); }
+
+// ---- the EQ: RX 12's processing range on the part's spectrum
+const EQ = { st: null, lo: 20, hi: 20000, amount: 1, spec: null, drag: null };
+const FMIN = 20, FMAX = 20000;
+const fx = (f, W) => Math.log(f / FMIN) / Math.log(FMAX / FMIN) * W;
+const xf = (x, W) => FMIN * Math.pow(FMAX / FMIN, Math.min(1, Math.max(0, x / W)));
+const hz = f => f >= 1000 ? (f / 1000).toFixed(f >= 10000 ? 0 : 1).replace('.0', '') + ' kHz' : Math.round(f) + ' Hz';
+function openEq(st) {
+  const c = st.ch;
+  EQ.st = st; EQ.lo = c.loHz; EQ.hi = c.hiHz; EQ.amount = c.amount; EQ.spec = null;
+  $('eqTitle').textContent = 'EQ · ' + c.name;
+  $('eqSub').textContent = c.kind === 'voice'
+    ? 'Where the cleaning acts, and how much. Outside the range the voice stays as it was recorded.'
+    : 'Where ' + c.name + ' is separated, and how much. Outside the range the full mix comes through (the bleed).';
+  $('eq').hidden = false;
+  showEq(); drawEq();
+  call('eqSpectrum', c.name).then(r => { if (EQ.st === st && r && r.freqs) { EQ.spec = r; drawEq(); } });
+}
+function showEq() {
+  $('eqLo').textContent = EQ.lo <= 20.5 ? '20 Hz' : hz(EQ.lo);
+  $('eqHi').textContent = EQ.hi >= 19999 ? '20 kHz' : hz(EQ.hi);
+  $('eqAmt').value = Math.round(EQ.amount * 100); $('eqAmtOut').textContent = Math.round(EQ.amount * 100) + '%';
+}
+function drawEq() {
+  const c = $('eqCanvas'), g = c.getContext('2d'), W = c.width, H = c.height, col = (EQ.st && COLORS[EQ.st.ch.name]) || '#c8f23a';
+  g.clearRect(0, 0, W, H);
+  g.font = '22px -apple-system, sans-serif'; g.textBaseline = 'top';
+  g.strokeStyle = 'rgba(200,242,58,.08)'; g.fillStyle = 'rgba(200,242,58,.45)'; g.lineWidth = 2;
+  [50, 100, 200, 500, 1000, 2000, 5000, 10000].forEach(f => { const x = fx(f, W); g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); g.fillText(hz(f), x + 6, H - 30); });
+  const x0 = fx(Math.max(FMIN, EQ.lo), W), x1 = fx(Math.min(FMAX, EQ.hi), W);
+  g.fillStyle = 'rgba(200,242,58,' + (0.05 + 0.2 * EQ.amount).toFixed(3) + ')';
+  g.fillRect(x0, 0, x1 - x0, H);
+  if (EQ.spec) {
+    const all = EQ.spec.processed.concat(EQ.spec.unprocessed).filter(v => v > -200);
+    const top = Math.max(...all) + 3, bottom = top - 75;
+    const y = d => (1 - (d - bottom) / (top - bottom)) * (H - 40);
+    const line = (arr, color, w) => { g.strokeStyle = color; g.lineWidth = w; g.beginPath(); arr.forEach((d, i) => { const X = fx(EQ.spec.freqs[i], W), Y = y(Math.max(bottom, d)); i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.stroke(); };
+    line(EQ.spec.unprocessed, 'rgba(243,237,220,.35)', 3);
+    g.shadowColor = col; g.shadowBlur = 10; line(EQ.spec.processed, col, 4); g.shadowBlur = 0;
+  } else { g.fillStyle = 'rgba(200,242,58,.5)'; g.fillText('Reading the spectrum…', 24, 24); }
+  [x0, x1].forEach(x => { g.fillStyle = '#c8f23a'; g.fillRect(x - 2, 0, 4, H); g.beginPath(); g.arc(x, H / 2, 14, 0, Math.PI * 2); g.fill(); });
+}
+function eqPointer(e) { const r = $('eqCanvas').getBoundingClientRect(); return (e.clientX - r.left) / r.width * $('eqCanvas').width; }
+$('eqCanvas').addEventListener('pointerdown', e => {
+  const W = $('eqCanvas').width, x = eqPointer(e);
+  EQ.drag = Math.abs(x - fx(Math.max(FMIN, EQ.lo), W)) <= Math.abs(x - fx(Math.min(FMAX, EQ.hi), W)) ? 'lo' : 'hi';
+  $('eqCanvas').setPointerCapture(e.pointerId); eqMove(e);
+});
+function eqMove(e) {
+  if (!EQ.drag) return;
+  const f = xf(eqPointer(e), $('eqCanvas').width);
+  if (EQ.drag === 'lo') EQ.lo = Math.min(f, EQ.hi / 1.5); else EQ.hi = Math.max(f, EQ.lo * 1.5);
+  if (EQ.lo < 22) EQ.lo = 20; if (EQ.hi > 19000) EQ.hi = 20000;
+  showEq(); drawEq();
+}
+$('eqCanvas').addEventListener('pointermove', eqMove);
+$('eqCanvas').addEventListener('pointerup', () => { if (EQ.drag) { EQ.drag = null; sendEq(); } });
+$('eqAmt').addEventListener('input', () => { EQ.amount = $('eqAmt').value / 100; showEq(); drawEq(); });
+$('eqAmt').addEventListener('change', sendEq);
+$('eqReset').onclick = () => { EQ.lo = 20; EQ.hi = 20000; EQ.amount = 1; showEq(); drawEq(); sendEq(); };
+function sendEq() {
+  const st = EQ.st; if (!st) return;
+  st.ch.loHz = EQ.lo; st.ch.hiHz = EQ.hi; st.ch.amount = EQ.amount; paintStrip(st);
+  call('setEq', st.ch.name, { loHz: EQ.lo, hiHz: EQ.hi, amount: EQ.amount });
+}
+const closeEq = () => { $('eq').hidden = true; EQ.st = null; };
+$('eqDone').onclick = closeEq; $('eqClose').onclick = closeEq;
+$('eq').addEventListener('click', e => { if (e.target === $('eq')) closeEq(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('eq').hidden) closeEq(); if (e.key === ' ' && !$('play').disabled && $('eq').hidden) { e.preventDefault(); $('play').click(); } });
+
+// ---- the licence
+let lic = null;
+function showLic(st, why) {
+  if (!st) return;
+  lic = st;
+  const line = $('licLine'), days = st.daysLeft;
+  line.classList.toggle('free', st.kind === 'free');
+  // Monthly: what the Worker last said (0.1.1 asks once a day): renews on…, payment due, cancelled, ended
+  const sub = st.sub && typeof st.sub === 'object' ? st.sub : {}, day = ms => new Date(ms).toLocaleDateString();
+  const monthLine = sub.status === 'active' && sub.renewsAt ? 'renews ' + day(sub.renewsAt)
+    : sub.status === 'past_due' ? 'payment due' : 'until ' + day(st.endsAt);
+  const ended = st.kind === 'free' && st.endsAt > 0;            // a Monthly key that ran out here
+  $('licText').innerHTML = st.kind === 'pro' ? '<b>Audioctor</b> · ' + (st.owner || 'licensed')
+    : st.kind === 'monthly' ? '<b>Monthly</b> · ' + monthLine
+    : st.kind === 'trial' ? '<b>Trial</b> · ' + days + (days === 1 ? ' day' : ' days') + ' left'
+    : ended ? '<b>Monthly ended</b> · no export'
+    : '<b>Trial over</b> · no export';
+  $('licGo').textContent = st.kind === 'pro' || st.kind === 'monthly' ? 'Licence' : st.kind === 'free' ? 'Get it' : 'Unlock';
+  $('licMachine').textContent = st.machine;
+  $('licSub').textContent = st.kind === 'pro' ? 'Audioctor, yours for good. Licensed to ' + (st.owner || '…') + (st.serial ? ' · serial ' + st.serial : '') + '.'
+    : st.kind === 'monthly' ? 'Audioctor Monthly, licensed to ' + (st.owner || '…') + '. This key runs to ' + day(st.endsAt) + '. '
+        + (sub.status === 'past_due' ? 'The last payment didn\'t go through: update your card in your account, and Audioctor fetches the next key by itself.'
+          : sub.status === 'cancelled' ? 'Cancelled: Audioctor works to the end of the paid month.'
+          : st.renews ? (sub.renewsAt ? 'It renews on ' + day(sub.renewsAt) + ', and ' : '') + 'the next month\'s key comes by itself while Audioctor is online.'
+          : 'Paste the whole block from the email (the key and its Renewal line), and the next month\'s key comes by itself.')
+    : ended ? 'Your Audioctor Monthly key ended on ' + day(st.endsAt) + '. You can still open, process, mix and listen; exporting needs a current key. Go online, or manage your subscription.'
+    : st.kind === 'trial' ? 'Everything is on for ' + days + (days === 1 ? ' more day' : ' more days') + '. To keep exporting after that, get Audioctor and paste the key from its email here.'
+    : 'The free 7 days are over. You can still open, process, mix and listen; exporting needs Audioctor. Paste your key here, or get one.';
+  $('licRemove').hidden = !(st.kind === 'pro' || st.kind === 'monthly');
+  $('licManage').hidden = !(st.kind === 'monthly' || ended);
+  if (why !== undefined) { $('licMsg').textContent = why || 'Unlocked. Thank you.'; $('licMsg').classList.toggle('ok', !why); }
+}
+function openLic(msg) { $('licPanel').hidden = false; $('licMsg').textContent = msg || ''; $('licMsg').classList.remove('ok'); }
+$('licLine').onclick = () => openLic();
+$('licClose').onclick = () => { $('licPanel').hidden = true; };
+$('licPanel').addEventListener('click', e => { if (e.target === $('licPanel')) $('licPanel').hidden = true; });
+$('licCopy').onclick = () => { call('licence', 'copyId'); $('licMsg').textContent = 'Copied: ' + (lic ? lic.machine : ''); $('licMsg').classList.add('ok'); };
+$('licBuy').onclick = () => { if (lic) call('openUrl', lic.buyUrl); };
+$('licManage').onclick = () => call('openUrl', (lic && lic.sub && lic.sub.manage) || 'https://snowstar.company/account.html#apps');
+$('licApply').onclick = () => call('licence', 'apply', $('licKey').value).then(st => { showLic(st, st ? st.why : 'No answer'); if (st && !st.why) $('licKey').value = ''; });
+$('licRemove').onclick = () => { if (confirm('Remove the licence from this Mac? You can paste the key again later.')) call('licence', 'remove').then(st => showLic(st, '')); };
+call('licence', 'state').then(st => showLic(st));
+on('locked', st => { showLic(st); openLic(st && st.kind === 'free' && st.endsAt > 0 ? 'Exporting needs a current key: your Monthly key has ended.' : 'Exporting needs Audioctor: your free 7 days are over.'); });
+on('licence', st => showLic(st));              // Monthly: the Worker answered (renewed, payment due, ended…)
+on('notice', m => toast(m, true));
+
+// ---- events from the engine
+on('files', list => { files = list; renderFiles(); });
+on('selected', o => {
+  if ((o.id ?? null) !== sel) after = [];
+  sel = o.id ?? null; current = o;
+  const has = sel !== null;
+  duration = o.seconds || 0; before = o.peaksBefore || [];
+  $('scopeName').textContent = has ? o.name + (o.mode ? '  ·  ' + (o.mode === 'song' ? 'song' : o.mode === 'instrument' ? 'instrument' : 'speech') : '')
+    + (o.bandwidthHz && o.bandwidthHz < 24000 ? '  ·  cut at ' + (o.bandwidthHz / 1000).toFixed(1) + ' kHz' : '') : '';
+  if (o.steps) { steps = Object.assign({}, o.steps); }
+  parts = o.parts || 'voice';
+  paintSteps(o);
+  const f = files.find(x => x.id === sel), working = f && f.state === 'working';
+  const chs = o.channels || [];
+  if (chs.length) buildBench(chs, sel, false);
+  else if (has) buildBench(LAYOUTS[parts].map(n => ({ name: n, placeholder: true })), sel, true);
+  else buildBench([], null, false);
+  $('play').disabled = !has || !o.seconds;
+  $('exportThis').disabled = !chs.length;
+  $('resetMix').disabled = !chs.length;
+  if (working && f.step) showWork(f.step, f.progress, f.eta);
+  else { $('lab').classList.remove('working'); if (chs.length) progress('READY · COMPARE, THEN EXPORT', 100); else if (has) progress('WAITING IN LINE', null, true); else progress('NOTHING YET', null, true); }
+  draw();
+});
+on('status', o => {
+  const f = files.find(x => x.id === o.id);
+  if (f && o.step !== 'done') { f.state = 'working'; f.step = o.step; f.progress = o.fraction; f.eta = o.eta; }
+  if (o.id === sel) {
+    if (o.step === 'done') { $('lab').classList.remove('working'); progress('READY' + (o.took ? ' IN ' + Math.round(o.took) + ' S' : ''), 100); }
+    else showWork(o.step, o.fraction, o.eta);
+  }
+  renderFiles();
+});
+on('position', o => {
+  pos = o.seconds; playing = o.playing;
+  $('play').querySelector('span').textContent = playing ? 'PAUSE' : 'PLAY'; $('play').classList.toggle('playing', playing);
+  meters(o.levels || []);
+  draw();
+});
+on('afterPeaks', o => { if (o.id === sel) { after = o.peaks || []; draw(); } });
+on('eqBusy', name => { const st = strips.find(s => s.ch.name === name); if (st) st.kEq.classList.add('busy'); });
+on('eqDone', name => { const st = strips.find(s => s.ch.name === name); if (st) st.kEq.classList.remove('busy'); });
+on('exporting', n => toast('Exporting ' + n + (n === 1 ? ' file…' : ' files…'), true));
+on('dragging', d => $('dropzone').classList.toggle('on', !!d));
+on('exported', m => toast(m, true));
+on('error', m => toast(m));
+
+// ---- a demo when opened in a browser (no engine): one song ready, one processing
+function demoCall(name, params) {
+  if (name === 'eqSpectrum') {   // a voice: low roll-off, body, presence, air; the room's hum and hiss in the unprocessed one
+    const fr = [], p = [], u = []; let s = 3;
+    const n = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296 - .5) * 3;
+    for (let f = 20; f <= 20001; f *= Math.pow(2, 1 / 6)) {
+      const L = Math.log2(f / 250);
+      const v = -38 + 30 / (1 + Math.exp(-(f - 110) / 25)) - 2.2 * L * L * (L > 0 ? .5 : 1.4) + 5 * Math.exp(-((Math.log2(f / 3000)) ** 2) / .3) - (f > 9000 ? (f - 9000) / 900 : 0);
+      fr.push(f); p.push(v + n()); u.push(Math.max(v + 1.5, -50 + (f < 140 ? 10 * Math.exp(-((f - 50) ** 2) / 400) : 0) + (f > 4000 ? 6 : 0)) + n());
+    }
+    return { freqs: fr, processed: p, unprocessed: u };
+  }
+  if (name === 'setParts') { parts = params[0]; }
+  if (name === 'licence') return { kind: 'trial', daysLeft: 6, canExport: true, machine: 'AD3F9A21C7E4B05D', buyUrl: '#' };
+  return undefined;
+}
+fit();
+progress('NOTHING YET', null, true);
+if (!B) demo(new URLSearchParams(location.search).get('scene'));
+
+// The demo: index.html in a browser shows the lab at work. ?scene=process | mix | eq plays a scene for the site's
+// moving screenshots (app/art/capture.js films them): a pointer, scripted steps, real UI.
+function demo(scene) {
+  const rnd = (() => { let s = 7; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); })();
+  const pk = [...Array(900)].map((_, i) => Math.abs(Math.sin(i / 9) * Math.sin(i / 70)) * .8 + .1 * rnd());
+  const NAME = 'Dancing on Dust (rough mix).wav';
+  const ch = (name, kind, gainDb, extra) => Object.assign({ name, kind, stereo: true, eq: kind !== 'background', gainDb, on: true, mono: false, solo: false, loHz: 20, hiHz: 20000, amount: 1 }, extra || {});
+  const chans = () => [ch('Voice', 'voice', 0), ch('Drums', 'part', -3), ch('Bass', 'part', 0), ch('Other', 'part', -8), ch('Guitars', 'part', 2), ch('Keys', 'part', -4), ch('Background', 'background', -40)];
+  const ready = (extra) => fire('selected', Object.assign({ id: 1, name: NAME, seconds: 253, state: 'ready', peaksBefore: pk, parts: 'instruments', mode: 'song', bandwidthHz: 24000,
+    steps: { quality: 'best', separate: true, clean: true, studio: false, highs: true }, channels: chans() }, extra || {}));
+  const base = [[.5, .45], [.8, .7], [.6, .6], [.3, .32], [.55, .5], [.4, .38], [.01, .01]];
+  let t0 = performance.now(), solo = -1;
+  const play = () => {
+    pos = (pos + .05) % 253;
+    const lv = base.map(([a, b], i) => { const g = Math.pow(10, ((strips.find(s => s.ch.index === i) || { ch: { gainDb: 0 } }).ch.gainDb) / 20);
+      const k = solo >= 0 && solo !== i ? 0 : g * (.55 + .45 * rnd()); return [a * k, b * k]; });
+    const all = lv.reduce((m, v) => Math.max(m, v[0]), 0); lv.push([all, all]);
+    fire('position', { seconds: pos, playing: true, levels: lv });
+  };
+  // the pointer, in the lab's own coordinates
+  const ptr = document.createElement('div');
+  ptr.style.cssText = 'position:fixed;width:22px;height:30px;z-index:50;pointer-events:none;transition:none;display:none;'
+    + 'background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 22 30%27%3E%3Cpath d=%27M2 2v22l6-6 4 10 4-2-4-9h8z%27 fill=%27%23fff%27 stroke=%27%23000%27 stroke-width=%271.6%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") 0 0/22px 30px no-repeat';
+  document.body.appendChild(ptr);                  // above everything, the EQ too; placed from the lab's coordinates
+  const pointAt = (x, y) => { const r = $('lab').getBoundingClientRect(), k = K(); ptr.style.display = 'block'; ptr.style.left = (r.left + x * k) + 'px'; ptr.style.top = (r.top + y * k) + 'px'; };
+  const lerp = (a, b, u) => a + (b - a) * Math.max(0, Math.min(1, u)), ease = u => u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u);
+  const cylX = i => slotX(i, 7), liqTop = db => 96 + 184 - fillOf(db) * LIQ_H;    // a cylinder's liquid surface (lab px)
+  const setGain = (i, db, dragging) => { const st = strips[i]; if (!st) return; st.ch.gainDb = Math.round(db * 10) / 10; st.el.classList.toggle('drag', !!dragging); paintStrip(st); };
+
+  if (!scene) {               // the still demo: one song ready and playing, one file in the queue
+    fire('files', [{ id: 1, name: NAME, seconds: 253, state: 'ready', checked: true, selected: true },
+                   { id: 2, name: 'Voice memo, Yehuda HaLevi St.qta', seconds: 68, state: 'working', step: 'separate', progress: .43, eta: 14, checked: true }]);
+    ready(); after = pk.map(v => v * .9); pos = 71; draw();
+    setInterval(play, 50);
+    return;
+  }
+  fire('files', [{ id: 1, name: NAME, seconds: 253, state: scene === 'process' ? 'working' : 'ready', step: scene === 'process' ? 'decode' : '', progress: 0, checked: true, selected: true }]);
+  if (scene === 'process') {
+    fire('selected', { id: 1, name: NAME, seconds: 253, state: 'working', peaksBefore: pk, parts: 'instruments', steps: { quality: 'best', separate: true, clean: true, studio: false, highs: true }, channels: [] });
+    let done = false;
+    const tick = () => {
+      const t = (performance.now() - t0) / 1000;
+      if (t < 6.5) {
+        const p = Math.min(.99, t / 6.5), step = p < .55 ? 'separate' : 'clean';
+        fire('status', { id: 1, step, fraction: p, eta: t > 1 ? (1 - p) * 38 : -1 });
+        fire('files', [{ id: 1, name: NAME, seconds: 253, state: 'working', step, progress: p, eta: t > 1 ? (1 - p) * 38 : -1, checked: true, selected: true }]);
+      } else if (!done) {
+        done = true;
+        fire('files', [{ id: 1, name: NAME, seconds: 253, state: 'ready', checked: true, selected: true }]);
+        ready(); fire('status', { id: 1, step: 'done', fraction: 1, took: 38 }); after = pk.map(v => v * .9); pos = 0;
+      } else if (t > 7.2) play();
+      if (t > 7.4 && t < 7.6) $('play').classList.add('playing');
+    };
+    setInterval(tick, 50);
+    return;
+  }
+  ready(); after = pk.map(v => v * .9); pos = 40; draw();
+  if (scene === 'mix') {
+    setInterval(() => {
+      const t = (performance.now() - t0) / 1000;
+      play();
+      // 0.6-1.4 s: to the Drums; 1.4-3.2 s: drag them down to -24 dB; 3.6-4.4: to Voice's S; 4.6-6.6: solo; 7-9: Drums back up
+      const dx = cylX(1) + 6, sx = slotX(0, 7) - 56 + 33 + 14, sy = 306 + 54;
+      if (t < 1.4) pointAt(lerp(700, dx, ease((t - .6) / .8)), lerp(340, liqTop(-3), ease((t - .6) / .8)));
+      else if (t < 3.2) { const db = lerp(-3, -24, ease((t - 1.4) / 1.8)); setGain(1, db, true); pointAt(dx, liqTop(db)); }
+      else if (t < 4.4) { setGain(1, -24, false); pointAt(lerp(dx, sx, ease((t - 3.6) / .8)), lerp(liqTop(-24), sy, ease((t - 3.6) / .8))); }
+      else if (t < 6.6) { if (solo < 0) { solo = 0; strips[0].ch.solo = true; paintStrip(strips[0]); } pointAt(sx, sy); }
+      else if (t < 7) { if (solo >= 0) { solo = -1; strips[0].ch.solo = false; paintStrip(strips[0]); } pointAt(lerp(sx, dx, ease((t - 6.6) / .4)), lerp(sy, liqTop(-24), ease((t - 6.6) / .4))); }
+      else if (t < 9) { const db = lerp(-24, -3, ease((t - 7) / 1.6)); setGain(1, db, t < 8.6); pointAt(dx, liqTop(db)); }
+    }, 50);
+    return;
+  }
+  if (scene === 'eq') {
+    let opened = false;
+    setInterval(() => {
+      const t = (performance.now() - t0) / 1000, k = K(), r = $('lab').getBoundingClientRect();
+      play();
+      const eqKey = [slotX(0, 7) - 56 + 33 + 3 * 28 - 2, 306 + 54];
+      if (t < 1.2) pointAt(lerp(600, eqKey[0], ease((t - .3) / .8)), lerp(200, eqKey[1], ease((t - .3) / .8)));
+      else if (!opened) { opened = true; openEq(strips[0]); }
+      if (opened) {
+        // the canvas, in lab px
+        const c = $('eqCanvas').getBoundingClientRect(), cx = (c.left - r.left) / k, cy = (c.top - r.top) / k, cw = c.width / k, ch2 = c.height / k;
+        const W = $('eqCanvas').width, edge = f => cx + fx(f, W) / W * cw;
+        if (t < 2.2) pointAt(lerp(eqKey[0], edge(20), ease((t - 1.4) / .8)), cy + ch2 / 2);
+        else if (t < 4.2) { EQ.lo = 20 * Math.pow(300 / 20, ease((t - 2.2) / 2)); showEq(); drawEq(); pointAt(edge(EQ.lo), cy + ch2 / 2); }
+        else if (t < 6.4) {
+          EQ.lo = 300; const a = $('eqAmt').getBoundingClientRect(), ax = (a.left - r.left) / k, aw = a.width / k, ay = (a.top - r.top) / k + a.height / 2 / k;
+          if (t < 4.8) pointAt(lerp(edge(300), ax + aw - 4, ease((t - 4.2) / .6)), lerp(cy + ch2 / 2, ay, ease((t - 4.2) / .6)));
+          else { EQ.amount = lerp(1, .55, ease((t - 4.8) / 1.4)); showEq(); drawEq(); pointAt(ax + aw * EQ.amount - 4, ay); }
+        }
+      }
+    }, 50);
+  }
+}
+</script>
+<script>
+// The web demo's epilogue: start on the asked example, and say what is the app's job, not the demo's.
+(function () {
+  const be = window.__JUCE__.backend, q = new URLSearchParams(location.search);
+  be.start(q.get('example')).catch(e => { document.getElementById('progline').textContent = 'COULD NOT LOAD THE DEMO'; console.error(e); });
+  const $ = id => document.getElementById(id);
+  const own = () => be.emitEvent('__juce__invoke', { name: 'chooseFiles', params: [], resultId: -1 });
+  setTimeout(() => {
+    $('licText').innerHTML = '<b>Demo</b> · Ori\'s own recordings';
+    $('licGo').textContent = 'Your file';
+    $('licLine').onclick = own;
+  }, 0);
+  $('adder').innerHTML = '＋ Your own file? <u>Try it free</u>';
+  $('scopeHint').textContent = 'Loading the demo';
+  // a file dropped on the window goes to the trial, not into the browser
+  addEventListener('dragover', e => { e.preventDefault(); $('dropzone').classList.add('on'); });
+  addEventListener('dragleave', e => { if (!e.relatedTarget) $('dropzone').classList.remove('on'); });
+  addEventListener('drop', e => { e.preventDefault(); $('dropzone').classList.remove('on'); own(); });
+  $('dropzone').innerHTML = 'Your own file<br>goes in the app';
+  addEventListener('message', e => {
+    const m = e.data || {};
+    if (m.type === 'audioctor-demo-select' && m.id) be.choose(m.id);
+    if (m.type === 'audioctor-demo-pause') be.emitEvent('__juce__invoke', { name: 'transport', params: ['pause'], resultId: -1 });
+  });
+})();
+</script>
+</body>
+</html>

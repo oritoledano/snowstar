@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Audioctor: every part, apart. Clean. Local. | by Snowstar</title>
-<meta name="description" content="Audioctor splits any recording into its parts and repairs each one, on your Mac: voice, drums, bass, guitars, keys. Mix them in a sound lab, export stems or the cleaned mix. 7 days free, then $5.99 a month or $49 once.">
+<meta name="description" content="Split any recording into its parts and clean each one, on your Mac. Voice, drums, bass, guitars, keys. 7 days free, then $49 once or $5.99 a month.">
 <link rel="icon" href="/apps/audioctor-favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/apps/audioctor-icon-32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="/apps/audioctor-icon-192.png" sizes="192x192">
@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=8">
+<link rel="stylesheet" href="audioctor.css?v=9">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -47,10 +47,8 @@
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Audioctor"><img src="audioctor-logo.png?v=1" alt="Audioctor" width="137" height="26"></a>
     <nav aria-label="Page">
-      <a href="#video">On a video</a>
+      <a href="#hear">Hear it</a>
       <a href="#how">How it works</a>
-      <a href="#chain">The chain</a>
-      <a href="#compare">Compare</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">Questions</a>
     </nav>
@@ -61,23 +59,21 @@
   </div>
 </header>
 
-<main id="top">
+<main id="top" data-autotxt>
 
-  <!-- ── hero: the line, the button, the lab at work ── -->
+  <!-- ── hero: the line, the price, the lab at work. Until the Worker has Audioctor's routes (download,
+       checkout), every [data-soon] asks for early access by mail; then the trial button goes to
+       /api/audioctor/download/free and the plans to the checkout. ── -->
   <section class="hero" aria-labelledby="heroTitle">
     <div class="wrap">
       <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">For Apple silicon Macs · App, AU and VST3</p>
       <h1 id="heroTitle">Every part, apart.<br><em>Clean. Local.</em></h1>
-      <p class="lead">Audioctor splits any recording into its parts (voice, drums, bass, guitars, keys) and repairs each one. Then you mix them in a sound lab and take out stems or the cleaned mix. All of it on your Mac: nothing is uploaded.</p>
-      <!-- Until the Worker has Audioctor's routes (download, checkout), every [data-soon] asks for early access by
-           mail. Then: the trial button -> /api/audioctor/download/free, the plans -> data-buy="monthly|lifetime". -->
+      <p class="lead">Split any recording into voice, music and every instrument. Clean each part, mix, export. On your Mac.</p>
       <div class="cta">
-        <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Try it free for 7 days</a>
-        <a class="btn ghost" href="#compare">See how it compares</a>
+        <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Try it free for 7 days</a>
+        <a class="btn ghost" href="#hear">Hear it</a>
       </div>
-      <p class="fine">No card for the trial. Then <b><span data-usd="5.99" data-dp="2">$5.99</span> a month</b>, or <b><span data-usd="49" data-dp="0">$49</span> once</b> and it's yours.</p>
-      <!-- The films are the app at work on real files, with the sound the engine itself made (see the page's
-           film script: one film is audible at a time, and unmuting restarts it). -->
+      <p class="fine">No card. Then <b><span data-usd="49" data-dp="0">$49</span> once</b>, or <span data-usd="5.99" data-dp="2">$5.99</span> a month.</p>
       <figure class="mac film" data-sound-at="2.6">
         <div class="bar"><i></i><i></i><i></i><b>Audioctor</b>
           <button class="sound" type="button" aria-pressed="false" title="Play this film with sound"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.6L12 5.5v13L7.6 14.5H4z"/><path class="w" d="M15.8 9.3a3.8 3.8 0 0 1 0 5.4"/><path class="w" d="M18.6 6.5a7.8 7.8 0 0 1 0 11"/><path class="x" d="M16.2 9.8l4.6 4.4m0-4.4l-4.6 4.4"/></svg><span>Hear it</span></button>
@@ -92,183 +88,97 @@
           <b data-at="17">Back to the mix</b>
         </figcaption>
       </figure>
-      <p class="works"><span>Voice memos, podcasts, videos, rehearsals, finished songs</span><span aria-hidden="true">·</span><span>Any file your Mac plays: <b>wav, aiff, mp3, m4a, flac, mov, mp4</b></span></p>
     </div>
   </section>
 
-  <!-- ── the two jobs: a produced song (the hero film) and a recording of the real world ── -->
-  <section id="video" aria-labelledby="videoTitle" style="padding-top:0">
+  <!-- ── hear it: the demo's recordings (marketing/demo, published at apps/audioctor-demo/), played by its engine
+       right here: Before / After, the faders. The engine's real output; nothing is processed in the browser. ── -->
+  <section id="hear" aria-labelledby="hearTitle">
     <div class="wrap">
-      <div class="sec-head"><p class="kicker">And the other way round</p><h2 id="videoTitle">A video from the crowd. <em>The singer, alone.</em></h2>
-        <p>The same lab on a phone video of a gig: voice, music and the room, each on its own fader. Eleven seconds of video took six. Press <b>Hear it</b> &mdash; the sound in the film is what came out of the app.</p></div>
-      <figure class="mac film" data-sound-at="2.4">
-        <div class="bar"><i></i><i></i><i></i><b>Audioctor</b>
-          <button class="sound" type="button" aria-pressed="false" title="Play this film with sound"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.6L12 5.5v13L7.6 14.5H4z"/><path class="w" d="M15.8 9.3a3.8 3.8 0 0 1 0 5.4"/><path class="w" d="M18.6 6.5a7.8 7.8 0 0 1 0 11"/><path class="x" d="M16.2 9.8l4.6 4.4m0-4.4l-4.6 4.4"/></svg><span>Hear it</span></button>
+      <div class="sec-head center"><p class="kicker" style="justify-content:center">Hear it</p><h2 id="hearTitle">Real recordings. <em>The app's own output.</em></h2></div>
+      <div class="demo" id="demo">
+        <div class="chips" id="dChips" aria-label="Recordings"></div>
+        <p class="blurb" id="dBlurb">&nbsp;</p>
+        <div class="ab">
+          <button type="button" class="side" id="dBefore" aria-pressed="false">Before</button>
+          <button type="button" class="play" id="dPlay" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><span id="dPlayT">Play</span></button>
+          <button type="button" class="side on" id="dAfter" aria-pressed="true">After</button>
         </div>
-        <video src="../media/audioctor/video.mp4?v=3" poster="../media/audioctor/video.jpg?v=3" muted loop playsinline preload="none" width="1600" height="710" aria-label="A phone video of a concert dropped on Audioctor: voice, music and background, then the raw recording compared with the cleaned mix, the singer soloed, and the crowd on its own"></video>
-        <figcaption class="beats">
-          <b class="on" data-at="0">Drop the video</b>
-          <b data-at="0.9">6 s for eleven</b>
-          <b data-at="3.5">Voice, music, background</b>
-          <b data-at="5.1">Before: the phone</b>
-          <b data-at="7.2">After: the room 40 dB down</b>
-          <b data-at="8.2">The singer alone</b>
-          <b data-at="11.5">The crowd alone</b>
-        </figcaption>
-      </figure>
-      <p class="works"><span>A gig on a phone, a Voice Memo, a Zoom call, a rehearsal, a finished song</span><span aria-hidden="true">·</span><span>The picture stays where it is: Audioctor takes the <b>sound</b> out of the file</span></p>
-    </div>
-  </section>
-
-  <!-- ── how: three steps, each the app on film ── -->
-  <section id="how" aria-labelledby="howTitle" style="padding-top:0">
-    <div class="wrap">
-      <div class="sec-head"><p class="kicker">How it works</p><h2 id="howTitle">Drop. Mix. <em>Shape.</em></h2></div>
-      <div class="steps">
-        <div class="step">
-          <div class="txt">
-            <span class="num">01 · Drop</span>
-            <h3>Drop any recording on the lab.</h3>
-            <p>Audioctor hears what it is (speech, a song, one instrument) and takes it apart. Each part fills its own cylinder while the tubes show how far it is, to the second. One voice gives you one cylinder; a full song, up to seven.</p>
-          </div>
-          <figure class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/step-drop.jpg?v=3" alt="Audioctor halfway through a song: seven cylinders filling, the progress reading 71 per cent and twenty seconds left" width="1600" height="710" loading="lazy" decoding="async"></figure>
-        </div>
-        <div class="step">
-          <div class="txt">
-            <span class="num">02 · Mix</span>
-            <h3>The liquid is the fader.</h3>
-            <p>Drag a part up or down, switch it off, solo it, fold it to mono. The meters on the glass move with the music, and the waveform redraws as you mix. Before and After are matched in loudness, so you judge the change, not the volume.</p>
-          </div>
-          <figure class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/step-mix.jpg?v=3" alt="The voice cylinder drained to nothing while the other parts play on: the mix without its vocal" width="1600" height="710" loading="lazy" decoding="async"></figure>
-        </div>
-        <div class="step">
-          <div class="txt">
-            <span class="num">03 · Shape</span>
-            <h3>Process only where it helps.</h3>
-            <p>Every part has a range EQ: choose from which frequency to which the processing acts, and how much. Keep a voice's own low end and clean only its top; let a little of the room back into the guitars. Then export the mix, or every part as its own file.</p>
-          </div>
-          <figure class="mac"><div class="bar"><i></i><i></i><i></i></div><video src="../media/audioctor/eq.mp4" poster="../media/audioctor/eq.jpg" muted loop playsinline preload="none" width="1600" height="710" aria-label="The range EQ open on the voice: the processing held between two frequencies, and how much of it"></video></figure>
-        </div>
+        <canvas id="dWave" width="1600" height="150" aria-label="The recording's waveform; click to move through it"></canvas>
+        <div class="dline"><span id="dTime">0:00</span><span id="dLbl">After</span></div>
+        <div class="faders" id="dFaders"></div>
+        <p class="fine">Before and After play at the same loudness, so you hear the change, not the volume. <a href="audioctor-demo/">Open the whole lab &rarr;</a></p>
       </div>
     </div>
   </section>
 
-  <!-- ── the chain: what happens to the signal, every step a switch ── -->
-  <section id="chain" aria-labelledby="chainTitle" style="padding-top:0">
+  <!-- ── how: three cards, a picture and a line each ── -->
+  <section id="how" aria-labelledby="howTitle">
     <div class="wrap">
-      <div class="sec-head"><p class="kicker">The chain</p><h2 id="chainTitle">One chain, <em>for any signal.</em></h2>
-        <p>Four steps in order, each one a switch you can turn off, and every result kept: turning a step back on is instant.</p></div>
-      <div class="chain">
-        <div class="link"><span class="tape">Separate</span><h3>Take it apart</h3><p>Voice and music, or voice, drums, bass, guitars, keys and the rest. Best quality or Fast, about three times quicker.</p><small>Best · Fast · Instruments</small></div>
-        <div class="link"><span class="tape">Clean voice</span><h3>Lift the voice out of the room</h3><p>Noise, hum and hiss around the voice go to their own part, Background, so you decide how much of them stays.</p><small>Noise to its own fader</small></div>
-        <div class="link"><span class="tape">Studio voice</span><h3>Rebuild a voice</h3><p>For speech recorded in a bad room: the voice rebuilt as if recorded close and dry. Compare it before you keep it.</p><small>Speech · a switch, never forced</small></div>
-        <div class="link"><span class="tape">Restore highs</span><h3>Give back what a codec cut</h3><p>When a phone call or a compressed file has lost its top (everything above 8 or 12 kHz), Audioctor hears the cliff and rebuilds it.</p><small>Only where it's missing</small></div>
+      <div class="sec-head center"><p class="kicker" style="justify-content:center">How it works</p><h2 id="howTitle">Drop. Mix. <em>Export.</em></h2></div>
+      <div class="trio">
+        <figure><div class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/step-drop.jpg?v=3" alt="Audioctor taking a song apart: seven cylinders filling" width="1600" height="710" loading="lazy"></div>
+          <figcaption><b>Take it apart</b>Voice and music, or every instrument: up to seven parts.</figcaption></figure>
+        <figure><div class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/video.jpg?v=3" alt="A phone video of a gig in Audioctor: voice, music and background on their own faders" width="1600" height="710" loading="lazy"></div>
+          <figcaption><b>Clean each part</b>Noise goes to its own fader. Rebuild a voice, or bring back the highs a phone cut.</figcaption></figure>
+        <figure><div class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/step-mix.jpg?v=3" alt="The voice cylinder drained while the band plays on" width="1600" height="710" loading="lazy"></div>
+          <figcaption><b>Mix and export</b>Faders, solo and a range EQ on every part. Export stems or the mix.</figcaption></figure>
       </div>
-      <p class="one"><img src="audioctor-icon-128.png" width="34" height="34" alt="" style="border-radius:8px"><span><b>Plays on your Mac, in your DAW.</b> The Audioctor app, and the same lab as an AU and VST3 plug-in.</span></p>
+      <p class="works"><span>Voice memos, podcasts, videos, rehearsals, finished songs</span><span aria-hidden="true">·</span><span><b>wav, aiff, mp3, m4a, flac, mov, mp4</b></span></p>
     </div>
   </section>
 
-  <!-- ── compare. Every cell is what the other product's own site says (read 20 October 2026); check again
-       before changing a word. "Not listed" means it isn't among the features its site lists. Sound quality is
-       not claimed here: that needs a published blind listening test first. ── -->
-  <section id="compare" aria-labelledby="compareTitle" style="padding-top:0">
+  <!-- ── pricing: $49 once leads (marketing/council-2026-10-25.md), $5.99 a month beside it; the trial in front ── -->
+  <section id="pricing" aria-labelledby="pricingTitle">
     <div class="wrap">
-      <div class="sec-head"><p class="kicker">Compare</p><h2 id="compareTitle">What used to take three apps.</h2>
-        <p>Voice repair from one, stems from another, a free cleaner that only works on some recordings. Audioctor is all three, on your Mac, for less than any one of them.</p></div>
-      <div class="table-wrap">
-        <table class="vs">
-          <thead><tr><th></th><th class="us">Audioctor</th><th>Adobe Podcast<br>Enhance Speech</th><th>Moises</th><th>Voice Memos<br>Studio Voice</th></tr></thead>
-          <tbody>
-            <tr><td>Splits a recording into parts</td><td class="us"><span class="yes">✓</span>Voice, drums, bass, guitars, keys, other, background</td><td><span class="yes">✓</span>Speech, noise and music</td><td><span class="yes">✓</span>Up to 7 stems</td><td><span class="no">–</span>No</td></tr>
-            <tr><td>Repairs a voice</td><td class="us"><span class="yes">✓</span>Clean voice, studio voice, restored highs<small>Each a switch</small></td><td><span class="yes">✓</span>Noise and echo<small>One strength slider</small></td><td><span class="no">–</span>Not listed</td><td><span class="yes">✓</span>Background noise<small>One slider</small></td></tr>
-            <tr><td>Works on songs, not only speech</td><td class="us"><span class="yes">✓</span>Songs, speech, single instruments</td><td><span class="no">–</span>Made for speech</td><td><span class="yes">✓</span>Made for music</td><td><span class="no">–</span>Speech</td></tr>
-            <tr><td>Mix the parts, choose where processing acts</td><td class="us"><span class="yes">✓</span>A fader, solo, mono and a range EQ per part</td><td>A level per part</td><td>A level per stem</td><td><span class="no">–</span>No</td></tr>
-            <tr><td>Where your audio goes</td><td class="us"><span class="yes">✓</span>Nowhere: it runs on your Mac</td><td>Uploaded to Adobe's servers</td><td>You upload the song</td><td><span class="yes">✓</span>Stays on your devices</td></tr>
-            <tr><td>Which recordings</td><td class="us"><span class="yes">✓</span>Any audio or video file your Mac plays</td><td>Audio; video on Premium</td><td>Songs, links and videos</td><td>Only Spatial Audio recordings from a recent iPhone</td></tr>
-            <tr><td>In your DAW</td><td class="us"><span class="yes">✓</span>App, AU and VST3</td><td><span class="no">–</span>In the browser</td><td><span class="yes">✓</span>Plug-in on Pro</td><td><span class="no">–</span>No</td></tr>
-            <tr><td>Price</td><td class="us">7 days free, then <span data-usd="5.99" data-dp="2">$5.99</span> a month or <span data-usd="49" data-dp="0">$49</span> once</td><td>Free 1 hour a day; Premium $9.99 a month</td><td>Free tier; Premium $3.99, Pro $9.99 a month</td><td>Free with Apple devices</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="vs-fine">As each listed it on podcast.adobe.com, moises.ai and support.apple.com, 20 October 2026. Their prices are before tax; ours include VAT.</p>
-      <div class="vs-sum">
-        <div><b><span data-usd="19.98" data-dp="2">$19.98</span> a month</b><span>Adobe Podcast Premium for the voice, plus Moises Pro for the stems and the plug-in.</span></div>
-        <div class="us"><b><span data-usd="5.99" data-dp="2">$5.99</span> a month</b><span>Audioctor does both, on your Mac. 70% less.</span></div>
-        <div><b><span data-usd="49" data-dp="0">$49</span> once</b><span>Or buy it outright, for less than three months of the other two, which are subscriptions only.</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── pricing: the trial is the door; then monthly, or once. Charged in shekels at the day's rate, like
-       StreamDAW (the Worker's HYP checkout). ── -->
-  <section id="pricing" aria-labelledby="pricingTitle" style="padding-top:0">
-    <div class="wrap">
-      <div class="sec-head center"><p class="kicker" style="justify-content:center">Free for 7 days, then monthly or once</p><h2 id="pricingTitle">Try all of it. <em>Then keep it.</em></h2></div>
-      <div class="plans">
-        <div class="plan">
-          <span class="tag">Free trial</span>
-          <div class="price">7 days<small>No card, no subscription</small></div>
-          <p class="note">Everything in Audioctor, from the first launch.</p>
-          <ul>
-            <li>Every part, every step of the chain</li>
-            <li>The lab's mixer and range EQ</li>
-            <li>Export stems and mixes</li>
-            <li>The app, AU and VST3</li>
-          </ul>
-          <a class="btn ghost" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon>Start the free trial</a>
-          <p class="after">After 7 days you can still open, process and listen; exporting needs a plan.</p>
-        </div>
+      <div class="sec-head center"><p class="kicker" style="justify-content:center">Pricing</p><h2 id="pricingTitle">7 days free. <em>Then it's yours.</em></h2>
+        <p>Every plan starts with the whole app for 7 days. No card.</p></div>
+      <div class="plans two">
         <div class="plan hot">
-          <span class="badge">Most flexible</span>
-          <span class="tag">Audioctor Monthly</span>
-          <div class="price"><span data-usd="5.99" data-dp="2">$5.99</span><small>a month · VAT included</small></div>
-          <p class="note">Charged <b><span data-usd="5.99" data-cur="ILS" data-dp="2">₪18.42</span> a month</b> in shekels, at the day's rate when you start, and the same every month after. Cancel any time, no fee.</p>
-          <ul>
-            <li>All of Audioctor, every update</li>
-            <li>Two Macs</li>
-            <li>Your key renews itself while Audioctor is online</li>
-          </ul>
-          <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20Monthly%20early%20access" data-soon>Start Audioctor Monthly</a>
-          <p class="after">Starts after your 7 free days, if you like.</p>
-        </div>
-        <div class="plan">
+          <span class="badge">Best value</span>
           <span class="tag">Audioctor</span>
-          <div class="price"><span data-usd="49" data-dp="0">$49</span><small>one payment · VAT included</small></div>
-          <p class="note"><b>One payment. Yours forever.</b> Every Audioctor 1 update included.</p>
+          <div class="price"><span data-usd="49" data-dp="0">$49</span><small>once</small></div>
           <ul>
-            <li>All of Audioctor</li>
+            <li>The app, AU and VST3</li>
             <li>Two Macs</li>
             <li>No subscription</li>
           </ul>
-          <a class="btn ghost" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon>Get Audioctor</a>
-          <p class="after">Buying means you accept the Audioctor licence terms.</p>
+          <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon>Get Audioctor</a>
+        </div>
+        <div class="plan">
+          <span class="tag">Audioctor Monthly</span>
+          <div class="price"><span data-usd="5.99" data-dp="2">$5.99</span><small>a month</small></div>
+          <ul>
+            <li>The app, AU and VST3</li>
+            <li>Two Macs</li>
+            <li>Cancel any time</li>
+          </ul>
+          <a class="btn ghost" href="mailto:hello@snowstar.company?subject=Audioctor%20Monthly%20early%20access" data-soon>Start monthly</a>
         </div>
       </div>
-      <p class="reqs">Needs a <b>Mac with Apple silicon</b> and <b>macOS 14</b> or later. The plug-in: <b>AU and VST3</b>.</p>
+      <p class="anchor">Adobe Podcast Premium for the voice plus Moises Pro for the stems: <b><span data-usd="19.98" data-dp="2">$19.98</span> a month</b>. Audioctor does both, on your Mac.</p>
+      <p class="reqs">Needs a <b>Mac with Apple silicon</b> and <b>macOS 14</b> or later. Their prices as listed on podcast.adobe.com and moises.ai, 20 October 2026.</p>
     </div>
   </section>
 
-  <section id="faq" aria-labelledby="faqTitle" style="padding-top:0">
+  <section id="faq" aria-labelledby="faqTitle">
     <div class="wrap">
       <div class="sec-head center"><h2 id="faqTitle">Questions.</h2></div>
       <div class="faq">
-        <details><summary>Does my audio leave my Mac?</summary><p>No. Separation and every repair run on your Mac, on its graphics chip where they can. Nothing you open is uploaded, and Audioctor works offline.</p></details>
-        <details><summary>How long does a song take?</summary><p>On an M1 Max, Best takes about 15 seconds for each minute of audio, and Fast about 10. The first file after installing takes a little longer while macOS prepares the models. The tubes show the percentage and the time left as it goes.</p></details>
-        <details><summary>What can it split?</summary><p>Voice and music, or, for produced songs, voice, drums, bass, guitars, keys and the rest. Background always gets its own fader: noise, hum and whatever else isn't a part. A single voice or instrument stays one part, with nothing to split.</p></details>
-        <details><summary>Will it change how my voice sounds?</summary><p>Clean voice keeps your voice and moves the noise to Background. Studio voice rebuilds a voice and can change its colour, so it is a switch: compare Before and After, and keep what you like. The range EQ lets the processing act only where you choose.</p></details>
-        <details><summary>Which DAWs?</summary><p>The plug-in is an Audio Unit and a VST3, filed under snowstar.company: Logic Pro, Ableton Live, Cubase, Studio One, Reaper and others. Drop files on its window, mix, and export, as in the app.</p></details>
-        <details><summary>How does the licence work?</summary><p>Like StreamDAW's: your key is made for your Mac and arrives by email within minutes; paste it into Audioctor. Monthly keys renew themselves while Audioctor is online. Each plan covers two Macs.</p></details>
-        <details><summary>Can I get a refund?</summary><p>Try it first: the 7 days cost nothing. Monthly: cancel any time; end it now instead and we refund the days you didn't use. Once your key is issued, a one-time purchase isn't refundable, except for a double charge or a key that never arrives.</p></details>
+        <details><summary>Does my audio leave my Mac?</summary><p>No. Everything runs on your Mac, and Audioctor works offline.</p></details>
+        <details><summary>Which DAWs?</summary><p>Any that loads an Audio Unit or a VST3: Logic Pro, Ableton Live, Cubase, Studio One, Reaper and more.</p></details>
+        <details><summary>How fast is it?</summary><p>About 15 seconds for each minute of audio on an M1 Max.</p></details>
+        <details><summary>What happens after the 7 days?</summary><p>You can still open, take apart and listen. Exporting needs a plan.</p></details>
       </div>
     </div>
   </section>
 
-  <section class="last" style="padding-top:0">
+  <section class="last">
     <div class="wrap">
-      <h2>Stop fixing it by hand.<br><em>Let the lab take it apart.</em></h2>
+      <h2>Try it on your own recording.</h2>
       <div class="cta">
-        <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon>Try it free for 7 days</a>
-        <a class="btn ghost" href="#pricing"><span data-usd="5.99" data-dp="2">$5.99</span> a month, or <span data-usd="49" data-dp="0">$49</span> once</a>
+        <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Try it free for 7 days</a>
+        <a class="btn ghost" href="#pricing"><span data-usd="49" data-dp="0">$49</span> once</a>
       </div>
     </div>
   </section>
@@ -288,12 +198,10 @@
 
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <nav aria-label="Main">
-    <a href="#video"><i>01</i>On a video</a>
+    <a href="#hear"><i>01</i>Hear it</a>
     <a href="#how"><i>02</i>How it works</a>
-    <a href="#chain"><i>03</i>The chain</a>
-    <a href="#compare"><i>04</i>Compare</a>
-    <a href="#pricing"><i>05</i>Pricing</a>
-    <a href="#faq"><i>06</i>Questions</a>
+    <a href="#pricing"><i>03</i>Pricing</a>
+    <a href="#faq"><i>04</i>Questions</a>
     <span class="menu-div">Products</span>
     <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
@@ -364,11 +272,132 @@
   });
 })();
 </script>
+<script>
+// the demo (#hear): the engine and recordings of marketing/demo, published at audioctor-demo/. Loaded when the section
+// comes near, so the page itself stays light; one sound at a time with the films.
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const BASE = 'audioctor-demo/';
+  const LABEL = { gig: 'A gig on a phone', memo: 'A voice memo', note: 'A WhatsApp voice note', song: 'A finished song' };
+  const COLORS = { Voice: '#c8f23a', Music: '#38d9a9', Background: '#8d8a80' };
+  const track = (name, props) => {
+    try { if (window.mutraTrack) window.mutraTrack('ad_' + name, props); dispatchEvent(new CustomEvent('audioctor:track', { detail: { name, props } })); } catch (e) {}
+  };
+  const hushFilms = () => document.querySelectorAll('.film video').forEach((v) => {
+    if (v.muted) return;
+    v.muted = true;
+    const b = v.closest('.film').querySelector('.sound');
+    if (b) { b.setAttribute('aria-pressed', 'false'); const t = b.querySelector('span'); if (t) t.textContent = 'Hear it'; }
+  });
+  let eng = null, cur = null, raf = 0, asked = false;
+  function start() {
+    if (asked) return; asked = true;
+    const sc = document.createElement('script');
+    sc.src = BASE + 'engine.js?v=1';
+    sc.onload = boot;
+    sc.onerror = () => { $('dPlayT').textContent = 'Not available'; };
+    document.body.appendChild(sc);
+  }
+  async function boot() {
+    eng = new window.AudioctorDemo.Engine(BASE + 'media/');
+    let examples;
+    try { examples = await eng.init(); } catch (e) { $('dPlayT').textContent = 'Not available'; return; }
+    examples.forEach((e) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'chip'; b.dataset.id = e.id;
+      b.textContent = LABEL[e.id] || e.name.replace(/\.[a-z0-9]+$/i, '');
+      b.onclick = () => pick(e.id);
+      $('dChips').appendChild(b);
+    });
+    $('dBefore').onclick = () => ab(false);
+    $('dAfter').onclick = () => ab(true);
+    $('dPlay').onclick = async () => {
+      await eng.unlock();
+      if (eng.playing) eng.pause(); else { hushFilms(); eng.play(); track('demo_played', { example: cur, after: eng.showAfter, view: 'landing' }); }
+      paint();
+    };
+    $('dWave').addEventListener('click', (ev) => { if (!eng.ex) return; const r = $('dWave').getBoundingClientRect(); eng.seek((ev.clientX - r.left) / r.width * eng.ex.seconds); });
+    document.querySelectorAll('.film .sound').forEach((b) => b.addEventListener('click', () => { if (eng.playing) { eng.pause(); paint(); } }));
+    pick(examples[0].id);
+  }
+  async function pick(id) {
+    cur = id;
+    document.querySelectorAll('#dChips .chip').forEach((b) => b.classList.toggle('sel', b.dataset.id === id));
+    const ex = eng.examples().find((e) => e.id === id);
+    $('dBlurb').textContent = ex.blurb;
+    $('dPlay').disabled = true; $('dPlayT').textContent = 'Loading…'; $('dFaders').innerHTML = '';
+    const was = eng.playing;
+    if (was) eng.pause();
+    await eng.load(id, (p) => { if (cur === id) $('dPlayT').textContent = 'Loading ' + Math.round(p * 100) + '%'; });
+    if (cur !== id) return;
+    eng.select(ex, ex.variants.voice ? 'voice' : 'base');      // the song as voice and music: three faders
+    faders(); paint();
+    if (was) { hushFilms(); eng.play(); paint(); }
+    track('demo_example', { example: id, view: 'landing' });
+    if (!raf) loop();
+  }
+  async function ab(after) {
+    if (!eng.ex) return;
+    eng.setAfter(after);
+    if (!eng.playing) { await eng.unlock(); hushFilms(); eng.play(); track('demo_played', { example: cur, after, view: 'landing' }); }
+    track('demo_ab', { example: cur, after, view: 'landing' });
+    paint();
+  }
+  const dbTxt = (db) => (db <= -60 ? '−∞ dB' : (db > 0.05 ? '+' : db < -0.05 ? '−' : '') + Math.abs(db).toFixed(1) + ' dB');
+  function faders() {
+    const box = $('dFaders'); box.innerHTML = '';
+    eng.channels().filter((c) => !c.minor).forEach((c) => {
+      const row = document.createElement('div'); row.className = 'fd'; row.style.setProperty('--c', COLORS[c.name] || '#c8f23a');
+      const id = 'dfd-' + c.name;
+      row.innerHTML = '<label class="nm" for="' + id + '"></label><input type="range" id="' + id + '" min="-60" max="6" step="0.5"><span class="db"></span>';
+      const nm = row.querySelector('.nm'); nm.textContent = c.name; nm.style.color = COLORS[c.name] || '#c8f23a';
+      const inp = row.querySelector('input'), out = row.querySelector('.db');
+      inp.value = c.gainDb; out.textContent = dbTxt(c.gainDb);
+      inp.oninput = () => { const db = +inp.value; eng.setChannel(c.name, { gainDb: db <= -60 ? -120 : db }); out.textContent = dbTxt(db); track('demo_fader', { example: cur, part: c.name, view: 'landing' }); };
+      box.appendChild(row);
+    });
+  }
+  function paint() {
+    const a = eng.showAfter;
+    $('dAfter').classList.toggle('on', a); $('dBefore').classList.toggle('on', !a);
+    $('dAfter').setAttribute('aria-pressed', a); $('dBefore').setAttribute('aria-pressed', !a);
+    $('dLbl').textContent = a ? 'After' : 'Before';
+    $('dPlay').disabled = !eng.ex; $('dPlayT').textContent = eng.playing ? 'Pause' : 'Play';
+    $('dPlay').classList.toggle('on', eng.playing);
+  }
+  let waveFor = '', pb = [], pa = [];
+  const mmss = (t) => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    if (!eng || !eng.ex) return;
+    eng.tick();
+    const key = eng.ex.id + eng.variant;
+    if (key !== waveFor) { waveFor = key; pb = eng.peaksBefore(); pa = eng.peaksAfter(); }
+    const c = $('dWave'), g = c.getContext('2d'), W = c.width, H = c.height, mid = H / 2;
+    g.clearRect(0, 0, W, H);
+    const lane = (pk, color) => {
+      const mx = Math.max(1e-4, ...pk), w = W / pk.length; g.fillStyle = color;
+      for (let i = 0; i < pk.length; i++) { const h = Math.min(1, pk[i] / mx) * (mid - 10); g.fillRect(i * w, mid - h, Math.max(1, w * .8), 2 * h); }
+    };
+    if (eng.showAfter) { lane(pb, 'rgba(200,242,58,.16)'); lane(pa, 'rgba(200,242,58,.85)'); }
+    else lane(pb, 'rgba(255,211,138,.85)');
+    const x = eng.position() / eng.ex.seconds * W; g.fillStyle = '#fff'; g.fillRect(x - 1, 0, 3, H);
+    $('dTime').textContent = mmss(eng.position()) + ' / ' + mmss(eng.ex.seconds);
+    if ($('dPlay').classList.contains('on') !== eng.playing) paint();
+  }
+  // near the screen (or a press on Play first): load
+  const sec = $('hear');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: '600px 0px' });
+    io.observe(sec);
+  } else start();
+})();
+</script>
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=29"></script>
-<script src="../js/site-edit.js?v=22"></script>
+<script src="../js/site-edit.js?v=23"></script>
 <script src="../js/consent.js?v=1"></script>
 </body>
 </html>

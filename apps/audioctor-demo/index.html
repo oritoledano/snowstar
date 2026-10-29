@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Audioctor demo: hear it take a recording apart</title>
+<meta name="description" content="Four real recordings, processed by Audioctor on a Mac. Switch Before and After, move every part, solo the voice. The app's own window, playing what the app made.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* The demo page (marketing/demo, for /apps/audioctor-demo/). The sale page's room: dark, Fraunces over Inter, lime for
+   the one thing to press. Desk-sized screens get the app's own window (lab.html); phones get one big Before/After
+   and three faders on the same engine, because a 1100 px lab doesn't fit a hand. */
+:root{
+  --bg:#0b0a08; --card:#181713; --card-2:#201e19; --ink:#f3eddc; --ink-2:rgba(243,237,220,.78); --muted:rgba(243,237,220,.58);
+  --line:rgba(243,237,220,.12); --line-2:rgba(243,237,220,.24); --lime:#c8f23a; --lime-ink:#1d2a00; --pink:#ff5c8a;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif; --sans:"Inter",system-ui,-apple-system,sans-serif;
+  --cond:"Barlow Condensed","Avenir Next Condensed","Arial Narrow",sans-serif;
+  --gut:clamp(16px,4vw,40px); color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:var(--gut)}
+.bar{display:flex;align-items:center;gap:16px;height:64px;border-bottom:1px solid var(--line)}
+.bar img{height:24px;width:auto;display:block}
+.bar .tag{font:700 12px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.bar .sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 24px;font:600 15.5px/1 var(--sans);text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.btn.lime{background:linear-gradient(#d6f55c,#b9df2f);color:var(--lime-ink);box-shadow:0 0 22px rgba(200,242,58,.28)}
+.btn.lime:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(200,242,58,.42)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn.sm{padding:10px 16px;font-size:14px}
+.btn:focus-visible,.ex:focus-visible,.chip:focus-visible,.seg button:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+header.hero{padding-block:clamp(28px,5vw,56px) 18px;display:flex;flex-direction:column;gap:14px}
+.kicker{font:700 13px/1 var(--cond);letter-spacing:.22em;text-transform:uppercase;color:var(--lime)}
+h1{font-family:var(--serif);font-weight:600;letter-spacing:-.02em;line-height:1.05;font-size:clamp(34px,5.6vw,64px);text-wrap:balance}
+h1 em{font-style:italic;font-weight:500;color:var(--ink-2)}
+.lead{font-size:clamp(16px,1.6vw,19px);color:var(--ink-2);max-width:68ch}
+
+/* desk: the examples, then the app's window */
+.desk{display:flex;flex-direction:column;gap:14px;padding-block:8px 8px}
+.exs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+.ex{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.ex b{font-weight:600;font-size:15px}
+.ex span{font-size:13.5px;color:var(--muted)}
+.ex.sel{border-color:rgba(200,242,58,.55);background:var(--card-2);box-shadow:inset 0 0 0 1px rgba(200,242,58,.25)}
+.frame{position:relative;width:100%;aspect-ratio:1280/568;border-radius:16px;overflow:hidden;background:#0b0a08;box-shadow:0 0 0 1px #000,0 30px 60px -24px rgba(0,0,0,.95)}
+.frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.how{display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--muted);font-size:13.5px}
+.how b{color:var(--ink-2);font-weight:600}
+
+/* phone: one big Before/After, three faders */
+.phone{display:none;flex-direction:column;gap:16px;padding-block:6px 10px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line-2);background:transparent;border-radius:999px;padding:9px 14px;font-size:14px;color:var(--ink-2)}
+.chip.sel{background:var(--ink);color:#12110e;border-color:var(--ink)}
+.pblurb{font-size:14px;color:var(--muted);min-height:1.6em}
+.scope{position:relative;border-radius:14px;background:#0a0f0e;box-shadow:inset 0 0 0 1px rgba(200,242,58,.15);overflow:hidden}
+.scope canvas{display:block;width:100%;height:96px}
+.scope .lbl{position:absolute;left:12px;top:8px;font:700 11px/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;color:rgba(200,242,58,.7)}
+.scope .t{position:absolute;right:12px;top:8px;font:500 11px/1 ui-monospace,Menlo,monospace;color:rgba(200,242,58,.7)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:6px}
+.seg button{border:0;border-radius:13px;padding:20px 8px;font:700 20px/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;background:transparent;color:var(--muted)}
+.seg button.on{background:linear-gradient(#d6f55c,#b9df2f);color:var(--lime-ink);box-shadow:0 0 18px rgba(200,242,58,.3)}
+.seg button.before.on{background:linear-gradient(#ffe2a6,#ffcf7a);color:#2b1d00;box-shadow:0 0 18px rgba(255,211,138,.25)}
+.play{border:1.5px solid var(--line-2);background:transparent;border-radius:999px;padding:14px;font:600 16px/1 var(--sans);display:flex;align-items:center;justify-content:center;gap:10px}
+.play.on{border-color:var(--ink)}
+.faders{display:flex;flex-direction:column;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.fd{display:grid;grid-template-columns:96px minmax(0,1fr) 64px;align-items:center;gap:10px}
+.fd .nm{font:700 13px/1 var(--cond);letter-spacing:.16em;text-transform:uppercase}
+.fd .db{font:500 12px/1 ui-monospace,Menlo,monospace;color:var(--muted);text-align:right}
+.fd input{width:100%;accent-color:var(--c,#c8f23a);height:28px}
+.hint{font-size:13px;color:var(--muted)}
+.status{font:700 12px/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;color:var(--lime)}
+
+@media (max-width:819px){ .desk{display:none} .phone{display:flex} }
+
+/* the next step */
+.next{margin-block:clamp(36px,6vw,72px);background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(22px,4vw,44px);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:center}
+.next h2{font-family:var(--serif);font-weight:600;letter-spacing:-.02em;line-height:1.08;font-size:clamp(28px,3.6vw,44px);text-wrap:balance}
+.next p{color:var(--ink-2);margin-top:12px;max-width:56ch}
+.next .acts{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.fine{font-size:13px;color:var(--muted)}
+.onmac{display:none;flex-direction:column;gap:10px;width:100%}
+.copy{display:flex;gap:8px;width:100%}
+.copy input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line-2);border-radius:999px;padding:10px 14px;color:var(--ink);font:14px var(--sans)}
+@media (max-width:819px){ .next{grid-template-columns:1fr} .onmac{display:flex} .desk-only{display:none} }
+.truth{padding-block:0 48px;color:var(--muted);font-size:13.5px;max-width:80ch}
+.truth b{color:var(--ink-2);font-weight:600}
+
+/* "that's the app's job": a small card instead of a dead end */
+.modal{position:fixed;inset:0;background:rgba(5,5,4,.72);display:grid;place-items:center;padding:16px;z-index:50}
+.modal[hidden]{display:none}
+.mcard{background:var(--card-2);border:1px solid var(--line-2);border-radius:18px;padding:24px;max-width:440px;width:100%;display:flex;flex-direction:column;gap:12px}
+.mcard h3{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.15}
+.mcard p{color:var(--ink-2);font-size:15px}
+.mcard .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+@media (prefers-reduced-motion:reduce){.btn{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <a href="/apps/audioctor.html?from=demo" aria-label="Audioctor"><img src="art/logo-audioctor.webp" alt="Audioctor" width="120" height="24"></a>
+    <span class="tag">The demo</span>
+    <span class="sp"></span>
+    <a class="btn lime sm" href="/apps/audioctor.html?get=free&amp;from=demo" data-cta="bar">Try it free</a>
+  </div>
+
+  <header class="hero">
+    <span class="kicker">Real recordings · the app's own window</span>
+    <h1>Hear it take a recording <em>apart.</em></h1>
+    <p class="lead">Four of Ori's own recordings, processed by Audioctor on a Mac. Switch Before and After, move the parts, solo the voice. Before is the recording; After is exactly what the app made.</p>
+  </header>
+
+  <section class="desk" aria-label="The lab">
+    <div class="exs" id="exs"></div>
+    <div class="frame"><iframe id="lab" title="The Audioctor lab, playing the demo recordings" allow="autoplay"></iframe></div>
+    <div class="how">
+      <span><b>Before / After</b> on the left of the panel</span>
+      <span><b>Drag the liquid</b> in a cylinder to set its level</span>
+      <span><b>S</b> solos a part · <b>EQ</b> sets where the cleaning acts</span>
+      <span><b>Space</b> plays and pauses</span>
+    </div>
+  </section>
+
+  <section class="phone" aria-label="The demo on a phone">
+    <div class="chips" id="chips" role="group" aria-label="Recordings"></div>
+    <p class="pblurb" id="pblurb"></p>
+    <div class="scope"><canvas id="pwave" width="900" height="192"></canvas><span class="lbl" id="plbl">After</span><span class="t" id="ptime"></span></div>
+    <div class="seg" role="group" aria-label="Before or After">
+      <button class="before" id="pbefore" aria-pressed="false">Before</button>
+      <button class="after on" id="pafter" aria-pressed="true">After</button>
+    </div>
+    <button class="play" id="pplay" disabled><span id="pplayt">Loading…</span></button>
+    <div class="faders" id="pfaders" aria-label="The parts"></div>
+    <p class="hint">Sound on. On an iPhone, check the silent switch.</p>
+  </section>
+
+  <section class="next" aria-labelledby="next">
+    <div>
+      <h2 id="next">Now try it on the worst file you have.</h2>
+      <p>The interview with the air conditioner, the voice memo you can't record again, the song you only have as a mix. 7 days free, no card. Everything runs on your Mac and nothing is uploaded.</p>
+    </div>
+    <div class="acts">
+      <a class="btn lime desk-only" href="/apps/audioctor.html?get=free&amp;from=demo" data-cta="main">Get the 7-day trial</a>
+      <div class="onmac">
+        <span class="fine">Audioctor runs on a Mac. Open this page there to download it:</span>
+        <div class="copy"><input id="link" readonly value="snowstar.company/apps/audioctor-demo/" aria-label="This page's address"><button class="btn ghost sm" id="copy">Copy link</button></div>
+      </div>
+      <a class="btn ghost sm" href="/apps/audioctor.html?from=demo#pricing" data-cta="prices">$49 once, or $5.99 a month</a>
+      <span class="fine">For Apple silicon Macs with macOS 14 or later. The app, plus AU and VST3.</span>
+    </div>
+  </section>
+
+  <p class="truth"><b>What you're hearing.</b> The engine's real output from Audioctor 0.1.3: Best quality for the gig and the song, and separator B in speech mode for the two voice recordings. Before and After both play at −16 LUFS, so you judge the change and not the volume. The switches that need new processing (Fast, other steps, your own file) are the app's job: here they say so.</p>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mtitle">
+  <div class="mcard">
+    <h3 id="mtitle">That part happens in the app.</h3>
+    <p id="mtext">Your own files, Export and every switch run on your Mac. The trial has all of it for 7 days, no card.</p>
+    <div class="row"><a class="btn lime" href="/apps/audioctor.html?get=free&amp;from=demo" data-cta="modal">Get the 7-day trial</a><button class="btn ghost" id="mclose">Back to the demo</button></div>
+  </div>
+</div>
+
+<script src="engine.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const phoneQ = matchMedia('(max-width: 819px)');
+  const seen = new Set();
+  // one place for analytics: the site's own pipeline if it's on the page, and an event the Meta Pixel can follow
+  function track(name, props) {
+    props = props || {};
+    const key = name + ':' + (props.example || '') + ':' + (props.part || '');
+    if ((name === 'demo_fader' || name === 'demo_eq' || name === 'demo_ab') && seen.has(key)) return;
+    seen.add(key);
+    try { window.dispatchEvent(new CustomEvent('audioctor:track', { detail: { name, props } })); } catch (e) {}
+    try { if (typeof window.mutraTrack === 'function') window.mutraTrack('ad_' + name, props.example || props.location || props.why || ''); } catch (e) {}
+  }
+  document.querySelectorAll('[data-cta]').forEach(a => a.addEventListener('click', () => track('trial_cta_clicked', { location: a.dataset.cta })));
+  const WHY = {
+    'own-file': ['Your own file goes in the app.', 'Drop any recording on Audioctor on your Mac: phone memos, interviews, videos, songs. The trial has everything for 7 days, no card.'],
+    export: ['Export is in the app.', 'The mix, or every part as its own file, from your own recordings. The trial exports everything for 7 days, no card.'],
+    licence: ['This is the demo.', 'It plays Ori\'s recordings. Your own files go in the app: 7 days free, no card.'],
+  };
+  function cta(why) {
+    const w = WHY[why] || WHY['own-file'];
+    $('mtitle').textContent = w[0]; $('mtext').textContent = w[1];
+    $('modal').hidden = false; track('demo_cta', { why });
+  }
+  $('mclose').onclick = () => { $('modal').hidden = true; };
+  $('modal').addEventListener('click', e => { if (e.target === $('modal')) $('modal').hidden = true; });
+  addEventListener('keydown', e => { if (e.key === 'Escape') $('modal').hidden = true; });
+  $('copy').onclick = () => {
+    const url = 'https://' + $('link').value;
+    const ok = () => { $('copy').textContent = 'Copied'; setTimeout(() => { $('copy').textContent = 'Copy link'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(ok, () => $('link').select()); else $('link').select();
+    track('demo_copy_link', {});
+  };
+  track('demo_viewed', { view: phoneQ.matches ? 'phone' : 'desk' });
+
+  let manifest = null;
+  fetch('media/manifest.json').then(r => r.json()).then(m => { manifest = m; boot(); }).catch(() => { $('pplayt').textContent = 'Could not load the demo'; });
+
+  // ---- desk: the app's window in a frame; the cards pick the recording
+  let deskOn = false, deskSel = null;
+  function desk() {
+    if (deskOn) return; deskOn = true;
+    const exs = $('exs');
+    manifest.examples.forEach((e, i) => {
+      const b = document.createElement('button'); b.className = 'ex' + (i === 0 ? ' sel' : ''); b.dataset.id = e.id;
+      b.innerHTML = '<b></b><span></span>'; b.querySelector('b').textContent = label(e); b.querySelector('span').textContent = e.blurb + ' ' + Math.round(e.seconds) + ' s.';
+      b.onclick = () => { $('lab').contentWindow.postMessage({ type: 'audioctor-demo-select', id: e.id }, '*'); mark(e.id); };
+      exs.appendChild(b);
+    });
+    $('lab').src = 'lab.html?example=' + manifest.examples[0].id;
+  }
+  const mark = id => { deskSel = id; document.querySelectorAll('.ex').forEach(b => b.classList.toggle('sel', b.dataset.id === id)); };
+  const label = e => ({ gig: 'A gig, filmed on a phone', memo: 'A voice memo', song: 'A finished song' })[e.id] || e.name;
+  addEventListener('message', ev => {
+    const m = ev.data || {};
+    if (m.type !== 'audioctor-demo') return;
+    if (m.cta) cta(m.cta.startsWith('url:') ? 'licence' : m.cta);
+    if (m.event) { track(m.event, m.props); if (m.event === 'demo_example' && m.props) mark(m.props.example); }
+  });
+
+  // ---- phone: the same engine, one big switch and three faders
+  let eng = null, cur = null, raf = 0;
+  const COLORS = { Voice: '#c8f23a', Music: '#38d9a9', Background: '#8d8a80' };
+  async function phone() {
+    if (eng) return;
+    eng = new AudioctorDemo.Engine('media/'); eng.manifest = manifest;
+    const chips = $('chips');
+    manifest.examples.forEach((e, i) => {
+      const b = document.createElement('button'); b.className = 'chip' + (i === 0 ? ' sel' : ''); b.textContent = label(e); b.dataset.id = e.id;
+      b.onclick = () => pick(e.id); chips.appendChild(b);
+    });
+    $('pbefore').onclick = () => ab(false);
+    $('pafter').onclick = () => ab(true);
+    $('pplay').onclick = async () => { await eng.unlock(); if (eng.playing) eng.pause(); else { eng.play(); track('demo_played', { example: cur, after: eng.showAfter, view: 'phone' }); } paint(); };
+    $('pwave').addEventListener('click', ev => { if (!eng.ex) return; const r = $('pwave').getBoundingClientRect(); eng.seek((ev.clientX - r.left) / r.width * eng.ex.seconds); });
+    pick(manifest.examples[0].id);
+  }
+  async function pick(id) {
+    cur = id;
+    document.querySelectorAll('.chip').forEach(b => b.classList.toggle('sel', b.dataset.id === id));
+    const ex = manifest.examples.find(e => e.id === id);
+    $('pblurb').textContent = ex.blurb;
+    $('pplay').disabled = true; $('pplayt').textContent = 'Loading…'; $('pfaders').innerHTML = '';
+    await eng.load(id, p => { if (cur === id) $('pplayt').textContent = 'Loading… ' + Math.round(p * 100) + '%'; });
+    if (cur !== id) return;
+    eng.select(ex, ex.variants.voice ? 'voice' : 'base');      // three faders on a phone: the song as voice and music
+    faders(); paint(); track('demo_example', { example: id, view: 'phone' });
+    if (!raf) loop();
+  }
+  async function ab(after) {
+    eng.setAfter(after);
+    if (!eng.playing) { await eng.unlock(); eng.play(); track('demo_played', { example: cur, after, view: 'phone' }); }
+    track('demo_ab', { example: cur, after, view: 'phone' }); paint();
+  }
+  const dbTxt = db => (db <= -60 ? '−∞ dB' : (db > 0.05 ? '+' : db < -0.05 ? '−' : '') + Math.abs(db).toFixed(1) + ' dB');
+  function faders() {
+    const box = $('pfaders'); box.innerHTML = '';
+    eng.channels().filter(c => !c.minor).forEach(c => {
+      const row = document.createElement('div'); row.className = 'fd'; row.style.setProperty('--c', COLORS[c.name] || '#c8f23a');
+      const id = 'fd-' + c.name;
+      row.innerHTML = '<label class="nm" for="' + id + '"></label><input type="range" id="' + id + '" min="-60" max="6" step="0.5"><span class="db"></span>';
+      row.querySelector('.nm').textContent = c.name; row.querySelector('.nm').style.color = COLORS[c.name] || '#c8f23a';
+      const inp = row.querySelector('input'), out = row.querySelector('.db');
+      inp.value = c.gainDb; out.textContent = dbTxt(c.gainDb);
+      inp.oninput = () => { const db = +inp.value; eng.setChannel(c.name, { gainDb: db <= -60 ? -120 : db }); out.textContent = dbTxt(db); track('demo_fader', { example: cur, part: c.name, view: 'phone' }); };
+      box.appendChild(row);
+    });
+  }
+  function paint() {
+    const a = eng.showAfter;
+    $('pafter').classList.toggle('on', a); $('pbefore').classList.toggle('on', !a);
+    $('pafter').setAttribute('aria-pressed', a); $('pbefore').setAttribute('aria-pressed', !a);
+    $('plbl').textContent = a ? 'After' : 'Before';
+    $('pplay').disabled = !eng.ex; $('pplayt').textContent = eng.playing ? 'Pause' : 'Play';
+    $('pplay').classList.toggle('on', eng.playing);
+  }
+  let waveFor = '', pb = [], pa = [];
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    if (!eng || !eng.ex) return;
+    eng.tick();
+    const key = eng.ex.id + eng.variant;
+    if (key !== waveFor) { waveFor = key; pb = eng.peaksBefore(); pa = eng.peaksAfter(); }
+    const c = $('pwave'), g = c.getContext('2d'), W = c.width, H = c.height, mid = H / 2;
+    g.clearRect(0, 0, W, H);
+    const lane = (pk, color) => { const mx = Math.max(1e-4, ...pk), w = W / pk.length; g.fillStyle = color; for (let i = 0; i < pk.length; i++) { const h = Math.min(1, pk[i] / mx) * (mid - 10); g.fillRect(i * w, mid - h, Math.max(1, w * .8), 2 * h); } };
+    if (eng.showAfter) { lane(pb, 'rgba(200,242,58,.16)'); lane(pa, 'rgba(200,242,58,.85)'); }
+    else lane(pb, 'rgba(255,200,120,.85)');
+    const x = eng.position() / eng.ex.seconds * W; g.fillStyle = '#fff'; g.fillRect(x - 1, 0, 2.5, H);
+    const s = eng.position(), f = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+    $('ptime').textContent = f(s) + ' / ' + f(eng.ex.seconds);
+    if (($('pplay').classList.contains('on')) !== eng.playing) paint();
+  }
+
+  function boot() { if (phoneQ.matches) phone(); else desk(); }
+  phoneQ.addEventListener('change', () => {
+    if (!manifest) return;
+    if (phoneQ.matches) { if ($('lab').contentWindow) $('lab').contentWindow.postMessage({ type: 'audioctor-demo-pause' }, '*'); phone(); }
+    else { if (eng) { eng.pause(); paint(); } desk(); }
+  });
+})();
+</script>
+</body>
+</html>
