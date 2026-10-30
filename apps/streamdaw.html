@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=15">
+<link rel="stylesheet" href="../css/streamdaw.css?v=16">
 <link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
@@ -294,10 +294,13 @@
             <li data-txt="streamdaw.pricing.free.f4">60 minutes a session</li>
             <li data-txt="streamdaw.pricing.free.f5">Who is listening, loudness, connections</li>
           </ul>
-          <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-os="mac" data-txt="streamdaw.pricing.free.cta">Download for Mac</a>
-          <!-- The PC build (2026-10-30). Both files are the free one; the unlabelled Download buttons
-               above follow the browser instead (js/streamdaw-page.js). -->
-          <p class="after" style="color:var(--ink-2)"><!-- .after is written for the dark cards; on this light one it needs the ink colour --><a href="/api/streamdaw/download/free?os=win" data-free-dl data-os="win" data-txt="streamdaw.pricing.free.cta-win">Download for Windows</a></p>
+          <!-- Both files, side by side (2026-10-31). Each is the free one. streamdaw-page.js makes
+               whichever this computer wants the solid button; the unlabelled Download buttons
+               elsewhere on the page follow the browser without saying so. -->
+          <div class="os-dl">
+            <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-os="mac" data-txt="streamdaw.pricing.free.cta">Download for Mac</a>
+            <a class="btn ghost" href="/api/streamdaw/download/free?os=win" data-free-dl data-os="win" data-txt="streamdaw.pricing.free.cta-win">Download for Windows</a>
+          </div>
         </div>
         <div class="plan monthly" id="oneCard">
           <a class="frame-badge" href="/api/streamdaw/download/free" data-free-dl title="Try every product free for 7 days: sign up and download. No card." aria-label="7-day free trial: sign up and download, no card"><span data-txt="streamdaw.plans.badge">7-day free trial</span></a>
@@ -449,7 +452,7 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=30"></script>
 <script src="../js/site-edit.js?v=23"></script>
-<script src="../js/streamdaw-page.js?v=20261031b"></script>
+<script src="../js/streamdaw-page.js?v=20261031c"></script>
 <script src="../js/streamdaw-plans.js?v=3"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>

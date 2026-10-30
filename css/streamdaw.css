@@ -670,3 +670,10 @@ html.pay-open{overflow:hidden}
   .pay .x{background:rgba(239,233,218,.14);color:var(--paper)}
 }
 @media (prefers-reduced-motion:reduce){.pay-card{transition:none}}
+
+/* The free card offers the Mac file and the PC file side by side (2026-10-31).
+   .plan .btn pushes itself to the bottom of the card with margin-top:auto; with two of
+   them the free space would be split between both, so the pair gets pushed down together
+   and the buttons stop doing it themselves. */
+.plan .os-dl{margin-top:auto;display:flex;flex-wrap:wrap;gap:10px}
+.plan .os-dl .btn{margin-top:0}

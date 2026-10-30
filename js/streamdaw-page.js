@@ -633,6 +633,14 @@
     if (signedIn()) return startFree(os);
     askFree(os);
   }
+  // The free card offers both files side by side (2026-10-31). Whichever one this computer
+  // wants is the solid button; the other stays an outline, so a visitor on either platform
+  // can see that the other exists and still take it.
+  (function () {
+    const m = document.querySelector('[data-free-dl][data-os="mac"]');
+    const w = document.querySelector('[data-free-dl][data-os="win"]');
+    if (m && w && winUA()) { m.classList.replace('ink', 'ghost'); w.classList.replace('ghost', 'ink'); }
+  })();
   document.querySelectorAll('[data-free-dl]').forEach((a) => a.addEventListener('click', (e) => {
     if (!a.hasAttribute('data-free-dl')) return;      // an owner's header button points elsewhere now
     e.preventDefault(); freeDownload(osFor(a));
