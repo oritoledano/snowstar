@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Install StreamDAW on your Mac | Snowstar</title>
-<meta name="description" content="How to install StreamDAW: open the installer, allow it once in System Settings › Privacy & Security › Open Anyway, then say yes to the microphone. Every screen you'll see, step by step.">
+<title>Install StreamDAW on your Mac or PC | Snowstar</title>
+<meta name="description" content="How to install StreamDAW on a Mac or on Windows: open the installer, allow it once (Mac: Privacy & Security › Open Anyway; Windows: More info › Run anyway), then say yes to the microphone. Every screen you'll see, step by step.">
 <link rel="canonical" href="https://snowstar.company/apps/streamdaw-install.html">
 <link rel="icon" href="/apps/streamdaw-favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="/apps/streamdaw-icon-32.png" sizes="32x32">
@@ -22,6 +22,13 @@
 
 <!-- The install guide (2026-10-13). StreamDAW is not signed with a Developer ID or notarized
      yet, so macOS stops the downloaded .pkg once and the buyer allows it in System Settings.
+     (2026-10-30) The Windows build lands beside it, in #osWin: not code-signed either, so
+     SmartScreen stops the .exe once. Every Windows fact here came from the Windows build's own
+     session: the file name and size, the SmartScreen wording, the two install paths, the Start menu
+     entry, and what the first version does. A PC unlocks exactly as a Mac does (the app makes the
+     same kind of SD... machine id), which is why this page says "computer" and not "Mac". Still
+     missing: Windows captures, because nobody on the team has a PC — the SmartScreen dialog and
+     the UAC prompt would match the two macOS captures above.
      Facts and sources: STREAMDAW/wip/install-guide-2026-10-13.md. Both pictures are real captures
      (macOS Tahoe 26.4, dark mode); the green ring on Open Anyway is ours. When the installers are
      notarized, steps 02 and 03 and the "Why macOS asks" panel go. -->
@@ -47,8 +54,16 @@
       <img src="streamdaw-icon-128.png?v=2" width="44" height="44" alt="">
       <p><b data-txt="streamdaw-install.dl.title">StreamDAW is downloading.</b> <span data-txt="streamdaw-install.dl.text">Follow the steps below while it does.</span> <a id="inDlAgain" href="/api/streamdaw/download/free" data-txt="streamdaw-install.dl.again">Didn't start? Download again</a></p>
     </div>
-    <p class="ul-lead" data-txt="streamdaw-install.lead">About five minutes, once. The first time, macOS asks you to allow StreamDAW, because Apple hasn't notarized it yet. Here is every screen you'll see, and what to press.</p>
+    <p class="ul-lead" data-txt="streamdaw-install.lead">About five minutes, once. The first time, your computer asks you to allow StreamDAW, because it isn't signed yet. Here is every screen you'll see, and what to press.</p>
 
+    <!-- Mac or PC (2026-10-30): the guide shows one of them. &os=win picks Windows, otherwise the
+         browser picks, and this toggle lets anyone read the other one. -->
+    <div class="bill" id="inOs" role="radiogroup" aria-label="Your computer" style="margin:0 0 28px">
+      <button type="button" role="radio" aria-checked="true" data-os="mac" data-txt="streamdaw-install.os.mac">On a Mac</button>
+      <button type="button" role="radio" aria-checked="false" data-os="win" data-txt="streamdaw-install.os.win">On Windows</button>
+    </div>
+
+    <div id="osMac">
     <div class="panel in-why">
       <h2 data-txt="streamdaw-install.why.title">Why macOS asks.</h2>
       <p data-txt="streamdaw-install.why.text">Apple notarizes software from developers in its paid developer programme. StreamDAW is new and made by a small studio, and we'll join once enough of you use it. Until then macOS can't vouch for the installer, so it asks you to confirm it yourself.</p>
@@ -130,6 +145,52 @@
       <h2 data-txt="streamdaw-install.end.title">That's it.</h2>
       <p data-txt="streamdaw-install.end.text">Bought a product? Next, <a href="streamdaw-unlock.html">unlock your Mac</a>: it takes a minute. Stuck on any step? Write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a> with a screenshot of what you see.</p>
     </div>
+    </div><!-- /#osMac -->
+
+    <div id="osWin" hidden>
+      <div class="panel in-why">
+        <h2 data-txt="streamdaw-install.win.why.title">Why Windows asks.</h2>
+        <p data-txt="streamdaw-install.win.why.text">Windows trusts an installer it has seen on many PCs already, or one signed by a company that paid for a certificate. StreamDAW for Windows is new and made by a small studio, so SmartScreen has nothing to go on and asks you to confirm it yourself. We'll sign it once enough of you use it.</p>
+        <p data-txt="streamdaw-install.win.why.what">The installer puts these on your PC, and nothing else:</p>
+        <ul class="in-places">
+          <li><span><b>The StreamDAW app</b>, and a Start menu entry called StreamDAW</span> <code>C:\Program Files\StreamDAW</code></li>
+          <li><span><b>The plug-in</b>, VST3</span> <code>C:\Program Files\Common Files\VST3\StreamDAW.vst3</code></li>
+        </ul>
+        <p data-txt="streamdaw-install.win.why.more">Nothing starts when you log in. Download it only from snowstar.company.</p>
+      </div>
+
+      <ol class="in-steps">
+        <li class="in-step">
+          <h2 data-txt="streamdaw-install.win.s1.title">Download.</h2>
+          <p data-txt="streamdaw-install.win.s1.text">Get StreamDAW from the <a href="streamdaw.html">StreamDAW page</a> (free, with a Snowstar account) or from the link in your purchase email. One file lands in your Downloads folder: <b>StreamDAW-0.7.1-Windows.exe</b>, about 44 MB. It needs <b>Windows 10 version 2004</b> (build 19041) or later, or <b>Windows 11</b>, on a 64-bit PC.</p>
+        </li>
+
+        <li class="in-step">
+          <h2 data-txt="streamdaw-install.win.s2.title">Open the installer.</h2>
+          <p data-txt="streamdaw-install.win.s2.text">Quit your DAW first. Then double-click the .exe file. Windows may say it protected your PC and show one <b>Don't run</b> button, as if there were no other way.</p>
+          <p class="in-do" data-txt="streamdaw-install.win.s2.do">Click <b>More info</b>, then <b>Run anyway</b>. Windows asks once more whether to let the installer make changes to your PC: click <b>Yes</b>.</p>
+        </li>
+
+        <li class="in-step">
+          <h2 data-txt="streamdaw-install.win.s3.title">Install.</h2>
+          <p data-txt="streamdaw-install.win.s3.text">Click through the installer and let it finish. The app goes to <code>C:\Program Files\StreamDAW</code> and the plug-in to <code>C:\Program Files\Common Files\VST3</code>, where every DAW looks for VST3 plug-ins.</p>
+        </li>
+
+        <li class="in-step">
+          <h2 data-txt="streamdaw-install.win.s4.title">Open StreamDAW.</h2>
+          <p data-txt="streamdaw-install.win.s4.text">Open your DAW, rescan plug-ins if it asks, put StreamDAW on your master bus and press <b>Go live</b>. The StreamDAW app opens by itself. This first Windows version streams your DAW, plays the sound of any app or of the whole PC into the stream, takes your microphone, and shows the Monitor.</p>
+          <div class="in-app">
+            <img src="streamdaw-icon-128.png?v=2" width="64" height="64" alt="The StreamDAW app icon: a lime SD on black leather">
+            <p data-txt="streamdaw-install.win.s4.icon">This is the StreamDAW app's icon, under <b>StreamDAW</b> in your Start menu and on the taskbar while it runs.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="panel in-end">
+        <h2 data-txt="streamdaw-install.win.end.title">That's it.</h2>
+        <p data-txt="streamdaw-install.win.end.text">Bought a product? Next, <a href="streamdaw-unlock.html">unlock this computer</a>: it takes a minute. Stuck on any step? Write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a> with a screenshot of what you see.</p>
+      </div>
+    </div><!-- /#osWin -->
   </div>
 </section>
 </main>
@@ -139,7 +200,7 @@
     <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
     <nav aria-label="StreamDAW">
       <a href="streamdaw.html">StreamDAW</a>
-      <a href="streamdaw-unlock.html">Unlock your Mac</a>
+      <a href="streamdaw-unlock.html">Unlock your computer</a>
       <a href="streamdaw-terms.html">Licence terms</a>
       <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>
     </nav>
@@ -155,15 +216,39 @@
 <script>
 // (2026-10-18) ?dl=free | ?dl=pro: start that download from here, once; the file comes as an attachment,
 // so this page stays. Signed out, the Worker sends the free one back to the sale page to sign up first.
+// (2026-10-30) &os=win asks for the Windows installer instead of the Mac .pkg and shows the Windows
+// steps. No &os: the browser decides, so every link made before today still lands on the right file.
 (function () {
-  var q = new URLSearchParams(location.search), k = q.get('dl');
-  var url = k === 'free' ? '/api/streamdaw/download/free' : k === 'pro' ? '/api/streamdaw/download' : '';
-  if (!url) return;
-  var box = document.getElementById('inDl'), again = document.getElementById('inDlAgain');
-  if (again) again.href = url;
+  var q = new URLSearchParams(location.search), k = q.get('dl'), os = q.get('os');
+  if (os !== 'win' && os !== 'mac') {
+    var d = navigator.userAgentData;
+    os = (d ? /win/i.test(d.platform || '') : /Windows|Win64|WOW64/i.test(navigator.userAgent || '')) ? 'win' : 'mac';
+  }
+  function dlUrl(kind, o) {
+    var base = kind === 'pro' ? '/api/streamdaw/download' : '/api/streamdaw/download/free';
+    return o === 'win' ? base + '?os=win' : base;
+  }
+  var mac = document.getElementById('osMac'), win = document.getElementById('osWin');
+  function show(o) {
+    os = o;
+    if (mac) mac.hidden = o !== 'mac';
+    if (win) win.hidden = o !== 'win';
+    document.querySelectorAll('#inOs button').forEach(function (b) {
+      b.setAttribute('aria-checked', b.dataset.os === o ? 'true' : 'false');
+    });
+    var again = document.getElementById('inDlAgain');
+    if (again) again.href = dlUrl(k === 'pro' ? 'pro' : 'free', o);
+  }
+  document.querySelectorAll('#inOs button').forEach(function (b) {
+    b.addEventListener('click', function () { show(b.dataset.os); });
+  });
+  show(os);
+
+  if (k !== 'free' && k !== 'pro') return;
+  var box = document.getElementById('inDl');
   if (box) box.hidden = false;
   history.replaceState(null, '', location.pathname + location.hash);
-  setTimeout(function () { location.href = url; }, 350);
+  setTimeout(function () { location.href = dlUrl(k, os); }, 350);
 })();
 </script>
 </body>

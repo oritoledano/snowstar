@@ -32,6 +32,9 @@ const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 const SITE = 'https://snowstar.company';
 const PRODUCT = 'streamdaw';
 const ASSET = 'streamdaw-macos';
+// (2026-10-30) The PC build, its own asset beside the Mac's: a download asks for it with ?os=win.
+const ASSET_WIN = 'streamdaw-windows';
+const assetFor = (req) => new URL(req.url).searchParams.get('os') === 'win' ? ASSET_WIN : ASSET;
 const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 days
 
 // Price in agorot INCL VAT — HYP charges shekels, so StreamDAW is priced in ₪.
@@ -636,7 +639,7 @@ export async function streamdawDownload(req, env) {
 
   const rel = await env.DB.prepare(
     'SELECT * FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
-  ).bind(ASSET).first();
+  ).bind(assetFor(req)).first();
   if (!rel) return json({ error: 'no_release' }, 404);
   const obj = await env.APPS.get(rel.r2_key);
   if (!obj) return json({ error: 'file_missing' }, 404);
@@ -667,7 +670,7 @@ export async function streamdawDownloadFree(req, env) {
   }
   const rel = await env.DB.prepare(
     'SELECT * FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
-  ).bind(ASSET).first();
+  ).bind(assetFor(req)).first();
   if (!rel) return json({ error: 'no_release' }, 404);
   const obj = await env.APPS.get(rel.r2_key);
   if (!obj) return json({ error: 'file_missing' }, 404);

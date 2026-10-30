@@ -164,8 +164,8 @@
       + '<p class="sdco-h">After you pay</p>'
       + '<ol class="sdco-next">'
       +   '<li><b>Your download link</b>, right here and in your inbox.</li>'
-      +   (mac ? '<li><b>The key for this Mac</b> (' + esc(mac) + ') by email, within minutes: paste it into StreamDAW › Settings › Licence.</li>'
-               : '<li><b>The key for your Mac</b>: request it on the <a href="streamdaw-unlock.html">unlock page</a>, it takes a minute. It arrives by email.</li>')
+      +   (mac ? '<li><b>The key for this computer</b> (' + esc(mac) + ') by email, within minutes: paste it into StreamDAW › Settings › Licence.</li>'
+               : '<li><b>The key for your computer</b>: request it on the <a href="streamdaw-unlock.html">unlock page</a>, it takes a minute. It arrives by email.</li>')
       + '</ol>'
       + '<p class="sdco-fine">Buying means you accept the <a href="streamdaw-terms.html">StreamDAW licence terms</a>. '
       + 'Once your key is issued it isn’t refundable, except for a double charge or a key that never arrives. <a href="streamdaw-terms.html#refunds">Refunds</a>.</p>';
@@ -179,8 +179,8 @@
       + '<p class="sdco-h">After you pay</p>'
       + '<ol class="sdco-next">'
       +   '<li><b>Your download link</b>, right here and in your inbox, with the receipt.</li>'
-      +   (mac ? '<li><b>The key for this Mac</b> (' + esc(mac) + ') by email, within minutes: paste everything in its box, the key and its Renewal line, into StreamDAW › Settings › Licence.</li>'
-               : '<li><b>The key for your Mac</b>: request it on the <a href="streamdaw-unlock.html">unlock page</a>, it takes a minute. It arrives by email.</li>')
+      +   (mac ? '<li><b>The key for this computer</b> (' + esc(mac) + ') by email, within minutes: paste everything in its box, the key and its Renewal line, into StreamDAW › Settings › Licence.</li>'
+               : '<li><b>The key for your computer</b>: request it on the <a href="streamdaw-unlock.html">unlock page</a>, it takes a minute. It arrives by email.</li>')
       +   '<li>Each month StreamDAW fetches its new key by itself while it is online, and you get a receipt for every charge.</li>'
       +   '<li>Cancel any time in <a href="../account.html#apps">your account</a> (Apps): nothing more is charged, and Pro stays on to the end of the month you paid for.</li>'
       + '</ol>'
@@ -242,13 +242,13 @@
       return '<div class="sdco-done ok"><span class="sdco-check" aria-hidden="true"></span>'
         + '<p class="kicker">You’re in</p><h3>' + (monthly ? 'Pro Monthly is on.' : 'StreamDAW Pro is yours.') + '</h3>'
         + '<p>' + (r.free ? 'No charge. Enjoy.' : 'Payment received. Thank you.') + ' The download link is in your inbox too.</p>'
-        + '<p>' + (mac ? 'The key for this Mac is being made and arrives by email within minutes: paste everything in its box into StreamDAW › Settings › Licence.'
-                       : 'Next, get the key for your Mac on the unlock page: it takes a minute.') + '</p>'
+        + '<p>' + (mac ? 'The key for this computer is being made and arrives by email within minutes: paste everything in its box into StreamDAW › Settings › Licence.'
+                       : 'Next, get the key for your computer on the unlock page: it takes a minute.') + '</p>'
         + (monthly ? '<p>It renews every month until you cancel in <a href="../account.html#apps">your account</a>.</p>' : '')
         + '<div class="cta"><a class="btn lime" href="' + esc(dl) + '">Download StreamDAW</a>'
-        + '<a class="btn ghost" href="streamdaw-unlock.html">Unlock your Mac</a></div>'
+        + '<a class="btn ghost" href="streamdaw-unlock.html">Unlock your computer</a></div>'
         + '<p class="sdco-alt">Signed in? It is in your Snowstar account too: download it again any time. '
-        + 'macOS asks you to allow the installer once: <a href="streamdaw-install.html">how to install</a>.</p></div>';
+        + 'Your computer asks you to allow the installer once: <a href="streamdaw-install.html">how to install</a>.</p></div>';
     }
     if (r.pay === 'confirming') {
       return '<div class="sdco-done"><p class="kicker">Almost there</p><h3>Your payment is being confirmed.</h3>'

@@ -173,8 +173,8 @@
     if (ev.name === 'checkout.completed') {
       setTimeout(closeSheet, 2600);
       say(`<b>${esc(NAMES[buying] || 'StreamDAW')} is yours. Thank you.</b> Paddle emails your receipt. `
-        + (forMac() ? 'The key for this Mac arrives by email within a minute: paste everything in its box into StreamDAW › Settings › Licence.'
-                    : 'Next, get the key for your Mac on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.'), true);
+        + (forMac() ? 'The key for this computer arrives by email within a minute: paste everything in its box into StreamDAW › Settings › Licence.'
+                    : 'Next, get the key for your computer on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.'), true);
       toPlans();
     }
   }
@@ -194,7 +194,7 @@
       if (d && d.free) {
         const until = d.until ? new Date(d.until * 1000).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '';
         say(`<b>${esc(NAMES[id])}: yours${until ? ' until ' + esc(until) : ''}, with ${esc(code.code)}.</b> No charge. `
-          + (forMac() ? 'The key for this Mac arrives by email within a minute.' : 'Get the key for your Mac on the <a href="streamdaw-unlock.html">unlock page</a>.')
+          + (forMac() ? 'The key for this computer arrives by email within a minute.' : 'Get the key for your computer on the <a href="streamdaw-unlock.html">unlock page</a>.')
           + (d.download ? ' <a href="' + esc(d.download) + '">Download StreamDAW</a>' : ''), true);
         code = null; toPlans(); return;
       }
@@ -259,7 +259,7 @@
       const o = $('owned');
       if (o) {
         o.innerHTML = live.map((s) => esc(s.name) + (s.cancelAt ? ': cancelled, yours until ' + when(s.cancelAt) : s.status === 'past_due' ? ': the last payment didn’t go through' : ': renews ' + when(s.nextBilledAt || s.periodEnd))).join(' · ')
-          + ' <a href="#" data-manage>Manage</a> <a href="streamdaw-unlock.html">Unlock a Mac</a>';
+          + ' <a href="#" data-manage>Manage</a> <a href="streamdaw-unlock.html">Unlock a computer</a>';
         o.hidden = false;
       }
       const m = $('manageCta'); if (m) m.hidden = false;
