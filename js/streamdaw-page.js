@@ -335,7 +335,7 @@
   // What you get on the left, HYP's payment page in a frame on the right; the result comes back
   // into it. If its script cannot load, the whole tab goes to HYP as it always did.
   const CHECKOUT_JS = (function () {
-    try { return new URL('streamdaw-checkout.js?v=5', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=4'; }
+    try { return new URL('streamdaw-checkout.js?v=5', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=5'; }
   })();
   // THE SWITCH. false: every purchase goes to HYP's own page in this tab, as before, and `?lb=1`
   // turns the lightbox on for one tab, to test. true: the lightbox for everyone (`?lb=0` turns it
