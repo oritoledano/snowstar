@@ -58,10 +58,10 @@
 },
  {
 "@type": "Question",
-"name": "What does the installer put on my Mac?",
+"name": "What does the installer put on my computer?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "The StreamDAW app, its plug-ins and the StreamDAW Audio device, and nothing else. Apple has checked the installer, so it opens with a double-click. The install guide shows every screen."
+"text": "The StreamDAW app and its plug-ins, and on a Mac the StreamDAW Audio device. Nothing else. Apple has checked the Mac installer, so it opens with a double-click. On Windows, SmartScreen may say it protected your PC: click More info › Run anyway. The install guide shows every screen."
 }
 },
  {
@@ -85,7 +85,7 @@
 "name": "How does the licence work?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Your key is made for your Mac and names what you have, until when. It usually arrives within minutes: paste it into StreamDAW › Settings › Licence. Each month or year you pay, StreamDAW fetches the next key by itself while it is online. New Mac? Sign in on the unlock page and request a key for it. Bought Pro before? It stays yours, every product, for good. Read the licence terms."
+"text": "Your key is made for the computer you use it on, Mac or PC, and names what you have, until when. It usually arrives within minutes: paste it into StreamDAW › Settings › Licence. Each month or year you pay, StreamDAW fetches the next key by itself while it is online. Another computer? Sign in on the unlock page and request a key for it. Bought Pro before? It stays yours, every product, for good. Read the licence terms."
 }
 },
  {
@@ -114,7 +114,7 @@
 <meta name="twitter:description" content="Send your studio session to anyone with a link or a QR code. Live and lossless, nothing for them to install. Master is free. Splits, Station, Record, Compare and Party add what you came to do.">
 <meta name="twitter:image" content="https://snowstar.company/assets/og-streamdaw.jpg?v=2">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 12 or later (Apple silicon)", "description": "Stream your DAW to anyone with a link or a QR code, live and lossless. Remote studio sessions with camera, screen and talkback; in-ear sync for bands on their phones.", "offers": [{"@type": "Offer", "name": "StreamDAW Master", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "StreamDAW, one product, monthly", "description": "Splits, Station, Record, Compare or Party; 7-day free trial in the app, no card", "price": "7", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "7", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M"}}, {"@type": "Offer", "name": "StreamDAW, one product, yearly", "description": "Splits, Station, Record, Compare or Party, billed yearly", "price": "60", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1Y"}}, {"@type": "Offer", "name": "StreamDAW All products, monthly", "description": "Every StreamDAW product", "price": "15", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "15", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M"}}, {"@type": "Offer", "name": "StreamDAW All products, yearly", "description": "Every StreamDAW product, billed yearly", "price": "144", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "144", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1Y"}}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
+{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "StreamDAW", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 12 or later (Apple silicon), Windows 10 version 2004 or later", "description": "Stream your DAW to anyone with a link or a QR code, live and lossless. Remote studio sessions with camera, screen and talkback; in-ear sync for bands on their phones.", "offers": [{"@type": "Offer", "name": "StreamDAW Master", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "StreamDAW, one product, monthly", "description": "Splits, Station, Record, Compare or Party; 7-day free trial in the app, no card", "price": "7", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "7", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M"}}, {"@type": "Offer", "name": "StreamDAW, one product, yearly", "description": "Splits, Station, Record, Compare or Party, billed yearly", "price": "60", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1Y"}}, {"@type": "Offer", "name": "StreamDAW All products, monthly", "description": "Every StreamDAW product", "price": "15", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "15", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1M"}}, {"@type": "Offer", "name": "StreamDAW All products, yearly", "description": "Every StreamDAW product, billed yearly", "price": "144", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "price": "144", "priceCurrency": "USD", "valueAddedTaxIncluded": true, "billingDuration": "P1Y"}}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/streamdaw.html"}
 </script>
 </head>
 <body>
@@ -131,7 +131,7 @@
     </nav>
     <div class="nav-tools">
       <span class="nav-acct" data-account-mount></span>
-      <!-- For someone who owns Pro this becomes "Unlock a Mac" (js/streamdaw-page.js): same box, no shift. -->
+      <!-- For someone who owns Pro this becomes "Unlock a computer" (js/streamdaw-page.js): same box, no shift. -->
       <a class="btn ink sm" id="navCta" href="/api/streamdaw/download/free" data-free-dl>Download<span class="long">free</span></a>
     </div>
   </div>
@@ -142,7 +142,7 @@
   <!-- ── hero: the line, the buttons, the app at work ── -->
   <section class="hero" id="hero" aria-labelledby="heroTitle">
     <div class="wrap">
-      <p class="kicker hero-kicker"><img class="app-ic" src="streamdaw-icon-128.png?v=2" width="26" height="26" alt=""><span data-txt="streamdaw.hero.kicker">Apple silicon Macs · AU and VST3</span></p>
+      <p class="kicker hero-kicker"><img class="app-ic" src="streamdaw-icon-128.png?v=2" width="26" height="26" alt=""><span data-txt="streamdaw.hero.kicker">Mac and Windows · AU and VST3</span></p>
       <h1 id="heroTitle" data-txt="streamdaw.hero.title"><span class="nb">Stream your DAW.</span><br><em>Live. Lossless.</em></h1>
       <!-- The use cases, typed one by one (2026-10-29, the founder): js/streamdaw-page.js types each line, holds it,
            deletes it and types the next, with its drawing beside it. The lines are the editable list under it
@@ -275,7 +275,7 @@
       </div>
 
       <!-- Shown to someone signed in who owns a product or a subscription (js/streamdaw-page.js, js/streamdaw-plans.js). -->
-      <p class="owned" id="owned" hidden>You have StreamDAW. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="streamdaw-install.html?dl=pro">Download the installer</a></p>
+      <p class="owned" id="owned" hidden>You have StreamDAW. <a href="streamdaw-unlock.html">Unlock a computer</a> <a href="streamdaw-install.html?dl=pro">Download the installer</a></p>
 
       <div class="bill" id="bill" role="radiogroup" aria-label="Billing">
         <button type="button" role="radio" aria-checked="true" data-bill="year"><span data-txt="streamdaw.plans.yearly">Yearly</span> <em data-txt="streamdaw.plans.save">save up to 28%</em></button>
@@ -294,7 +294,10 @@
             <li data-txt="streamdaw.pricing.free.f4">60 minutes a session</li>
             <li data-txt="streamdaw.pricing.free.f5">Who is listening, loudness, connections</li>
           </ul>
-          <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-txt="streamdaw.pricing.free.cta">Download for Mac</a>
+          <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl data-os="mac" data-txt="streamdaw.pricing.free.cta">Download for Mac</a>
+          <!-- The PC build (2026-10-30). Both files are the free one; the unlabelled Download buttons
+               above follow the browser instead (js/streamdaw-page.js). -->
+          <p class="after" style="color:var(--ink-2)"><!-- .after is written for the dark cards; on this light one it needs the ink colour --><a href="/api/streamdaw/download/free?os=win" data-free-dl data-os="win" data-txt="streamdaw.pricing.free.cta-win">Download for Windows</a></p>
         </div>
         <div class="plan monthly" id="oneCard">
           <a class="frame-badge" href="/api/streamdaw/download/free" data-free-dl title="Try every product free for 7 days: sign up and download. No card." aria-label="7-day free trial: sign up and download, no card"><span data-txt="streamdaw.plans.badge">7-day free trial</span></a>
@@ -336,7 +339,7 @@
       </div>
 
       <p class="plans-fine" data-txt="streamdaw.plans.fine">Prices in US dollars, tax included. Our order process is conducted by our online reseller Paddle.com, the merchant of record for all our orders. <a href="#" id="haveCode">Have a code?</a></p>
-      <p class="unlock-cta" data-txt="streamdaw.plans.unlock">Bought StreamDAW? <a href="streamdaw-unlock.html">Unlock it on your Mac</a></p>
+      <p class="unlock-cta" data-txt="streamdaw.plans.unlock">Bought StreamDAW? <a href="streamdaw-unlock.html">Unlock it on your computer</a></p>
       <p class="unlock-cta manage-cta" id="manageCta" hidden>Subscribed? <a href="#" id="manageSub">Manage or cancel</a></p>
 
       <!-- Competitors' prices, as their own sites showed them (read 2026-10-12): keep the date in the footnote, and
@@ -349,7 +352,7 @@
         <p class="vs-fine" data-txt="streamdaw.plans.vs.fine">Their prices before tax, as listed on waves.com and audiomovers.com, 12 October 2026.</p>
       </div>
 
-      <p class="reqs" data-txt="streamdaw.pricing.reqs"><b>Mac with Apple silicon</b>, macOS 12 or later. Listeners: <b>any recent browser</b>.</p>
+      <p class="reqs" data-txt="streamdaw.pricing.reqs"><b>Mac with Apple silicon</b>, macOS 12 or later, or a <b>PC with Windows 10</b> version 2004 or later. Listeners: <b>any recent browser</b>.</p>
     </div>
   </section>
 
@@ -366,14 +369,14 @@
           <p data-txt="streamdaw.faq.a3">Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest; Bluetooth adds its own delay.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs does it work with?</span></summary>
           <p data-txt="streamdaw.faq.a4">Tested in Ableton Live and the StreamDAW app. The plug-in loads as AU or VST3 in Logic Pro, Cubase, Studio One, Reaper and Bitwig. Pro Tools is on the way.</p></details>
-        <details><summary><span data-txt="streamdaw.faq.q9">What does the installer put on my Mac?</span></summary>
-          <p data-txt="streamdaw.faq.a9">The StreamDAW app, its plug-ins and the StreamDAW Audio device, and nothing else. Apple has checked the installer, so it opens with a double-click. <a href="streamdaw-install.html">The install guide</a> shows every screen.</p></details>
+        <details><summary><span data-txt="streamdaw.faq.q9">What does the installer put on my computer?</span></summary>
+          <p data-txt="streamdaw.faq.a9">The StreamDAW app and its plug-ins, and on a Mac the StreamDAW Audio device. Nothing else. Apple has checked the Mac installer, so it opens with a double-click. On Windows, SmartScreen may say it protected your PC: click More info › Run anyway. <a href="streamdaw-install.html">The install guide</a> shows every screen.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q7">Who can get into my session?</span></summary>
           <p data-txt="streamdaw.faq.a7">Only people you let in. Anyone with the link reaches your waiting room, and you let each person in. With Pro you can also require sign-in, so each listener registers first. You can switch the waiting room off: the Silent disco preset starts with it off.</p></details>
         <details><summary><span data-txt="streamdaw.plans.faq.q1">How much is it?</span></summary>
           <p data-txt="streamdaw.plans.faq.a1">Master is free. Each product is $7 a month, or $60 a year ($5 a month). All products: $15 a month, or $144 a year ($12 a month). US dollars, tax included; you pay in your own currency. Try everything free for 7 days in the app first, no card.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q5">How does the licence work?</span></summary>
-          <p data-txt="streamdaw.plans.faq.a5">Your key is made for your Mac and names what you have, until when. It usually arrives within minutes: paste it into StreamDAW › Settings › Licence. Each month or year you pay, StreamDAW fetches the next key by itself while it is online. New Mac? <a href="streamdaw-unlock.html">Sign in on the unlock page</a> and request a key for it. Bought Pro before? It stays yours, every product, for good. <a href="streamdaw-terms.html">Read the licence terms</a>.</p></details>
+          <p data-txt="streamdaw.plans.faq.a5">Your key is made for the computer you use it on, Mac or PC, and names what you have, until when. It usually arrives within minutes: paste it into StreamDAW › Settings › Licence. Each month or year you pay, StreamDAW fetches the next key by itself while it is online. Another computer? <a href="streamdaw-unlock.html">Sign in on the unlock page</a> and request a key for it. Bought Pro before? It stays yours, every product, for good. <a href="streamdaw-terms.html">Read the licence terms</a>.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q6">Can I get a refund?</span></summary>
           <p data-txt="streamdaw.plans.faq.a6">Try before you buy: the free version and the 7-day trial cost nothing. Cancel any time in your account: nothing more is charged, and what you paid for runs to its end. Changed your mind? Ask within 14 days of your first payment and you get it all back. <a href="streamdaw-terms.html#refunds">Details</a>.</p></details>
       </div>
@@ -397,7 +400,7 @@
     <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
     <nav aria-label="StreamDAW">
       <a href="./">All apps</a>
-      <a href="streamdaw-unlock.html">Unlock your Mac</a>
+      <a href="streamdaw-unlock.html">Unlock your computer</a>
       <a href="streamdaw-changes.html">What's new</a>
       <a href="streamdaw-terms.html">Licence terms</a>
       <a href="../account.html#apps">Manage or cancel a subscription</a>
@@ -446,8 +449,8 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=30"></script>
 <script src="../js/site-edit.js?v=23"></script>
-<script src="../js/streamdaw-page.js?v=20261030"></script>
-<script src="../js/streamdaw-plans.js?v=2"></script>
+<script src="../js/streamdaw-page.js?v=20261031"></script>
+<script src="../js/streamdaw-plans.js?v=3"></script>
 <script src="../js/consent.js?v=1"></script>
 <script src="demo/qr.js?v=8047289a" defer></script>
 <script src="demo/dock.js?v=4e928290" defer></script>

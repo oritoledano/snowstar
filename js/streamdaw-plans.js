@@ -259,7 +259,7 @@
       const o = $('owned');
       if (o) {
         o.innerHTML = live.map((s) => esc(s.name) + (s.cancelAt ? ': cancelled, yours until ' + when(s.cancelAt) : s.status === 'past_due' ? ': the last payment didn’t go through' : ': renews ' + when(s.nextBilledAt || s.periodEnd))).join(' · ')
-          + ' <a href="#" data-manage>Manage</a> <a href="streamdaw-unlock.html">Unlock a Mac</a>';
+          + ' <a href="#" data-manage>Manage</a> <a href="streamdaw-unlock.html">Unlock a computer</a>';
         o.hidden = false;
       }
       const m = $('manageCta'); if (m) m.hidden = false;

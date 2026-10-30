@@ -284,11 +284,11 @@
     return `<div class="ac-panel"><h2>StreamDAW</h2>
       ${paddleBlock((data.apps && data.apps.subscriptions) || [])}
       ${s ? subBlock(s) : ''}
-      <p class="ac-note">Your licence is kept with this account. Each Mac gets its own key:
-        request one for a new Mac on the unlock page.</p>
+      <p class="ac-note">Your licence is kept with this account. Each computer gets its own key:
+        request one for another computer on the unlock page.</p>
       <div class="ac-acts" style="justify-content:flex-start">
-        <a class="mbtn mbtn-solid" href="/apps/streamdaw-unlock.html">Unlock a Mac</a>
-        <a class="mbtn mbtn-ghost" href="/api/streamdaw/download">Download the app</a>
+        <a class="mbtn mbtn-solid" href="/apps/streamdaw-unlock.html">Unlock a computer</a>
+        <a class="mbtn mbtn-ghost" href="/apps/streamdaw-install.html?dl=pro">Download the app</a>
       </div></div>`;
   }
 

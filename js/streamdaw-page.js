@@ -316,11 +316,11 @@
     t.innerHTML = '<span class="tag lime">You’re in</span>'
       + '<div class="price">' + (monthly ? 'Pro Monthly is on.' : 'Unlocked.') + '</div>'
       + '<p class="note">' + (free ? 'No charge. Enjoy.' : 'Payment received. Thank you.') + ' Your private download link is in your inbox too.'
-      + (forMac() ? ' The key for this Mac is being made and arrives by email: paste everything in its box into StreamDAW › Settings › Licence.' : ' Next, get the key for your Mac: it takes a minute.')
+      + (forMac() ? ' The key for this computer is being made and arrives by email: paste everything in its box into StreamDAW › Settings › Licence.' : ' Next, get the key for your computer: it takes a minute.')
       + (monthly ? ' It renews every month until you cancel in <a href="../account.html#apps">your account</a>.' : '') + '</p>'
       + '<div class="cta">'
       + (downloadUrl ? '<a class="btn lime" href="' + downloadUrl + '">Download StreamDAW</a>' : '')
-      + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl && !monthly ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your Mac</a>'
+      + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl && !monthly ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your computer</a>'
       + '</div>'
       + '<p class="after">Signed in? It is in your Snowstar account too: download it again any time. '
       + 'Open the installer when it lands: <a href="streamdaw-install.html">how to install</a>.</p>';
@@ -335,7 +335,7 @@
   // What you get on the left, HYP's payment page in a frame on the right; the result comes back
   // into it. If its script cannot load, the whole tab goes to HYP as it always did.
   const CHECKOUT_JS = (function () {
-    try { return new URL('streamdaw-checkout.js?v=4', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=4'; }
+    try { return new URL('streamdaw-checkout.js?v=5', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=4'; }
   })();
   // THE SWITCH. false: every purchase goes to HYP's own page in this tab, as before, and `?lb=1`
   // turns the lightbox on for one tab, to test. true: the lightbox for everyone (`?lb=0` turns it
@@ -462,8 +462,8 @@
     if (r.bought) {
       h = '<b>' + escT(name) + (name === 'All products' ? ' are yours ' : ' is yours ') + (once ? 'for good.' : 'for a year.') + '</b> '
         + (r.free ? 'No charge. Enjoy.' : 'Payment received. Thank you.') + ' '
-        + (forMac() ? 'The key for this Mac is being made and arrives by email: paste everything in its box into StreamDAW › Settings › Licence.'
-                    : 'Next, get the key for your Mac on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.')
+        + (forMac() ? 'The key for this computer is being made and arrives by email: paste everything in its box into StreamDAW › Settings › Licence.'
+                    : 'Next, get the key for your computer on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.')
         + (r.download ? ' <a href="' + escT(r.download) + '">Download StreamDAW</a>' : '');
     } else if (r.pay === 'confirming') h = 'Your payment is being confirmed. We will email you as soon as it is, with your key. Nothing to do now.';
     else if (r.pay === 'failed') h = r.reason === 'declined' ? 'The card was declined, so nothing went through. Try again, or use another card.'
@@ -541,7 +541,7 @@
   // ── 4. an owner on the sale page ───────────────────────────────────────
   // Keys are requested on the unlock page now. Someone who owns Pro and lands here (an old
   // email says "sign in at snowstar.company/apps/streamdaw") gets pointed there: the header
-  // button turns into "Unlock a Mac" and a line shows above the plans. Asked only when
+  // button turns into "Unlock a computer" and a line shows above the plans. Asked only when
   // signed in, so a visitor never triggers a 401.
   let ownerChecked = null;
   async function ownerCheck() {
@@ -568,7 +568,7 @@
           : sub.status === 'past_due' ? 'Your Pro Monthly payment didn’t go through: we try again on ' + when(sub.nextTryAt) + '.'
           : 'Your Pro Monthly is cancelled: Pro until ' + when(sub.paidThrough) + '.';
         const o = $('owned');
-        if (o) { o.innerHTML = escT(line) + ' <a href="../account.html#apps">Manage subscription</a> <a href="streamdaw-unlock.html">Unlock a Mac</a>'; o.hidden = false; }
+        if (o) { o.innerHTML = escT(line) + ' <a href="../account.html#apps">Manage subscription</a> <a href="streamdaw-unlock.html">Unlock a computer</a>'; o.hidden = false; }
         const b = $('buyMonthly'); if (b) { b.textContent = 'Manage subscription'; b.dataset.manage = '1'; }
         const cta = $('navCta');
         if (cta && sub.status !== 'cancelled') { cta.href = 'streamdaw-unlock.html'; cta.removeAttribute('data-free-dl'); cta.innerHTML = 'Unlock<span class="long">a Mac</span>'; }
@@ -578,7 +578,7 @@
       if (d.plan === 'lifetime') { const b = $('buyMonthly'); if (b) { b.disabled = true; b.textContent = 'You own Pro'; } }
       if (d.plan === 'pass') {                      // a pass: keep the buy buttons, say until when
         const o = $('owned');
-        if (o) { o.innerHTML = 'You have a Pro pass until ' + new Date(d.expiresAt * 1000).toISOString().slice(0, 10) + '. <a href="streamdaw-unlock.html">Unlock a Mac</a> <a href="/api/streamdaw/download">Download the installer</a>'; o.hidden = false; }
+        if (o) { o.innerHTML = 'You have a Pro pass until ' + new Date(d.expiresAt * 1000).toISOString().slice(0, 10) + '. <a href="streamdaw-unlock.html">Unlock a computer</a> <a href="streamdaw-install.html?dl=pro">Download the installer</a>'; o.hidden = false; }
         return;
       }
       const cta = $('navCta');
@@ -596,12 +596,20 @@
   // A Google sign-in reloads the page, so the wish is kept in this tab for a while
   // (sessionStorage) and honoured once the account shows up; pressing a buy button drops it.
   const FREE_DL = '/api/streamdaw/download/free', FREE_KEY = 'sd_free_dl', FREE_FOR = 15 * 60 * 1000;
+  // Mac or PC (2026-10-30). A labelled link says which file it is (data-os="mac" | "win"); an
+  // unlabelled Download button follows the browser, so nobody on a PC lands on the Mac .pkg. The
+  // wish survives a Google sign-in's reload beside the wish itself, and travels to the install
+  // guide as &os=win, which starts that file and shows that platform's steps.
+  const OS_KEY = 'sd_free_os';
+  const winUA = () => { try { const d = navigator.userAgentData; return d ? /win/i.test(d.platform || '') : /Windows|Win64|WOW64/i.test(navigator.userAgent || ''); } catch (e) { return false; } };
+  const osFor = (a) => { const o = a && a.dataset ? a.dataset.os : ''; return o === 'win' || o === 'mac' ? o : (winUA() ? 'win' : 'mac'); };
+  const osWish = () => { try { return sessionStorage.getItem(OS_KEY) === 'win' ? 'win' : (winUA() ? 'win' : 'mac'); } catch (e) { return 'mac'; } };
   const wantFree = () => { try { const t = +sessionStorage.getItem(FREE_KEY) || 0; return t > 0 && Date.now() - t < FREE_FOR; } catch (e) { return false; } };
-  const keepFree = (on) => { try { if (on) sessionStorage.setItem(FREE_KEY, String(Date.now())); else sessionStorage.removeItem(FREE_KEY); } catch (e) {} };
+  const keepFree = (on, os) => { try { if (on) { sessionStorage.setItem(FREE_KEY, String(Date.now())); sessionStorage.setItem(OS_KEY, os === 'win' ? 'win' : 'mac'); } else { sessionStorage.removeItem(FREE_KEY); sessionStorage.removeItem(OS_KEY); } } catch (e) {} };
   // Once per wish: the sign-in's resume and the account's change can both call this. (2026-10-18)
   // The install guide opens at once and starts the file itself, so the steps are
   // in front of the buyer while it downloads. installHint stays for a page that cannot leave.
-  function startFree() { keepFree(false); location.href = 'streamdaw-install.html?dl=free'; }
+  function startFree(os) { const o = os === 'win' || os === 'mac' ? os : osWish(); keepFree(false); location.href = 'streamdaw-install.html?dl=free' + (o === 'win' ? '&os=win' : ''); }
   function installHint() {
     const h = $('dlHint'), x = $('dlHintX');
     if (!h) return;
@@ -611,36 +619,36 @@
     h.hidden = false;
     if (x && !x.dataset.on) { x.dataset.on = '1'; x.addEventListener('click', () => { h.hidden = true; }); }
   }
-  function freeIfWanted() { if (wantFree() && signedIn()) startFree(); }
-  function askFree() {
+  function freeIfWanted() { if (wantFree() && signedIn()) startFree(osWish()); }
+  function askFree(os) {
     const open = window.SnowstarOpenAuth;
     if (!open) { alert('Sign-in is loading. One moment, then try again.'); return; }
-    keepFree(true); keepBuy(null);
+    keepFree(true, os); keepBuy(null);
     if (wishOff) { wishOff(); wishOff = null; }
     if (window.SnowstarAuthResume) window.SnowstarAuthResume(freeIfWanted);
     open('signup', 'Your free Snowstar account, then the download starts. It includes 7 days of every Pro feature, no card.', 'app');
   }
-  async function freeDownload() {
+  async function freeDownload(os) {
     await ready();
-    if (signedIn()) return startFree();
-    askFree();
+    if (signedIn()) return startFree(os);
+    askFree(os);
   }
   document.querySelectorAll('[data-free-dl]').forEach((a) => a.addEventListener('click', (e) => {
     if (!a.hasAttribute('data-free-dl')) return;      // an owner's header button points elsewhere now
-    e.preventDefault(); freeDownload();
+    e.preventDefault(); freeDownload(osFor(a));
   }));
   document.querySelectorAll('[data-buy]').forEach((b) => b.addEventListener('click', () => keepFree(false)));
   (async function () {
     const direct = q.get('get') === 'free';
     if (direct) {                                       // tidy the address; the wish is kept above
-      keepFree(true);
+      keepFree(true, winUA() ? 'win' : 'mac');
       const u = new URL(location.href); u.searchParams.delete('get');
       history.replaceState(null, '', u.pathname + (u.searchParams.toString() ? '?' + u.searchParams : '') + u.hash);
     }
     if (!wantFree()) return;
     await ready();
     const M = acct(); if (M && M.onChange) M.onChange(freeIfWanted);   // e.g. back from Google
-    if (signedIn()) startFree(); else if (direct) askFree();
+    if (signedIn()) startFree(osWish()); else if (direct) askFree(osWish());
   })();
 })();
 

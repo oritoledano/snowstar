@@ -246,7 +246,7 @@
                        : 'Next, get the key for your Mac on the unlock page: it takes a minute.') + '</p>'
         + (monthly ? '<p>It renews every month until you cancel in <a href="../account.html#apps">your account</a>.</p>' : '')
         + '<div class="cta"><a class="btn lime" href="' + esc(dl) + '">Download StreamDAW</a>'
-        + '<a class="btn ghost" href="streamdaw-unlock.html">Unlock your Mac</a></div>'
+        + '<a class="btn ghost" href="streamdaw-unlock.html">Unlock your computer</a></div>'
         + '<p class="sdco-alt">Signed in? It is in your Snowstar account too: download it again any time. '
         + 'Open the installer when it lands: <a href="streamdaw-install.html">how to install</a>.</p></div>';
     }
