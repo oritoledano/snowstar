@@ -76,6 +76,8 @@ import { handleStream } from './stream.js';
 import { getClasses, setClasses } from './pricing.js';
 import { listJobs, saveJob, exportJobs } from './jobs.js';
 import { interpretBrief } from './agent.js';
+// the dashboard's own assistant: a model picks one of a fixed list of skills, nothing more
+import { assistantAsk } from './assistant.js';
 import { listStacks, saveStack } from './stacks.js';
 import { sharePage } from './share.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
@@ -396,6 +398,9 @@ async function handle(req, env, ctx) {
   if (path === '/stacks' && method === 'POST') return saveStack(req, env, await currentUser(req, env));
   // search agent: a model reads the brief, the ranking stays ours
   if (path === '/agent' && method === 'POST') return interpretBrief(req, env);
+  // Ask, on the dashboard: the model only chooses a skill, every query is ours and
+  // every write comes back as a form for the owner to submit himself
+  if (path === '/assistant' && method === 'POST') return assistantAsk(req, env, await currentUser(req, env));
   // the job ledger — what was sold, to whom, and on what licence
   if (path === '/jobs' && method === 'GET') return listJobs(env, await currentUser(req, env));
   if (path === '/jobs' && method === 'POST') return saveJob(req, env, await currentUser(req, env));

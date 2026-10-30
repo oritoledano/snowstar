@@ -37,6 +37,7 @@
      they live in the URL and survive a refresh. */
   const NAV = [
     { key: 'general', label: 'General', pages: [
+      { key: 'ask',       label: 'Ask' },
       { key: 'overview',  label: 'Overview',  tabs: ['today', 'traffic', 'demand'] },
       { key: 'inbox',     label: 'Inbox',     tabs: ['new', 'open', 'done'] },
       { key: 'people',    label: 'People' },
@@ -68,6 +69,7 @@
   /* Old single-word hashes still work. Every bookmark, every `data-go` card on
      the overview, and every link in a sent email keeps resolving. */
   const LEGACY = {
+    ask: 'general/ask',
     overview: 'general/overview/today', stats: 'general/overview/traffic',
     demand: 'general/overview/demand', inbox: 'general/inbox/new',
     members: 'general/people', notes: 'general/editor/notes',
@@ -221,6 +223,7 @@
      now be checked against it rather than drifting away from it — see the
      coverage assertion at the bottom of this file. */
   const ROUTES = {
+    'general/ask':                 () => paintAsk(),
     'general/overview/today':      () => paintOverview(),
     'general/overview/traffic':    () => paintStats(),
     'general/overview/demand':     () => paintDemand(),
@@ -4227,6 +4230,148 @@
     };
     document.querySelectorAll('[data-sc-toggle]').forEach((b) => {
       b.onclick = async () => { await post('/snowstash/coupon', { toggle: Number(b.dataset.scToggle) }); paintStashCodes(); };
+    });
+  }
+
+  /* Ask — plain language in, one of the Worker's fixed skills out.
+     The model never writes anything: a request for a code comes back as a
+     filled-in form, which this posts to /api/coupons like the Editor does, so
+     a confused answer costs a glance rather than a live discount. */
+  const secs = (n) => {
+    n = Math.max(0, Math.round(Number(n) || 0));
+    if (!n) return '—';
+    if (n < 60) return n + 's';
+    if (n < 3600) return Math.floor(n / 60) + 'm ' + (n % 60) + 's';
+    return Math.floor(n / 3600) + 'h ' + Math.round((n % 3600) / 60) + 'm';
+  };
+
+  const ASK_EGS = [
+    'Which page did people spend the most time on this week?',
+    'How long did visits last in the last 30 days?',
+    'Who stayed longest this week and what did they do?',
+    'Where did the visits come from?',
+    'Make me a code for Mutra only, 70% off, for a week',
+    'Show me the discount codes',
+  ];
+
+  function paintAsk() {
+    paint(`<div class="db-panel">
+      <h2>Ask</h2>
+      <p class="db-empty" style="padding-top:0">One line, in your own words. It reads the same
+        numbers the other pages do, and it can draft a discount code for you to check. It cannot
+        change anything by itself — a code is only made when you press Create.</p>
+
+      <div class="cp-new" style="grid-template-columns:1fr auto">
+        <label class="ar-f"><span>Your question</span>
+          <input id="ask-q" maxlength="600" placeholder="Which page did people spend the most time on this week?"></label>
+        <div class="ar-f"><span>&nbsp;</span><button class="rv-btn rv-ok" id="ask-go">Ask</button></div>
+      </div>
+      <p class="cp-said" id="ask-eg">${ASK_EGS.map((e) =>
+        `<button class="rv-btn ask-eg" style="margin:0 6px 6px 0">${esc(e)}</button>`).join('')}</p>
+      <div id="ask-out"></div></div>`);
+
+    const out = document.getElementById('ask-out');
+    const q = document.getElementById('ask-q');
+
+    const cell = (v, kind) => (kind === 'secs' ? secs(v)
+      : kind === 'date' ? when(v)
+      : kind === 'num' ? String(v == null ? '' : v)
+      : esc(v));
+
+    function showAnswer(r) {
+      const cols = (r.columns || []).map((label, i) => ({
+        label, num: (r.kinds || [])[i] === 'num' || (r.kinds || [])[i] === 'secs',
+        get: (row) => cell(row[i], (r.kinds || [])[i]),
+      }));
+      out.innerHTML = `<div class="db-panel" style="margin-top:14px">
+        ${r.say ? `<p><b>${esc(r.say)}</b></p>` : ''}
+        ${r.title ? `<h2 style="margin-top:0">${esc(r.title)}</h2>` : ''}
+        ${(r.rows || []).length ? table(r.rows, cols) : '<p class="db-empty">Nothing in that window.</p>'}
+        ${r.note ? `<p class="db-empty" style="padding-top:8px">${esc(r.note)}</p>` : ''}</div>`;
+    }
+
+    function showProposal(r) {
+      const b = r.body || {};
+      const opt = (v, label, sel) => `<option value="${v}"${sel === v ? ' selected' : ''}>${label}</option>`;
+      out.innerHTML = `<div class="db-panel" style="margin-top:14px">
+        <p><b>${esc(r.say || 'Check it and press Create.')}</b></p>
+        <div class="cp-new">
+          <label class="ar-f"><span>Discount</span>
+            <div class="cp-row2">
+              <input id="ak-val" type="number" min="1" value="${b.value || ''}">
+              <select id="ak-kind">${opt('percent', '% off', b.kind)}${opt('amount', '₪ off', b.kind)}</select>
+            </div></label>
+          <label class="ar-f"><span>Which property</span>
+            <select id="ak-scope">
+              ${b.scope ? '' : '<option value="">— pick one —</option>'}
+              ${opt('mutra', 'Mutra — music licensing', b.scope)}
+              ${opt('all', 'All properties', b.scope)}
+              ${opt('streamdaw', 'StreamDAW', b.scope)}
+              ${opt('audioctor', 'Audioctor', b.scope)}
+              ${opt('snowstash', 'Snowstash', b.scope)}
+              ${opt('snowstar', 'Snowstar', b.scope)}
+            </select></label>
+          <label class="ar-f"><span>Expires${b.lasts_days ? ` (in ${b.lasts_days} days)` : ''}</span>
+            <input id="ak-exp" type="date" value="${b.expires_at
+              ? new Date(b.expires_at * 1000).toISOString().slice(0, 10) : ''}"></label>
+          <label class="ar-f"><span>Max uses (0 = unlimited)</span>
+            <input id="ak-max" type="number" min="0" value="${b.max_uses || 0}"></label>
+          <label class="ar-f"><span>Code (blank = generate)</span>
+            <input id="ak-code" maxlength="40" value="${esc(b.code || '')}"></label>
+          <label class="ar-f"><span>Note to self</span>
+            <input id="ak-note" maxlength="200" value="${esc(b.note || '')}"></label>
+          <div class="ar-f"><span>&nbsp;</span><button class="rv-btn rv-ok" id="ak-make">Create code</button></div>
+        </div>
+        <p class="cp-said" id="ak-said">${r.missing && r.missing.length
+          ? 'Fill in ' + esc(r.missing.join(', and ')) + ' before you create it.' : ''}</p></div>`;
+
+      document.getElementById('ak-make').addEventListener('click', async () => {
+        const said = document.getElementById('ak-said');
+        const scope = document.getElementById('ak-scope').value;
+        const value = Number(document.getElementById('ak-val').value);
+        if (!scope) { said.textContent = 'Pick which property it is for.'; return; }
+        if (!(value > 0)) { said.textContent = 'Put in how big the discount is.'; return; }
+        const exp = document.getElementById('ak-exp').value;
+        said.textContent = 'Creating…';
+        const res = await post('/coupons', {
+          scope, value, kind: document.getElementById('ak-kind').value,
+          max_uses: Number(document.getElementById('ak-max').value) || 0,
+          code: document.getElementById('ak-code').value.trim(),
+          note: document.getElementById('ak-note').value.trim(),
+          expires_at: exp ? Math.floor(new Date(exp + 'T23:59:59').getTime() / 1000) : null,
+        });
+        said.textContent = res && res.ok
+          ? `Made: ${res.code}. It is live now, and it is in Editor › Discount codes.`
+          : `Not made: ${(res && res.error) || 'something went wrong'}.`;
+      });
+    }
+
+    async function ask(text) {
+      if (!text) return;
+      out.innerHTML = '<p class="db-empty">Thinking…</p>';
+      const r = await post('/assistant', { ask: text });
+      if (!r || !r.ok) {
+        out.innerHTML = `<p class="db-empty">${esc(
+          !r ? 'No answer came back.'
+          : r.reason === 'no_ai_binding' ? 'The model is not switched on for this Worker.'
+          : r.reason === 'ai_failed' ? 'The model did not answer in time. Try once more.'
+          : r.reason === 'unparseable' ? 'The model answered with something I could not read. Try saying it differently.'
+          : r.reason === 'forbidden' ? 'Owners only.'
+          : 'That did not work: ' + (r.detail || r.reason || ''))}</p>`;
+        return;
+      }
+      if (r.kind === 'propose') return showProposal(r);
+      if (r.kind === 'ask') { out.innerHTML = `<p class="db-empty">${esc(r.say)}</p>`; return; }
+      showAnswer(r);
+    }
+
+    document.getElementById('ask-go').addEventListener('click', () => ask(q.value.trim()));
+    q.addEventListener('keydown', (e) => { if (e.key === 'Enter') ask(q.value.trim()); });
+    document.getElementById('ask-eg').addEventListener('click', (e) => {
+      const b = e.target.closest('.ask-eg');
+      if (!b) return;
+      q.value = b.textContent;
+      ask(q.value);
     });
   }
 
