@@ -641,27 +641,27 @@ function showLic(st, why) {
   line.classList.toggle('free', st.kind === 'free');
   // Monthly: what the Worker last said (0.1.1 asks once a day): renews on…, payment due, cancelled, ended
   const sub = st.sub && typeof st.sub === 'object' ? st.sub : {}, day = ms => new Date(ms).toLocaleDateString();
+  const period = st.kind === 'year' ? 'year' : 'month', planName = st.kind === 'year' ? 'Audioctor Yearly' : 'Audioctor Monthly';
   const monthLine = sub.status === 'active' && sub.renewsAt ? 'renews ' + day(sub.renewsAt)
     : sub.status === 'past_due' ? 'payment due' : 'until ' + day(st.endsAt);
   const ended = st.kind === 'free' && st.endsAt > 0;            // a plan's key that ran out here
   const leftLine = left + ' left today', paid = st.kind !== 'free';
   $('licText').innerHTML = st.kind === 'pro' ? '<b>Audioctor</b> · ' + (st.owner || 'licensed')
     : st.kind === 'monthly' ? '<b>Monthly</b> · ' + monthLine
-    : st.kind === 'year' ? '<b>Yearly</b> · until ' + day(st.endsAt)
+    : st.kind === 'year' ? '<b>Yearly</b> · ' + monthLine
     : '<b>' + (ended ? 'Plan ended' : 'Free') + '</b> · ' + leftLine;
   $('licGo').textContent = paid ? 'Licence' : 'Upgrade';
   $('licMachine').textContent = st.machine;
   $('licSub').textContent = st.kind === 'pro' ? 'Audioctor, yours for good. Licensed to ' + (st.owner || '…') + (st.serial ? ' · serial ' + st.serial : '') + '.'
-    : st.kind === 'monthly' ? 'Audioctor Monthly, licensed to ' + (st.owner || '…') + '. This key runs to ' + day(st.endsAt) + '. '
+    : paid ? planName + ', licensed to ' + (st.owner || '…') + '. This key runs to ' + day(st.endsAt) + '. '
         + (sub.status === 'past_due' ? 'The last payment didn\'t go through: update your card in your account, and Audioctor fetches the next key by itself.'
-          : sub.status === 'cancelled' ? 'Cancelled: Audioctor works to the end of the paid month.'
-          : st.renews ? (sub.renewsAt ? 'It renews on ' + day(sub.renewsAt) + ', and ' : '') + 'the next month\'s key comes by itself while Audioctor is online.'
-          : 'Paste the whole block from the email (the key and its Renewal line), and the next month\'s key comes by itself.')
-    : st.kind === 'year' ? 'Audioctor Yearly, licensed to ' + (st.owner || '…') + (st.serial ? ' · serial ' + st.serial : '') + '. This key runs to ' + day(st.endsAt) + ', and nothing renews by itself.'
+          : sub.status === 'cancelled' ? 'Cancelled: Audioctor works to the end of the paid ' + period + '.'
+          : st.renews ? (sub.renewsAt ? 'It renews on ' + day(sub.renewsAt) + ', and ' : '') + 'the next ' + period + '\'s key comes by itself while Audioctor is online.'
+          : 'Paste the whole block from the email (the key and its Renewal line), and the next ' + period + '\'s key comes by itself.')
     : ended ? 'Your plan ended on ' + day(st.endsAt) + ', so this copy is on Free: clips up to a minute, 3 exports a day. Longer clips still open, process and play.'
     : 'Free: every tool, clips up to a minute, 3 exports a day. Longer clips open, process and play; exporting them needs a plan. Bought one? Paste the key from its email here.';
   $('licRemove').hidden = !paid;
-  $('licManage').hidden = !(st.kind === 'monthly' || ended);
+  $('licManage').hidden = !(st.kind === 'monthly' || st.kind === 'year' || ended);
   if (why !== undefined) { $('licMsg').textContent = why || 'Unlocked. Thank you.'; $('licMsg').classList.toggle('ok', !why); }
 }
 function openLic(msg) { $('licPanel').hidden = false; $('licMsg').textContent = msg || ''; $('licMsg').classList.remove('ok'); }

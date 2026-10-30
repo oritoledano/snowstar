@@ -65,8 +65,9 @@ import { audioctorCheckout, audioctorDownload, audioctorDownloadFree, audioctorM
          audioctorActivationIssue, audioctorDeactivate, mintWaiting as audioctorMintWaiting } from './audioctor.js';
 import { audioctorPrices, audioctorSubCancel, audioctorSubResume, audioctorSubCancelLink, audioctorSubByToken,
          audioctorSubAdmin, audioctorLicenceRefresh, audioctorRenewals } from './audioctor-subs.js';
-// Audioctor through Paddle, the merchant of record (2026-10-27): its webhook (audioctor-paddle.js).
-import { audioctorPaddleWebhook } from './audioctor-paddle.js';
+// Audioctor through Paddle, the merchant of record (subscriptions since 2026-10-30, audioctor-paddle.js).
+import { audioctorPaddleWebhook, paddleSetup as audioctorPaddleSetup, paddlePortal as audioctorPaddlePortal,
+         paddleRenewalNotices as audioctorRenewalNotices } from './audioctor-paddle.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
          streamdawUpdatesCleanup } from './streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -521,7 +522,7 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/coupon/check' && method === 'POST') return audioctorCouponCheck(req, env);
   if (path === '/audioctor/coupon' && method === 'POST') return audioctorCouponCreate(req, env, await currentUser(req, env));
   if (path === '/audioctor/download' && method === 'GET') return audioctorDownload(req, env);
-  // The 7-day trial: the same installer, for anyone signed in (a key opens it for good, or monthly).
+  // The Free plan: the same installer, for anyone signed in (a plan's key lifts its limits).
   if (path === '/audioctor/download/free' && (method === 'GET' || method === 'HEAD')) return audioctorDownloadFree(req, env);
   // The models the app fetches on its first run (public, immutable, Range): audioctor/models/<set>/<path>.p<i> in APPS.
   if (path.startsWith('/audioctor/models/') && (method === 'GET' || method === 'HEAD')) return audioctorModel(req, env, path.slice('/audioctor/models/'.length));
@@ -541,6 +542,8 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/reconcile' && method === 'POST') return audioctorReconcile(req, env, await currentUser(req, env));
   // Paddle's server, signed (Paddle-Signature, HMAC with the webhook secret): no cookie, no Origin.
   if (path === '/audioctor/paddle/webhook' && method === 'POST') return audioctorPaddleWebhook(req, env);
+  if (path === '/audioctor/paddle/setup' && method === 'POST') return audioctorPaddleSetup(req, env, await currentUser(req, env));
+  if (path === '/audioctor/paddle/portal' && method === 'POST') return audioctorPaddlePortal(req, env);
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
@@ -854,6 +857,7 @@ export default {
     /* Audioctor Monthly renewals, and Audioctor keys a failure left waiting (audioctor*.js). */
     ctx.waitUntil(audioctorRenewals(env).catch(() => {}));
     ctx.waitUntil(audioctorMintWaiting(env).catch(() => {}));
+    ctx.waitUntil(audioctorRenewalNotices(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },

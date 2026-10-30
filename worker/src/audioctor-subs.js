@@ -1,5 +1,6 @@
 /**
- * Audioctor Monthly: all of Audioctor for $5.99 a month (Ori, 2026-10-20).
+ * Audioctor Monthly on HYP: all of Audioctor for $7 a month (Ori, 2026-10-20; the price since 2026-10-30). Closed:
+ * Paddle sells the plans now (audioctor-paddle.js). The refresh route below serves both.
  *
  * StreamDAW Pro Monthly's engine (streamdaw-subs.js, copied 2026-10-21, kept in step), for Audioctor's own tables
  * (schema-audioctor.sql). Read streamdaw-subs.js's header for the whole story; in short:
@@ -22,7 +23,7 @@ import { sha256b64, randB64, safeEqual, ipTag } from './crypto.js';
 import { parseHyp } from './hyp.js';
 import * as SD from './audioctor.js';
 
-export const MONTHLY_USD_CENTS = 599;          // $5.99 a month, VAT included
+export const MONTHLY_USD_CENTS = SD.PLANS.monthly.usdCents;   // VAT included
 export const GRACE_DAYS = 3;                   // a key runs this long past the paid month
 const RETRY_DAYS = [1, 3, 7];                  // after the due day: 3 retries over 7 days, then it stops
 const SUB_MIN_APP = '0.1.0';                   // reads a key with an end (format 3)
@@ -59,21 +60,20 @@ export function addMonths(sec, n) {
   return Math.floor(Date.UTC(y, m, Math.min(d.getUTCDate(), last), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()) / 1000);
 }
 
-/** The shekel price of a month, today: $5.99 at the site's daily rate, to the agora. */
+/** The shekel price of a month, today: at the site's daily rate, to the agora. */
 export async function monthlyPrice(env) {
   return SD.shekelsFor(env, MONTHLY_USD_CENTS);
 }
 
-/** GET /audioctor/prices — what the sale page shows: Audioctor once and a month, in agorot at today's rate. */
+/** GET /audioctor/prices — what the sale page shows: the two plans, and whether they sell now. The page charges in
+ *  dollars through Paddle.js (audioctor-paddle.js); the shekels are for showing them at today's rate. */
 export async function audioctorPrices(env) {
-  const [once, m] = await Promise.all([SD.shekelsFor(env, SD.ONCE_USD_CENTS), monthlyPrice(env)]);
-  // Under Paddle (audioctor-paddle.js) the page charges in dollars through Paddle.js: it gets what Paddle.js needs,
-  // and Monthly stays closed until Paddle sells it too. The shekel amounts stay for a page not switched yet.
+  const [y, m] = await Promise.all([SD.shekelsFor(env, SD.PLANS.year.usdCents), monthlyPrice(env)]);
   const P = await import('./audioctor-paddle.js');
   const paddle = P.paddleOn(env) ? P.paddleClient(env) : null;
-  return json({ billing: paddle ? 'paddle' : 'hyp', ...(paddle ? { paddle } : {}),
-                lifetime: { amount: once.amount, usdCents: once.usdCents, rate: once.rate },
-                monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate, open: paddle ? false : await monthlyOpen(env) } });
+  return json({ billing: paddle ? 'paddle' : 'hyp', open: await P.ready(env), ...(paddle ? { paddle } : {}),
+                year: { amount: y.amount, usdCents: y.usdCents, rate: y.rate },
+                monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate } });
 }
 
 /* Monthly takes money only once HYP has switched on card tokens and server charges for the
@@ -135,7 +135,7 @@ export async function subFor(env, user) {
 export async function monthlyCheckout(env, user, body) {
   const email = lc(user.email);
   if (body.coupon && String(body.coupon).trim())
-    return json({ error: 'coupon', reason: 'codes are for Audioctor (once), not Monthly' }, 400);
+    return json({ error: 'coupon', reason: 'Codes are for the Yearly plan.' }, 400);
   const owns = await env.DB.prepare(
     `SELECT id FROM entitlements WHERE product = 'audioctor' AND status = 'active' AND plan = 'lifetime' AND (user_id = ? OR email = ?) LIMIT 1`
   ).bind(user.id, email).first().catch(() => null);
@@ -576,10 +576,22 @@ export async function audioctorLicenceRefresh(req, env) {
   ).bind(machine).all()).results) || [];
   const row = rows.find((r) => safeEqual(String(r.renew_code), code));
   if (!row) return json({ error: 'unknown' }, 403);
-  const s = await env.DB.prepare('SELECT * FROM audioctor_subscriptions WHERE entitlement_id = ?').bind(row.entitlement_id).first();
+  let s = await env.DB.prepare('SELECT * FROM audioctor_subscriptions WHERE entitlement_id = ?').bind(row.entitlement_id).first();
+  let plan = 'monthly';
+  // A Paddle subscription (2026-10-30): the same answer, from its own row (Paddle bills; nothing is charged here).
+  if (!s) {
+    const p = await (await import('./audioctor-paddle.js')).paddleSubOfEntitlement(env, row.entitlement_id);
+    if (p) {
+      const ent = await env.DB.prepare('SELECT status FROM entitlements WHERE id = ?').bind(row.entitlement_id).first();
+      const refunded = !!ent && ent.status === 'refunded';
+      plan = p.plan;
+      s = { status: refunded ? 'cancelled' : p.status === 'canceled' ? 'ended' : p.cancel_at ? 'cancelled' : p.status === 'past_due' ? 'past_due' : 'active',
+            paid_through: p.period_end, next_charge_at: p.cancel_at ? null : (p.next_billed_at || p.period_end), cancel_when: refunded ? 'now' : 'end' };
+    }
+  }
   const keyEnds = row.key_text ? keyEndMs(row.key_text) : 0;
   const out = {
-    ok: true, plan: 'monthly', status: s ? s.status : 'ended', serial: row.serial || null, keyEnds,
+    ok: true, plan, status: s ? s.status : 'ended', serial: row.serial || null, keyEnds,
     paidThrough: s ? s.paid_through * 1000 : 0,
     renewsAt: s && s.status === 'active' && s.next_charge_at ? s.next_charge_at * 1000 : null,
     nextTryAt: s && s.status === 'past_due' && s.next_charge_at ? s.next_charge_at * 1000 : null,

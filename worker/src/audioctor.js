@@ -7,9 +7,11 @@
  * own pair (audioctor-keys.js), at most MAX_MACS Macs a purchase, Audioctor Monthly in audioctor-subs.js.
  * StreamDAW's code is not touched: its own tables stay its own. Audioctor's: schema-audioctor.sql.
  *
- * Prices are dollars, charged in shekels at the day's rate (fx.js): Audioctor once ($49) at checkout time, Monthly
- * ($5.99) locked for the subscriber. Coupons: its own `audioctor_coupons`, then the shared `coupons` (scope 'audioctor' or 'all').
- * The app: SNOWSTAR-ENHANCE repo (app/licence: the key check, "AD" machine ids, the 7-day trial in the app).
+ * What it sells since 2026-10-30 (the founder: subscriptions only, as StreamDAW): PLANS below, through Paddle
+ * (audioctor-paddle.js); the app has a Free plan and needs no purchase to start. The HYP paths in this file and in
+ * audioctor-subs.js (Audioctor once, Monthly on a card token) stay for what they sold, closed: AUDIOCTOR_HYP_OPEN.
+ * Coupons: its own `audioctor_coupons`, then the shared `coupons` (scope 'audioctor' or 'all').
+ * The app: SNOWSTAR-ENHANCE repo (app/licence: the key check, "AD" machine ids, the Free plan's walls).
  */
 
 import { sendMail } from './mail.js';
@@ -27,10 +29,13 @@ const ASSET = 'audioctor-macos';
 const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 days
 const PAGE = `${SITE}/apps/audioctor.html`;
 
-// Audioctor once: $49, VAT included, charged in shekels at the day's rate (Ori, 2026-10-20).
+// What Audioctor sells: dollars, tax included (marketing/PRICING.md). Paddle renews both.
+export const PLANS = { monthly: { usdCents: 700, every: 'month', name: 'Audioctor Monthly' },
+                       year: { usdCents: 6000, every: 'year', name: 'Audioctor Yearly' } };
+// Audioctor once: $49, VAT included, charged in shekels at the day's rate (Ori, 2026-10-20). Closed since 2026-10-30.
 export const ONCE_USD_CENTS = 4900;
 const isMonthly = (plan) => plan === 'monthly';
-const ends = (plan) => isMonthly(plan);                       // a plan whose key has an end
+const ends = (plan) => plan === 'monthly' || plan === 'year';  // a plan whose key has an end and a Renewal line
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
 const subsMod = () => import('./audioctor-subs.js');          // Audioctor Monthly (imports this file: no static cycle)
 const paddleMod = () => import('./audioctor-paddle.js');      // Paddle, the merchant of record (2026-10-27; imports this file too)
@@ -140,17 +145,15 @@ export async function audioctorCheckout(req, env) {
   const email = lc(user.email);
   if (!validEmail(email)) return json({ error: 'sign_in_required' }, 401);
 
-  const P = await paddleMod();
-  if (isMonthly(body.plan)) {
-    if (P.paddleOn(env)) return json({ error: 'monthly_not_ready', reason: 'Monthly is not sold through Paddle yet' }, 503);
-    return (await subsMod()).monthlyCheckout(env, user, body);
-  }
-  const plan = 'lifetime';
   const owns = await env.DB.prepare(
     `SELECT id FROM entitlements WHERE product = ? AND status = 'active' AND plan = 'lifetime' AND (user_id = ? OR email = ?) LIMIT 1`
   ).bind(PRODUCT, user.id, email).first().catch(() => null);
   if (owns) return json({ error: 'owns_it', reason: 'You already own Audioctor. Get a key for another Mac on the unlock page.' }, 409);
+  const P = await paddleMod();
   if (P.paddleOn(env)) return P.paddleCheckout(env, user, body);
+  if (String(env.AUDIOCTOR_HYP_OPEN || '') !== '1') return json({ error: 'not_ready', reason: 'Buying opens soon. The free download is there now.' }, 503);
+  if (isMonthly(body.plan)) return (await subsMod()).monthlyCheckout(env, user, body);
+  const plan = 'lifetime';
   let amount = (await shekelsFor(env, ONCE_USD_CENTS)).amount, couponCode = null;
   if (body.coupon && String(body.coupon).trim()) {
     // Coupon (optional). Invalid code entered → tell them, don't silently charge full.
@@ -188,14 +191,13 @@ export async function audioctorCheckout(req, env) {
 }
 
 /* A coupon that covers the whole price: granted at once, no payment page (HYP's or Paddle's). */
-async function grantFree(env, { ref, user, email, couponCode, machine, ownerName, currency = 'ILS' }) {
-  const plan = 'lifetime';
+async function grantFree(env, { ref, user, email, couponCode, machine, ownerName, currency = 'ILS', plan = 'lifetime', expiresAt }) {
   await insertOrder(env, { ref, userId: user.id, email, plan, amount: 0, currency, status: 'granted', coupon: couponCode, machine, ownerName });
-  const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, currency, plan, source: 'coupon' });
+  const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, currency, plan, source: 'coupon', expiresAt });
   if (couponCode) await burnCoupon(env, couponCode);
   const link = await mintDownloadLink(env, ent.id, email);
   if (machine) await requestKey(env, { entId: ent.id, email, machine, name: ownerName || email, via: 'checkout' }).catch(() => {});
-  await emailReceipt(env, email, link, machine, { ref, amount: 0, currency, coupon: couponCode, plan }).catch(() => {});
+  await emailReceipt(env, email, link, machine, { ref, amount: 0, currency, coupon: couponCode, plan, expiresAt: ent.expires_at }).catch(() => {});
   await env.DB.prepare('UPDATE audioctor_orders SET entitlement_id = ?, settled_at = ? WHERE ref = ?')
     .bind(ent.id, now(), ref).run().catch(() => {});
   await (await subsMod()).cancelForUpgrade(env, email, user.id).catch(() => {});   // for good: a Monthly stops
@@ -294,7 +296,7 @@ export async function audioctorReturn(req, env, raw, q) {
     const okRef = /^AD-[A-Z0-9]{4,20}$/.test(ref) ? ref : null;   // the query is anyone's to type
     return audioctorFramePage({ type: 'ad-checkout', ref: okRef, ...msg }, dest);
   };
-  const planOf = (o) => (o && (o.plan === 'pass' || o.plan === 'monthly') ? o.plan : 'lifetime');
+  const planOf = (o) => (o && (o.plan === 'pass' || ends(o.plan)) ? o.plan : 'lifetime');
   const fail = (why, o) => back(`pay=failed&reason=${encodeURIComponent(why)}`, { bought: false, pay: 'failed', reason: why, plan: o ? planOf(o) : null });
   const bought = (o) => back(`bought=1&ref=${encodeURIComponent(ref)}`, { bought: true, plan: planOf(o) });
 
@@ -371,7 +373,7 @@ async function keptReturn(env, ref) {
    download link, the key request when the order came from the app, the receipt. The order is
    claimed first ('granting', one UPDATE), so two at once (the frame and a reload, a return and
    Reconcile) grant it once. */
-async function fulfilPaid(env, order, q, source) {
+async function fulfilPaid(env, order, q, source, expiresAt) {
   const ref = order.ref;
   const claim = await env.DB.prepare(
     `UPDATE audioctor_orders SET status='granting' WHERE ref=? AND status NOT IN ('granted','granting')`
@@ -380,8 +382,8 @@ async function fulfilPaid(env, order, q, source) {
   try {
     const plan = order.plan || 'lifetime';
     const subs = await subsMod();
-    const monthly = isMonthly(plan) ? await subs.monthlyGranted(env, order, q, ref) : null;
-    const ent = monthly ? monthly.ent : await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: order.amount, currency: order.currency || 'ILS', plan, source });
+    const monthly = isMonthly(plan) && source !== 'paddle' ? await subs.monthlyGranted(env, order, q, ref) : null;   // HYP's own Monthly
+    const ent = monthly ? monthly.ent : await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: order.amount, currency: order.currency || 'ILS', plan, source, expiresAt });
     if (order.coupon) await burnCoupon(env, order.coupon);
     const link = await mintDownloadLink(env, ent.id, order.email);
     if (order.machine_id)
@@ -512,8 +514,8 @@ export async function audioctorDownload(req, env) {
   });
 }
 
-/** GET /audioctor/download/free — the 7-day trial: the same installer, for anyone with a
- *  Snowstar account (as StreamDAW). A key made for one Mac keeps it going after the trial, so
+/** GET /audioctor/download/free — the Free plan: the same installer, for anyone with a
+ *  Snowstar account (as StreamDAW). A key made for one Mac lifts its limits, so
  *  the build itself is not the thing being sold; the account is how we know who has it.
  *  Signed out: back to the sale page with the sign-up open (?get=free; the page
  *  starts the download once they are in), or a 401 for a caller that asks for JSON.
@@ -585,14 +587,13 @@ export async function myAudioctor(env, user) {
     `SELECT id, plan, created_at, expires_at FROM entitlements WHERE product = ? AND status = 'active'
        AND (user_id = ? OR email = ?) AND (expires_at IS NULL OR expires_at > ?) ORDER BY (expires_at IS NULL) DESC, created_at DESC LIMIT 1`
   ).bind(PRODUCT, user.id, lc(user.email), now()).first();
-  // What Audioctor once costs today (the page shows it), in shekels at the day's rate.
-  const proPrice = (await shekelsFor(env, ONCE_USD_CENTS)).amount;
-  // Monthly: its state (renews / cancelled / payment due), for the account page and the sale page.
+  // A plan's state (renews / cancelled / payment due), for the account page and the sale page.
   const subscription = await (await subsMod()).subFor(env, user).catch(() => null);
-  if (!ent) return json({ owned: false, proPrice, subscription });
+  const plans = await (await paddleMod()).paddleSubsFor(env, user.email, user.id).catch(() => []);
+  if (!ent) return json({ owned: false, subscription, plans });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();
-  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, proPrice, subscription,
+  return json({ owned: true, since: ent.created_at, plan: ent.plan, expiresAt: ent.expires_at || null, subscription, plans,
                 release: rel, download: `${SITE}/api/audioctor/download` });
 }
 
@@ -666,7 +667,7 @@ function licenceMail({ title, intro, steps, key, footer, button }) {
    them (and the key request is then made the old way, on the page), so a deploy before
    the migration cannot break checkout. */
 async function insertOrder(env, { ref, userId, email, plan, amount, currency = 'ILS', status, coupon, machine, ownerName }) {
-  plan = isMonthly(plan) ? plan : 'lifetime';
+  plan = ends(plan) ? plan : 'lifetime';
   try {
     await env.DB.prepare(
       `INSERT INTO audioctor_orders (ref, user_id, email, plan, amount, currency, status, coupon, machine_id, owner_name, created_at)
@@ -896,8 +897,9 @@ async function issueKey(env, row, key, onlyPending) {
   const lines = keyLines(hex);
   const serial = checked.serial;
   const ent = await env.DB.prepare('SELECT plan FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
-  const monthly = !!ent && isMonthly(ent.plan);
-  // Monthly: the renewal code goes out with the first key and stays the same after (the app
+  const monthly = !!ent && ends(ent.plan);                      // a plan that renews, by the month or the year
+  const each = ent && ent.plan === 'year' ? 'year' : 'month', planName = PLANS[ent && ent.plan === 'year' ? 'year' : 'monthly'].name;
+  // A plan: the renewal code goes out with the first key and stays the same after (the app
   // keeps it, and fetches every later key with it).
   const code = monthly ? (row.renew_code || (await subsMod()).newRenewCode()) : null;
   const renewal = row.status === 'renewing';
@@ -914,18 +916,18 @@ async function issueKey(env, row, key, onlyPending) {
   const n = box.split('\n').filter(Boolean).length;
   const until = row.expires_at ? dayOf(row.expires_at) : '';
   const subs = monthly ? await subsMod() : null;
-  const what = monthly ? 'Audioctor Monthly key' : 'Audioctor key';
+  const what = monthly ? `${planName} key` : 'Audioctor key';
   const minApp = MIN_APP;
   const copy = monthly ? `Copy everything in the box below (all ${n} lines: the key and its Renewal line) and paste it into the box.`
                        : `Copy the key below (all ${n} lines) and paste it into the box.`;
-  const renewText = monthly ? `Audioctor Monthly: this key runs to ${until}, 3 days past the month you paid for. Audioctor ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
+  const renewText = monthly ? `${planName}: this key runs to ${until}, 3 days past the ${each} you paid for. Audioctor ${subs.RENEW_APP} or newer fetches the next one by itself every ${each} while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
     : '';
-  const renewHtml = monthly ? `This key runs to ${until}, 3 days past the month you paid for. Audioctor ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
+  const renewHtml = monthly ? `This key runs to ${until}, 3 days past the ${each} you paid for. Audioctor ${subs.RENEW_APP} or newer fetches the next one by itself every ${each} while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
     : '';
   try {
     await sendMail(env, {
       to: row.email,
-      subject: monthly ? 'Your Audioctor Monthly key' : 'Your Audioctor key',
+      subject: monthly ? `Your ${planName} key` : 'Your Audioctor key',
       text: `${hi ? `Hi ${hi}, your` : 'Your'} ${what} is ready.\n\n`
           + `1. Open Audioctor and click the licence line at the bottom left of its window.\n`
           + `2. ${copy}\n`
@@ -939,8 +941,8 @@ async function issueKey(env, row, key, onlyPending) {
           + `Another Mac? Get a key for it here: ${UNLOCK_URL}\n`
           + `Keep this email: it is your licence. Lost it? The same page shows your keys when you sign in.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
       html: licenceMail({
-        title: monthly ? 'Your Audioctor Monthly key' : 'Your Audioctor key',
-        intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready${until ? `: Audioctor until <b>${until}</b>, renewed each month` : ''}.`,
+        title: monthly ? `Your ${planName} key` : 'Your Audioctor key',
+        intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready${until ? `: Audioctor until <b>${until}</b>, renewed each ${each}` : ''}.`,
         steps: [
           'Open Audioctor and click <b>the licence line</b> at the bottom left of its window.',
           monthly ? `Copy everything in the box below (all ${n} lines: the key <b>and its Renewal line</b>) and paste it into the box.`
@@ -1053,8 +1055,8 @@ async function grantEntitlement(env, { email, ext_ref, amount, currency = 'ILS',
   const existing = await env.DB.prepare('SELECT * FROM entitlements WHERE ext_ref = ?').bind(ext_ref).first();
   if (existing) return existing;
   const u = await env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(lc(email)).first();
-  // Audioctor once does not end. Monthly ends with its key (the caller says when).
-  if (expiresAt == null) expiresAt = null;      // Audioctor once does not end; Monthly says when
+  // Audioctor once does not end. A plan ends with its key (the caller says when).
+  if (expiresAt == null) expiresAt = null;
   const ins = await env.DB.prepare(
     `INSERT INTO entitlements (user_id, email, product, plan, status, source, ext_ref, amount, currency, created_at, expires_at)
      VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?)`
@@ -1079,7 +1081,8 @@ function emailReceipt(env, to, link, machine, order) {
   const when = new Date().toISOString().slice(0, 10);
   const lines = [
     o.ref ? `Order: ${o.ref}` : '',
-    'Product: Audioctor, one payment, every Audioctor 1 update included, on up to 2 Macs',
+    ends(o.plan) ? `Product: ${PLANS[o.plan].name}, renewed each ${PLANS[o.plan].every} until you cancel, on up to 2 Macs` : 'Product: Audioctor, one payment, every Audioctor 1 update included, on up to 2 Macs',
+    o.expiresAt ? `Runs to: ${dayOf(o.expiresAt)}` : '',
     paid ? `Paid: ${paid}${o.coupon ? ` (coupon ${o.coupon})` : ''}` : '',
     `Date: ${when}`,
   ].filter(Boolean);

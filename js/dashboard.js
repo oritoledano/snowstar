@@ -1551,6 +1551,7 @@
          for some products or all; how many uses; until when; new customers only. A %/$ code becomes a Paddle discount
          the first time someone uses it (worker/src/streamdaw-paddle.js); a free code never reaches Paddle. */
       const pad = d.paddle || {};
+      const adPad = await fetch('/api/audioctor/prices', { credentials: 'include' }).then((r) => r.json()).catch(() => ({}));   // Audioctor's plans, the same account
       const PRODS = [['all', 'All products'], ['splits', 'Splits'], ['station', 'Station'], ['record', 'Record'], ['compare', 'Compare'], ['party', 'Party']];
       const worth = (c) => {
         const n = Number(c.months || 0);
@@ -1565,6 +1566,8 @@
                         : `<span class="pill warn">not set up</span> The products, prices and webhook are not made yet in Paddle (${esc(pad.paddle && pad.paddle.environment === 'production' ? 'live' : 'sandbox')}).`)
             : 'Off: set the PADDLE_API_KEY secret on the Worker first.'}</p>
           ${pad.billing === 'paddle' && !pad.open ? '<button class="rv-btn rv-ok" id="sd-paddle-setup">Set up Paddle</button> <span class="rv-note" id="sd-paddle-said"></span>' : ''}
+          <p class="db-empty" style="padding-top:12px">Audioctor: ${adPad.open ? '<span class="pill good">selling</span> its product, two prices and webhook are made.' : '<span class="pill warn">not set up</span> Its product, two prices and webhook are not made yet in Paddle.'}</p>
+          ${adPad.billing === 'paddle' && !adPad.open ? '<button class="rv-btn rv-ok" id="ad-paddle-setup">Set up Paddle for Audioctor</button> <span class="rv-note" id="ad-paddle-said"></span>' : ''}
         </div>
         <div class="db-panel"><h2>Discount codes <span class="pill">${(d.coupons || []).length}</span></h2>
           <p class="db-empty" style="padding-top:0">A code goes in a link (<code>snowstar.company/apps/streamdaw.html?c=CODE</code>)
@@ -1706,6 +1709,16 @@
       said.textContent = 'Making the products, prices and webhook in Paddle…';
       const r = await post('/streamdaw/paddle/setup', {});
       setup.disabled = false;
+      if (r && r.ok && r.ready) { load(); return; }
+      said.textContent = (r && r.reason) || 'Paddle did not answer. Nothing half-made stays wrong: press again.';
+    });
+    const adSetup = document.getElementById('ad-paddle-setup');
+    if (adSetup) adSetup.addEventListener('click', async () => {
+      adSetup.disabled = true;
+      const said = document.getElementById('ad-paddle-said');
+      said.textContent = 'Making the product, prices and webhook in Paddle…';
+      const r = await post('/audioctor/paddle/setup', {});
+      adSetup.disabled = false;
       if (r && r.ok && r.ready) { load(); return; }
       said.textContent = (r && r.reason) || 'Paddle did not answer. Nothing half-made stays wrong: press again.';
     });

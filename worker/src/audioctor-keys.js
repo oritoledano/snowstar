@@ -91,7 +91,7 @@ async function signingKey(secret) {
 }
 
 /* Mint a key here: { hex, serial } or { error }. The same refusals as AudioctorKeyGen: a key that
-   would not unlock, or a pass with an odd end (`expiresAt` seconds, in the coming year), is never
+   would not unlock, or a key with an odd end (`expiresAt` seconds, a year and its grace at most), is never
    made. The caller still runs checkKey on it, as on every key, before storing it. */
 export async function mintKey(secret, { name, email, machine, expiresAt, serial }) {
   name = cleanName(name);
@@ -104,7 +104,7 @@ export async function mintKey(secret, { name, email, machine, expiresAt, serial 
   let expiresMs = 0;
   if (expiresAt != null) {
     const sec = Number(expiresAt);
-    if (!(Number.isSafeInteger(sec) && sec * 1000 > nowMs && sec * 1000 < nowMs + 366 * 86400000)) return { error: `odd end for a key (${expiresAt}): seconds, in the coming year` };
+    if (!(Number.isSafeInteger(sec) && sec * 1000 > nowMs && sec * 1000 < nowMs + 400 * 86400000)) return { error: `odd end for a key (${expiresAt}): seconds, within 400 days` };
     expiresMs = sec * 1000;
   }
   serial = serial || makeSerial();
