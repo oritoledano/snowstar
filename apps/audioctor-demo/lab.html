@@ -226,7 +226,7 @@ button { font: inherit; color: inherit; }
   <div class="silk">Samples</div>
   <ul class="files" id="files"></ul>
   <div class="adder" id="adder">＋ Drop files here or <u>add files</u></div>
-  <button class="lic" id="licLine" title="Licence"><span id="licText">Trial</span><u id="licGo">Unlock</u></button>
+  <button class="lic" id="licLine" title="Licence"><span id="licText">Free</span><u id="licGo">Upgrade</u></button>
   <button class="railbtn" id="exportChecked" disabled>Export checked</button>
 </aside>
 <main class="labwrap" id="labwrap">
@@ -316,7 +316,7 @@ button { font: inherit; color: inherit; }
       <button class="ob" id="licRemove" hidden><span class="cap"><b>Remove from this Mac</b></span></button>
       <span class="note"></span>
       <button class="ob" id="licManage" hidden><span class="cap"><b>Manage</b></span></button>
-      <button class="ob" id="licBuy"><span class="cap"><b>Get Audioctor</b></span></button>
+      <button class="ob" id="licBuy"><span class="cap"><b>See plans</b></span></button>
       <button class="ob sel" id="licApply"><span class="cap"><b>Unlock</b><i class="led"></i></span></button>
     </div>
   </div>
@@ -637,19 +637,19 @@ let lic = null;
 function showLic(st, why) {
   if (!st) return;
   lic = st;
-  const line = $('licLine'), days = st.daysLeft;
+  const line = $('licLine'), left = st.exportsLeft;
   line.classList.toggle('free', st.kind === 'free');
   // Monthly: what the Worker last said (0.1.1 asks once a day): renews on…, payment due, cancelled, ended
   const sub = st.sub && typeof st.sub === 'object' ? st.sub : {}, day = ms => new Date(ms).toLocaleDateString();
   const monthLine = sub.status === 'active' && sub.renewsAt ? 'renews ' + day(sub.renewsAt)
     : sub.status === 'past_due' ? 'payment due' : 'until ' + day(st.endsAt);
-  const ended = st.kind === 'free' && st.endsAt > 0;            // a Monthly key that ran out here
+  const ended = st.kind === 'free' && st.endsAt > 0;            // a plan's key that ran out here
+  const leftLine = left + ' left today', paid = st.kind !== 'free';
   $('licText').innerHTML = st.kind === 'pro' ? '<b>Audioctor</b> · ' + (st.owner || 'licensed')
     : st.kind === 'monthly' ? '<b>Monthly</b> · ' + monthLine
-    : st.kind === 'trial' ? '<b>Trial</b> · ' + days + (days === 1 ? ' day' : ' days') + ' left'
-    : ended ? '<b>Monthly ended</b> · no export'
-    : '<b>Trial over</b> · no export';
-  $('licGo').textContent = st.kind === 'pro' || st.kind === 'monthly' ? 'Licence' : st.kind === 'free' ? 'Get it' : 'Unlock';
+    : st.kind === 'year' ? '<b>Yearly</b> · until ' + day(st.endsAt)
+    : '<b>' + (ended ? 'Plan ended' : 'Free') + '</b> · ' + leftLine;
+  $('licGo').textContent = paid ? 'Licence' : 'Upgrade';
   $('licMachine').textContent = st.machine;
   $('licSub').textContent = st.kind === 'pro' ? 'Audioctor, yours for good. Licensed to ' + (st.owner || '…') + (st.serial ? ' · serial ' + st.serial : '') + '.'
     : st.kind === 'monthly' ? 'Audioctor Monthly, licensed to ' + (st.owner || '…') + '. This key runs to ' + day(st.endsAt) + '. '
@@ -657,10 +657,10 @@ function showLic(st, why) {
           : sub.status === 'cancelled' ? 'Cancelled: Audioctor works to the end of the paid month.'
           : st.renews ? (sub.renewsAt ? 'It renews on ' + day(sub.renewsAt) + ', and ' : '') + 'the next month\'s key comes by itself while Audioctor is online.'
           : 'Paste the whole block from the email (the key and its Renewal line), and the next month\'s key comes by itself.')
-    : ended ? 'Your Audioctor Monthly key ended on ' + day(st.endsAt) + '. You can still open, process, mix and listen; exporting needs a current key. Go online, or manage your subscription.'
-    : st.kind === 'trial' ? 'Everything is on for ' + days + (days === 1 ? ' more day' : ' more days') + '. To keep exporting after that, get Audioctor and paste the key from its email here.'
-    : 'The free 7 days are over. You can still open, process, mix and listen; exporting needs Audioctor. Paste your key here, or get one.';
-  $('licRemove').hidden = !(st.kind === 'pro' || st.kind === 'monthly');
+    : st.kind === 'year' ? 'Audioctor Yearly, licensed to ' + (st.owner || '…') + (st.serial ? ' · serial ' + st.serial : '') + '. This key runs to ' + day(st.endsAt) + ', and nothing renews by itself.'
+    : ended ? 'Your plan ended on ' + day(st.endsAt) + ', so this copy is on Free: clips up to a minute, 3 exports a day. Longer clips still open, process and play.'
+    : 'Free: every tool, clips up to a minute, 3 exports a day. Longer clips open, process and play; exporting them needs a plan. Bought one? Paste the key from its email here.';
+  $('licRemove').hidden = !paid;
   $('licManage').hidden = !(st.kind === 'monthly' || ended);
   if (why !== undefined) { $('licMsg').textContent = why || 'Unlocked. Thank you.'; $('licMsg').classList.toggle('ok', !why); }
 }
@@ -674,7 +674,13 @@ $('licManage').onclick = () => call('openUrl', (lic && lic.sub && lic.sub.manage
 $('licApply').onclick = () => call('licence', 'apply', $('licKey').value).then(st => { showLic(st, st ? st.why : 'No answer'); if (st && !st.why) $('licKey').value = ''; });
 $('licRemove').onclick = () => { if (confirm('Remove the licence from this Mac? You can paste the key again later.')) call('licence', 'remove').then(st => showLic(st, '')); };
 call('licence', 'state').then(st => showLic(st));
-on('locked', st => { showLic(st); openLic(st && st.kind === 'free' && st.endsAt > 0 ? 'Exporting needs a current key: your Monthly key has ended.' : 'Exporting needs Audioctor: your free 7 days are over.'); });
+on('locked', st => {
+  showLic(st);
+  const n = st ? st.exportsLeft : 0;
+  openLic(st && st.wall === 'long' ? 'This clip runs past a minute, where Free stops. A plan exports any length.'
+    : n ? 'Free has ' + n + (n === 1 ? ' export' : ' exports') + ' left today: tick fewer files, or get a plan with no daily limit.'
+    : 'That\'s today\'s 3 free exports. They come back tomorrow, and a plan has no daily limit.');
+});
 on('licence', st => showLic(st));              // Monthly: the Worker answered (renewed, payment due, ended…)
 on('notice', m => toast(m, true));
 
@@ -738,7 +744,7 @@ function demoCall(name, params) {
     return { freqs: fr, processed: p, unprocessed: u };
   }
   if (name === 'setParts') { parts = params[0]; }
-  if (name === 'licence') return { kind: 'trial', daysLeft: 6, canExport: true, machine: 'AD3F9A21C7E4B05D', buyUrl: '#' };
+  if (name === 'licence') return { kind: 'free', exportsLeft: 3, machine: 'AD3F9A21C7E4B05D', buyUrl: '#' };
   return undefined;
 }
 fit();
@@ -855,7 +861,7 @@ function demo(scene) {
   }, 0);
   $('adder').innerHTML = '＋ Your own file? <u>Try it free</u>';
   $('scopeHint').textContent = 'Loading the demo';
-  // a file dropped on the window goes to the trial, not into the browser
+  // a file dropped on the window goes to the free app, not into the browser
   addEventListener('dragover', e => { e.preventDefault(); $('dropzone').classList.add('on'); });
   addEventListener('dragleave', e => { if (!e.relatedTarget) $('dropzone').classList.remove('on'); });
   addEventListener('drop', e => { e.preventDefault(); $('dropzone').classList.remove('on'); own(); });
