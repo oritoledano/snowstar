@@ -63,7 +63,7 @@
 
   <!-- ── hero: the line, the price, the lab at work. Until the Worker has Audioctor's routes (download,
        checkout), every [data-soon] opens #soon (the waitlist; its mailto href is only the no-JavaScript
-       fallback); then the free button goes to /api/audioctor/download/free and the plans to the checkout. ── -->
+       fallback); then the free button goes to /api/audioctor/download/free; the plans go to the checkout (js/audioctor-plans.js). ── -->
   <section class="hero" aria-labelledby="heroTitle">
     <div class="wrap">
       <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">For Apple silicon Macs · App, AU and VST3</p>
@@ -144,7 +144,7 @@
             <li>The app, AU and VST3 on two Macs</li>
             <li>Cancel any time</li>
           </ul>
-          <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon>Get a year</a>
+          <a class="btn lime" href="mailto:hello@snowstar.company?subject=Audioctor%20early%20access" data-soon data-plan="year">Get a year</a>
         </div>
         <div class="plan">
           <span class="tag">Audioctor Monthly</span>
@@ -155,9 +155,10 @@
             <li>The app, AU and VST3 on two Macs</li>
             <li>Cancel any time</li>
           </ul>
-          <a class="btn ghost" href="mailto:hello@snowstar.company?subject=Audioctor%20Monthly%20early%20access" data-soon>Start monthly</a>
+          <a class="btn ghost" href="mailto:hello@snowstar.company?subject=Audioctor%20Monthly%20early%20access" data-soon data-plan="monthly">Start monthly</a>
         </div>
       </div>
+      <p class="planmsg" id="planMsg" role="status" hidden></p>
       <p class="anchor">Adobe sells Podcast Premium inside Firefly Pro, at <b><span data-usd="19.99" data-dp="2">$19.99</span> a month</b>. Audioctor cleans the voice and splits the stems on your Mac, from a quarter of that.</p>
       <p class="reqs">Needs a <b>Mac with Apple silicon</b> and <b>macOS 14</b> or later. Adobe's price as listed on adobe.com, 25 October 2026.</p>
     </div>
@@ -453,6 +454,7 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=30"></script>
 <script src="../js/site-edit.js?v=23"></script>
+<script src="../js/audioctor-plans.js?v=1"></script>
 <script src="../js/consent.js?v=1"></script>
 </body>
 </html>
