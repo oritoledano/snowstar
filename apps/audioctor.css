@@ -269,7 +269,7 @@ main > section + section{padding-top:0}
 .trio figcaption{margin-top:14px;color:var(--ink-2);font-size:15.5px;line-height:1.5}
 .trio figcaption b{display:block;font:600 21px/1.2 var(--serif);color:var(--ink);margin-bottom:4px}
 
-/* pricing: two plans, $49 first */
+/* pricing: two plans, the year first */
 .plans.two{grid-template-columns:repeat(2,minmax(0,380px));justify-content:center}
 .plan.hot .btn,.plan .btn{margin-top:auto}
 .plan ul{margin-bottom:22px}

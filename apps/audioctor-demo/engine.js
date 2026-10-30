@@ -343,7 +343,7 @@
       },
       chooseFiles: () => cta('own-file'),
       export: () => cta('export'),
-      remove: () => emit('notice', 'These are the demo\'s own recordings. Your files go in the app: 7 days free.'),
+      remove: () => emit('notice', 'These are the demo\'s own recordings. Your files go in the app: free up to a minute.'),
       setChecked: () => undefined,
       licence: what => (what === 'state' ? { kind: 'trial', daysLeft: 7, canExport: false, machine: 'Demo', buyUrl: hooks.buyUrl || '/apps/audioctor.html#pricing' } : (cta('licence'), undefined)),
       openUrl: url => cta('url:' + url),

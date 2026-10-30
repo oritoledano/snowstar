@@ -144,15 +144,15 @@ h1 em{font-style:italic;font-weight:500;color:var(--ink-2)}
   <section class="next" aria-labelledby="next">
     <div>
       <h2 id="next">Now try it on the worst file you have.</h2>
-      <p>The interview with the air conditioner, the voice memo you can't record again, the song you only have as a mix. 7 days free, no card. Everything runs on your Mac and nothing is uploaded.</p>
+      <p>The interview with the air conditioner, the voice memo you can't record again, the song you only have as a mix. Free for clips up to a minute, no card. Everything runs on your Mac and nothing is uploaded.</p>
     </div>
     <div class="acts">
-      <a class="btn lime desk-only" href="/apps/audioctor.html?get=free&amp;from=demo" data-cta="main">Get the 7-day trial</a>
+      <a class="btn lime desk-only" href="/apps/audioctor.html?get=free&amp;from=demo" data-cta="main">Get it free</a>
       <div class="onmac">
         <span class="fine">Audioctor runs on a Mac. Open this page there to download it:</span>
         <div class="copy"><input id="link" readonly value="snowstar.company/apps/audioctor-demo/" aria-label="This page's address"><button class="btn ghost sm" id="copy">Copy link</button></div>
       </div>
-      <a class="btn ghost sm" href="/apps/audioctor.html?from=demo#pricing" data-cta="prices">$49 once, or $5.99 a month</a>
+      <a class="btn ghost sm" href="/apps/audioctor.html?from=demo#pricing" data-cta="prices">$7 a month, or $60 a year</a>
       <span class="fine">For Apple silicon Macs with macOS 14 or later. The app, plus AU and VST3.</span>
     </div>
   </section>
@@ -163,8 +163,8 @@ h1 em{font-style:italic;font-weight:500;color:var(--ink-2)}
 <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mtitle">
   <div class="mcard">
     <h3 id="mtitle">That part happens in the app.</h3>
-    <p id="mtext">Your own files, Export and every switch run on your Mac. The trial has all of it for 7 days, no card.</p>
-    <div class="row"><a class="btn lime" href="/apps/audioctor.html?get=free&amp;from=demo" data-cta="modal">Get the 7-day trial</a><button class="btn ghost" id="mclose">Back to the demo</button></div>
+    <p id="mtext">Your own files, Export and every switch run on your Mac. The free download has all of it for clips up to a minute, no card.</p>
+    <div class="row"><a class="btn lime" href="/apps/audioctor.html?get=free&amp;from=demo" data-cta="modal">Get it free</a><button class="btn ghost" id="mclose">Back to the demo</button></div>
   </div>
 </div>
 
@@ -186,9 +186,9 @@ h1 em{font-style:italic;font-weight:500;color:var(--ink-2)}
   }
   document.querySelectorAll('[data-cta]').forEach(a => a.addEventListener('click', () => track('trial_cta_clicked', { location: a.dataset.cta })));
   const WHY = {
-    'own-file': ['Your own file goes in the app.', 'Drop any recording on Audioctor on your Mac: phone memos, interviews, videos, songs. The trial has everything for 7 days, no card.'],
-    export: ['Export is in the app.', 'The mix, or every part as its own file, from your own recordings. The trial exports everything for 7 days, no card.'],
-    licence: ['This is the demo.', 'It plays Ori\'s recordings. Your own files go in the app: 7 days free, no card.'],
+    'own-file': ['Your own file goes in the app.', 'Drop any recording on Audioctor on your Mac: phone memos, interviews, videos, songs. The free download does every tool on clips up to a minute, no card.'],
+    export: ['Export is in the app.', 'The mix, or every part as its own file, from your own recordings. The free download exports clips up to a minute, 3 a day, no card.'],
+    licence: ['This is the demo.', 'It plays Ori\'s recordings. Your own files go in the app: free up to a minute, no card.'],
   };
   function cta(why) {
     const w = WHY[why] || WHY['own-file'];
