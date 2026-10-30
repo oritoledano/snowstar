@@ -74,7 +74,7 @@ export function couponProblem(c, atAgorot) {
    THIS table is now the Snowstar-level one: a code here says which property it
    is for, and each property also consults it for codes marked for itself or for
    all. */
-export const SCOPES = ['all', 'mutra', 'streamdaw', 'snowstash', 'snowstar'];
+export const SCOPES = ['all', 'mutra', 'streamdaw', 'snowstash', 'snowstar', 'audioctor'];
 export const scopeOk = (v) => (SCOPES.includes(String(v)) ? String(v) : 'mutra');
 
 /**

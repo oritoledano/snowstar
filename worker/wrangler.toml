@@ -64,6 +64,15 @@ MAIL_FROM = "SNOWSTAR.COMPANY <hello@snowstar.company>"
 STREAMDAW_BILLING = "paddle"
 PADDLE_ENV = "sandbox"
 
+
+# Audioctor through Paddle, the merchant of record (src/audioctor-paddle.js, 2026-10-27).
+# On only when the price below AND three secrets are set (npx wrangler secret put PADDLE_API_KEY /
+# PADDLE_WEBHOOK_SECRET / PADDLE_CLIENT_TOKEN); until then Audioctor stays on HYP, untouched.
+# PADDLE_ENV above is shared: one Paddle account for both products.
+AUDIOCTOR_BILLING = "paddle"
+PADDLE_PRICE_ONCE = ""       # pri_…  Audioctor, $49 one-time
+PADDLE_PRICE_MONTHLY = ""    # pri_…  Audioctor Monthly, $5.99 (not sold through Paddle yet: phase 2)
+PADDLE_PRODUCT_ID = ""       # pro_…  the product; a coupon's one-off price is made on it
 # daily digest at 07:00 UTC
 [triggers]
 crons = ["0 7 * * *"]

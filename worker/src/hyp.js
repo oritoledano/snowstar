@@ -316,6 +316,10 @@ export async function handleReturn(req, env, ctx) {
     const { streamdawReturn } = await import('./streamdaw.js');
     return streamdawReturn(req, env, raw, q);
   }
+  if (ref.startsWith('AD-')) {
+    const { audioctorReturn } = await import('./audioctor.js');
+    return audioctorReturn(req, env, raw, q);
+  }
 
   const fail = (why) => Response.redirect(
     `https://snowstar.company/mutra.html?pay=failed&reason=${encodeURIComponent(why)}`, 302);

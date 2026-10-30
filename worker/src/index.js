@@ -59,6 +59,14 @@ import { paddleSetup, paddleWebhook, paddlePortal, paddleCouponCheck, paddleOn }
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { streamdawMacLink, streamdawMacStatus } from './streamdaw-macs.js';
+// Audioctor (2026-10-21): its own modules and tables, StreamDAW's money path untouched (audioctor*.js).
+import { audioctorCheckout, audioctorDownload, audioctorDownloadFree, audioctorModel, myAudioctor, audioctorCouponCheck, audioctorCouponCreate,
+         audioctorAdmin, audioctorReconcile, audioctorActivate, audioctorActivationStatus,
+         audioctorActivationIssue, audioctorDeactivate, mintWaiting as audioctorMintWaiting } from './audioctor.js';
+import { audioctorPrices, audioctorSubCancel, audioctorSubResume, audioctorSubCancelLink, audioctorSubByToken,
+         audioctorSubAdmin, audioctorLicenceRefresh, audioctorRenewals } from './audioctor-subs.js';
+// Audioctor through Paddle, the merchant of record (2026-10-27): its webhook (audioctor-paddle.js).
+import { audioctorPaddleWebhook } from './audioctor-paddle.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
          streamdawUpdatesCleanup } from './streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -506,6 +514,34 @@ async function handle(req, env, ctx) {
   const liveId = path.match(/^\/streamdaw\/live\/([a-z0-9]{1,32})$/);
   if (liveId && method === 'GET') return streamdawLiveStatus(req, env, liveId[1]);
 
+  // ── Audioctor (audioctor.js, audioctor-subs.js): StreamDAW's routes, its own product and tables.
+  // Its installers are registered through /streamdaw/release with asset 'audioctor-macos'.
+  if (path === '/audioctor/prices' && method === 'GET') return audioctorPrices(env);
+  if (path === '/audioctor/checkout' && method === 'POST') return audioctorCheckout(req, env);
+  if (path === '/audioctor/coupon/check' && method === 'POST') return audioctorCouponCheck(req, env);
+  if (path === '/audioctor/coupon' && method === 'POST') return audioctorCouponCreate(req, env, await currentUser(req, env));
+  if (path === '/audioctor/download' && method === 'GET') return audioctorDownload(req, env);
+  // The 7-day trial: the same installer, for anyone signed in (a key opens it for good, or monthly).
+  if (path === '/audioctor/download/free' && (method === 'GET' || method === 'HEAD')) return audioctorDownloadFree(req, env);
+  // The models the app fetches on its first run (public, immutable, Range): audioctor/models/<set>/<path>.p<i> in APPS.
+  if (path.startsWith('/audioctor/models/') && (method === 'GET' || method === 'HEAD')) return audioctorModel(req, env, path.slice('/audioctor/models/'.length));
+  if (path === '/audioctor/mine' && method === 'GET') return myAudioctor(env, await currentUser(req, env));
+  if (path === '/audioctor/activate' && method === 'POST') return audioctorActivate(req, env, await currentUser(req, env));
+  if (path === '/audioctor/activations' && method === 'GET') return audioctorActivationStatus(env, await currentUser(req, env));
+  if (path === '/audioctor/activation/issue' && method === 'POST') return audioctorActivationIssue(req, env, await currentUser(req, env));
+  if (path === '/audioctor/deactivate' && method === 'POST') return audioctorDeactivate(req, env, await currentUser(req, env));
+  if (path === '/audioctor/subscription/cancel' && method === 'POST') return audioctorSubCancel(req, env, await currentUser(req, env));
+  if (path === '/audioctor/subscription/resume' && method === 'POST') return audioctorSubResume(req, env, await currentUser(req, env));
+  if (path === '/audioctor/subscription/cancel-link' && method === 'POST') return audioctorSubCancelLink(req, env);
+  if (path === '/audioctor/subscription/by-token' && method === 'POST') return audioctorSubByToken(req, env);
+  if (path === '/audioctor/subscription/admin' && method === 'POST') return audioctorSubAdmin(req, env, await currentUser(req, env));
+  // The app asking for next month's key (no cookie, no Origin: its machine id and renewal code).
+  if (path === '/audioctor/licence/refresh' && method === 'POST') return audioctorLicenceRefresh(req, env);
+  if (path === '/audioctor/admin' && method === 'GET') return audioctorAdmin(env, await currentUser(req, env));
+  if (path === '/audioctor/reconcile' && method === 'POST') return audioctorReconcile(req, env, await currentUser(req, env));
+  // Paddle's server, signed (Paddle-Signature, HMAC with the webhook secret): no cookie, no Origin.
+  if (path === '/audioctor/paddle/webhook' && method === 'POST') return audioctorPaddleWebhook(req, env);
+
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
   /* Their own inbox. Every message we have sent them, by department. */
@@ -815,6 +851,9 @@ export default {
     ctx.waitUntil(streamdawRenewals(env).catch(() => {}));
     /* StreamDAW keys the Worker signs: anything a failure left waiting (streamdaw.js, mintWaiting). */
     ctx.waitUntil(mintWaiting(env).catch(() => {}));
+    /* Audioctor Monthly renewals, and Audioctor keys a failure left waiting (audioctor*.js). */
+    ctx.waitUntil(audioctorRenewals(env).catch(() => {}));
+    ctx.waitUntil(audioctorMintWaiting(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },
