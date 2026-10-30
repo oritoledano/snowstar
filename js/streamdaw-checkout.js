@@ -248,7 +248,7 @@
         + '<div class="cta"><a class="btn lime" href="' + esc(dl) + '">Download StreamDAW</a>'
         + '<a class="btn ghost" href="streamdaw-unlock.html">Unlock your Mac</a></div>'
         + '<p class="sdco-alt">Signed in? It is in your Snowstar account too: download it again any time. '
-        + 'macOS asks you to allow the installer once: <a href="streamdaw-install.html">how to install</a>.</p></div>';
+        + 'Open the installer when it lands: <a href="streamdaw-install.html">how to install</a>.</p></div>';
     }
     if (r.pay === 'confirming') {
       return '<div class="sdco-done"><p class="kicker">Almost there</p><h3>Your payment is being confirmed.</h3>'

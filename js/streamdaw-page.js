@@ -323,7 +323,7 @@
       + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl && !monthly ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your Mac</a>'
       + '</div>'
       + '<p class="after">Signed in? It is in your Snowstar account too: download it again any time. '
-      + 'macOS asks you to allow the installer once: <a href="streamdaw-install.html">how to install</a>.</p>';
+      + 'Open the installer when it lands: <a href="streamdaw-install.html">how to install</a>.</p>';
   }
 
   // ── account: the SAME sign-in lightbox as Mutra and the homepage ──
@@ -599,7 +599,7 @@
   const wantFree = () => { try { const t = +sessionStorage.getItem(FREE_KEY) || 0; return t > 0 && Date.now() - t < FREE_FOR; } catch (e) { return false; } };
   const keepFree = (on) => { try { if (on) sessionStorage.setItem(FREE_KEY, String(Date.now())); else sessionStorage.removeItem(FREE_KEY); } catch (e) {} };
   // Once per wish: the sign-in's resume and the account's change can both call this. (2026-10-18)
-  // The install guide opens at once and starts the file itself, so the steps (and Open Anyway) are
+  // The install guide opens at once and starts the file itself, so the steps are
   // in front of the buyer while it downloads. installHint stays for a page that cannot leave.
   function startFree() { keepFree(false); location.href = 'streamdaw-install.html?dl=free'; }
   function installHint() {
