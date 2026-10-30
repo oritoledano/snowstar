@@ -7,10 +7,10 @@
      All products                              $15 a month or $144 a year
      (2026-10-29, the founder; sold through Paddle, streamdaw-paddle.js. The first prices were $79–$199 a year.)
 
-   Prices are US dollars including VAT, charged in shekels at the site's daily rate (fx.js), as Pro
-   Monthly is. A year is one payment for 365 days (no card kept, nothing charged by itself); buying
-   the same product again adds a year to what is left. Monthly prices are listed but not sold yet:
-   they need HYP's token charges (streamdaw-subs.js), and checkout refuses them.
+   Through Paddle every plan, month or year, is a subscription that renews by itself until cancelled
+   (streamdaw-paddle.js). The rest of this note is HYP's product checkout, closed: prices in US dollars
+   including VAT, charged in shekels at the site's daily rate (fx.js), as Pro Monthly is; a year is one
+   payment for 365 days, and buying again adds a year to what is left; monthly prices were refused there.
 
    Every key carries the account's WHOLE list, so a new key never takes away a product held before
    (the app refuses such a key: streamDAWProductsLost). Pro bought before the split ('lifetime',

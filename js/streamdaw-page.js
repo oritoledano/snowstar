@@ -323,7 +323,7 @@
       + '<a class="btn ' + (downloadUrl ? 'ghost' : 'lime') + '" href="streamdaw-unlock.html"' + (downloadUrl && !monthly ? ' style="color:var(--paper);border-color:rgba(239,233,218,.5)"' : '') + '>Unlock your computer</a>'
       + '</div>'
       + '<p class="after">Signed in? It is in your Snowstar account too: download it again any time. '
-      + 'Your computer asks you to allow the installer once: <a href="streamdaw-install.html">how to install</a>.</p>';
+      + 'Open the installer when it lands: <a href="streamdaw-install.html">how to install</a>.</p>';
   }
 
   // ── account: the SAME sign-in lightbox as Mutra and the homepage ──
@@ -335,7 +335,7 @@
   // What you get on the left, HYP's payment page in a frame on the right; the result comes back
   // into it. If its script cannot load, the whole tab goes to HYP as it always did.
   const CHECKOUT_JS = (function () {
-    try { return new URL('streamdaw-checkout.js?v=5', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=5'; }
+    try { return new URL('streamdaw-checkout.js?v=5', document.currentScript.src).href; } catch (e) { return '../js/streamdaw-checkout.js?v=4'; }
   })();
   // THE SWITCH. false: every purchase goes to HYP's own page in this tab, as before, and `?lb=1`
   // turns the lightbox on for one tab, to test. true: the lightbox for everyone (`?lb=0` turns it
@@ -607,7 +607,7 @@
   const wantFree = () => { try { const t = +sessionStorage.getItem(FREE_KEY) || 0; return t > 0 && Date.now() - t < FREE_FOR; } catch (e) { return false; } };
   const keepFree = (on, os) => { try { if (on) { sessionStorage.setItem(FREE_KEY, String(Date.now())); sessionStorage.setItem(OS_KEY, os === 'win' ? 'win' : 'mac'); } else { sessionStorage.removeItem(FREE_KEY); sessionStorage.removeItem(OS_KEY); } } catch (e) {} };
   // Once per wish: the sign-in's resume and the account's change can both call this. (2026-10-18)
-  // The install guide opens at once and starts the file itself, so the steps (and Open Anyway) are
+  // The install guide opens at once and starts the file itself, so the steps are
   // in front of the buyer while it downloads. installHint stays for a page that cannot leave.
   function startFree(os) { const o = os === 'win' || os === 'mac' ? os : osWish(); keepFree(false); location.href = 'streamdaw-install.html?dl=free' + (o === 'win' ? '&os=win' : ''); }
   function installHint() {

@@ -61,12 +61,13 @@
   }
 
   async function loadAll() {
-    const [lic, msg, dl, up, apps] = await Promise.all([
+    const [lic, msg, dl, up, apps, ad] = await Promise.all([
       get('/licence/mine').catch(() => ({})),
       get('/messages/mine').catch(() => ({})),
       get('/downloads').catch(() => ({})),
       get('/artist/uploads').catch(() => ({})),
       get('/streamdaw/mine').catch(() => ({})),
+      get('/audioctor/mine').catch(() => ({})),
     ]);
     data = {
       licences: (lic && lic.licences) || [],
@@ -79,12 +80,13 @@
       // Pro Monthly counts too, also once it is cancelled or its payment failed: that is where it is
       // managed (the sale page, the emails and the app all link to #apps).
       apps: apps && (apps.owned || apps.subscription || (apps.subscriptions || []).length) ? apps : null,
+      audioctor: ad && (ad.owned || (ad.plans || []).length) ? ad : null,
     };
   }
 
   const has = (t) => !t.needs
     || (t.needs === 'artist' && data.isArtist)
-    || (t.needs === 'apps' && data.apps);
+    || (t.needs === 'apps' && (data.apps || data.audioctor));
 
   function shell(inner) {
     const who = (M && M.user && (M.user.name || M.user.email)) || '';
@@ -252,7 +254,32 @@
       <p class="ac-note" id="sdPortalSaid" style="margin-top:8px"></p></div>`;
   }
 
-  function apps() {
+  /* Audioctor's plan through Paddle (2026-10-30): when it renews or ends, and Paddle's own page to cancel, change the
+     card or get an invoice (POST /audioctor/paddle/portal). */
+  function audioctorBlock() {
+    const a = data.audioctor;
+    if (!a) return '';
+    const live = (a.plans || []).filter((x) => x.status !== 'canceled');
+    const rows = live.map((x) => `<p style="margin:0 0 6px"><b>Audioctor ${x.plan === 'year' ? 'Yearly' : 'Monthly'}</b> · ${
+      x.cancelAt ? `cancelled, yours until <b>${day(x.cancelAt)}</b>`
+      : x.status === 'past_due' ? 'the last payment didn’t go through: Paddle tries again'
+      : `renews on <b>${day(x.nextBilledAt || x.periodEnd)}</b>`}</p>`).join('');
+    return `<div class="ac-panel"><h2>Audioctor</h2>
+      ${rows ? `<div class="sd-sub" style="border:1px solid var(--line,rgba(0,0,0,.15));border-radius:14px;padding:16px 18px;margin:0 0 18px">
+      ${rows}
+      <p class="ac-note" style="margin:0 0 10px">Paddle.com is our reseller: it takes the payments and emails your invoices.</p>
+      <div class="ac-acts" style="justify-content:flex-start"><button class="mbtn mbtn-ghost" id="adPortal">Manage or cancel</button></div>
+      <p class="ac-note" id="adPortalSaid" style="margin-top:8px"></p></div>` : ''}
+      <p class="ac-note">Your plan is kept with this account. Each Mac gets its own key: request one for a new Mac on the unlock page.</p>
+      <div class="ac-acts" style="justify-content:flex-start">
+        <a class="mbtn mbtn-solid" href="/apps/audioctor-unlock.html">Unlock a Mac</a>
+        ${a.download ? `<a class="mbtn mbtn-ghost" href="${esc(a.download)}">Download the app</a>` : ''}
+      </div></div>`;
+  }
+
+  function apps() { return (data.apps ? streamdawApps() : '') + audioctorBlock(); }
+
+  function streamdawApps() {
     const s = data.apps && data.apps.subscription;
     return `<div class="ac-panel"><h2>StreamDAW</h2>
       ${paddleBlock((data.apps && data.apps.subscriptions) || [])}
@@ -279,6 +306,14 @@
     const box = document.getElementById('sdCancelBox'), said = document.getElementById('sdCancelSaid');
     const open = document.getElementById('sdCancel'), keep = document.getElementById('sdCancelKeep'), go = document.getElementById('sdCancelGo');
     const resume = document.getElementById('sdResume');
+    const adPortal = document.getElementById('adPortal');
+    if (adPortal) adPortal.addEventListener('click', async () => {
+      adPortal.disabled = true;
+      const r = await post('/audioctor/paddle/portal', {});
+      if (r && r.url) { location.href = r.url; return; }
+      adPortal.disabled = false;
+      document.getElementById('adPortalSaid').textContent = (r && r.reason) || 'Could not open it. Please try again.';
+    });
     const portal = document.getElementById('sdPortal');
     if (portal) portal.addEventListener('click', async () => {
       portal.disabled = true;

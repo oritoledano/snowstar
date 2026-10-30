@@ -274,6 +274,9 @@ main > section + section{padding-top:0}
 .plan.hot .btn,.plan .btn{margin-top:auto}
 .plan ul{margin-bottom:22px}
 .anchor{text-align:center;color:var(--ink-2);margin-top:26px;font-size:15.5px}
+.planmsg{max-width:640px;margin:24px auto 0;padding:14px 18px;border:1px solid var(--line-2);border-radius:14px;text-align:center;font-size:15.5px;line-height:1.5}
+.planmsg.ok{border-color:rgba(202,235,105,.5)}
+.planmsg a{color:inherit;text-decoration:underline}
 
 @media (max-width:860px){
   .trio{grid-template-columns:1fr;gap:28px}

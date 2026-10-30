@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-product="audioctor">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unlock Audioctor on your Mac | Snowstar</title>
+<meta name="description" content="Have a plan? Sign in, paste your Mac's machine ID and get the key that lifts the Free limits on it.">
+<!-- An owner's page, not a sale page: it stays out of search results. -->
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://snowstar.company/apps/audioctor-unlock.html">
+<link rel="icon" href="/apps/audioctor-favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/apps/audioctor-icon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/apps/audioctor-icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apps/audioctor-apple-touch-icon.png">
+<link rel="manifest" href="/apps/audioctor.webmanifest">
+<meta name="theme-color" content="#efe9da">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/account.css?v=19">
+<link rel="stylesheet" href="../css/streamdaw.css?v=12">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="audioctor.html" aria-label="Audioctor"><img class="wordmark" src="audioctor-logo.png" alt="Audioctor" height="24" style="filter:brightness(0)"></a>
+    <div class="nav-tools solo">
+      <a class="back" href="audioctor.html">About Audioctor</a>
+      <span class="nav-acct" data-account-mount></span>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="ul-main" id="unlock">
+  <div class="wrap">
+    <p class="kicker" data-txt="audioctor-unlock.kicker">Your licence</p>
+    <h1 data-txt="audioctor-unlock.title">Unlock your Mac.</h1>
+    <p class="ul-lead" data-txt="audioctor-unlock.lead">Each key is made for one Mac. Getting yours takes a minute.</p>
+
+    <ol class="ul-steps">
+      <li data-txt="audioctor-unlock.step1">In Audioctor, click <b>the licence line</b> at the bottom left of its window and press <b>Copy</b> next to This Mac.</li>
+      <li data-txt="audioctor-unlock.step2">Paste it below and press <b>Request my key</b>.</li>
+      <li data-txt="audioctor-unlock.step3">Copy the key, paste it into the same panel and press <b>Unlock</b>.</li>
+    </ol>
+
+    <!-- One panel shows at a time (js/audioctor-unlock.js): checking, signed out, no plan, owner. -->
+    <div class="panel" id="ulWait"><p data-txt="audioctor-unlock.wait">Checking your account…</p></div>
+
+    <div class="panel" id="ulAnon" hidden>
+      <h2 data-txt="audioctor-unlock.anon.title">Sign in first.</h2>
+      <p data-txt="audioctor-unlock.anon.text">Use the email you bought Audioctor with. Your key and your Macs are kept with that account.</p>
+      <div class="cta">
+        <button class="btn ink" type="button" id="ulSignin"><span data-txt="audioctor-unlock.anon.signin">Sign in</span></button>
+        <a class="btn ghost" href="audioctor.html#pricing"><span data-txt="audioctor-unlock.anon.cta-prices">See the prices</span></a>
+      </div>
+    </div>
+
+    <div class="panel" id="ulNone" hidden>
+      <h2 data-txt="audioctor-unlock.none.title">No Audioctor plan on this account.</h2>
+      <p><span data-txt="audioctor-unlock.none.who">Signed in as</span> <b id="ulWho"></b>. <span data-txt="audioctor-unlock.none.other">Bought it with another email? Sign out from the account menu, top right, and sign in with that one.</span></p>
+      <p data-txt="audioctor-unlock.none.trial">Just trying it? The Free plan needs no key.</p>
+      <div class="cta">
+        <a class="btn ink" href="audioctor.html#pricing"><span data-txt="audioctor-unlock.none.cta-prices">See the prices</span></a>
+      </div>
+    </div>
+
+    <div class="panel" id="ulOwner" hidden>
+      <h2 data-txt="audioctor-unlock.owner.title">Get a key.</h2>
+      <div id="licForm">
+        <div class="field">
+          <label for="licName" data-txt="audioctor-unlock.owner.name">Name on the licence</label>
+          <input id="licName" type="text" maxlength="60" autocomplete="name" placeholder="Your name or your studio's">
+        </div>
+        <div class="field">
+          <label for="licMachine" data-txt="audioctor-unlock.owner.machine">Machine ID</label>
+          <input id="licMachine" type="text" maxlength="30" placeholder="AD…" spellcheck="false" autocomplete="off" autocapitalize="characters">
+        </div>
+        <div class="cta"><button class="btn ink" type="button" id="licSend"><span data-txt="audioctor-unlock.owner.request">Request my key</span></button></div>
+        <p class="lmsg" id="licMsg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="keybox" id="licKeyWrap" hidden>
+        <p><b data-txt="audioctor-unlock.key.title">Your key</b> for <code id="licKeyFor"></code>. <span data-txt="audioctor-unlock.key.text">Copy it, paste it into the licence panel and press Unlock.</span></p>
+        <textarea id="licKey" readonly rows="6" spellcheck="false" aria-label="Your licence key"></textarea>
+        <div class="cta"><button class="btn ink sm" type="button" id="licCopy">Copy key</button><button class="btn ghost sm" type="button" id="licAnother">Another Mac</button></div>
+      </div>
+      <div class="keybox" id="macsWrap" hidden>
+        <p><b data-txt="audioctor-unlock.macs.title">Your Macs</b></p>
+        <ul class="macs" id="macs"></ul>
+      </div>
+      <p class="ul-fine" data-txt="audioctor-unlock.owner.fine">A purchase covers the Macs you use yourself: keys for the first two are made automatically. For more, write to <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>.</p>
+    </div>
+
+    <p class="ul-fine" data-txt="audioctor-unlock.fine">The machine ID is on the licence line of Audioctor, on the Mac you want to unlock. <a href="../terms.html">Licence terms</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="Audioctor">
+      <a href="audioctor.html">Audioctor</a>
+      <a href="../terms.html">Licence terms</a>
+      <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+
+<script src="../js/money.js?v=3"></script>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=30"></script>
+<script src="../js/site-edit.js?v=23"></script>
+<script src="../js/audioctor-unlock.js?v=1"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>
