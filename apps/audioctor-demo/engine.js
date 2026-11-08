@@ -343,9 +343,9 @@
       },
       chooseFiles: () => cta('own-file'),
       export: () => cta('export'),
-      remove: () => emit('notice', 'These are the demo\'s own recordings. Your files go in the app: free up to a minute.'),
+      remove: () => emit('notice', 'These are the demo\'s own recordings. Your files go in the app: your first 3 clips free.'),
       setChecked: () => undefined,
-      licence: what => (what === 'state' ? { kind: 'free', exportsLeft: 3, machine: 'Demo', buyUrl: hooks.buyUrl || '/apps/audioctor.html#pricing' } : (cta('licence'), undefined)),
+      licence: what => (what === 'state' ? { kind: 'free', exportsLeft: 3, welcomeLeft: 3, machine: 'Demo', buyUrl: hooks.buyUrl || '/apps/audioctor.html#pricing' } : (cta('licence'), undefined)),
       openUrl: url => cta('url:' + url),
     };
     const backend = {
