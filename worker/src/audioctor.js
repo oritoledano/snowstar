@@ -827,7 +827,7 @@ export async function audioctorActivate(req, env, user) {
   const name = String(body.name || user.name || '').trim().slice(0, 60);
 
   if (!MACHINE_ID_RE.test(machine))
-    return json({ error: 'That does not look like a machine ID. Copy it from the plug-in: ⓘ → Copy my machine ID.' }, 400);
+    return json({ error: 'That does not look like a machine ID. Copy it from the licence line in Audioctor.' }, 400);
   if (!name)
     return json({ error: 'Tell us the name that should appear on the licence.' }, 400);
 
@@ -1099,7 +1099,7 @@ ${link}
 
 ${keyLine}
 
-Then: install the .pkg, open Audioctor (or its plug-in in your DAW) and drop a recording on the lab.
+Then: install the .pkg, open Audioctor and drop a recording on the lab.
 
 ${mailLinksText()}
 
@@ -1110,7 +1110,7 @@ ${mailLinksText()}
     steps: [
       'Download Audioctor and install the .pkg.',
       escHtml(keyLine),
-      'Open Audioctor (or its plug-in in your DAW) and drop a recording on the lab.',
+      'Open Audioctor and drop a recording on the lab.',
     ],
     button: { href: link, label: 'Download Audioctor' },
     footer: lines.map(escHtml).join('<br>') + '<br>The download link is private to you and good for 7 days; after that, download from <a href="' + ACCOUNT_URL + '">your account</a>.',
