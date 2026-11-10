@@ -645,7 +645,9 @@ function showLic(st, why) {
   const monthLine = sub.status === 'active' && sub.renewsAt ? 'renews ' + day(sub.renewsAt)
     : sub.status === 'past_due' ? 'payment due' : 'until ' + day(st.endsAt);
   const ended = st.kind === 'free' && st.endsAt > 0;            // a plan's key that ran out here
-  const leftLine = left + ' left today', paid = st.kind !== 'free';
+  const leftLine = left + ' left today', paid = st.kind !== 'free', wl = st.welcomeLeft || 0;
+  const freeRule = wl ? 'your first exports take clips up to 6 minutes (' + wl + ' left), then up to 30 seconds; 3 exports a day'
+    : 'clips up to 30 seconds, 3 exports a day';
   $('licText').innerHTML = st.kind === 'pro' ? '<b>Audioctor</b> · ' + (st.owner || 'licensed')
     : st.kind === 'monthly' ? '<b>Monthly</b> · ' + monthLine
     : st.kind === 'year' ? '<b>Yearly</b> · ' + monthLine
@@ -658,8 +660,8 @@ function showLic(st, why) {
           : sub.status === 'cancelled' ? 'Cancelled: Audioctor works to the end of the paid ' + period + '.'
           : st.renews ? (sub.renewsAt ? 'It renews on ' + day(sub.renewsAt) + ', and ' : '') + 'the next ' + period + '\'s key comes by itself while Audioctor is online.'
           : 'Paste the whole block from the email (the key and its Renewal line), and the next ' + period + '\'s key comes by itself.')
-    : ended ? 'Your plan ended on ' + day(st.endsAt) + ', so this copy is on Free: clips up to a minute, 3 exports a day. Longer clips still open, process and play.'
-    : 'Free: every tool, clips up to a minute, 3 exports a day. Longer clips open, process and play; exporting them needs a plan. Bought one? Paste the key from its email here.';
+    : ended ? 'Your plan ended on ' + day(st.endsAt) + ', so this copy is on Free: ' + freeRule + '. Longer clips still open, process and play.'
+    : 'Free: every tool; ' + freeRule + '. Longer clips open, process and play; exporting them needs a plan. Bought one? Paste the key from its email here.';
   $('licRemove').hidden = !paid;
   $('licManage').hidden = !(st.kind === 'monthly' || st.kind === 'year' || ended);
   if (why !== undefined) { $('licMsg').textContent = why || 'Unlocked. Thank you.'; $('licMsg').classList.toggle('ok', !why); }
@@ -677,7 +679,7 @@ call('licence', 'state').then(st => showLic(st));
 on('locked', st => {
   showLic(st);
   const n = st ? st.exportsLeft : 0;
-  openLic(st && st.wall === 'long' ? 'This clip runs past a minute, where Free stops. A plan exports any length.'
+  openLic(st && st.wall === 'long' ? 'This clip runs past ' + (st.limit >= 360 ? '6 minutes' : '30 seconds') + ', where Free stops. A plan exports any length.'
     : n ? 'Free has ' + n + (n === 1 ? ' export' : ' exports') + ' left today: tick fewer files, or get a plan with no daily limit.'
     : 'That\'s today\'s 3 free exports. They come back tomorrow, and a plan has no daily limit.');
 });
@@ -744,7 +746,7 @@ function demoCall(name, params) {
     return { freqs: fr, processed: p, unprocessed: u };
   }
   if (name === 'setParts') { parts = params[0]; }
-  if (name === 'licence') return { kind: 'free', exportsLeft: 3, machine: 'AD3F9A21C7E4B05D', buyUrl: '#' };
+  if (name === 'licence') return { kind: 'free', exportsLeft: 3, welcomeLeft: 3, machine: 'AD3F9A21C7E4B05D', buyUrl: '#' };
   return undefined;
 }
 fit();
