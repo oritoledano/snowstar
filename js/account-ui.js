@@ -76,6 +76,13 @@
       price: 'StreamDAW products from <b>$5</b> a month',
       news: 'Send me news about StreamDAW updates and new Snowstar apps',
     },
+    audioctor: {
+      top: ['Download Audioctor for Mac', 'Your first 3 clips free, up to 6 minutes each',
+            'Then 30-second clips, 3 a day, free', 'Your plan and your keys in one place'],
+      bot: ['Any length, no daily limit', 'On two Macs', 'Cancel any time'],
+      price: 'Plans from <b>$5</b> a month',
+      news: 'Send me news about Audioctor updates and new Snowstar apps',
+    },
   };
   const sell = SELL[M.product] || SELL.mutra;
   const li = (a) => a.map((x) => `<li>${x}</li>`).join('');
