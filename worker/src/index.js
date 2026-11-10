@@ -80,6 +80,8 @@ import { interpretBrief } from './agent.js';
 import { assistantAsk } from './assistant.js';
 import { listStacks, saveStack } from './stacks.js';
 import { sharePage } from './share.js';
+// Per-work share links, /w/<id>: one piece of Selected work, with its own card
+import { workSharePage } from './share-work.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim,
@@ -194,6 +196,8 @@ function originOk(req) {
 async function handle(req, env, ctx) {
   const url = new URL(req.url);
   if (url.pathname.startsWith('/t/')) return sharePage(req, env, url);
+  // One piece of Selected work, shareable on its own (share-work.js)
+  if (url.pathname.startsWith('/w/')) return workSharePage(req, env, url);
   // StreamDAW live links: on to the Mac's tunnel, or a page that waits for it (streamdaw.js).
   if (url.pathname.startsWith('/live/')) return streamdawLivePage(req, env, url);
   const path = url.pathname.replace(/^\/api/, '') || '/';

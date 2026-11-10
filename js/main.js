@@ -150,7 +150,23 @@ function loadWorks() {
     .then(d => buildWorkGrid(d.works))
     .catch(() => buildWorkGrid(typeof PROJECTS !== 'undefined' ? PROJECTS : []));
 }
-loadWorks();
+/* A shared link lands here as ?work=<id>. The Worker's /w/<id> page is the one
+   that previews properly and is what Share hands out; this is the other half,
+   so a link edited by hand, or an old one from the address bar, opens the same
+   film. Done once, after the first load: a later reload of the grid from the
+   editor must not reopen it on top of what the owner is doing. */
+let workDeepLinked = false;
+function openFromQuery() {
+  if (workDeepLinked) return;
+  workDeepLinked = true;
+  const id = Number(new URLSearchParams(location.search).get('work'));
+  if (!Number.isInteger(id) || id <= 0) return;
+  const p = WORKS.find(w => Number(w.id) === id);
+  if (p) openLightbox(p);
+  else history.replaceState(null, '', location.pathname + '#work');
+}
+
+loadWorks().then(openFromQuery);
 // the admin editor refreshes the grid after a save without a page reload
 window.SnowstarWorks = { reload: loadWorks, list: () => WORKS };
 
@@ -302,6 +318,50 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 const lb = document.getElementById('lightbox');
 const lbBody = document.getElementById('lightboxBody');
 const lbTitle = document.getElementById('lightboxTitle');
+/* Sharing one piece of work (2026-11-10). Everything in the grid is already
+   public, so this is a deep link rather than an access grant: /w/<id> is a page
+   of its own, served by the Worker (share-work.js), which previews as that film
+   instead of as the homepage. Only works that came from the API have an id —
+   the showreel and the data.js fallback do not, and the button hides for them
+   rather than offering a link that would not resolve. */
+const shareBtn = document.getElementById('lightboxShare');
+const shareText = document.getElementById('lightboxShareText');
+let shareTimer = null;
+
+function workShareUrl(p) {
+  return p && p.id ? `${location.origin}/w/${p.id}` : '';
+}
+
+function setShareState(label, done) {
+  if (!shareBtn) return;
+  shareText.textContent = label;
+  shareBtn.classList.toggle('done', !!done);
+  clearTimeout(shareTimer);
+  if (done) shareTimer = setTimeout(() => {
+    shareText.textContent = 'Share';
+    shareBtn.classList.remove('done');
+  }, 2200);
+}
+
+async function shareWork(p) {
+  const url = workShareUrl(p);
+  if (!url) return;
+  // On a phone this opens the real share sheet, which is where people actually
+  // send things from. Anywhere else, the link goes to the clipboard.
+  if (navigator.share) {
+    try { await navigator.share({ title: p.title, url }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    setShareState('Link copied', true);
+  } catch {
+    // Clipboard refused (an insecure origin, or the browser said no): show the
+    // link so it can still be copied by hand rather than failing silently.
+    window.prompt('Copy this link', url);
+  }
+}
+
 function openLightbox(p) {
   if (p.mp4) {
     lbBody.innerHTML = `<video src="${p.mp4}" controls autoplay playsinline poster="${p.thumb}"></video>`;
@@ -320,6 +380,15 @@ function openLightbox(p) {
   lbTitle.innerHTML = `<strong>${p.title}</strong>` +
     (creditBits ? `<span class="lb-credits">${creditBits}</span>` :
       (p.mp4 || p.vimeo ? '' : '<span class="lb-credits"><span>full film on request</span></span>'));
+  if (shareBtn) {
+    shareBtn.hidden = !workShareUrl(p);
+    setShareState('Share', false);
+    shareBtn.onclick = () => shareWork(p);
+  }
+  // The address follows what is open, so copying from the bar works too and a
+  // reload comes back to the same film. replaceState, not push: the back button
+  // should leave the grid, not step through everything that was opened.
+  if (p && p.id) history.replaceState(null, '', `?work=${p.id}`);
   lb.hidden = false;
   document.body.style.overflow = 'hidden';
 }
@@ -327,6 +396,8 @@ function closeLightbox() {
   lb.hidden = true;
   lbBody.innerHTML = '';
   document.body.style.overflow = '';
+  if (shareBtn) shareBtn.hidden = true;
+  if (location.search) history.replaceState(null, '', location.pathname + '#work');
 }
 document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
 lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });

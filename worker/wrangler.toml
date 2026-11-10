@@ -10,6 +10,9 @@ routes = [
   # Per-track share links. A scraper reads tags specific to the track here;
   # a person is redirected straight on to the catalogue with it open.
   { pattern = "snowstar.company/t/*", zone_name = "snowstar.company" },
+  # Per-work share links, /w/<id>: one piece of Selected work on a page of its own,
+  # so a film sent to a client previews as that film and opens on it.
+  { pattern = "snowstar.company/w/*", zone_name = "snowstar.company" },
   # StreamDAW live links: /live/<id>/s/<session> goes on to that Mac's tunnel, or waits for it.
   { pattern = "snowstar.company/live/*", zone_name = "snowstar.company" }
 ]

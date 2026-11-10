@@ -495,6 +495,21 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 }
 .lightbox-close:hover{opacity:1;transform:rotate(90deg)}
 
+/* Share one piece of work (2026-11-10). Left of the close cross and the same
+   distance down, so the two read as one row of controls over the film. */
+.lightbox-share{
+  position:absolute;top:26px;right:76px;display:inline-flex;align-items:center;gap:7px;
+  background:none;border:1px solid rgba(255,255,255,.3);border-radius:999px;
+  padding:7px 14px;color:var(--text);font:500 13px/1 inherit;cursor:pointer;
+  opacity:.75;transition:opacity .2s,border-color .2s;
+}
+.lightbox-share:hover{opacity:1;border-color:rgba(255,255,255,.6)}
+.lightbox-share.done{opacity:1;border-color:rgba(255,255,255,.75)}
+@media (max-width: 760px){
+  .lightbox-share{top:22px;right:64px;padding:6px 11px;font-size:12px}
+  .lightbox-share svg{width:13px;height:13px}
+}
+
 /* ————— responsive ————— */
 @media (max-width: 900px){
   .about-inner{grid-template-columns:1fr}
