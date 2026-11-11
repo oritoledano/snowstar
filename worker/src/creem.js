@@ -5,9 +5,11 @@
  * settings in D1, the one signed webhook (POST /api/creem/webhook) and which app an event belongs to.
  *
  * Secrets and vars:
- *   CREEM_API_KEY   (secret) the store's API key. A test-mode key until the store passes Creem's review; then the live
- *                   key replaces it and CREEM_ENV becomes 'live'.
+ *   CREEM_API_KEY   (secret) the store's test-mode key (creem_test_…), used while CREEM_ENV is not 'live'.
+ *   CREEM_LIVE_API_KEY (secret) the live key, used once CREEM_ENV is 'live': kept apart so going live is one var.
  *   CREEM_ENV       (var) 'live' takes real money at api.creem.io; anything else is test mode at test-api.creem.io.
+ *   POST /api/creem/setup {env:'live'|'test'} (the owner) makes the products and the webhook of either environment
+ *   ahead of time, so the live store is ready before CREEM_ENV changes.
  *   CREEM_WEBHOOK_SECRET (secret, optional) a webhook made by hand in Creem's dashboard; the one this Worker makes
  *                   itself keeps its secret in D1, and either signs.
  *
@@ -37,7 +39,8 @@ export const live = (env) => String(env.CREEM_ENV || '') === 'live';
 /** The environment's name on every row this file writes: 'creem-live' or 'creem-test'. */
 export const tag = (env) => (live(env) ? 'creem-live' : 'creem-test');
 const API = (env) => (live(env) ? 'https://api.creem.io' : 'https://test-api.creem.io');
-export const hasKey = (env) => !!env.CREEM_API_KEY;
+const keyOf = (env) => String((live(env) ? env.CREEM_LIVE_API_KEY : env.CREEM_API_KEY) || '');
+export const hasKey = (env) => !!keyOf(env);
 /** ISO date or milliseconds → seconds. */
 export const secs = (v) => {
   if (v == null || v === '') return null;
@@ -51,7 +54,7 @@ export const idOf = (v) => (v && typeof v === 'object' ? v.id || null : v || nul
 export async function api(env, method, path, body) {
   const res = await fetch(API(env) + path, {
     method,
-    headers: { 'x-api-key': env.CREEM_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
+    headers: { 'x-api-key': keyOf(env), 'content-type': 'application/json', accept: 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
     signal: AbortSignal.timeout(20000),
   });
@@ -134,6 +137,22 @@ const APPS = {
   audioctor: () => import('./audioctor-creem.js'),
   streamdaw: () => import('./creem-streamdaw.js'),
 };
+
+/** POST /creem/setup {env} — the owner: both apps' products and the webhook in that environment, made now (again is
+ *  harmless). Lets the live store be ready while the site still sells in test mode. Answers ids, never a secret. */
+export async function creemSetup(req, env, user) {
+  if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
+  const b = await req.json().catch(() => ({}));
+  const e = { ...env, CREEM_ENV: b.env === 'live' ? 'live' : 'test' };
+  if (!hasKey(e)) return json({ error: 'no_api_key', env: tag(e), reason: live(e) ? 'Set CREEM_LIVE_API_KEY first.' : 'Set CREEM_API_KEY first.' }, 400);
+  const out = {};
+  for (const [a, load] of Object.entries(APPS)) {
+    const m = await load();
+    try { out[a] = await m.setup(e); } catch (x) { out[a] = { error: String(x && x.message || x).slice(0, 200) }; }
+  }
+  const c = await conf(e);
+  return json({ ok: true, env: tag(e), ...out, products: Object.keys(c).filter((k) => k.startsWith('product:')).length, webhook: !!c.webhook_secret });
+}
 
 /** POST /creem/webhook — Creem's server, signed: no cookie, no Origin. */
 export async function creemWebhook(req, env) {

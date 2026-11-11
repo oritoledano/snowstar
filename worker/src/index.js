@@ -69,7 +69,7 @@ import { audioctorPrices, audioctorSubCancel, audioctorSubResume, audioctorSubCa
 import { audioctorPaddleWebhook, paddleSetup as audioctorPaddleSetup, paddlePortal as audioctorPaddlePortal,
          paddleRenewalNotices as audioctorRenewalNotices } from './audioctor-paddle.js';
 // Creem, the merchant of record since 2026-11-11 (creem.js; Audioctor's side in audioctor-creem.js).
-import { creemWebhook } from './creem.js';
+import { creemWebhook, creemSetup } from './creem.js';
 import { on as audioctorCreemOn, portal as audioctorCreemPortal, renewalNotices as audioctorCreemRenewalNotices } from './audioctor-creem.js';
 import { routed as streamdawCreemOn, checkout as streamdawCreemCheckout, prices as streamdawCreemPrices, portal as streamdawCreemPortal } from './creem-streamdaw.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
@@ -560,6 +560,7 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/paddle/portal' && method === 'POST') return audioctorPaddlePortal(req, env);
   // Creem's server, signed (creem-signature, HMAC of the body with the webhook secret): no cookie, no Origin.
   if (path === '/creem/webhook' && method === 'POST') return creemWebhook(req, env);
+  if (path === '/creem/setup' && method === 'POST') return creemSetup(req, env, await currentUser(req, env));
   if (path === '/audioctor/portal' && method === 'POST') return audioctorCreemOn(env) ? audioctorCreemPortal(req, env) : audioctorPaddlePortal(req, env);
 
   // ── licensing: request in, owner grants, member downloads the master ──
