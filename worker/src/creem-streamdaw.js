@@ -269,6 +269,8 @@ async function subChanged(env, type, s) {
   const status = String(s.status || '');
   let mapped = status, cancelAt = null;
   if (type === 'subscription.scheduled_cancel' || status === 'scheduled_cancel') { mapped = 'active'; cancelAt = C.secs(s.current_period_end_date) || now(); }
+  // Cancelled in Creem's portal: status 'canceled' at once, but the year or month paid for runs to its end.
+  else if (status === 'canceled' && C.secs(s.current_period_end_date) > now() + 60) { mapped = 'active'; cancelAt = C.secs(s.current_period_end_date); }
   else if (status === 'canceled') cancelAt = C.secs(s.canceled_at) || now();
   else if (status === 'unpaid' || status === 'expired') mapped = 'past_due';
   if (!['active', 'trialing', 'past_due', 'paused', 'canceled'].includes(mapped)) mapped = 'active';
