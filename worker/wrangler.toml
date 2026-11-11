@@ -71,7 +71,11 @@ PADDLE_ENV = "sandbox"
 # Audioctor through Paddle, the merchant of record (src/audioctor-paddle.js, subscriptions since 2026-10-30).
 # The same secrets as StreamDAW; the product, prices and webhook come from "Set up Paddle" in the dashboard and live
 # in D1 (audioctor_paddle_conf). Until then checkout says it opens soon. PADDLE_ENV above is shared.
-AUDIOCTOR_BILLING = "paddle"
+AUDIOCTOR_BILLING = "creem"
+# Creem, the merchant of record since 2026-11-11 (src/creem.js): Paddle declined the account. On once the secret
+# CREEM_API_KEY is set (a test-mode key first). CREEM_ENV "live" takes real money (with the live key); anything else is
+# Creem's test mode. The products and the webhook are made by the Worker itself the first time they are needed.
+CREEM_ENV = "test"
 # daily digest at 07:00 UTC
 [triggers]
 crons = ["0 7 * * *"]

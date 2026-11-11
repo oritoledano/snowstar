@@ -1,4 +1,8 @@
-/* ═══════════ Audioctor's plans, through Paddle (2026-10-30) ══════════════════
+/* ═══════════ Audioctor's plans, through Creem (2026-11-11; Paddle until then) ═══
+   Creem (since Paddle declined the account): the Worker makes a Creem checkout (worker/src/audioctor-creem.js) and the
+   page goes to Creem's checkout page, which comes back here with ?paid=1. Until /api/audioctor/prices says open and
+   live, the buttons stay on the waitlist; ?creem=test lets the owner try Creem's test mode. What follows about Paddle
+   is the same flow before 2026-11-11, kept while the Worker can still be switched back.
    The two buy buttons on apps/audioctor.html ([data-plan]: year, monthly). Paddle is the merchant of record: the Worker
    makes a Paddle transaction for the plan (POST /api/audioctor/checkout, worker/src/audioctor-paddle.js) and Paddle.js
    opens it. Nothing is granted on the page's word: the key comes once Paddle tells the Worker the payment went through.
@@ -28,8 +32,13 @@
 
   let sells = false, cfg = null, code = null;
   fetch('/api/audioctor/prices', { credentials: 'omit' }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-    cfg = d && d.paddle;
-    sells = !!(d && d.open && cfg && (cfg.environment === 'production' || q.get('paddle') === 'test'));
+    if (d && d.billing === 'creem') {
+      const cr = d.creem || {};
+      sells = !!(d.open && (cr.environment === 'live' || q.get('creem') === 'test'));
+    } else {
+      cfg = d && d.paddle;
+      sells = !!(d && d.open && cfg && (cfg.environment === 'production' || q.get('paddle') === 'test'));
+    }
     if (sells && q.get('c')) checkCode(q.get('c'));
   }).catch(() => {});
 
@@ -68,7 +77,7 @@
     });
     return paddleLoad;
   }
-  const thanks = () => '<b>Audioctor is yours. Thank you.</b> Paddle emails your receipt. ' + (forMac()
+  const thanks = () => '<b>Audioctor is yours. Thank you.</b> Your receipt comes by email. ' + (forMac()
     ? 'Your key for this Mac comes by email in a minute: paste it in the licence line at the bottom left of Audioctor’s window.'
     : '<a href="audioctor-unlock.html">Get your key for a Mac</a>.');
   function onPaddle(ev) {
@@ -91,6 +100,7 @@
       if (r.status === 401) { signUp(() => buy(plan, button)); return; }
       if (d.free) { say(thanks(), true); return; }
       if (d.error === 'owns_it' || d.error === 'already_subscribed') { say(`${esc(d.reason)} <a href="/account.html#apps">Your account</a>.`, false); return; }
+      if (r.ok && d.creem && /^https:\/\//.test(d.creem.checkoutUrl || '')) { track('checkout_open', { plan }); location.href = d.creem.checkoutUrl; return; }
       if (!r.ok || !d.paddle) { say(esc(d.reason || 'Checkout could not open. Nothing was charged. Please try again.'), false); return; }
       const P = await paddleJs();
       P.Checkout.open({ transactionId: d.paddle.transactionId, settings: { displayMode: 'overlay', theme: 'dark' } });
@@ -98,6 +108,13 @@
     } catch (e) {
       say('Checkout could not open. Nothing was charged. Please try again.', false);
     } finally { delete button.dataset.busy; }
+  }
+
+  // Back from Creem's checkout page (its success URL): the key comes once Creem tells the Worker, by email in a minute.
+  if (q.get('paid') === '1') {
+    say(thanks(), true);
+    track('checkout_done', {});
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
   }
 
   // Before the waitlist's own listener: a plan that sells goes to checkout, anything else stays with it.

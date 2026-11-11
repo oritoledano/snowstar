@@ -68,6 +68,9 @@ import { audioctorPrices, audioctorSubCancel, audioctorSubResume, audioctorSubCa
 // Audioctor through Paddle, the merchant of record (subscriptions since 2026-10-30, audioctor-paddle.js).
 import { audioctorPaddleWebhook, paddleSetup as audioctorPaddleSetup, paddlePortal as audioctorPaddlePortal,
          paddleRenewalNotices as audioctorRenewalNotices } from './audioctor-paddle.js';
+// Creem, the merchant of record since 2026-11-11 (creem.js; Audioctor's side in audioctor-creem.js).
+import { creemWebhook } from './creem.js';
+import { on as audioctorCreemOn, portal as audioctorCreemPortal, renewalNotices as audioctorCreemRenewalNotices } from './audioctor-creem.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
          streamdawUpdatesCleanup } from './streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -224,7 +227,7 @@ async function handle(req, env, ctx) {
   // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
   // /streamdaw/turn: the same relays, the same bearer secret; it only hands that Mac TURN credentials.
   // /streamdaw/macs/status: the same relays; it answers only whether that machine ID is connected to an account.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/streamdaw/paddle/webhook', '/n/u']);
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/streamdaw/paddle/webhook', '/creem/webhook', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -553,6 +556,9 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/paddle/webhook' && method === 'POST') return audioctorPaddleWebhook(req, env);
   if (path === '/audioctor/paddle/setup' && method === 'POST') return audioctorPaddleSetup(req, env, await currentUser(req, env));
   if (path === '/audioctor/paddle/portal' && method === 'POST') return audioctorPaddlePortal(req, env);
+  // Creem's server, signed (creem-signature, HMAC of the body with the webhook secret): no cookie, no Origin.
+  if (path === '/creem/webhook' && method === 'POST') return creemWebhook(req, env);
+  if (path === '/audioctor/portal' && method === 'POST') return audioctorCreemOn(env) ? audioctorCreemPortal(req, env) : audioctorPaddlePortal(req, env);
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
@@ -867,6 +873,7 @@ export default {
     ctx.waitUntil(audioctorRenewals(env).catch(() => {}));
     ctx.waitUntil(audioctorMintWaiting(env).catch(() => {}));
     ctx.waitUntil(audioctorRenewalNotices(env).catch(() => {}));
+    ctx.waitUntil(audioctorCreemRenewalNotices(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));
   },

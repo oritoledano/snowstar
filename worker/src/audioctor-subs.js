@@ -69,6 +69,10 @@ export async function monthlyPrice(env) {
  *  dollars through Paddle.js (audioctor-paddle.js); the shekels are for showing them at today's rate. */
 export async function audioctorPrices(env) {
   const [y, m] = await Promise.all([SD.shekelsFor(env, SD.PLANS.year.usdCents), monthlyPrice(env)]);
+  const Cr = await import('./audioctor-creem.js');            // Creem since 2026-11-11 (Paddle declined the account)
+  if (Cr.on(env)) return json({ billing: 'creem', open: await Cr.ready(env), creem: Cr.client(env),
+                                 year: { amount: y.amount, usdCents: y.usdCents, rate: y.rate },
+                                 monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate } });
   const P = await import('./audioctor-paddle.js');
   const paddle = P.paddleOn(env) ? P.paddleClient(env) : null;
   return json({ billing: paddle ? 'paddle' : 'hyp', open: await P.ready(env), ...(paddle ? { paddle } : {}),
