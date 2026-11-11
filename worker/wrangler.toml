@@ -75,7 +75,7 @@ AUDIOCTOR_BILLING = "creem"
 # Creem, the merchant of record since 2026-11-11 (src/creem.js): Paddle declined the account. On once the secret
 # CREEM_API_KEY (test key) is set; CREEM_ENV "live" takes real money with the secret CREEM_LIVE_API_KEY; anything else is
 # Creem's test mode. The products and the webhook are made by the Worker itself the first time they are needed.
-CREEM_ENV = "test"
+CREEM_ENV = "live"
 # daily digest at 07:00 UTC
 [triggers]
 crons = ["0 7 * * *"]
