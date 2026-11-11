@@ -1036,8 +1036,8 @@ async function issueKey(env, row, key, onlyPending) {
   const lines = keyLines(hex);
   const serial = checked.serial;
   const ent = await env.DB.prepare('SELECT plan, source FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
-  // A Paddle subscription renews like Pro Monthly: the same Renewal line, each later key fetched by the app.
-  const monthly = !!ent && (isMonthly(ent.plan) || ent.source === 'paddle');
+  // A Paddle or Creem subscription renews like Pro Monthly: the same Renewal line, each later key fetched by the app.
+  const monthly = !!ent && (isMonthly(ent.plan) || ent.source === 'paddle' || ent.source === 'creem');
   // Pro Monthly: the renewal code goes out with the first key and stays the same after (the app
   // keeps it, and fetches every later key with it).
   const code = monthly ? (row.renew_code || (await subsMod()).newRenewCode()) : null;

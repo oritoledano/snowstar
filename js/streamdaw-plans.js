@@ -68,7 +68,8 @@
   const pricesAsked = fetch('/api/streamdaw/prices', { credentials: 'omit' }).then((r) => (r.ok ? r.json() : null)).then((d) => {
     const p = d && d.paddle;
     if (p && p.plans) plans = p.plans;
-    open = !!(p && p.open);
+    // Creem (2026-11-11): sells for real only in live mode; ?creem=test lets the owner try Creem's test mode.
+    open = d && d.creem ? !!(d.creem.open && (d.creem.environment === 'live' || q.get('creem') === 'test')) : !!(p && p.open);
     paddleCfg = p && p.paddle;
     paint();
   }).catch(() => {});
@@ -198,6 +199,7 @@
           + (d.download ? ' <a href="' + esc(d.download) + '">Download StreamDAW</a>' : ''), true);
         code = null; toPlans(); return;
       }
+      if (d && d.creem && /^https:\/\//.test(d.creem.checkoutUrl || '')) { location.href = d.creem.checkoutUrl; return; }
       if (!d || !d.paddle || !d.paddle.transactionId) {
         say(esc((d && d.reason) || 'Checkout did not open. Nothing was charged. Please try again.'), false); toPlans(); return;
       }
@@ -246,7 +248,14 @@
     inp.focus();
   });
 
-  // ── the buyer's subscriptions: a line above the plans, and Paddle's own page to manage them ──
+  // Back from Creem's checkout page (its success URL): the key comes once Creem tells the Worker.
+  if (q.get('paid') === '1') {
+    say('<b>StreamDAW is yours. Thank you.</b> Your receipt comes by email. '
+      + (forMac() ? 'The key for this computer arrives by email within a minute: paste everything in its box into StreamDAW › Settings › Licence.'
+                  : 'Next, get the key for your computer on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.'), true);
+    try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
+  }
+  // ── the buyer's subscriptions: a line above the plans, and the merchant's own page to manage them ──
   async function mine() {
     await ready();
     if (!signedIn()) return;
@@ -269,7 +278,7 @@
   async function manage(e) {
     e.preventDefault();
     try {
-      const d = await (await fetch('/api/streamdaw/paddle/portal', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: '{}' })).json();
+      const d = await (await fetch('/api/streamdaw/portal', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: '{}' })).json();
       if (d && d.url) { location.href = d.url; return; }
       say(esc((d && d.reason) || 'Could not open your subscriptions. Please try again.'), false);
     } catch (err) { say('Could not open your subscriptions. Please try again.', false); }

@@ -71,6 +71,7 @@ import { audioctorPaddleWebhook, paddleSetup as audioctorPaddleSetup, paddlePort
 // Creem, the merchant of record since 2026-11-11 (creem.js; Audioctor's side in audioctor-creem.js).
 import { creemWebhook } from './creem.js';
 import { on as audioctorCreemOn, portal as audioctorCreemPortal, renewalNotices as audioctorCreemRenewalNotices } from './audioctor-creem.js';
+import { routed as streamdawCreemOn, checkout as streamdawCreemCheckout, prices as streamdawCreemPrices, portal as streamdawCreemPortal } from './creem-streamdaw.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
          streamdawUpdatesCleanup } from './streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -465,19 +466,20 @@ async function handle(req, env, ctx) {
   if (path === '/snowstash/coupon' && method === 'POST') return stashCouponCreate(req, env, await currentUser(req, env));
   if (path === '/snowstash/checkout' && method === 'POST') return stashCheckout(req, env, await currentUser(req, env));
 
-  if (path === '/streamdaw/checkout' && method === 'POST') return streamdawCheckout(req, env);
+  // StreamDAW through Creem since 2026-11-11 (creem-streamdaw.js): checkout, prices and portal go there when it is on.
+  if (path === '/streamdaw/checkout' && method === 'POST') return streamdawCreemOn(env) ? streamdawCreemCheckout(req, env) : streamdawCheckout(req, env);
   if (path === '/streamdaw/download' && method === 'GET') return streamdawDownload(req, env);
   // The free version: the same installer, for anyone (Pro is a key for one Mac).
   if (path === '/streamdaw/download/free' && (method === 'GET' || method === 'HEAD')) return streamdawDownloadFree(req, env);
   if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
-  if (path === '/streamdaw/coupon/check' && method === 'POST') return paddleOn(env) ? paddleCouponCheck(req, env) : streamdawCouponCheck(req, env);
+  if (path === '/streamdaw/coupon/check' && method === 'POST') return paddleOn(env) || streamdawCreemOn(env) ? paddleCouponCheck(req, env) : streamdawCouponCheck(req, env);
   // StreamDAW through Paddle (2026-10-29, streamdaw-paddle.js): the owner's setup, the buyer's portal.
   if (path === '/streamdaw/paddle/setup' && method === 'POST') return paddleSetup(req, env, await currentUser(req, env));
-  if (path === '/streamdaw/paddle/portal' && method === 'POST') return paddlePortal(req, env);
+  if ((path === '/streamdaw/paddle/portal' || path === '/streamdaw/portal') && method === 'POST') return streamdawCreemOn(env) ? streamdawCreemPortal(req, env) : paddlePortal(req, env);
   // Pro Monthly (streamdaw-subs.js): the prices the page shows, cancelling (signed in, or by a
   // link sent to the email), resuming, the owner's settling, and the app asking for its renewed key
   // (no cookie and no Origin: its machine id and the renewal code it was given with the first key).
-  if (path === '/streamdaw/prices' && method === 'GET') return streamdawPrices(env);
+  if (path === '/streamdaw/prices' && method === 'GET') return streamdawCreemOn(env) ? streamdawCreemPrices(env, await streamdawPrices(env)) : streamdawPrices(env);
   if (path === '/streamdaw/subscription/cancel' && method === 'POST') return streamdawSubCancel(req, env, await currentUser(req, env));
   if (path === '/streamdaw/subscription/resume' && method === 'POST') return streamdawSubResume(req, env, await currentUser(req, env));
   if (path === '/streamdaw/subscription/cancel-link' && method === 'POST') return streamdawSubCancelLink(req, env);
