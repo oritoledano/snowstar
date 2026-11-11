@@ -59,6 +59,7 @@ const EMAIL_TABLES = [
      machine ID, the key), a bug report's reply address, the copy of every email we sent,
      and the archive the old rule 1 kept. */
   ['streamdaw_activations', 'email'], ['streamdaw_reports', 'email'],
+  ['audioctor_activations', 'email'],         // Audioctor's key requests: email, machine ID, name (privacy policy 2026-11-11)
   ['user_messages', 'email'], ['people_archive', 'email'],
 ];
 /** Money and agreements: kept when the person goes (rule 2). Orders and payments are
@@ -75,6 +76,7 @@ const ID_TABLES = [
   ['snowstash_scans', 'user_id'], ['snowstash_registrations', 'user_id'],
   ['snowstash_unlocks', 'user_id'],
   ['streamdaw_free_downloads', 'user_id'],   // who took the free installer (2026-10-13)
+  ['audioctor_free_downloads', 'user_id'],   // the same for Audioctor (2026-11-11)
   ['streamdaw_macs', 'user_id'],             // the Macs they connected (2026-10-15; erasePerson reads them first)
   ['user_messages', 'user_id'],              // copies of what we emailed them (2026-10-14)
   ['sessions_seen', 'user_id'],              // signed-in visits, where the column exists
@@ -379,6 +381,8 @@ export async function erasePerson(env, { email, uid } = {}) {
                               entitlement_id = NULL, erased_at = ? WHERE lower(email) = ? OR user_id = ?`, t, E, U)))
     await softRun(env, `UPDATE streamdaw_orders SET email = '', user_id = NULL, entitlement_id = NULL WHERE lower(email) = ? OR user_id = ?`, E, U);
   if (sd.length && sd[0].n) done.push(`${sd[0].n} StreamDAW orders kept for tax, without the person`);
+  // Audioctor's orders: kept for tax, without the person or the Mac (privacy policy 2026-11-11).
+  await softRun(env, `UPDATE audioctor_orders SET email = '', user_id = NULL, machine_id = NULL, owner_name = NULL WHERE lower(email) = ? OR user_id = ?`, E, U);
   if (!(await softRun(env, `UPDATE snowstash_orders SET email = '', user_id = NULL, scan_id = NULL, erased_at = ? WHERE lower(email) = ? OR user_id = ?`, t, E, U)))
     await softRun(env, `UPDATE snowstash_orders SET email = '', user_id = NULL, scan_id = NULL WHERE lower(email) = ? OR user_id = ?`, E, U);
   await softRun(env, 'UPDATE payments SET email = NULL, user_id = NULL, payer_note = NULL WHERE lower(email) = ? OR user_id = ?', E, U);

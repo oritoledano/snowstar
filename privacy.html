@@ -40,11 +40,11 @@
 <div class="wrap">
   <h1>Privacy</h1>
   <p class="lede">Snowstar.Company — Tel Aviv</p>
-  <p class="upd">Last updated 15 October 2026</p>
+  <p class="upd">Last updated 11 November 2026</p>
 
   <p>This page explains what Snowstar.Company collects when you use
-  <a href="https://snowstar.company">snowstar.company</a>, the Mutra music catalog and
-  <a href="#streamdaw">StreamDAW</a>, why, and how to get rid of it. We have deliberately kept the
+  <a href="https://snowstar.company">snowstar.company</a>, the Mutra music catalog,
+  <a href="#streamdaw">StreamDAW</a> and <a href="#audioctor">Audioctor</a>, why, and how to get rid of it. We have deliberately kept the
   collection small.</p>
 
   <h2>Visiting the site</h2>
@@ -72,8 +72,8 @@
   <p>We do not sell, rent or trade personal data. The third parties involved are the services that
   run the site: Cloudflare (hosting, database, storage, delivery and receiving our email), GitHub
   Pages (the pages themselves), Resend (sending our emails, such as receipts and password resets)
-  and, if you buy something, HYP (card payments and tax invoices for music licences) or Paddle (StreamDAW
-  subscriptions, as the seller of record). They process data on our
+  and, if you buy something, HYP (card payments and tax invoices for music licences) or Paddle (StreamDAW and
+  Audioctor subscriptions, as the seller of record). They process data on our
   behalf, not for their own purposes. Our pages load their typefaces from Google Fonts, so your
   browser asks Google for them and Google sees your IP address and browser. Google or Facebook
   are involved only if you choose to sign in with them. Our own notifications (a new order, a new
@@ -287,11 +287,46 @@
 
   <p class="upd">StreamDAW section added 14 October 2026</p>
 
+  <h2 id="audioctor">Audioctor</h2>
+  <p>Audioctor is our Mac app that separates and cleans recordings. This part covers what it sends us and what stays on
+  your Mac.</p>
+
+  <div class="card">
+    <p style="margin-bottom:0"><strong>The short version.</strong> Your recordings never reach us. Audioctor separates and
+    cleans them on your Mac, and works offline. What reaches us is what the shop needs: your account, your order, and the
+    Mac your key is for. There is no usage tracking inside the app.</p>
+  </div>
+
+  <h3>What reaches us</h3>
+  <ul>
+    <li><b>The free download.</b> It needs a Snowstar account, so we know which account downloaded which version, and
+    when.</li>
+    <li><b>The first launch.</b> Audioctor downloads its sound models (about 2.3 GB) from snowstar.company. Nothing is sent
+    with the request; like any download, Cloudflare sees your IP address.</li>
+    <li><b>A purchase.</b> Your email address, the plan, your order, and, if you bought from inside the app, your Mac's
+    machine ID (a code Audioctor makes from the Mac, starting with AD), so the key works on that Mac. Card details go to
+    Paddle and never reach us.</li>
+    <li><b>Renewals.</b> With a paid plan, once a day while your Mac is online, Audioctor asks snowstar.company for the next
+    key. It sends the machine ID, the renewal code from your key email, the end date of the key it already has, and the
+    app's version. That is how a renewal, a cancellation or a refund reaches the app.</li>
+  </ul>
+
+  <h3>What stays on your Mac</h3>
+  <p>Your recordings, everything you export, your settings, and the Free plan's counts (how many clips you exported today
+  and in all). We cannot see any of it.</p>
+
+  <h3>How long we keep it</h3>
+  <p>Keys, machine IDs and download records stay while your account exists and are deleted with it. Orders and payment
+  records are kept as the law requires (see <a href="#data-deletion">deleting your data</a>). The rest of this page, about
+  accounts, sharing and your rights, applies to Audioctor too.</p>
+
+  <p class="upd">Audioctor section added 11 November 2026</p>
+
   <h2 id="data-deletion">Deleting your data</h2>
   <div class="card">
     <p><strong>Email <a href="mailto:hello@snowstar.company?subject=Delete%20my%20data" target="_blank" rel="noopener">hello@snowstar.company</a></strong>
     and we will delete your account and everything attached to it — email address, name, favorites,
-    sign-ins, StreamDAW key requests and keys, problem reports and the copies of the emails we sent
+    sign-ins, StreamDAW and Audioctor key requests, keys and machine IDs, problem reports and the copies of the emails we sent
     you — within 30 days, usually the same day. What the law makes us keep stays: orders and payment
     records, stripped of your name and email, for 7 years after the end of the tax year, and music
     licences we granted, which are agreements with other people.</p>
