@@ -60,7 +60,7 @@ import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStr
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { streamdawMacLink, streamdawMacStatus } from './streamdaw-macs.js';
 // Audioctor (2026-10-21): its own modules and tables, StreamDAW's money path untouched (audioctor*.js).
-import { audioctorCheckout, audioctorDownload, audioctorDownloadFree, audioctorModel, myAudioctor, audioctorCouponCheck, audioctorCouponCreate,
+import { audioctorCheckout, audioctorDownload, audioctorDownloadFree, audioctorLatest, audioctorModel, myAudioctor, audioctorCouponCheck, audioctorCouponCreate,
          audioctorAdmin, audioctorReconcile, audioctorActivate, audioctorActivationStatus,
          audioctorActivationIssue, audioctorDeactivate, mintWaiting as audioctorMintWaiting } from './audioctor.js';
 import { audioctorPrices, audioctorSubCancel, audioctorSubResume, audioctorSubCancelLink, audioctorSubByToken,
@@ -538,6 +538,7 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/download' && method === 'GET') return audioctorDownload(req, env);
   // The Free plan: the same installer, for anyone signed in (a plan's key lifts its limits).
   if (path === '/audioctor/download/free' && (method === 'GET' || method === 'HEAD')) return audioctorDownloadFree(req, env);
+  if (path === '/audioctor/latest' && method === 'GET') return audioctorLatest(req, env);
   // The models the app fetches on its first run (public, immutable, Range): audioctor/models/<set>/<path>.p<i> in APPS.
   if (path.startsWith('/audioctor/models/') && (method === 'GET' || method === 'HEAD')) return audioctorModel(req, env, path.slice('/audioctor/models/'.length));
   if (path === '/audioctor/mine' && method === 'GET') return myAudioctor(env, await currentUser(req, env));

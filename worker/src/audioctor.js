@@ -530,6 +530,16 @@ export async function audioctorDownload(req, env) {
  *  Each download is filed with who took it (audioctor_free_downloads,
  *  schema-audioctor.sql); req_log still counts route + 200 for the funnel. */
 const FREE_SIGNUP_URL = `${PAGE}?get=free`;
+/** Public (2026-11-12): the latest Audioctor on the site, for the app's Update button. The app (0.1.6+, site copy only)
+ *  asks once a day and shows the button when this is newer than itself; the url opens in the browser. No user data. */
+export async function audioctorLatest(req, env) {
+  const rel = await env.DB.prepare(
+    'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
+  ).bind(ASSET).first();
+  if (!rel || !rel.version) return json({ error: 'no_release' }, 404);
+  return json({ version: rel.version, url: `${SITE}/api/audioctor/download/free` }, 200, { 'cache-control': 'public, max-age=600' });
+}
+
 export async function audioctorDownloadFree(req, env) {
   const user = await currentUser(req, env).catch(() => null);
   if (!user) {
