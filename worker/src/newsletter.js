@@ -59,6 +59,13 @@ function audienceSql(a = {}) {
                          WHERE l.revoked_at IS NULL AND lower(l.email) = lower(u.email))`);
   }
   if (a.hasUploaded) where.push('EXISTS (SELECT 1 FROM submissions s WHERE s.user_id = u.id)');
+  /* Everybody who has a product: downloaded it, or holds a plan. A notice about what they already
+     have (a new version) goes to them with optedInOnly false; the suppressions below still hold. */
+  if (a.product === 'audioctor') {
+    where.push(`(EXISTS (SELECT 1 FROM audioctor_free_downloads d WHERE d.user_id = u.id)
+              OR EXISTS (SELECT 1 FROM entitlements e WHERE e.product = 'audioctor' AND e.status = 'active'
+                          AND (e.user_id = u.id OR lower(e.email) = lower(u.email))))`);
+  }
 
   /* Never anybody who has opted out, whatever the filter says. */
   where.push('NOT EXISTS (SELECT 1 FROM suppressions x WHERE lower(x.email) = lower(u.email))');
@@ -75,6 +82,7 @@ export async function audienceCount(env, user, url) {
     hasLicensed: url.searchParams.get('licensed') === '1',
     hasUploaded: url.searchParams.get('uploaded') === '1',
     optedInOnly: url.searchParams.get('all') !== '1',
+    product: url.searchParams.get('product') || null,
   };
   const { sql, binds } = audienceSql(a);
   let rows = [];
@@ -95,7 +103,14 @@ export async function audienceCount(env, user, url) {
    register. Both are tables with inline styles because email clients are not
    browsers, and neither loads an image — a newsletter that is one blocked
    picture is a blank message. */
+/* Whose letter it is: the label over the subject and why it came (2026-11-12: a product's update notice). */
+const BRANDS = {
+  audioctor: { label: 'Audioctor · Snowstar.Company', why: 'You are getting this because you downloaded or bought Audioctor.' },
+};
 function render(c, { name, unsubUrl }) {
+  let aud = {};
+  try { aud = typeof c.audience === 'string' ? JSON.parse(c.audience || '{}') : (c.audience || {}); } catch { aud = {}; }
+  const brand = BRANDS[aud.product] || { label: 'Mutra · Snowstar.Company', why: 'You are getting this because you made an account on snowstar.company.' };
   const paras = String(c.body || '').split(/\n\s*\n/).filter(Boolean);
   const hi = name ? `Hi ${esc(name.split(' ')[0])},` : 'Hi,';
   const cream = c.template === 'cream';
@@ -114,7 +129,7 @@ function render(c, { name, unsubUrl }) {
              style="max-width:560px;background:${card};border:1px solid ${line};border-radius:16px;">
         <tr><td style="padding:34px 32px;font-family:${font};color:${ink};">
           <div style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:${dim};margin-bottom:20px;">
-            Mutra · Snowstar.Company</div>
+            ${esc(brand.label)}</div>
           <h1 style="margin:0 0 18px;font-size:22px;line-height:1.3;">${esc(c.subject)}</h1>
           <p style="margin:0 0 14px;font-size:15px;line-height:1.65;">${hi}</p>
           ${paras.map((p) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.65;">${
@@ -122,7 +137,7 @@ function render(c, { name, unsubUrl }) {
           <hr style="border:0;border-top:1px solid ${line};margin:26px 0 16px;">
           <p style="margin:0;font-size:12px;line-height:1.6;color:${dim};">
             Snowstar.Company, Tel Aviv, Israel.<br>
-            You are getting this because you made an account on snowstar.company.
+            ${esc(brand.why)}
             <a href="${unsubUrl}" style="color:${dim};">Unsubscribe</a> — one click, no questions.
           </p>
         </td></tr>
@@ -131,7 +146,7 @@ function render(c, { name, unsubUrl }) {
   </table></body></html>`;
 
   const text = `${hi}\n\n${paras.join('\n\n')}\n\n—\nSnowstar.Company, Tel Aviv, Israel.\n`
-    + `You are getting this because you made an account on snowstar.company.\n`
+    + `${brand.why}\n`
     + `Unsubscribe: ${unsubUrl}\n`;
   return { html, text };
 }
