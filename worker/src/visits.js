@@ -49,10 +49,21 @@ export async function listVisits(req, env, user) {
   const limit = Math.min(200, Math.max(5, parseInt(url.searchParams.get('limit') || '60', 10)));
   const since = now() - days * 86400;
 
+  /* The owner's own visits are not traffic. analytics.js stops recording them
+     from 13 November, but 4,647 of the 7,423 events already in the table were
+     his - nearly two thirds - so a reader that only stopped at the write would
+     still show mostly him for as long as the window reaches back. Excluded
+     here rather than deleted: the rows are real history and some of them are
+     the only record of a bug being reproduced. A visit counts as his if any
+     event in it carries an admin's id. */
   const vs = await env.DB.prepare(
     `SELECT session_id, first_ts, last_ts, country, referrer, views, plays, licenses
        FROM sessions_seen
       WHERE last_ts >= ?
+        AND session_id NOT IN (
+          SELECT e.session_id FROM events e
+            JOIN users u ON u.id = e.user_id
+           WHERE u.admin = 1)
       ORDER BY first_ts DESC
       LIMIT ?`
   ).bind(since, limit).all();

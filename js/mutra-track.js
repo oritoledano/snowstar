@@ -11,6 +11,32 @@
               navigator.msDoNotTrack === '1' || navigator.globalPrivacyControl === true;
   if (dnt) { window.mutraTrack = () => {}; return; }
 
+  /* The owner's own machine (2026-11-13). The Worker already refuses to record
+     an admin who is signed in; this is the other half, for when he is signed
+     out or in a private window and is still just working on his own site.
+     localStorage and not sessionStorage on purpose: the whole point is that it
+     outlives the tab. ?notme=1 turns it on anywhere, ?notme=0 turns it off, so
+     he can check what a real visitor records without clearing site data. */
+  const OFF = 'sn_notrack';
+  try {
+    const q = new URLSearchParams(location.search).get('notme');
+    if (q === '1') localStorage.setItem(OFF, '1');
+    if (q === '0') localStorage.removeItem(OFF);
+    if (localStorage.getItem(OFF) === '1') { window.mutraTrack = () => {}; return; }
+  } catch { /* storage blocked: fall through and let the server decide */ }
+
+  /* Signing in as an admin on this browser sets the flag for every visit after
+     this one. The account module resolves after this file runs, so the first
+     view of that first visit is still sent - and the Worker drops it, because
+     by then the request carries an admin's cookie. */
+  const markIfAdmin = () => {
+    try {
+      const a = window.SnowstarAccount;
+      if (a && a.user && a.user.admin) localStorage.setItem(OFF, '1');
+    } catch { /* nothing to do */ }
+  };
+  setTimeout(markIfAdmin, 2500);
+
   let sid;
   try {
     sid = sessionStorage.getItem('mutra_sid');

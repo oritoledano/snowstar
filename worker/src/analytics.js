@@ -70,6 +70,16 @@ export async function handleTrack(req, env, ctx) {
   ctx.waitUntil((async () => {
     try {
       const user = await currentUser(req, env).catch(() => null);
+      /* The owner's own browsing is not traffic (2026-11-13). He works on the
+         live site every day, and every one of those page views was landing in
+         the same table the Visits page reads, so the numbers he was trying to
+         read were mostly himself. Dropped here rather than filtered in the
+         queries: a row that should not exist is better not written, and every
+         reader of this table - Visits, traffic, the digest, the alerts - gets
+         the fix without knowing about it.
+         This covers him while signed in. mutra-track.js keeps a flag for the
+         rest, so his browser stays quiet when he is signed out. */
+      if (user && user.admin) return;
       await env.DB.batch([
         env.DB.prepare(
           'INSERT INTO events (session_id, type, detail, page, country, referrer, ts, duration, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
