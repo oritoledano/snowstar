@@ -39,6 +39,7 @@ const ends = (plan) => plan === 'monthly' || plan === 'year';  // a plan whose k
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
 const subsMod = () => import('./audioctor-subs.js');          // Audioctor Monthly (imports this file: no static cycle)
 const paddleMod = () => import('./audioctor-paddle.js');      // Paddle, the merchant of record (2026-10-27; imports this file too)
+const creemMod = () => import('./audioctor-creem.js');        // Creem, the merchant of record since 2026-11-11 (Paddle declined)
 const newRef = () => 'AD-' + urlToken(9).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10).padEnd(6, 'X');
 /* A dollar code ('usd', cents off: e.g. $49 -> $39) on HYP's shekel price: the same dollars at today's rate. */
 async function inShekels(env, c) {
@@ -122,6 +123,8 @@ export async function audioctorCouponCreate(req, env, user) {
 /** POST /audioctor/coupon/check — { code } → what it does to Audioctor's price (once). Public. */
 export async function audioctorCouponCheck(req, env) {
   const b = await req.json().catch(() => ({}));
+  const Cr = await creemMod();
+  if (Cr.on(env)) return Cr.couponCheck(env, b.code);
   const P = await paddleMod();
   if (P.paddleOn(env)) return P.paddleCouponCheck(env, b.code);
   const price = (await shekelsFor(env, ONCE_USD_CENTS)).amount;
@@ -149,6 +152,8 @@ export async function audioctorCheckout(req, env) {
     `SELECT id FROM entitlements WHERE product = ? AND status = 'active' AND plan = 'lifetime' AND (user_id = ? OR email = ?) LIMIT 1`
   ).bind(PRODUCT, user.id, email).first().catch(() => null);
   if (owns) return json({ error: 'owns_it', reason: 'You already own Audioctor. Get a key for another Mac on the unlock page.' }, 409);
+  const Cr = await creemMod();
+  if (Cr.on(env)) return Cr.checkout(env, user, body);
   const P = await paddleMod();
   if (P.paddleOn(env)) return P.paddleCheckout(env, user, body);
   if (String(env.AUDIOCTOR_HYP_OPEN || '') !== '1') return json({ error: 'not_ready', reason: 'Buying opens soon. The free download is there now.' }, 503);
@@ -382,7 +387,7 @@ async function fulfilPaid(env, order, q, source, expiresAt) {
   try {
     const plan = order.plan || 'lifetime';
     const subs = await subsMod();
-    const monthly = isMonthly(plan) && source !== 'paddle' ? await subs.monthlyGranted(env, order, q, ref) : null;   // HYP's own Monthly
+    const monthly = isMonthly(plan) && source !== 'paddle' && source !== 'creem' ? await subs.monthlyGranted(env, order, q, ref) : null;   // HYP's own Monthly
     const ent = monthly ? monthly.ent : await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: order.amount, currency: order.currency || 'ILS', plan, source, expiresAt });
     if (order.coupon) await burnCoupon(env, order.coupon);
     const link = await mintDownloadLink(env, ent.id, order.email);
@@ -390,7 +395,8 @@ async function fulfilPaid(env, order, q, source, expiresAt) {
       await requestKey(env, { entId: ent.id, email: order.email, machine: order.machine_id, name: order.owner_name || order.email, via: 'checkout' }).catch(() => {});
     if (monthly) await subs.mailWelcome(env, monthly.sub, { link, machine: order.machine_id || null, ref }).catch(() => {});
     else await emailReceipt(env, order.email, link, order.machine_id || null,
-      { ref, amount: order.amount, currency: order.currency || 'ILS', coupon: order.coupon || null, plan, expiresAt: ent.expires_at }).catch(() => {});
+      { ref, amount: order.amount, currency: order.currency || 'ILS', coupon: order.coupon || null, plan, expiresAt: ent.expires_at,
+        reseller: source === 'creem' ? 'Creem' : source === 'paddle' ? 'Paddle' : null }).catch(() => {});
     // Granted from here on: the receipt has gone, so nothing below may send the order back.
     await env.DB.prepare(`UPDATE audioctor_orders SET status='granted', hyp_id=COALESCE(?, hyp_id), entitlement_id=?, settled_at=? WHERE ref=?`)
       .bind(q && q.Id ? String(q.Id) : null, ent.id, now(), ref).run().catch(() => {});
@@ -430,11 +436,13 @@ export async function audioctorReconcile(req, env, user) {
   const order = await env.DB.prepare('SELECT * FROM audioctor_orders WHERE ref = ?').bind(ref).first();
   if (!order) return json({ error: 'not_found' }, 404);
   if (order.status === 'granted') return json({ ok: true, already: true, ref, entitlement_id: order.entitlement_id || null });
-  if (order.paddle_txn) {                         // Paddle's own record of the transaction decides (audioctor-paddle.js)
-    const r = await (await paddleMod()).paddleReconcile(env, order).catch((e) => ({ error: String(e.message).slice(0, 200) }));
-    await adLog(env, `admin:${user.id || user.email || '?'}`, 'ad.reconcile_paddle', ref, r);
+  if (order.paddle_txn) {                         // Creem's (ch_…) or Paddle's own record of the payment decides
+    const creem = /^ch_/.test(order.paddle_txn);
+    const r = await (creem ? (await creemMod()).reconcile(env, order) : (await paddleMod()).paddleReconcile(env, order))
+      .catch((e) => ({ error: String(e.message).slice(0, 200) }));
+    await adLog(env, `admin:${user.id || user.email || '?'}`, creem ? 'ad.reconcile_creem' : 'ad.reconcile_paddle', ref, r);
     const o2 = await env.DB.prepare('SELECT entitlement_id FROM audioctor_orders WHERE ref = ?').bind(ref).first();
-    return json(r.ok ? { ok: true, via: 'paddle', ref, outcome: r.outcome, entitlement_id: o2 && o2.entitlement_id } : { error: r.error, status: r.status || null }, r.ok ? 200 : 409);
+    return json(r.ok ? { ok: true, via: creem ? 'creem' : 'paddle', ref, outcome: r.outcome, entitlement_id: o2 && o2.entitlement_id } : { error: r.error, status: r.status || null }, r.ok ? 200 : 409);
   }
   if (order.status !== 'charged_unverified' && order.status !== 'verify_failed')
     return json({ error: 'not_reconcilable', status: order.status }, 409);
@@ -522,6 +530,16 @@ export async function audioctorDownload(req, env) {
  *  Each download is filed with who took it (audioctor_free_downloads,
  *  schema-audioctor.sql); req_log still counts route + 200 for the funnel. */
 const FREE_SIGNUP_URL = `${PAGE}?get=free`;
+/** Public (2026-11-12): the latest Audioctor on the site, for the app's Update button. The app (0.1.6+, site copy only)
+ *  asks once a day and shows the button when this is newer than itself; the url opens in the browser. No user data. */
+export async function audioctorLatest(req, env) {
+  const rel = await env.DB.prepare(
+    'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
+  ).bind(ASSET).first();
+  if (!rel || !rel.version) return json({ error: 'no_release' }, 404);
+  return json({ version: rel.version, url: `${SITE}/api/audioctor/download/free` }, 200, { 'cache-control': 'public, max-age=600' });
+}
+
 export async function audioctorDownloadFree(req, env) {
   const user = await currentUser(req, env).catch(() => null);
   if (!user) {
@@ -589,7 +607,8 @@ export async function myAudioctor(env, user) {
   ).bind(PRODUCT, user.id, lc(user.email), now()).first();
   // A plan's state (renews / cancelled / payment due), for the account page and the sale page.
   const subscription = await (await subsMod()).subFor(env, user).catch(() => null);
-  const plans = await (await paddleMod()).paddleSubsFor(env, user.email, user.id).catch(() => []);
+  const Cr = await creemMod();
+  const plans = await (Cr.on(env) ? Cr.subsFor(env, user.email, user.id) : (await paddleMod()).paddleSubsFor(env, user.email, user.id)).catch(() => []);
   if (!ent) return json({ owned: false, subscription, plans });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();
@@ -1077,7 +1096,7 @@ async function mintDownloadLink(env, entitlementId, email) {
 function emailReceipt(env, to, link, machine, order) {
   const o = order || {};
   const money = (a) => (o.currency === 'USD' ? `$${(a / 100).toFixed(2)}` : `₪${(a / 100).toFixed(2)}`);
-  const paid = typeof o.amount === 'number' ? (o.amount > 0 ? money(o.amount) + (o.currency === 'USD' ? ' (charged by Paddle, our reseller)' : '') : 'free (coupon)') : '';
+  const paid = typeof o.amount === 'number' ? (o.amount > 0 ? money(o.amount) + (o.reseller ? ` (charged by ${o.reseller}, our reseller)` : '') : 'free (coupon)') : '';
   const when = new Date().toISOString().slice(0, 10);
   const lines = [
     o.ref ? `Order: ${o.ref}` : '',

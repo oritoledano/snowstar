@@ -204,6 +204,13 @@ const PRODUCTS = {
          + 'and a re-download.',
     cta: ['Open StreamDAW', '/apps/streamdaw.html'],
   },
+  audioctor: {
+    name: 'Audioctor',
+    line: 'Every part, apart. Clean. Local.',
+    blurb: 'Your plan and your keys live on this account, so a new Mac only ever needs a sign-in '
+         + 'and a download. Your recordings never leave your Mac.',
+    cta: ['Open Audioctor', '/apps/audioctor.html'],
+  },
   snowstash: {
     name: 'Snowstash',
     line: 'Find the royalties nobody paid you.',

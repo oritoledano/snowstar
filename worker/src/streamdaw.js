@@ -34,7 +34,14 @@ const PRODUCT = 'streamdaw';
 const ASSET = 'streamdaw-macos';
 // (2026-10-30) The PC build, its own asset beside the Mac's: a download asks for it with ?os=win.
 const ASSET_WIN = 'streamdaw-windows';
-const assetFor = (req) => new URL(req.url).searchParams.get('os') === 'win' ? ASSET_WIN : ASSET;
+// ?os=win / ?os=mac decide; without it, the browser's own system does (2026-11-12: a Windows app's "update" link
+// carried no os, so a PC got the Mac installer).
+const assetFor = (req) => {
+  const os = new URL(req.url).searchParams.get('os');
+  if (os === 'win') return ASSET_WIN;
+  if (os === 'mac') return ASSET;
+  return /Windows/i.test(req.headers.get('user-agent') || '') ? ASSET_WIN : ASSET;
+};
 const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 days
 
 // Price in agorot INCL VAT — HYP charges shekels, so StreamDAW is priced in ₪.
@@ -1036,8 +1043,8 @@ async function issueKey(env, row, key, onlyPending) {
   const lines = keyLines(hex);
   const serial = checked.serial;
   const ent = await env.DB.prepare('SELECT plan, source FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
-  // A Paddle subscription renews like Pro Monthly: the same Renewal line, each later key fetched by the app.
-  const monthly = !!ent && (isMonthly(ent.plan) || ent.source === 'paddle');
+  // A Paddle or Creem subscription renews like Pro Monthly: the same Renewal line, each later key fetched by the app.
+  const monthly = !!ent && (isMonthly(ent.plan) || ent.source === 'paddle' || ent.source === 'creem');
   // Pro Monthly: the renewal code goes out with the first key and stays the same after (the app
   // keeps it, and fetches every later key with it).
   const code = monthly ? (row.renew_code || (await subsMod()).newRenewCode()) : null;

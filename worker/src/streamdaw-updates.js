@@ -83,7 +83,8 @@ export async function streamdawUpdateCheck(req, env, url) {
     try { await env.DB.prepare('INSERT OR IGNORE INTO streamdaw_bundle_bad (version, install_id, at) VALUES (?, ?, ?)').bind(v, install, t).run(); } catch {}
   }
 
-  const rel = await softFirst(env, 'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1', ASSET);
+  const win = q.get('os') === 'win';             // the Windows app says so (2026-11-12); its own release, its own file
+  const rel = await softFirst(env, 'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1', win ? 'streamdaw-windows' : ASSET);
   const mine = await softFirst(env, 'SELECT policy, message FROM streamdaw_app_versions WHERE version = ?', app);
   const latest = rel && APP_VER.test(String(rel.version || '')) ? String(rel.version) : null;
   const latestRow = latest ? await softFirst(env, 'SELECT notes FROM streamdaw_app_versions WHERE version = ?', latest) : null;
@@ -100,7 +101,7 @@ export async function streamdawUpdateCheck(req, env, url) {
   return json({
     ok: true,
     checkEveryHours: 24,
-    app: { version: app, latest, url: DOWNLOAD_URL, notes: (latestRow && latestRow.notes) || '', policy,
+    app: { version: app, latest, url: win ? DOWNLOAD_URL + '?os=win' : DOWNLOAD_URL, notes: (latestRow && latestRow.notes) || '', policy,
            message: (policy !== 'ok' && mine && mine.message) || '' },
     bundle: offer ? { version: offer.version, url: `${SITE}/api/streamdaw/bundles/${offer.version}.tgz`, sha256: offer.sha256,
                       size: offer.bytes || 0, minApp: offer.min_app_version, notes: offer.notes || '' } : null,

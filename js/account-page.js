@@ -245,11 +245,11 @@
     if (!live.length) return '';
     const rows = live.map((x) => `<p style="margin:0 0 6px"><b>StreamDAW ${esc(x.name)}</b> · ${x.period === 'year' ? 'yearly' : 'monthly'} · ${
       x.cancelAt ? `cancelled, yours until <b>${day(x.cancelAt)}</b>`
-      : x.status === 'past_due' ? 'the last payment didn’t go through: Paddle tries again'
+      : x.status === 'past_due' ? 'the last payment didn’t go through: Creem tries again'
       : `renews on <b>${day(x.nextBilledAt || x.periodEnd)}</b>`}</p>`).join('');
     return `<div class="sd-sub" style="border:1px solid var(--line,rgba(0,0,0,.15));border-radius:14px;padding:16px 18px;margin:0 0 18px">
       ${rows}
-      <p class="ac-note" style="margin:0 0 10px">Paddle.com is our reseller: it takes the payments and emails your invoices.</p>
+      <p class="ac-note" style="margin:0 0 10px">Creem is our reseller: it takes the payments and emails your invoices.</p>
       <div class="ac-acts" style="justify-content:flex-start"><button class="mbtn mbtn-ghost" id="sdPortal">Manage or cancel</button></div>
       <p class="ac-note" id="sdPortalSaid" style="margin-top:8px"></p></div>`;
   }
@@ -262,12 +262,12 @@
     const live = (a.plans || []).filter((x) => x.status !== 'canceled');
     const rows = live.map((x) => `<p style="margin:0 0 6px"><b>Audioctor ${x.plan === 'year' ? 'Yearly' : 'Monthly'}</b> · ${
       x.cancelAt ? `cancelled, yours until <b>${day(x.cancelAt)}</b>`
-      : x.status === 'past_due' ? 'the last payment didn’t go through: Paddle tries again'
+      : x.status === 'past_due' ? 'the last payment didn’t go through: Creem tries again'
       : `renews on <b>${day(x.nextBilledAt || x.periodEnd)}</b>`}</p>`).join('');
     return `<div class="ac-panel"><h2>Audioctor</h2>
       ${rows ? `<div class="sd-sub" style="border:1px solid var(--line,rgba(0,0,0,.15));border-radius:14px;padding:16px 18px;margin:0 0 18px">
       ${rows}
-      <p class="ac-note" style="margin:0 0 10px">Paddle.com is our reseller: it takes the payments and emails your invoices.</p>
+      <p class="ac-note" style="margin:0 0 10px">Creem is our reseller: it takes the payments and emails your invoices.</p>
       <div class="ac-acts" style="justify-content:flex-start"><button class="mbtn mbtn-ghost" id="adPortal">Manage or cancel</button></div>
       <p class="ac-note" id="adPortalSaid" style="margin-top:8px"></p></div>` : ''}
       <p class="ac-note">Your plan is kept with this account. Each Mac gets its own key: request one for a new Mac on the unlock page.</p>
@@ -309,7 +309,7 @@
     const adPortal = document.getElementById('adPortal');
     if (adPortal) adPortal.addEventListener('click', async () => {
       adPortal.disabled = true;
-      const r = await post('/audioctor/paddle/portal', {});
+      const r = await post('/audioctor/portal', {});
       if (r && r.url) { location.href = r.url; return; }
       adPortal.disabled = false;
       document.getElementById('adPortalSaid').textContent = (r && r.reason) || 'Could not open it. Please try again.';
@@ -317,7 +317,7 @@
     const portal = document.getElementById('sdPortal');
     if (portal) portal.addEventListener('click', async () => {
       portal.disabled = true;
-      const r = await post('/streamdaw/paddle/portal', {});
+      const r = await post('/streamdaw/portal', {});
       if (r && r.url) { location.href = r.url; return; }
       portal.disabled = false;
       document.getElementById('sdPortalSaid').textContent = (r && r.reason) || 'Could not open it. Please try again.';

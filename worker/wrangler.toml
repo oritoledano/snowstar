@@ -64,14 +64,18 @@ MAIL_FROM = "SNOWSTAR.COMPANY <hello@snowstar.company>"
 # PADDLE_API_KEY is set (npx wrangler secret put PADDLE_API_KEY) and the owner pressed "Set up Paddle" in the
 # dashboard; until then StreamDAW stays as it was. PADDLE_ENV "live" takes real money; anything else is the sandbox.
 # PADDLE_CLIENT_TOKEN (public by design, for the page's Paddle.js) is a secret only so it changes without a deploy.
-STREAMDAW_BILLING = "paddle"
+STREAMDAW_BILLING = "creem"     # Creem since 2026-11-11 (src/creem-streamdaw.js); "paddle" goes back to streamdaw-paddle.js
 PADDLE_ENV = "sandbox"
 
 
 # Audioctor through Paddle, the merchant of record (src/audioctor-paddle.js, subscriptions since 2026-10-30).
 # The same secrets as StreamDAW; the product, prices and webhook come from "Set up Paddle" in the dashboard and live
 # in D1 (audioctor_paddle_conf). Until then checkout says it opens soon. PADDLE_ENV above is shared.
-AUDIOCTOR_BILLING = "paddle"
+AUDIOCTOR_BILLING = "creem"
+# Creem, the merchant of record since 2026-11-11 (src/creem.js): Paddle declined the account. On once the secret
+# CREEM_API_KEY (test key) is set; CREEM_ENV "live" takes real money with the secret CREEM_LIVE_API_KEY; anything else is
+# Creem's test mode. The products and the webhook are made by the Worker itself the first time they are needed.
+CREEM_ENV = "live"
 # daily digest at 07:00 UTC
 [triggers]
 crons = ["0 7 * * *"]
