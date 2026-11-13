@@ -19,6 +19,8 @@ import { currentUser } from './session.js';
 import { sha256b64, randB64 } from './crypto.js';
 import { parseHyp, verifyReturn } from './hyp.js';
 import { applyCoupon, couponProblem, normCode } from './coupons.js';
+// who is subscribed, read from the table Creem actually writes (subs-admin.js)
+import { creemSubs } from './subs-admin.js';
 import { cachedRates, FALLBACK } from './fx.js';
 import { checkKey, mintKey } from './audioctor-keys.js';
 
@@ -1202,6 +1204,12 @@ export async function audioctorAdmin(env, user) {
 
     /* Monthly: every subscription, its charges, MRR, charges HYP never answered, refunds owed. */
     ...(await (await subsMod()).subsAdmin(env).catch(() => ({}))),
+
+    /* Where the money actually is. subsAdmin above reads audioctor_subscriptions,
+       the HYP-era table, which has been empty since the move; Creem writes into
+       audioctor_paddle_subs. Without this the admin showed no subscribers while a
+       live monthly was being billed. (2026-11-13, subs-admin.js) */
+    creem: await creemSubs(env, 'audioctor').catch(() => null),
 
     /* Who took the free installer (the trial). */
     onTrial: await soft(`SELECT d.user_id, u.email, u.name, d.version, d.created_at FROM audioctor_free_downloads d

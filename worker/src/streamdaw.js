@@ -27,6 +27,8 @@ import { parseHyp, verifyReturn } from './hyp.js';
 import { applyCoupon, couponProblem, normCode } from './coupons.js';
 import { checkKey, mintKey } from './streamdaw-keys.js';
 import * as P from './streamdaw-products.js';
+// who is subscribed, read from the table Creem actually writes (subs-admin.js)
+import { creemSubs } from './subs-admin.js';
 
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 const SITE = 'https://snowstar.company';
@@ -1494,6 +1496,11 @@ export async function streamdawAdmin(env, user) {
 
     /* Pro Monthly: every subscription, its charges, MRR, charges HYP never answered, refunds owed. */
     ...(await (await subsMod()).subsAdmin(env).catch(() => ({}))),
+
+    /* The same blind spot Audioctor had: subsAdmin reads streamdaw_subscriptions,
+       the HYP-era table, and Creem writes into streamdaw_paddle_subs. Without
+       this a Creem subscriber does not appear here at all. (2026-11-13) */
+    creem: await creemSubs(env, 'streamdaw').catch(() => null),
 
     /* Who took the free installer or connected a Mac (the trial), with what their Macs did (2026-10-15). */
     onTrial: await (await import('./streamdaw-macs.js')).peopleOnTrial(env).catch(() => ({ ok: false, people: [] })),

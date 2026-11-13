@@ -54,6 +54,9 @@
     { key: 'snowstash', label: 'Snowstash', pages: [
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
+    { key: 'audioctor', label: 'Audioctor', pages: [
+      { key: 'ad', label: 'App', tabs: ['subscribers', 'people', 'keys', 'orders', 'codes', 'releases'] },
+    ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
       { key: 'sdaw', label: 'App', tabs: ['orders', 'subscriptions', 'health', 'people', 'keys', 'reports', 'codes', 'releases', 'updates'] },
     ] },
@@ -72,6 +75,7 @@
   const LEGACY = {
     ask: 'general/ask',
     visits: 'general/visits',
+    audioctor: 'audioctor/ad/subscribers',
     overview: 'general/overview/today', stats: 'general/overview/traffic',
     demand: 'general/overview/demand', inbox: 'general/inbox/new',
     members: 'general/people', notes: 'general/editor/notes',
@@ -159,6 +163,11 @@
   /* A rail down the side, the pages of the current property beside it, and the
      page's own tabs above the content. The rail is the only thing that survives
      a repaint unchanged, which is the point: you always know where you are. */
+  /* Which groups the owner has folded open besides the one he is in. Lives for
+     the session rather than in storage: the rail should come back predictable
+     on a fresh load, not remember a shape from last week. */
+  const railOpen = new Set();
+
   const shell = (inner) => {
     const g = NAV.find((x) => x.key === group) || NAV[0];
     const pg = pageOf(group, page) || g.pages[0];
@@ -166,13 +175,19 @@
     <div class="db-shell">
       <nav class="db-rail">
         <h1>Dashboard</h1>
-        ${NAV.map((n) => `
-          <div class="db-railgroup${n.key === group ? ' on' : ''}">
-            <button class="db-railhead" data-g="${n.key}">${n.label}</button>
-            <div class="db-railpages">${n.pages.map((p) => `
+        ${NAV.map((n) => {
+          const isOpen = railOpen.has(n.key) || n.key === group;
+          return `
+          <div class="db-railgroup${n.key === group ? ' on' : ''}${isOpen ? ' open' : ''}">
+            <button class="db-railhead" data-g="${n.key}" aria-expanded="${isOpen}">
+              <svg class="db-chev" viewBox="0 0 12 12" width="9" height="9" aria-hidden="true"><path d="M3 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>${n.label}</span>
+              <i class="db-railcount">${n.pages.length}</i>
+            </button>
+            <div class="db-railpages"><div class="db-railpages-in">${n.pages.map((p) => `
               <button class="db-railpage${p.key === page && n.key === group ? ' on' : ''}"
-                      data-g="${n.key}" data-p="${p.key}">${p.label}</button>`).join('')}</div>
-          </div>`).join('')}
+                      data-g="${n.key}" data-p="${p.key}">${p.label}</button>`).join('')}</div></div>
+          </div>`; }).join('')}
       </nav>
       <div class="db-main">
         <div class="db-crumb">
@@ -187,11 +202,22 @@
 
   function paint(inner) {
     app.innerHTML = shell(inner);
-    /* A property is not itself a destination — clicking it goes to its first
-       page, because landing on a heading that shows nothing is a dead end. */
+    /* A heading does two jobs now that the rail is an accordion, and which one
+       depends on where you already are. A shut group opens AND goes to its
+       first page, because a heading that shows nothing when clicked is still a
+       dead end. The group you are already in just shuts, so the rail can be
+       folded down to the one property you are working on. */
     app.querySelectorAll('.db-railhead').forEach((b) => b.addEventListener('click', () => {
       const n = NAV.find((x) => x.key === b.dataset.g);
       if (!n || !n.pages.length) return;
+      if (n.key === group) {
+        const box = b.closest('.db-railgroup');
+        const shut = box.classList.toggle('open');
+        b.setAttribute('aria-expanded', String(shut));
+        if (shut) railOpen.add(n.key); else railOpen.delete(n.key);
+        return;
+      }
+      railOpen.add(n.key);
       go(n.key, n.pages[0].key);
     }));
     app.querySelectorAll('.db-railpage').forEach((b) =>
@@ -250,6 +276,12 @@
     'mutra/msystem/notifications': () => paintMail(),
     'snowstash/stash/scans':       () => paintStashScans(),
     'snowstash/stash/codes':       () => paintStashCodes(),
+    'audioctor/ad/subscribers':    () => paintAudioctor('subscribers'),
+    'audioctor/ad/people':         () => paintAudioctor('people'),
+    'audioctor/ad/keys':           () => paintAudioctor('keys'),
+    'audioctor/ad/orders':         () => paintAudioctor('orders'),
+    'audioctor/ad/codes':          () => paintAudioctor('codes'),
+    'audioctor/ad/releases':       () => paintAudioctor('releases'),
     'streamdaw/sdaw/orders':       () => paintStreamdaw('orders'),
     'streamdaw/sdaw/subscriptions': () => paintStreamdaw('subscriptions'),
     'streamdaw/sdaw/people':       () => paintStreamdaw('people'),
@@ -4234,6 +4266,124 @@
     document.querySelectorAll('[data-sc-toggle]').forEach((b) => {
       b.onclick = async () => { await post('/snowstash/coupon', { toggle: Number(b.dataset.scToggle) }); paintStashCodes(); };
     });
+  }
+
+  /* Audioctor — the same six questions StreamDAW's page answers, for the app
+     that had no page at all. Everything comes from /api/audioctor/admin.
+     The subscribers tab reads d.creem, which is the table the Creem webhook
+     actually writes: the endpoint's older subs fields read the HYP-era table
+     and have been empty since the move, which is why a live monthly customer
+     was nowhere in this dashboard. */
+  // how long somebody has been a subscriber, read as a span rather than a count
+  const spanDays = (n) => (n >= 365 ? `${Math.floor(n / 365)}y ${Math.floor((n % 365) / 30)}m`
+    : n >= 30 ? `${Math.floor(n / 30)}m ${n % 30}d` : `${n}d`);
+
+  async function paintAudioctor(tab) {
+    const d = await get('/audioctor/admin');
+    const c = d.creem || { subs: [], live: {}, test: {} };
+    const live = c.live || {}, test = c.test || {};
+    const liveSubs = (c.subs || []).filter((s) => s.live);
+    const testSubs = (c.subs || []).filter((s) => !s.live);
+    const st = d.stats || {};
+
+    const tabs = ['subscribers', 'people', 'keys', 'orders', 'codes', 'releases'];
+    const head = `<div style="display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap">${tabs.map((t) =>
+      `<a class="chip ${t === tab ? 'active' : ''}" href="#audioctor/ad/${t}">${t}</a>`).join('')}</div>`;
+
+    const warn = d.blocked
+      ? `<p class="db-empty" style="color:#f87171;padding:0 4px 12px">${esc(d.blocked.says)}</p>` : '';
+
+    const subsTable = (list) => table(list, [
+      { label: 'Who', get: (s) => `<b>${esc(s.user_name || s.email)}</b>` },
+      { label: 'Plan', get: (s) => esc(s.plan) },
+      { label: 'Status', get: (s) => s.cancel_at
+          ? `<span class="pill">ending ${when(s.endingOn)}</span>`
+          : `<span class="pill${s.running ? ' good' : ''}">${esc(s.status)}</span>` },
+      { label: 'Subscriber for', num: true, get: (s) => spanDays(s.forDays) },
+      { label: 'Since', get: (s) => when(s.created_at) },
+      { label: 'Next charge', get: (s) => s.cancel_at ? '—' : when(s.next_billed_at) },
+    ]);
+
+    let body = '';
+    if (tab === 'subscribers') {
+      body = `
+        <div class="db-cards">
+          <div class="db-card"><b class="grad-text">${live.running || 0}</b><span>Paying now</span></div>
+          <div class="db-card"><b class="grad-text">${live.ending || 0}</b><span>Ending (renewal off)</span></div>
+          <div class="db-card"><b class="grad-text">${live.stopped || 0}</b><span>Stopped</span></div>
+          <div class="db-card"><b class="grad-text">${spanDays(live.longestDays || 0)}</b><span>Longest subscriber</span></div>
+        </div>
+        <div class="db-panel" style="margin-top:14px"><h2>Real customers <span class="pill">Creem live</span></h2>
+          ${liveSubs.length ? subsTable(liveSubs)
+            : '<p class="db-empty">Nobody is on a live subscription yet.</p>'}</div>
+        <div class="db-panel" style="margin-top:14px"><h2>Tests <span class="pill">${testSubs.length}</span></h2>
+          <p class="db-empty" style="padding-top:0">Creem test mode and the old Paddle sandbox. Kept apart from
+            the figures above on purpose — counting a rehearsal as a customer is how you end up believing
+            you have four of them.</p>
+          ${testSubs.length ? subsTable(testSubs) : '<p class="db-empty">None.</p>'}</div>`;
+    } else if (tab === 'people') {
+      body = `
+        <div class="db-cards">
+          <div class="db-card"><b class="grad-text">${(d.onTrial || []).length}</b><span>Took the free app</span></div>
+          <div class="db-card"><b class="grad-text">${st.active || 0}</b><span>Active entitlements</span></div>
+          <div class="db-card"><b class="grad-text">${st.downloads || 0}</b><span>Paid downloads</span></div>
+          <div class="db-card"><b class="grad-text">${st.freeDownloads14d || 0}</b><span>Free downloads, 14d</span></div>
+        </div>
+        <div class="db-panel" style="margin-top:14px"><h2>Who took the free app</h2>
+          ${table(d.onTrial || [], [
+            { label: 'Who', get: (r) => esc(r.name || r.email || 'not signed in') },
+            { label: 'Version', get: (r) => esc(r.version || '') },
+            { label: 'When', get: (r) => when(r.created_at, { time: true }) },
+          ])}</div>`;
+    } else if (tab === 'keys') {
+      body = `<div class="db-panel"><h2>Licence keys</h2>
+        <p class="db-empty" style="padding-top:0">Pending first: somebody has paid and cannot use the app
+          until the key is minted.</p>
+        ${table(d.activations || [], [
+          { label: 'Who', get: (r) => esc(r.owner_name || r.email) },
+          { label: 'Status', get: (r) => `<span class="pill${r.status === 'issued' ? ' good' : ''}">${esc(r.status)}</span>` },
+          { label: 'Machine', get: (r) => `<code>${esc(String(r.machine_id || '').slice(0, 18))}</code>` },
+          { label: 'Asked', get: (r) => when(r.requested_at, { time: true }) },
+          { label: 'Issued', get: (r) => when(r.issued_at) },
+        ])}</div>`;
+    } else if (tab === 'orders') {
+      body = `
+        <div class="db-cards">
+          <div class="db-card"><b class="grad-text">${st.granted || 0}</b><span>Granted</span></div>
+          <div class="db-card"><b class="grad-text">${st.abandoned || 0}</b><span>Abandoned</span></div>
+          <div class="db-card"><b class="grad-text">${st.free || 0}</b><span>Free</span></div>
+          <div class="db-card"><b class="grad-text">${money(st.revenue, 0)}</b><span>Settled</span></div>
+        </div>
+        <div class="db-panel" style="margin-top:14px"><h2>Orders</h2>
+          ${table(d.orders || [], [
+            { label: 'Ref', get: (r) => `<code>${esc(r.ref)}</code>` },
+            { label: 'Who', get: (r) => esc(r.user_name || r.email) },
+            { label: 'Plan', get: (r) => esc(r.plan || '') },
+            { label: 'Amount', num: true, get: (r) => r.amount ? money(r.amount) : 'free' },
+            { label: 'Status', get: (r) => `<span class="pill${r.status === 'granted' ? ' good' : ''}">${esc(r.status)}</span>` },
+            { label: 'When', get: (r) => when(r.created_at, { time: true }) },
+          ])}</div>`;
+    } else if (tab === 'codes') {
+      body = `<div class="db-panel"><h2>Discount codes</h2>
+        ${table(d.coupons || [], [
+          { label: 'Code', get: (r) => `<code>${esc(r.code)}</code>` },
+          { label: 'Worth', get: (r) => r.kind === 'percent' ? r.value + '%' : money(r.value, 0) },
+          { label: 'Used', num: true, get: (r) => r.max_uses ? `${r.used}/${r.max_uses}` : String(r.used) },
+          { label: 'Expires', get: (r) => when(r.expires_at) },
+          { label: 'On', get: (r) => r.active ? 'yes' : 'no' },
+        ])}</div>`;
+    } else {
+      body = `<div class="db-panel"><h2>Releases</h2>
+        ${table(d.releases || [], [
+          { label: 'Version', get: (r) => esc(r.version) },
+          { label: 'File', get: (r) => esc(r.filename || r.r2_key || '') },
+          { label: 'Size', num: true, get: (r) => r.bytes ? (r.bytes / 1048576).toFixed(1) + ' MB' : '—' },
+          { label: 'Latest', get: (r) => r.is_latest ? '<span class="pill good">yes</span>' : '' },
+          { label: 'When', get: (r) => when(r.created_at) },
+        ])}</div>`;
+    }
+
+    paint(`<div><h2 style="margin:0 0 4px">Audioctor</h2>${head}${warn}${body}</div>`);
   }
 
   /* Visits — one row per visit, the whole visit in it.

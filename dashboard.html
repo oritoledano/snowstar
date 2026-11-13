@@ -42,17 +42,41 @@
 .db-rail{position:sticky;top:78px;display:flex;flex-direction:column;gap:2px}
 .db-rail h1{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
   color:var(--dim,var(--muted));margin:0 0 12px 10px;font-weight:600}
-.db-railgroup{margin-bottom:6px}
-.db-railhead{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
-  padding:6px 10px;font-family:var(--font-display);font-size:.7rem;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--dim,var(--muted))}
+/* ── the rail as an accordion (2026-11-13) ───────────────────────────────
+   Seven properties, each with its own pages, was a single flat column you had
+   to read end to end to find anything. A group folds now, and only the one you
+   are in is open. The two levels are told apart by everything at once rather
+   than by indentation alone: a heading is small, uppercase, letterspaced and
+   carries a chevron and a count; a page is sentence case, larger, and sits
+   inside a hairline that makes it visibly a child of the heading above it. */
+.db-railgroup{margin-bottom:2px;border-radius:10px}
+.db-railgroup.on{background:var(--tint,rgba(255,255,255,.035))}
+.db-railhead{display:flex;align-items:center;gap:7px;width:100%;text-align:left;
+  background:none;border:0;cursor:pointer;padding:8px 10px;border-radius:10px;
+  font-family:var(--font-display);font-size:.66rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--dim,var(--muted));transition:color .15s}
+.db-railhead:hover{color:var(--text,#eef3fb)}
+.db-railhead span{flex:1}
 .db-railgroup.on .db-railhead{color:var(--coral,#e8b98a)}
-.db-railpages{display:flex;flex-direction:column;gap:1px}
+/* the count is the quiet half of the heading: it says how much is folded away */
+.db-railcount{font-style:normal;font-size:.62rem;letter-spacing:.06em;opacity:.45;
+  font-family:var(--font-display)}
+.db-chev{flex:none;transition:transform .18s ease;opacity:.6}
+.db-railgroup.open .db-chev{transform:rotate(90deg)}
+/* Collapsed by default; grid-template-rows animates to a height nobody has to
+   measure, which max-height guesswork always gets wrong when a group grows. */
+.db-railpages{display:grid;grid-template-rows:0fr;transition:grid-template-rows .2s ease;
+  margin-left:16px;border-left:1px solid var(--line,rgba(255,255,255,.1))}
+.db-railpages > *{overflow:hidden}
+.db-railgroup.open .db-railpages{grid-template-rows:1fr}
+.db-railpages-in{display:flex;flex-direction:column;gap:1px;padding:2px 0 6px}
 .db-railpage{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
-  padding:7px 10px;border-radius:8px;font:inherit;font-size:.86rem;
-  color:var(--muted,#93a0b8);transition:background .15s,color .15s}
+  padding:7px 10px 7px 12px;margin-left:-1px;border-left:2px solid transparent;
+  border-radius:0 8px 8px 0;font:inherit;font-size:.88rem;
+  color:var(--muted,#93a0b8);transition:background .15s,color .15s,border-color .15s}
 .db-railpage:hover{background:var(--tint,rgba(255,255,255,.05));color:var(--text,#eef3fb)}
-.db-railpage.on{background:var(--panel-2,rgba(255,255,255,.07));color:var(--text,#eef3fb);font-weight:600}
+.db-railpage.on{background:var(--panel-2,rgba(255,255,255,.07));color:var(--text,#eef3fb);
+  font-weight:600;border-left-color:var(--coral,#e8b98a)}
 .db-crumb{display:flex;align-items:baseline;gap:8px;margin:0 0 14px}
 .db-crumb span{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim,var(--muted))}
 .db-crumb b{font-family:var(--font-display);font-size:1.25rem}
@@ -67,9 +91,16 @@
   .db-shell{grid-template-columns:1fr;gap:16px}
   .db-rail{position:static;flex-direction:row;flex-wrap:wrap;gap:10px}
   .db-rail h1{display:none}
-  .db-railgroup{margin:0}
-  .db-railpages{flex-direction:row;flex-wrap:wrap;gap:4px}
-  .db-railpage{padding:5px 10px;font-size:.8rem}
+  /* On a phone the accordion stays an accordion, but each group is a full-width
+     row rather than a column beside the content: a horizontal strip of folded
+     headings would put the pages you want behind two taps and a guess. */
+  .db-rail{flex-direction:column;flex-wrap:nowrap;gap:2px}
+  .db-railgroup{margin:0;width:100%}
+  .db-railpages{margin-left:14px}
+  .db-railpages-in{flex-direction:row;flex-wrap:wrap;gap:4px;padding:2px 0 8px 2px}
+  .db-railpage{width:auto;padding:5px 10px;font-size:.82rem;border-radius:8px;
+    border-left-width:0;margin-left:0}
+  .db-railpage.on{border-left-width:2px}
 }
   .db-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0 26px}
   .db-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px;cursor:pointer;transition:border-color .2s}
@@ -693,7 +724,7 @@
 <!-- the analyser, so an already-uploaded submission can be measured from here -->
 <script src="js/mutra-analyse.js?v=3"></script>
 <script src="js/mutra-reanalyse.js?v=1"></script>
-<script src="js/dashboard.js?v=68"></script>
+<script src="js/dashboard.js?v=69"></script>
 
 <!-- full-screen menu, same burger and behaviour as Mutra -->
 <div class="mmenu" id="mmenu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
