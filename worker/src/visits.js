@@ -125,6 +125,15 @@ export async function listVisits(req, env, user) {
     });
 
     const viewed = walked.filter((s) => s.type === 'view' && s.page);
+
+    /* Two different numbers, because the obvious one lies. last_ts - first_ts
+       is the span from arrival to the last thing they did, and a tab left open
+       overnight keeps extending it: one visit in the table reads 19 hours. So
+       the span is kept and shown, but "active" - the capped gaps added up - is
+       what the average is built from, because that is time somebody was
+       actually there. They agree for any normal visit and diverge exactly when
+       the span stops meaning anything. */
+    const active = walked.reduce((n, s) => n + (s.dwell || 0), 0);
     let longest = null;
     for (const [page, seconds] of perPage) {
       if (!longest || seconds > longest.seconds) longest = { page, seconds };
@@ -142,6 +151,9 @@ export async function listVisits(req, env, user) {
       started: v.first_ts,
       ended: v.last_ts,
       seconds: v.last_ts > v.first_ts ? v.last_ts - v.first_ts : null,
+      active: active || null,
+      // a span far longer than the time actually spent means the tab was left open
+      idle: v.last_ts - v.first_ts > 7200 && active < (v.last_ts - v.first_ts) / 4,
       country: v.country || '',
       referrer: v.referrer || '',
       pages: viewed.length,
@@ -170,8 +182,12 @@ function totals(rows) {
   return {
     visits: rows.length,
     measurable: timed.length,
-    avgSeconds: timed.length
-      ? Math.round(timed.reduce((n, r) => n + r.seconds, 0) / timed.length) : 0,
+    /* Built from active time, not the span: one tab left open overnight would
+       otherwise set the average for the whole day. */
+    avgSeconds: (() => {
+      const act = rows.filter((r) => r.active);
+      return act.length ? Math.round(act.reduce((n, r) => n + r.active, 0) / act.length) : 0;
+    })(),
     signedIn: rows.filter((r) => r.who).length,
     signedUp: rows.filter((r) => r.who && r.who.signedUpNow).length,
     /* One page and gone. Worth its own number: it is the single figure that

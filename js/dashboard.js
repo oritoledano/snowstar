@@ -4281,21 +4281,27 @@
 
       <div class="db-cards">
         <div class="db-card"><b class="grad-text">${t.visits || 0}</b><span>Visits</span></div>
-        <div class="db-card"><b class="grad-text">${dur(t.avgSeconds)}</b><span>Average stay</span></div>
+        <div class="db-card"><b class="grad-text">${dur(t.avgSeconds)}</b><span>Average time on site</span></div>
         <div class="db-card"><b class="grad-text">${t.bounced || 0}</b><span>One page only</span></div>
         <div class="db-card"><b class="grad-text">${t.signedIn || 0}</b><span>Signed in</span></div>
         <div class="db-card"><b class="grad-text">${t.signedUp || 0}</b><span>Signed up here</span></div>
       </div>
 
-      <p class="db-empty" style="padding:14px 4px 10px">Arrived is local time. Stay is the first
-        event to the last, so a visit with a single event has no length. Lingered is the page with
+      <p class="db-empty" style="padding:14px 4px 10px">Arrived is local time. Stay is the time
+        actually spent — the gaps between what they did, added up — not arrival to last event,
+        because a tab left open stretches that to hours. A visit with one event has no length. Lingered is the page with
         the most time on it, measured as the gap to the next thing they did and capped at 30
         minutes — the page they left on has no next event, so it is never the one shown.
         Click a row for the whole path.</p>
 
       ${vs.length ? table(vs, [
         { label: 'Arrived', get: (v) => clock(v.started) },
-        { label: 'Stay', num: true, get: (v) => dur(v.seconds) },
+        /* The span and the time actually spent. They agree for a normal visit;
+           when they do not, the tab was left open, and saying "19h" with no
+           qualification is how an average gets ruined. */
+        { label: 'Stay', num: true, get: (v) => v.idle
+            ? `${dur(v.active)} <span style="color:var(--muted)" title="Tab left open — the visit spans ${dur(v.seconds)}">· idle after</span>`
+            : dur(v.active || v.seconds) },
         { label: 'Who', get: who },
         { label: 'Pages', num: true, get: (v) => v.pages || 0 },
         { label: 'Entered', get: (v) => esc(shortPage(v.entry)) },
