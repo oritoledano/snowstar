@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-product="audioctor">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's new in Audioctor | Snowstar</title>
+<meta name="description" content="Every Audioctor version: what was added, changed and fixed.">
+<link rel="canonical" href="https://snowstar.company/apps/audioctor-changes.html">
+<link rel="icon" href="/apps/audioctor-favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/apps/audioctor-icon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apps/audioctor-apple-touch-icon.png">
+<meta name="theme-color" content="#0b0a08">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/account.css?v=19">
+<link rel="stylesheet" href="audioctor.css?v=11">
+<style>
+  .ul-main { padding-top: clamp(40px, 7vw, 80px); }
+  .upd { margin: 28px 0 8px; padding: 24px 26px; border-radius: 18px; background: var(--card); box-shadow: inset 0 0 0 1.5px rgba(200,242,58,.45), 0 0 30px rgba(200,242,58,.08); }
+  .upd[hidden] { display: none; }
+  .upd h2 { font-size: clamp(24px, 3vw, 32px); }
+  .upd p { color: var(--ink-2); margin: 10px 0 18px; max-width: 40em; }
+  .chg { border-top: 1px solid var(--line-2); padding: 28px 0 8px; }
+  .chg h2 { font-size: clamp(22px, 2.6vw, 28px); letter-spacing: -.01em; }
+  .chg h2 .when { display: block; font: 500 14px/1.3 var(--sans); color: var(--muted); margin-top: 6px; }
+  .chg h2 .new { display: none; vertical-align: middle; margin-left: 12px; padding: 4px 10px; border-radius: 999px; font: 700 12px/1 var(--cond); letter-spacing: .14em; text-transform: uppercase; color: var(--lime-ink); background: var(--lime); }
+  .chg.fresh h2 .new { display: inline-block; }
+  .chg.fresh { border-top-color: rgba(200,242,58,.5); }
+  .chg h3 { font: 700 13px/1 var(--cond); letter-spacing: .16em; text-transform: uppercase; color: var(--lime); margin: 18px 0 8px; }
+  .chg ul { margin: 0; padding-left: 20px; max-width: 44em; color: var(--ink-2); }
+  .chg li { margin: 6px 0; line-height: 1.55; }
+</style>
+</head>
+<body>
+<!-- Made by app/changelog-site.mjs in SNOWSTAR-ENHANCE from app/CHANGELOG.md: edit that file, not this one. -->
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="audioctor.html" aria-label="Audioctor"><img src="audioctor-logo.png?v=1" alt="Audioctor" width="137" height="26"></a>
+    <div class="nav-tools">
+      <span class="nav-acct" data-account-mount></span>
+      <a class="btn lime sm" href="/api/audioctor/download/free" data-free-dl>Download</a>
+    </div>
+  </div>
+</header>
+<main>
+<section class="ul-main">
+  <div class="wrap">
+    <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">Audioctor</p>
+    <h1>What's new.</h1>
+    <div class="upd" id="upd" hidden>
+      <h2 id="updTitle">Audioctor 0.1.8 is ready</h2>
+      <p id="updSub"></p>
+      <a class="btn lime" href="/api/audioctor/download/free" data-free-dl>Download Audioctor 0.1.8</a>
+    </div>
+    <p class="lead" id="lead">Every version: what was added, changed and fixed. Newest first.</p>
+    <article class="chg" id="v0-1-8" data-version="0.1.8"><h2>Audioctor 0.1.8<span class="new">New for you</span> <span class="when">13 November 2026</span></h2><h3>Added</h3><ul><li>The picture: a video shows in a small window while you work, muted and in time with the sound, so you can judge the sound against the room on screen. It follows play, pause, every jump and the loop.</li><li>Loop: drag across the waveform to loop that part, or press LOOP (or L) to loop all of it. A click outside the loop ends it.</li><li>A video comes back as a video: drop a video, mix it, and the export folder holds the same video with your mix as its sound. The picture is copied as shot (not re-encoded, a phone's portrait stays portrait), and the sound is in sync to the sample.</li></ul><h3>Changed</h3><ul><li>Talk over music (a reel, a vlog) opens as a Soundtrack. Music opens only for singing, or for music with no voice.</li></ul></article>
+    <article class="chg" id="v0-1-7" data-version="0.1.7"><h2>Audioctor 0.1.7<span class="new">New for you</span> <span class="when">12 November 2026</span></h2><h3>Added</h3><ul><li>WhatsApp voice notes: drop .opus and .ogg files straight in.</li></ul></article>
+    <article class="chg" id="v0-1-6" data-version="0.1.6"><h2>Audioctor 0.1.6<span class="new">New for you</span> <span class="when">12 November 2026</span></h2><h3>Added</h3><ul><li>Acknowledgements: every model's and library's licence, reproduced in full, from the plans panel and inside the app.</li><li>The Mac App Store edition: Audioctor Yearly and Monthly through the App Store, with Restore purchases and Manage.</li><li>The version under the logo, and an Update button when a newer Audioctor is on the site (checked once a day; it opens the download, nothing installs by itself). The App Store edition updates through the App Store.</li><li>Studio voice shows its work: its key glows amber and breathes while Studio voice is being made, then turns lime once you hear it.</li><li>Speech plays its voice in mono: what is wide in a speaking voice is the room, and the room and noise left in the voice's sides go with it. The Voice's MONO key is lit; press it for stereo.</li><li>A clear × on every file in the list, and the Delete key removes the file on screen.</li><li>EQ points on every part, as on a studio EQ: double-click the picture for a point, drag it for frequency and gain, scroll on it for Q, double-click it to remove it. Each point is a Bell, Low or High Shelf, Low or High Cut (12, 24 or 48 dB/oct), Notch, Band Pass or Tilt Shelf; up to 8 per part, heard as you drag and in the export. Background has an EQ now too.</li><li>The parts lever sets itself: after a first listen of a few seconds, talk opens as Soundtrack and a song or music opens as Music (every instrument). Flip it any time, and Audioctor keeps your choice for that file.</li></ul><h3>Changed</h3><ul><li>The parts lever reads Soundtrack (voice, music, background) or Music (every instrument on its own).</li></ul><h3>Fixed</h3><ul><li>Music with no voice (an instrumental, a backing track) splits into its instruments like any song, instead of one &quot;Instrument&quot; for the whole piece. Clean voice, Studio voice and Restore highs look unlit there: there is no voice for them.</li><li>Sound follows the Mac's output: connect Bluetooth headphones or pick another output in Control Center and Audioctor plays there at once, even mid-song.</li></ul></article>
+    <article class="chg" id="v0-1-5" data-version="0.1.5"><h2>Audioctor 0.1.5<span class="new">New for you</span> <span class="when">10 November 2026</span></h2><h3>Added</h3><ul><li>A Free plan with no time limit: every tool, no watermark. The first 3 exports take clips up to 6 minutes; after that, clips up to 30 seconds, 3 exports a day. Longer clips open, process and play for free, and exporting them needs a plan.</li><li>Audioctor Yearly: billed once a year until you cancel, and each year's key comes by itself while Audioctor is online.</li></ul><h3>Removed</h3><ul><li>The 7-day trial. The Free plan takes its place.</li><li>The AU and VST3 plug-ins, for now. They don't hear the track they sit on yet, so a DAW gained nothing over the app. They come back when they do.</li></ul></article>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="Audioctor">
+      <a href="audioctor.html">Audioctor</a>
+      <a href="audioctor-terms.html">Licence terms</a>
+      <a href="mailto:hello@snowstar.company">Something not working? hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+<script>
+// ?from=<the installed version> (the app's Update button): what is new since then, marked, with the download on top
+(function () {
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var from = (new URLSearchParams(location.search).get('from') || '').trim();
+  if (!/^\d+\.\d+\.\d+$/.test(from)) return;
+  var f = from.split('.').map(Number), newer = function (v) { var p = v.split('.').map(Number); for (var i = 0; i < 3; i++) if (p[i] !== f[i]) return p[i] > f[i]; return false; };
+  var fresh = [].slice.call(document.querySelectorAll('.chg')).filter(function (a) { return newer(a.dataset.version); });
+  if (!fresh.length) return;
+  fresh.forEach(function (a) { a.classList.add('fresh'); });
+  document.getElementById('updSub').textContent = 'You have ' + from + '. What is new since then is marked below. Install it over the one you have: your plan and your files stay as they are.';
+  document.getElementById('upd').hidden = false;
+  document.getElementById('lead').textContent = 'Every version, newest first.';
+})();
+</script>
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=32"></script>
+<script src="../js/audioctor-free.js?v=1"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>

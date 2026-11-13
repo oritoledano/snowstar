@@ -539,7 +539,11 @@ export async function audioctorLatest(req, env) {
     'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
   ).bind(ASSET).first();
   if (!rel || !rel.version) return json({ error: 'no_release' }, 404);
-  return json({ version: rel.version, url: `${SITE}/api/audioctor/download/free` }, 200, { 'cache-control': 'public, max-age=600' });
+  // The app's Update button opens what is new since the version it runs, with the download on top (2026-11-13, Ori:
+  // "an update has to say what is new"). The page is made from the app's CHANGELOG.md (app/changelog-site.mjs).
+  const app = new URL(req.url).searchParams.get('app') || '';
+  const from = /^\d+\.\d+\.\d+$/.test(app) ? `?from=${app}` : '';
+  return json({ version: rel.version, url: `${SITE}/apps/audioctor-changes.html${from}` }, 200, { 'cache-control': 'public, max-age=600' });
 }
 
 export async function audioctorDownloadFree(req, env) {
