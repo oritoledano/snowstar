@@ -1,11 +1,11 @@
 /**
- * Audioctor through Creem, the merchant of record (2026-11-11; Paddle declined the account): $7 a month or $60 a year,
+ * Audioctor through Creem, the merchant of record (since 2026-11-11): $7 a month or $60 a year,
  * renewed by Creem, cancelled any time; the Free plan lives in the app. creem.js holds what StreamDAW shares (the API,
  * the store's settings, the one webhook). The Worker still makes every key.
  *
  * On when the var AUDIOCTOR_BILLING is 'creem' and the secret CREEM_API_KEY is set. The two products are made in Creem
  * the first time the prices are asked for (setup(), once, under a lock), so the owner pastes the API key and nothing
- * else. Rows share Paddle's tables, tagged with the environment ('creem-test' / 'creem-live'), so the account page,
+ * else. Subscriptions live in audioctor_paddle_subs, tagged with the environment ('creem-test' / 'creem-live'), so the account page,
  * the app's refresh route and the erase all keep working unchanged: audioctor_paddle_subs (one row per subscription),
  * audioctor_orders.paddle_txn (here: Creem's checkout id, ch_…).
  *
@@ -27,7 +27,6 @@ import { currentUser } from './session.js';
 import { couponProblem } from './coupons.js';
 import * as SD from './audioctor.js';
 import * as C from './creem.js';
-import { usdAfterCoupon, couponLabel } from './audioctor-paddle.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
@@ -38,6 +37,23 @@ const usd = (cents) => `$${(Number(cents || 0) / 100).toFixed(2)}`;
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
 const REF_RE = /^AD-[A-Z0-9]{4,20}$/;
 const GRACE = 3 * 86400;                       // a key runs this long past the period paid for (as Monthly)
+
+/* ── a code's worth, in dollars ─────────────────────────────────
+   Moved here from the module for the reseller before Creem, removed on
+   2026-11-13 with the service itself. Three kinds of code reach
+   this: 'percent' as it is, 'usd' already in cents, and 'amount' in agorot from
+   the HYP era, converted at today's rate. couponProblem's own checks (active,
+   expiry, uses, minimum) stay in shekels, where they were written. */
+async function usdAfterCoupon(env, c, cents) {
+  if (!c) return { cents, off: 0 };
+  let off;
+  if (c.kind === 'percent') off = Math.round((cents * Math.min(100, Math.max(0, c.value))) / 100);
+  else if (c.kind === 'usd') off = Math.max(0, c.value);
+  else off = Math.round(Math.max(0, c.value) * (await SD.shekelsFor(env, 100)).rate);   // agorot x USD per ILS
+  off = Math.min(cents, off);
+  return { cents: cents - off, off };
+}
+const couponLabel = (c) => (c.kind === 'percent' ? `${c.value}% off` : c.kind === 'usd' ? `${usd(c.value)} off` : `₪${(c.value / 100).toFixed(0)} off`);
 const NOTICE_DAYS = 14;                        // a year's renewal is announced this long before
 const APP = 'audioctor';
 const SUCCESS_URL = `${SD.SITE}/apps/audioctor.html?paid=1#pricing`;
@@ -342,4 +358,9 @@ export async function renewalNotices(env, t = now()) {
           + `${SD.mailLinksText()}\n\n— Snowstar.Company` }).then(() => { sent++; }).catch(() => {});
   }
   return { sent };
+}
+
+/** The subscription row behind one entitlement, or null (audioctor-subs.js's licence refresh). */
+export async function subOfEntitlement(env, entId) {
+  return env.DB.prepare('SELECT * FROM audioctor_paddle_subs WHERE entitlement_id = ?').bind(entId).first().catch(() => null);
 }

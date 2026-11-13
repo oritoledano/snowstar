@@ -254,7 +254,7 @@
   // code can be handed out without asking anyone to type it. Applied on load, the page lands on
   // the price, and the code rides into checkout (HYP's page in this tab, or the lightbox).
   const q = new URLSearchParams(location.search);
-  // The plans through Paddle (2026-10-29, js/streamdaw-plans.js) take codes, ?buy=1 and checkout on a page with #plans.
+  // The plans at the reseller (js/streamdaw-plans.js) take codes, ?buy=1 and checkout on a page with #plans.
   const PLANS_PAGE = !!$('plans');
   const couponFromLink = (function () {
     const code = (q.get('c') || q.get('coupon') || '').trim();

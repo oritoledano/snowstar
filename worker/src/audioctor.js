@@ -7,8 +7,8 @@
  * own pair (audioctor-keys.js), at most MAX_MACS Macs a purchase, Audioctor Monthly in audioctor-subs.js.
  * StreamDAW's code is not touched: its own tables stay its own. Audioctor's: schema-audioctor.sql.
  *
- * What it sells since 2026-10-30 (the founder: subscriptions only, as StreamDAW): PLANS below, through Paddle
- * (audioctor-paddle.js); the app has a Free plan and needs no purchase to start. The HYP paths in this file and in
+ * What it sells since 2026-10-30 (the founder: subscriptions only, as StreamDAW): PLANS below, through Creem
+ * (audioctor-creem.js); the app has a Free plan and needs no purchase to start. The HYP paths in this file and in
  * audioctor-subs.js (Audioctor once, Monthly on a card token) stay for what they sold, closed: AUDIOCTOR_HYP_OPEN.
  * Coupons: its own `audioctor_coupons`, then the shared `coupons` (scope 'audioctor' or 'all').
  * The app: SNOWSTAR-ENHANCE repo (app/licence: the key check, "AD" machine ids, the Free plan's walls).
@@ -31,7 +31,7 @@ const ASSET = 'audioctor-macos';
 const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 days
 const PAGE = `${SITE}/apps/audioctor.html`;
 
-// What Audioctor sells: dollars, tax included (marketing/PRICING.md). Paddle renews both.
+// What Audioctor sells: dollars, tax included (marketing/PRICING.md). The reseller renews both.
 export const PLANS = { monthly: { usdCents: 700, every: 'month', name: 'Audioctor Monthly' },
                        year: { usdCents: 6000, every: 'year', name: 'Audioctor Yearly' } };
 // Audioctor once: $49, VAT included, charged in shekels at the day's rate (Ori, 2026-10-20). Closed since 2026-10-30.
@@ -40,8 +40,10 @@ const isMonthly = (plan) => plan === 'monthly';
 const ends = (plan) => plan === 'monthly' || plan === 'year';  // a plan whose key has an end and a Renewal line
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
 const subsMod = () => import('./audioctor-subs.js');          // Audioctor Monthly (imports this file: no static cycle)
-const paddleMod = () => import('./audioctor-paddle.js');      // Paddle, the merchant of record (2026-10-27; imports this file too)
-const creemMod = () => import('./audioctor-creem.js');        // Creem, the merchant of record since 2026-11-11 (Paddle declined)
+const creemMod = () => import('./audioctor-creem.js');        // Creem, the merchant of record since 2026-11-11 (imports this file too)
+/* An entitlement a reseller granted, rather than HYP: 'creem' now, and the trial grants of
+   29-30 October, which worker/migrate-rename-subs.sql re-labels 'test'. */
+const RESELLER = ['creem', 'paddle', 'test'];
 const newRef = () => 'AD-' + urlToken(9).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10).padEnd(6, 'X');
 /* A dollar code ('usd', cents off: e.g. $49 -> $39) on HYP's shekel price: the same dollars at today's rate. */
 async function inShekels(env, c) {
@@ -127,8 +129,6 @@ export async function audioctorCouponCheck(req, env) {
   const b = await req.json().catch(() => ({}));
   const Cr = await creemMod();
   if (Cr.on(env)) return Cr.couponCheck(env, b.code);
-  const P = await paddleMod();
-  if (P.paddleOn(env)) return P.paddleCouponCheck(env, b.code);
   const price = (await shekelsFor(env, ONCE_USD_CENTS)).amount;
   const c = await inShekels(env, await findCoupon(env, b.code));
   const problem = couponProblem(c, price);
@@ -156,8 +156,6 @@ export async function audioctorCheckout(req, env) {
   if (owns) return json({ error: 'owns_it', reason: 'You already own Audioctor. Get a key for another Mac on the unlock page.' }, 409);
   const Cr = await creemMod();
   if (Cr.on(env)) return Cr.checkout(env, user, body);
-  const P = await paddleMod();
-  if (P.paddleOn(env)) return P.paddleCheckout(env, user, body);
   if (String(env.AUDIOCTOR_HYP_OPEN || '') !== '1') return json({ error: 'not_ready', reason: 'Buying opens soon. The free download is there now.' }, 503);
   if (isMonthly(body.plan)) return (await subsMod()).monthlyCheckout(env, user, body);
   const plan = 'lifetime';
@@ -197,7 +195,7 @@ export async function audioctorCheckout(req, env) {
   return json({ ok: true, url: `${BASE}?${text.trim()}`, ref, plan, amount_gross: amount });
 }
 
-/* A coupon that covers the whole price: granted at once, no payment page (HYP's or Paddle's). */
+/* A coupon that covers the whole price: granted at once, no payment page at all. */
 async function grantFree(env, { ref, user, email, couponCode, machine, ownerName, currency = 'ILS', plan = 'lifetime', expiresAt }) {
   await insertOrder(env, { ref, userId: user.id, email, plan, amount: 0, currency, status: 'granted', coupon: couponCode, machine, ownerName });
   const ent = await grantEntitlement(env, { email, ext_ref: ref, amount: 0, currency, plan, source: 'coupon', expiresAt });
@@ -389,7 +387,7 @@ async function fulfilPaid(env, order, q, source, expiresAt) {
   try {
     const plan = order.plan || 'lifetime';
     const subs = await subsMod();
-    const monthly = isMonthly(plan) && source !== 'paddle' && source !== 'creem' ? await subs.monthlyGranted(env, order, q, ref) : null;   // HYP's own Monthly
+    const monthly = isMonthly(plan) && !RESELLER.includes(source) ? await subs.monthlyGranted(env, order, q, ref) : null;   // HYP's own Monthly
     const ent = monthly ? monthly.ent : await grantEntitlement(env, { email: order.email, ext_ref: ref, amount: order.amount, currency: order.currency || 'ILS', plan, source, expiresAt });
     if (order.coupon) await burnCoupon(env, order.coupon);
     const link = await mintDownloadLink(env, ent.id, order.email);
@@ -398,7 +396,7 @@ async function fulfilPaid(env, order, q, source, expiresAt) {
     if (monthly) await subs.mailWelcome(env, monthly.sub, { link, machine: order.machine_id || null, ref }).catch(() => {});
     else await emailReceipt(env, order.email, link, order.machine_id || null,
       { ref, amount: order.amount, currency: order.currency || 'ILS', coupon: order.coupon || null, plan, expiresAt: ent.expires_at,
-        reseller: source === 'creem' ? 'Creem' : source === 'paddle' ? 'Paddle' : null }).catch(() => {});
+        reseller: source === 'creem' ? 'Creem' : null }).catch(() => {});
     // Granted from here on: the receipt has gone, so nothing below may send the order back.
     await env.DB.prepare(`UPDATE audioctor_orders SET status='granted', hyp_id=COALESCE(?, hyp_id), entitlement_id=?, settled_at=? WHERE ref=?`)
       .bind(q && q.Id ? String(q.Id) : null, ent.id, now(), ref).run().catch(() => {});
@@ -438,13 +436,12 @@ export async function audioctorReconcile(req, env, user) {
   const order = await env.DB.prepare('SELECT * FROM audioctor_orders WHERE ref = ?').bind(ref).first();
   if (!order) return json({ error: 'not_found' }, 404);
   if (order.status === 'granted') return json({ ok: true, already: true, ref, entitlement_id: order.entitlement_id || null });
-  if (order.paddle_txn) {                         // Creem's (ch_…) or Paddle's own record of the payment decides
-    const creem = /^ch_/.test(order.paddle_txn);
-    const r = await (creem ? (await creemMod()).reconcile(env, order) : (await paddleMod()).paddleReconcile(env, order))
+  if (order.paddle_txn) {                        // Creem's own record of the payment (ch_…) decides
+    const r = await (await creemMod()).reconcile(env, order)
       .catch((e) => ({ error: String(e.message).slice(0, 200) }));
-    await adLog(env, `admin:${user.id || user.email || '?'}`, creem ? 'ad.reconcile_creem' : 'ad.reconcile_paddle', ref, r);
+    await adLog(env, `admin:${user.id || user.email || '?'}`, 'ad.reconcile_creem', ref, r);
     const o2 = await env.DB.prepare('SELECT entitlement_id FROM audioctor_orders WHERE ref = ?').bind(ref).first();
-    return json(r.ok ? { ok: true, via: creem ? 'creem' : 'paddle', ref, outcome: r.outcome, entitlement_id: o2 && o2.entitlement_id } : { error: r.error, status: r.status || null }, r.ok ? 200 : 409);
+    return json(r.ok ? { ok: true, via: 'creem', ref, outcome: r.outcome, entitlement_id: o2 && o2.entitlement_id } : { error: r.error, status: r.status || null }, r.ok ? 200 : 409);
   }
   if (order.status !== 'charged_unverified' && order.status !== 'verify_failed')
     return json({ error: 'not_reconcilable', status: order.status }, 409);
@@ -614,7 +611,7 @@ export async function myAudioctor(env, user) {
   // A plan's state (renews / cancelled / payment due), for the account page and the sale page.
   const subscription = await (await subsMod()).subFor(env, user).catch(() => null);
   const Cr = await creemMod();
-  const plans = await (Cr.on(env) ? Cr.subsFor(env, user.email, user.id) : (await paddleMod()).paddleSubsFor(env, user.email, user.id)).catch(() => []);
+  const plans = await Cr.subsFor(env, user.email, user.id).catch(() => []);
   if (!ent) return json({ owned: false, subscription, plans });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();

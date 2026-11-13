@@ -1629,11 +1629,22 @@
     }
 
     if (view === 'codes') {
-      /* Codes for StreamDAW (2026-10-29, through Paddle): % or $ off for some payments, or free months with no card;
-         for some products or all; how many uses; until when; new customers only. A %/$ code becomes a Paddle discount
-         the first time someone uses it (worker/src/streamdaw-paddle.js); a free code never reaches Paddle. */
-      const pad = d.paddle || {};
-      const adPad = await fetch('/api/audioctor/prices', { credentials: 'include' }).then((r) => r.json()).catch(() => ({}));   // Audioctor's plans, the same account
+      /* Codes for StreamDAW: % or $ off for some payments, or free months with no card; for some products or all;
+         how many uses; until when; new customers only. A %/$ code becomes a discount at the reseller the first time
+         someone uses it (worker/src/creem-streamdaw.js); a free code never reaches the reseller at all.
+
+         The two prices endpoints are asked for the selling state rather than the admin payload, because that is
+         where it is decided: each one answers billing.open once its products and webhook exist (2026-11-13). */
+      const [sdSell, adSell] = await Promise.all([
+        fetch('/api/streamdaw/prices', { credentials: 'include' }).then((r) => r.json()).catch(() => ({})),
+        fetch('/api/audioctor/prices', { credentials: 'include' }).then((r) => r.json()).catch(() => ({})),
+      ]);
+      const sells = (x, cr) => {
+        const open = !!(x && x.open);
+        const where = cr && cr.environment === 'live' ? 'live' : 'test mode';
+        return open ? `<span class="pill good">selling</span> ${esc(where)}: the products, their prices and the webhook are made.`
+                    : `<span class="pill warn">not selling</span> The products, prices and webhook are not made yet (${esc(where)}).`;
+      };
       const PRODS = [['all', 'All products'], ['splits', 'Splits'], ['station', 'Station'], ['record', 'Record'], ['compare', 'Compare'], ['party', 'Party']];
       const worth = (c) => {
         const n = Number(c.months || 0);
@@ -1642,14 +1653,15 @@
         return off + (n === 0 ? ', every payment' : n === 1 ? ', first payment' : `, first ${n} payments`);
       };
       paint(`${kpis}
-        <div class="db-panel"><h2>Paddle</h2>
-          <p class="db-empty" style="padding-top:0">${pad.billing === 'paddle'
-            ? (pad.open ? `<span class="pill good">selling</span> ${esc(pad.paddle && pad.paddle.environment === 'production' ? 'live' : 'sandbox')}: the products, their prices and the webhook are made.`
-                        : `<span class="pill warn">not set up</span> The products, prices and webhook are not made yet in Paddle (${esc(pad.paddle && pad.paddle.environment === 'production' ? 'live' : 'sandbox')}).`)
-            : 'Off: set the PADDLE_API_KEY secret on the Worker first.'}</p>
-          ${pad.billing === 'paddle' && !pad.open ? '<button class="rv-btn rv-ok" id="sd-paddle-setup">Set up Paddle</button> <span class="rv-note" id="sd-paddle-said"></span>' : ''}
-          <p class="db-empty" style="padding-top:12px">Audioctor: ${adPad.open ? '<span class="pill good">selling</span> its product, two prices and webhook are made.' : '<span class="pill warn">not set up</span> Its product, two prices and webhook are not made yet in Paddle.'}</p>
-          ${adPad.billing === 'paddle' && !adPad.open ? '<button class="rv-btn rv-ok" id="ad-paddle-setup">Set up Paddle for Audioctor</button> <span class="rv-note" id="ad-paddle-said"></span>' : ''}
+        <div class="db-panel"><h2>Billing <span class="pill">Creem</span></h2>
+          <p class="db-empty" style="padding-top:0">StreamDAW: ${(sdSell.billing || {}).billing === 'creem'
+            ? sells(sdSell.billing, sdSell.creem) : 'the reseller is off: STREAMDAW_BILLING is not "creem", or CREEM_API_KEY is not set.'}</p>
+          <p class="db-empty" style="padding-top:8px">Audioctor: ${adSell.billing === 'creem'
+            ? sells(adSell, adSell.creem) : 'the reseller is off: AUDIOCTOR_BILLING is not "creem", or CREEM_API_KEY is not set.'}</p>
+          <p class="rv-note" style="margin-top:8px">Both are made on their own the first time someone asks for the
+            prices, so there is nothing to press here. Creem is the merchant of record for the apps: it charges the
+            card, adds the buyer's own tax and emails them the invoice. Mutra's licences are charged through Max and
+            invoiced from morning \u2014 see Money for both in one list.</p>
         </div>
         <div class="db-panel"><h2>Discount codes <span class="pill">${(d.coupons || []).length}</span></h2>
           <p class="db-empty" style="padding-top:0">A code goes in a link (<code>snowstar.company/apps/streamdaw.html?c=CODE</code>)
@@ -1783,26 +1795,6 @@
       make.disabled = false;
       if (!r || !r.ok) { alert(r && r.error === 'code_taken' ? 'That code is taken.' : r && r.reason ? r.reason : 'Could not create it.'); return; }
       load();
-    });
-    const setup = document.getElementById('sd-paddle-setup');
-    if (setup) setup.addEventListener('click', async () => {
-      setup.disabled = true;
-      const said = document.getElementById('sd-paddle-said');
-      said.textContent = 'Making the products, prices and webhook in Paddle…';
-      const r = await post('/streamdaw/paddle/setup', {});
-      setup.disabled = false;
-      if (r && r.ok && r.ready) { load(); return; }
-      said.textContent = (r && r.reason) || 'Paddle did not answer. Nothing half-made stays wrong: press again.';
-    });
-    const adSetup = document.getElementById('ad-paddle-setup');
-    if (adSetup) adSetup.addEventListener('click', async () => {
-      adSetup.disabled = true;
-      const said = document.getElementById('ad-paddle-said');
-      said.textContent = 'Making the product, prices and webhook in Paddle…';
-      const r = await post('/audioctor/paddle/setup', {});
-      adSetup.disabled = false;
-      if (r && r.ok && r.ready) { load(); return; }
-      said.textContent = (r && r.reason) || 'Paddle did not answer. Nothing half-made stays wrong: press again.';
     });
     document.querySelectorAll('.sd-tog').forEach((b) => b.addEventListener('click', async () => {
       await post('/streamdaw/coupon', { toggle: Number(b.dataset.id) }); load();
@@ -4422,7 +4414,8 @@
           ${liveSubs.length ? subsTable(liveSubs)
             : '<p class="db-empty">Nobody is on a live subscription yet.</p>'}</div>
         <div class="db-panel" style="margin-top:14px"><h2>Tests <span class="pill">${testSubs.length}</span></h2>
-          <p class="db-empty" style="padding-top:0">Creem test mode and the old Paddle sandbox. Kept apart from
+          <p class="db-empty" style="padding-top:0">Creem test mode, and the rows from the store being tried out
+            before it opened. Kept apart from
             the figures above on purpose — counting a rehearsal as a customer is how you end up believing
             you have four of them.</p>
           ${testSubs.length ? subsTable(testSubs) : '<p class="db-empty">None.</p>'}</div>`;

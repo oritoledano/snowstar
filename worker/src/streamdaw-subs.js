@@ -100,9 +100,9 @@ export async function streamdawPrices(env) {
   const m = await monthlyPrice(env);
   // The products (streamdaw-products.js): each one's price today, and whether checkout sells them yet.
   const products = await (await import('./streamdaw-products.js')).catalogFor(env);
-  // Paddle (2026-10-29): the plans by the month and the year, and whether they sell now.
-  const paddle = await (await import('./streamdaw-paddle.js')).paddlePrices(env).catch(() => null);
-  return json({ pro: { amount: SD.PRICE_GROSS }, monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate, open: await monthlyOpen(env) }, products, paddle });
+  /* Who sells the plans by the month and the year is decided one layer up: index.js wraps this
+     answer with creem-streamdaw.js's prices() while Creem is the reseller. */
+  return json({ pro: { amount: SD.PRICE_GROSS }, monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate, open: await monthlyOpen(env) }, products });
 }
 
 /* Pro Monthly takes money only once HYP has switched on card tokens and server charges for the
@@ -611,9 +611,9 @@ export async function streamdawLicenceRefresh(req, env) {
   const row = rows.find((r) => safeEqual(String(r.renew_code), code));
   if (!row) return json({ error: 'unknown' }, 403);
   let s = await env.DB.prepare('SELECT * FROM streamdaw_subscriptions WHERE entitlement_id = ?').bind(row.entitlement_id).first();
-  // A Paddle subscription (2026-10-29): the same answer, from its own row (Paddle bills; nothing is charged here).
+  // A reseller's subscription: the same answer, from its own row (Creem bills; nothing is charged here).
   if (!s) {
-    const p = await (await import('./streamdaw-paddle.js')).paddleSubOfEntitlement(env, row.entitlement_id);
+    const p = await (await import('./creem-streamdaw.js')).subOfEntitlement(env, row.entitlement_id);
     if (p) s = { status: p.status === 'canceled' ? 'ended' : p.cancel_at ? 'cancelled' : p.status === 'past_due' ? 'past_due' : 'active',
                  paid_through: p.period_end, next_charge_at: p.cancel_at ? null : (p.next_billed_at || p.period_end), cancel_when: 'end' };
   }
@@ -625,7 +625,7 @@ export async function streamdawLicenceRefresh(req, env) {
     nextTryAt: s && s.status === 'past_due' && s.next_charge_at ? s.next_charge_at * 1000 : null,
     renewing: row.status === 'renewing', manage: MANAGE_URL,
   };
-  // A products key (Paddle): the app up to 0.7.1 sends have 0 for it (its key never ends itself), so the key goes
+  // A products key (the reseller's): the app up to 0.7.1 sends have 0 for it (its key never ends itself), so the key goes
   // out only in the two days after it was signed, not every day (each would say "renewed" again).
   const fresh = !SD.keyIsProducts(row.key_text) || Number(b.have || 0) > 0 || Number(row.issued_at || 0) > now() - 2 * 86400;
   if (row.key_text && keyEnds > Number(b.have || 0) && fresh) out.key = SD.keyLines(row.key_text);

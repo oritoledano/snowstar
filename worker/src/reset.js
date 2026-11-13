@@ -383,7 +383,7 @@ export async function erasePerson(env, { email, uid } = {}) {
   if (sd.length && sd[0].n) done.push(`${sd[0].n} StreamDAW orders kept for tax, without the person`);
   // Audioctor's orders: kept for tax, without the person or the Mac (privacy policy 2026-11-11).
   await softRun(env, `UPDATE audioctor_orders SET email = '', user_id = NULL, machine_id = NULL, owner_name = NULL WHERE lower(email) = ? OR user_id = ?`, E, U);
-  await softRun(env, `UPDATE audioctor_paddle_subs SET email = '', user_id = NULL WHERE lower(email) = ? OR user_id = ?`, E, U);   // Creem's and Paddle's rows
+  await softRun(env, `UPDATE audioctor_paddle_subs SET email = '', user_id = NULL WHERE lower(email) = ? OR user_id = ?`, E, U);   // the reseller's rows
   if (!(await softRun(env, `UPDATE snowstash_orders SET email = '', user_id = NULL, scan_id = NULL, erased_at = ? WHERE lower(email) = ? OR user_id = ?`, t, E, U)))
     await softRun(env, `UPDATE snowstash_orders SET email = '', user_id = NULL, scan_id = NULL WHERE lower(email) = ? OR user_id = ?`, E, U);
   await softRun(env, 'UPDATE payments SET email = NULL, user_id = NULL, payer_note = NULL WHERE lower(email) = ? OR user_id = ?', E, U);

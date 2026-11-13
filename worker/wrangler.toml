@@ -60,21 +60,14 @@ ALERT_TO = "oritoledano@gmail.com"
 # Routing and must not be touched, or inbound mail to hello@ stops.
 MAIL_FROM = "SNOWSTAR.COMPANY <hello@snowstar.company>"
 
-# StreamDAW through Paddle, the merchant of record (src/streamdaw-paddle.js, 2026-10-29). On only once the secret
-# PADDLE_API_KEY is set (npx wrangler secret put PADDLE_API_KEY) and the owner pressed "Set up Paddle" in the
-# dashboard; until then StreamDAW stays as it was. PADDLE_ENV "live" takes real money; anything else is the sandbox.
-# PADDLE_CLIENT_TOKEN (public by design, for the page's Paddle.js) is a secret only so it changes without a deploy.
-STREAMDAW_BILLING = "creem"     # Creem since 2026-11-11 (src/creem-streamdaw.js); "paddle" goes back to streamdaw-paddle.js
-PADDLE_ENV = "sandbox"
-
-
-# Audioctor through Paddle, the merchant of record (src/audioctor-paddle.js, subscriptions since 2026-10-30).
-# The same secrets as StreamDAW; the product, prices and webhook come from "Set up Paddle" in the dashboard and live
-# in D1 (audioctor_paddle_conf). Until then checkout says it opens soon. PADDLE_ENV above is shared.
+# Who sells the apps. "creem" routes checkout, prices, the portal and the coupon check to src/creem-streamdaw.js and
+# src/audioctor-creem.js; anything else leaves each app on its own pre-Creem HYP path (shekels, AUDIOCTOR_HYP_OPEN /
+# STREAMDAW_MONTHLY_OPEN). The first reseller's own variables went with its code on 2026-11-13.
+STREAMDAW_BILLING = "creem"
 AUDIOCTOR_BILLING = "creem"
-# Creem, the merchant of record since 2026-11-11 (src/creem.js): Paddle declined the account. On once the secret
-# CREEM_API_KEY (test key) is set; CREEM_ENV "live" takes real money with the secret CREEM_LIVE_API_KEY; anything else is
-# Creem's test mode. The products and the webhook are made by the Worker itself the first time they are needed.
+# Creem, the merchant of record since 2026-11-11 (src/creem.js). On once the secret CREEM_API_KEY (test key) is set;
+# CREEM_ENV "live" takes real money with the secret CREEM_LIVE_API_KEY; anything else is Creem's test mode. The
+# products and the webhook are made by the Worker itself the first time they are needed.
 CREEM_ENV = "live"
 # daily digest at 07:00 UTC
 [triggers]

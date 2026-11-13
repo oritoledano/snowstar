@@ -637,7 +637,8 @@ html.sdco-lock,html.sdco-lock body{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.offer{transition:none}}
 @media (max-width:640px){.bill button{padding:11px 14px;font-size:14px}}
 
-/* The pay sheet (2026-10-29): Paddle's form inline in our card; what you buy on the left. The card moves, the page
+/* The pay sheet (2026-10-29, unused since 2026-11-13): the reseller's form inline in our card; what you buy on
+   the left. Creem hosts its own checkout page now, so nothing opens this. The card moves, the page
    behind is dimmed at once (transform only). */
 html.pay-open{overflow:hidden}
 .pay{position:fixed;inset:0;z-index:90;background:rgba(18,16,12,.62);display:flex;align-items:center;justify-content:center;padding:16px}

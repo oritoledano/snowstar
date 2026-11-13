@@ -1,9 +1,10 @@
-/* ═══════════ StreamDAW plans, through Paddle (2026-10-29) ═══════════════════
+/* ═══════════ StreamDAW plans, through Creem (2026-11-11) ════════════════════
    apps/streamdaw.html #pricing: Free, One product (picked), All products; billed yearly (the default, shown as its
-   monthly figure) or monthly. Paddle is the merchant of record: the Worker makes a Paddle transaction for the plan
-   (POST /api/streamdaw/checkout, worker/src/streamdaw-paddle.js) and Paddle.js opens it inline, in our own pay sheet. Nothing is
-   granted on the page's word: the key comes once Paddle tells the Worker the payment went through.
-   Until Paddle sells (/api/streamdaw/prices → paddle.open false) every buy button starts the free week instead.
+   monthly figure) or monthly. Creem is the merchant of record: the Worker makes a Creem checkout for the plan
+   (POST /api/streamdaw/checkout, worker/src/creem-streamdaw.js) and the page goes to Creem's own checkout page, which
+   comes back here with ?paid=1. Nothing is granted on the page's word: the key comes once Creem tells the Worker the
+   payment went through.
+   Until Creem sells (/api/streamdaw/prices → creem.open, live) every buy button starts the free week instead.
    Codes: ?c=CODE in the link, or "Have a code?". The offer: 15% off a first purchase (WELCOME15), shown once to a
    visitor weighing it up (leaving the page, or back from a product page), only while that code works. */
 (function () {
@@ -22,7 +23,7 @@
   const NAMES = { splits: 'Splits', station: 'Station', record: 'Record', compare: 'Compare', party: 'Party', all: 'All products' };
   // What the page says before the Worker answers (the same figures: worker/src/streamdaw-products.js).
   let plans = { splits: { month: 700, year: 6000 }, all: { month: 1500, year: 14400 } };
-  let open = false, paddleCfg = null, period = 'year', pick = 'splits', code = null;
+  let open = false, period = 'year', pick = 'splits', code = null;
   const dollars = (c) => '$' + Math.round(c / 100);
   const calm = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const msgBox = $('planMsg');
@@ -66,11 +67,10 @@
   paint();
 
   const pricesAsked = fetch('/api/streamdaw/prices', { credentials: 'omit' }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-    const p = d && d.paddle;
-    if (p && p.plans) plans = p.plans;
-    // Creem (2026-11-11): sells for real only in live mode; ?creem=test lets the owner try Creem's test mode.
-    open = d && d.creem ? !!(d.creem.open && (d.creem.environment === 'live' || q.get('creem') === 'test')) : !!(p && p.open);
-    paddleCfg = p && p.paddle;
+    const b = d && d.billing;
+    if (b && b.plans) plans = b.plans;
+    // Creem sells for real only in live mode; ?creem=test lets the owner try Creem's test mode.
+    open = d && d.creem ? !!(d.creem.open && (d.creem.environment === 'live' || q.get('creem') === 'test')) : !!(b && b.open);
     paint();
   }).catch(() => {});
 
@@ -87,98 +87,10 @@
   const MACHINE_RE = /^SD[0-9A-F]{12,20}$/;
   const forMac = () => { try { const m = sessionStorage.getItem('sd_machine') || String(q.get('machine') || '').toUpperCase(); return MACHINE_RE.test(m) ? m : null; } catch (e) { return null; } };
 
-  // ── Paddle.js, loaded on the first purchase ──
-  let paddleLoad = null;
-  function paddleJs() {
-    if (paddleLoad) return paddleLoad;
-    paddleLoad = new Promise((resolve, reject) => {
-      if (window.Paddle) return resolve(window.Paddle);
-      const s = document.createElement('script');
-      s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-      s.onload = () => resolve(window.Paddle); s.onerror = () => { paddleLoad = null; reject(new Error('paddle.js')); };
-      document.head.appendChild(s);
-    }).then((P) => {
-      if (paddleCfg && paddleCfg.environment === 'sandbox') P.Environment.set('sandbox');
-      P.Initialize({ token: paddleCfg && paddleCfg.token, eventCallback: onPaddle });
-      return P;
-    });
-    return paddleLoad;
-  }
-  let buying = null;
-
-  // ── the pay sheet: Paddle's form inline, inside our own card (what you buy beside it, in the page's language) ──
-  let sheet = null;
-  function money(n, cur) {
-    try { return new Intl.NumberFormat(navigator.language || 'en', { style: 'currency', currency: cur, maximumFractionDigits: n % 1 ? 2 : 0 }).format(n); }
-    catch (e) { return cur + ' ' + n; }
-  }
-  function closeSheet() {
-    if (!sheet || !sheet.classList.contains('on')) return;
-    try { window.Paddle && window.Paddle.Checkout.close(); } catch (e) {}
-    sheet.classList.remove('on'); document.documentElement.classList.remove('pay-open');
-    const back = sheet._from; setTimeout(() => { sheet.hidden = true; if (back && back.focus) back.focus(); }, calm() ? 0 : 320);
-  }
-  function openSheet(id) {
-    if (!sheet) {
-      sheet = document.createElement('div');
-      sheet.className = 'pay'; sheet.hidden = true;
-      sheet.innerHTML = `<div class="pay-card" role="dialog" aria-modal="true" aria-labelledby="payName">
-        <button class="x" type="button" aria-label="Close the checkout">×</button>
-        <div class="pay-sum">
-          <span class="pay-kick">StreamDAW</span>
-          <h3 id="payName" data-p="name"></h3>
-          <p class="pay-line" data-p="line"></p>
-          <p class="pay-price"><b data-p="price"></b> <span data-p="per"></span></p>
-          <p class="pay-code" data-p="code" hidden></p>
-          <ul class="pay-pts">
-            <li>Your key comes by email the moment the payment goes through.</li>
-            <li>Cancel any time in your account: it runs to the end of what you paid for.</li>
-            <li>Changed your mind? The first payment comes back in full within 14 days.</li>
-          </ul>
-          <p class="pay-fine">Paddle.com is our reseller: it takes the payment, adds your country’s tax and emails the invoice.</p>
-        </div>
-        <div class="pay-form"><div class="sd-pay-frame"></div><p class="pay-wait" data-p="wait">Opening the secure checkout…</p></div>
-      </div>`;
-      document.body.appendChild(sheet);
-      sheet.querySelector('.x').addEventListener('click', closeSheet);
-      sheet.addEventListener('click', (e) => { if (e.target === sheet) closeSheet(); });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
-    }
-    const p = plans[id] || plans.splits, f = (k) => sheet.querySelector(`[data-p="${k}"]`);
-    f('name').textContent = NAMES[id];
-    f('line').textContent = id === 'all' ? 'Splits, Station, Record, Compare and Party, on one key.' : LINES[id];
-    f('price').textContent = period === 'year' ? dollars(p.year) : dollars(p.month);
-    f('per').textContent = period === 'year' ? 'a year' : 'a month';
-    f('code').hidden = !code; if (code) f('code').innerHTML = `<b>${esc(code.code)}</b> · ${esc(code.label)}`;
-    f('wait').hidden = false;
-    sheet.querySelector('.sd-pay-frame').innerHTML = '';
-    sheet._from = document.activeElement;
-    sheet.hidden = false; document.documentElement.classList.add('pay-open');
-    requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.add('on')));
-    sheet.querySelector('.x').focus();
-  }
-  // Paddle's own figures (with the buyer's tax) replace ours once the form knows the country.
-  function sheetTotals(d) {
-    if (!sheet || !d) return;
-    const t = d.totals, cur = d.currency_code, f = (k) => sheet.querySelector(`[data-p="${k}"]`);
-    if (t && cur && typeof t.total === 'number') f('price').textContent = money(t.total, cur);
-    const it = d.items && d.items[0], cyc = it && it.billing_cycle;
-    if (cyc && cyc.interval) f('per').textContent = cyc.interval === 'year' ? 'a year' : 'a month';
-    if (d.discount && t && t.discount > 0 && cur) { const c = f('code'); c.hidden = false; c.innerHTML = `${esc(d.discount.code || 'Code')} · ${esc(money(t.discount, cur))} off`; }
-  }
-
-  function onPaddle(ev) {
-    if (!ev || !ev.name) return;
-    if (ev.name === 'checkout.loaded' && sheet) { const w = sheet.querySelector('[data-p="wait"]'); if (w) w.hidden = true; }
-    if (/^checkout\.(loaded|items\.updated|customer\.(created|updated)|payment\.selected|discount\.applied)$/.test(ev.name)) sheetTotals(ev.data);
-    if (ev.name === 'checkout.completed') {
-      setTimeout(closeSheet, 2600);
-      say(`<b>${esc(NAMES[buying] || 'StreamDAW')} is yours. Thank you.</b> Paddle emails your receipt. `
-        + (forMac() ? 'The key for this computer arrives by email within a minute: paste everything in its box into StreamDAW › Settings › Licence.'
-                    : 'Next, get the key for your computer on the <a href="streamdaw-unlock.html">unlock page</a>: it takes a minute.'), true);
-      toPlans();
-    }
-  }
+  /* There was an inline pay sheet here until 2026-11-13: the reseller's form in our own card, with
+     what you were buying beside it. Creem hosts its own checkout page and we send the buyer to it, so
+     the sheet had nothing to hold and every line of it was unreachable. The .pay rules in
+     css/streamdaw.css are what is left of it. */
 
   async function buy(which) {
     const id = which === 'all' ? 'all' : pick;
@@ -200,19 +112,8 @@
         code = null; toPlans(); return;
       }
       if (d && d.creem && /^https:\/\//.test(d.creem.checkoutUrl || '')) { location.href = d.creem.checkoutUrl; return; }
-      if (!d || !d.paddle || !d.paddle.transactionId) {
-        say(esc((d && d.reason) || 'Checkout did not open. Nothing was charged. Please try again.'), false); toPlans(); return;
-      }
-      if (d.paddle.token || !paddleCfg) paddleCfg = { environment: d.paddle.environment, token: d.paddle.token || (paddleCfg && paddleCfg.token) };
-      const P = await paddleJs();
-      buying = id;
-      openSheet(id);
-      P.Checkout.open({ transactionId: d.paddle.transactionId,
-        settings: { displayMode: 'inline', frameTarget: 'sd-pay-frame', frameInitialHeight: 450, variant: 'one-page',
-          frameStyle: 'width:100%;min-width:286px;background-color:transparent;border:none;',
-          theme: 'light', showAddDiscounts: false, allowLogout: false, locale: (navigator.language || 'en').slice(0, 2) } });
+      say(esc((d && d.reason) || 'Checkout did not open. Nothing was charged. Please try again.'), false); toPlans();
     } catch (e) {
-      closeSheet();
       say('Checkout could not be reached. Nothing was charged. Please try again.', false);
     } finally { btns.forEach((b) => { b.disabled = false; }); }
   }

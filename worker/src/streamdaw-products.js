@@ -5,10 +5,10 @@
      Master   free (no key needed)
      Splits, Station, Record, Compare, Party   $7 a month or $60 a year each
      All products                              $15 a month or $144 a year
-     (2026-10-29, the founder; sold through Paddle, streamdaw-paddle.js. The first prices were $79–$199 a year.)
+     (2026-10-29, the founder; sold through the reseller, creem-streamdaw.js. The first prices were $79–$199 a year.)
 
-   Through Paddle every plan, month or year, is a subscription that renews by itself until cancelled
-   (streamdaw-paddle.js). The rest of this note is HYP's product checkout, closed: prices in US dollars
+   At the reseller every plan, month or year, is a subscription that renews by itself until cancelled
+   (creem-streamdaw.js). The rest of this note is HYP's product checkout, closed: prices in US dollars
    including VAT, charged in shekels at the site's daily rate (fx.js), as Pro Monthly is; a year is one
    payment for 365 days, and buying again adds a year to what is left; monthly prices were refused there.
 
@@ -25,7 +25,7 @@ export const PAID = ['splits', 'station', 'record', 'compare', 'party'];     // 
 export const NAMES = { splits: 'Splits', station: 'Station', record: 'Record', compare: 'Compare', party: 'Party', all: 'All products' };
 export const CATALOG = {      // US cents, tax included. 2026-10-29 (the founder): a product $7 a month or $60 a year,
   splits:  { year: 6000, month: 700 },       // All products $15 a month or $144 a year; every product by the month or
-  station: { year: 6000, month: 700 },       // the year, sold through Paddle (streamdaw-paddle.js). Was $99–$129 a year.
+  station: { year: 6000, month: 700 },       // the year, sold through the reseller (creem-streamdaw.js). Was $99–$129 a year.
   record:  { year: 6000, month: 700 },
   compare: { year: 6000, month: 700, once: 4900 },   // once (for good): only HYP's product checkout, which is closed
   party:   { year: 6000, month: 700 },

@@ -238,9 +238,9 @@
     </div>`;
   }
 
-  /* StreamDAW subscriptions through Paddle (2026-10-29): each one, when it renews or ends, and Paddle's own page to
-     cancel, change the card or get an invoice (POST /streamdaw/paddle/portal). */
-  function paddleBlock(list) {
+  /* StreamDAW subscriptions at the reseller: each one, when it renews or ends, and Creem's own page to
+     cancel, change the card or get an invoice (POST /streamdaw/portal). */
+  function subsBlock(list) {
     const live = list.filter((x) => x.status !== 'canceled');
     if (!live.length) return '';
     const rows = live.map((x) => `<p style="margin:0 0 6px"><b>StreamDAW ${esc(x.name)}</b> · ${x.period === 'year' ? 'yearly' : 'monthly'} · ${
@@ -254,8 +254,8 @@
       <p class="ac-note" id="sdPortalSaid" style="margin-top:8px"></p></div>`;
   }
 
-  /* Audioctor's plan through Paddle (2026-10-30): when it renews or ends, and Paddle's own page to cancel, change the
-     card or get an invoice (POST /audioctor/paddle/portal). */
+  /* Audioctor's plan at the reseller: when it renews or ends, and Creem's own page to cancel, change the
+     card or get an invoice (POST /audioctor/portal). */
   function audioctorBlock() {
     const a = data.audioctor;
     if (!a) return '';
@@ -282,7 +282,7 @@
   function streamdawApps() {
     const s = data.apps && data.apps.subscription;
     return `<div class="ac-panel"><h2>StreamDAW</h2>
-      ${paddleBlock((data.apps && data.apps.subscriptions) || [])}
+      ${subsBlock((data.apps && data.apps.subscriptions) || [])}
       ${s ? subBlock(s) : ''}
       <p class="ac-note">Your licence is kept with this account. Each computer gets its own key:
         request one for another computer on the unlock page.</p>

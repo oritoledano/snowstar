@@ -1,6 +1,6 @@
 /**
  * Audioctor Monthly on HYP: all of Audioctor for $7 a month (Ori, 2026-10-20; the price since 2026-10-30). Closed:
- * Paddle sells the plans now (audioctor-paddle.js). The refresh route below serves both.
+ * Creem sells the plans now (audioctor-creem.js). The refresh route below serves both.
  *
  * StreamDAW Pro Monthly's engine (streamdaw-subs.js, copied 2026-10-21, kept in step), for Audioctor's own tables
  * (schema-audioctor.sql). Read streamdaw-subs.js's header for the whole story; in short:
@@ -66,16 +66,15 @@ export async function monthlyPrice(env) {
 }
 
 /** GET /audioctor/prices — what the sale page shows: the two plans, and whether they sell now. The page charges in
- *  dollars through Paddle.js (audioctor-paddle.js); the shekels are for showing them at today's rate. */
+ *  dollars at Creem (audioctor-creem.js); the shekels are for showing them at today's rate. */
 export async function audioctorPrices(env) {
   const [y, m] = await Promise.all([SD.shekelsFor(env, SD.PLANS.year.usdCents), monthlyPrice(env)]);
-  const Cr = await import('./audioctor-creem.js');            // Creem since 2026-11-11 (Paddle declined the account)
+  const Cr = await import('./audioctor-creem.js');            // Creem, the reseller since 2026-11-11
   if (Cr.on(env)) return json({ billing: 'creem', open: await Cr.ready(env), creem: Cr.client(env),
                                  year: { amount: y.amount, usdCents: y.usdCents, rate: y.rate },
                                  monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate } });
-  const P = await import('./audioctor-paddle.js');
-  const paddle = P.paddleOn(env) ? P.paddleClient(env) : null;
-  return json({ billing: paddle ? 'paddle' : 'hyp', open: await P.ready(env), ...(paddle ? { paddle } : {}),
+  // No reseller switched on: HYP's own shekel checkout, which is what AUDIOCTOR_HYP_OPEN gates.
+  return json({ billing: 'hyp', open: String(env.AUDIOCTOR_HYP_OPEN || '') === '1',
                 year: { amount: y.amount, usdCents: y.usdCents, rate: y.rate },
                 monthly: { amount: m.amount, usdCents: m.usdCents, rate: m.rate } });
 }
@@ -582,9 +581,9 @@ export async function audioctorLicenceRefresh(req, env) {
   if (!row) return json({ error: 'unknown' }, 403);
   let s = await env.DB.prepare('SELECT * FROM audioctor_subscriptions WHERE entitlement_id = ?').bind(row.entitlement_id).first();
   let plan = 'monthly';
-  // A Paddle subscription (2026-10-30): the same answer, from its own row (Paddle bills; nothing is charged here).
+  // A reseller's subscription: the same answer, from its own row (Creem bills; nothing is charged here).
   if (!s) {
-    const p = await (await import('./audioctor-paddle.js')).paddleSubOfEntitlement(env, row.entitlement_id);
+    const p = await (await import('./audioctor-creem.js')).subOfEntitlement(env, row.entitlement_id);
     if (p) {
       const ent = await env.DB.prepare('SELECT status FROM entitlements WHERE id = ?').bind(row.entitlement_id).first();
       const refunded = !!ent && ent.status === 'refunded';

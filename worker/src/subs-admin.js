@@ -1,8 +1,9 @@
 /**
  * Who is subscribed, read from where the money actually lands.
  *
- * Creem writes a subscription into <app>_paddle_subs - the tables Paddle left
- * behind, reused rather than renamed, because the shape was already right.
+ * Creem writes a subscription into <app>_paddle_subs - the tables the first
+ * reseller left behind, reused because the shape was already right (the rename
+ * is worker/migrate-rename-subs.sql, to be run by hand).
  * Both admin endpoints, meanwhile, ask their *-subs.js module for
  * <app>_subscriptions, the HYP-era table, which has nothing in it and has had
  * nothing in it since the move.
@@ -21,7 +22,7 @@
 const now = () => Math.floor(Date.now() / 1000);
 
 /* 'creem-live' is the only env that moved real money. Anything else - the
-   Creem test mode, and the Paddle sandbox rows still sitting in these tables
+   Creem test mode, and the rows left from trying the store out
    from October - is a rehearsal and is counted separately, never together. */
 const isLive = (env) => String(env || '').toLowerCase() === 'creem-live';
 

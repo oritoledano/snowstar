@@ -1,14 +1,11 @@
-/* ═══════════ Audioctor's plans, through Creem (2026-11-11; Paddle until then) ═══
-   Creem (since Paddle declined the account): the Worker makes a Creem checkout (worker/src/audioctor-creem.js) and the
-   page goes to Creem's checkout page, which comes back here with ?paid=1. Until /api/audioctor/prices says open and
-   live, the buttons stay on the waitlist; ?creem=test lets the owner try Creem's test mode. What follows about Paddle
-   is the same flow before 2026-11-11, kept while the Worker can still be switched back.
-   The two buy buttons on apps/audioctor.html ([data-plan]: year, monthly). Paddle is the merchant of record: the Worker
-   makes a Paddle transaction for the plan (POST /api/audioctor/checkout, worker/src/audioctor-paddle.js) and Paddle.js
-   opens it. Nothing is granted on the page's word: the key comes once Paddle tells the Worker the payment went through.
-   Until Paddle sells for real (/api/audioctor/prices: open, production) the buttons stay on the waitlist; ?paddle=test
-   lets the owner try the sandbox. ?c=CODE in a link carries a code for the first year. ?machine=AD… comes from the
-   app ("See plans"), and that Mac's key is made the moment the money is in. */
+/* ═══════════ Audioctor's plans, through Creem (2026-11-11) ══════════════════
+   The Worker makes a Creem checkout (worker/src/audioctor-creem.js) and the page goes to Creem's checkout page,
+   which comes back here with ?paid=1. Until /api/audioctor/prices says open and live the buttons stay on the
+   waitlist; ?creem=test lets the owner try Creem's test mode.
+
+   The two buy buttons on apps/audioctor.html ([data-plan]: year, monthly). Creem is the merchant of record.
+   Nothing is granted on the page's word: the key comes once Creem tells the Worker the payment went through.
+*/
 (function () {
   'use strict';
   const q = new URLSearchParams(location.search);
@@ -30,15 +27,10 @@
   })();
   const forMac = () => { try { const m = sessionStorage.getItem('ad_machine'); return MACHINE_RE.test(m || '') ? m : null; } catch (e) { return null; } };
 
-  let sells = false, cfg = null, code = null;
+  let sells = false, code = null;
   fetch('/api/audioctor/prices', { credentials: 'omit' }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-    if (d && d.billing === 'creem') {
-      const cr = d.creem || {};
-      sells = !!(d.open && (cr.environment === 'live' || q.get('creem') === 'test'));
-    } else {
-      cfg = d && d.paddle;
-      sells = !!(d && d.open && cfg && (cfg.environment === 'production' || q.get('paddle') === 'test'));
-    }
+    const cr = (d && d.creem) || {};
+    sells = !!(d && d.billing === 'creem' && d.open && (cr.environment === 'live' || q.get('creem') === 'test'));
     if (sells && q.get('c')) checkCode(q.get('c'));
   }).catch(() => {});
 
@@ -60,33 +52,9 @@
     openAuth('signup', 'Your plan and your keys are kept with a free Snowstar account.', 'app');
   }
 
-  // ── Paddle.js, loaded on the first purchase ──
-  let paddleLoad = null;
-  function paddleJs() {
-    if (paddleLoad) return paddleLoad;
-    paddleLoad = new Promise((resolve, reject) => {
-      if (window.Paddle) return resolve(window.Paddle);
-      const s = document.createElement('script');
-      s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-      s.onload = () => resolve(window.Paddle); s.onerror = () => { paddleLoad = null; reject(new Error('paddle.js')); };
-      document.head.appendChild(s);
-    }).then((P) => {
-      if (cfg.environment === 'sandbox') P.Environment.set('sandbox');
-      P.Initialize({ token: cfg.clientToken, eventCallback: onPaddle });
-      return P;
-    });
-    return paddleLoad;
-  }
   const thanks = () => '<b>Audioctor is yours. Thank you.</b> Your receipt comes by email. ' + (forMac()
     ? 'Your key for this Mac comes by email in a minute: paste it in the licence line at the bottom left of Audioctor’s window.'
     : '<a href="audioctor-unlock.html">Get your key for a Mac</a>.');
-  function onPaddle(ev) {
-    if (!ev || ev.name !== 'checkout.completed') return;
-    setTimeout(() => { try { window.Paddle.Checkout.close(); } catch (e) {} }, 2600);
-    say(thanks(), true);
-    track('checkout_done', {});
-  }
-
   async function buy(plan, button) {
     await ready();
     const M = acct();
@@ -101,10 +69,7 @@
       if (d.free) { say(thanks(), true); return; }
       if (d.error === 'owns_it' || d.error === 'already_subscribed') { say(`${esc(d.reason)} <a href="/account.html#apps">Your account</a>.`, false); return; }
       if (r.ok && d.creem && /^https:\/\//.test(d.creem.checkoutUrl || '')) { track('checkout_open', { plan }); location.href = d.creem.checkoutUrl; return; }
-      if (!r.ok || !d.paddle) { say(esc(d.reason || 'Checkout could not open. Nothing was charged. Please try again.'), false); return; }
-      const P = await paddleJs();
-      P.Checkout.open({ transactionId: d.paddle.transactionId, settings: { displayMode: 'overlay', theme: 'dark' } });
-      track('checkout_open', { plan });
+      say(esc(d.reason || 'Checkout could not open. Nothing was charged. Please try again.'), false);
     } catch (e) {
       say('Checkout could not open. Nothing was charged. Please try again.', false);
     } finally { delete button.dataset.busy; }

@@ -55,7 +55,6 @@ import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawLiveRegister, streamdawLiveStatus, streamdawLivePage, streamdawLiveCleanup } from './streamdaw.js';
 import { streamdawPrices, streamdawSubCancel, streamdawSubResume, streamdawSubCancelLink, streamdawSubByToken,
          streamdawSubAdmin, streamdawLicenceRefresh, streamdawRenewals } from './streamdaw-subs.js';
-import { paddleSetup, paddleWebhook, paddlePortal, paddleCouponCheck, paddleOn } from './streamdaw-paddle.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
          streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
 import { streamdawMacLink, streamdawMacStatus } from './streamdaw-macs.js';
@@ -65,13 +64,11 @@ import { audioctorCheckout, audioctorDownload, audioctorDownloadFree, audioctorL
          audioctorActivationIssue, audioctorDeactivate, mintWaiting as audioctorMintWaiting } from './audioctor.js';
 import { audioctorPrices, audioctorSubCancel, audioctorSubResume, audioctorSubCancelLink, audioctorSubByToken,
          audioctorSubAdmin, audioctorLicenceRefresh, audioctorRenewals } from './audioctor-subs.js';
-// Audioctor through Paddle, the merchant of record (subscriptions since 2026-10-30, audioctor-paddle.js).
-import { audioctorPaddleWebhook, paddleSetup as audioctorPaddleSetup, paddlePortal as audioctorPaddlePortal,
-         paddleRenewalNotices as audioctorRenewalNotices } from './audioctor-paddle.js';
 // Creem, the merchant of record since 2026-11-11 (creem.js; Audioctor's side in audioctor-creem.js).
 import { creemWebhook, creemSetup } from './creem.js';
 import { on as audioctorCreemOn, portal as audioctorCreemPortal, renewalNotices as audioctorCreemRenewalNotices } from './audioctor-creem.js';
-import { routed as streamdawCreemOn, checkout as streamdawCreemCheckout, prices as streamdawCreemPrices, portal as streamdawCreemPortal } from './creem-streamdaw.js';
+import { routed as streamdawCreemOn, checkout as streamdawCreemCheckout, prices as streamdawCreemPrices,
+         portal as streamdawCreemPortal, couponCheck as streamdawCreemCouponCheck } from './creem-streamdaw.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
          streamdawUpdatesCleanup } from './streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
@@ -234,7 +231,7 @@ async function handle(req, env, ctx) {
   // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
   // /streamdaw/turn: the same relays, the same bearer secret; it only hands that Mac TURN credentials.
   // /streamdaw/macs/status: the same relays; it answers only whether that machine ID is connected to an account.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/audioctor/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/streamdaw/paddle/webhook', '/creem/webhook', '/n/u']);
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/audioctor/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/creem/webhook', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -481,10 +478,14 @@ async function handle(req, env, ctx) {
   // The free version: the same installer, for anyone (Pro is a key for one Mac).
   if (path === '/streamdaw/download/free' && (method === 'GET' || method === 'HEAD')) return streamdawDownloadFree(req, env);
   if (path === '/streamdaw/mine' && method === 'GET') return myStreamdaw(env, await currentUser(req, env));
-  if (path === '/streamdaw/coupon/check' && method === 'POST') return paddleOn(env) || streamdawCreemOn(env) ? paddleCouponCheck(req, env) : streamdawCouponCheck(req, env);
-  // StreamDAW through Paddle (2026-10-29, streamdaw-paddle.js): the owner's setup, the buyer's portal.
-  if (path === '/streamdaw/paddle/setup' && method === 'POST') return paddleSetup(req, env, await currentUser(req, env));
-  if ((path === '/streamdaw/paddle/portal' || path === '/streamdaw/portal') && method === 'POST') return streamdawCreemOn(env) ? streamdawCreemPortal(req, env) : paddlePortal(req, env);
+  if (path === '/streamdaw/coupon/check' && method === 'POST') return streamdawCreemOn(env) ? streamdawCreemCouponCheck(req, env) : streamdawCouponCheck(req, env);
+  /* The buyer's own page at the reseller: cancel, change the card, get an invoice. Only Creem has one;
+     under the pre-Creem HYP path there is nothing to open, so say so rather than 404. */
+  if (path === '/streamdaw/portal' && method === 'POST') {
+    return streamdawCreemOn(env) ? streamdawCreemPortal(req, env)
+      : new Response(JSON.stringify({ error: 'no_portal', reason: 'Write to hello@snowstar.company and we will do it by hand.' }),
+                     { status: 503, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+  }
   // Pro Monthly (streamdaw-subs.js): the prices the page shows, cancelling (signed in, or by a
   // link sent to the email), resuming, the owner's settling, and the app asking for its renewed key
   // (no cookie and no Origin: its machine id and the renewal code it was given with the first key).
@@ -511,8 +512,6 @@ async function handle(req, env, ctx) {
   if (path === '/streamdaw/minter/issue' && method === 'POST') return streamdawMinterIssue(req, env);
   // Bug reports: open to anyone, because the useful ones arrive the moment
   // something breaks and a sign-in wall loses them.
-  // Paddle's server, signed (Paddle-Signature, HMAC with the destination's secret): no cookie, no Origin.
-  if (path === '/streamdaw/paddle/webhook' && method === 'POST') return paddleWebhook(req, env);
   if (path === '/streamdaw/report' && (method === 'POST' || method === 'OPTIONS')) return streamdawReport(req, env);
   if (path === '/streamdaw/reports') return streamdawReports(req, env, await currentUser(req, env));
   if (path === '/streamdaw/presence-token' && (method === 'POST' || method === 'OPTIONS')) return streamdawPresenceToken(req, env);
@@ -566,14 +565,14 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/reports') return audioctorReports(req, env, await currentUser(req, env));
   if (path === '/audioctor/admin' && method === 'GET') return audioctorAdmin(env, await currentUser(req, env));
   if (path === '/audioctor/reconcile' && method === 'POST') return audioctorReconcile(req, env, await currentUser(req, env));
-  // Paddle's server, signed (Paddle-Signature, HMAC with the webhook secret): no cookie, no Origin.
-  if (path === '/audioctor/paddle/webhook' && method === 'POST') return audioctorPaddleWebhook(req, env);
-  if (path === '/audioctor/paddle/setup' && method === 'POST') return audioctorPaddleSetup(req, env, await currentUser(req, env));
-  if (path === '/audioctor/paddle/portal' && method === 'POST') return audioctorPaddlePortal(req, env);
   // Creem's server, signed (creem-signature, HMAC of the body with the webhook secret): no cookie, no Origin.
   if (path === '/creem/webhook' && method === 'POST') return creemWebhook(req, env);
   if (path === '/creem/setup' && method === 'POST') return creemSetup(req, env, await currentUser(req, env));
-  if (path === '/audioctor/portal' && method === 'POST') return audioctorCreemOn(env) ? audioctorCreemPortal(req, env) : audioctorPaddlePortal(req, env);
+  if (path === '/audioctor/portal' && method === 'POST') {
+    return audioctorCreemOn(env) ? audioctorCreemPortal(req, env)
+      : new Response(JSON.stringify({ error: 'no_portal', reason: 'Write to hello@snowstar.company and we will do it by hand.' }),
+                     { status: 503, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+  }
 
   // ── licensing: request in, owner grants, member downloads the master ──
   if (path === '/licence/request' && method === 'POST') return createRequest(req, env, await currentUser(req, env));
@@ -887,7 +886,6 @@ export default {
     /* Audioctor Monthly renewals, and Audioctor keys a failure left waiting (audioctor*.js). */
     ctx.waitUntil(audioctorRenewals(env).catch(() => {}));
     ctx.waitUntil(audioctorMintWaiting(env).catch(() => {}));
-    ctx.waitUntil(audioctorRenewalNotices(env).catch(() => {}));
     ctx.waitUntil(audioctorCreemRenewalNotices(env).catch(() => {}));
     /* Today's shekel rates, so a dollar price is today's dollar price. */
     ctx.waitUntil(refreshRates(env).catch(() => null));

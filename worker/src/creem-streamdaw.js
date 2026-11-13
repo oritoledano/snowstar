@@ -1,14 +1,13 @@
 /**
- * StreamDAW through Creem, the merchant of record (2026-11-11; Paddle declined the account). The plans are Paddle's
- * (streamdaw-products.js, decided 2026-10-29): each product $7 a month or $60 a year, All products $15 a month or $144
- * a year, US dollars, tax included; Master stays free. creem.js holds what Audioctor shares (the API, the store's
- * settings, the one webhook). streamdaw-paddle.js is the model and stays as it was; index.js routes here instead when
- * STREAMDAW_BILLING is 'creem' and the secret CREEM_API_KEY is set.
+ * StreamDAW through Creem, the merchant of record (since 2026-11-11). The plans were decided 2026-10-29
+ * (streamdaw-products.js): each product $7 a month or $60 a year, All products $15 a month or $144 a year, US dollars,
+ * tax included; Master stays free. creem.js holds what Audioctor shares (the API, the store's settings, the one
+ * webhook).
  *
  * Twelve Creem products (six plans, by the month and the year), made the first time the prices are asked (under a
- * lock), so the owner pastes the API key and nothing else. Rows share Paddle's table streamdaw_paddle_subs, tagged
- * with the environment ('creem-test' / 'creem-live'), so /streamdaw/mine and the app's licence refresh read them
- * unchanged. streamdaw_orders.hyp_id holds Creem's checkout id (ch_…).
+ * lock), so the owner pastes the API key and nothing else. Subscriptions live in streamdaw_paddle_subs, tagged with the
+ * environment ('creem-test' / 'creem-live'), so /streamdaw/mine and the app's licence refresh read them unchanged.
+ * streamdaw_orders.hyp_id holds Creem's checkout id (ch_...).
  *
  *   1. POST /streamdaw/checkout {product, period, coupon?, machine?}: a Creem checkout for that plan, our SD- reference
  *      as its request_id and in its metadata; the page goes to Creem's checkout page and comes back with ?paid=1.
@@ -16,7 +15,8 @@
  *   2. The webhook (creem.js): checkout.completed or the first subscription.paid makes the entitlement and the keys;
  *      each later subscription.paid moves the end on and re-signs the account's keys quietly; subscription.* keeps
  *      the row's status; a full refund ends the plan, at Creem too.
- *   3. POST /streamdaw/portal (and the old /streamdaw/paddle/portal): Creem's customer portal for the buyer.
+ *   3. POST /streamdaw/portal: Creem's customer portal for the buyer.
+ *   4. POST /streamdaw/coupon/check: what a code is worth, before anyone pays.
  */
 
 import { sendMail } from './mail.js';
@@ -25,7 +25,6 @@ import { normCode } from './coupons.js';
 import * as SD from './streamdaw.js';
 import * as P from './streamdaw-products.js';
 import * as C from './creem.js';
-import { couponWhy, couponWords, catalog } from './streamdaw-paddle.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
@@ -84,11 +83,14 @@ export async function ready(env) {
   return allMade(await C.conf(env));
 }
 
-/** GET /streamdaw/prices under Creem: what streamdawPrices says, with Creem in Paddle's place. */
+/** GET /streamdaw/prices: what streamdawPrices says, plus who sells and for how much.
+ *  This key had the old reseller's name until 2026-11-13; the pages that read it were changed with it,
+ *  and their ?v= went up so no cached page asks for the old shape. */
 export async function prices(env, base) {
   const d = await base.json().catch(() => ({}));
-  return json({ ...d, paddle: { billing: 'creem', open: await ready(env), plans: catalog(), paddle: null },
-                creem: { open: await ready(env), environment: C.live(env) ? 'live' : 'test' } });
+  const open = await ready(env);
+  return json({ ...d, billing: { billing: 'creem', open, plans: catalog() },
+                creem: { open, environment: C.live(env) ? 'live' : 'test' } });
 }
 
 // ── checkout ────────────────────────────────────────────────────────────────
@@ -137,8 +139,67 @@ async function findCoupon(env, code) {
 }
 const couponProducts = (c) => String((c && c.products) || '').split(',').filter(Boolean);
 
+/* ── the catalogue, and what a code is worth ─────────────────────────
+   These came out of the module for the reseller before Creem, removed on
+   2026-11-13 with the service itself. They were imported from it while it
+   existed, which made a reseller we never sold through a dependency of the
+   one we do.
+
+   couponCheck answers POST /streamdaw/coupon/check, and it asks THIS file's
+   findCoupon. That is a fix, not a move: the endpoint used to have its own
+   lookup that read streamdaw_coupons alone, so a code made in Editor > Discount
+   codes was refused by the check in front of checkout while checkout itself
+   honoured it. The owner handed such a code out and watched it fail. */
+export function catalog() {
+  const out = {};
+  for (const id of P.PAID.concat('all')) {
+    const c = P.CATALOG[id];
+    out[id] = { name: P.NAMES[id], month: c.month, year: c.year, yearMonthly: Math.round(c.year / 12) };
+  }
+  return out;
+}
+
+async function boughtBefore(env, email, userId) {
+  const r = await env.DB.prepare(
+    `SELECT 1 FROM entitlements WHERE product = 'streamdaw' AND (email = ? OR (? IS NOT NULL AND user_id = ?)) LIMIT 1`
+  ).bind(lc(email), userId || null, userId || null).first().catch(() => null);
+  return !!r;
+}
+
+/** Why `c` cannot be used for `plan` by this account, or ''. */
+async function couponWhy(env, c, plan, email, userId) {
+  if (!c || !c.active) return 'That code isn\u2019t valid.';
+  if (c.expires_at && c.expires_at < now()) return 'That code has expired.';
+  if (c.max_uses && c.used >= c.max_uses) return 'That code has been used up.';
+  const id = String(plan).split(':')[0];
+  const only = couponProducts(c);
+  if (only.length && !only.includes(id)) return `That code is for ${only.map((x) => P.NAMES[x] || x).join(' or ')}.`;
+  if (c.first_only && await boughtBefore(env, email, userId)) return 'That code is for a first purchase.';
+  return '';
+}
+
+/** What a code does, in words, for the page: "15% off the first payment", "3 months free". */
+function couponWords(c) {
+  const n = Number(c.months || 0);
+  if (c.kind === 'free') return n ? `${n} month${n > 1 ? 's' : ''} free` : 'free';
+  const off = c.kind === 'amount' ? `$${(c.value / 100).toFixed(0)} off` : `${c.value}% off`;
+  return n > 1 ? `${off} the first ${n} payments` : n === 1 ? `${off} the first payment` : `${off} every payment`;
+}
+
+/** POST /streamdaw/coupon/check {code, product?} - what a code does, before anyone pays. */
+export async function couponCheck(req, env) {
+  const b = await req.json().catch(() => ({}));
+  const c = await findCoupon(env, b.code);
+  const user = await currentUser(req, env).catch(() => null);
+  const plan = `${String(b.product || (couponProducts(c)[0] || 'all'))}:month`;
+  const why = await couponWhy(env, c, plan, user && user.email, user && user.id);
+  if (why) return json({ ok: false, reason: why });
+  return json({ ok: true, code: c.code, kind: c.kind, value: c.value, months: c.months || 0, products: couponProducts(c),
+                free: c.kind === 'free', label: couponWords(c) });
+}
+
 /* A key with the account's whole list for the Mac it was bought on and the account's Macs that have one: the same
-   as streamdaw-paddle.js's keysFor. */
+   as the pre-Creem path built it. */
 async function keysFor(env, ent, machine, ownerName) {
   const prior = ((await env.DB.prepare(
     `SELECT machine_id, owner_name FROM streamdaw_activations WHERE email = ? AND status IN ('issued','renewing')
@@ -361,4 +422,20 @@ export async function portal(req, env) {
     if (!d || !/^https:\/\//.test(String(d.customer_portal_link || ''))) throw new Error('no link');
     return json({ ok: true, url: d.customer_portal_link });
   } catch { return json({ error: 'creem', reason: 'Could not open the subscription page. Please try again.' }, 502); }
+}
+
+/* ── what the account page and the app's licence refresh ask for ─────────
+   Both used to call the old reseller's module for this, which is why removing
+   that file reaches as far as it does. The shape is unchanged on purpose:
+   /streamdaw/mine and the refresh answer what they answered yesterday. */
+
+/** The account's subscriptions, for /streamdaw/mine and the licence refresh. */
+export async function subsFor(env, email, userId) {
+  return (await subsOf(env, email, userId)).map((s) => ({ plan: s.plan, name: P.NAMES[s.plan.split(':')[0]], period: s.plan.split(':')[1],
+    status: s.status, periodEnd: s.period_end, cancelAt: s.cancel_at || null, nextBilledAt: s.next_billed_at || null }));
+}
+
+/** The subscription row behind one entitlement, or null. */
+export async function subOfEntitlement(env, entId) {
+  return env.DB.prepare('SELECT * FROM streamdaw_paddle_subs WHERE entitlement_id = ?').bind(entId).first().catch(() => null);
 }

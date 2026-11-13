@@ -1,5 +1,5 @@
 /**
- * Creem (Armitage Labs OÜ, Estonia), the merchant of record for StreamDAW and Audioctor since 2026-11-11: Paddle
+ * Creem (Armitage Labs OÜ, Estonia), the merchant of record for StreamDAW and Audioctor since 2026-11-11. The
  * declined the account that day, so Creem takes the payments, files the VAT and sales tax, issues the invoices and
  * renews the subscriptions. The Worker still makes every key. This file is what both apps share: the API, the store's
  * settings in D1, the one signed webhook (POST /api/creem/webhook) and which app an event belongs to.

@@ -104,7 +104,8 @@ export async function moneyAll(req, env, user) {
 
   /* ── Creem: the subscriptions, which is where the money is now ───────────
      env is the only honest signal here: 'creem-live' took a real card and
-     everything else is Creem's test mode or a Paddle sandbox row from October.
+     everything else is a rehearsal: Creem's test mode, or a row from the store
+     being tried out in October.
      The amount is not in this table - Creem holds it - so these are listed as
      subscriptions rather than given a figure this Worker cannot stand behind. */
   for (const [table, vertical] of [['streamdaw_paddle_subs', 'StreamDAW'], ['audioctor_paddle_subs', 'Audioctor']]) {

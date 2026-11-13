@@ -63,7 +63,7 @@ const isMonthly = (plan) => plan === 'monthly';
 const ends = (plan) => isPass(plan) || isMonthly(plan);       // a plan whose key has an end
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
 const subsMod = () => import('./streamdaw-subs.js');
-const paddleMod = () => import('./streamdaw-paddle.js');       // Paddle (imports this file too)           // Pro Monthly (imports this file: no static cycle)
+const creemMod = () => import('./creem-streamdaw.js');        // Creem, the reseller (imports this file too: no static cycle)
 
 /* Pass money paid by this buyer that a Pro purchase now may use: passes settled in the last
    PASS_CREDIT_DAYS and after their last Pro purchase (a credit is used once). */
@@ -242,7 +242,7 @@ export async function streamdawCouponCreate(req, env, user) {
   if (b.remove) { await env.DB.prepare('DELETE FROM streamdaw_coupons WHERE id = ?').bind(Number(b.remove)).run(); return json({ ok: true }); }
   if (b.toggle) { await env.DB.prepare('UPDATE streamdaw_coupons SET active = 1 - active WHERE id = ?').bind(Number(b.toggle)).run(); return json({ ok: true }); }
 
-  // percent (1..100), amount (dollars in, US cents stored: Paddle sells in dollars), or free (the plan for `months`, no card).
+  // percent (1..100), amount (dollars in, US cents stored: the reseller sells in dollars), or free (the plan for `months`, no card).
   const kind = ['amount', 'free'].includes(b.kind) ? b.kind : 'percent';
   let value = kind === 'free' ? 100 : Math.round(Number(b.value));
   if (!Number.isFinite(value) || value <= 0) return json({ error: 'bad_value' }, 400);
@@ -274,12 +274,8 @@ export async function streamdawCheckout(req, env) {
   const body = await req.json().catch(() => ({}));
   const email = lc(user.email);
   if (!validEmail(email)) return json({ error: 'sign_in_required' }, 401);
-  // Sold through Paddle (2026-10-29): every product, by the month or the year (streamdaw-paddle.js).
-  const PD = await paddleMod();
-  if (PD.paddleOn(env)) {
-    if (!body.product) return json({ error: 'plan_retired', reason: 'StreamDAW is sold by product now: pick Splits, Station, Record, Compare, Party or All.' }, 410);
-    return PD.paddleCheckout(env, user, body);
-  }
+  /* Nothing reaches here while Creem is the reseller: index.js sends /streamdaw/checkout to
+     creem-streamdaw.js first. What follows is the HYP path, kept for the shekel products. */
 
   // Pro (once), or Pro Monthly (streamdaw-subs.js). The 7-day pass is no longer sold. Pro takes
   // the buyer's recent pass money off first (passes sold before 2026-10-14), then a coupon.
@@ -712,8 +708,8 @@ export async function myStreamdaw(env, user) {
   const subscription = await (await subsMod()).subFor(env, user).catch(() => null);
   // The products this account holds (id → end in seconds, 0 = for good), for the account and sale pages.
   const products = P.holdings(await accountRows(env, user.email, user.id), now());
-  // Paddle subscriptions (2026-10-29): plan, status, the end of the paid period, a cancel to come.
-  const subscriptions = await (await paddleMod()).paddleSubsFor(env, user.email, user.id).catch(() => []);
+  // The reseller's subscriptions: plan, status, the end of the paid period, a cancel to come.
+  const subscriptions = await (await creemMod()).subsFor(env, user.email, user.id).catch(() => []);
   if (!ent) return json({ owned: false, proPrice, subscription, subscriptions, products });
   const rel = await env.DB.prepare('SELECT version, filename, bytes, sha256 FROM app_releases WHERE asset = ? AND is_latest = 1')
     .bind(ASSET).first();
@@ -1045,8 +1041,10 @@ async function issueKey(env, row, key, onlyPending) {
   const lines = keyLines(hex);
   const serial = checked.serial;
   const ent = await env.DB.prepare('SELECT plan, source FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
-  // A Paddle or Creem subscription renews like Pro Monthly: the same Renewal line, each later key fetched by the app.
-  const monthly = !!ent && (isMonthly(ent.plan) || ent.source === 'paddle' || ent.source === 'creem');
+  /* A reseller's subscription renews like Pro Monthly: the same Renewal line, each later key fetched
+     by the app. Besides 'creem' there are the two grants made while the store was being tried out
+     (2026-10-29/30), the owner's own, which worker/migrate-rename-subs.sql re-labels 'test'. */
+  const monthly = !!ent && (isMonthly(ent.plan) || ['creem', 'paddle', 'test'].includes(ent.source));
   // Pro Monthly: the renewal code goes out with the first key and stays the same after (the app
   // keeps it, and fetches every later key with it).
   const code = monthly ? (row.renew_code || (await subsMod()).newRenewCode()) : null;
@@ -1479,10 +1477,8 @@ export async function streamdawAdmin(env, user) {
       Math.floor(Date.now() / 1000) - 14 * 86400))[0] || {}).n || 0,
   };
 
-  // Paddle (2026-10-29): on or off, sandbox or live, set up or not (the codes view's "Set up Paddle").
-  const paddle = await (await paddleMod()).paddlePrices(env).catch(() => null);
   return json({
-    orders, entitlements, coupons, releases, stats, paddle,
+    orders, entitlements, coupons, releases, stats,
     /* Licence keys waiting to be minted. Oldest first: these are people who have
        paid and cannot use what they bought until someone runs the keygen. */
     activations: (await soft(
@@ -1498,8 +1494,8 @@ export async function streamdawAdmin(env, user) {
     ...(await (await subsMod()).subsAdmin(env).catch(() => ({}))),
 
     /* The same blind spot Audioctor had: subsAdmin reads streamdaw_subscriptions,
-       the HYP-era table, and Creem writes into streamdaw_paddle_subs. Without
-       this a Creem subscriber does not appear here at all. (2026-11-13) */
+       the HYP-era table, and Creem writes into streamdaw_paddle_subs. Without this a
+       Creem subscriber does not appear here at all. (2026-11-13) */
     creem: await creemSubs(env, 'streamdaw').catch(() => null),
 
     /* Who took the free installer or connected a Mac (the trial), with what their Macs did (2026-10-15). */
