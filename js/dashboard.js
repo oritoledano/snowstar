@@ -55,7 +55,7 @@
       { key: 'stash',     label: 'Scans',     tabs: ['scans', 'codes'] },
     ] },
     { key: 'audioctor', label: 'Audioctor', pages: [
-      { key: 'ad', label: 'App', tabs: ['subscribers', 'people', 'keys', 'orders', 'codes', 'releases'] },
+      { key: 'ad', label: 'App', tabs: ['subscribers', 'people', 'keys', 'reports', 'orders', 'codes', 'releases'] },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
       { key: 'sdaw', label: 'App', tabs: ['orders', 'subscriptions', 'health', 'people', 'keys', 'reports', 'codes', 'releases', 'updates'] },
@@ -279,6 +279,7 @@
     'audioctor/ad/subscribers':    () => paintAudioctor('subscribers'),
     'audioctor/ad/people':         () => paintAudioctor('people'),
     'audioctor/ad/keys':           () => paintAudioctor('keys'),
+    'audioctor/ad/reports':        () => paintAudioctorReports(),
     'audioctor/ad/orders':         () => paintAudioctor('orders'),
     'audioctor/ad/codes':          () => paintAudioctor('codes'),
     'audioctor/ad/releases':       () => paintAudioctor('releases'),
@@ -1153,6 +1154,50 @@
 
   /* Bug reports. Separate fetch from the rest of the StreamDAW admin because these
      are long free text and arrive on their own schedule. */
+  /* Audioctor's problem reports. The same triage as StreamDAW's, against
+     /api/audioctor/reports. The app has to be wired to post to
+     /api/audioctor/report before anything arrives, and the empty state says
+     that rather than leaving a blank table to be read as "no problems". */
+  async function paintAudioctorReports() {
+    const d = await get('/audioctor/reports');
+    const rows = d.reports || [];
+    const fresh = rows.filter((r) => r.status === 'new').length;
+    const ctx = (c) => {
+      if (!c) return '';
+      try {
+        const o = JSON.parse(c);
+        return Object.entries(o).filter(([, v]) => v !== null && v !== '')
+          .map(([k, v]) => `${k}=${typeof v === 'object' ? JSON.stringify(v) : v}`).join(' · ').slice(0, 300);
+      } catch { return String(c).slice(0, 200); }
+    };
+    const tabs = ['subscribers', 'people', 'keys', 'reports', 'orders', 'codes', 'releases'];
+    const head = `<div style="display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap">${tabs.map((t) =>
+      `<a class="chip ${t === 'reports' ? 'active' : ''}" href="#audioctor/ad/${t}">${t}</a>`).join('')}</div>`;
+
+    paint(`<div><h2 style="margin:0 0 4px">Audioctor</h2>${head}
+      ${fresh ? `<div class="db-warn warn" style="margin-bottom:16px"><b>${fresh} unread
+        ${fresh === 1 ? 'report' : 'reports'}.</b></div>` : ''}
+      <div class="db-panel"><h2>Problem reports <span class="pill">${rows.length}</span></h2>
+        ${rows.length ? '' : `<p class="db-empty" style="padding-top:0">Nothing here — and that is
+          not the same as nobody having trouble. The channel exists
+          (<code>POST /api/audioctor/report</code>, no account needed) but the app does not send to
+          it yet. Until it does, this table stays empty whatever happens.</p>`}
+        ${table(rows, [
+          { label: 'When', get: (r) => when(r.created_at, { time: true }) },
+          { label: 'From', get: (r) => `${esc(r.source)}${r.email ? '<br><small>' + esc(r.email) + '</small>' : ''}` },
+          { label: 'What', get: (r) => `${r.status === 'new' ? '<b style="color:#e8b04b">● </b>' : ''}${esc(r.body)}
+              <br><small style="opacity:.6">${esc(ctx(r.context))}</small>` },
+          { label: '', get: (r) => r.status === 'closed' ? ''
+              : `<button class="chip ad-rep" data-id="${r.id}" data-to="${r.status === 'new' ? 'seen' : 'closed'}">${
+                  r.status === 'new' ? 'mark read' : 'close'}</button>` },
+        ])}</div></div>`);
+
+    document.querySelectorAll('.ad-rep').forEach((b) => b.addEventListener('click', async () => {
+      await post('/audioctor/reports', { id: Number(b.dataset.id), status: b.dataset.to });
+      load();
+    }));
+  }
+
   async function paintStreamdawReports() {
     const d = await get('/streamdaw/reports');
     const rows = d.reports || [];
@@ -4286,7 +4331,7 @@
     const testSubs = (c.subs || []).filter((s) => !s.live);
     const st = d.stats || {};
 
-    const tabs = ['subscribers', 'people', 'keys', 'orders', 'codes', 'releases'];
+    const tabs = ['subscribers', 'people', 'keys', 'reports', 'orders', 'codes', 'releases'];
     const head = `<div style="display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap">${tabs.map((t) =>
       `<a class="chip ${t === tab ? 'active' : ''}" href="#audioctor/ad/${t}">${t}</a>`).join('')}</div>`;
 

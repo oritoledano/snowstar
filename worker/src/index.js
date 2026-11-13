@@ -88,6 +88,8 @@ import { sharePage } from './share.js';
 import { workSharePage } from './share-work.js';
 // Visits: one row per visit, with its path, its dwell and where it ended (visits.js)
 import { listVisits } from './visits.js';
+// "this went wrong", from inside Audioctor (audioctor-reports.js)
+import { audioctorReport, audioctorReports } from './audioctor-reports.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim,
@@ -230,7 +232,7 @@ async function handle(req, env, ctx) {
   // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
   // /streamdaw/turn: the same relays, the same bearer secret; it only hands that Mac TURN credentials.
   // /streamdaw/macs/status: the same relays; it answers only whether that machine ID is connected to an account.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/streamdaw/paddle/webhook', '/creem/webhook', '/n/u']);
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/audioctor/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/streamdaw/paddle/webhook', '/creem/webhook', '/n/u']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -557,6 +559,8 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/subscription/admin' && method === 'POST') return audioctorSubAdmin(req, env, await currentUser(req, env));
   // The app asking for next month's key (no cookie, no Origin: its machine id and renewal code).
   if (path === '/audioctor/licence/refresh' && method === 'POST') return audioctorLicenceRefresh(req, env);
+  if (path === '/audioctor/report' && (method === 'POST' || method === 'OPTIONS')) return audioctorReport(req, env);
+  if (path === '/audioctor/reports') return audioctorReports(req, env, await currentUser(req, env));
   if (path === '/audioctor/admin' && method === 'GET') return audioctorAdmin(env, await currentUser(req, env));
   if (path === '/audioctor/reconcile' && method === 'POST') return audioctorReconcile(req, env, await currentUser(req, env));
   // Paddle's server, signed (Paddle-Signature, HMAC with the webhook secret): no cookie, no Origin.
