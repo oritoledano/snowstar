@@ -1043,8 +1043,8 @@ async function issueKey(env, row, key, onlyPending) {
   const ent = await env.DB.prepare('SELECT plan, source FROM entitlements WHERE id = ?').bind(row.entitlement_id).first().catch(() => null);
   /* A reseller's subscription renews like Pro Monthly: the same Renewal line, each later key fetched
      by the app. Besides 'creem' there are the two grants made while the store was being tried out
-     (2026-10-29/30), the owner's own, which worker/migrate-rename-subs.sql re-labels 'test'. */
-  const monthly = !!ent && (isMonthly(ent.plan) || ['creem', 'paddle', 'test'].includes(ent.source));
+     (2026-10-29/30), the owner's own, whose source is 'test'. */
+  const monthly = !!ent && (isMonthly(ent.plan) || ['creem', 'test'].includes(ent.source));
   // Pro Monthly: the renewal code goes out with the first key and stays the same after (the app
   // keeps it, and fetches every later key with it).
   const code = monthly ? (row.renew_code || (await subsMod()).newRenewCode()) : null;
@@ -1494,7 +1494,7 @@ export async function streamdawAdmin(env, user) {
     ...(await (await subsMod()).subsAdmin(env).catch(() => ({}))),
 
     /* The same blind spot Audioctor had: subsAdmin reads streamdaw_subscriptions,
-       the HYP-era table, and Creem writes into streamdaw_paddle_subs. Without this a
+       the HYP-era table, and Creem writes into streamdaw_subs. Without this a
        Creem subscriber does not appear here at all. (2026-11-13) */
     creem: await creemSubs(env, 'streamdaw').catch(() => null),
 

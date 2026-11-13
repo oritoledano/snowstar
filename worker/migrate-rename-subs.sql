@@ -1,4 +1,7 @@
--- Run once, by hand:
+-- APPLIED to the live database on 2026-11-13: 13 queries, 1,523 rows written. Kept as the record
+-- of what the tables used to be called. Do not run it again - the ALTERs will fail on the new names.
+--
+-- It was run as:
 --   cd worker && npx wrangler d1 execute snowstar-members --remote --file migrate-rename-subs.sql
 --
 -- The first reseller's name out of the live schema (2026-11-13). Nothing is dropped and no row is

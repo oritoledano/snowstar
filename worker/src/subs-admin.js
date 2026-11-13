@@ -1,9 +1,9 @@
 /**
  * Who is subscribed, read from where the money actually lands.
  *
- * Creem writes a subscription into <app>_paddle_subs - the tables the first
- * reseller left behind, reused because the shape was already right (the rename
- * is worker/migrate-rename-subs.sql, to be run by hand).
+ * Creem writes a subscription into <app>_subs - the tables the first reseller
+ * left behind, reused because the shape was already right and renamed on
+ * 2026-11-13 (worker/migrate-rename-subs.sql).
  * Both admin endpoints, meanwhile, ask their *-subs.js module for
  * <app>_subscriptions, the HYP-era table, which has nothing in it and has had
  * nothing in it since the move.
@@ -30,7 +30,7 @@ const isLive = (env) => String(env || '').toLowerCase() === 'creem-live';
  * @param {string} app  'audioctor' | 'streamdaw'
  */
 export async function creemSubs(env, app) {
-  const table = app === 'streamdaw' ? 'streamdaw_paddle_subs' : 'audioctor_paddle_subs';
+  const table = app === 'streamdaw' ? 'streamdaw_subs' : 'audioctor_subs';
   let rows = [];
   try {
     const r = await env.DB.prepare(

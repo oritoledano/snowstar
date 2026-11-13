@@ -7,7 +7,7 @@
  *
  *   Mutra        payments           is_test, a flag somebody sets
  *   the apps     *_orders           status, where 'started' means an abandoned cart
- *   Creem        *_paddle_subs      env, where only 'creem-live' took a card
+ *   Creem        *_subs             env, where only 'creem-live' took a card
  *
  * Each screen that reads one of them tells a different story, and all three
  * have already misled: streamdaw_orders sums ₪3,735 of carts nobody completed,
@@ -108,7 +108,7 @@ export async function moneyAll(req, env, user) {
      being tried out in October.
      The amount is not in this table - Creem holds it - so these are listed as
      subscriptions rather than given a figure this Worker cannot stand behind. */
-  for (const [table, vertical] of [['streamdaw_paddle_subs', 'StreamDAW'], ['audioctor_paddle_subs', 'Audioctor']]) {
+  for (const [table, vertical] of [['streamdaw_subs', 'StreamDAW'], ['audioctor_subs', 'Audioctor']]) {
     for (const s of await soft(
       `SELECT s.sub_id, s.env, s.email, s.plan, s.status, s.created_at, s.next_billed_at, s.cancel_at,
               u.name AS who

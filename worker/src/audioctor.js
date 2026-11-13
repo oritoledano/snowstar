@@ -41,9 +41,9 @@ const ends = (plan) => plan === 'monthly' || plan === 'year';  // a plan whose k
 const dayOf = (sec) => new Date(Number(sec) * 1000).toISOString().slice(0, 10);
 const subsMod = () => import('./audioctor-subs.js');          // Audioctor Monthly (imports this file: no static cycle)
 const creemMod = () => import('./audioctor-creem.js');        // Creem, the merchant of record since 2026-11-11 (imports this file too)
-/* An entitlement a reseller granted, rather than HYP: 'creem' now, and the trial grants of
-   29-30 October, which worker/migrate-rename-subs.sql re-labels 'test'. */
-const RESELLER = ['creem', 'paddle', 'test'];
+/* An entitlement a reseller granted, rather than HYP: 'creem', and the trial grants of
+   29-30 October, whose source is 'test'. */
+const RESELLER = ['creem', 'test'];
 const newRef = () => 'AD-' + urlToken(9).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 10).padEnd(6, 'X');
 /* A dollar code ('usd', cents off: e.g. $49 -> $39) on HYP's shekel price: the same dollars at today's rate. */
 async function inShekels(env, c) {
@@ -436,7 +436,7 @@ export async function audioctorReconcile(req, env, user) {
   const order = await env.DB.prepare('SELECT * FROM audioctor_orders WHERE ref = ?').bind(ref).first();
   if (!order) return json({ error: 'not_found' }, 404);
   if (order.status === 'granted') return json({ ok: true, already: true, ref, entitlement_id: order.entitlement_id || null });
-  if (order.paddle_txn) {                        // Creem's own record of the payment (ch_…) decides
+  if (order.checkout_id) {                        // Creem's own record of the payment (ch_…) decides
     const r = await (await creemMod()).reconcile(env, order)
       .catch((e) => ({ error: String(e.message).slice(0, 200) }));
     await adLog(env, `admin:${user.id || user.email || '?'}`, 'ad.reconcile_creem', ref, r);
@@ -1208,7 +1208,7 @@ export async function audioctorAdmin(env, user) {
 
     /* Where the money actually is. subsAdmin above reads audioctor_subscriptions,
        the HYP-era table, which has been empty since the move; Creem writes into
-       audioctor_paddle_subs. Without this the admin showed no subscribers while a
+       audioctor_subs. Without this the admin showed no subscribers while a
        live monthly was being billed. (2026-11-13, subs-admin.js) */
     creem: await creemSubs(env, 'audioctor').catch(() => null),
 

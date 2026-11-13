@@ -5,9 +5,9 @@
  *
  * On when the var AUDIOCTOR_BILLING is 'creem' and the secret CREEM_API_KEY is set. The two products are made in Creem
  * the first time the prices are asked for (setup(), once, under a lock), so the owner pastes the API key and nothing
- * else. Subscriptions live in audioctor_paddle_subs, tagged with the environment ('creem-test' / 'creem-live'), so the account page,
- * the app's refresh route and the erase all keep working unchanged: audioctor_paddle_subs (one row per subscription),
- * audioctor_orders.paddle_txn (here: Creem's checkout id, ch_…).
+ * else. Subscriptions live in audioctor_subs, tagged with the environment ('creem-test' / 'creem-live'), so the account page,
+ * the app's refresh route and the erase all keep working unchanged: audioctor_subs (one row per subscription),
+ * audioctor_orders.checkout_id (here: Creem's checkout id, ch_…).
  *
  *   1. POST /audioctor/checkout {plan, coupon?, machine?} (audioctor.js hands over here): a Creem checkout for that
  *      plan, our AD- reference as its request_id and in its metadata; the page goes to Creem's checkout page and comes
@@ -115,7 +115,7 @@ export async function couponCheck(env, code) {
 // ── 1. checkout ─────────────────────────────────────────────────────────────
 async function subsOf(env, email, userId) {
   return ((await env.DB.prepare(
-    `SELECT * FROM audioctor_paddle_subs WHERE env = ? AND (email = ? OR (? IS NOT NULL AND user_id = ?)) ORDER BY created_at DESC`
+    `SELECT * FROM audioctor_subs WHERE env = ? AND (email = ? OR (? IS NOT NULL AND user_id = ?)) ORDER BY created_at DESC`
   ).bind(C.tag(env), lc(email), userId || null, userId || null).all().catch(() => ({ results: [] }))).results) || [];
 }
 const running = (s) => s && ['active', 'trialing', 'past_due'].includes(s.status) && !s.cancel_at;
@@ -162,7 +162,7 @@ export async function checkout(env, user, body) {
   }
   if (!ch || !/^ch_[A-Za-z0-9]+$/.test(String(ch.id || '')) || !/^https:\/\//.test(String(ch.checkout_url || '')))
     return json({ error: 'creem_error', reason: 'Checkout could not open. Nothing was charged. Please try again.' }, 502);
-  await env.DB.prepare('UPDATE audioctor_orders SET paddle_txn = ? WHERE ref = ?').bind(ch.id, ref).run();
+  await env.DB.prepare('UPDATE audioctor_orders SET checkout_id = ? WHERE ref = ?').bind(ch.id, ref).run();
   return json({ ok: true, ref, plan, amount_gross: cents, currency: 'USD', email,
                 creem: { checkoutUrl: ch.checkout_url, ...client(env) } });
 }
@@ -170,7 +170,7 @@ export async function checkout(env, user, body) {
 // ── 2. the webhook's events (creem.js) ──────────────────────────────────────
 /* The row that ties a subscription to its entitlement. Written once; a repeat of the first payment finds it there. */
 const keepSub = (env, p, plan, entId, email, userId, ref) => env.DB.prepare(
-  `INSERT INTO audioctor_paddle_subs (sub_id, env, user_id, email, customer_id, plan, status, entitlement_id, period_end, next_billed_at, first_ref, created_at, updated_at)
+  `INSERT INTO audioctor_subs (sub_id, env, user_id, email, customer_id, plan, status, entitlement_id, period_end, next_billed_at, first_ref, created_at, updated_at)
    VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?) ON CONFLICT (sub_id) DO NOTHING`
 ).bind(p.sub, C.tag(env), userId || null, lc(email), p.customer || null, plan, entId, p.ends, p.next || p.ends, ref, now(), now()).run();
 
@@ -196,12 +196,12 @@ async function periodPaid(env, p) {
   const plan = planOfProduct(cf, p.product);
   if (!plan) return 'not an Audioctor product';
   if (!p.paid) return 'not paid';
-  const row = p.sub ? await env.DB.prepare('SELECT * FROM audioctor_paddle_subs WHERE sub_id = ?').bind(p.sub).first() : null;
+  const row = p.sub ? await env.DB.prepare('SELECT * FROM audioctor_subs WHERE sub_id = ?').bind(p.sub).first() : null;
   if (row) {
     if (!p.ends || p.ends <= Number(row.period_end || 0)) return 'already';
     const expiresAt = p.ends + GRACE;
     await env.DB.prepare('UPDATE entitlements SET expires_at = MAX(COALESCE(expires_at, 0), ?) WHERE id = ?').bind(expiresAt, row.entitlement_id).run();
-    await env.DB.prepare(`UPDATE audioctor_paddle_subs SET period_end = ?, next_billed_at = ?, status = 'active', updated_at = ? WHERE sub_id = ?`)
+    await env.DB.prepare(`UPDATE audioctor_subs SET period_end = ?, next_billed_at = ?, status = 'active', updated_at = ? WHERE sub_id = ?`)
       .bind(p.ends, p.next || p.ends, now(), p.sub).run();
     await env.DB.prepare(
       `UPDATE audioctor_activations SET expires_at = ?, status = CASE WHEN status IN ('issued','renewing') THEN 'renewing' ELSE status END
@@ -217,9 +217,9 @@ async function periodPaid(env, p) {
       text: `Creem subscription ${p.sub || '?'} was paid with reference ${p.ref}, which is not in audioctor_orders. Nothing was granted. Check Creem.` }).catch(() => {});
     return 'unknown ref';
   }
-  if (p.checkout && order.paddle_txn && order.paddle_txn !== p.checkout) {
+  if (p.checkout && order.checkout_id && order.checkout_id !== p.checkout) {
     await sendMail(env, { to: owner(env), subject: 'Audioctor (Creem): a second checkout for one order',
-      text: `Order ${p.ref} belongs to ${order.paddle_txn}, and ${p.checkout} completed with the same reference. Nothing more was granted. `
+      text: `Order ${p.ref} belongs to ${order.checkout_id}, and ${p.checkout} completed with the same reference. Nothing more was granted. `
           + `If the buyer paid twice, refund the second payment in Creem.` }).catch(() => {});
     return 'other checkout';
   }
@@ -252,7 +252,7 @@ async function subChanged(env, type, s) {
   else if (status === 'unpaid' || status === 'expired') mapped = 'past_due';
   if (!['active', 'trialing', 'past_due', 'paused', 'canceled'].includes(mapped)) mapped = 'active';
   const res = await env.DB.prepare(
-    `UPDATE audioctor_paddle_subs SET status = ?, cancel_at = ?, next_billed_at = COALESCE(?, next_billed_at),
+    `UPDATE audioctor_subs SET status = ?, cancel_at = ?, next_billed_at = COALESCE(?, next_billed_at),
        customer_id = COALESCE(customer_id, ?), updated_at = ? WHERE sub_id = ? AND env = ?`
   ).bind(mapped, cancelAt, C.secs(s.next_transaction_date), C.idOf(s.customer), now(), String(s.id || ''), C.tag(env)).run();
   return res.meta && res.meta.changes ? `subscription ${mapped}${cancelAt ? ' (cancel set)' : ''}` : 'not ours';
@@ -265,9 +265,9 @@ async function onRefund(env, r) {
   const subId = C.idOf(r.subscription) || t.subscription || null;
   const chId = C.idOf(r.checkout);
   const ref = String((r.checkout && r.checkout.request_id) || '');
-  const order = (chId && await env.DB.prepare('SELECT * FROM audioctor_orders WHERE paddle_txn = ?').bind(chId).first())
+  const order = (chId && await env.DB.prepare('SELECT * FROM audioctor_orders WHERE checkout_id = ?').bind(chId).first())
     || (REF_RE.test(ref) && await env.DB.prepare('SELECT * FROM audioctor_orders WHERE ref = ?').bind(ref).first()) || null;
-  const sub = await env.DB.prepare('SELECT * FROM audioctor_paddle_subs WHERE sub_id = ? OR entitlement_id = ?')
+  const sub = await env.DB.prepare('SELECT * FROM audioctor_subs WHERE sub_id = ? OR entitlement_id = ?')
     .bind(String(subId || ''), order && order.entitlement_id || -1).first();
   if (!order && !sub) return 'not ours';
   const paid = Number(t.amount_paid || 0), back = Number(r.refund_amount || t.refunded_amount || 0);
@@ -280,7 +280,7 @@ async function onRefund(env, r) {
     if (sub && running(sub)) {
       try { await C.api(env, 'POST', `/v1/subscriptions/${encodeURIComponent(sub.sub_id)}/cancel`, { mode: 'immediate' }); }
       catch { stopped = false; }
-      await env.DB.prepare(`UPDATE audioctor_paddle_subs SET status = 'canceled', cancel_at = ?, updated_at = ? WHERE sub_id = ?`).bind(now(), now(), sub.sub_id).run();
+      await env.DB.prepare(`UPDATE audioctor_subs SET status = 'canceled', cancel_at = ?, updated_at = ? WHERE sub_id = ?`).bind(now(), now(), sub.sub_id).run();
     }
   }
   const who = (order && order.email) || sub.email, what = order ? order.ref : sub.sub_id;
@@ -297,9 +297,9 @@ export async function claims(env, o) {
   const chId = o.object === 'checkout' ? o.id : C.idOf(o.checkout);
   const subId = o.object === 'subscription' ? o.id : C.idOf(o.subscription) || (o.transaction && o.transaction.subscription) || null;
   const ref = String((o.checkout && o.checkout.request_id) || o.request_id || C.metadataOf(o).ref || '');
-  if (chId && await env.DB.prepare('SELECT 1 AS x FROM audioctor_orders WHERE paddle_txn = ?').bind(chId).first()) return true;
+  if (chId && await env.DB.prepare('SELECT 1 AS x FROM audioctor_orders WHERE checkout_id = ?').bind(chId).first()) return true;
   if (REF_RE.test(ref) && await env.DB.prepare('SELECT 1 AS x FROM audioctor_orders WHERE ref = ?').bind(ref).first()) return true;
-  return !!(subId && await env.DB.prepare('SELECT 1 AS x FROM audioctor_paddle_subs WHERE sub_id = ? AND env = ?').bind(subId, C.tag(env)).first());
+  return !!(subId && await env.DB.prepare('SELECT 1 AS x FROM audioctor_subs WHERE sub_id = ? AND env = ?').bind(subId, C.tag(env)).first());
 }
 
 /** creem.js hands Audioctor's events here. */
@@ -333,8 +333,8 @@ export async function subsFor(env, email, userId) {
 // ── 4. reconcile: the webhook never came ────────────────────────────────────
 /** For audioctorReconcile: Creem's own record of the order's checkout decides. */
 export async function reconcile(env, order) {
-  if (!/^ch_/.test(String(order.paddle_txn || ''))) return { error: 'no_checkout' };
-  const ch = await C.api(env, 'GET', `/v1/checkouts?checkout_id=${encodeURIComponent(order.paddle_txn)}`);
+  if (!/^ch_/.test(String(order.checkout_id || ''))) return { error: 'no_checkout' };
+  const ch = await C.api(env, 'GET', `/v1/checkouts?checkout_id=${encodeURIComponent(order.checkout_id)}`);
   if (!ch || ch.status !== 'completed') return { error: 'not_paid', status: ch && ch.status };
   const outcome = await periodPaid(env, { ...paidFrom('checkout.completed', ch), ref: order.ref, checkout: ch.id });
   return { ok: outcome === 'granted' || outcome === 'already', outcome };
@@ -346,7 +346,7 @@ export async function renewalNotices(env, t = now()) {
   if (!on(env)) return { sent: 0 };
   const from = t + NOTICE_DAYS * 86400;
   const rows = ((await env.DB.prepare(
-    `SELECT * FROM audioctor_paddle_subs WHERE env = ? AND plan = 'year' AND status = 'active' AND cancel_at IS NULL
+    `SELECT * FROM audioctor_subs WHERE env = ? AND plan = 'year' AND status = 'active' AND cancel_at IS NULL
         AND COALESCE(next_billed_at, period_end) >= ? AND COALESCE(next_billed_at, period_end) < ?`
   ).bind(C.tag(env), from, from + 86400).all()).results) || [];
   let sent = 0;
@@ -362,5 +362,5 @@ export async function renewalNotices(env, t = now()) {
 
 /** The subscription row behind one entitlement, or null (audioctor-subs.js's licence refresh). */
 export async function subOfEntitlement(env, entId) {
-  return env.DB.prepare('SELECT * FROM audioctor_paddle_subs WHERE entitlement_id = ?').bind(entId).first().catch(() => null);
+  return env.DB.prepare('SELECT * FROM audioctor_subs WHERE entitlement_id = ?').bind(entId).first().catch(() => null);
 }

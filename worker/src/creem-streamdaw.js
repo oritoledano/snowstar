@@ -5,7 +5,7 @@
  * webhook).
  *
  * Twelve Creem products (six plans, by the month and the year), made the first time the prices are asked (under a
- * lock), so the owner pastes the API key and nothing else. Subscriptions live in streamdaw_paddle_subs, tagged with the
+ * lock), so the owner pastes the API key and nothing else. Subscriptions live in streamdaw_subs, tagged with the
  * environment ('creem-test' / 'creem-live'), so /streamdaw/mine and the app's licence refresh read them unchanged.
  * streamdaw_orders.hyp_id holds Creem's checkout id (ch_...).
  *
@@ -96,7 +96,7 @@ export async function prices(env, base) {
 // ── checkout ────────────────────────────────────────────────────────────────
 async function subsOf(env, email, userId) {
   return ((await env.DB.prepare(
-    `SELECT * FROM streamdaw_paddle_subs WHERE env = ? AND (email = ? OR (? IS NOT NULL AND user_id = ?)) ORDER BY created_at DESC`
+    `SELECT * FROM streamdaw_subs WHERE env = ? AND (email = ? OR (? IS NOT NULL AND user_id = ?)) ORDER BY created_at DESC`
   ).bind(C.tag(env), lc(email), userId || null, userId || null).all().catch(() => ({ results: [] }))).results) || [];
 }
 const running = (s) => s && ['active', 'trialing', 'past_due'].includes(s.status) && !s.cancel_at;
@@ -301,11 +301,11 @@ async function periodPaid(env, p) {
   if (!p.paid) return 'not paid';
   if (!p.sub || !p.ends) return 'no subscription or period';
   const expiresAt = p.ends + GRACE;
-  const row = await env.DB.prepare('SELECT * FROM streamdaw_paddle_subs WHERE sub_id = ?').bind(p.sub).first();
+  const row = await env.DB.prepare('SELECT * FROM streamdaw_subs WHERE sub_id = ?').bind(p.sub).first();
   if (row) {
     if (p.ends <= Number(row.period_end || 0)) return 'already';
     await env.DB.prepare('UPDATE entitlements SET expires_at = MAX(COALESCE(expires_at, 0), ?) WHERE id = ?').bind(expiresAt, row.entitlement_id).run();
-    await env.DB.prepare(`UPDATE streamdaw_paddle_subs SET period_end = ?, next_billed_at = ?, status = 'active', updated_at = ? WHERE sub_id = ?`)
+    await env.DB.prepare(`UPDATE streamdaw_subs SET period_end = ?, next_billed_at = ?, status = 'active', updated_at = ? WHERE sub_id = ?`)
       .bind(p.ends, p.next || p.ends, now(), p.sub).run();
     await env.DB.prepare(`UPDATE streamdaw_activations SET status = 'renewing' WHERE email = ? AND status = 'issued' AND renew_code IS NOT NULL`).bind(row.email).run();
     await SD.mintWaiting(env).catch(() => {});
@@ -339,7 +339,7 @@ async function periodPaid(env, p) {
     const ent = await SD.grantEntitlement(env, { email, ext_ref: `creem:${p.sub}`, amount: 0, plan, source: 'creem', expiresAt });
     await env.DB.prepare('UPDATE entitlements SET user_id = COALESCE(user_id, ?) WHERE id = ?').bind(order.user_id || null, ent.id).run().catch(() => {});
     await env.DB.prepare(
-      `INSERT INTO streamdaw_paddle_subs (sub_id, env, user_id, email, customer_id, plan, status, entitlement_id, period_end, next_billed_at, first_ref, created_at, updated_at)
+      `INSERT INTO streamdaw_subs (sub_id, env, user_id, email, customer_id, plan, status, entitlement_id, period_end, next_billed_at, first_ref, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?) ON CONFLICT (sub_id) DO NOTHING`
     ).bind(p.sub, C.tag(env), order.user_id || null, email, p.customer || null, plan, ent.id, p.ends, p.next || p.ends, p.ref, now(), now()).run();
     if (order.coupon) await env.DB.prepare('UPDATE streamdaw_coupons SET used = used + 1 WHERE code = ?').bind(String(order.coupon)).run().catch(() => {});
@@ -363,7 +363,7 @@ async function subChanged(env, type, s) {
   else if (status === 'unpaid' || status === 'expired') mapped = 'past_due';
   if (!['active', 'trialing', 'past_due', 'paused', 'canceled'].includes(mapped)) mapped = 'active';
   const res = await env.DB.prepare(
-    `UPDATE streamdaw_paddle_subs SET status = ?, cancel_at = ?, next_billed_at = COALESCE(?, next_billed_at),
+    `UPDATE streamdaw_subs SET status = ?, cancel_at = ?, next_billed_at = COALESCE(?, next_billed_at),
        customer_id = COALESCE(customer_id, ?), updated_at = ? WHERE sub_id = ? AND env = ?`
   ).bind(mapped, cancelAt, C.secs(s.next_transaction_date), C.idOf(s.customer), now(), String(s.id || ''), C.tag(env)).run();
   return res.meta && res.meta.changes ? `subscription ${mapped}${cancelAt ? ' (cancel set)' : ''}` : 'not ours';
@@ -372,7 +372,7 @@ async function subChanged(env, type, s) {
 async function onRefund(env, r) {
   const t = r.transaction || {};
   const subId = C.idOf(r.subscription) || t.subscription || null;
-  const sub = subId ? await env.DB.prepare('SELECT * FROM streamdaw_paddle_subs WHERE sub_id = ? AND env = ?').bind(subId, C.tag(env)).first() : null;
+  const sub = subId ? await env.DB.prepare('SELECT * FROM streamdaw_subs WHERE sub_id = ? AND env = ?').bind(subId, C.tag(env)).first() : null;
   if (!sub) return 'not ours';
   const paid = Number(t.amount_paid || 0), back = Number(r.refund_amount || t.refunded_amount || 0);
   const full = t.status === 'refunded' || (paid > 0 && back >= paid);
@@ -383,7 +383,7 @@ async function onRefund(env, r) {
     if (running(sub)) {
       try { await C.api(env, 'POST', `/v1/subscriptions/${encodeURIComponent(sub.sub_id)}/cancel`, { mode: 'immediate' }); }
       catch { stopped = false; }
-      await env.DB.prepare(`UPDATE streamdaw_paddle_subs SET status = 'canceled', cancel_at = ?, updated_at = ? WHERE sub_id = ?`).bind(now(), now(), sub.sub_id).run();
+      await env.DB.prepare(`UPDATE streamdaw_subs SET status = 'canceled', cancel_at = ?, updated_at = ? WHERE sub_id = ?`).bind(now(), now(), sub.sub_id).run();
     }
   }
   await sendMail(env, { to: owner(env), subject: `StreamDAW (Creem): ${full ? 'refunded' : 'part refunded'}, ${sub.plan}`,
@@ -399,7 +399,7 @@ export async function claims(env, o) {
   const chId = o.object === 'checkout' ? o.id : C.idOf(o.checkout);
   const subId = o.object === 'subscription' ? o.id : C.idOf(o.subscription) || (o.transaction && o.transaction.subscription) || null;
   if (chId && await env.DB.prepare('SELECT 1 AS x FROM streamdaw_orders WHERE hyp_id = ?').bind(chId).first()) return true;
-  return !!(subId && await env.DB.prepare('SELECT 1 AS x FROM streamdaw_paddle_subs WHERE sub_id = ? AND env = ?').bind(subId, C.tag(env)).first());
+  return !!(subId && await env.DB.prepare('SELECT 1 AS x FROM streamdaw_subs WHERE sub_id = ? AND env = ?').bind(subId, C.tag(env)).first());
 }
 
 /** creem.js hands StreamDAW's events here. */
@@ -437,5 +437,5 @@ export async function subsFor(env, email, userId) {
 
 /** The subscription row behind one entitlement, or null. */
 export async function subOfEntitlement(env, entId) {
-  return env.DB.prepare('SELECT * FROM streamdaw_paddle_subs WHERE entitlement_id = ?').bind(entId).first().catch(() => null);
+  return env.DB.prepare('SELECT * FROM streamdaw_subs WHERE entitlement_id = ?').bind(entId).first().catch(() => null);
 }
