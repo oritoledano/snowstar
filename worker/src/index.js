@@ -82,6 +82,8 @@ import { listStacks, saveStack } from './stacks.js';
 import { sharePage } from './share.js';
 // Per-work share links, /w/<id>: one piece of Selected work, with its own card
 import { workSharePage } from './share-work.js';
+// Visits: one row per visit, with its path, its dwell and where it ended (visits.js)
+import { listVisits } from './visits.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
 import { reassignOwner, getOwner } from './ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim,
@@ -246,6 +248,8 @@ async function handle(req, env, ctx) {
   if (path === '/stats' && method === 'GET') return handleStats(req, env, await currentUser(req, env));
   if (path === '/demand' && method === 'GET') return handleDemand(req, env, await currentUser(req, env));
   if (path === '/journey' && method === 'GET') return handleJourney(req, env, await currentUser(req, env));
+  // the whole visit in one row: arrival, length, path, where they lingered, where they left
+  if (path === '/visits' && method === 'GET') return listVisits(req, env, await currentUser(req, env));
   if (path === '/alerts' && method === 'GET') return listAlerts(env, await currentUser(req, env));
   if (path === '/alerts/mute' && method === 'POST') return setAlertsMuted(req, env, await currentUser(req, env));
   if (path === '/health' && method === 'GET') return healthReport(env, await currentUser(req, env), url);

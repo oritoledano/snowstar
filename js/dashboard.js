@@ -39,6 +39,7 @@
     { key: 'general', label: 'General', pages: [
       { key: 'ask',       label: 'Ask' },
       { key: 'overview',  label: 'Overview',  tabs: ['today', 'traffic', 'demand'] },
+      { key: 'visits',    label: 'Visits' },
       { key: 'inbox',     label: 'Inbox',     tabs: ['new', 'open', 'done'] },
       { key: 'people',    label: 'People' },
       { key: 'reset',     label: 'Clear tests' },
@@ -70,6 +71,7 @@
      the overview, and every link in a sent email keeps resolving. */
   const LEGACY = {
     ask: 'general/ask',
+    visits: 'general/visits',
     overview: 'general/overview/today', stats: 'general/overview/traffic',
     demand: 'general/overview/demand', inbox: 'general/inbox/new',
     members: 'general/people', notes: 'general/editor/notes',
@@ -224,6 +226,7 @@
      coverage assertion at the bottom of this file. */
   const ROUTES = {
     'general/ask':                 () => paintAsk(),
+    'general/visits':              () => paintVisits(),
     'general/overview/today':      () => paintOverview(),
     'general/overview/traffic':    () => paintStats(),
     'general/overview/demand':     () => paintDemand(),
@@ -4231,6 +4234,101 @@
     document.querySelectorAll('[data-sc-toggle]').forEach((b) => {
       b.onclick = async () => { await post('/snowstash/coupon', { toggle: Number(b.dataset.scToggle) }); paintStashCodes(); };
     });
+  }
+
+  /* Visits — one row per visit, the whole visit in it.
+     Traffic counts; this one is for reading a person. Everything here comes
+     from /api/visits (worker/src/visits.js), which derives time-on-page from
+     the gap to the next event because events.duration is track listening time,
+     not page time. The last page of a visit has no next event, so its dwell is
+     unknown and says so rather than showing a zero. */
+  let visitDays = 1;
+
+  const dur = (s) => {
+    if (!s && s !== 0) return '—';
+    s = Math.round(s);
+    if (s < 60) return s + 's';
+    if (s < 3600) return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+    return Math.floor(s / 3600) + 'h ' + Math.round((s % 3600) / 60) + 'm';
+  };
+  const clock = (ts) => new Date(ts * 1000).toLocaleString(undefined,
+    { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  // "/apps/streamdaw.html" reads as "streamdaw" in a table; "/" reads as "home"
+  const shortPage = (p) => {
+    if (!p) return '—';
+    if (p === '/' || p === '/index.html') return 'home';
+    return p.replace(/^\//, '').replace(/\.html$/, '').replace(/\/$/, '') || 'home';
+  };
+
+  async function paintVisits() {
+    const d = await get('/visits?days=' + visitDays + '&limit=80');
+    const vs = d.visits || [];
+    const t = d.totals || {};
+
+    const who = (v) => {
+      if (!v.who) return '<span style="color:var(--muted)">visitor</span>';
+      const name = esc(v.who.name || v.who.email);
+      return v.who.signedUpNow
+        ? `<b>${name}</b> <span class="pill good">signed up here</span>`
+        : `<b>${name}</b>`;
+    };
+
+    paint(`<div class="db-panel">
+      <h2>Visits <span class="pill">${t.visits || 0} in ${visitDays === 1 ? 'the last day' : visitDays + ' days'}</span></h2>
+      <div style="display:flex;gap:8px;margin:0 0 16px">${[1, 7, 30].map((n) =>
+        `<button class="chip ${n === visitDays ? 'active' : ''}" data-vdays="${n}">${
+          n === 1 ? 'Today' : n + ' days'}</button>`).join('')}</div>
+
+      <div class="db-cards">
+        <div class="db-card"><b class="grad-text">${t.visits || 0}</b><span>Visits</span></div>
+        <div class="db-card"><b class="grad-text">${dur(t.avgSeconds)}</b><span>Average stay</span></div>
+        <div class="db-card"><b class="grad-text">${t.bounced || 0}</b><span>One page only</span></div>
+        <div class="db-card"><b class="grad-text">${t.signedIn || 0}</b><span>Signed in</span></div>
+        <div class="db-card"><b class="grad-text">${t.signedUp || 0}</b><span>Signed up here</span></div>
+      </div>
+
+      <p class="db-empty" style="padding:14px 4px 10px">Arrived is local time. Stay is the first
+        event to the last, so a visit with a single event has no length. Lingered is the page with
+        the most time on it, measured as the gap to the next thing they did and capped at 30
+        minutes — the page they left on has no next event, so it is never the one shown.
+        Click a row for the whole path.</p>
+
+      ${vs.length ? table(vs, [
+        { label: 'Arrived', get: (v) => clock(v.started) },
+        { label: 'Stay', num: true, get: (v) => dur(v.seconds) },
+        { label: 'Who', get: who },
+        { label: 'Pages', num: true, get: (v) => v.pages || 0 },
+        { label: 'Entered', get: (v) => esc(shortPage(v.entry)) },
+        { label: 'Lingered', get: (v) => v.longest
+            ? `${esc(shortPage(v.longest.page))} <span style="color:var(--muted)">${dur(v.longest.seconds)}</span>`
+            : '—' },
+        { label: 'Left from', get: (v) => esc(shortPage(v.exit)) },
+        { label: 'From', get: (v) => esc([v.country, v.referrer].filter(Boolean).join(' · ') || 'direct') },
+      ], { rowAttr: (v) => ` class="click" data-vsid="${esc(v.sid)}"` })
+      : '<p class="db-empty">Nothing in that window. Tracking only counts visitors who accept analytics.</p>'}
+      <div id="vpath"></div></div>`);
+
+    app.querySelectorAll('[data-vdays]').forEach((b) =>
+      b.addEventListener('click', () => { visitDays = +b.dataset.vdays; load(); }));
+
+    const verb = { view: 'opened', play: 'played', play_end: 'stopped', license: 'clicked licence on',
+                   search: 'searched', favorite: 'favourited', download: 'downloaded' };
+    app.querySelectorAll('tr.click').forEach((tr) =>
+      tr.addEventListener('click', () => {
+        const v = vs.find((x) => x.sid === tr.dataset.vsid);
+        const box = document.getElementById('vpath');
+        if (!v) { box.innerHTML = ''; return; }
+        box.innerHTML = `<div class="db-panel" style="margin-top:14px">
+          <h2>The path <span class="pill">${clock(v.started)} · ${dur(v.seconds)}</span></h2>
+          <ul class="jrn">${v.steps.map((s) => `<li>+${dur(s.at)} — ${
+            esc(verb[s.type] || s.type)} <b>${esc(s.page ? shortPage(s.page) : s.detail)}</b>${
+            s.detail && s.page ? ` <span style="color:var(--muted)">${esc(s.detail)}</span>` : ''}${
+            s.dwell ? ` <span style="color:var(--muted)">· stayed ${dur(s.dwell)}</span>` : ''}</li>`).join('')}</ul>
+          ${v.moreSteps ? `<p class="db-empty">…and ${v.moreSteps} more.</p>` : ''}
+          <p class="db-empty">Left from <b>${esc(shortPage(v.exit))}</b>. How long they stayed on
+            that last page cannot be known — nothing followed it.</p></div>`;
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }));
   }
 
   /* Ask — plain language in, one of the Worker's fixed skills out.
