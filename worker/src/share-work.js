@@ -53,8 +53,28 @@ export async function workSharePage(req, env, url) {
 
   const title = row.title || 'Snowstar';
   const pageUrl = `${SITE}/w/${id}`;
-  const img = abs(row.thumb) || `${SITE}/assets/og-snowstar.jpg`;
   const video = abs(row.mp4);
+
+  /* The grid thumb is 800px wide at whatever shape the frame happened to be -
+     some are nearly square - and a share card wants 1200x630. assets/share/
+     holds a card per thumb, the still fitted over a blurred fill so a square
+     frame is not cropped to a letterbox. A work whose thumb was uploaded later
+     has no card yet, so this asks before it points at one; /assets is served
+     by Pages and is not on a Worker route, so the check cannot loop back here.
+     If the lookup fails for any reason the thumb is used, which is what the
+     card was made from anyway. */
+  let img = abs(row.thumb) || `${SITE}/assets/og-snowstar.jpg`;
+  const m = /^assets\/thumbs\/([A-Za-z0-9._-]+)$/.exec(String(row.thumb || '').trim());
+  if (m) {
+    const card = `${SITE}/assets/share/${m[1]}`;
+    try {
+      const head = await fetch(card, { method: 'HEAD', cf: { cacheTtl: 3600 } });
+      if (head.ok) img = card;
+    } catch { /* the thumb is a fine card, just a smaller one */ }
+  }
+  // Only stated when it is the card, because the thumb's shape varies per work
+  // and a wrong size tells a scraper to lay out a box the image will not fill.
+  const sized = img.includes('/assets/share/');
 
   /* The description is the credits, because that is what the person being sent
      this actually wants to know: who made it and for whom. */
@@ -87,6 +107,8 @@ export async function workSharePage(req, env, url) {
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(pageUrl)}">
 <meta property="og:image" content="${esc(img)}">
+${sized ? `<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">` : ''}
 ${video ? `<meta property="og:video" content="${esc(video)}">
 <meta property="og:video:type" content="video/mp4">` : ''}
 <meta name="twitter:card" content="summary_large_image">
