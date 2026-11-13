@@ -103,10 +103,37 @@ async function accountRows(env, email, userId) {
     `SELECT id, plan, expires_at FROM entitlements WHERE product = 'streamdaw' AND status = 'active' AND (email = ? OR (? IS NOT NULL AND user_id = ?))`
   ).bind(lc(email), userId || null, userId || null).all()) || {}).results || [];
 }
+/* StreamDAW's own codes first, then the ones made in Editor > Discount codes
+   (2026-11-13). Before this it read streamdaw_coupons alone, so a code created
+   in the Editor with scope "streamdaw" or "all" was simply not found at
+   checkout - the owner handed one out and it failed, with nothing to say why.
+   The pre-Creem path in streamdaw.js always had this fallback; the Creem
+   rewrite dropped it. Audioctor's path kept it, which is why codes work there.
+
+   Percent only, deliberately. The two tables disagree about what `value` means
+   for an "amount" code: streamdaw_coupons holds US cents (its create endpoint
+   says "dollars in, US cents stored", because the plans are priced in dollars)
+   and coupons holds agorot. Falling back on those would turn ₪50 off into $50
+   off. A percentage carries no units and is safe; a shekel amount has to be
+   made as a StreamDAW code, where it means what it says. */
 async function findCoupon(env, code) {
   const c = normCode(code);
   if (!c) return null;
-  return env.DB.prepare('SELECT * FROM streamdaw_coupons WHERE code = ?').bind(c).first().catch(() => null);
+  const own = await env.DB.prepare(
+    'SELECT * FROM streamdaw_coupons WHERE code = ?'
+  ).bind(c).first().catch(() => null);
+  if (own) return own;
+
+  const shared = await env.DB.prepare(
+    `SELECT * FROM coupons
+      WHERE code = ? AND kind = 'percent' AND (scope = 'streamdaw' OR scope = 'all')`
+  ).bind(c).first().catch(() => null);
+  if (!shared) return null;
+
+  /* The shared table names the same rule differently. Without this mapping a
+     first-purchase-only code would quietly apply to everyone, which is worse
+     than not honouring it at all. */
+  return { ...shared, first_only: shared.first_purchase_only ? 1 : 0 };
 }
 const couponProducts = (c) => String((c && c.products) || '').split(',').filter(Boolean);
 

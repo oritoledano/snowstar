@@ -1170,11 +1170,7 @@
           .map(([k, v]) => `${k}=${typeof v === 'object' ? JSON.stringify(v) : v}`).join(' · ').slice(0, 300);
       } catch { return String(c).slice(0, 200); }
     };
-    const tabs = ['subscribers', 'people', 'keys', 'reports', 'orders', 'codes', 'releases'];
-    const head = `<div style="display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap">${tabs.map((t) =>
-      `<a class="chip ${t === 'reports' ? 'active' : ''}" href="#audioctor/ad/${t}">${t}</a>`).join('')}</div>`;
-
-    paint(`<div><h2 style="margin:0 0 4px">Audioctor</h2>${head}
+    paint(`<div>
       ${fresh ? `<div class="db-warn warn" style="margin-bottom:16px"><b>${fresh} unread
         ${fresh === 1 ? 'report' : 'reports'}.</b></div>` : ''}
       <div class="db-panel"><h2>Problem reports <span class="pill">${rows.length}</span></h2>
@@ -4331,10 +4327,6 @@
     const testSubs = (c.subs || []).filter((s) => !s.live);
     const st = d.stats || {};
 
-    const tabs = ['subscribers', 'people', 'keys', 'reports', 'orders', 'codes', 'releases'];
-    const head = `<div style="display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap">${tabs.map((t) =>
-      `<a class="chip ${t === tab ? 'active' : ''}" href="#audioctor/ad/${t}">${t}</a>`).join('')}</div>`;
-
     const warn = d.blocked
       ? `<p class="db-empty" style="color:#f87171;padding:0 4px 12px">${esc(d.blocked.says)}</p>` : '';
 
@@ -4428,7 +4420,7 @@
         ])}</div>`;
     }
 
-    paint(`<div><h2 style="margin:0 0 4px">Audioctor</h2>${head}${warn}${body}</div>`);
+    paint(`<div>${warn}${body}</div>`);
   }
 
   /* Visits — one row per visit, the whole visit in it.
