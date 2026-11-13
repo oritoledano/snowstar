@@ -40,6 +40,7 @@
       { key: 'ask',       label: 'Ask' },
       { key: 'overview',  label: 'Overview',  tabs: ['today', 'traffic', 'demand'] },
       { key: 'visits',    label: 'Visits' },
+      { key: 'money',     label: 'Money' },
       { key: 'inbox',     label: 'Inbox',     tabs: ['new', 'open', 'done'] },
       { key: 'people',    label: 'People' },
       { key: 'reset',     label: 'Clear tests' },
@@ -75,6 +76,7 @@
   const LEGACY = {
     ask: 'general/ask',
     visits: 'general/visits',
+    money: 'general/money',
     audioctor: 'audioctor/ad/subscribers',
     overview: 'general/overview/today', stats: 'general/overview/traffic',
     demand: 'general/overview/demand', inbox: 'general/inbox/new',
@@ -253,6 +255,7 @@
   const ROUTES = {
     'general/ask':                 () => paintAsk(),
     'general/visits':              () => paintVisits(),
+    'general/money':               () => paintMoney(),
     'general/overview/today':      () => paintOverview(),
     'general/overview/traffic':    () => paintStats(),
     'general/overview/demand':     () => paintDemand(),
@@ -4307,6 +4310,71 @@
     document.querySelectorAll('[data-sc-toggle]').forEach((b) => {
       b.onclick = async () => { await post('/snowstash/coupon', { toggle: Number(b.dataset.scToggle) }); paintStashCodes(); };
     });
+  }
+
+  /* Money — every vertical in one list, with one rule for what counts.
+     Three tables disagree about "real": Mutra has an is_test flag, the apps'
+     orders have a status where 'started' is an abandoned cart, and Creem has
+     an env where only creem-live took a card. Each row says which rule it was
+     judged by, and the ones that fail are shown rather than hidden, because a
+     transaction that disappears quietly is how you come to trust a wrong
+     total. See worker/src/money.js. */
+  let moneyDays = 365;
+
+  async function paintMoney() {
+    const d = await get('/money?days=' + moneyDays);
+    const t = d.totals || {};
+    const ils = (n) => '₪' + (Number(n || 0) / 100).toFixed(2);
+
+    const row = (r) => [
+      { label: 'When', get: (x) => when(x.when, { time: true }) },
+      { label: 'Where', get: (x) => `<span class="pill">${esc(x.vertical)}</span>` },
+      { label: 'Who', get: (x) => esc(x.who || 'unknown') },
+      { label: 'What', get: (x) => esc(x.what || '') },
+      { label: 'Amount', num: true, get: (x) => x.amount
+          ? `${x.currency === 'USD' ? '$' : '₪'}${(x.amount / 100).toFixed(2)}`
+          : x.subscription ? '<span style="color:var(--muted)">subscription</span>' : '—' },
+      { label: 'Notes', get: (x) => [
+          x.why ? `<span style="color:var(--muted)">${esc(x.why)}</span>` : '',
+          ...(x.flags || []).map((f) => `<span style="color:${/failed|not linked|no licence/.test(f) ? '#f87171' : 'var(--muted)'}">${esc(f)}</span>`),
+        ].filter(Boolean).join('<br>') },
+    ];
+
+    paint(`<div class="db-panel">
+      <h2>Money <span class="pill">every vertical</span></h2>
+      <div style="display:flex;gap:8px;margin:0 0 16px">${[30, 365, 3650].map((n) =>
+        `<button class="chip ${n === moneyDays ? 'active' : ''}" data-mdays="${n}">${
+          n === 30 ? 'This month' : n === 365 ? 'This year' : 'Everything'}</button>`).join('')}</div>
+
+      <div class="db-cards">
+        <div class="db-card"><b class="grad-text">${ils(t.takenIls)}</b><span>Taken, in shekels</span></div>
+        <div class="db-card"><b class="grad-text">${t.paidTransactions || 0}</b><span>Paid transactions</span></div>
+        <div class="db-card"><b class="grad-text">${t.liveSubscriptions || 0}</b><span>Live subscriptions</span></div>
+        <div class="db-card"><b class="grad-text">${t.rehearsals || 0}</b><span>Rehearsals</span></div>
+      </div>
+
+      ${(t.invoiceFailures || t.unlinked) ? `<div class="db-warn warn" style="margin-top:16px">
+        <b>${t.invoiceFailures ? `${t.invoiceFailures} payment${t.invoiceFailures === 1 ? '' : 's'} with no tax invoice` : ''}${
+          t.invoiceFailures && t.unlinked ? ', and ' : ''}${
+          t.unlinked ? `${t.unlinked} not linked to what was bought` : ''}.</b>
+        Money arrived and the paperwork did not follow it.</div>` : ''}
+
+      <p class="db-empty" style="padding:14px 4px 10px">Only shekels are added up. The apps sell in
+        dollars through Creem, which holds the amounts, so those are counted as subscriptions rather
+        than given a figure this dashboard would be inventing.</p>
+
+      <div class="db-panel" style="margin-top:4px"><h2>Real <span class="pill good">${(d.real || []).length}</span></h2>
+        ${(d.real || []).length ? table(d.real, row(), { rowAttr: (x) => x.flags && x.flags.length ? ' style="background:rgba(248,113,113,.05)"' : '' })
+          : '<p class="db-empty">Nothing yet in this window.</p>'}</div>
+
+      <div class="db-panel" style="margin-top:14px"><h2>Rehearsals <span class="pill">${(d.rehearsals || []).length}</span></h2>
+        <p class="db-empty" style="padding-top:0">Abandoned carts, test mode, sandbox rows and payments
+          the invoice pipeline itself called a test. Shown rather than dropped — each says why.</p>
+        ${(d.rehearsals || []).length ? table(d.rehearsals, row()) : '<p class="db-empty">None.</p>'}</div>
+    </div>`);
+
+    app.querySelectorAll('[data-mdays]').forEach((b) =>
+      b.addEventListener('click', () => { moneyDays = +b.dataset.mdays; load(); }));
   }
 
   /* Audioctor — the same six questions StreamDAW's page answers, for the app

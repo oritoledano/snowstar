@@ -88,6 +88,8 @@ import { sharePage } from './share.js';
 import { workSharePage } from './share-work.js';
 // Visits: one row per visit, with its path, its dwell and where it ended (visits.js)
 import { listVisits } from './visits.js';
+// every real transaction across every vertical, one rule, stated per row (money.js)
+import { moneyAll } from './money.js';
 // "this went wrong", from inside Audioctor (audioctor-reports.js)
 import { audioctorReport, audioctorReports } from './audioctor-reports.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
@@ -256,6 +258,7 @@ async function handle(req, env, ctx) {
   if (path === '/journey' && method === 'GET') return handleJourney(req, env, await currentUser(req, env));
   // the whole visit in one row: arrival, length, path, where they lingered, where they left
   if (path === '/visits' && method === 'GET') return listVisits(req, env, await currentUser(req, env));
+  if (path === '/money' && method === 'GET') return moneyAll(req, env, await currentUser(req, env));
   if (path === '/alerts' && method === 'GET') return listAlerts(env, await currentUser(req, env));
   if (path === '/alerts/mute' && method === 'POST') return setAlertsMuted(req, env, await currentUser(req, env));
   if (path === '/health' && method === 'GET') return healthReport(env, await currentUser(req, env), url);
