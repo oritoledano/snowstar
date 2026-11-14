@@ -134,8 +134,8 @@ export function metadataOf(o) {
 }
 
 const APPS = {
-  audioctor: () => import('./audioctor-creem.js'),
-  streamdaw: () => import('./creem-streamdaw.js'),
+  audioctor: () => import('../audioctor/audioctor-creem.js'),
+  streamdaw: () => import('../streamdaw/creem-streamdaw.js'),
 };
 
 /** POST /creem/setup {env} — the owner: both apps' products and the webhook in that environment, made now (again is

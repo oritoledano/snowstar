@@ -14,14 +14,14 @@
  * The app: AUDIOCTOR repo (app/licence: the key check, "AD" machine ids, the Free plan's walls).
  */
 
-import { sendMail } from './mail.js';
-import { currentUser } from './session.js';
-import { sha256b64, randB64 } from './crypto.js';
-import { parseHyp, verifyReturn } from './hyp.js';
-import { applyCoupon, couponProblem, normCode } from './coupons.js';
+import { sendMail } from '../shared/mail.js';
+import { currentUser } from '../shared/session.js';
+import { sha256b64, randB64 } from '../shared/crypto.js';
+import { parseHyp, verifyReturn } from '../shared/hyp.js';
+import { applyCoupon, couponProblem, normCode } from '../shared/coupons.js';
 // who is subscribed, read from the table Creem actually writes (subs-admin.js)
-import { creemSubs } from './subs-admin.js';
-import { cachedRates, FALLBACK } from './fx.js';
+import { creemSubs } from '../shared/subs-admin.js';
+import { cachedRates, FALLBACK } from '../shared/fx.js';
 import { checkKey, mintKey } from './audioctor-keys.js';
 
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';

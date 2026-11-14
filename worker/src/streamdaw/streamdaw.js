@@ -20,15 +20,15 @@
  * zero authorisation, so there is nothing to send to HYP.
  */
 
-import { sendMail } from './mail.js';
-import { currentUser } from './session.js';
-import { sha256b64, randB64, safeEqual, ipTag } from './crypto.js';
-import { parseHyp, verifyReturn } from './hyp.js';
-import { applyCoupon, couponProblem, normCode } from './coupons.js';
+import { sendMail } from '../shared/mail.js';
+import { currentUser } from '../shared/session.js';
+import { sha256b64, randB64, safeEqual, ipTag } from '../shared/crypto.js';
+import { parseHyp, verifyReturn } from '../shared/hyp.js';
+import { applyCoupon, couponProblem, normCode } from '../shared/coupons.js';
 import { checkKey, mintKey } from './streamdaw-keys.js';
 import * as P from './streamdaw-products.js';
 // who is subscribed, read from the table Creem actually writes (subs-admin.js)
-import { creemSubs } from './subs-admin.js';
+import { creemSubs } from '../shared/subs-admin.js';
 
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 const SITE = 'https://snowstar.company';

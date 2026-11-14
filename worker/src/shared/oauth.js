@@ -13,7 +13,7 @@
  *    and Facebook and still be one account.
  */
 
-import { linkOnSignIn } from './rights.js';
+import { linkOnSignIn } from '../mutra/rights.js';
 import { publicUser } from './user.js';
 
 const STATE_TTL = 600;          // 10 minutes to complete the round trip

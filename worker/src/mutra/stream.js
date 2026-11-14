@@ -32,7 +32,7 @@
  * every honest listener their playback.
  */
 
-import { ipTag } from './crypto.js';
+import { ipTag } from '../shared/crypto.js';
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {

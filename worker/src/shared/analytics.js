@@ -16,7 +16,7 @@ const ENGAGED_PLAYS = 2;         // a visit gets interesting at 2 plays…
 const SESSION_IDLE_MS = 30 * 60 * 1000;
 const MAX_LISTEN_SECONDS = 7200; // 2h ceiling on a single reported duration
 
-import { hasLiveLicence } from './licensing.js';
+import { hasLiveLicence } from '../mutra/licensing.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200, headers = {}) =>

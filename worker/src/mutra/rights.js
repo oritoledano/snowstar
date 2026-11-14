@@ -15,7 +15,7 @@
  *    delivered to Ori's own inbox with a FORWARD-TO banner instead.
  */
 
-import { sendMail, mailLive, mailFrom } from './mail.js';
+import { sendMail, mailLive, mailFrom } from '../shared/mail.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>

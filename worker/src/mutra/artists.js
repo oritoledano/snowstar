@@ -8,7 +8,7 @@
  * studio pipeline, not here); rejection keeps the file but tells the artist.
  */
 
-import { sendMail, mailFrom, mailTo } from './mail.js';
+import { sendMail, mailFrom, mailTo } from '../shared/mail.js';
 import { parseDeclaration, recordDeclaration, rightsFlags } from './rights.js';
 
 const now = () => Math.floor(Date.now() / 1000);
@@ -165,7 +165,7 @@ export async function createSubmission(req, env, user, ctx) {
        leaves a row in the alerts log, so "was I told?" has an answer. */
     ctx.waitUntil((async () => {
       try {
-        const { notifyOwner } = await import('./analytics.js');
+        const { notifyOwner } = await import('../shared/analytics.js');
         await notifyOwner(env, 'submission',
           `${flags.length ? '⚠ ' : ''}Mutra submission: “${title}” by ${creditedName}`,
           `${creditedName} <${user.email}> uploaded “${title}”.\n\n`
@@ -341,7 +341,7 @@ export async function listSubmissions(env, user, url) {
 
 /** Owner: approve (queues for catalog ingestion) or reject, with a note. */
 import { trashObject } from './trash.js';
-import { submissionsOpen, CLOSED_MESSAGE } from './site.js';
+import { submissionsOpen, CLOSED_MESSAGE } from '../shared/site.js';
 
 export async function reviewSubmission(req, env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
@@ -805,7 +805,7 @@ export async function deleteArtist(req, env, user) {
   await env.DB.batch(stmts);
   // And the rest of the person, as the privacy policy promises (reset.js erasePerson,
   // 2026-10-14): key requests, reports, email copies, orders stripped for tax, the trail.
-  if (uid) { const { erasePerson } = await import('./reset.js'); await erasePerson(env, { email: who.email, uid }); }
+  if (uid) { const { erasePerson } = await import('../shared/reset.js'); await erasePerson(env, { email: who.email, uid }); }
   try {
     await env.DB.prepare(
       'INSERT INTO admin_log (actor_id, action, subject, detail, ts) VALUES (?, ?, ?, ?, ?)'

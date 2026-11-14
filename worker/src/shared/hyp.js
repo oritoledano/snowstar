@@ -156,7 +156,7 @@ export async function startCheckout(req, env, user) {
     // Imported here rather than at the top, matching the redirect handler:
     // licensing.js imports coupons.js which imports nothing back, but a static
     // cycle between these two modules has bitten before.
-    const { grantLicence } = await import('./licensing.js');
+    const { grantLicence } = await import('../mutra/licensing.js');
     const out = await grantLicence(env, {
       request_id: r.id, user_id: r.user_id, email: r.email, slug: r.slug,
       tier: r.tier, amount: 0, reason: 'comp', actor: 'system:coupon',
@@ -309,15 +309,15 @@ export async function handleReturn(req, env, ctx) {
   // not a music licence. Dispatch them out before any licence logic runs.
   // Dynamic import avoids a static cycle: streamdaw.js imports from this file.
   if (ref.startsWith('ST-')) {
-    const { stashReturn } = await import('./snowstash.js');
+    const { stashReturn } = await import('../snowstash/snowstash.js');
     return stashReturn(req, env, raw, q);
   }
   if (ref.startsWith('SD-')) {
-    const { streamdawReturn } = await import('./streamdaw.js');
+    const { streamdawReturn } = await import('../streamdaw/streamdaw.js');
     return streamdawReturn(req, env, raw, q);
   }
   if (ref.startsWith('AD-')) {
-    const { audioctorReturn } = await import('./audioctor.js');
+    const { audioctorReturn } = await import('../audioctor/audioctor.js');
     return audioctorReturn(req, env, raw, q);
   }
 
@@ -416,7 +416,7 @@ export async function handleReturn(req, env, ctx) {
   if (r.lane === 'quote') return fail('quote_lane');
   if (r.lane === 'demo') return fail('demo_lane');
 
-  const { grantLicence } = await import('./licensing.js');
+  const { grantLicence } = await import('../mutra/licensing.js');
   const pay = await env.DB.prepare(
     `INSERT INTO payments (user_id, email, amount, currency, method, status, reference, payer_note, ts, recorded_by)
      VALUES (?, ?, ?, 'ILS', 'card', 'received', ?, ?, ?, 'system:hyp')`
@@ -443,12 +443,12 @@ export async function handleReturn(req, env, ctx) {
      the Invoices panel rather than as a silent gap. */
   if (out.ok) {
     try {
-      const { accrueEarnings } = await import('./earnings.js');
+      const { accrueEarnings } = await import('../mutra/earnings.js');
       await accrueEarnings(env, { slug: r.slug, licence_id: out.id,
                                   amount_agorot: r.list_amount, reason: 'paid' });
     } catch { /* deliberately swallowed */ }
     try {
-      const { autoIssueInvoice } = await import('./greeninvoice.js');
+      const { autoIssueInvoice } = await import('../mutra/greeninvoice.js');
       await autoIssueInvoice(env, out.id);
     } catch { /* deliberately swallowed */ }
   }

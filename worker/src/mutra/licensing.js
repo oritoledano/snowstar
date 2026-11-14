@@ -14,13 +14,13 @@
  */
 
 import { priceFor, isBuyer, isCoverage, isTerm, BUYERS, loadClasses } from './pricing.js';
-import { sendMail } from './mail.js';
-import { alert } from './analytics.js';
+import { sendMail } from '../shared/mail.js';
+import { alert } from '../shared/analytics.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 import { accrueEarnings } from './earnings.js';
 import { findCoupon, couponProblem, couponAllowsClass, applyCoupon, burnCoupon,
-         couponProblemFor, recordCouponUse } from './coupons.js';
+         couponProblemFor, recordCouponUse } from '../shared/coupons.js';
 import { rightsLocked } from './ownership.js';
 
 const json = (data, status = 200) =>

@@ -22,9 +22,9 @@
  * that takes the price to zero is honoured as a free grant that skips HYP
  * entirely, because a card gateway refuses a zero authorisation.
  */
-import { applyCoupon, couponProblem, normCode } from './coupons.js';
-import { parseHyp, verifyReturn } from './hyp.js';
-import { sendMail } from './mail.js';
+import { applyCoupon, couponProblem, normCode } from '../shared/coupons.js';
+import { parseHyp, verifyReturn } from '../shared/hyp.js';
+import { sendMail } from '../shared/mail.js';
 
 const SITE = 'https://snowstar.company';
 const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';

@@ -20,7 +20,7 @@
  *     user_id TEXT NOT NULL, app_version TEXT, linked_at INTEGER NOT NULL, seen_at INTEGER NOT NULL)
  *   (schema-streamdaw-macs.sql)
  */
-import { currentUser } from './session.js';
+import { currentUser } from '../shared/session.js';
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },

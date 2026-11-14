@@ -39,7 +39,7 @@
  * published slug. And hyp_checkouts has neither: it hangs off the request, so
  * deleting the request first orphans it permanently.
  */
-import { trashObject } from './trash.js';
+import { trashObject } from '../mutra/trash.js';
 import { ipTag } from './crypto.js';
 
 const now = () => Math.floor(Date.now() / 1000);

@@ -18,7 +18,7 @@
  * dispute, the project brief for a quote.
  */
 
-import { ipTag } from './crypto.js';
+import { ipTag } from '../shared/crypto.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) =>
@@ -112,7 +112,7 @@ export async function submitContact(req, env) {
   // and always go, even if contact alerts are muted — muting "a message came
   // in" should not silence a legal notice.
   try {
-    const { alert } = await import('./analytics.js');
+    const { alert } = await import('../shared/analytics.js');
     const urgent = route.priority === 'claim' || route.priority === 'rights';
     const text = `${route.label} · ${ref}\n\n`
       + `From:  ${email}${b.name ? ' (' + clean(b.name, 120) + ')' : ''}\n`

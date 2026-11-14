@@ -19,7 +19,7 @@
    Checkout sells products only while STREAMDAW_PRODUCTS_OPEN=1; until then it sells Pro as before.
    This module is pure apart from the rate, so the STREAMDAW repo's tests load it as is. */
 
-import { cachedRates, FALLBACK } from './fx.js';
+import { cachedRates, FALLBACK } from '../shared/fx.js';
 
 export const PAID = ['splits', 'station', 'record', 'compare', 'party'];     // in the app's order; master is free
 export const NAMES = { splits: 'Splits', station: 'Station', record: 'Record', compare: 'Compare', party: 'Party', all: 'All products' };

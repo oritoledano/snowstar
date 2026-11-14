@@ -19,12 +19,12 @@
  *   4. POST /streamdaw/coupon/check: what a code is worth, before anyone pays.
  */
 
-import { sendMail } from './mail.js';
-import { currentUser } from './session.js';
-import { normCode } from './coupons.js';
+import { sendMail } from '../shared/mail.js';
+import { currentUser } from '../shared/session.js';
+import { normCode } from '../shared/coupons.js';
 import * as SD from './streamdaw.js';
 import * as P from './streamdaw-products.js';
-import * as C from './creem.js';
+import * as C from '../shared/creem.js';
 
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200) => new Response(JSON.stringify(data), {

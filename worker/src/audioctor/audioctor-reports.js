@@ -16,8 +16,8 @@
  * it be read as "no problems".
  */
 
-import { sendMail } from './mail.js';
-import { ipTag } from './crypto.js';
+import { sendMail } from '../shared/mail.js';
+import { ipTag } from '../shared/crypto.js';
 
 const json = (data, status = 200, headers = {}) =>
   new Response(JSON.stringify(data), {

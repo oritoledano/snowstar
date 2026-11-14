@@ -16,96 +16,96 @@
  */
 
 import { handleTrack, handleStats, handleJourney, sendDigest, handleDownload,
-         listAlerts, setAlertsMuted, handleDemand } from './analytics.js';
-import { sendMail, resetEmail, welcomeEmail , myMessages, markMessageRead} from './mail.js';
-import { transcribeSubmission, suggestVersions, suggestTags } from './intake.js';
-import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './oauth.js';
+         listAlerts, setAlertsMuted, handleDemand } from './shared/analytics.js';
+import { sendMail, resetEmail, welcomeEmail , myMessages, markMessageRead} from './shared/mail.js';
+import { transcribeSubmission, suggestVersions, suggestTags } from './mutra/intake.js';
+import { startOAuth, finishOAuth, facebookDataDeletion, claimHandoff, KILL_LEGACY_COOKIE } from './shared/oauth.js';
 import { listWorks, saveWork, reorderWorks, deleteWork, uploadWorkFile,
-         listLogos, saveLogo, reorderLogos, deleteLogo } from './works.js';
-import { resetPreview, resetApply, listArchive } from './reset.js';
+         listLogos, saveLogo, reorderLogos, deleteLogo } from './studio/works.js';
+import { resetPreview, resetApply, listArchive } from './shared/reset.js';
 import { audienceCount, saveCampaign, testCampaign, listCampaigns,
-         unsubscribe, drainCampaigns } from './newsletter.js';
-import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim , evaluateStorageGate, joinWaitlist} from './site.js';
+         unsubscribe, drainCampaigns } from './shared/newsletter.js';
+import { listTexts, saveText, listNotes, saveNote, deleteNote, storageReport, storageReclaim , evaluateStorageGate, joinWaitlist} from './shared/site.js';
 import {listOverrides, saveOverride, uploadCover, listUses, saveUse,
-         setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack, tagTracks } from './catalog.js';
-import { bulkEdit, bulkUndo, listBatches, bulkArtist } from './bulk.js';
-import { listArtists, ensureArtists, saveArtist } from './artistreg.js';
-import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './clearlist.js';
+         setOrigTitle, listOrigTitles, deleteTrack, undeleteTrack, tagTracks } from './mutra/catalog.js';
+import { bulkEdit, bulkUndo, listBatches, bulkArtist } from './mutra/bulk.js';
+import { listArtists, ensureArtists, saveArtist } from './mutra/artistreg.js';
+import { listChannels, addChannel, removeChannel, allChannels, setChannelStatus } from './mutra/clearlist.js';
 import { registerArtist, myUploads, uploadTrack, createSubmission,
          streamSubmission, listSubmissions, reviewSubmission, cleanupOrphanUploads,
          listArtistsAdmin, updateSubmission, bulkReview, bulkEditSubmissions,
          askSubmission, answerSubmission, deleteSubmission, deleteArtist ,
-         uploadSubmissionArt} from './artists.js';
+         uploadSubmissionArt} from './mutra/artists.js';
 import { listOutbox, sendOutbox, myCredits, respondCredit, linkOnSignIn,
-         listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration, deleteOutbox, flushAutoMail } from './rights.js';
-import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './profile.js';
-import { updateMember, deleteMember, memberDetail } from './members.js';
-import { startCheckout, handleReturn, listStale, hypStatus } from './hyp.js';
+         listManagedArtists, createManagedArtist, countersignClaim, claimStatus, amendDeclaration, deleteOutbox, flushAutoMail } from './mutra/rights.js';
+import { updateProfile, myDownloads, myFavoritesList, uploadAvatar, clearAvatar } from './shared/profile.js';
+import { updateMember, deleteMember, memberDetail } from './shared/members.js';
+import { startCheckout, handleReturn, listStale, hypStatus } from './shared/hyp.js';
 import { stashArtists, stashScanStart, stashScanGet, stashMine,
          stashCouponCheck, stashCouponCreate, stashCheckout, stashAdmin,
          stashCatalog, stashCatalogDelete, stashCatalogManual, stashCatalogImport,
          stashDeezerSearch, stashDeezerImport, stashCatalogScan,
-         stashRegistrations, stashRegistrationSet } from './snowstash.js';
+         stashRegistrations, stashRegistrationSet } from './snowstash/snowstash.js';
 import { streamdawCheckout, streamdawDownload, myStreamdaw,
          streamdawCouponCheck, streamdawCouponCreate, streamdawPresenceToken, streamdawTurn,
          streamdawAdmin, streamdawRelease, streamdawReconcile,
          streamdawActivate, streamdawActivationStatus, streamdawActivationIssue,
          streamdawMinterPending, streamdawMinterIssue, streamdawDeactivate, mintWaiting,
          streamdawReport, streamdawReports, streamdawDownloadFree,
-         streamdawLiveRegister, streamdawLiveStatus, streamdawLivePage, streamdawLiveCleanup } from './streamdaw.js';
+         streamdawLiveRegister, streamdawLiveStatus, streamdawLivePage, streamdawLiveCleanup } from './streamdaw/streamdaw.js';
 import { streamdawPrices, streamdawSubCancel, streamdawSubResume, streamdawSubCancelLink, streamdawSubByToken,
-         streamdawSubAdmin, streamdawLicenceRefresh, streamdawRenewals } from './streamdaw-subs.js';
+         streamdawSubAdmin, streamdawLicenceRefresh, streamdawRenewals } from './streamdaw/streamdaw-subs.js';
 import { streamdawTelemetry, streamdawUsage, streamdawHealth, streamdawHealthStream,
-         streamdawTelemetryCleanup } from './streamdaw-telemetry.js';
-import { streamdawMacLink, streamdawMacStatus } from './streamdaw-macs.js';
+         streamdawTelemetryCleanup } from './streamdaw/streamdaw-telemetry.js';
+import { streamdawMacLink, streamdawMacStatus } from './streamdaw/streamdaw-macs.js';
 // Audioctor (2026-10-21): its own modules and tables, StreamDAW's money path untouched (audioctor*.js).
 import { audioctorCheckout, audioctorDownload, audioctorDownloadFree, audioctorLatest, audioctorModel, myAudioctor, audioctorCouponCheck, audioctorCouponCreate,
          audioctorAdmin, audioctorReconcile, audioctorActivate, audioctorActivationStatus,
-         audioctorActivationIssue, audioctorDeactivate, mintWaiting as audioctorMintWaiting } from './audioctor.js';
+         audioctorActivationIssue, audioctorDeactivate, mintWaiting as audioctorMintWaiting } from './audioctor/audioctor.js';
 import { audioctorPrices, audioctorSubCancel, audioctorSubResume, audioctorSubCancelLink, audioctorSubByToken,
-         audioctorSubAdmin, audioctorLicenceRefresh, audioctorRenewals } from './audioctor-subs.js';
+         audioctorSubAdmin, audioctorLicenceRefresh, audioctorRenewals } from './audioctor/audioctor-subs.js';
 // Creem, the merchant of record since 2026-11-11 (creem.js; Audioctor's side in audioctor-creem.js).
-import { creemWebhook, creemSetup } from './creem.js';
-import { on as audioctorCreemOn, portal as audioctorCreemPortal, renewalNotices as audioctorCreemRenewalNotices } from './audioctor-creem.js';
+import { creemWebhook, creemSetup } from './shared/creem.js';
+import { on as audioctorCreemOn, portal as audioctorCreemPortal, renewalNotices as audioctorCreemRenewalNotices } from './audioctor/audioctor-creem.js';
 import { routed as streamdawCreemOn, checkout as streamdawCreemCheckout, prices as streamdawCreemPrices,
-         portal as streamdawCreemPortal, couponCheck as streamdawCreemCouponCheck } from './creem-streamdaw.js';
+         portal as streamdawCreemPortal, couponCheck as streamdawCreemCouponCheck } from './streamdaw/creem-streamdaw.js';
 import { streamdawUpdateCheck, streamdawBundleFile, streamdawUpdatesAdmin,
-         streamdawUpdatesCleanup } from './streamdaw-updates.js';
+         streamdawUpdatesCleanup } from './streamdaw/streamdaw-updates.js';
 import { createRequest, myLicences, listQueue, recordPayment,
-         grantFromDashboard, revokeLicence, declineRequest , remindExpiring} from './licensing.js';
-import { handleStream } from './stream.js';
-import { getClasses, setClasses } from './pricing.js';
-import { listJobs, saveJob, exportJobs } from './jobs.js';
-import { interpretBrief } from './agent.js';
+         grantFromDashboard, revokeLicence, declineRequest , remindExpiring} from './mutra/licensing.js';
+import { handleStream } from './mutra/stream.js';
+import { getClasses, setClasses } from './mutra/pricing.js';
+import { listJobs, saveJob, exportJobs } from './studio/jobs.js';
+import { interpretBrief } from './mutra/agent.js';
 // the dashboard's own assistant: a model picks one of a fixed list of skills, nothing more
-import { assistantAsk } from './assistant.js';
-import { listStacks, saveStack } from './stacks.js';
-import { sharePage } from './share.js';
+import { assistantAsk } from './shared/assistant.js';
+import { listStacks, saveStack } from './mutra/stacks.js';
+import { sharePage } from './mutra/share.js';
 // Per-work share links, /w/<id>: one piece of Selected work, with its own card
-import { workSharePage } from './share-work.js';
+import { workSharePage } from './studio/share-work.js';
 // Visits: one row per visit, with its path, its dwell and where it ended (visits.js)
-import { listVisits } from './visits.js';
+import { listVisits } from './shared/visits.js';
 // every real transaction across every vertical, one rule, stated per row (money.js)
-import { moneyAll } from './money.js';
+import { moneyAll } from './shared/money.js';
 // "this went wrong", from inside Audioctor (audioctor-reports.js)
-import { audioctorReport, audioctorReports } from './audioctor-reports.js';
-import { listTrash, emptyTrash, restoreFromTrash } from './trash.js';
-import { reassignOwner, getOwner } from './ownership.js';
+import { audioctorReport, audioctorReports } from './audioctor/audioctor-reports.js';
+import { listTrash, emptyTrash, restoreFromTrash } from './mutra/trash.js';
+import { reassignOwner, getOwner } from './mutra/ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim,
-         myProfile, publicArtist } from './artistprofile.js';
-import { listCoupons, saveCoupon, checkCoupon , firstLicenceOffer} from './coupons.js';
-import { listInvoices, issueInvoice, retryInvoice, whoami, previewInvoice, pinBusiness, skipInvoice } from './greeninvoice.js';
-import { listCollections, saveCollection, setCollectionTracks, uploadCollectionArt } from './collections.js';
-import { listEarnings, settleEarnings, myEarnings, saveTerms } from './earnings.js';
-import { certificate } from './certificate.js';
-import { submitContact, listMessages, setMessageStatus } from './contact.js';
-import { publicUser } from './user.js';
-import { pbkdf2, safeEqual, randB64, sha256b64, ipTag, PBKDF2_ITERS } from './crypto.js';
-import { currentUser, readCookies, peekUser } from './session.js';
-import { recordRequest, healthReport, pruneReqLog } from './health.js';
-import { fxEndpoint, refreshRates } from './fx.js';
-import { DemoRoom, streamdawDemoSocket } from './streamdaw-demo-room.js';
-import { privacyCleanup } from './retention.js';
+         myProfile, publicArtist } from './mutra/artistprofile.js';
+import { listCoupons, saveCoupon, checkCoupon , firstLicenceOffer} from './shared/coupons.js';
+import { listInvoices, issueInvoice, retryInvoice, whoami, previewInvoice, pinBusiness, skipInvoice } from './mutra/greeninvoice.js';
+import { listCollections, saveCollection, setCollectionTracks, uploadCollectionArt } from './mutra/collections.js';
+import { listEarnings, settleEarnings, myEarnings, saveTerms } from './mutra/earnings.js';
+import { certificate } from './mutra/certificate.js';
+import { submitContact, listMessages, setMessageStatus } from './mutra/contact.js';
+import { publicUser } from './shared/user.js';
+import { pbkdf2, safeEqual, randB64, sha256b64, ipTag, PBKDF2_ITERS } from './shared/crypto.js';
+import { currentUser, readCookies, peekUser } from './shared/session.js';
+import { recordRequest, healthReport, pruneReqLog } from './shared/health.js';
+import { fxEndpoint, refreshRates } from './shared/fx.js';
+import { DemoRoom, streamdawDemoSocket } from './streamdaw/streamdaw-demo-room.js';
+import { privacyCleanup } from './shared/retention.js';
 // The demo's studio rooms are Durable Objects: the runtime finds their class among the exports.
 export { DemoRoom };
 
@@ -658,7 +658,7 @@ async function handle(req, env, ctx) {
       /* And tell the owner. The welcome mail goes to THEM; without this line
          nobody on our side learns that a person arrived until they email. */
       try {
-        const { notifyOwner } = await import('./analytics.js');
+        const { notifyOwner } = await import('./shared/analytics.js');
         await notifyOwner(env, 'signup', `New sign-up: ${name || email}`,
           `${name || '(no name)'} <${email}> just created an account.\n\n`
           + `Came in through: ${source || 'unknown'}\nMethod: email and password\n\n`

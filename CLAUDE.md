@@ -25,14 +25,41 @@ same goes for `dashboard.html`, `apps/`, `sitemap.xml` and the webmanifests. Reo
 
 ## Where each vertical's code lives
 
-| vertical | pages | js | worker/src |
+`worker/src/` is split into one folder per vertical (2026-11-14). `index.js` stays at
+`worker/src/index.js` because `wrangler.toml:2` is `main = "src/index.js"` and
+`wrangler.toml:84` resolves `class_name = "DemoRoom"` off that module's exports.
+
+| vertical | pages | js/ | worker/src/ |
 |---|---|---|---|
-| studio | `index.html`, `artist(s).html`, `contact.html` | `main`, `data`, `artists-page`, `works-admin` | `works`, `share-work`, `artists`, `contact` |
-| Mutra | `mutra.html` | `mutra-*` (21 files) | `catalog`, `licensing`, `rights`, `earnings`, `ownership`, `collections`, `intake`, … |
-| Snowstash | `snowstash.html` | — | `snowstash` |
-| StreamDAW | `apps/streamdaw*.html` | `streamdaw-*` | `streamdaw*`, `creem-streamdaw` |
-| Audioctor | `apps/audioctor*.html` | `audioctor-*` | `audioctor*` |
-| shared | `account`, `dashboard`, `stats`, `reset`, `terms`, `privacy`, `refund` | `account*`, `dashboard`, `money`, `consent` | `session`, `members`, `mail`, `oauth`, `money`, `coupons`, `creem`, `hyp` |
+| studio | `index.html`, `contact.html` | `main`, `data`, `works-admin` | `studio/` — 3: `works`, `share-work`, `jobs` |
+| Mutra | `mutra.html`, **`artist.html`, `artists.html`** | `mutra-*`, `artists-page` | `mutra/` — 21: `catalog`, `licensing`, `rights`, `artists`, `earnings`, **`contact`**, … |
+| Snowstash | `snowstash.html` | — (its logic is inside `dashboard.js`, `account-ui.js`, `site-edit.js`) | `snowstash/` — 1 |
+| StreamDAW | `apps/streamdaw*.html` | `streamdaw-*` | `streamdaw/` — 9 |
+| Audioctor | `apps/audioctor*.html` | `audioctor-*` | `audioctor/` — 5 |
+| shared | `account`, `dashboard`, `stats`, `reset`, `terms`, `privacy`, `refund` | `account*`, `dashboard`, `money`, `consent`, **`mutra-track`, `mutra-skin`** | `shared/` — 21: `session`, `members`, `mail`, `oauth`, `coupons`, `creem`, `hyp`, … |
+
+Four traps in that table, each one found by getting it wrong first:
+
+- **`artist.html` and `artists.html` are Mutra, not studio.** "Artist" means one thing on
+  this site and it is the Mutra catalogue: `works.js` and `main.js` contain no occurrence
+  of the word. But `data-product="mutra"` does **not** prove ownership — `account.html`
+  and `dashboard.html` declare it too, because it is a skin switch read by `mutra-skin.js`.
+- **`contact.js` is Mutra.** Its only caller is `js/mutra-contact.js`, loaded only by
+  `mutra.html`. `contact.html` does not post to `/api/contact`.
+- **`js/mutra-track.js` and `js/mutra-skin.js` are shared** despite the name — 20 and 6
+  pages load them, `index.html` and `snowstash.html` among them. Likewise `css/mutra.css`
+  and `css/skins.css`, which `account.html` and `dashboard.html` load. Anything that sorts
+  `js/` by filename prefix breaks tracking and theming sitewide.
+- **`worker/src/studio/works.js` is two verticals in one file.** Lines 1-152 are the studio
+  portfolio (`works` table, `/works`); from 154 it is client logos (`client_logos`,
+  `/logos`), which `js/mutra-page.js` fetches. It was left whole rather than split.
+
+There are **zero product-to-product imports** — no Mutra module imports a StreamDAW one,
+and so on. Every cross-vertical dependency goes through `shared/`. Two deliberate
+inversions remain: `shared/hyp.js` and `shared/creem.js` dynamically import down into the
+verticals to break a static cycle, and `shared/analytics.js`, `oauth.js` and `reset.js`
+import statically from `mutra/`. Keep it that way: a new cross-vertical need belongs in
+`shared/`, not in an import between two verticals.
 
 ## Things that bite
 
