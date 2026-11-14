@@ -32,7 +32,13 @@ CREATE TABLE IF NOT EXISTS streamdaw_update_installs (
   bundle_version  TEXT,                            -- the relay + pages it runs ('0' = the app's own, from before stamps)
   first_seen      INTEGER NOT NULL,
   last_seen       INTEGER NOT NULL,
-  checks          INTEGER NOT NULL DEFAULT 1
+  checks          INTEGER NOT NULL DEFAULT 1,
+  -- 'mac' or 'win'. Added 2026-11-14, by hand on the live database:
+  --   ALTER TABLE streamdaw_update_installs ADD COLUMN os TEXT
+  -- The Windows app had sent ?os=win since 2026-11-12 and the release query read it,
+  -- but nothing stored it, so every Windows install was counted as a Mac and measured
+  -- against the macOS latest. NULL on every row written before that date.
+  os              TEXT
 );
 CREATE INDEX IF NOT EXISTS streamdaw_update_installs_seen ON streamdaw_update_installs (last_seen);
 -- A bundle that crashed at start twice on a Mac (the app rolled back by itself), said once per install.

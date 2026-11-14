@@ -65,17 +65,22 @@ export async function streamdawUpdateCheck(req, env, url) {
   const app = q.get('app') || '', bundle = q.get('bundle') || '0', install = q.get('install') || '';
   if (!APP_VER.test(app) || !(bundle === '0' || STAMP.test(bundle)) || !INSTALL.test(install)) return json({ error: 'bad_request' }, 400);
   const t = now();
+  // Which platform is asking. The Windows app has sent ?os=win since 2026-11-12, but it
+  // was only read further down to pick the release — nothing recorded it, so every
+  // Windows install was stored and counted as a Mac (os column added 2026-11-14).
+  // Decided here rather than at the release query because the INSERT below needs it.
+  const os = q.get('os') === 'win' ? 'win' : 'mac';
 
-  // Who is out there, by version: one row per install, written at most every 10 minutes.
+  // Who is out there, by version and platform: one row per install, written at most every 10 minutes.
   const seen = await softFirst(env, 'SELECT last_seen FROM streamdaw_update_installs WHERE install_id = ?', install);
   if (!seen || t - (seen.last_seen || 0) >= 600) {
     try {
       await env.DB.prepare(
-        `INSERT INTO streamdaw_update_installs (install_id, app_version, bundle_version, first_seen, last_seen, checks)
-         VALUES (?, ?, ?, ?, ?, 1)
+        `INSERT INTO streamdaw_update_installs (install_id, app_version, bundle_version, first_seen, last_seen, checks, os)
+         VALUES (?, ?, ?, ?, ?, 1, ?)
          ON CONFLICT(install_id) DO UPDATE SET app_version = excluded.app_version, bundle_version = excluded.bundle_version,
-           last_seen = excluded.last_seen, checks = streamdaw_update_installs.checks + 1`
-      ).bind(install, app, bundle, t, t).run();
+           last_seen = excluded.last_seen, checks = streamdaw_update_installs.checks + 1, os = excluded.os`
+      ).bind(install, app, bundle, t, t, os).run();
     } catch { /* before the migration: the answer still goes out */ }
   }
   // A bundle this Mac rolled back by itself (it crashed at start twice there).
@@ -83,7 +88,7 @@ export async function streamdawUpdateCheck(req, env, url) {
     try { await env.DB.prepare('INSERT OR IGNORE INTO streamdaw_bundle_bad (version, install_id, at) VALUES (?, ?, ?)').bind(v, install, t).run(); } catch {}
   }
 
-  const win = q.get('os') === 'win';             // the Windows app says so (2026-11-12); its own release, its own file
+  const win = os === 'win';                      // the Windows app says so (2026-11-12); its own release, its own file
   const rel = await softFirst(env, 'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1', win ? 'streamdaw-windows' : ASSET);
   const mine = await softFirst(env, 'SELECT policy, message FROM streamdaw_app_versions WHERE version = ?', app);
   const latest = rel && APP_VER.test(String(rel.version || '')) ? String(rel.version) : null;
@@ -166,6 +171,14 @@ export async function streamdawUpdatesAdmin(req, env, user) {
     `SELECT app_version AS version, COUNT(*) AS installs30d, SUM(CASE WHEN last_seen > ? THEN 1 ELSE 0 END) AS installs7d,
             SUM(CASE WHEN last_seen > ? THEN 1 ELSE 0 END) AS installs1d
        FROM streamdaw_update_installs WHERE last_seen > ? GROUP BY app_version`, week, day, month);
+  // Per platform, additive so the existing panel keeps reading `latest` and `apps` as
+  // before. os is NULL on every row written before 2026-11-14, so those count as mac —
+  // which is what they were assumed to be anyway, and the split sharpens as apps check in.
+  const byOs = await soft(env,
+    `SELECT COALESCE(os, 'mac') AS os, COUNT(*) AS installs30d,
+            SUM(CASE WHEN last_seen > ? THEN 1 ELSE 0 END) AS installs7d
+       FROM streamdaw_update_installs WHERE last_seen > ? GROUP BY COALESCE(os, 'mac')`, week, month);
+  const relWin = await softFirst(env, "SELECT version FROM app_releases WHERE asset = 'streamdaw-windows' AND is_latest = 1 ORDER BY created_at DESC LIMIT 1");
   const relays = await soft(env,
     `SELECT bundle_version AS version, COUNT(*) AS installs7d FROM streamdaw_update_installs WHERE last_seen > ? GROUP BY bundle_version`, week);
   const policies = await soft(env, 'SELECT version, policy, message, notes, updated_at FROM streamdaw_app_versions ORDER BY updated_at DESC LIMIT 100');
@@ -178,11 +191,15 @@ export async function streamdawUpdatesAdmin(req, env, user) {
   const apps = [...byVer.values()].sort((a, b) => compareVersions(b.version, a.version));
   return json({
     now: t,
-    latest: rel ? rel.version : null,
+    latest: rel ? rel.version : null,              // the macOS release, as it always was
+    latestWin: relWin ? relWin.version : null,     // its Windows counterpart
     totals: {
       installs7d: apps.reduce((n, a) => n + (a.installs7d || 0), 0),
       installs30d: apps.reduce((n, a) => n + (a.installs30d || 0), 0),
       onLatest7d: rel ? ((byVer.get(rel.version) || {}).installs7d || 0) : 0,
+      // installs by platform. Until 2026-11-14 nothing recorded it, so a figure here
+      // that counts 'mac' includes whatever Windows installs checked in before then.
+      byOs: byOs.map((r) => ({ os: r.os, installs7d: r.installs7d || 0, installs30d: r.installs30d || 0 })),
     },
     apps, bundles, relays: relays.sort((a, b) => compareVersions(b.version, a.version)),
   });
