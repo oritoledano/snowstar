@@ -5,11 +5,11 @@
 'use strict';
 const path = require('path'), fs = require('fs'), os = require('os');
 const { spawn, execFileSync } = require('child_process');
-const WebSocket = require(path.join(os.homedir(), 'Dropbox/CLAUDE CODE PROJETCS/STREAMDAW/server/node_modules/ws'));
+const WebSocket = require(path.join(os.homedir(), 'Dropbox/CLAUDE CODE PROJETCS/SNOWSTAR/streamdaw/server/node_modules/ws'));
 
 const HERE = __dirname;
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const PAGE = 'file://' + path.join(os.homedir(), 'Dropbox/CLAUDE CODE PROJETCS/SNOWSTAR-ENHANCE/app/ui/index.html');
+const PAGE = 'file://' + path.join(os.homedir(), 'Dropbox/CLAUDE CODE PROJETCS/SNOWSTAR/audioctor/app/ui/index.html');
 const W = 1280, H = 568, DPR = 1.5, OUTW = 1600;       // the app's window, filmed at 1920x852, written at 1600x710
 const id = process.argv[2];
 const still = process.argv.includes('--still') ? parseFloat(process.argv[process.argv.indexOf('--still') + 1]) : null;

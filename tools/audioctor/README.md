@@ -11,7 +11,7 @@ the card being dragged in.
 
 ## How they are made
 
-1. **The engine runs for real** (SNOWSTAR-ENHANCE's `AudioctorCli`), writing one stereo file per part:
+1. **The engine runs for real** (AUDIOCTOR's `AudioctorCli`), writing one stereo file per part:
 
    ```
    AudioctorCli enhance FILE -o DIR --parts instruments --quality best      # the song
@@ -25,7 +25,7 @@ the card being dragged in.
    BEFORE/AFTER switch — and writes `<id>-audio.wav` plus `<id>-film.json`: the timeline, the waveform peaks for
    the scope, and one meter frame every 50 ms. The meters you see are the sound you hear, from the same numbers.
 
-3. **`film.js`** loads the app's own window (`SNOWSTAR-ENHANCE/app/ui/index.html`, **as it ships** — the page is not
+3. **`film.js`** loads the app's own window (`AUDIOCTOR/app/ui/index.html`, **as it ships** — the page is not
    edited, it is spoken to through its own event bus), injects `scene.js` with that JSON, films it in headless
    Chrome and muxes the sound. It drops the frames taken before the scene started, so picture and sound share one
    zero.
@@ -45,5 +45,5 @@ Re-run step 3: the films follow the app's own CSS and markup, so a new look need
 as well if the engine's output changed (different parts, different timings). The timings in `spec.json` are
 compressed on purpose — the real run took 54 s and 6 s, and the films say so on the nixies.
 
-**Don't edit anything in SNOWSTAR-ENHANCE from this repo** (the split: that session owns the app, this one owns the
+**Don't edit anything in AUDIOCTOR from this repo** (the split: that session owns the app, this one owns the
 site). `film.js` only reads its page.

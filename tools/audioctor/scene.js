@@ -1,4 +1,4 @@
-// The scene the films show, injected into the app's own page (SNOWSTAR-ENHANCE app/ui/index.html) and driven by
+// The scene the films show, injected into the app's own page (AUDIOCTOR app/ui/index.html) and driven by
 // real data: the engine's own channel list, waveforms, timings and meter levels (film/<id>-film.json).
 // Nothing here is edited into the app: the page is loaded as it ships and spoken to through its own event bus.
 (FILM) => {

@@ -11,7 +11,7 @@
  * (audioctor-creem.js); the app has a Free plan and needs no purchase to start. The HYP paths in this file and in
  * audioctor-subs.js (Audioctor once, Monthly on a card token) stay for what they sold, closed: AUDIOCTOR_HYP_OPEN.
  * Coupons: its own `audioctor_coupons`, then the shared `coupons` (scope 'audioctor' or 'all').
- * The app: SNOWSTAR-ENHANCE repo (app/licence: the key check, "AD" machine ids, the Free plan's walls).
+ * The app: AUDIOCTOR repo (app/licence: the key check, "AD" machine ids, the Free plan's walls).
  */
 
 import { sendMail } from './mail.js';
@@ -571,7 +571,7 @@ export async function audioctorDownloadFree(req, env) {
   });
 }
 
-/** The models (launch gate A3): the app's first run fetches its ~2.3 GB set here, part by part. SNOWSTAR-ENHANCE's
+/** The models (launch gate A3): the app's first run fetches its ~2.3 GB set here, part by part. AUDIOCTOR's
  *  app/models/pack.py cuts and uploads them as APPS keys audioctor/models/<set>/<path>.p<i> (R2 takes 300 MiB a put).
  *  Public and immutable: the app pins every file's sha256, so a set's bytes never change under its name and are
  *  worth nothing without the app. A Range request resumes a part that was cut off. */

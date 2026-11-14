@@ -2,7 +2,7 @@
    The same format and checks, with Audioctor's own magic ("AD"), product line ("Audioctor"), machine ids ("AD…")
    and its own P-256 pairs, so a StreamDAW key never opens Audioctor nor the reverse.
 
-   Two pairs; the app (SNOWSTAR-ENHANCE repo, app/licence/Licence.cpp, kPublicKeys) trusts both:
+   Two pairs; the app (AUDIOCTOR repo, app/licence/Licence.cpp, kPublicKeys) trusts both:
    - the OFFLINE pair, on Ori's Mac only (~/.cache/snowstar-enhance/licence-keypair.txt): keys minted by hand
      (AudioctorKeyGen), pasted in the dashboard;
    - the WORKER pair (~/.cache/snowstar-enhance/licence-keypair-worker.txt, when made), whose private half is the
