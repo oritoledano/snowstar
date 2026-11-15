@@ -21,7 +21,7 @@
 
 import { sendMail } from '../shared/mail.js';
 import { currentUser } from '../shared/session.js';
-import { normCode } from '../shared/coupons.js';
+import { normCode, notYours } from '../shared/coupons.js';
 import * as SD from './streamdaw.js';
 import * as P from './streamdaw-products.js';
 import * as C from '../shared/creem.js';
@@ -175,6 +175,7 @@ async function couponWhy(env, c, plan, email, userId) {
   const only = couponProducts(c);
   if (only.length && !only.includes(id)) return `That code is for ${only.map((x) => P.NAMES[x] || x).join(' or ')}.`;
   if (c.first_only && await boughtBefore(env, email, userId)) return 'That code is for a first purchase.';
+  if (email && notYours(c, email)) return notYours(c, email);   // a preview without an account is not refused
   return '';
 }
 

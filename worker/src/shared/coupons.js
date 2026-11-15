@@ -55,6 +55,15 @@ export function applyCoupon(amountAgorot, c) {
   return { amount: Math.max(0, amountAgorot - off), off };
 }
 
+/* A code made for one person (2026-11-15, Ori: "it must not pass from one person to another"): for_email names
+   the account that may use it. A preview without an account says nothing; the checkout, which always has one,
+   refuses any other email. */
+export function notYours(c, email) {
+  if (!c || !c.for_email) return null;
+  return String(email || '').trim().toLowerCase() === String(c.for_email).trim().toLowerCase()
+    ? null : 'This code was made for another account. Sign in with the email it was sent to.';
+}
+
 /** Why a code cannot be used, in the order a person would ask. */
 export function couponProblem(c, atAgorot) {
   if (!c) return 'No such code.';
@@ -89,7 +98,7 @@ export async function findCoupon(env, code, scope = 'mutra') {
   if (!c) return null;
   return env.DB.prepare(
     `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note, classes,
-            scope, per_user_limit, first_purchase_only
+            scope, per_user_limit, first_purchase_only, for_email
        FROM coupons WHERE code = ? AND (scope = ? OR scope = 'all')`
   ).bind(c, scopeOk(scope)).first().catch(() => null);
 }
@@ -125,7 +134,7 @@ export async function listCoupons(env, user) {
   if (!user || !user.admin) return json({ error: 'forbidden' }, 403);
   const r = await env.DB.prepare(
     `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note,
-            classes, scope, per_user_limit, first_purchase_only, created_at
+            classes, scope, per_user_limit, first_purchase_only, for_email, created_at
        FROM coupons ORDER BY created_at DESC LIMIT 300`
   ).all().catch(() => ({ results: [] }));
   return json({ coupons: r.results || [] });
@@ -152,6 +161,8 @@ export async function saveCoupon(req, env, user) {
   if (kind === 'percent' && value > 100) return json({ error: 'percent_over_100' }, 400);
   if (kind === 'amount') value = value * 100;             // entered in shekels, stored in agorot
 
+  const forEmail = clean(b.for_email, 120).toLowerCase() || null;
+  if (forEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(forEmail)) return json({ error: 'bad_email' }, 400);
   const code = normCode(b.code) || makeCode(b.prefix);
   const exists = await env.DB.prepare('SELECT 1 FROM coupons WHERE code = ?').bind(code).first().catch(() => null);
   if (exists) return json({ error: 'code_taken', code }, 409);
@@ -159,8 +170,8 @@ export async function saveCoupon(req, env, user) {
   await env.DB.prepare(
     `INSERT INTO coupons (code, kind, value, min_amount, max_uses, used, expires_at,
                           active, note, classes, scope, per_user_limit, first_purchase_only,
-                          created_at, created_by)
-     VALUES (?, ?, ?, ?, ?, 0, ?, 1, ?, ?, ?, ?, ?, ?, ?)`
+                          created_at, created_by, for_email)
+     VALUES (?, ?, ?, ?, ?, 0, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(code, kind, value,
          Math.max(0, Math.round(Number(b.min_amount) || 0) * 100),
          Math.max(0, Math.round(Number(b.max_uses) || 0)),
@@ -169,9 +180,9 @@ export async function saveCoupon(req, env, user) {
          scopeOk(b.scope),
          Math.max(0, Math.round(Number(b.per_user_limit) || 0)),
          b.first_purchase_only ? 1 : 0,
-         now(), user.email || 'owner').run();
+         now(), user.email || 'owner', forEmail).run();
 
-  return json({ ok: true, code });
+  return json({ ok: true, code, for_email: forEmail });
 }
 
 /** Called once a licence is actually granted, never at preview time. */
@@ -213,6 +224,7 @@ export async function hasBoughtBefore(env, email, userId) {
  */
 export async function couponProblemFor(env, c, email, userId) {
   if (!c) return 'unknown_code';
+  if (notYours(c, email)) return 'for_another_account';
   if (c.first_purchase_only && await hasBoughtBefore(env, email, userId)) {
     return 'first_purchase_only';
   }

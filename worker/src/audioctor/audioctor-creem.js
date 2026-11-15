@@ -24,7 +24,7 @@
 
 import { sendMail } from '../shared/mail.js';
 import { currentUser } from '../shared/session.js';
-import { couponProblem } from '../shared/coupons.js';
+import { couponProblem, notYours, couponProblemFor } from '../shared/coupons.js';
 import * as SD from './audioctor.js';
 import * as C from '../shared/creem.js';
 
@@ -109,7 +109,8 @@ export async function couponCheck(env, code) {
   if (problem) return json({ ok: false, reason: problem });
   const { cents, off } = await usdAfterCoupon(env, c, year);
   return json({ ok: true, code: c.code, kind: c.kind, value: c.value, currency: 'USD', off, amount: cents, usdCents: cents,
-                free: cents <= 0, label: `${couponLabel(c)} the first year` });
+                free: cents <= 0, forOne: !!c.for_email,
+                label: `${couponLabel(c)} the first year${c.for_email ? ', for the account it was made for' : ''}` });
 }
 
 // ── 1. checkout ─────────────────────────────────────────────────────────────
@@ -133,7 +134,8 @@ export async function checkout(env, user, body) {
   if (body.coupon && String(body.coupon).trim()) {
     if (plan !== 'year') return json({ error: 'coupon', reason: 'Codes are for the Yearly plan.' }, 400);
     c = await SD.findCoupon(env, body.coupon);
-    const problem = couponProblem(c, (await SD.shekelsFor(env, list)).amount);
+    const problem = couponProblem(c, (await SD.shekelsFor(env, list)).amount) || notYours(c, email)
+      || ((await couponProblemFor(env, c, email, user.id)) === 'already_used' ? 'You have used this code already.' : null);
     if (problem) return json({ error: 'coupon', reason: problem }, 400);
     ({ cents, off } = await usdAfterCoupon(env, c, list));
   }
@@ -149,7 +151,8 @@ export async function checkout(env, user, body) {
                               coupon: c ? c.code : null, machine, ownerName });
   let ch;
   try {
-    const discount = c ? await C.discountCode(env, `discount:${APP}:${c.code}`, { code: c.code, name: `Audioctor code ${c.code}`,
+    const twin = c && c.for_email ? `${c.code}-${ref.slice(-6)}`.slice(0, 40) : c && c.code;
+    const discount = c ? await C.discountCode(env, `discount:${APP}:${twin}`, { code: twin, name: `Audioctor code ${c.code}`,
       percent: c.kind === 'percent' ? c.value : null, cents: off, expiresAt: c.expires_at || null, products: [cf[productKey('year')]] }) : null;
     ch = await C.api(env, 'POST', '/v1/checkouts', {
       product_id: cf[productKey(plan)], request_id: ref, units: 1, success_url: SUCCESS_URL,

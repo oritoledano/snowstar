@@ -4469,6 +4469,7 @@
           { label: 'Used', num: true, get: (r) => r.max_uses ? `${r.used}/${r.max_uses}` : String(r.used) },
           { label: 'Expires', get: (r) => when(r.expires_at) },
           { label: 'On', get: (r) => r.active ? 'yes' : 'no' },
+          { label: 'For', get: (r) => (r.for_email ? esc(r.for_email) : 'anyone') },
           { label: 'Link', get: (r) => copyLinkBtn(codeLink('audioctor', r.code)) },
         ])}
         <p class="db-empty">New codes: General › Editor › Coupons, property Audioctor.</p></div>`;
@@ -4780,6 +4781,8 @@
           <input id="cp-cls" placeholder="blank = all, e.g. CD" maxlength="4"></label>
         <label class="ar-f"><span>Expires</span><input id="cp-exp" type="date"></label>
         <label class="ar-f"><span>Note to self</span><input id="cp-note" maxlength="200" placeholder="Black Friday"></label>
+        <label class="ar-f"><span>Only for this email (blank = anyone)</span>
+          <input id="cp-for" type="email" maxlength="120" placeholder="their sign-in email"></label>
         <div class="ar-f"><span>&nbsp;</span><button class="rv-btn rv-ok" id="cp-make">Create code</button></div>
       </div>
       <p class="cp-said"></p>
@@ -4799,6 +4802,7 @@
         { label: 'Used', num: true, get: (c) => c.max_uses ? `${c.used}/${c.max_uses}` : String(c.used) },
         { label: 'Expires', get: (c) => when(c.expires_at) },
         { label: 'Note', get: (c) => esc(c.note || '') },
+        { label: 'For', get: (c) => (c.for_email ? `<span class="pill">${esc(c.for_email)}</span>` : 'anyone') },
         { label: 'Link', get: (c) => copyLinkBtn(codeLink(c.scope, c.code)) },
         { label: '', get: (c) => `<button class="rv-btn cp-tog" data-id="${c.id}">${
             c.active ? 'On' : 'Off'}</button> <button class="rv-btn cp-del" data-id="${c.id}">×</button>` },
@@ -4819,6 +4823,7 @@
         scope: document.getElementById('cp-scope').value,
         per_user_limit: Number(document.getElementById('cp-peruser').value) || 0,
         note: document.getElementById('cp-note').value,
+        for_email: document.getElementById('cp-for').value.trim(),
         expires_at: exp ? Math.floor(new Date(exp + 'T23:59:59').getTime() / 1000) : null,
       });
       if (r && r.ok) {
@@ -4827,7 +4832,8 @@
         const s2 = document.querySelector('.cp-said');
         if (s2) { s2.innerHTML = `Created <code>${esc(r.code)}</code>${url ? ` · send this link: <a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a> ${copyLinkBtn(url)}` : ''}`; wireCopy(); }
       }
-      else said.textContent = r && r.error === 'code_taken' ? 'That code already exists.'
+      else said.textContent = r && r.error === 'bad_email' ? 'That email doesn\u2019t look right.'
+        : r && r.error === 'code_taken' ? 'That code already exists.'
         : (r && r.error) || 'Could not create that code.';
     });
     wireCopy();

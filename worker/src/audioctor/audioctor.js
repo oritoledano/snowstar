@@ -18,7 +18,7 @@ import { sendMail } from '../shared/mail.js';
 import { currentUser } from '../shared/session.js';
 import { sha256b64, randB64 } from '../shared/crypto.js';
 import { parseHyp, verifyReturn } from '../shared/hyp.js';
-import { applyCoupon, couponProblem, normCode } from '../shared/coupons.js';
+import { applyCoupon, couponProblem, normCode, notYours } from '../shared/coupons.js';
 // who is subscribed, read from the table Creem actually writes (subs-admin.js)
 import { creemSubs } from '../shared/subs-admin.js';
 import { cachedRates, FALLBACK } from '../shared/fx.js';
@@ -84,10 +84,11 @@ function findCoupon(env, code) {
   const c = normCode(code);
   if (!c) return Promise.resolve(null);
   return env.DB.prepare(
-    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note
+    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note, for_email
        FROM audioctor_coupons WHERE code = ?`
   ).bind(c).first().catch(() => null).then((own) => own || env.DB.prepare(
-    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note
+    `SELECT id, code, kind, value, min_amount, max_uses, used, expires_at, active, note, for_email,
+            per_user_limit, first_purchase_only
        FROM coupons WHERE code = ? AND (scope = 'audioctor' OR scope = 'all')`
   ).bind(c).first().catch(() => null));
 }
@@ -116,12 +117,14 @@ export async function audioctorCouponCreate(req, env, user) {
   const code = normCode(b.code) || ('ADCT-' + urlToken(6).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6));
   const exists = await env.DB.prepare('SELECT 1 FROM audioctor_coupons WHERE code = ?').bind(code).first().catch(() => null);
   if (exists) return json({ error: 'code_taken', code }, 409);
+  const forEmail = String(b.for_email || '').trim().toLowerCase().slice(0, 120) || null;
+  if (forEmail && !validEmail(forEmail)) return json({ error: 'bad_email' }, 400);
   await env.DB.prepare(
-    `INSERT INTO audioctor_coupons (code, kind, value, min_amount, max_uses, used, expires_at, active, note, created_at)
-     VALUES (?, ?, ?, 0, ?, 0, ?, 1, ?, ?)`
+    `INSERT INTO audioctor_coupons (code, kind, value, min_amount, max_uses, used, expires_at, active, note, created_at, for_email)
+     VALUES (?, ?, ?, 0, ?, 0, ?, 1, ?, ?, ?)`
   ).bind(code, kind, value, Math.max(0, Math.round(Number(b.max_uses) || 0)),
-         Number(b.expires_at) || null, String(b.note || '').slice(0, 200), now()).run();
-  return json({ ok: true, code, kind, value });
+         Number(b.expires_at) || null, String(b.note || '').slice(0, 200), now(), forEmail).run();
+  return json({ ok: true, code, kind, value, for_email: forEmail });
 }
 
 /** POST /audioctor/coupon/check — { code } → what it does to Audioctor's price (once). Public. */
@@ -163,7 +166,7 @@ export async function audioctorCheckout(req, env) {
   if (body.coupon && String(body.coupon).trim()) {
     // Coupon (optional). Invalid code entered → tell them, don't silently charge full.
     const c = await inShekels(env, await findCoupon(env, body.coupon));
-    const problem = couponProblem(c, amount);
+    const problem = couponProblem(c, amount) || notYours(c, email);
     if (problem) return json({ error: 'coupon', reason: problem }, 400);
     ({ amount } = applyCoupon(amount, c));
     couponCode = c.code;
@@ -1165,7 +1168,7 @@ export async function audioctorAdmin(env, user) {
       ORDER BY e.created_at DESC LIMIT 200`);
 
   const coupons = await soft(
-    `SELECT id, code, kind, value, max_uses, used, expires_at, active, note, created_at
+    `SELECT id, code, kind, value, max_uses, used, expires_at, active, note, for_email, created_at
        FROM audioctor_coupons ORDER BY created_at DESC`);
 
   const releases = await soft(
