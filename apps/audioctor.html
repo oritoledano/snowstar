@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=11">
+<link rel="stylesheet" href="audioctor.css?v=12">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -47,8 +47,7 @@
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Audioctor"><img src="audioctor-logo.png?v=1" alt="Audioctor" width="137" height="26"></a>
     <nav aria-label="Page">
-      <a href="#hear">Hear it</a>
-      <a href="#how">How it works</a>
+      <a href="#remix">For remixers</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">Questions</a>
     </nav>
@@ -64,67 +63,65 @@
   <!-- ── hero: the line, the price, the lab at work. Every "Try it free" [data-free-dl] is the download (js/audioctor-free.js,
        /api/audioctor/download/free, 2026-11-10). The plans go to the checkout once Creem sells for real
        (js/audioctor-plans.js); until then they open #soon (the waitlist). ── -->
-  <section class="hero" aria-labelledby="heroTitle">
-    <div class="wrap">
-      <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">For Mac · Apple silicon or Intel · macOS 14 or later</p>
-      <h1 id="heroTitle">Every part, apart.<br><em>Clean. Local.</em></h1>
-      <p class="lead">Split any recording into voice, music and every instrument. Clean each part, mix, export. On your Mac.</p>
-      <div class="cta">
-        <a class="btn lime" href="/api/audioctor/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Try it free</a>
-        <a class="btn ghost" href="#hear">Hear it</a>
-      </div>
-      <p class="fine">Your first 3 clips free, up to 6 minutes each. No card. Then from <b><span data-usd="5" data-dp="0">$5</span> a month</b>.</p>
-      <figure class="mac film" data-sound-at="2.6">
-        <div class="bar"><i></i><i></i><i></i><b>Audioctor</b>
-          <button class="sound" type="button" aria-pressed="false" title="Play this film with sound"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.6L12 5.5v13L7.6 14.5H4z"/><path class="w" d="M15.8 9.3a3.8 3.8 0 0 1 0 5.4"/><path class="w" d="M18.6 6.5a7.8 7.8 0 0 1 0 11"/><path class="x" d="M16.2 9.8l4.6 4.4m0-4.4l-4.6 4.4"/></svg><span>Hear it</span></button>
+  <section class="hero hero-ab" aria-labelledby="heroTitle">
+    <div class="wrap ab-hero">
+      <div class="ab-copy">
+        <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">For Mac · Apple silicon or Intel · macOS 14 or later</p>
+        <h1 id="heroTitle">Fix the sound<br><em>of your video.</em></h1>
+        <p class="lead">Room echo, noise, music too loud under the talk: gone, and the picture stays in sync. On your Mac, so nothing you shot is uploaded.</p>
+        <div class="cta">
+          <a class="btn lime" href="/api/audioctor/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Download free</a>
+          <a class="btn ghost ab-phone" id="abMail" href="mailto:?subject=Audioctor%20for%20my%20Mac&amp;body=https%3A%2F%2Fsnowstar.company%2Fapps%2Faudioctor.html">On your phone? Send it to your Mac</a>
         </div>
-        <video src="../media/audioctor/song.mp4?v=3" poster="../media/audioctor/song.jpg?v=3" muted loop playsinline autoplay preload="metadata" width="1600" height="710" aria-label="A finished master dropped on Audioctor: six parts fill their cylinders in 54 seconds, then the voice is soloed and pulled out of the mix"></video>
-        <figcaption class="beats">
-          <b class="on" data-at="0">Drop a finished master</b>
-          <b data-at="0.9">54 s for three minutes</b>
-          <b data-at="3.8">Six parts, six faders</b>
-          <b data-at="7">Solo the voice</b>
-          <b data-at="11.8">Pull it out: karaoke</b>
-          <b data-at="17">Back to the mix</b>
-        </figcaption>
+        <p class="fine">Your first 3 videos free, up to 6 minutes each. No card. Then from <b><span data-usd="5" data-dp="0">$5</span> a month</b>.</p>
+      </div>
+      <!-- the switch (js/audioctor-ab.js): one video, its sound Before and After, the same loudness, in sync -->
+      <figure class="abp" id="abp">
+        <div class="abp-stage">
+          <video id="abVideo" muted playsinline loop preload="none" aria-label="The video; its sound plays Before or After"></video>
+          <button type="button" class="abp-play" id="abPlay" aria-label="Play with sound">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+          </button>
+          <span class="abp-tag" id="abTag">After · Audioctor</span>
+        </div>
+        <div class="abp-switch" role="group" aria-label="Hear it before or after">
+          <button type="button" id="abBefore" aria-pressed="false">Before</button>
+          <button type="button" id="abAfter" aria-pressed="true">After</button>
+        </div>
+        <canvas class="abp-wave" id="abWave" width="1200" height="110" aria-label="The sound's waveform, Before or After; click to move through it"></canvas>
+        <figcaption class="abp-meta"><span id="abCap"></span><span>Best with headphones</span></figcaption>
+        <div class="abp-ex" role="tablist" aria-label="Examples">
+          <button type="button" role="tab" data-ex="reel" aria-selected="true">Phone reel</button>
+          <button type="button" role="tab" data-ex="lecture" aria-selected="false">Lecture in a room</button>
+        </div>
       </figure>
     </div>
   </section>
 
-  <!-- ── hear it: the demo's recordings (marketing/demo, published at apps/audioctor-demo/), played by its engine
-       right here: Before / After, the faders. The engine's real output; nothing is processed in the browser. ── -->
-  <section id="hear" aria-labelledby="hearTitle">
+  <!-- ── for remixers (2026-11-15, Ori): KAYMA – Bad Blood, the founder's own track, in the app's own page (app/art/capture.js,
+       scene=remix, filmed frame by frame); its sound is the app's real stems of the track, cut to the scene's steps ── -->
+  <section id="remix" aria-labelledby="remixTitle">
     <div class="wrap">
-      <div class="sec-head center"><p class="kicker" style="justify-content:center">Hear it</p><h2 id="hearTitle">Real recordings. <em>The app's own output.</em></h2></div>
-      <div class="demo" id="demo">
-        <div class="chips" id="dChips" aria-label="Recordings"></div>
-        <p class="blurb" id="dBlurb">&nbsp;</p>
-        <div class="ab">
-          <button type="button" class="side" id="dBefore" aria-pressed="false">Before</button>
-          <button type="button" class="play" id="dPlay" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><span id="dPlayT">Play</span></button>
-          <button type="button" class="side on" id="dAfter" aria-pressed="true">After</button>
+      <div class="sec-head center"><p class="kicker" style="justify-content:center">For remixers and DJs</p>
+        <h2 id="remixTitle">Every part of a track. <em>On its own fader.</em></h2>
+        <p>Drop a finished master: vocal, drums, bass, guitars, keys and the rest come apart in about a minute. Solo, loop, EQ, then export every part. Your promos never leave your Mac.</p></div>
+      <figure class="mac film" data-sound-at="5.2">
+        <div class="bar"><i></i><i></i><i></i><b>Audioctor</b>
+          <button class="sound" type="button" aria-pressed="false" title="Play this film with sound"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.6L12 5.5v13L7.6 14.5H4z"/><path class="w" d="M15.8 9.3a3.8 3.8 0 0 1 0 5.4"/><path class="w" d="M18.6 6.5a7.8 7.8 0 0 1 0 11"/><path class="x" d="M16.2 9.8l4.6 4.4m0-4.4l-4.6 4.4"/></svg><span>Hear it</span></button>
         </div>
-        <canvas id="dWave" width="1600" height="150" aria-label="The recording's waveform; click to move through it"></canvas>
-        <div class="dline"><span id="dTime">0:00</span><span id="dLbl">After</span></div>
-        <div class="faders" id="dFaders"></div>
-        <p class="fine">Before and After play at the same loudness, so you hear the change, not the volume. <a href="audioctor-demo/">Open the whole lab &rarr;</a></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── how: three cards, a picture and a line each ── -->
-  <section id="how" aria-labelledby="howTitle">
-    <div class="wrap">
-      <div class="sec-head center"><p class="kicker" style="justify-content:center">How it works</p><h2 id="howTitle">Drop. Mix. <em>Export.</em></h2></div>
-      <div class="trio">
-        <figure><div class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/step-drop.jpg?v=3" alt="Audioctor taking a song apart: seven cylinders filling" width="1600" height="710" loading="lazy"></div>
-          <figcaption><b>Take it apart</b>Voice and music, or every instrument: up to seven parts.</figcaption></figure>
-        <figure><div class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/video.jpg?v=3" alt="A phone video of a gig in Audioctor: voice, music and background on their own faders" width="1600" height="710" loading="lazy"></div>
-          <figcaption><b>Clean each part</b>Noise goes to its own fader. Rebuild a voice, or bring back the highs a phone cut.</figcaption></figure>
-        <figure><div class="mac"><div class="bar"><i></i><i></i><i></i></div><img src="../media/audioctor/step-mix.jpg?v=3" alt="The voice cylinder drained while the band plays on" width="1600" height="710" loading="lazy"></div>
-          <figcaption><b>Mix and export</b>Faders, solo and a range EQ on every part. Export stems or the mix.</figcaption></figure>
-      </div>
-      <p class="works"><span>Voice memos, podcasts, videos, rehearsals, finished songs</span><span aria-hidden="true">·</span><span><b>wav, aiff, mp3, m4a, flac, mov, mp4</b></span></p>
+        <video src="../media/audioctor/remix.mp4?v=1" poster="../media/audioctor/remix.jpg?v=1" muted loop playsinline autoplay preload="none" width="1280" height="568" aria-label="KAYMA – Bad Blood taken apart in Audioctor: drums solo, vocal solo, the vocal down, a loop on the chorus, a high shelf on the vocal, export"></video>
+        <figcaption class="beats">
+          <b class="on" data-at="0">Drop a finished master</b>
+          <b data-at="2">Every part apart, about a minute</b>
+          <b data-at="9.2">Solo the drums</b>
+          <b data-at="13.2">Solo the vocal</b>
+          <b data-at="17.2">The vocal down, the drums up front</b>
+          <b data-at="21.6">Loop the chorus</b>
+          <b data-at="27.6">A high shelf on the vocal</b>
+          <b data-at="33.6">Export every part</b>
+        </figcaption>
+      </figure>
+      <p class="fine" style="text-align:center">KAYMA – Bad Blood, the app's real output. The progress is sped up.</p>
     </div>
   </section>
 
@@ -222,10 +219,9 @@
 
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
   <nav aria-label="Main">
-    <a href="#hear"><i>01</i>Hear it</a>
-    <a href="#how"><i>02</i>How it works</a>
-    <a href="#pricing"><i>03</i>Pricing</a>
-    <a href="#faq"><i>04</i>Questions</a>
+    <a href="#remix"><i>01</i>For remixers</a>
+    <a href="#pricing"><i>02</i>Pricing</a>
+    <a href="#faq"><i>03</i>Questions</a>
     <span class="menu-div">Products</span>
     <a href="../index.html"><img class="menu-word" src="../assets/snowstar-word-trim.png?v=1" alt="Snowstar"></a>
     <a href="../mutra.html"><img class="menu-word" src="../assets/mutra-word-trim.png?v=1" alt="Mutra"></a>
@@ -256,7 +252,7 @@
 // the films play only while on screen (and not at all for reduced motion: their posters stay)
 (function () {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const vids = [...document.querySelectorAll('video')];
+  const vids = [...document.querySelectorAll('.film video')];   // the hero's switch (#abVideo) plays only with its sound
   if (!still) {
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       const v = e.target;
@@ -296,164 +292,6 @@
   });
 })();
 </script>
-<script>
-// the demo (#hear): the engine and recordings of marketing/demo, published at audioctor-demo/. Loaded when the section
-// comes near, so the page itself stays light; one sound at a time with the films.
-(function () {
-  const $ = (id) => document.getElementById(id);
-  const BASE = 'audioctor-demo/';
-  const LABEL = { gig: 'A gig on a phone', memo: 'A voice memo', note: 'A WhatsApp voice note', song: 'A finished song' };
-  const COLORS = { Voice: '#c8f23a', Music: '#38d9a9', Background: '#8d8a80' };
-  const track = (name, props) => {
-    try { if (window.mutraTrack) window.mutraTrack('ad_' + name, props); dispatchEvent(new CustomEvent('audioctor:track', { detail: { name, props } })); } catch (e) {}
-  };
-  const hushFilms = () => document.querySelectorAll('.film video').forEach((v) => {
-    if (v.muted) return;
-    v.muted = true;
-    const b = v.closest('.film').querySelector('.sound');
-    if (b) { b.setAttribute('aria-pressed', 'false'); const t = b.querySelector('span'); if (t) t.textContent = 'Hear it'; }
-  });
-  let eng = null, cur = null, raf = 0, asked = false;
-  function start() {
-    if (asked) return; asked = true;
-    const sc = document.createElement('script');
-    sc.src = BASE + 'engine.js?v=1';
-    sc.onload = boot;
-    sc.onerror = () => { $('dPlayT').textContent = 'Not available'; };
-    document.body.appendChild(sc);
-  }
-  async function boot() {
-    eng = new window.AudioctorDemo.Engine(BASE + 'media/');
-    let examples;
-    try { examples = await eng.init(); } catch (e) { $('dPlayT').textContent = 'Not available'; return; }
-    examples.forEach((e) => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'chip'; b.dataset.id = e.id;
-      b.textContent = LABEL[e.id] || e.name.replace(/\.[a-z0-9]+$/i, '');
-      b.onclick = () => pick(e.id);
-      $('dChips').appendChild(b);
-    });
-    $('dBefore').onclick = () => ab(false);
-    $('dAfter').onclick = () => ab(true);
-    $('dPlay').onclick = async () => {
-      await eng.unlock();
-      if (eng.playing) eng.pause(); else { hushFilms(); eng.play(); track('demo_played', { example: cur, after: eng.showAfter, view: 'landing' }); }
-      paint();
-    };
-    $('dWave').addEventListener('click', (ev) => { if (!eng.ex) return; const r = $('dWave').getBoundingClientRect(); eng.seek((ev.clientX - r.left) / r.width * eng.ex.seconds); });
-    document.querySelectorAll('.film .sound').forEach((b) => b.addEventListener('click', () => { if (eng.playing) { eng.pause(); paint(); } }));
-    pick(examples[0].id);
-  }
-  async function pick(id) {
-    cur = id;
-    document.querySelectorAll('#dChips .chip').forEach((b) => b.classList.toggle('sel', b.dataset.id === id));
-    const ex = eng.examples().find((e) => e.id === id);
-    $('dBlurb').textContent = ex.blurb;
-    $('dPlay').disabled = true; $('dPlayT').textContent = 'Loading…'; $('dFaders').innerHTML = '';
-    const was = eng.playing;
-    if (was) eng.pause();
-    await eng.load(id, (p) => { if (cur === id) $('dPlayT').textContent = 'Loading ' + Math.round(p * 100) + '%'; });
-    if (cur !== id) return;
-    eng.select(ex, ex.variants.voice ? 'voice' : 'base');      // the song as voice and music: three faders
-    faders(); paint();
-    if (was) { hushFilms(); eng.play(); paint(); }
-    track('demo_example', { example: id, view: 'landing' });
-    if (!raf) loop();
-  }
-  async function ab(after) {
-    if (!eng.ex) return;
-    eng.setAfter(after);
-    if (!eng.playing) { await eng.unlock(); hushFilms(); eng.play(); track('demo_played', { example: cur, after, view: 'landing' }); }
-    track('demo_ab', { example: cur, after, view: 'landing' });
-    paint();
-  }
-  const dbTxt = (db) => (db <= -60 ? '−∞ dB' : (db > 0.05 ? '+' : db < -0.05 ? '−' : '') + Math.abs(db).toFixed(1) + ' dB');
-  function faders() {
-    const box = $('dFaders'); box.innerHTML = '';
-    eng.channels().filter((c) => !c.minor).forEach((c) => {
-      const row = document.createElement('div'); row.className = 'fd'; row.style.setProperty('--c', COLORS[c.name] || '#c8f23a');
-      const id = 'dfd-' + c.name;
-      row.innerHTML = '<label class="nm" for="' + id + '"></label><input type="range" id="' + id + '" min="-60" max="6" step="0.5"><span class="db"></span>';
-      const nm = row.querySelector('.nm'); nm.textContent = c.name; nm.style.color = COLORS[c.name] || '#c8f23a';
-      const inp = row.querySelector('input'), out = row.querySelector('.db');
-      inp.value = c.gainDb; out.textContent = dbTxt(c.gainDb);
-      inp.oninput = () => { const db = +inp.value; eng.setChannel(c.name, { gainDb: db <= -60 ? -120 : db }); out.textContent = dbTxt(db); track('demo_fader', { example: cur, part: c.name, view: 'landing' }); };
-      box.appendChild(row);
-    });
-  }
-  function paint() {
-    const a = eng.showAfter;
-    $('dAfter').classList.toggle('on', a); $('dBefore').classList.toggle('on', !a);
-    $('dAfter').setAttribute('aria-pressed', a); $('dBefore').setAttribute('aria-pressed', !a);
-    $('dLbl').textContent = a ? 'After' : 'Before';
-    $('dPlay').disabled = !eng.ex; $('dPlayT').textContent = eng.playing ? 'Pause' : 'Play';
-    $('dPlay').classList.toggle('on', eng.playing);
-  }
-  let waveFor = '', pb = [], pa = [];
-  const mmss = (t) => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
-  function loop() {
-    raf = requestAnimationFrame(loop);
-    if (!eng || !eng.ex) return;
-    eng.tick();
-    const key = eng.ex.id + eng.variant;
-    if (key !== waveFor) { waveFor = key; pb = eng.peaksBefore(); pa = eng.peaksAfter(); }
-    const c = $('dWave'), g = c.getContext('2d'), W = c.width, H = c.height, mid = H / 2;
-    g.clearRect(0, 0, W, H);
-    const lane = (pk, color) => {
-      const mx = Math.max(1e-4, ...pk), w = W / pk.length; g.fillStyle = color;
-      for (let i = 0; i < pk.length; i++) { const h = Math.min(1, pk[i] / mx) * (mid - 10); g.fillRect(i * w, mid - h, Math.max(1, w * .8), 2 * h); }
-    };
-    if (eng.showAfter) { lane(pb, 'rgba(200,242,58,.16)'); lane(pa, 'rgba(200,242,58,.85)'); }
-    else lane(pb, 'rgba(255,211,138,.85)');
-    const x = eng.position() / eng.ex.seconds * W; g.fillStyle = '#fff'; g.fillRect(x - 1, 0, 3, H);
-    $('dTime').textContent = mmss(eng.position()) + ' / ' + mmss(eng.ex.seconds);
-    if ($('dPlay').classList.contains('on') !== eng.playing) paint();
-  }
-  // near the screen (or a press on Play first): load
-  const sec = $('hear');
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); start(); } }, { rootMargin: '600px 0px' });
-    io.observe(sec);
-  } else start();
-})();
-// "Opening soon": until the Worker sells Audioctor, every [data-soon] opens #soon and saves an email to the site's
-// waitlist (kind "audioctor"); the email link only when that save fails, or with no <dialog> at all.
-(function () {
-  const d = document.getElementById('soon'), f = document.getElementById('soonForm');
-  const i = document.getElementById('soonEmail'), said = document.getElementById('soonSaid');
-  if (!d || typeof d.showModal !== 'function') return;
-  const MAIL = 'mailto:hello@snowstar.company?subject=' + encodeURIComponent('Audioctor early access');
-  const track = (name, props) => {
-    try { dispatchEvent(new CustomEvent('audioctor:track', { detail: { name, props: Object.assign({ view: 'landing' }, props) } })); } catch (e) {}
-  };
-  document.querySelectorAll('[data-soon]').forEach((a) => a.addEventListener('click', (e) => {
-    e.preventDefault();
-    d.showModal();
-    track('soon_open', { from: a.textContent.trim().slice(0, 40) });
-    if (!i.disabled) i.focus();
-  }));
-  // close: the × or a press outside the card (the backdrop is the dialog's own box)
-  d.addEventListener('click', (e) => {
-    const r = d.getBoundingClientRect();
-    const out = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
-    if (e.target.closest('[data-close]') || (e.target === d && out)) d.close();
-  });
-  f.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = (i.value || '').trim();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { said.textContent = 'That email does not look right.'; i.focus(); return; }
-    const b = f.querySelector('button'); b.disabled = true; said.textContent = 'Saving…';
-    fetch('/api/waitlist', { method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin',
-      body: JSON.stringify({ email, kind: 'audioctor' }) })
-      .then((r) => (r.ok ? r.json() : null)).catch(() => null)
-      .then((res) => {
-        if (res && res.ok) { said.textContent = 'Got it. We write once, the day Audioctor opens.'; i.disabled = true; track('soon_saved', {}); return; }
-        b.disabled = false;
-        said.innerHTML = 'That did not save. <a href="' + MAIL + '">Email us instead</a>.';
-      });
-  });
-})();
-</script>
 <!-- After the free download starts (js/audioctor-free.js): what to do when it lands. -->
 <div class="dl-hint" id="dlHint" role="status" hidden>
   <img class="dl-ic" src="audioctor-icon-128.png" width="40" height="40" alt="">
@@ -468,6 +306,7 @@
 <script src="../js/site-edit.js?v=23"></script>
 <script src="../js/audioctor-plans.js?v=3"></script>
 <script src="../js/audioctor-free.js?v=1"></script>
+<script src="../js/audioctor-ab.js?v=2"></script>
 <script src="../js/consent.js?v=1"></script>
 <!-- visit tracking, after consent.js so snowConsent exists when it reads it -->
 <script src="../js/mutra-track.js?v=5"></script>

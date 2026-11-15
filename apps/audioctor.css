@@ -324,3 +324,41 @@ main > section + section{padding-top:0}
 .dl-hint button{flex:none;width:32px;height:32px;border-radius:50%;border:0;cursor:pointer;background:rgba(243,237,220,.1);color:var(--ink);font:400 20px/1 var(--sans);padding:0 0 2px}
 .dl-hint button:hover{background:rgba(243,237,220,.2)}
 .soon p a{color:var(--lime);text-decoration:underline;text-underline-offset:3px}
+
+/* ── the hero's switch (2026-11-15): one video, its sound Before and After (js/audioctor-ab.js) ── */
+.ab-hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(28px,5vw,64px);align-items:center}
+.ab-copy h1{font-size:clamp(44px,6vw,80px)}
+.ab-phone{display:none}
+@media (hover:none) and (pointer:coarse){.ab-phone{display:inline-flex}}
+.abp{margin:0;padding:14px;border-radius:22px;background:var(--card);box-shadow:0 0 0 1px var(--line),0 50px 100px -40px rgba(0,0,0,.9),0 0 120px -40px rgba(200,242,58,.22)}
+.abp-stage{position:relative;aspect-ratio:5/4;max-height:58vh;width:100%;border-radius:14px;overflow:hidden;background:#000}
+.abp-stage::before{content:"";position:absolute;inset:-30px;background:var(--poster) center/cover no-repeat;filter:blur(28px) brightness(.45);transform:scale(1.1)}
+.abp-stage video{position:relative;display:block;width:100%;height:100%;object-fit:contain;cursor:pointer}
+.abp-play{position:absolute;left:50%;top:50%;width:78px;height:78px;margin:-39px 0 0 -39px;border:0;border-radius:50%;cursor:pointer;
+  background:var(--lime);color:var(--lime-ink);box-shadow:0 0 0 8px rgba(200,242,58,.18),0 12px 30px rgba(0,0,0,.5);transition:transform .18s ease,opacity .18s ease}
+.abp-play:hover{transform:scale(1.06)}
+.abp-play svg{width:34px;height:34px;fill:currentColor}
+.abp-play .i-pause{display:none}
+.abp.playing .abp-play{transform:scale(.0001)}
+.abp.playing .abp-stage:hover .abp-play{transform:scale(.8)}
+.abp.playing .abp-play .i-play{display:none}.abp.playing .abp-play .i-pause{display:inline}
+.abp.busy .abp-play{animation:abpulse 1s ease-in-out infinite}
+@keyframes abpulse{50%{transform:scale(.9)}}
+.abp-tag{position:absolute;left:12px;top:12px;padding:6px 11px;border-radius:999px;font:700 12px/1 var(--cond);letter-spacing:.16em;text-transform:uppercase;
+  color:#1b1405;background:var(--amber);transition:background .2s ease,color .2s ease}
+.abp.after .abp-tag{background:var(--lime);color:var(--lime-ink)}
+.abp-switch{position:relative;display:grid;grid-template-columns:1fr 1fr;margin-top:12px;padding:5px;border-radius:999px;background:var(--bg-2);box-shadow:inset 0 0 0 1px var(--line)}
+.abp-switch::before{content:"";position:absolute;top:5px;bottom:5px;left:5px;width:calc(50% - 5px);border-radius:999px;background:var(--amber);
+  transition:transform .32s cubic-bezier(.2,.8,.2,1),background .32s ease}
+.abp.after .abp-switch::before{transform:translateX(100%);background:var(--lime)}
+.abp-switch button{position:relative;z-index:1;border:0;background:none;cursor:pointer;padding:13px 10px;font:700 15px/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .2s ease}
+.abp-switch button[aria-pressed="true"]{color:#14130f}
+.abp-wave{display:block;width:100%;height:56px;margin-top:12px;cursor:pointer}
+.abp-meta{display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:13px;color:var(--muted)}
+.abp-ex{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.abp-ex button{border:0;cursor:pointer;padding:9px 14px;border-radius:999px;font:600 13.5px/1 var(--sans);color:var(--ink-2);background:transparent;box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.abp-ex button[aria-selected="true"]{color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--lime)}
+@media (max-width:900px){.ab-hero{grid-template-columns:1fr;gap:18px}.abp{padding:10px}.abp-stage{aspect-ratio:1/1;max-height:none}
+  /* on a phone the switch comes right under the headline: the difference is heard before the reading */
+  .ab-copy{display:contents}.ab-copy .kicker{order:1;margin-bottom:0}.ab-copy h1{order:2}.abp{order:3}.ab-copy .lead{order:4;margin-top:4px}.ab-copy .cta{order:5;margin-top:0}.ab-copy .fine{order:6;margin-top:0}}
+@media (prefers-reduced-motion:reduce){.abp-switch::before,.abp-play{transition:none}.abp.busy .abp-play{animation:none}}
