@@ -4469,7 +4469,9 @@
           { label: 'Used', num: true, get: (r) => r.max_uses ? `${r.used}/${r.max_uses}` : String(r.used) },
           { label: 'Expires', get: (r) => when(r.expires_at) },
           { label: 'On', get: (r) => r.active ? 'yes' : 'no' },
-        ])}</div>`;
+          { label: 'Link', get: (r) => copyLinkBtn(codeLink('audioctor', r.code)) },
+        ])}
+        <p class="db-empty">New codes: General › Editor › Coupons, property Audioctor.</p></div>`;
     } else {
       body = `<div class="db-panel"><h2>Releases</h2>
         ${table(d.releases || [], [
@@ -4482,6 +4484,7 @@
     }
 
     paint(`<div>${warn}${body}</div>`);
+    if (tab === 'codes') wireCopy();
   }
 
   /* Visits — one row per visit, the whole visit in it.
@@ -4727,6 +4730,19 @@
     });
   }
 
+  /* A code's share link (2026-11-15, Ori: "how do I send it, and how does he claim it"): the app's own page with
+     ?c=, which checks the code and carries it to checkout. A free one (100%) grants there with no card. */
+  const CODE_PAGES = { audioctor: 'apps/audioctor.html', streamdaw: 'apps/streamdaw.html' };
+  const codeLink = (scope, code) => (CODE_PAGES[scope] ? `https://snowstar.company/${CODE_PAGES[scope]}?c=${encodeURIComponent(code)}#pricing` : '');
+  const copyLinkBtn = (url) => (url ? `<button class="rv-btn cp-copy" data-url="${esc(url)}" title="${esc(url)}">Copy link</button>` : '—');
+  function wireCopy() {
+    app.querySelectorAll('.cp-copy').forEach((b) => b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(b.dataset.url); b.textContent = 'Copied'; }
+      catch (e) { window.prompt('Copy this link', b.dataset.url); }
+      setTimeout(() => { b.textContent = 'Copy link'; }, 2000);
+    }));
+  }
+
   async function paintCoupons() {
     const d = await get('/coupons');
     const cs = d.coupons || [];
@@ -4754,6 +4770,7 @@
             <option value="mutra">Mutra — music licensing</option>
             <option value="all">All properties</option>
             <option value="streamdaw">StreamDAW</option>
+            <option value="audioctor">Audioctor</option>
             <option value="snowstash">Snowstash</option>
             <option value="snowstar">Snowstar</option>
           </select></label>
@@ -4782,6 +4799,7 @@
         { label: 'Used', num: true, get: (c) => c.max_uses ? `${c.used}/${c.max_uses}` : String(c.used) },
         { label: 'Expires', get: (c) => when(c.expires_at) },
         { label: 'Note', get: (c) => esc(c.note || '') },
+        { label: 'Link', get: (c) => copyLinkBtn(codeLink(c.scope, c.code)) },
         { label: '', get: (c) => `<button class="rv-btn cp-tog" data-id="${c.id}">${
             c.active ? 'On' : 'Off'}</button> <button class="rv-btn cp-del" data-id="${c.id}">×</button>` },
       ], { rowAttr: (c) => c.active ? '' : ' style="opacity:.45"' })
@@ -4803,10 +4821,16 @@
         note: document.getElementById('cp-note').value,
         expires_at: exp ? Math.floor(new Date(exp + 'T23:59:59').getTime() / 1000) : null,
       });
-      if (r && r.ok) { said.textContent = `Created ${r.code}`; load(); }
+      if (r && r.ok) {
+        const url = codeLink(document.getElementById('cp-scope').value, r.code);
+        await load();
+        const s2 = document.querySelector('.cp-said');
+        if (s2) { s2.innerHTML = `Created <code>${esc(r.code)}</code>${url ? ` · send this link: <a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a> ${copyLinkBtn(url)}` : ''}`; wireCopy(); }
+      }
       else said.textContent = r && r.error === 'code_taken' ? 'That code already exists.'
         : (r && r.error) || 'Could not create that code.';
     });
+    wireCopy();
     app.querySelectorAll('.cp-tog').forEach((b) => b.addEventListener('click', async () => {
       await post('/coupons', { toggle: Number(b.dataset.id) }); load();
     }));
