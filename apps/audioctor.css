@@ -451,12 +451,9 @@ main > section + section{padding-top:0}
 .duo-copy h1,#pricingTitle,.last h2,.reels h2,.music h2{text-wrap:balance}
 @media (max-width:560px){.duo-copy h1{font-size:8.4vw}}
 
-/* 2026-11-16, third pass: the hero sits on the app's own window, dimmed; the reels follow its button closely and
-   their headline comes under them, so the opening has one headline. */
-.hero-duo{position:relative;isolation:isolate;padding-bottom:clamp(30px,3.4vw,44px)}
-.hero-duo::before{content:"";position:absolute;inset:0;z-index:-2;background:url(../media/audioctor/song.jpg?v=1) center 38%/cover no-repeat;opacity:.3;
-  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 50%,transparent 100%);mask-image:linear-gradient(180deg,#000 0,#000 50%,transparent 100%)}
-.hero-duo::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(56% 74% at 50% 46%,rgba(11,10,8,.86),rgba(11,10,8,.5) 64%,rgba(11,10,8,.15) 100%)}
+/* 2026-11-16, third pass: the reels follow the hero's button closely and their headline comes under them, so the
+   opening has one headline. (The app's window behind the hero came out again the same day, Ori.) */
+.hero-duo{padding-bottom:clamp(30px,3.4vw,44px)}
 .reels .reels-row{margin-top:0}
 .reels-head{margin-top:clamp(44px,5.4vw,72px)}
 .reels-head h2{text-wrap:balance}
