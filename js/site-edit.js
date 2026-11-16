@@ -87,6 +87,75 @@
   ];
   const PROP_KEY = 'config.properties';
 
+  /* ── look: size and air, in steps, never in pixels ────────────────────────
+     Two things the owner asked for on 2026-11-16: make a text bigger or smaller,
+     and give a block more room, without either one breaking on a phone.
+
+     SIZE is a percentage on a <span class="se-fs"> wrapped round the block's own
+     contents, so it rides in the saved HTML with the text and needs no CSS of its
+     own (the editor's stylesheet is admin-only — a visitor never loads it). A
+     percentage on font-size resolves against the PARENT, and the parent here is
+     the block itself, whose size is whatever its clamp()/vw rule works out to at
+     that viewport. So 125% is a quarter bigger at every width, and the authored
+     responsive scale is still the thing doing the scaling.
+
+     AIR is em of padding added above or below, stored per block in one row per
+     page. padding, not margin, because padding ADDS to the margin the stylesheet
+     already gave the block instead of replacing it: there is no breakpoint at
+     which this can fight the CSS, and nothing responsive is ever frozen into a
+     number. em, so the gap tracks the block's own responsive font-size. The one
+     cost is a block with authored padding of its own (a table cell, a card),
+     where the override replaces it — visible at once in the page, and one step
+     back to 0 undoes it.
+
+     Both are clamped to a fixed list of steps here AND again on the way in from
+     the API, so a bad stored value can only ever mean "no override". */
+  const LAYOUT_KEY = 'layout.' + PAGE;
+  const FS_STEPS = [70, 80, 90, 100, 110, 125, 150, 175, 200];
+  const SP_STEPS = [0, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4];
+  let layout = {};          // data-txt key -> { t, b } em of added air
+  let layout0 = '';         // what the server last said, for Discard
+  const spStep = (n) => (SP_STEPS.includes(+n) ? +n : null);
+  const touched = new Set();
+
+  /** Applied on hydration for everyone, and again on every step in the editor. */
+  function applyLayout(map) {
+    for (const [key, v] of Object.entries(map || {})) {
+      let el = null;
+      try { el = document.querySelector(`[data-txt="${key}"]`); } catch { continue }
+      if (!el) continue;
+      touched.add(el);
+      const t = spStep(v && v.t), b = spStep(v && v.b);
+      el.style.paddingTop = t ? t + 'em' : '';
+      el.style.paddingBottom = b ? b + 'em' : '';
+    }
+  }
+
+  /* A span round block-level children would be invalid markup and would drag those
+     children's own sizes with it, so only a leaf text block can be scaled. */
+  const BLOCKISH = 'p,div,section,article,aside,header,footer,nav,form,table,figure,ul,ol,li,h1,h2,h3,h4,h5,h6';
+  const canSize = (el) => !el.querySelector(BLOCKISH);
+  const sizeOf = (el) => {
+    const s = el.querySelector('span.se-fs');
+    const n = s ? parseFloat(s.style.fontSize) : 100;
+    return FS_STEPS.includes(n) ? n : 100;
+  };
+  /** Idempotent: every existing wrapper is unwrapped first, so stepping twice
+   *  cannot nest two spans and multiply the scale. */
+  function setSize(el, pct) {
+    el.querySelectorAll('span.se-fs').forEach((s) => {
+      while (s.firstChild) s.parentNode.insertBefore(s.firstChild, s);
+      s.remove();
+    });
+    el.normalize();
+    if (pct === 100 || !FS_STEPS.includes(pct)) return;
+    const s = document.createElement('span');
+    s.className = 'se-fs';
+    s.style.fontSize = pct + '%';
+    while (el.firstChild) s.appendChild(el.firstChild);
+    el.appendChild(s);
+  }
+
   /** Is this page the property's own page? */
   function isCurrent(p) {
     const path = location.pathname;
@@ -517,6 +586,39 @@
     });
   })();
 
+  /* ── the editor's own attributes must never reach the stored HTML ─────────
+     A keyed block can contain another keyed block — a <p> with a keyed <a> inside it,
+     which autoKeys does on purpose, because both are text someone may want to change.
+     enterText then puts class="se-editable" contenteditable="true" on BOTH, and
+     putting them on the child CHANGES THE PARENT'S innerHTML. So the parent counted
+     as dirty although nobody had touched it, and was saved with those attributes
+     baked into its child.
+
+     Found on 2026-11-16: five of the 52 rows live on snowstar.company carried
+     contenteditable="true", which made that text editable for every visitor of the
+     StreamDAW and Audioctor pages. Nothing showed it — .se-editable's outline is in
+     the editor's own stylesheet, which only an admin ever loads.
+
+     So: capture clean, compare clean, save clean — and strip on hydration too, which
+     repairs the rows already stored for every visitor without a D1 write. The next
+     save of each of those blocks writes the clean version back. */
+  function strip(root) {
+    root.querySelectorAll('[contenteditable],.se-editable').forEach((n) => {
+      n.removeAttribute('contenteditable');
+      n.classList.remove('se-editable');
+      if (!n.classList.length) n.removeAttribute('class');
+    });
+    return root;
+  }
+  const cleanOf = (el) => strip(el.cloneNode(true)).innerHTML;
+  const cleanStr = (html) => {
+    if (!/contenteditable|se-editable/.test(html)) return html;   // the normal case, untouched
+    const t = document.createElement('template');
+    t.innerHTML = html;
+    strip(t.content);
+    return t.innerHTML;
+  };
+
   // ── 1. hydration — runs for everyone, fails silent ──
   const hydrate = fetch('/api/texts')
     .then((r) => (r.ok ? r.json() : { texts: {} }))
@@ -544,8 +646,13 @@
           } catch {}
           continue;
         }
+        if (key === LAYOUT_KEY) {
+          layout0 = html;
+          try { layout = JSON.parse(html) || {}; applyLayout(layout); } catch { layout = {}; }
+          continue;
+        }
         const el = document.querySelector(`[data-txt="${key}"]`);
-        if (el) el.innerHTML = html;
+        if (el) el.innerHTML = cleanStr(html);
       }
       /* Always, not only when a config exists — the home page needs its own
          Snowstar row inserted whether or not anything has ever been hidden. */
@@ -560,6 +667,12 @@
   const M = window.SnowstarAccount;
   if (!M) return;
   let built = false;
+  /* Declared before boot() is called, not after: buildPill() assigns `pill`, and the
+     synchronous boot() below only ever got away with running before this line because
+     account.js resolves the session asynchronously, so M.user was still null and boot
+     returned early. A session known at parse time would have thrown a TDZ error and
+     left the admin with no editor at all. */
+  let pill, mode = null; // null | 'text' | 'draw'
 
   function boot() {
     if (!M.user || !M.user.admin || built) return;
@@ -588,7 +701,6 @@
   }
 
   // ─────────── floating pill ───────────
-  let pill, mode = null; // null | 'text' | 'draw'
   hydrate.then((texts) => {
     try { savedSels = JSON.parse((texts && texts['rows.removed.' + PAGE]) || '[]'); } catch {}
   });
@@ -618,42 +730,102 @@
 
   // ─────────── text editing ───────────
   let originals = new Map();
-  let saveBar;
+  let saveBar, cur = null, layoutDirty = false;
 
   function enterText() {
     if (mode === 'draw') exitDraw(false);
     mode = 'text'; lit('text', true);
     originals.clear();
     document.querySelectorAll('[data-txt]').forEach((el) => {
-      originals.set(el, el.innerHTML);
+      originals.set(el, cleanOf(el));
       el.classList.add('se-editable');
       el.setAttribute('contenteditable', 'true');
       el.addEventListener('input', markDirty);
+      el.addEventListener('focusin', pickBlock);
     });
     saveBar = document.createElement('div');
     saveBar.className = 'se-savebar';
-    saveBar.innerHTML = `<span>Click any outlined text and type</span>
+    saveBar.innerHTML = `<span id="seHint">Click any outlined text and type</span>
+      <span class="se-fmt" hidden>
+        <b>Size</b>
+        <button data-fs="-" title="Smaller">A&minus;</button><i data-v="fs">100%</i><button data-fs="+" title="Bigger">A+</button>
+        <b>Air &uarr;</b>
+        <button data-sp="t-" title="Less room above">&minus;</button><i data-v="t">0</i><button data-sp="t+" title="More room above">+</button>
+        <b>Air &darr;</b>
+        <button data-sp="b-" title="Less room below">&minus;</button><i data-v="b">0</i><button data-sp="b+" title="More room below">+</button>
+      </span>
       <button class="se-primary" id="seSave" disabled>Save changes</button>
       <button id="seDiscard">Discard</button>`;
     document.body.appendChild(saveBar);
     saveBar.querySelector('#seSave').addEventListener('click', saveTexts);
     saveBar.querySelector('#seDiscard').addEventListener('click', exitText);
+    saveBar.querySelector('.se-fmt').addEventListener('mousedown', (e) => e.preventDefault());
+    saveBar.querySelector('.se-fmt').addEventListener('click', onFmt);
+    cur = null;
+  }
+
+  /* ── size and air, on whichever block has the caret ─────────────────────── */
+  function pickBlock(e) { cur = e.currentTarget; syncFmt(); }
+
+  const stepped = (list, now, dir) => {
+    const i = Math.max(0, list.indexOf(now));
+    return list[Math.min(list.length - 1, Math.max(0, i + dir))];
+  };
+
+  function onFmt(e) {
+    const b = e.target.closest('button');
+    if (!b || !cur || !saveBar) return;
+    if (b.dataset.fs) {
+      if (!canSize(cur)) return;
+      setSize(cur, stepped(FS_STEPS, sizeOf(cur), b.dataset.fs === '+' ? 1 : -1));
+      markDirty();
+    } else if (b.dataset.sp) {
+      const side = b.dataset.sp[0];
+      const key = cur.dataset.txt;
+      const row = layout[key] || (layout[key] = {});
+      row[side] = stepped(SP_STEPS, spStep(row[side]) || 0, b.dataset.sp[1] === '+' ? 1 : -1);
+      if (!row.t && !row.b) delete layout[key];
+      touched.add(cur);
+      cur.style.paddingTop = row.t ? row.t + 'em' : '';
+      cur.style.paddingBottom = row.b ? row.b + 'em' : '';
+      layoutDirty = true;
+      markDirty();
+    }
+    syncFmt();
+  }
+
+  function syncFmt() {
+    if (!saveBar) return;
+    const fmt = saveBar.querySelector('.se-fmt');
+    if (!cur) { fmt.hidden = true; return; }
+    const row = layout[cur.dataset.txt] || {};
+    fmt.hidden = false;
+    fmt.querySelector('[data-v="fs"]').textContent = sizeOf(cur) + '%';
+    fmt.querySelector('[data-v="t"]').textContent = String(spStep(row.t) || 0);
+    fmt.querySelector('[data-v="b"]').textContent = String(spStep(row.b) || 0);
+    fmt.querySelectorAll('[data-fs]').forEach((btn) => { btn.disabled = !canSize(cur); });
   }
 
   function markDirty() {
     saveBar.querySelector('#seSave').disabled = false;
-    saveBar.querySelector('span').textContent = 'Unsaved changes';
+    saveBar.querySelector('#seHint').textContent = 'Unsaved changes';
   }
 
   async function saveTexts() {
-    const dirty = [...originals].filter(([el, orig]) => el.innerHTML !== orig);
+    const dirty = [...originals].filter(([el, orig]) => cleanOf(el) !== orig);
     const btn = saveBar.querySelector('#seSave');
     btn.disabled = true; btn.textContent = 'Saving…';
     try {
       for (const [el] of dirty) {
-        await api('/texts', { key: el.dataset.txt, html: el.innerHTML });
+        await api('/texts', { key: el.dataset.txt, html: cleanOf(el) });
       }
-      toast(`Saved ${dirty.length} text${dirty.length === 1 ? '' : 's'} — live now`);
+      const air = layoutDirty;
+      if (air) {
+        const body = Object.keys(layout).length ? JSON.stringify(layout) : '';
+        await api('/texts', { key: LAYOUT_KEY, html: body });
+        layout0 = body; layoutDirty = false;
+      }
+      toast(`Saved ${dirty.length} text${dirty.length === 1 ? '' : 's'}${air ? ' and the spacing' : ''} — live now`);
       // keep the new text in place; just leave edit mode
       originals.clear();
       teardownText();
@@ -664,8 +836,14 @@
   }
 
   function exitText() {
-    // revert anything unsaved
-    originals.forEach((html, el) => { if (el.innerHTML !== html) el.innerHTML = html; });
+    // revert anything unsaved — the text, and the air
+    originals.forEach((html, el) => { if (cleanOf(el) !== html) el.innerHTML = html; });
+    if (layoutDirty) {
+      touched.forEach((el) => { el.style.paddingTop = ''; el.style.paddingBottom = ''; });
+      try { layout = JSON.parse(layout0 || '{}') || {}; } catch { layout = {}; }
+      applyLayout(layout);
+      layoutDirty = false;
+    }
     teardownText();
   }
   function teardownText() {
@@ -673,7 +851,9 @@
       el.classList.remove('se-editable');
       el.removeAttribute('contenteditable');
       el.removeEventListener('input', markDirty);
+      el.removeEventListener('focusin', pickBlock);
     });
+    cur = null;
     if (saveBar) saveBar.remove();
     mode = null; lit('text', false);
   }
@@ -1080,11 +1260,19 @@
     .se-rowbar button:disabled{opacity:.4;cursor:default}
     .se-rowbar .se-primary{background:#ff3d8b;color:#fff}
     .se-savebar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:95;display:flex;
+      flex-wrap:wrap;justify-content:center;max-width:min(96vw,1000px);
       gap:10px;align-items:center;padding:10px 16px;border-radius:14px;border:1px solid rgba(235,225,210,.25);
       background:rgba(8,11,20,.95);color:#a8a29a;font:500 .82rem system-ui,sans-serif;box-shadow:0 12px 34px rgba(0,0,0,.5)}
     .se-savebar button{border:1px solid rgba(235,225,210,.25);background:none;color:#f2ede4;font:600 .78rem system-ui;
       padding:8px 14px;border-radius:9px;cursor:pointer}
     .se-savebar button:disabled{opacity:.45;cursor:default}
+    .se-fmt{display:inline-flex;align-items:center;gap:3px;flex-wrap:wrap;padding:0 10px;
+      border-left:1px solid rgba(235,225,210,.18);border-right:1px solid rgba(235,225,210,.18)}
+    .se-fmt b{margin:0 3px 0 7px;font:600 .6rem/1 system-ui,sans-serif;letter-spacing:.09em;
+      text-transform:uppercase;opacity:.6;white-space:nowrap}
+    .se-fmt b:first-child{margin-left:0}
+    .se-fmt i{min-width:36px;text-align:center;font:600 .74rem/1 system-ui,sans-serif;font-style:normal;color:#f2ede4}
+    .se-savebar .se-fmt button{padding:5px 9px;font-size:.72rem;line-height:1}
     .se-primary{background:linear-gradient(100deg,#efe7d8,#e0b48b,#d9744a)!important;color:#121110!important;border-color:transparent!important}
     .se-overlay{position:absolute;top:0;left:0;z-index:85;cursor:crosshair}
     .se-overlay canvas{display:block;touch-action:none}

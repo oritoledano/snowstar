@@ -23,6 +23,43 @@ exactly where it is — moving `mutra.html` kills `snowstar.company/mutra.html`,
 same goes for `dashboard.html`, `apps/`, `sitemap.xml` and the webmanifests. Reorganising
 `js/`, `css/` or `worker/src/` is safe; touching an HTML path is not.
 
+## Every new page ships editable
+
+Standing rule, 2026-11-16, asked for from the Audioctor session: Ori should not need a
+session to change a sentence. A new `.html` carries three things before it ships:
+
+1. `<script src="js/account.js?v=N" defer></script>` — the editor only ever wakes for an admin
+2. `<script src="js/site-edit.js?v=N" defer></script>`
+3. `<main data-autotxt>` — keys every text block as `auto.<page>.<hash of its own words>`,
+   so nothing has to be named `data-txt` by hand, and moving a block keeps its edit
+
+`node contracts/check.mjs` enforces it (`pages-editable`). What must **not** be editable —
+the app UI, the legal text, the dated terms archives — is listed with its reason in
+`contracts/registry.json` under `editable.exempt`. Six pages that predate the rule are
+under `editable.pending`: they print as a note rather than a failure, and wiring one means
+deleting its line there.
+
+### Size and air are relative, never pixels
+
+The editor also sets a block's text size and the room around it. Both are stored relative
+on purpose — this is the part that is easy to get wrong:
+
+- **Size** is a percentage on a `<span class="se-fs">` wrapped round the block's own
+  contents, so it rides in the saved HTML with the text and needs no stylesheet (the
+  editor's CSS is admin-only; a visitor never loads it). A percentage on `font-size`
+  resolves against the **parent** — here the block itself — so 125% is a quarter bigger
+  than whatever that block's `clamp()`/`vw` rule works out to at that viewport. Measured
+  on the home page's h1: one 200% override reads 192px at 1280 and 67.5px at 375.
+- **Air** is em of `padding` above and below, stored per block in one `layout.<page>` row.
+  `padding`, not `margin`, because it **adds** to the margin the stylesheet already gave
+  the block instead of replacing it — there is no breakpoint at which it can fight the
+  CSS. The one cost is a block with authored padding of its own (a table cell, a card),
+  where the override replaces it; that is visible at once and one step back to 0 undoes it.
+
+Both are clamped to a fixed list of steps in the editor and again on the way in from the
+API, so a bad stored value can only ever mean "no override". **Never store a px size or
+gap**: that is the one way to freeze a responsive value at the width it was measured at.
+
 ## Where each vertical's code lives
 
 `worker/src/` is split into one folder per vertical (2026-11-14). `index.js` stays at
