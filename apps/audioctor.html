@@ -67,11 +67,11 @@
     <div class="wrap ab-hero">
       <div class="ab-copy">
         <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">For Mac · Apple silicon or Intel · macOS 14 or later</p>
-        <h1 id="heroTitle">Fix the sound<br><em>of your video.</em></h1>
+        <h1 id="heroTitle" data-txt="audioctor.hero.title">Fix the sound<br><em>of your video.</em></h1>
         <p class="lead">Room echo, noise, music too loud under the talk: gone, and the picture stays in sync. On your Mac, so nothing you shot is uploaded.</p>
         <div class="cta">
           <a class="btn lime" href="/api/audioctor/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Download free</a>
-          <a class="btn ghost ab-phone" id="abMail" href="mailto:?subject=Audioctor%20for%20my%20Mac&amp;body=https%3A%2F%2Fsnowstar.company%2Fapps%2Faudioctor.html">On your phone? Send it to your Mac</a>
+          <a class="btn ghost ab-phone" id="abMail" data-txt="audioctor.hero.phone" href="mailto:?subject=Audioctor%20for%20my%20Mac&amp;body=https%3A%2F%2Fsnowstar.company%2Fapps%2Faudioctor.html">On your phone? Send it to your Mac</a>
         </div>
         <p class="fine">Your first 3 videos free, up to 6 minutes each. No card. Then from <b><span data-usd="5" data-dp="0">$5</span> a month</b>.</p>
       </div>
@@ -85,8 +85,8 @@
           <span class="abp-tag" id="abTag">After · Audioctor</span>
         </div>
         <div class="abp-switch" role="group" aria-label="Hear it before or after">
-          <button type="button" id="abBefore" aria-pressed="false">Before</button>
-          <button type="button" id="abAfter" aria-pressed="true">After</button>
+          <button type="button" id="abBefore" aria-pressed="false" data-txt="audioctor.ab.before">Before</button>
+          <button type="button" id="abAfter" aria-pressed="true" data-txt="audioctor.ab.after">After</button>
         </div>
         <canvas class="abp-wave" id="abWave" width="1200" height="110" aria-label="The sound's waveform, Before or After; click to move through it"></canvas>
         <figcaption class="abp-meta"><span id="abCap"></span><span>Best with headphones</span></figcaption>
@@ -103,7 +103,7 @@
   <section id="remix" aria-labelledby="remixTitle">
     <div class="wrap">
       <div class="sec-head center"><p class="kicker" style="justify-content:center">For remixers and DJs</p>
-        <h2 id="remixTitle">Every part of a track. <em>On its own fader.</em></h2>
+        <h2 id="remixTitle" data-txt="audioctor.remix.title">Every part of a track. <em>On its own fader.</em></h2>
         <p>Drop a finished master: vocal, drums, bass, guitars, keys and the rest come apart in about a minute. Solo, loop, EQ, then export every part. Your promos never leave your Mac.</p></div>
       <figure class="mac film" data-sound-at="5.2">
         <div class="bar"><i></i><i></i><i></i><b>Audioctor</b>
@@ -128,7 +128,7 @@
   <!-- ── pricing (2026-10-30, subscriptions only, as StreamDAW): a year leads, a month beside it, free in front ── -->
   <section id="pricing" aria-labelledby="pricingTitle">
     <div class="wrap">
-      <div class="sec-head center"><p class="kicker" style="justify-content:center">Pricing</p><h2 id="pricingTitle">3 clips free. <em>Any length from <span data-usd="5" data-dp="0">$5</span> a month.</em></h2>
+      <div class="sec-head center"><p class="kicker" style="justify-content:center">Pricing</p><h2 id="pricingTitle" data-txt="audioctor.pricing.title">3 clips free. <em>Any length from <span data-usd="5" data-dp="0">$5</span> a month.</em></h2>
         <p>Every tool, no watermark, no card. Your first 3 exports take clips up to 6 minutes; after that Free exports clips up to 30 seconds, 3 a day. Longer clips open and play for free.</p></div>
       <div class="plans two">
         <div class="plan hot">
@@ -163,7 +163,7 @@
 
   <section id="faq" aria-labelledby="faqTitle">
     <div class="wrap">
-      <div class="sec-head center"><h2 id="faqTitle">Questions.</h2></div>
+      <div class="sec-head center"><h2 id="faqTitle" data-txt="audioctor.faq.title">Questions.</h2></div>
       <div class="faq">
         <details><summary>Does my audio leave my Mac?</summary><p>No. Everything runs on your Mac, and Audioctor works offline.</p></details>
         <details><summary>Is there a plug-in?</summary><p>Not yet. One that cleans the track it sits on is on its way. Until then, export from Audioctor and drop the files into your DAW.</p></details>
@@ -190,7 +190,7 @@
   <dialog class="soon" id="soon" aria-labelledby="soonTitle">
     <button class="x" type="button" aria-label="Close" data-close>&times;</button>
     <p class="kicker">Plans open soon</p>
-    <h2 id="soonTitle">Plans open soon.</h2>
+    <h2 id="soonTitle" data-txt="audioctor.soon.title">Plans open soon.</h2>
     <p>Leave your email and we write once, the day they open. Free works now: your first 3 clips up to 6 minutes each. <a href="/api/audioctor/download/free" data-free-dl>Try it free</a>.</p>
     <form class="notify" id="soonForm" novalidate>
       <label class="vh" for="soonEmail">Your email</label>
