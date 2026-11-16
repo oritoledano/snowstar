@@ -363,30 +363,14 @@ main > section + section{padding-top:0}
   .ab-copy{display:contents}.ab-copy .kicker{order:1;margin-bottom:0}.ab-copy h1{order:2}.abp{order:3}.ab-copy .lead{order:4;margin-top:4px}.ab-copy .cta{order:5;margin-top:0}.ab-copy .fine{order:6;margin-top:0}}
 @media (prefers-reduced-motion:reduce){.abp-switch::before,.abp-play{transition:none}.abp.busy .abp-play{animation:none}}
 
-/* ── the two-job hero (2026-11-16): the H1's two lines, then a phone (a reel, Before / After) beside the app's own window
-   on a Mac, and one card per job under the Mac. The phone is drawn here; the reel's furniture is decoration (aria-hidden). ── */
+/* ── 2026-11-16, second pass: the hero is words and one button; creators get three reels on three phones (#video), then
+   the musicians the app's own window (#djs). The phone is drawn here; the reel's furniture is decoration (aria-hidden). ── */
 .hero-duo{padding-top:clamp(28px,3.6vw,44px)}
 .duo-copy{text-align:center;display:flex;flex-direction:column;align-items:center}
 .duo-copy .kicker{justify-content:center}
 .duo-copy h1{font-size:clamp(40px,4.8vw,66px)}
 .duo-copy .lead{margin-top:14px;max-width:700px}
 .duo-copy .cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:24px}
-.duo-copy .fine{margin-top:12px}
-.duo{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:clamp(24px,4vw,48px);row-gap:22px;margin-top:clamp(28px,3.4vw,40px);align-items:start}
-.duo .abp{grid-row:1 / span 2;margin:0;padding:0;background:none;box-shadow:none}
-.duo-mac{grid-column:2;margin-top:0!important}
-.duo-mac .bar{gap:8px}
-.duo-mac .beats{display:block;flex:1 1 auto;min-width:0;margin-left:6px;padding:0;background:none;border:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.duo-mac .beats b{display:none;margin:0;padding:0;border:0;font:700 11.5px/1 var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}
-.duo-mac .beats b.on{display:inline}
-.duo-mac .bar > b::after{content:"·";margin-left:10px;color:rgba(243,237,220,.3)}
-.duo-mac .sound{position:static;transform:none;flex:none;margin-left:auto}
-.duo-cards{grid-column:2;display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.duo-card{border:1px solid var(--line);border-radius:18px;padding:22px 22px 24px;background:linear-gradient(180deg,var(--card),var(--bg-2));scroll-margin-top:90px}
-.duo-card .kicker{margin-bottom:10px;font-size:12px}
-.duo-card h2{font-size:clamp(24px,2.3vw,30px);line-height:1.1}
-.duo-card p:not(.kicker){margin-top:10px;color:var(--ink-2);font-size:15px;line-height:1.55}
-.duo-fine{text-align:center;margin-top:26px}
 
 /* the phone */
 .phone{position:relative;width:100%;aspect-ratio:9/18.4;padding:9px;border-radius:48px;background:linear-gradient(150deg,#3a3936,#141412 40%,#26251f);
@@ -422,26 +406,47 @@ main > section + section{padding-top:0}
 .reel-audio{display:flex;align-items:center;gap:5px;margin-top:6px;font:500 11.5px/1 var(--sans);opacity:.92}
 .reel-audio svg{width:12px;height:12px}
 .phone .abp-wave{position:absolute;z-index:3;left:12px;right:12px;bottom:56px;width:auto;height:22px;margin:0}
-.duo .abp-switch{margin-top:16px}
-.duo .abp-ex{justify-content:center;margin-top:10px}
-.duo .abp-meta{display:block;text-align:center;margin-top:10px;font-size:12.5px;color:var(--muted)}
 
 /* pricing: three plans, Free first */
 .plan.free .price small{color:var(--lime)}
 .plan.free li::before{background:var(--ink-2);box-shadow:none}
 
-@media (max-width:980px){
-  .duo{grid-template-columns:minmax(0,1fr);grid-template-rows:none;row-gap:28px}
-  .duo .abp{grid-row:auto;width:min(300px,78vw);justify-self:center}
-  .duo-mac,.duo-cards{grid-column:1}
-}
-@media (max-width:640px){
-  .duo-cards{grid-template-columns:1fr}
-  .duo-see{display:none}
-  .duo-mac .bar > b{display:none}
-  .duo-mac .bar > b::after{display:none}
-}
 @media (max-width:900px){.plans{max-width:440px;margin:0 auto}}
-.duo-copy h1,.duo-card h2,#pricingTitle,.last h2{text-wrap:balance}
-@media (max-width:900px){.duo .abp{order:0}}
+@media (max-width:560px){.duo-copy h1{font-size:8.4vw}}
+
+/* creators: three phones in a row; on a phone they swipe, Dalit first */
+.reels .abp{margin:0;padding:0;background:none;box-shadow:none;min-width:0}
+.reels-row{display:grid;grid-template-columns:repeat(3,minmax(0,290px));justify-content:center;gap:clamp(18px,3vw,40px);margin-top:clamp(28px,3.6vw,44px)}
+.reels .abp-switch{margin-top:14px}
+.reels-note{text-align:center;margin-top:18px;font-size:13.5px;color:var(--muted)}
+@media (max-width:860px){
+  .reels-row{display:flex;justify-content:flex-start;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-left:calc(var(--gut) * -1);margin-right:calc(var(--gut) * -1);
+    padding:6px var(--gut) 18px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .reels-row::-webkit-scrollbar{display:none}
+  .reels-row .abp{flex:0 0 min(270px,74vw);scroll-snap-align:center}
+  .reels-row .abp[data-ex="lecture"]{order:-2}.reels-row .abp[data-ex="reel"]{order:-1}
+}
+
+/* the story under the reels: the pains in amber (Before), the fix in lime (After) */
+.mic{max-width:1000px;margin:clamp(40px,5vw,64px) auto 0}
+.reels-sub{font:500 clamp(19px,2vw,24px)/1.4 var(--serif)!important;color:var(--ink-2)!important;margin:12px auto 0!important;text-align:center}
+.mic h3{font:600 clamp(32px,4.2vw,54px)/1.05 var(--serif);letter-spacing:-.02em;text-align:center;text-wrap:balance}
+.mic-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:stretch}
+.mic-pains{list-style:none;display:grid;gap:10px}
+.mic-pains li{display:flex;align-items:center;gap:14px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--bg-2);color:var(--ink-2);font-size:16px;line-height:1.4}
+.mic-pains svg{flex:none;width:38px;height:38px;padding:8px;border-radius:50%;fill:none;stroke:var(--amber);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;background:rgba(255,211,138,.1)}
+.mic-fix{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:clamp(22px,3vw,34px);border-radius:20px;border:1px solid rgba(200,242,58,.45);
+  background:radial-gradient(120% 90% at 100% 0,rgba(200,242,58,.13),transparent 60%),linear-gradient(180deg,var(--card),var(--bg-2));box-shadow:0 0 60px -24px rgba(200,242,58,.45)}
+.mic-fix .kicker{margin:0}
+.mic-fix p:not(.kicker){font:500 clamp(19px,1.8vw,23px)/1.45 var(--serif);color:var(--ink)}
+.mic-fix .btn{align-self:flex-start;margin-top:6px}
+@media (max-width:760px){.mic-grid{grid-template-columns:1fr}}
+
+/* musicians: the app's window, full width */
+.music .mac{margin-top:clamp(26px,3.4vw,40px)}
+.music .sec-head p{margin-left:auto;margin-right:auto}
+
+/* pricing and the rest */
+@media (max-width:900px){.plans{max-width:440px;margin:0 auto}}
+.duo-copy h1,#pricingTitle,.last h2,.reels h2,.music h2{text-wrap:balance}
 @media (max-width:560px){.duo-copy h1{font-size:8.4vw}}
