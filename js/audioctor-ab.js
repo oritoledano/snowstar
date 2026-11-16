@@ -10,13 +10,13 @@
   if (!root) return;
   const $ = (id) => document.getElementById(id);
   const M = '../media/audioctor/ab/';
-  const EX = {
+  const EX = {                                        // the first one opens (2026-11-16, Ori: Dalit's lecture first)
+    lecture: { cap: 'Dalit Nemirovsky · a lecture', tall: true },
     reel:    { cap: 'Shahak Shapira · a phone reel', tall: true },
-    lecture: { cap: 'Dalit Nemirovsky · a lecture', tall: false },
   };
   const video = $('abVideo'), canvas = $('abWave'), g = canvas.getContext('2d');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let ex = 'reel', after = true, peaks = null, ctx = null, gains = null, srcs = [], bufs = {}, startAt = 0, dur = 0;
+  let ex = 'lecture', after = true, peaks = null, ctx = null, gains = null, srcs = [], bufs = {}, startAt = 0, dur = 0;
   let playing = false, flipped = false, morph = 1, morphFrom = 1, morphAt = 0, raf = 0, flipTimer = 0, loading = false;
 
   fetch(M + 'peaks.json').then((r) => r.json()).then((p) => { peaks = p; draw(); }).catch(() => {});
@@ -166,5 +166,5 @@
     }
   });
 
-  setEx('reel');
+  setEx('lecture');
 })();
