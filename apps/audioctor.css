@@ -483,3 +483,9 @@ main > section + section{padding-top:0}
 /* tighter rhythm down the page */
 main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 .music .mac{margin-top:clamp(22px,3vw,34px)}
+
+/* 2026-11-16, Ori: the words go to the phones' left, beside Shahak (wide screens only; below 1100px they stay under) */
+@media (min-width:1101px){
+  .reels-wrap{grid-template-columns:minmax(0,1fr) auto}
+  .reels-copy{order:-1;justify-self:end}
+}
