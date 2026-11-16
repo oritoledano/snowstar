@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=17">
+<link rel="stylesheet" href="audioctor.css?v=18">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -79,41 +79,14 @@
   </section>
 
   <!-- ── creators: three reels on three phones, each its own Before / After (js/audioctor-ab.js); one plays at a time.
-       Left to right as Ori placed them: KAYMA – ONSITELOVER, Shahak, Dalit. On a phone they swipe, Dalit first.
-       They come straight under the hero's button; the section's own headline sits under them (2026-11-16, Ori: one
-       headline at a time in the opening). ── -->
+       Left to right (2026-11-16, Ori): Shahak, Dalit, KAYMA – ONSITELOVER; the words to their right, centred on them.
+       On a phone they swipe, Dalit first, and the words come after them, so the opening keeps one headline. Under them
+       the four situations, drawn (amber is the noise, as Before is). ── -->
   <section id="video" class="reels" aria-labelledby="videoTitle">
     <div class="wrap">
-      <div class="reels-row">
-        <figure class="abp" data-ex="onsite" aria-label="KAYMA – ONSITELOVER, live">
-          <div class="phone">
-            <div class="phone-screen abp-stage">
-              <video muted playsinline loop preload="none" aria-label="KAYMA – ONSITELOVER, live: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
-              <span class="abp-tag" id="abTag-onsite">After · Audioctor</span>
-              <button type="button" class="abp-play" aria-label="Play KAYMA – ONSITELOVER, live with sound">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
-              </button>
-              <div class="reel-rail" aria-hidden="true">
-                <span><svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"/></svg><b id="rLikes-onsite"></b></span>
-                <span><svg viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 1 1-3.6-6.9 8.5 8.5 0 0 1 3.6 6.9zM20.5 20.5l-2.4-3.2"/></svg><b id="rComments-onsite"></b></span>
-                <span><svg viewBox="0 0 24 24"><path d="M5 9.5V8a2 2 0 0 1 2-2h11m-3-3 3 3-3 3M19 14.5V16a2 2 0 0 1-2 2H6m3 3-3-3 3-3"/></svg><b id="rReposts-onsite"></b></span>
-                <span><svg viewBox="0 0 24 24"><path d="M21 3 10.2 13.8M21 3l-6.8 18-4-7.2L3 9.8z"/></svg><b id="rShares-onsite"></b></span>
-              </div>
-              <div class="reel-meta" aria-hidden="true">
-                <p class="reel-who"><i class="reel-av" id="rAv-onsite"></i><b id="rName-onsite"></b><span class="reel-follow">Follow</span></p>
-                <p class="reel-cap" id="rCap-onsite"></p>
-                <p class="reel-audio"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 17.5V6l11-2.5v11.2a2.8 2.8 0 1 1-2-2.7V7.4l-7 1.6v8.5a2.8 2.8 0 1 1-2-2.7z"/></svg><span id="rAudio-onsite">Original audio</span></p>
-              </div>
-              <canvas class="abp-wave" width="560" height="56" aria-label="KAYMA – ONSITELOVER, live: the sound's waveform; click to move through it"></canvas>
-              <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
-            </div>
-          </div>
-          <div class="abp-switch" role="group" aria-label="KAYMA – ONSITELOVER, live: hear it before or after">
-            <button type="button" data-side="before" aria-pressed="false">Before</button>
-            <button type="button" data-side="after" aria-pressed="true">After</button>
-          </div>
-        </figure>
+      <div class="reels-wrap">
+        <div class="reels-col">
+          <div class="reels-row">
         <figure class="abp" data-ex="reel" aria-label="Shahak Shapira">
           <div class="phone">
             <div class="phone-screen abp-stage">
@@ -172,27 +145,63 @@
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
         </figure>
-      </div>
-      <p class="reels-note">Press play, then flip Before and After. Best with headphones.</p>
-      <div class="sec-head center reels-head">
-        <h2 id="videoTitle" data-txt="audioctor.video.h2">The must-have tool <em>for content creators.</em></h2>
-        <p class="reels-sub" data-txt="audioctor.card.video.title">Sound like you wore a mic, post it loud and clear.</p></div>
-
-      <!-- the story under the reels: the pains (amber, as Before) and what Audioctor does about them (lime, as After).
-           Ori's words, 2026-11-16. -->
-      <div class="mic">
-        <div class="mic-grid">
-          <ul class="mic-pains">
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l5 4V6L7 10zM16 9.5a4 4 0 0 1 0 5M18.8 7a7.5 7.5 0 0 1 0 10"/></svg><span>A car horn, construction or a crying baby ruined your perfect take?</span></li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M4 4l16 16"/></svg><span>Creating content without a neck mic?</span></li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9.5" y="3" width="5" height="8" rx="2.5"/><path d="M12 11v4M8 15h8l-1 6H9z"/></svg><span>Tired of holding one and still having to handle noise cleanups?</span></li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M14.6 9.2c-.5-.9-1.5-1.4-2.6-1.4-1.5 0-2.6.8-2.6 2s1.1 1.7 2.6 2.1 2.6.9 2.6 2.1-1.1 2-2.6 2c-1.2 0-2.2-.5-2.7-1.4M12 6.3v1.5m0 8.4v1.5"/></svg><span>Still paying for pricey audio engineering sessions?</span></li>
-          </ul>
-          <div class="mic-fix">
-            <p class="kicker">With Audioctor</p>
-            <p>Drop a video and Audioctor analyzes and splits your soundtrack, so you can adjust the volume and EQ, and pick mono or stereo, for voice, music and background.</p>
-            <a class="btn lime" href="/api/audioctor/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Download free</a>
+        <figure class="abp" data-ex="onsite" aria-label="KAYMA – ONSITELOVER, live">
+          <div class="phone">
+            <div class="phone-screen abp-stage">
+              <video muted playsinline loop preload="none" aria-label="KAYMA – ONSITELOVER, live: the video; its sound plays Before or After"></video>
+              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <span class="abp-tag" id="abTag-onsite">After · Audioctor</span>
+              <button type="button" class="abp-play" aria-label="Play KAYMA – ONSITELOVER, live with sound">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+              </button>
+              <div class="reel-rail" aria-hidden="true">
+                <span><svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"/></svg><b id="rLikes-onsite"></b></span>
+                <span><svg viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 1 1-3.6-6.9 8.5 8.5 0 0 1 3.6 6.9zM20.5 20.5l-2.4-3.2"/></svg><b id="rComments-onsite"></b></span>
+                <span><svg viewBox="0 0 24 24"><path d="M5 9.5V8a2 2 0 0 1 2-2h11m-3-3 3 3-3 3M19 14.5V16a2 2 0 0 1-2 2H6m3 3-3-3 3-3"/></svg><b id="rReposts-onsite"></b></span>
+                <span><svg viewBox="0 0 24 24"><path d="M21 3 10.2 13.8M21 3l-6.8 18-4-7.2L3 9.8z"/></svg><b id="rShares-onsite"></b></span>
+              </div>
+              <div class="reel-meta" aria-hidden="true">
+                <p class="reel-who"><i class="reel-av" id="rAv-onsite"></i><b id="rName-onsite"></b><span class="reel-follow">Follow</span></p>
+                <p class="reel-cap" id="rCap-onsite"></p>
+                <p class="reel-audio"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 17.5V6l11-2.5v11.2a2.8 2.8 0 1 1-2-2.7V7.4l-7 1.6v8.5a2.8 2.8 0 1 1-2-2.7z"/></svg><span id="rAudio-onsite">Original audio</span></p>
+              </div>
+              <canvas class="abp-wave" width="560" height="56" aria-label="KAYMA – ONSITELOVER, live: the sound's waveform; click to move through it"></canvas>
+              <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
+            </div>
           </div>
+          <div class="abp-switch" role="group" aria-label="KAYMA – ONSITELOVER, live: hear it before or after">
+            <button type="button" data-side="before" aria-pressed="false">Before</button>
+            <button type="button" data-side="after" aria-pressed="true">After</button>
+          </div>
+        </figure>
+          </div>
+          <p class="reels-note">Press play, then flip Before and After. Best with headphones.</p>
+        </div>
+        <div class="reels-copy">
+          <h2 id="videoTitle" data-txt="audioctor.creators.h2">Designed for <em>Content Creators.</em></h2>
+          <p class="reels-sub" data-txt="audioctor.creators.sub">Sound like you wore a mic - post it loud and clear.</p>
+          <p class="reels-body" data-txt="audioctor.creators.body">Drop a video and Audioctor analyzes and splits your soundtrack, so you can adjust the volume and EQ, and pick mono or stereo, for voice, music and background.</p>
+        </div>
+      </div>
+      <div class="pains">
+        <p class="kicker" style="justify-content:center">Sound familiar?</p>
+        <div class="pains-row">
+        <figure class="pain">
+          <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><path class="ob" d="M14 100h172"/><path class="ob" d="M150 100V28h34M150 28l-12 10M184 28v14"/><path class="nz" d="M178 42v10m-6 0h12"/><path class="ob" d="M32 90h66a6 6 0 0 0 6-6v-9a6 6 0 0 0-6-6h-9L76 54H50L38 69h-4a6 6 0 0 0-6 6v9a6 6 0 0 0 6 6z"/><circle class="ob" cx="47" cy="92" r="7"/><circle class="ob" cx="87" cy="92" r="7"/><path class="nz wv" d="M112 64q6 8 0 16"/><path class="nz wv w2" d="M121 57q11 15 0 30"/><path class="nz wv w3" d="M130 50q16 22 0 44"/></svg></div>
+          <figcaption>A car horn, construction or a crying baby ruined your perfect take?</figcaption>
+        </figure>
+        <figure class="pain">
+          <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><circle class="ob" cx="100" cy="36" r="17"/><path class="ob" d="M56 112q0-38 44-38t44 38"/><path class="ob" d="M88 75l12 15 12-15"/><circle class="nz dash" cx="122" cy="94" r="7"/><path class="nz" d="M110 82l24 24"/><path class="nz wv" d="M150 26a10 10 0 1 1 13 9.5V40"/><circle class="nzf wv" cx="163" cy="47" r="2"/></svg></div>
+          <figcaption>Creating content without a neck mic?</figcaption>
+        </figure>
+        <figure class="pain">
+          <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><circle class="ob" cx="100" cy="30" r="15"/><path class="ob" d="M88 26h24M86 33h28M92 19h16"/><path class="ob" d="M93 45l4 57h6l4-57"/><path class="ob" d="M84 66h30a6 6 0 0 1 0 12H84M84 78h30a6 6 0 0 1 0 12H86a8 8 0 0 1-8-8V70a6 6 0 0 1 6-4z"/><path class="nz wv" d="M26 36l6-8 6 8 6-8 6 8"/><path class="nz wv w2" d="M20 64l6-8 6 8 6-8 6 8"/><path class="nz wv w3" d="M150 46l6-8 6 8 6-8 6 8"/><path class="nz wv" d="M146 76l6-8 6 8 6-8 6 8"/></svg></div>
+          <figcaption>Tired of holding one and still having to handle noise cleanups?</figcaption>
+        </figure>
+        <figure class="pain">
+          <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><rect class="ob" x="26" y="62" width="120" height="44" rx="7"/><path class="ob" d="M46 72v26M66 72v26M86 72v26M106 72v26M126 72v26"/><path class="ob fd" d="M41 86h10M61 78h10M81 92h10M101 82h10M121 88h10"/><path class="ob" d="M146 24v20"/><path class="nz" d="M122 44h48l10 13-10 13h-48z"/><circle class="nz" cx="130" cy="57" r="3"/><text class="nzt wv" x="140" y="63">$$$</text></svg></div>
+          <figcaption>Still paying for pricey audio engineering sessions?</figcaption>
+        </figure>
         </div>
       </div>
     </div>
