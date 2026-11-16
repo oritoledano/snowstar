@@ -135,6 +135,12 @@
      children's own sizes with it, so only a leaf text block can be scaled. */
   const BLOCKISH = 'p,div,section,article,aside,header,footer,nav,form,table,figure,ul,ol,li,h1,h2,h3,h4,h5,h6';
   const canSize = (el) => !el.querySelector(BLOCKISH);
+  /* Vertical padding on a non-replaced `display:inline` box paints but adds no layout space,
+     so Air on one of those does nothing at all — and autoKeys does key inline blocks (a,
+     button, label, and any span it reaches). The control is disabled there rather than left
+     to click with no effect. inline-block and inline-flex do honour padding, so only exactly
+     `inline` is refused. */
+  const canAir = (el) => { try { return getComputedStyle(el).display !== 'inline'; } catch { return true } };
   const sizeOf = (el) => {
     const s = el.querySelector('span.se-fs');
     const n = s ? parseFloat(s.style.fontSize) : 100;
@@ -551,8 +557,16 @@
      /api/texts promise, which left a window — first paint to the network settling — where the
      static menu door showed a browser's own disclosure triangle and a 16px label, and the
      contact block had no styling at all. Neither block depends on the answer. */
-  footCss();
-  railCss();
+  /* Both of these are for the menu buildMenu() assembles, and buildMenu only ever runs on a
+     nav that has a .menu-div child — 16 of the 25 pages. On the others they injected a
+     stylesheet matching nothing plus two Google Fonts requests for Anton and Barlow
+     Condensed, which nothing on such a page asks for. That was harmless until 2026-11-16,
+     when this file started loading on pages with no menu at all so that their copy could be
+     edited; dead weight on those pages is the thing to avoid, not to inherit. */
+  if (document.querySelector('nav > .menu-div')) {
+    footCss();
+    railCss();
+  }
 
   /* ── auto keys (2026-10-29): every text editable without naming it in the HTML ──
      A page whose <main> carries data-autotxt (the StreamDAW pages) gets a key on each text block that has
@@ -624,6 +638,7 @@
     .then((r) => (r.ok ? r.json() : { texts: {} }))
     .then(({ texts }) => {
       let props = {};
+      const rows = [];
       for (const [key, html] of Object.entries(texts)) {
         if (key === 'rows.removed.' + PAGE) {
           try { JSON.parse(html).forEach((sel) => {
@@ -651,9 +666,30 @@
           try { layout = JSON.parse(html) || {}; applyLayout(layout); } catch { layout = {}; }
           continue;
         }
-        const el = document.querySelector(`[data-txt="${key}"]`);
-        if (el) el.innerHTML = cleanStr(html);
+        rows.push([key, html]);
       }
+      /* Outermost block first. A keyed block can contain another keyed block — autoKeys
+         keys a <p> and the <a> inside it on purpose, both being text someone may want to
+         change — and assigning the parent's innerHTML throws away whatever the child's own
+         row had just put there. Object.entries order is the D1 table's, not the document's,
+         so with the two applied in table order the newer edit on the inner block was lost
+         on about every other load, with nothing to show why. Depth is measured before any
+         assignment, and each element is looked up again at the moment it is applied,
+         because applying a parent replaces the child node the first lookup found. */
+      const depthOf = (el) => { let d = 0; for (let n = el; n; n = n.parentElement) d += 1; return d; };
+      rows
+        .map(([key, html]) => {
+          let el = null;
+          try { el = document.querySelector(`[data-txt="${key}"]`); } catch { return null }
+          return el ? { key, html, d: depthOf(el) } : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.d - b.d)
+        .forEach(({ key, html }) => {
+          let el = null;
+          try { el = document.querySelector(`[data-txt="${key}"]`); } catch { return }
+          if (el) el.innerHTML = cleanStr(html);
+        });
       /* Always, not only when a config exists — the home page needs its own
          Snowstar row inserted whether or not anything has ever been hidden. */
       buildMenu(props);
@@ -667,11 +703,6 @@
   const M = window.SnowstarAccount;
   if (!M) return;
   let built = false;
-  /* Declared before boot() is called, not after: buildPill() assigns `pill`, and the
-     synchronous boot() below only ever got away with running before this line because
-     account.js resolves the session asynchronously, so M.user was still null and boot
-     returned early. A session known at parse time would have thrown a TDZ error and
-     left the admin with no editor at all. */
   let pill, mode = null; // null | 'text' | 'draw'
 
   function boot() {
@@ -681,7 +712,16 @@
     buildPill();
   }
   M.onChange(boot);
-  boot();
+  /* A microtask, not a straight call. boot() reaches buildPill() and from there loadPins(),
+     and both touch `let` bindings declared further down this file — `pill`, then `pinLayer`.
+     Calling boot() here synchronously only ever worked because account.js resolves the
+     session over the network, so M.user was still null and boot returned at its first line;
+     the moment a session was known at parse time it threw a TDZ ReferenceError and the admin
+     got no editor at all, with the failure buried in the console. Moving one declaration up
+     only moved the error to the next one — `pinLayer` proved that on 2026-11-16. A microtask
+     runs after this whole script has been evaluated, so every binding exists, and it is
+     still well before first paint. */
+  queueMicrotask(boot);
 
   const api = async (path, body) => {
     const res = await fetch('/api' + path, {
@@ -765,7 +805,18 @@
   }
 
   /* ── size and air, on whichever block has the caret ─────────────────────── */
-  function pickBlock(e) { cur = e.currentTarget; syncFmt(); }
+  /* The INNERMOST keyed block, from the event's target — not e.currentTarget. focusin
+     bubbles, and a keyed block can sit inside another keyed block, so clicking into the
+     <a> in a <li> fired this on the <a> and then again on the <li>, and the last one to
+     run won: the toolbar always ended up pointing at the outer block, so the inner one
+     could not be sized at all and the Air control claimed to work on a line where it
+     cannot. Reading closest('[data-txt]') off the target gives the same answer whichever
+     listener runs. */
+  function pickBlock(e) {
+    const t = e.target && e.target.closest ? e.target.closest('[data-txt]') : null;
+    cur = t || e.currentTarget;
+    syncFmt();
+  }
 
   const stepped = (list, now, dir) => {
     const i = Math.max(0, list.indexOf(now));
@@ -780,6 +831,7 @@
       setSize(cur, stepped(FS_STEPS, sizeOf(cur), b.dataset.fs === '+' ? 1 : -1));
       markDirty();
     } else if (b.dataset.sp) {
+      if (!canAir(cur)) return;
       const side = b.dataset.sp[0];
       const key = cur.dataset.txt;
       const row = layout[key] || (layout[key] = {});
@@ -803,7 +855,13 @@
     fmt.querySelector('[data-v="fs"]').textContent = sizeOf(cur) + '%';
     fmt.querySelector('[data-v="t"]').textContent = String(spStep(row.t) || 0);
     fmt.querySelector('[data-v="b"]').textContent = String(spStep(row.b) || 0);
+    const air = canAir(cur);
     fmt.querySelectorAll('[data-fs]').forEach((btn) => { btn.disabled = !canSize(cur); });
+    fmt.querySelectorAll('[data-sp]').forEach((btn) => {
+      btn.disabled = !air;
+      btn.title = air ? btn.title.replace(/ — .*$/, '') : 'This block is inline — vertical padding adds no space';
+    });
+    if (!air) { fmt.querySelector('[data-v="t"]').textContent = '–'; fmt.querySelector('[data-v="b"]').textContent = '–'; }
   }
 
   function markDirty() {

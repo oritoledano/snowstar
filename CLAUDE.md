@@ -35,9 +35,17 @@ session to change a sentence. A new `.html` carries three things before it ships
 
 `node contracts/check.mjs` enforces it (`pages-editable`). What must **not** be editable —
 the app UI, the legal text, the dated terms archives — is listed with its reason in
-`contracts/registry.json` under `editable.exempt`. Six pages that predate the rule are
-under `editable.pending`: they print as a note rather than a failure, and wiring one means
-deleting its line there.
+`contracts/registry.json` under `editable.exempt`. `editable.pending` is empty as of
+2026-11-16: all 24 pages that should be editable are.
+
+**A generated page needs its generator fixed, not its HTML.** `apps/streamdaw-changes.html`
+and `apps/audioctor-changes.html` are written by `changelog-site.mjs` in the StreamDAW and
+Audioctor repos, so an edit to the `.html` here survives exactly until the next run. They
+are listed under `editable.generated` and a second check,
+`generators-write-editable-pages`, reads those two scripts and reports when a template has
+lost the wiring or pinned an older `site-edit.js?v=`. Both are red today and both fixes
+belong to those repos' own sessions. That check also fails if the pages disagree with each
+other about `site-edit.js?v=`, which is the "bump `?v=` everywhere" trap made automatic.
 
 ### Size and air are relative, never pixels
 
@@ -59,6 +67,28 @@ on purpose — this is the part that is easy to get wrong:
 Both are clamped to a fixed list of steps in the editor and again on the way in from the
 API, so a bad stored value can only ever mean "no override". **Never store a px size or
 gap**: that is the one way to freeze a responsive value at the width it was measured at.
+
+Two limits that are deliberate, not oversights. Size is refused on a block that contains
+another block, because the span would have to wrap block-level children — invalid, and it
+would drag their own sizes with it. Air is refused on a `display:inline` block, because
+vertical padding on one paints but adds no layout space; the control greys out and shows
+`–` rather than letting you click it to no effect.
+
+### Keyed blocks nest, and that decides three things
+
+`autoKeys` keys a `<p>` *and* the `<a>` inside it — both are text someone may want to
+change. Three consequences, each of which was a bug first:
+
+- **Hydration applies the outermost key first.** Assigning the parent's `innerHTML`
+  replaces the child, so in D1 table order the newer edit on the inner block was lost on
+  about every other load. Keys are sorted by DOM depth and each element is looked up again
+  at the moment it is applied.
+- **The toolbar follows `closest('[data-txt]')` from the event target**, not
+  `e.currentTarget`. `focusin` bubbles, so the outer block used to win and the inner one
+  could never be selected.
+- **The editor's own attributes are stripped on capture, compare and save.** Marking the
+  child changes the parent's `innerHTML`, which made the parent count as dirty untouched
+  and stored `contenteditable="true"` on its child — live, on five rows, until 2026-11-16.
 
 ## Where each vertical's code lives
 
