@@ -552,3 +552,5 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 .hero-duo[data-hero="blend"] .pb1{bottom:-46%}.hero-duo[data-hero="blend"] .pb2{bottom:-54%}.hero-duo[data-hero="blend"] .pb3{bottom:-44%}.hero-duo[data-hero="blend"] .pb4{bottom:-30%}
 .hero-duo[data-hero="blend"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:120px;z-index:0;background:linear-gradient(180deg,rgba(11,10,8,0),var(--bg) 80%)}
 .hero-duo[data-hero="blend"] .lab-shot .mac{box-shadow:0 0 0 1px rgba(255,255,255,.1),0 50px 100px -30px rgba(0,0,0,.95),0 0 140px -30px rgba(255,92,138,.35)}
+/* the hero's headline as the editor stores it holds two <h2>s pasted into the <h1> (2026-11-17): they read as the h1 */
+.duo-copy h1 h2{font:inherit;letter-spacing:inherit;line-height:inherit;color:inherit;margin:0}

@@ -616,17 +616,28 @@
      So: capture clean, compare clean, save clean — and strip on hydration too, which
      repairs the rows already stored for every visitor without a D1 write. The next
      save of each of those blocks writes the clean version back. */
+  /* And what a paste brings (2026-11-17): copying one outlined block into another copies it
+     with the browser's computed styles inline — the editor's own outline among them
+     ("outline: … solid 1.5px !important"), which then framed Audioctor's hero for every
+     visitor — and with that block's own key (data-txt="audioctor.last.title"), so the hero
+     carried a second copy of the bottom headline's key. The outline goes, and a named key
+     inside another block goes (an auto. key there is the page's own nesting, kept). */
   function strip(root) {
     root.querySelectorAll('[contenteditable],.se-editable').forEach((n) => {
       n.removeAttribute('contenteditable');
       n.classList.remove('se-editable');
       if (!n.classList.length) n.removeAttribute('class');
     });
+    root.querySelectorAll('[style*="outline"]').forEach((n) => {
+      n.style.removeProperty('outline'); n.style.removeProperty('outline-offset');
+      if (!n.getAttribute('style').trim()) n.removeAttribute('style');
+    });
+    root.querySelectorAll('[data-txt]').forEach((n) => { if (!n.dataset.txt.startsWith('auto.')) n.removeAttribute('data-txt'); });
     return root;
   }
   const cleanOf = (el) => strip(el.cloneNode(true)).innerHTML;
   const cleanStr = (html) => {
-    if (!/contenteditable|se-editable/.test(html)) return html;   // the normal case, untouched
+    if (!/contenteditable|se-editable|outline|data-txt="(?!auto\.)/.test(html)) return html;   // the normal case, untouched
     const t = document.createElement('template');
     t.innerHTML = html;
     strip(t.content);
