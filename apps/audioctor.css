@@ -362,3 +362,86 @@ main > section + section{padding-top:0}
   /* on a phone the switch comes right under the headline: the difference is heard before the reading */
   .ab-copy{display:contents}.ab-copy .kicker{order:1;margin-bottom:0}.ab-copy h1{order:2}.abp{order:3}.ab-copy .lead{order:4;margin-top:4px}.ab-copy .cta{order:5;margin-top:0}.ab-copy .fine{order:6;margin-top:0}}
 @media (prefers-reduced-motion:reduce){.abp-switch::before,.abp-play{transition:none}.abp.busy .abp-play{animation:none}}
+
+/* ── the two-job hero (2026-11-16): the H1's two lines, then a phone (a reel, Before / After) beside the app's own window
+   on a Mac, and one card per job under the Mac. The phone is drawn here; the reel's furniture is decoration (aria-hidden). ── */
+.hero-duo{padding-top:clamp(28px,3.6vw,44px)}
+.duo-copy{text-align:center;display:flex;flex-direction:column;align-items:center}
+.duo-copy .kicker{justify-content:center}
+.duo-copy h1{font-size:clamp(40px,4.8vw,66px)}
+.duo-copy .lead{margin-top:14px;max-width:700px}
+.duo-copy .cta{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:24px}
+.duo-copy .fine{margin-top:12px}
+.duo{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:clamp(24px,4vw,48px);row-gap:22px;margin-top:clamp(28px,3.4vw,40px);align-items:start}
+.duo .abp{grid-row:1 / span 2;margin:0;padding:0;background:none;box-shadow:none}
+.duo-mac{grid-column:2;margin-top:0!important}
+.duo-mac .bar{gap:8px}
+.duo-mac .beats{display:block;flex:1 1 auto;min-width:0;margin-left:6px;padding:0;background:none;border:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.duo-mac .beats b{display:none;margin:0;padding:0;border:0;font:700 11.5px/1 var(--cond);letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}
+.duo-mac .beats b.on{display:inline}
+.duo-mac .bar > b::after{content:"·";margin-left:10px;color:rgba(243,237,220,.3)}
+.duo-mac .sound{position:static;transform:none;flex:none;margin-left:auto}
+.duo-cards{grid-column:2;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.duo-card{border:1px solid var(--line);border-radius:18px;padding:22px 22px 24px;background:linear-gradient(180deg,var(--card),var(--bg-2));scroll-margin-top:90px}
+.duo-card .kicker{margin-bottom:10px;font-size:12px}
+.duo-card h2{font-size:clamp(24px,2.3vw,30px);line-height:1.1}
+.duo-card p:not(.kicker){margin-top:10px;color:var(--ink-2);font-size:15px;line-height:1.55}
+.duo-fine{text-align:center;margin-top:26px}
+
+/* the phone */
+.phone{position:relative;width:100%;aspect-ratio:9/18.4;padding:9px;border-radius:48px;background:linear-gradient(150deg,#3a3936,#141412 40%,#26251f);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.14),0 0 0 1px #000,0 50px 90px -36px rgba(0,0,0,.95),0 0 110px -40px rgba(200,242,58,.3)}
+.phone::before,.phone::after{content:"";position:absolute;width:3px;border-radius:2px;background:#2c2b27}
+.phone::before{left:-3px;top:22%;height:13%;box-shadow:0 -46px 0 -0px #2c2b27}
+.phone::after{right:-3px;top:28%;height:18%}
+.phone-screen{position:relative;width:100%;height:100%;border-radius:39px;overflow:hidden;background:#000;aspect-ratio:auto;max-height:none}
+.phone-screen video{position:absolute;left:0;right:0;top:40px;width:100%;height:auto;aspect-ratio:9/16;object-fit:cover;cursor:pointer}
+.phone-screen::before{display:none}
+.phone-screen::after{content:"";position:absolute;left:0;right:0;top:40px;bottom:50px;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.3) 0,rgba(0,0,0,0) 14%,rgba(0,0,0,0) 58%,rgba(0,0,0,.7) 100%)}
+.reel-nav{position:absolute;z-index:4;left:0;right:0;bottom:0;height:50px;display:flex;justify-content:space-around;align-items:flex-start;padding:9px 10px 0;background:#000;color:#fff;pointer-events:none}
+.reel-nav svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.reel-nav i{width:21px;height:21px;border-radius:50%;background:linear-gradient(135deg,#c8f23a,#5a7a10)}
+.sbar{position:absolute;z-index:3;left:0;right:0;top:0;height:40px;display:flex;align-items:center;justify-content:space-between;padding:4px 22px 0 28px;color:#fff;pointer-events:none}
+.sbar b{font:600 13.5px/1 var(--sans);letter-spacing:.01em}
+.sbar svg{width:46px;height:11px}
+.island{position:absolute;left:50%;top:9px;width:84px;height:25px;margin-left:-42px;border-radius:20px;background:#000}
+.phone .abp-tag{top:52px;left:12px;z-index:3;font-size:11px;padding:5px 10px}
+.phone .abp-play{z-index:3;width:68px;height:68px;margin:-34px 0 0 -34px}
+.phone .abp-play svg{width:30px;height:30px}
+.reel-rail{position:absolute;z-index:3;right:8px;bottom:118px;display:flex;flex-direction:column;align-items:center;gap:13px;color:#fff;pointer-events:none}
+.reel-rail span{display:flex;flex-direction:column;align-items:center;gap:3px}
+.reel-rail svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
+.reel-rail b{font:600 11px/1 var(--sans);text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.reel-rail b:empty{display:none}
+.reel-meta{position:absolute;z-index:3;left:12px;right:52px;bottom:84px;color:#fff;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.55)}
+.reel-who{display:flex;align-items:center;gap:8px;font:600 13px/1 var(--sans)}
+.reel-av{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:700 11px/1 var(--sans);font-style:normal;color:#14130f;
+  background:var(--ink);box-shadow:0 0 0 1.5px #000,0 0 0 3px #e1306c}
+.reel-follow{padding:4px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.7);font:600 11.5px/1 var(--sans)}
+.reel-cap{margin-top:8px;font:500 12.5px/1.35 var(--sans);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reel-audio{display:flex;align-items:center;gap:5px;margin-top:6px;font:500 11.5px/1 var(--sans);opacity:.92}
+.reel-audio svg{width:12px;height:12px}
+.phone .abp-wave{position:absolute;z-index:3;left:12px;right:12px;bottom:56px;width:auto;height:22px;margin:0}
+.duo .abp-switch{margin-top:16px}
+.duo .abp-ex{justify-content:center;margin-top:10px}
+.duo .abp-meta{display:block;text-align:center;margin-top:10px;font-size:12.5px;color:var(--muted)}
+
+/* pricing: three plans, Free first */
+.plan.free .price small{color:var(--lime)}
+.plan.free li::before{background:var(--ink-2);box-shadow:none}
+
+@media (max-width:980px){
+  .duo{grid-template-columns:minmax(0,1fr);grid-template-rows:none;row-gap:28px}
+  .duo .abp{grid-row:auto;width:min(300px,78vw);justify-self:center}
+  .duo-mac,.duo-cards{grid-column:1}
+}
+@media (max-width:640px){
+  .duo-cards{grid-template-columns:1fr}
+  .duo-see{display:none}
+  .duo-mac .bar > b{display:none}
+  .duo-mac .bar > b::after{display:none}
+}
+@media (max-width:900px){.plans{max-width:440px;margin:0 auto}}
+.duo-copy h1,.duo-card h2,#pricingTitle,.last h2{text-wrap:balance}
+@media (max-width:900px){.duo .abp{order:0}}
+@media (max-width:560px){.duo-copy h1{font-size:8.4vw}}

@@ -10,9 +10,13 @@
   if (!root) return;
   const $ = (id) => document.getElementById(id);
   const M = '../media/audioctor/ab/';
-  const EX = {                                        // the first one opens (2026-11-16, Ori: Dalit's lecture first)
-    lecture: { cap: 'Dalit Nemirovsky · a lecture', tall: true },
-    reel:    { cap: 'Shahak Shapira · a phone reel', tall: true },
+  /* the first one opens (2026-11-16, Ori: Dalit's lecture first). Each sits in a phone as a reel: its name, its caption
+     and its counts [likes, comments, reposts, shares]; an empty one is hidden. Shahak's are his post's,
+     instagram.com/p/DcBxWK2OVR5, read 2026-11-16. Dalit's reel is not posted: hers are Ori's figures for her page's
+     usual reach (2026-11-16). */
+  const EX = {
+    lecture: { name: 'Dalit Nemirovsky', av: 'DN', cap: 'A lecture, filmed from the back row', counts: ['354', '45', '', '31'] },
+    reel:    { name: 'shahak', av: 'S', cap: 'Hero or villain?', counts: ['79.2K', '430', '857', '13.5K'] },
   };
   const video = $('abVideo'), canvas = $('abWave'), g = canvas.getContext('2d');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -25,11 +29,13 @@
     stop();
     ex = name;
     const e = EX[name];
-    root.classList.toggle('tall', e.tall);
     video.poster = M + name + '.jpg';
     video.src = M + name + '.mp4';
     root.style.setProperty('--poster', `url("${M}${name}.jpg")`);
-    $('abCap').textContent = e.cap;
+    $('rName').textContent = e.name;
+    $('rAv').textContent = e.av;
+    $('rCap').textContent = e.cap;
+    ['rLikes', 'rComments', 'rReposts', 'rShares'].forEach((id, i) => { $(id).textContent = e.counts ? e.counts[i] : ''; });
     root.querySelectorAll('[data-ex]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.ex === name)));
     flipped = false;
     setSide(true, true);
@@ -132,7 +138,7 @@
     const n = p.before.length, w = W / n, prog = dur ? clock() / dur : 0;
     for (let i = 0; i < n; i++) {
       const v = p.before[i] + (p.after[i] - p.before[i]) * morph;
-      const h = Math.max(1.5, v * (mid - 4));
+      const h = Math.max(1, v * (mid - 2));
       const played = i / n < prog;
       // Before amber, After lime; the played part brighter
       const r = Math.round(255 + (200 - 255) * morph), gg = Math.round(211 + (242 - 211) * morph), b = Math.round(138 + (58 - 138) * morph);
