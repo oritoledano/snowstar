@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=20">
+<link rel="stylesheet" href="audioctor.css?v=22">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -64,17 +64,51 @@
   <!-- ── hero (2026-11-16, second pass): Ori's own headline and line (his edits, stored under audioctor.h1 and
        audioctor.h1.lead: leave these two elements and their keys alone), one button. The examples follow, a section a job:
        creators first (#video), then musicians (#djs). Every [data-free-dl] is the download (js/audioctor-free.js). ── -->
-  <section class="hero hero-duo" aria-labelledby="heroTitle">
+  <!-- ── hero (2026-11-17, Ori: the olive band out, then "blend A and B"): the band moves like the flask's liquid (the
+       potion), and on it the app's own window, filmed from ui/index.html?scene=hero (app/art/capture.js, an 8 s seamless
+       loop: every liquid rising and falling, the meters playing), the flask bubbling, its smoke rising out of the window.
+       The texts in this page are Ori's as last edited in the site editor (2026-11-17), written in so the first paint is
+       already his; the editor still overrides them. ── -->
+  <section class="hero hero-duo" data-hero="blend" aria-labelledby="heroTitle">
+    <div class="potion" aria-hidden="true"><i class="pb pb1"></i><i class="pb pb2"></i><i class="pb pb3"></i><i class="pb pb4"></i>
+      <svg class="pw" viewBox="0 0 1440 160" preserveAspectRatio="none"><path class="w1" d="M0 70Q180 30 360 70T720 70T1080 70T1440 70V160H0z"/><path class="w2" d="M0 96Q180 128 360 96T720 96T1080 96T1440 96V160H0z"/><path class="w3" d="M0 122Q180 100 360 122T720 122T1080 122T1440 122V160H0z"/></svg></div>
     <div class="wrap">
       <div class="duo-copy">
         <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">Audioctor for Mac</p>
-        <h1 id="heroTitle" data-txt="audioctor.h1">Fix your video's sound.<br><em>Pull any track apart.</em></h1>
-        <p class="lead" data-txt="audioctor.h1.lead">Take the echo and noise out of any video. Split any song into vocal, drums, bass and more. All on your Mac.</p>
+        <h1 id="heroTitle" data-txt="audioctor.h1">Audio split and cleanup.<br><div><font color="rgba(243, 237, 220, 0.78)"><span style="font-weight: 500;"><em>Better than any tool out there.</em></span></font></div></h1>
+        <p class="lead" data-txt="audioctor.h1.lead"><span class="se-fs" style="font-size: 90%;">Turn shitty audio into&nbsp;<span style="font-size: clamp(18px, 1.9vw, 22px);">crystal clear sound in one click.</span></span></p>
         <div class="cta">
           <a class="btn lime" href="/api/audioctor/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Download free</a>
           <a class="btn ghost ab-phone" id="abMail" data-txt="audioctor.hero.phone" href="mailto:?subject=Audioctor%20for%20my%20Mac&amp;body=https%3A%2F%2Fsnowstar.company%2Fapps%2Faudioctor.html">On your phone? Send it to your Mac</a>
         </div>
       </div>
+      <figure class="lab-shot" aria-label="Audioctor's own window: a song taken apart, every part on its own cylinder, the meters playing">
+        <div class="mac">
+          <div class="bar"><i></i><i></i><i></i><b>Audioctor</b></div>
+          <video src="../media/audioctor/hero-lab.mp4?v=1" poster="../media/audioctor/hero-lab.jpg?v=1" muted loop playsinline autoplay preload="auto" width="1280" height="568"></video>
+        </div>
+        <div class="brew" aria-hidden="true">
+          <i class="bub" style="--x:27.9%;--s:4;--d:1.87s;--w:-2.3px;animation-delay:-2.14s"></i>
+          <i class="bub" style="--x:26.7%;--s:6;--d:1.47s;--w:0.0px;animation-delay:-0.10s"></i>
+          <i class="bub" style="--x:28.5%;--s:3;--d:1.69s;--w:0.3px;animation-delay:-0.15s"></i>
+          <i class="bub" style="--x:29.3%;--s:4;--d:2.16s;--w:0.4px;animation-delay:-0.16s"></i>
+          <i class="bub" style="--x:29.4%;--s:3;--d:2.57s;--w:-2.3px;animation-delay:-2.23s"></i>
+          <i class="bub" style="--x:27.8%;--s:4;--d:2.05s;--w:0.4px;animation-delay:-1.46s"></i>
+          <i class="bub" style="--x:29.9%;--s:3;--d:2.10s;--w:0.7px;animation-delay:-0.97s"></i>
+          <i class="bub" style="--x:29.2%;--s:3;--d:2.08s;--w:0.6px;animation-delay:-1.29s"></i>
+          <i class="bub" style="--x:29.1%;--s:4;--d:1.96s;--w:2.1px;animation-delay:-0.94s"></i>
+          <i class="bub" style="--x:27.5%;--s:4;--d:2.24s;--w:-1.3px;animation-delay:-1.49s"></i>
+          <i class="bub" style="--x:29.0%;--s:4;--d:2.28s;--w:-1.1px;animation-delay:-2.55s"></i>
+          <i class="puff p0" style="--dx:-56%;--r:-4deg;--d:7.0s;animation-delay:-0.00s"></i>
+          <i class="puff p1" style="--dx:-52%;--r:-1deg;--d:5.6s;animation-delay:-0.85s"></i>
+          <i class="puff p2" style="--dx:10%;--r:13deg;--d:6.6s;animation-delay:-1.70s"></i>
+          <i class="puff p3" style="--dx:35%;--r:-9deg;--d:6.9s;animation-delay:-2.55s"></i>
+          <i class="puff p0" style="--dx:1%;--r:4deg;--d:6.4s;animation-delay:-3.40s"></i>
+          <i class="puff p1" style="--dx:31%;--r:22deg;--d:6.4s;animation-delay:-4.25s"></i>
+          <i class="puff p2" style="--dx:10%;--r:-22deg;--d:6.9s;animation-delay:-5.10s"></i>
+          <i class="puff p3" style="--dx:8%;--r:25deg;--d:7.1s;animation-delay:-5.95s"></i>
+        </div>
+      </figure>
     </div>
   </section>
 
@@ -175,28 +209,28 @@
           </div>
         </figure>
           </div>
-          <p class="reels-note">Press play, then flip Before and After. Best with headphones.</p>
+          <p class="reels-note"><br></p>
         </div>
         <div class="reels-copy">
           <h2 id="videoTitle" data-txt="audioctor.creators.h2">Designed for <em>Content Creators.</em></h2>
-          <p class="reels-sub" data-txt="audioctor.creators.sub">Sound like you wore a mic - post it loud and clear.</p>
-          <p class="reels-body" data-txt="audioctor.creators.body">Drop a video and Audioctor analyzes and splits your soundtrack, so you can adjust the volume and EQ, and pick mono or stereo, for voice, music and background.</p>
+          <p class="reels-sub" data-txt="audioctor.creators.sub">Sound like you wore a mic,&nbsp;<div>or enhance the one you wore.</div></p>
+          <p class="reels-body" data-txt="audioctor.creators.body">Drop a video and watch how Audioctor separates your soundtrack. Try "Studio Voice" to eliminate room reverb and create a crystal clear recording.&nbsp; <br>Fine tune by adjusting volume, EQ, mono/stereo for each track, try blending the original "in mix" and export your video with the new audio instantly.</p>
         </div>
       </div>
-      <div class="pains">
+      <div class="pains" hidden>
         <p class="kicker" style="justify-content:center">Sound familiar?</p>
         <div class="pains-row">
         <figure class="pain">
           <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><path class="ob" d="M14 100h172"/><path class="ob" d="M150 100V28h34M150 28l-12 10M184 28v14"/><path class="nz" d="M178 42v10m-6 0h12"/><path class="ob" d="M32 90h66a6 6 0 0 0 6-6v-9a6 6 0 0 0-6-6h-9L76 54H50L38 69h-4a6 6 0 0 0-6 6v9a6 6 0 0 0 6 6z"/><circle class="ob" cx="47" cy="92" r="7"/><circle class="ob" cx="87" cy="92" r="7"/><path class="nz wv" d="M112 64q6 8 0 16"/><path class="nz wv w2" d="M121 57q11 15 0 30"/><path class="nz wv w3" d="M130 50q16 22 0 44"/></svg></div>
-          <figcaption>A car horn, construction or a crying baby ruined your perfect take?</figcaption>
+          <figcaption>Eliminate noise.</figcaption>
         </figure>
         <figure class="pain">
           <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><circle class="ob" cx="100" cy="36" r="17"/><path class="ob" d="M56 112q0-38 44-38t44 38"/><path class="ob" d="M88 75l12 15 12-15"/><circle class="nz dash" cx="122" cy="94" r="7"/><path class="nz" d="M110 82l24 24"/><path class="nz wv" d="M150 26a10 10 0 1 1 13 9.5V40"/><circle class="nzf wv" cx="163" cy="47" r="2"/></svg></div>
-          <figcaption>Creating content without a neck mic?</figcaption>
+          <figcaption>No neck mic needed.</figcaption>
         </figure>
         <figure class="pain">
           <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><circle class="ob" cx="100" cy="30" r="15"/><path class="ob" d="M88 26h24M86 33h28M92 19h16"/><path class="ob" d="M93 45l4 57h6l4-57"/><path class="ob" d="M84 66h30a6 6 0 0 1 0 12H84M84 78h30a6 6 0 0 1 0 12H86a8 8 0 0 1-8-8V70a6 6 0 0 1 6-4z"/><path class="nz wv" d="M26 36l6-8 6 8 6-8 6 8"/><path class="nz wv w2" d="M20 64l6-8 6 8 6-8 6 8"/><path class="nz wv w3" d="M150 46l6-8 6 8 6-8 6 8"/><path class="nz wv" d="M146 76l6-8 6 8 6-8 6 8"/></svg></div>
-          <figcaption>Tired of holding one and still having to handle noise cleanups?</figcaption>
+          <figcaption>No&nbsp;</figcaption>
         </figure>
         <figure class="pain">
           <div class="pain-art"><svg viewBox="0 0 200 120" aria-hidden="true"><rect class="ob" x="26" y="62" width="120" height="44" rx="7"/><path class="ob" d="M46 72v26M66 72v26M86 72v26M106 72v26M126 72v26"/><path class="ob fd" d="M41 86h10M61 78h10M81 92h10M101 82h10M121 88h10"/><path class="ob" d="M146 24v20"/><path class="nz" d="M122 44h48l10 13-10 13h-48z"/><circle class="nz" cx="130" cy="57" r="3"/><text class="nzt wv" x="140" y="63">$$$</text></svg></div>
@@ -213,7 +247,7 @@
   <section id="djs" class="music" aria-labelledby="musicTitle">
     <div class="wrap">
       <div class="sec-head center"><p class="kicker" style="justify-content:center">For DJs, producers and remixers</p>
-        <h2 id="musicTitle" data-txt="audioctor.music.h2">Made for <em>musicians.</em></h2>
+        <h2 id="musicTitle" data-txt="audioctor.music.h2">The best stem splitter online<br>(<em>That works locally)</em></h2>
         <p data-txt="audioctor.card.djs.body">Your acapella in a minute. Drop a finished track: vocal, drums, bass, guitars and keys each get a fader. Solo, loop and EQ, then export every part as its own file.</p></div>
       <figure class="mac film" data-sound-at="5.2">
         <div class="bar"><i></i><i></i><i></i><b>Audioctor</b>
@@ -231,15 +265,15 @@
           <b data-at="33.6">Export every part</b>
         </figcaption>
       </figure>
-      <p class="fine" style="text-align:center">KAYMA – Bad Blood, the app's real output. The progress is sped up.</p>
+      <p class="fine" style="text-align:center"><br></p>
     </div>
   </section>
 
   <!-- ── pricing (2026-11-16): Free as a plan of its own, left of the year (Ori: "people don't know it's free"). ── -->
   <section id="pricing" aria-labelledby="pricingTitle">
     <div class="wrap">
-      <div class="sec-head center"><p class="kicker" style="justify-content:center">Pricing</p><h2 id="pricingTitle" data-txt="audioctor.pricing.h2">Start free. <em>Unlimited from <span data-usd="5" data-dp="0">$5</span> a month.</em></h2>
-        <p data-txt="audioctor.pricing.sub">Every tool on every plan. No watermark, ever.</p></div>
+      <div class="sec-head center"><p class="kicker" style="justify-content:center">Pricing</p><h2 id="pricingTitle" data-txt="audioctor.pricing.h2">3 tracks everyday -&nbsp;<span style="font-size: clamp(32px, 4.6vw, 58px); letter-spacing: -0.02em; text-wrap-mode: initial;">free</span><span style="font-size: clamp(32px, 4.6vw, 58px); letter-spacing: -0.02em; text-wrap-mode: initial;">.</span><br><em>Unlimited - lowest price online.</em></h2>
+        <p data-txt="audioctor.pricing.sub" hidden>Every tool on every plan. No watermark, ever.</p></div>
       <div class="plans">
         <div class="plan free">
           <span class="tag">Audioctor Free</span>
@@ -277,8 +311,8 @@
         </div>
       </div>
       <p class="planmsg" id="planMsg" role="status" hidden></p>
-      <p class="anchor">Adobe sells Podcast Premium inside Firefly Pro, at <b><span data-usd="19.99" data-dp="2">$19.99</span> a month</b>. Audioctor cleans the voice and splits the stems on your Mac, from a quarter of that.</p>
-      <p class="reqs">Needs a <b>Mac</b> with <b>macOS 14</b> or later: Apple silicon is fastest, and Intel Macs run it too, slower. Adobe's price as listed on adobe.com, 25 October 2026.</p>
+      <p class="anchor" hidden>Adobe sells Podcast Premium inside Firefly Pro, at <b><span data-usd="19.99" data-dp="2">$19.99</span> a month</b>. Audioctor cleans the voice and splits the stems on your Mac, from a quarter of that.</p>
+      <p class="reqs"><b>Mac</b>&nbsp;<b>macOS 14</b> or later.&nbsp;</p>
     </div>
   </section>
 

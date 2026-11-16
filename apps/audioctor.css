@@ -486,8 +486,6 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 
 /* ── 2026-11-17, fifth pass (Ori): the hero is a band of its own colour, so the creators' headline under it reads as the
    next section, not a rival; that headline sits above the phones again, centred; the phones spread out again. ── */
-.hero-duo{position:relative;padding-bottom:clamp(44px,5vw,64px);border-bottom:1px solid rgba(200,242,58,.22);
-  background:radial-gradient(70% 120% at 50% -10%,rgba(200,242,58,.20),rgba(200,242,58,0) 62%),linear-gradient(180deg,#1a2109 0%,#121608 100%)}
 .reels{padding-top:clamp(44px,5.4vw,72px)!important}
 .reels .wrap{max-width:var(--maxw)}
 .reels-wrap{grid-template-columns:1fr;gap:clamp(26px,3.4vw,40px)}
@@ -495,3 +493,62 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 .reels-copy .reels-body{max-width:640px;margin-left:auto;margin-right:auto}
 .reels-row{grid-template-columns:repeat(3,minmax(0,290px));gap:clamp(20px,3.4vw,44px);justify-content:center}
 @media (max-width:860px){.reels-row{justify-content:flex-start}}
+
+/* ── 2026-11-17, the hero, two options (Ori): the olive band is out. data-hero="lab": the app's own window under the
+   words, its liquids and meters moving (a film), the flask bubbling, its smoke rising out of the window. data-hero=
+   "potion": the band moves like the flask's liquid. ── */
+.hero-duo{position:relative;isolation:isolate;overflow:hidden;padding-bottom:clamp(40px,5vw,64px)}
+.hero-duo .wrap{position:relative;z-index:1}
+
+/* lab */
+.lab-shot{position:relative;max-width:900px;margin:clamp(30px,3.6vw,46px) auto 0;container-type:inline-size}
+.hero-duo[data-hero="potion"] .lab-shot{display:none}
+.lab-shot .mac video{aspect-ratio:1280/568}
+.brew{position:absolute;left:0;right:0;top:30px;bottom:0;pointer-events:none;overflow:visible}
+.bub{position:absolute;left:var(--x);top:44.5%;width:calc(var(--s) * .1cqw);height:calc(var(--s) * .1cqw);border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.95),rgba(255,255,255,.25) 60%,rgba(255,255,255,0) 70%);box-shadow:0 0 0 1px rgba(255,255,255,.35) inset;
+  animation:bub var(--d) ease-in infinite;opacity:0}
+@keyframes bub{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:.95}70%{transform:translate(var(--w),-6.6cqw) scale(1);opacity:.9}
+  85%{transform:translate(calc(var(--w) * -1),-7.4cqw) scale(1.25);opacity:.5}100%{transform:translate(0,-7.6cqw) scale(1.6);opacity:0}}
+.puff{position:absolute;left:28.9%;top:15.5%;width:7cqw;height:7cqw;margin:-3.5cqw 0 0 -3.5cqw;border-radius:50%;filter:blur(1.1cqw);opacity:0;
+  animation:puff var(--d) ease-out infinite}
+.puff.p0{background:radial-gradient(circle,rgba(255,92,138,.55),rgba(255,92,138,0) 68%)}
+.puff.p1{background:radial-gradient(circle,rgba(255,211,138,.5),rgba(255,211,138,0) 68%)}
+.puff.p2{background:radial-gradient(circle,rgba(155,123,255,.55),rgba(155,123,255,0) 68%)}
+.puff.p3{background:radial-gradient(circle,rgba(243,237,220,.45),rgba(243,237,220,0) 68%)}
+@keyframes puff{0%{transform:translate(0,1cqw) scale(.25) rotate(0);opacity:0}12%{opacity:.9}
+  55%{opacity:.55}100%{transform:translate(var(--dx),-34cqw) scale(3.4) rotate(var(--r));opacity:0}}
+
+/* potion */
+.potion{position:absolute;inset:0;z-index:0;display:none;overflow:hidden;pointer-events:none}
+.hero-duo[data-hero="potion"] .potion{display:block}
+.hero-duo[data-hero="potion"]{padding-bottom:clamp(110px,12vw,170px)}
+.pb{position:absolute;width:62vw;height:62vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(70px);opacity:.55;mix-blend-mode:screen}
+.pb1{left:-14%;bottom:-62%;background:radial-gradient(circle,#ff5c8a,rgba(255,92,138,0) 66%);animation:pbA 16s ease-in-out infinite alternate}
+.pb2{left:22%;bottom:-70%;background:radial-gradient(circle,#ffd38a,rgba(255,211,138,0) 66%);animation:pbB 19s ease-in-out infinite alternate}
+.pb3{right:-16%;bottom:-60%;background:radial-gradient(circle,#9b7bff,rgba(155,123,255,0) 66%);animation:pbA 22s ease-in-out infinite alternate-reverse}
+.pb4{left:40%;bottom:-48%;width:40vw;height:40vw;background:radial-gradient(circle,#c8f23a,rgba(200,242,58,0) 66%);opacity:.32;animation:pbB 13s ease-in-out infinite alternate-reverse}
+@keyframes pbA{0%{transform:translate(0,0) scale(1)}50%{transform:translate(8vw,-6%) scale(1.12)}100%{transform:translate(-4vw,4%) scale(.95)}}
+@keyframes pbB{0%{transform:translate(0,0) scale(1.05)}50%{transform:translate(-9vw,-8%) scale(.92)}100%{transform:translate(5vw,2%) scale(1.1)}}
+.pw{position:absolute;left:0;bottom:0;width:200%;height:clamp(90px,11vw,150px);opacity:.9}
+.pw path{mix-blend-mode:soft-light}
+.pw .w1{fill:rgba(243,237,220,.16);animation:pwave 14s linear infinite}
+.pw .w2{fill:rgba(255,92,138,.22);animation:pwave 10s linear infinite reverse}
+.pw .w3{fill:rgba(155,123,255,.26);animation:pwave 18s linear infinite}
+@keyframes pwave{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hero-duo[data-hero="potion"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;z-index:0;background:linear-gradient(180deg,rgba(11,10,8,0),var(--bg))}
+
+@media (prefers-reduced-motion:reduce){.bub,.puff,.pb,.pw path{animation:none!important}.bub,.puff{display:none}}
+.hero-duo .duo-copy{position:relative;z-index:2}
+.lab-shot{z-index:1}
+.puff.p0{background:radial-gradient(circle,rgba(255,92,138,.75),rgba(255,92,138,0) 68%)}
+.puff.p1{background:radial-gradient(circle,rgba(255,211,138,.7),rgba(255,211,138,0) 68%)}
+.puff.p2{background:radial-gradient(circle,rgba(155,123,255,.75),rgba(155,123,255,0) 68%)}
+.puff.p3{background:radial-gradient(circle,rgba(243,237,220,.6),rgba(243,237,220,0) 68%)}
+
+/* the blend (Ori, 2026-11-17): the potion moving behind the app's window */
+.hero-duo[data-hero="blend"] .potion{display:block}
+.hero-duo[data-hero="blend"] .pb{opacity:.66}
+.hero-duo[data-hero="blend"] .pb1{bottom:-46%}.hero-duo[data-hero="blend"] .pb2{bottom:-54%}.hero-duo[data-hero="blend"] .pb3{bottom:-44%}.hero-duo[data-hero="blend"] .pb4{bottom:-30%}
+.hero-duo[data-hero="blend"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:120px;z-index:0;background:linear-gradient(180deg,rgba(11,10,8,0),var(--bg) 80%)}
+.hero-duo[data-hero="blend"] .lab-shot .mac{box-shadow:0 0 0 1px rgba(255,255,255,.1),0 50px 100px -30px rgba(0,0,0,.95),0 0 140px -30px rgba(255,92,138,.35)}
