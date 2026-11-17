@@ -103,7 +103,7 @@
   </section>
 
   <!-- ── creators: three reels on three phones, each its own Before / After (js/audioctor-ab.js); one plays at a time.
-       Left to right (2026-11-16/17, Ori): Shahak, Dalit, KAYMA – ONSITELOVER, Matan Hakimi, KAYMA on i24, Roy Rieck (both approved, 2026-11-17).
+       Left to right (2026-11-16/17, Ori): Shahak, Dalit, KAYMA – ONSITELOVER, Matan Hakimi, KAYMA on i24, Roy Rieck (both approved, 2026-11-17), Justin Brown of Primal Video (approved, 2026-11-17).
        On a phone they swipe, Dalit first, and the words come after them, so the opening keeps one headline. Under them
        the four situations, drawn (amber is the noise, as Before is). ── -->
   <section id="video" class="reels" aria-labelledby="videoTitle">
@@ -281,6 +281,35 @@
             </div>
           </div>
           <div class="abp-switch" role="group" aria-label="Roy Rieck: hear it before or after">
+            <button type="button" data-side="before" aria-pressed="false">Before</button>
+            <button type="button" data-side="after" aria-pressed="true">After</button>
+          </div>
+        </figure>
+        <figure class="abp" data-ex="primal" aria-label="Justin Brown, Primal Video">
+          <div class="phone">
+            <div class="phone-screen abp-stage">
+              <video muted playsinline loop preload="none" aria-label="Justin Brown, Primal Video: the video; its sound plays Before or After"></video>
+              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <span class="abp-tag" id="abTag-primal">After · Audioctor</span>
+              <button type="button" class="abp-play" aria-label="Play Justin Brown, Primal Video with sound">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+              </button>
+              <div class="reel-rail" aria-hidden="true">
+                <span><svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"/></svg><b id="rLikes-primal"></b></span>
+                <span><svg viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 1 1-3.6-6.9 8.5 8.5 0 0 1 3.6 6.9zM20.5 20.5l-2.4-3.2"/></svg><b id="rComments-primal"></b></span>
+                <span><svg viewBox="0 0 24 24"><path d="M5 9.5V8a2 2 0 0 1 2-2h11m-3-3 3 3-3 3M19 14.5V16a2 2 0 0 1-2 2H6m3 3-3-3 3-3"/></svg><b id="rReposts-primal"></b></span>
+                <span><svg viewBox="0 0 24 24"><path d="M21 3 10.2 13.8M21 3l-6.8 18-4-7.2L3 9.8z"/></svg><b id="rShares-primal"></b></span>
+              </div>
+              <div class="reel-meta" aria-hidden="true">
+                <p class="reel-who"><i class="reel-av" id="rAv-primal"></i><b id="rName-primal"></b><span class="reel-follow">Follow</span></p>
+                <p class="reel-cap" id="rCap-primal"></p>
+                <p class="reel-audio"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 17.5V6l11-2.5v11.2a2.8 2.8 0 1 1-2-2.7V7.4l-7 1.6v8.5a2.8 2.8 0 1 1-2-2.7z"/></svg><span id="rAudio-primal">Original audio</span></p>
+              </div>
+              <canvas class="abp-wave" width="560" height="56" aria-label="Justin Brown, Primal Video: the sound's waveform; click to move through it"></canvas>
+              <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
+            </div>
+          </div>
+          <div class="abp-switch" role="group" aria-label="Justin Brown, Primal Video: hear it before or after">
             <button type="button" data-side="before" aria-pressed="false">Before</button>
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
@@ -580,7 +609,7 @@
 <script src="../js/site-edit.js?v=27"></script>
 <script src="../js/audioctor-plans.js?v=3"></script>
 <script src="../js/audioctor-free.js?v=1"></script>
-<script src="../js/audioctor-ab.js?v=8"></script>
+<script src="../js/audioctor-ab.js?v=9"></script>
 <script src="../js/consent.js?v=1"></script>
 <!-- visit tracking, after consent.js so snowConsent exists when it reads it -->
 <script src="../js/mutra-track.js?v=5"></script>
