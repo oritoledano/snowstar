@@ -11,7 +11,7 @@
   const figs = [...document.querySelectorAll('.abp[data-ex]')];
   if (!figs.length) return;
   const M = '../media/audioctor/ab/';
-  const V = '?v=3';                                   // media version: a new reel's URL is never one the CDN already holds as a miss
+  const V = '?v=4';                                   // media version: a new reel's URL is never one the CDN already holds as a miss
   /* Each reel: its name and its caption. The rail shows the icons without counts (2026-11-16, Ori: no numbers); a
      reel's counts [likes, comments, reposts, shares] would go in `counts`. KAYMA – ONSITELOVER live at Jaffa Port is
      Ori's own: Before is the original from 19.681 s, After the app's export of the same 10.6 s, sample-aligned. */
