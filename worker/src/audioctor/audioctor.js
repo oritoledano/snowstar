@@ -773,7 +773,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
 
   // Signed here, now, with the Worker's pair: the key is in this answer and in the buyer's email.
   const row = await env.DB.prepare('SELECT * FROM audioctor_activations WHERE entitlement_id = ? AND machine_id = ?').bind(entId, machine).first();
-  const signed = row ? await autoIssue(env, row) : { error: 'the request was not filed' };
+  const signed = row ? await autoIssue(env, row, false, via) : { error: 'the request was not filed' };
   if (signed.ok) {
     const done = await env.DB.prepare('SELECT * FROM audioctor_activations WHERE id = ?').bind(row.id).first();
     return { status: 'issued', key: withRenewal(keyLines(done.key_text), done.renew_code) };
@@ -912,7 +912,7 @@ export async function audioctorActivationIssue(req, env, user) {
 /* Store a minted key and email it to the buyer — from the dashboard (the owner pasting) or
    from the Worker's own signing. `onlyPending`: signing by itself never overwrites a key the
    owner already sent by hand. */
-async function issueKey(env, row, key, onlyPending) {
+async function issueKey(env, row, key, onlyPending, via = '') {
   // Keep only the signed hex (keygen's whole printout may be pasted), and check it is a whole
   // format-2 key for this request's Mac with a good signature: storing anything else would tell
   // the buyer their licence is ready when it is not. The serial is read from the signed payload.
@@ -945,6 +945,8 @@ async function issueKey(env, row, key, onlyPending) {
   const minApp = MIN_APP;
   const copy = monthly ? `Copy everything in the box below (all ${n} lines: the key and its Renewal line) and paste it into the box.`
                        : `Copy the key below (all ${n} lines) and paste it into the box.`;
+  // Signed in from the app (audioctor-connect.js, 2026-11-17): the app has its key already; this email is the record
+  const signedIn = via === 'connect';
   const renewText = monthly ? `${planName}: this key runs to ${until}, 3 days past the ${each} you paid for. Audioctor ${subs.RENEW_APP} or newer fetches the next one by itself every ${each} while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
     : '';
   const renewHtml = monthly ? `This key runs to ${until}, 3 days past the ${each} you paid for. Audioctor ${subs.RENEW_APP} or newer fetches the next one by itself every ${each} while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
@@ -952,11 +954,14 @@ async function issueKey(env, row, key, onlyPending) {
   try {
     await sendMail(env, {
       to: row.email,
-      subject: monthly ? `Your ${planName} key` : 'Your Audioctor key',
-      text: `${hi ? `Hi ${hi}, your` : 'Your'} ${what} is ready.\n\n`
+      subject: signedIn ? 'Audioctor is unlocked on your Mac' : monthly ? `Your ${planName} key` : 'Your Audioctor key',
+      text: (signedIn
+            ? `${hi ? `Hi ${hi}, Audioctor` : 'Audioctor'} is unlocked on your Mac: you signed in from the app, and it took its key by itself. Nothing to do.\n\n`
+              + `Keep this email as your record. The key below is a spare: should you ever need it, paste it in the licence panel (Have a key from an email? Paste it).\n\n`
+            : `${hi ? `Hi ${hi}, your` : 'Your'} ${what} is ready.\n\n`
           + `1. Open Audioctor and click the licence line at the bottom left of its window.\n`
           + `2. ${copy}\n`
-          + `3. Press Unlock.\n\n`
+          + `3. Press Unlock.\n\n`)
           + `${box}\n\n`
           + `Registered to: ${row.owner_name || row.email} · ${row.email}\n`
           + (serial ? `Serial: ${serial}\n` : '')
@@ -966,9 +971,11 @@ async function issueKey(env, row, key, onlyPending) {
           + `Another Mac? Get a key for it here: ${UNLOCK_URL}\n`
           + `Keep this email: it is your licence. Lost it? The same page shows your keys when you sign in.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
       html: licenceMail({
-        title: monthly ? `Your ${planName} key` : 'Your Audioctor key',
-        intro: `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready${until ? `: Audioctor until <b>${until}</b>, renewed each ${each}` : ''}.`,
-        steps: [
+        title: signedIn ? 'Audioctor is unlocked' : monthly ? `Your ${planName} key` : 'Your Audioctor key',
+        intro: signedIn
+          ? `${hi ? `Hi ${escHtml(hi)}, Audioctor` : 'Audioctor'} is unlocked on your Mac: you signed in from the app, and it took its key by itself${until ? `. Your plan runs to <b>${until}</b>, renewed each ${each}` : ''}. Nothing to do.`
+          : `${hi ? `Hi ${escHtml(hi)}, your` : 'Your'} key is ready${until ? `: Audioctor until <b>${until}</b>, renewed each ${each}` : ''}.`,
+        steps: signedIn ? ['Keep this email as your record. The key below is a spare: should you ever need it, paste it in the licence panel (<b>Have a key from an email? Paste it</b>).'] : [
           'Open Audioctor and click <b>the licence line</b> at the bottom left of its window.',
           monthly ? `Copy everything in the box below (all ${n} lines: the key <b>and its Renewal line</b>) and paste it into the box.`
                   : `Copy the key below (all ${n} lines) and paste it into the box.`,
@@ -997,12 +1004,12 @@ const withRenewal = (lines, code) => (code ? `${lines}\n\nRenewal: ${code}` : li
    (checked again there like every key). `override`: the owner letting a request through by hand
    (a Mac over the limit), which may also replace a key already sent. No secret: nothing happens,
    the request waits for the owner. */
-async function autoIssue(env, row, override = false) {
+async function autoIssue(env, row, override = false, via = '') {
   if (!env.AUDIOCTOR_SIGNING_KEY) return { error: 'no AUDIOCTOR_SIGNING_KEY in this Worker' };
   const name = row.owner_name || String(row.email || '').split('@')[0] || 'Audioctor user';
   const minted = await mintKey(env.AUDIOCTOR_SIGNING_KEY, { name, email: row.email, machine: row.machine_id, expiresAt: row.expires_at });
   if (minted.error) return minted;
-  return issueKey(env, row, minted.hex, !override);
+  return issueKey(env, row, minted.hex, !override, via);
 }
 
 /** Everything that may go out by itself and still waits — a Mac within MAX_MACS, a Monthly key
@@ -1234,5 +1241,5 @@ export async function audioctorAdmin(env, user) {
 
 export { findCoupon, burnCoupon, newRef, grantFree, fulfilPaid, emailReceipt };
 export { licenceMail, mailLinksText, escHtml, firstName, grantEntitlement, mintDownloadLink, requestKey, insertOrder,
-         keyHex, keyLines, normMachine, hypConfigured, payPageParams, throttle,
+         keyHex, keyLines, normMachine, hypConfigured, payPageParams, throttle, activeEntitlement,
          SITE, ACCOUNT_URL, UNLOCK_URL, TERMS_URL, HELP_MAIL, BASE as HYP_PAGE, MIN_APP };

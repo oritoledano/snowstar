@@ -155,7 +155,9 @@ export async function checkout(env, user, body) {
     const discount = c ? await C.discountCode(env, `discount:${APP}:${twin}`, { code: twin, name: `Audioctor code ${c.code}`,
       percent: c.kind === 'percent' ? c.value : null, cents: off, expiresAt: c.expires_at || null, products: [cf[productKey('year')]] }) : null;
     ch = await C.api(env, 'POST', '/v1/checkouts', {
-      product_id: cf[productKey(plan)], request_id: ref, units: 1, success_url: SUCCESS_URL,
+      // bought on the app's sign-in page (audioctor-connect.js): back there, where the app is waiting for its key
+      product_id: cf[productKey(plan)], request_id: ref, units: 1,
+      success_url: /^[A-Za-z0-9_-]{16,64}$/.test(String(body.connect || '')) ? `${SD.SITE}/apps/audioctor-connect.html?c=${body.connect}&paid=1` : SUCCESS_URL,
       customer: { email }, ...(discount ? { discount_code: discount } : {}),
       metadata: { app: APP, ref, plan, user_id: user.id || '', machine: machine || '' },
     });

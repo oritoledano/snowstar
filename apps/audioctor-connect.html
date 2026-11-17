@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-product="audioctor">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in to Audioctor | Snowstar</title>
+<meta name="description" content="Connect Audioctor on your Mac to your Snowstar account. Your plan unlocks it by itself.">
+<!-- Opened by the app's Sign in (worker/src/audioctor/audioctor-connect.js), never from search. -->
+<meta name="robots" content="noindex">
+<link rel="icon" href="/apps/audioctor-favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/apps/audioctor-icon-32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/apps/audioctor-icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apps/audioctor-apple-touch-icon.png">
+<meta name="theme-color" content="#efe9da">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/account.css?v=19">
+<link rel="stylesheet" href="../css/streamdaw.css?v=12">
+<style>
+  .cn-code { display: inline-block; font: 600 26px/1 ui-monospace, Menlo, monospace; letter-spacing: .12em; padding: 10px 16px; border-radius: 10px;
+    background: #14130f; color: #efe9da; margin: 6px 0 4px; }
+  .cn-mac { color: #5d584c; font-size: 14px; }
+  .cn-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0 6px; }
+  .cn-plan { border: 1px solid rgba(20,19,15,.15); border-radius: 12px; padding: 16px; background: #fffaf0; }
+  .cn-plan h3 { margin: 0 0 4px; font-size: 18px; }
+  .cn-plan .price { font: 600 24px/1.2 Fraunces, serif; margin: 2px 0 10px; }
+  .cn-plan .price small { font: 500 13px Inter, sans-serif; color: #5d584c; }
+  .cn-done { font-size: 18px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a href="audioctor.html" aria-label="Audioctor"><img class="wordmark" src="audioctor-logo.png" alt="Audioctor" height="24" style="filter:brightness(0)"></a>
+    <div class="nav-tools solo">
+      <a class="back" href="audioctor.html">About Audioctor</a>
+      <span class="nav-acct" data-account-mount></span>
+    </div>
+  </div>
+</header>
+
+<main data-autotxt>
+<section class="ul-main" id="connect">
+  <div class="wrap">
+    <p class="kicker">Audioctor on your Mac</p>
+    <h1 id="cnTitle">Sign in to Audioctor.</h1>
+
+    <!-- One panel at a time (js/audioctor-connect.js) -->
+    <div class="panel" id="cnWait"><p>One moment…</p></div>
+
+    <div class="panel" id="cnBad" hidden>
+      <h2>This sign-in has ended.</h2>
+      <p id="cnBadText">It timed out, or it was opened from somewhere else. In Audioctor, press <b>Sign in</b> again: it opens a fresh page.</p>
+    </div>
+
+    <div class="panel" id="cnAnon" hidden>
+      <p>Audioctor on <b class="cnMacName">your Mac</b> asked to sign in. Use your Snowstar account: the one you got Audioctor with, or a new one.</p>
+      <div class="cta">
+        <button class="btn ink" type="button" id="cnSignin">Sign in</button>
+        <button class="btn ghost" type="button" id="cnSignup">Create an account</button>
+      </div>
+    </div>
+
+    <div class="panel" id="cnAsk" hidden>
+      <p>Connect <b class="cnMacName">this Mac</b> to <b class="cnEmail"></b>?</p>
+      <p class="cn-mac">Check that Audioctor shows the same code:</p>
+      <div class="cn-code" id="cnShort">···-···</div>
+      <p class="cn-mac">Only if you pressed <b>Sign in</b> in Audioctor yourself, just now.</p>
+      <div class="cta">
+        <button class="btn ink" type="button" id="cnGo">Connect</button>
+        <button class="btn ghost" type="button" id="cnOther">Use another account</button>
+      </div>
+      <p class="lmsg" id="cnMsg" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="panel" id="cnPlans" hidden>
+      <h2>Connected. Now pick a plan.</h2>
+      <p><b class="cnEmail"></b> has no Audioctor plan yet. Free keeps working as it is. A plan exports any length, with no daily limit, and unlocks this Mac the moment it is paid: Audioctor is waiting.</p>
+      <div class="cn-plans">
+        <div class="cn-plan"><h3>Yearly</h3><p class="price">$60 <small>a year, about $5 a month</small></p>
+          <button class="btn ink" type="button" data-plan="year">Get Yearly</button></div>
+        <div class="cn-plan"><h3>Monthly</h3><p class="price">$7 <small>a month</small></p>
+          <button class="btn ghost" type="button" data-plan="monthly">Get Monthly</button></div>
+      </div>
+      <p class="lmsg" id="cnBuyMsg" role="status" aria-live="polite"></p>
+      <p class="ul-fine">Cancel any time from your account. Prices include tax. <a href="audioctor-terms.html">Licence terms</a>.</p>
+    </div>
+
+    <div class="panel" id="cnDone" hidden>
+      <h2>Audioctor is unlocked.</h2>
+      <p class="cn-done">Go back to Audioctor: it has your plan now. You can close this tab.</p>
+      <p class="ul-fine">Your Macs and your plan are in <a href="../account.html#apps">your account</a>.</p>
+    </div>
+
+    <div class="panel" id="cnPaying" hidden>
+      <h2>Payment received.</h2>
+      <p>Audioctor unlocks by itself in a moment. Keep it open.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="yr">2026</span> Snowstar · Tel Aviv</span>
+    <nav aria-label="Audioctor">
+      <a href="audioctor.html">Audioctor</a>
+      <a href="audioctor-terms.html">Licence terms</a>
+      <a href="mailto:hello@snowstar.company">hello@snowstar.company</a>
+    </nav>
+    <a href="../index.html">powered by <b>snowstar.company</b></a>
+  </div>
+</footer>
+
+<script src="../js/account.js?v=3"></script>
+<script src="../js/account-ui.js?v=32"></script>
+<script src="../js/site-edit.js?v=29"></script>
+<script src="../js/audioctor-connect.js?v=1"></script>
+<script src="../js/consent.js?v=1"></script>
+</body>
+</html>
