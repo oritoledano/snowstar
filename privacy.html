@@ -309,6 +309,12 @@
     <li><b>Renewals.</b> With a paid plan, once a day while your Mac is online, Audioctor asks snowstar.company for the next
     key. It sends the machine ID, the renewal code from your key email, the end date of the key it already has, and the
     app's version. That is how a renewal, a cancellation or a refund reaches the app.</li>
+    <li><b>The update check.</b> Once a day while your Mac is online, Audioctor asks snowstar.company whether a newer
+    version is out. With the question it sends its version, the Mac's chip and macOS version, its plan (Free or paid), and
+    a number made from the machine ID by a one-way function (it cannot be turned back into the ID). That lets us count how
+    many Macs run Audioctor; Cloudflare tells us the country, not the address.</li>
+    <li><b>Signing in from the app.</b> When you press Sign in, Audioctor sends its machine ID and your Mac's name, and the
+    page you open shows the same short code; once you connect, that Mac is linked to your account.</li>
   </ul>
 
   <h3>What stays on your Mac</h3>

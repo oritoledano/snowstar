@@ -4379,6 +4379,56 @@
   const spanDays = (n) => (n >= 365 ? `${Math.floor(n / 365)}y ${Math.floor((n % 365) / 30)}m`
     : n >= 30 ? `${Math.floor(n / 30)}m ${n % 30}d` : `${n}d`);
 
+  /* The App Store (2026-11-17, Ori: an iPhone purchase through Apple was nowhere here). Apple's server notifications
+     (worker audioctor-appstore.js): one row per subscription, Production apart from Sandbox (TestFlight and Xcode
+     purchases cost nothing and are kept out of the figures, as Creem's tests are). Apple gives no name or email. */
+  function appStorePanel(a) {
+    if (!a) return '';
+    const plan = (p) => /year/.test(p || '') ? 'Yearly' : /month/.test(p || '') ? 'Monthly' : esc(p || '');
+    const price = (s) => s.price != null ? `${(s.price / 1000).toFixed(2)} ${esc(s.currency || '')}` : '';
+    const rows = (list) => table(list, [
+      { label: 'Plan', get: (s) => `<b>${plan(s.product_id)}</b>` },
+      { label: 'Status', get: (s) => `<span class="pill${s.status === 'active' ? ' good' : ''}">${esc(s.status || '')}${s.auto_renew === 0 ? ' · renewal off' : ''}</span>` },
+      { label: 'Country', get: (s) => esc(s.storefront || '') },
+      { label: 'Price', num: true, get: price },
+      { label: 'Since', get: (s) => when(s.first_purchase) },
+      { label: 'Paid to', get: (s) => when(s.expires_date) },
+      { label: 'Last word', get: (s) => esc([s.last_type, s.last_subtype].filter(Boolean).join(' · ').toLowerCase()) },
+    ]);
+    const live = (a.subs || []).filter((s) => s.environment === 'Production'), sand = (a.subs || []).filter((s) => s.environment !== 'Production');
+    return `<div class="db-panel" style="margin-top:14px"><h2>App Store <span class="pill">iPhone · Mac App Store</span></h2>
+      <div class="db-cards"><div class="db-card"><b class="grad-text">${(a.live || {}).active || 0}</b><span>Paying through Apple</span></div>
+        <div class="db-card"><b class="grad-text">${(a.live || {}).total || 0}</b><span>Ever subscribed (Apple)</span></div>
+        <div class="db-card"><b class="grad-text">${a.sandbox || 0}</b><span>Sandbox / TestFlight</span></div></div>
+      ${live.length ? rows(live) : `<p class="db-empty">No App Store subscription yet${a.lastEvent ? '' : ' (and no word from Apple: is the notification URL set in App Store Connect?)'}.</p>`}
+      ${sand.length ? `<h3 style="margin:16px 0 6px">Sandbox <span class="pill">${sand.length}</span></h3>${rows(sand)}` : ''}</div>`;
+  }
+
+  /* Every Mac that runs Audioctor (0.1.13+, its daily update check: a one-way hash of the machine, never the ID). A Mac
+     is "known" when it has a key or signed in from the app; the rest came from a download, or from an installer passed
+     on by hand: more Macs than downloads is how the second shows. */
+  function installsPanel(list, downloaders) {
+    const week = Date.now() / 1000 - 7 * 86400;
+    const known = list.filter((r) => r.account).length;
+    return `<div class="db-panel" style="margin-top:14px"><h2>Macs running Audioctor <span class="pill">0.1.13 and later</span></h2>
+      <div class="db-cards"><div class="db-card"><b class="grad-text">${list.length}</b><span>Macs</span></div>
+        <div class="db-card"><b class="grad-text">${list.filter((r) => r.first_seen > week).length}</b><span>New this week</span></div>
+        <div class="db-card"><b class="grad-text">${list.filter((r) => r.last_seen > week).length}</b><span>Used this week</span></div>
+        <div class="db-card"><b class="grad-text">${known}</b><span>Known to an account</span></div></div>
+      <p class="db-empty" style="padding-top:0">${downloaders} downloads by signed-in people. Macs well past that mean an installer was passed on.</p>
+      ${list.length ? table(list, [
+        { label: 'Mac', get: (r) => `<code>${esc(r.machine_hash.slice(0, 8))}</code>` },
+        { label: 'Account', get: (r) => r.account ? esc(r.account.name || r.account.email) : '<span class="pill">not signed in</span>' },
+        { label: 'Version', get: (r) => esc(r.app_version || '') },
+        { label: 'Plan', get: (r) => esc(r.plan || '') },
+        { label: 'Chip', get: (r) => r.arch === 'arm64' ? 'Apple' : r.arch === 'x86_64' ? 'Intel' : '' },
+        { label: 'macOS', get: (r) => esc(r.os || '') },
+        { label: 'Country', get: (r) => esc(r.country || '') },
+        { label: 'First seen', get: (r) => when(r.first_seen, { time: true }) },
+        { label: 'Last seen', get: (r) => when(r.last_seen) },
+      ]) : '<p class="db-empty">None yet: the first count comes from 0.1.13.</p>'}</div>`;
+  }
+
   async function paintAudioctor(tab) {
     const d = await get('/audioctor/admin');
     const c = d.creem || { subs: [], live: {}, test: {} };
@@ -4413,6 +4463,7 @@
         <div class="db-panel" style="margin-top:14px"><h2>Real customers <span class="pill">Creem live</span></h2>
           ${liveSubs.length ? subsTable(liveSubs)
             : '<p class="db-empty">Nobody is on a live subscription yet.</p>'}</div>
+        ${appStorePanel(d.appstore)}
         <div class="db-panel" style="margin-top:14px"><h2>Tests <span class="pill">${testSubs.length}</span></h2>
           <p class="db-empty" style="padding-top:0">Creem test mode, and the rows from the store being tried out
             before it opened. Kept apart from
@@ -4427,6 +4478,7 @@
           <div class="db-card"><b class="grad-text">${st.downloads || 0}</b><span>Paid downloads</span></div>
           <div class="db-card"><b class="grad-text">${st.freeDownloads14d || 0}</b><span>Free downloads, 14d</span></div>
         </div>
+        ${installsPanel(d.installs || [], (d.onTrial || []).length)}
         <div class="db-panel" style="margin-top:14px"><h2>Who took the free app</h2>
           ${table(d.onTrial || [], [
             { label: 'Who', get: (r) => esc(r.name || r.email || 'not signed in') },

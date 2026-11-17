@@ -92,6 +92,8 @@ import { audioctorReport, audioctorReports } from './audioctor/audioctor-reports
 // "Sign in" from inside Audioctor: the device sign-in that hands the app its key (audioctor-connect.js)
 import { connectStart as audioctorConnectStart, connectInfo as audioctorConnectInfo, connectApprove as audioctorConnectApprove,
          connectPoll as audioctorConnectPoll } from './audioctor/audioctor-connect.js';
+// Apple's server notifications for Audioctor's App Store subscriptions (iPhone and Mac App Store; audioctor-appstore.js)
+import { appstoreNotification } from './audioctor/audioctor-appstore.js';
 import { listTrash, emptyTrash, restoreFromTrash } from './mutra/trash.js';
 import { reassignOwner, getOwner } from './mutra/ownership.js';
 import { listProfiles, saveProfile, uploadArtistPhoto, setManager, deleteProfile, approveClaim,
@@ -234,7 +236,7 @@ async function handle(req, env, ctx) {
   // Mac's own bearer secret and only ever moves that Mac's link (streamdaw.js).
   // /streamdaw/turn: the same relays, the same bearer secret; it only hands that Mac TURN credentials.
   // /streamdaw/macs/status: the same relays; it answers only whether that machine ID is connected to an account.
-  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/audioctor/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/creem/webhook', '/n/u', '/audioctor/connect/start', '/audioctor/connect/poll']);
+  const CSRF_EXEMPT = new Set(['/streamdaw/presence-token', '/streamdaw/report', '/audioctor/report', '/streamdaw/telemetry', '/streamdaw/usage', '/streamdaw/live/register', '/streamdaw/turn', '/streamdaw/macs/status', '/creem/webhook', '/n/u', '/audioctor/connect/start', '/audioctor/connect/poll', '/appstore/notifications']);
   if (method !== 'GET' && !CSRF_EXEMPT.has(path) && !originOk(req))
     return json({ error: 'bad_origin' }, 403);
 
@@ -568,6 +570,7 @@ async function handle(req, env, ctx) {
   if (path === '/audioctor/connect/info' && method === 'POST') return audioctorConnectInfo(req, env);
   if (path === '/audioctor/connect/approve' && method === 'POST') return audioctorConnectApprove(req, env);
   if (path === '/audioctor/connect/poll' && method === 'POST') return audioctorConnectPoll(req, env);
+  if (path === '/appstore/notifications' && method === 'POST') return appstoreNotification(req, env);
   if (path === '/audioctor/report' && (method === 'POST' || method === 'OPTIONS')) return audioctorReport(req, env);
   if (path === '/audioctor/reports') return audioctorReports(req, env, await currentUser(req, env));
   if (path === '/audioctor/admin' && method === 'GET') return audioctorAdmin(env, await currentUser(req, env));

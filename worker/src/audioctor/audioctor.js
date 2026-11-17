@@ -541,9 +541,45 @@ export async function audioctorLatest(req, env) {
   if (!rel || !rel.version) return json({ error: 'no_release' }, 404);
   // The app's Update button opens what is new since the version it runs, with the download on top (2026-11-13, Ori:
   // "an update has to say what is new"). The page is made from the app's CHANGELOG.md (app/changelog-site.mjs).
-  const app = new URL(req.url).searchParams.get('app') || '';
+  const sp = new URL(req.url).searchParams;
+  const app = sp.get('app') || '';
   const from = /^\d+\.\d+\.\d+$/.test(app) ? `?from=${app}` : '';
+  await countInstall(env, req, sp, app).catch(() => {});
   return json({ version: rel.version, url: `${SITE}/apps/audioctor-changes.html${from}` }, 200, { 'cache-control': 'public, max-age=600' });
+}
+
+/* Every Mac that runs Audioctor (2026-11-17, Ori: "the dashboard has to show everyone who has the app, nobody I do not
+   know of"). The site's installer needs an account, but an installer can be passed on by hand; the app (0.1.13+) says
+   once a day, with its update check, which Mac it is: a one-way hash of its machine ID (the first 16 hex of SHA-256),
+   never the ID, never a name. One row per Mac: first and last seen, version, chip, macOS, plan, country. The admin page
+   joins a hash to an account where the Mac has a key (audioctor_activations) or signed in (audioctor_connect).
+   schema-audioctor-installs.sql */
+async function countInstall(env, req, sp, app) {
+  const m = String(sp.get('m') || '').toLowerCase();
+  if (!/^[0-9a-f]{16}$/.test(m)) return;
+  const pick = (k, re) => { const v = String(sp.get(k) || ''); return re.test(v) ? v : null; };
+  const t = now();
+  await env.DB.prepare(
+    `INSERT INTO audioctor_installs (machine_hash, first_seen, last_seen, app_version, arch, os, plan, country, checks)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+     ON CONFLICT (machine_hash) DO UPDATE SET last_seen = excluded.last_seen, app_version = excluded.app_version,
+       arch = COALESCE(excluded.arch, audioctor_installs.arch), os = COALESCE(excluded.os, audioctor_installs.os),
+       plan = excluded.plan, country = COALESCE(excluded.country, audioctor_installs.country), checks = audioctor_installs.checks + 1`
+  ).bind(m, t, t, /^\d+\.\d+\.\d+$/.test(app) ? app : null, pick('arch', /^(arm64|x86_64)$/), pick('os', /^\d{1,2}(\.\d{1,2}){0,2}$/),
+         pick('plan', /^(free|year|monthly|pro)$/), (req.cf && /^[A-Z]{2}$/.test(String(req.cf.country || ''))) ? req.cf.country : null).run();
+}
+
+/** The Macs, newest first, each with the account it is known by (a key, or a sign-in from the app), for the admin page. */
+async function installsFor(env) {
+  const rows = ((await env.DB.prepare('SELECT * FROM audioctor_installs ORDER BY first_seen DESC LIMIT 500').all().catch(() => ({ results: [] }))).results) || [];
+  if (!rows.length) return [];
+  const hash = async (id) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(id))))]
+    .map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+  const known = new Map();
+  const acts = ((await env.DB.prepare('SELECT machine_id, email, owner_name FROM audioctor_activations').all().catch(() => ({ results: [] }))).results) || [];
+  const cons = ((await env.DB.prepare('SELECT machine_id, email FROM audioctor_connect WHERE user_id IS NOT NULL').all().catch(() => ({ results: [] }))).results) || [];
+  for (const r of [...cons, ...acts]) known.set(await hash(r.machine_id), { email: r.email, name: r.owner_name || null });
+  return rows.map((r) => ({ ...r, account: known.get(r.machine_hash) || null }));
 }
 
 export async function audioctorDownloadFree(req, env) {
@@ -1221,6 +1257,11 @@ export async function audioctorAdmin(env, user) {
        audioctor_subs. Without this the admin showed no subscribers while a
        live monthly was being billed. (2026-11-13, subs-admin.js) */
     creem: await creemSubs(env, 'audioctor').catch(() => null),
+
+    /* Every Mac that runs it (0.1.13+, its daily update check), and the account it is known by (countInstall). */
+    installs: await installsFor(env).catch(() => []),
+    /* The App Store's subscriptions, as Apple's server notifications tell them (audioctor-appstore.js). */
+    appstore: await (await import('./audioctor-appstore.js')).appstoreAdmin(env).catch(() => null),
 
     /* Who took the free installer (the trial). */
     onTrial: await soft(`SELECT d.user_id, u.email, u.name, d.version, d.created_at FROM audioctor_free_downloads d
