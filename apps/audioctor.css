@@ -554,3 +554,4 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 .hero-duo[data-hero="blend"] .lab-shot .mac{box-shadow:0 0 0 1px rgba(255,255,255,.1),0 50px 100px -30px rgba(0,0,0,.95),0 0 140px -30px rgba(255,92,138,.35)}
 /* the hero's headline as the editor stores it holds two <h2>s pasted into the <h1> (2026-11-17): they read as the h1 */
 .duo-copy h1 h2{font:inherit;letter-spacing:inherit;line-height:inherit;color:inherit;margin:0}
+#video,#djs{scroll-margin-top:64px}
