@@ -555,3 +555,29 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 /* the hero's headline as the editor stores it holds two <h2>s pasted into the <h1> (2026-11-17): they read as the h1 */
 .duo-copy h1 h2{font:inherit;letter-spacing:inherit;line-height:inherit;color:inherit;margin:0}
 #video,#djs{scroll-margin-top:64px}
+
+/* the four steps for creators (2026-11-17): a number, a line, and a close-up of the app under it */
+.steps{list-style:none;margin:clamp(40px,5vw,64px) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.steps li{display:flex;flex-direction:column;padding:18px 18px 16px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,var(--card),var(--bg-2))}
+.steps .n{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--lime);color:var(--lime-ink);font:700 15px/1 var(--cond)}
+.steps h3{margin-top:12px;font:600 21px/1.15 var(--serif);letter-spacing:-.01em}
+.steps p{margin-top:6px;color:var(--ink-2);font-size:14.5px;line-height:1.5;flex:1}
+.steps img{display:block;width:100%;height:auto;aspect-ratio:4/3;margin-top:14px;border-radius:12px;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 16px 30px -18px rgba(0,0,0,.9)}
+@media (max-width:980px){.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.steps{grid-template-columns:1fr}}
+
+/* six reels in one row, three and a half in view (Ori, 2026-11-17): the row scrolls sideways; arrows on a desktop */
+.reels-row{display:flex;justify-content:flex-start;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 0 8px;-webkit-overflow-scrolling:touch}
+.reels-row::-webkit-scrollbar{display:none}
+.reels-row .abp{flex:0 0 calc((100% - 3 * 22px) / 3.5);min-width:0;scroll-snap-align:start}
+.reels-arrows{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+.reels-arrows button{width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;font:400 26px/1 var(--sans);color:var(--ink);background:var(--card-2);box-shadow:inset 0 0 0 1px var(--line-2)}
+.reels-arrows button:hover:not(:disabled){box-shadow:inset 0 0 0 1.5px var(--lime);color:var(--lime)}
+.reels-arrows button:disabled{opacity:.3;cursor:default}
+.reels .reels-note{margin-top:-30px}
+@media (max-width:860px){
+  .reels-row{gap:16px;margin-left:calc(var(--gut) * -1);margin-right:calc(var(--gut) * -1);padding:6px var(--gut) 18px}
+  .reels-row .abp{flex:0 0 min(270px,74vw);scroll-snap-align:center}
+  .reels-arrows{display:none}
+  .reels .reels-note{margin-top:0}
+}

@@ -18,6 +18,7 @@
     onsite:  { name: 'KAYMA', av: 'K', cap: 'ONSITELOVER, live at Jaffa Port', audio: 'KAYMA · ONSITELOVER', counts: null },
     reel:    { name: 'shahak', av: 'S', cap: 'Hero or villain?', audio: 'Original audio', counts: null },
     lecture: { name: 'Dalit Nemirovsky', av: 'DN', cap: 'A lecture, filmed from the back row', audio: 'Original audio', counts: null },
+    i24:     { name: 'KAYMA', av: 'K', cap: 'In the studio at i24 News', audio: 'Original audio', counts: null },
   };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let ctx = null, peaks = null, current = null;
