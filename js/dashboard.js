@@ -4514,7 +4514,21 @@
             { label: 'When', get: (r) => when(r.created_at, { time: true }) },
           ])}</div>`;
     } else if (tab === 'codes') {
-      body = `<div class="db-panel"><h2>Discount codes</h2>
+      // A new code here (2026-11-17, Ori: "let me make codes from the dashboard"): the gift (a free first year for one
+      // person, bound to their email, as Gal's and Dalit's) or a discount; POST /audioctor/coupon (audioctor.js)
+      body = `<div class="db-panel"><h2>New code</h2>
+        <div class="ar-grid">
+          <label class="ar-f"><span>For (name)</span><input id="adc-name" type="text" maxlength="60" placeholder="Dalit Nemirovsky"></label>
+          <label class="ar-f"><span>Only for this email (blank = anyone with the link)</span><input id="adc-email" type="email" maxlength="120" placeholder="their sign-in email"></label>
+          <label class="ar-f"><span>What it gives</span><select id="adc-kind">
+            <option value="gift">A free first year</option><option value="percent">% off the first year</option>
+            <option value="usd">$ off the first year</option></select></label>
+          <label class="ar-f"><span>How much</span><input id="adc-value" type="number" min="1" value="100" disabled></label>
+          <label class="ar-f"><span>Uses (0 = no limit)</span><input id="adc-uses" type="number" min="0" value="1"></label>
+          <div class="ar-f"><span>&nbsp;</span><button class="rv-btn rv-ok" id="adc-make" type="button">Make the code</button></div>
+        </div>
+        <p class="db-empty adc-said" style="padding:10px 0 0"></p></div>
+        <div class="db-panel" style="margin-top:14px"><h2>Discount codes</h2>
         ${table(d.coupons || [], [
           { label: 'Code', get: (r) => `<code>${esc(r.code)}</code>` },
           { label: 'Worth', get: (r) => r.kind === 'percent' ? r.value + '%' : money(r.value, 0) },
@@ -4524,7 +4538,7 @@
           { label: 'For', get: (r) => (r.for_email ? esc(r.for_email) : 'anyone') },
           { label: 'Link', get: (r) => copyLinkBtn(codeLink('audioctor', r.code)) },
         ])}
-        <p class="db-empty">New codes: General › Editor › Coupons, property Audioctor.</p></div>`;
+        </div>`;
     } else {
       body = `<div class="db-panel"><h2>Releases</h2>
         ${table(d.releases || [], [
@@ -4537,7 +4551,30 @@
     }
 
     paint(`<div>${warn}${body}</div>`);
-    if (tab === 'codes') wireCopy();
+    if (tab === 'codes') { wireCopy(); wireAdCode(); }
+  }
+
+  function wireAdCode() {
+    const $id = (x) => document.getElementById(x);
+    const kind = $id('adc-kind'), value = $id('adc-value'), said = document.querySelector('.adc-said');
+    if (!kind) return;
+    kind.addEventListener('change', () => { value.disabled = kind.value === 'gift'; if (kind.value === 'gift') value.value = 100; });
+    $id('adc-make').addEventListener('click', async () => {
+      const name = $id('adc-name').value.trim(), email = $id('adc-email').value.trim(), k = kind.value;
+      const r = await post('/audioctor/coupon', {
+        kind: k === 'usd' ? 'usd' : 'percent', value: k === 'gift' ? 100 : Number(value.value),
+        code: k === 'gift' ? 'GIFT-' + Math.random().toString(36).slice(2, 8).toUpperCase().replace(/[^A-Z0-9]/g, 'X') : '',
+        max_uses: Number($id('adc-uses').value) || 0, for_email: email,
+        note: (k === 'gift' ? 'A free year: gift' : 'Code') + (name ? ` (${name})` : ''),
+      }).catch(() => null);
+      if (r && r.ok) {
+        const url = codeLink('audioctor', r.code);
+        await paintAudioctor('codes');
+        const s2 = document.querySelector('.adc-said');
+        if (s2) { s2.innerHTML = `Made <code>${esc(r.code)}</code>${name ? ' for ' + esc(name) : ''} · send this link: <a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a> ${copyLinkBtn(url)}`; wireCopy(); }
+      } else said.textContent = r && r.error === 'bad_email' ? 'That email doesn\u2019t look right.'
+        : r && r.error === 'code_taken' ? 'That code already exists. Try again.' : (r && r.error) || 'Could not make that code.';
+    });
   }
 
   /* Visits — one row per visit, the whole visit in it.
