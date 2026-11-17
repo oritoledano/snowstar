@@ -11,6 +11,7 @@
   const figs = [...document.querySelectorAll('.abp[data-ex]')];
   if (!figs.length) return;
   const M = '../media/audioctor/ab/';
+  const V = '?v=2';                                   // media version: a new reel's URL is never one the CDN already holds as a miss
   /* Each reel: its name and its caption. The rail shows the icons without counts (2026-11-16, Ori: no numbers); a
      reel's counts [likes, comments, reposts, shares] would go in `counts`. KAYMA – ONSITELOVER live at Jaffa Port is
      Ori's own: Before is the original from 19.681 s, After the app's export of the same 10.6 s, sample-aligned. */
@@ -27,11 +28,11 @@
   const bufs = {};
   const players = [];
 
-  fetch(M + 'peaks.json').then((r) => r.json()).then((p) => { peaks = p; players.forEach((pl) => pl.draw()); }).catch(() => {});
+  fetch(M + 'peaks.json' + V).then((r) => r.json()).then((p) => { peaks = p; players.forEach((pl) => pl.draw()); }).catch(() => {});
 
   function load(name) {
     if (!bufs[name]) {
-      const get = (side) => fetch(M + name + '-' + side + '.m4a').then((r) => r.arrayBuffer()).then((a) => ctx.decodeAudioData(a));
+      const get = (side) => fetch(M + name + '-' + side + '.m4a' + V).then((r) => r.arrayBuffer()).then((a) => ctx.decodeAudioData(a));
       bufs[name] = Promise.all([get('before'), get('after')]).then(([b, a]) => ({ before: b, after: a }));
       bufs[name].catch(() => { delete bufs[name]; });
     }
@@ -53,8 +54,8 @@
     $('rCap').textContent = e.cap || '';
     $('rAudio').textContent = e.audio || 'Original audio';
     ['rLikes', 'rComments', 'rReposts', 'rShares'].forEach((id, i) => { $(id).textContent = e.counts ? e.counts[i] : ''; });
-    video.poster = M + name + '.jpg';
-    video.src = M + name + '.mp4';
+    video.poster = M + name + '.jpg' + V;
+    video.src = M + name + '.mp4' + V;
 
     function setSide(isAfter, instant) {
       after = isAfter;
