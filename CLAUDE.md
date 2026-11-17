@@ -78,20 +78,46 @@ vertical padding on one paints but adds no layout space; the control greys out a
 `c` and `f` beside `t` and `b` — not in the block's saved HTML, and not in a wrapper span
 like Size's. The reason is not taste: a block's `style` attribute is **not part of its own
 `innerHTML`**, which is all `/api/texts` stores, so a colour set on the block itself could
-never be saved at all. The row buys three things the span could not:
+never be saved at all.
 
-- it works on a block that **contains** other blocks, where Size is refused — colour and
-  font simply inherit, so a whole section recolours in one click;
-- nothing is written into the text, so a colour change can never make the dirty-compare
-  think the words changed;
-- there is no second wrapper that has to agree with `se-fs` about which one wraps which.
+**The whole row is painted by one generated stylesheet, never by an element's `style`
+attribute.** That was the second attempt; the first painted inline and review caught two
+visitor-facing bugs in it, both of which the stylesheet makes impossible:
 
-Both are validated on the way in and on the way out. A colour is six hex digits or it is
-nothing. A font is an **id from the `FONTS` table** in `js/site-edit.js` — Inter, Sora,
-Anton, Fraunces, Space Grotesk, Unbounded, Oswald, Barlow Condensed, Permanent Marker,
-IBM Plex Mono, Commit Mono: every face already used somewhere on this site. The stack and
-the stylesheet URL are only ever read from that table, so **no stored string ever reaches
-a `style` property or a URL**. Adding a face to the picker means adding a row there.
+- `el.style.color = ''` does not mean "leave it alone" — it **removes** that declaration
+  from the element's own style attribute, which is where the page's markup keeps its
+  authored colour (`artists.html:433` and `:440`, `contact.html:52`, `snowstash.html:569`).
+  So an air-only row — the only shape that existed before colour and font — deleted its
+  block's colour for every visitor, and the control that looked like the undo (`×`, "back
+  to the page's own colour") was what did it. The padding half of that had been live since
+  Air shipped.
+- A block's style attribute is not in its own innerHTML but it **is** in its keyed parent's.
+  Keys nest on purpose, so colouring an `<a>` made the untouched `<li>` round it count as
+  dirty and stored the child's inline style inside the parent's text row — the same shape
+  as the `contenteditable` leak of 2026-11-16, and it freezes that sentence against every
+  later edit to the HTML.
+
+The rules are `[data-txt="<key>"][data-txt]{…!important}`. The doubled attribute selector
+and the `!important` are **deliberate and are the exception to "never fight the CSS"**: what
+they override may be `!important` itself — `.service-tags` and `.about-locales` are, on five
+keyed blocks of the home page, where an inline colour was silently doing nothing at all. The
+selector is built **only** from keys matching the shape the API enforces on a row key, so
+nothing stored can close the bracket and write CSS of its own.
+
+**A quick colour is a token, not a hex.** The site has three skins and a light/dark toggle
+(`css/skins.css`, `js/mutra-skin.js`), all redefining `--text`, `--muted`, `--dim`, `--coral`
+and `--amber`. A `#eef3fb` picked in the dark is 1.0:1 against bone-light's `#f7f4ee`, and
+the admin never sees it, because the toggle belongs to the visitor. The five swatches store a
+token id and resolve to `var(--text,…)` and friends, each carrying the studio stylesheet's
+own value as the fallback for pages that never load `skins.css`. The picker and the
+eyedropper still store an absolute six-digit hex — that is what they are for, and a colour
+lifted off a photo has no token to be.
+
+A font is an **id from the `FONTS` table** in `js/site-edit.js` — Inter, Sora, Anton,
+Fraunces, Space Grotesk, Unbounded, Oswald, Barlow Condensed, Permanent Marker, IBM Plex
+Mono, Commit Mono: every face already used somewhere on this site. The stack and the
+stylesheet URL are only ever read from that table, so **no stored string ever reaches a CSS
+declaration or a URL**. Adding a face to the picker means adding a row there.
 
 A page loads only the fonts its own markup asks for, so `ensureFont()` appends the Google
 Fonts link (or Commit Mono's self-hosted `@font-face`) **the moment a face is actually
@@ -122,6 +148,13 @@ change. Three consequences, each of which was a bug first:
 - **The editor's own attributes are stripped on capture, compare and save.** Marking the
   child changes the parent's `innerHTML`, which made the parent count as dirty untouched
   and stored `contenteditable="true"` on its child — live, on five rows, until 2026-11-16.
+- **And `teardownText` has to strip them the same way `strip()` does.** It removed the
+  `se-editable` class but left the empty `class=""` behind on a block that had none of its
+  own; `strip()` removes that attribute. The two disagreeing meant that from the **second**
+  entry into Texts in one page life, every keyed block containing a keyed child counted as
+  dirty untouched — all eight address lines on `contact.html`, each given a stored override
+  nobody asked for and then frozen against any later edit to the HTML. Fixed 2026-11-17;
+  the first pass through the editor never showed it, which is why it lasted.
 
 ## Where each vertical's code lives
 

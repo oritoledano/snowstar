@@ -116,7 +116,6 @@
   let layout = {};          // data-txt key -> { t, b, c, f }: air, colour, font
   let layout0 = '';         // what the server last said, for Discard
   const spStep = (n) => (SP_STEPS.includes(+n) ? +n : null);
-  const touched = new Set();
 
   /* ── colour and font, asked for on 2026-11-17 ───────────────────────────────
      Both live in the same layout row as the air, and NOT in the block's saved
@@ -159,9 +158,25 @@
     { id: 'commit',    label: 'Commit Mono',      stack: '"Commit Mono",ui-monospace,monospace',       face: '/assets/fonts/commit-mono.woff2' },
   ];
   const fontOf = (id) => FONTS.find((f) => f.id === id) || null;
-  /* The five colours of the design system, so the common case is one click and
-     on-brand. The full picker and the eyedropper are beside them. */
-  const SWATCH = ['#eef3fb', '#93a0b8', '#e0b48b', '#d9744a', '#efe7d8'];
+  /* The quick colours are the design system's TOKENS, not the hex they happen to
+     be right now. The site has three skins and a light/dark toggle (css/skins.css,
+     js/mutra-skin.js), all of them redefining --text, --muted, --dim, --coral and
+     --amber; a stored #eef3fb picked in the dark is 1.0:1 against bone-light's
+     #f7f4ee and the admin never sees it, because the toggle is the visitor's. A
+     token flips with the page. Each carries the studio stylesheet's own value as
+     the fallback, for the pages that never load skins.css.
+     The picker and the eyedropper still store an absolute hex — that is what they
+     are for, and a colour chosen off a photo has no token to be. */
+  const TOKENS = [
+    { id: 'text',   label: 'Text',   css: 'var(--text,#eef3fb)' },
+    { id: 'muted',  label: 'Muted',  css: 'var(--muted,#93a0b8)' },
+    { id: 'dim',    label: 'Dim',    css: 'var(--dim,#7d786f)' },
+    { id: 'accent', label: 'Accent', css: 'var(--coral,var(--ice,#e0b48b))' },
+    { id: 'warm',   label: 'Warm',   css: 'var(--amber,#d9744a)' },
+  ];
+  const tokenOf = (v) => TOKENS.find((t) => t.id === v) || null;
+  /** A stored colour is either a token id or six hex digits. Anything else is nothing. */
+  const colorCss = (v) => { const t = tokenOf(v); return t ? t.css : cStep(v); };
 
   /* A page loads only the fonts its own markup needs, so a block set in a face
      that page never asked for would quietly fall back to the stack's second
@@ -185,29 +200,60 @@
     }
   }
 
-  /** The whole of a block's stored look, in one place: air, colour, font. Every
-   *  value goes through its own validator, so a row that was stored wrong — or
-   *  truncated — can only ever mean "no override", never a broken style. */
-  function paintLook(el, row) {
-    const r = row || {};
-    touched.add(el);
-    const t = spStep(r.t), b = spStep(r.b);
-    el.style.paddingTop = t ? t + 'em' : '';
-    el.style.paddingBottom = b ? b + 'em' : '';
-    const c = cStep(r.c);
-    el.style.color = c || '';
-    const f = fontOf(r.f);
-    el.style.fontFamily = f ? f.stack : '';
-    if (f) ensureFont(f.id);
-  }
+  /* ── the look is ONE generated stylesheet, never an element's style attribute ──
+     Written this way on 2026-11-17 after review, for two reasons that each cost a
+     visitor-facing bug when the look was painted inline:
 
-  /** Applied on hydration for everyone, and again on every step in the editor. */
-  function applyLayout(map) {
+     1. `el.style.color = ''` does not mean "leave it alone". It REMOVES that
+        declaration from the element's own style attribute — the same place the
+        page's markup keeps its authored colour. artists.html:433 and :440,
+        contact.html:52, snowstash.html:569-570 and two streamdaw pages all carry
+        one. So a row of the only shape that existed before colour and font — air
+        only, {t}/{b} — deleted its block's colour for every visitor, and the one
+        control that looked like the undo ("× back to the page's own colour") was
+        what did it. The padding half of that had been live since Air shipped.
+     2. A block's style attribute is not part of its own innerHTML, but it IS part
+        of its keyed PARENT's. autoKeys keys a <li> and the <a> inside it on
+        purpose, so colouring the <a> made the untouched <li> count as dirty and
+        stored the child's inline style inside the parent's text row — which then
+        freezes that sentence against every future edit to the HTML. The same
+        shape as the contenteditable leak found on 2026-11-16.
+
+     A stylesheet touches no attribute, so neither can happen, and Discard is a
+     re-render rather than a list of properties to put back.
+
+     Two things the rules need. The selector is built ONLY from keys matching the
+     shape the API itself enforces on a row key, so nothing stored can close the
+     bracket and write CSS of its own. And they carry !important with a doubled
+     attribute selector, because what they override may be !important already:
+     .service-tags and .about-locales are, on five keyed blocks of the home page,
+     where an inline colour was silently doing nothing at all. */
+  const KEY_OK = /^[a-z0-9][a-z0-9./-]{1,80}$/;
+  let lookSheet = null;
+  /** Rebuilt whole, every time: on hydration for everyone, and on every step and
+   *  every Discard in the editor. Each value goes through its own validator, so a
+   *  row stored wrong — or truncated — can only ever mean "no override". */
+  function renderLook(map) {
+    const out = [];
     for (const [key, v] of Object.entries(map || {})) {
-      let el = null;
-      try { el = document.querySelector(`[data-txt="${key}"]`); } catch { continue }
-      if (el) paintLook(el, v);
+      if (!KEY_OK.test(key) || !v || typeof v !== 'object') continue;
+      const d = [];
+      const t = spStep(v.t), b = spStep(v.b);
+      if (t) d.push('padding-top:' + t + 'em!important');
+      if (b) d.push('padding-bottom:' + b + 'em!important');
+      const c = colorCss(v.c);
+      if (c) d.push('color:' + c + '!important');
+      const f = fontOf(v.f);
+      if (f) { d.push('font-family:' + f.stack + '!important'); ensureFont(f.id); }
+      if (d.length) out.push('[data-txt="' + key + '"][data-txt]{' + d.join(';') + '}');
     }
+    if (!lookSheet) {
+      if (!out.length) return;
+      lookSheet = document.createElement('style');
+      lookSheet.id = 'se-look';
+      document.head.appendChild(lookSheet);
+    }
+    lookSheet.textContent = out.join('\n');
   }
 
   /* A span round block-level children would be invalid markup and would drag those
@@ -753,7 +799,7 @@
         }
         if (key === LAYOUT_KEY) {
           layout0 = html;
-          try { layout = JSON.parse(html) || {}; applyLayout(layout); } catch { layout = {}; }
+          try { layout = JSON.parse(html) || {}; renderLook(layout); } catch { layout = {}; }
           continue;
         }
         rows.push([key, html]);
@@ -886,7 +932,7 @@
         <b>Font</b>
         <select data-ff title="The site's own fonts">${fontOpts()}</select>
         <b>Colour</b>
-        ${SWATCH.map((c) => `<button class="se-sw" data-sw="${c}" style="background:${c}" title="${c}"></button>`).join('')}
+        ${TOKENS.map((t) => `<button class="se-sw" data-sw="${t.id}" style="background:${t.css}" title="${t.label} — follows the page's theme"></button>`).join('')}
         <input type="color" data-fc title="Any colour" value="#e0b48b">
         <button data-eye title="Pick a colour from anywhere on the screen" hidden>&#9673;</button>
         <button data-fcx title="Back to the page's own colour">&times;</button>
@@ -944,12 +990,12 @@
     Object.assign(row, patch);
     for (const k of ['t', 'b', 'c', 'f']) if (!row[k]) delete row[k];
     if (!Object.keys(row).length) delete layout[key];
-    paintLook(cur, layout[key]);
+    renderLook(layout);
     layoutDirty = true;
     markDirty();
     syncFmt();
   }
-  const putColor = (hex) => { if (cStep(hex) && canColor(cur)) putLook({ c: cStep(hex) }); };
+  const putColor = (v) => { if (colorCss(v) && canColor(cur)) putLook({ c: tokenOf(v) ? v : cStep(v) }); };
   function onFont(e) {
     const f = fontOf(e.target.value);
     if (f) ensureFont(f.id);
@@ -1029,6 +1075,7 @@
        from is how a picker loses its grip. Leave it alone while it has focus. */
     if (document.activeElement !== fc) fc.value = cStep(row.c) || hexNow(cur);
     fc.classList.toggle('on', !!cStep(row.c));
+    fmt.querySelectorAll('.se-sw').forEach((b) => b.classList.toggle('on', b.dataset.sw === row.c));
     fmt.querySelectorAll('[data-fc],[data-sw],[data-eye],[data-fcx]').forEach((n) => { n.disabled = !ok; });
     fmt.querySelector('[data-fcx]').title = ok
       ? "Back to the page's own colour"
@@ -1073,12 +1120,11 @@
     // revert anything unsaved — the text, and the air
     originals.forEach((html, el) => { if (cleanOf(el) !== html) el.innerHTML = html; });
     if (layoutDirty) {
-      touched.forEach((el) => {
-        el.style.paddingTop = ''; el.style.paddingBottom = '';
-        el.style.color = ''; el.style.fontFamily = '';
-      });
+      /* One re-render from what the server last said puts everything back —
+         there is no list of properties to restore, because nothing was ever
+         written onto an element. */
       try { layout = JSON.parse(layout0 || '{}') || {}; } catch { layout = {}; }
-      applyLayout(layout);
+      renderLook(layout);
       layoutDirty = false;
     }
     teardownText();
@@ -1086,6 +1132,17 @@
   function teardownText() {
     document.querySelectorAll('[data-txt]').forEach((el) => {
       el.classList.remove('se-editable');
+      /* and the empty class attribute it leaves behind on a block that had none
+         of its own, which strip() removes but this did not. The two disagreeing
+         is enough: on the SECOND entry into Texts in one page life, a keyed
+         child was captured with class="" and saved without it, so every keyed
+         block containing a keyed child counted as dirty untouched. On
+         contact.html that was all eight address lines — eight sentences given a
+         stored override nobody asked for, each one then frozen against any
+         later edit to the HTML. Found on 2026-11-17 by review of the colour
+         work; it predates it, and the first pass through the editor never
+         showed it. */
+      if (!el.classList.length) el.removeAttribute('class');
       el.removeAttribute('contenteditable');
       el.removeEventListener('input', markDirty);
       el.removeEventListener('focusin', pickBlock);
@@ -1520,6 +1577,7 @@
       border-radius:8px;padding:5px 7px;font:600 .72rem system-ui,sans-serif;max-width:132px}
     .se-savebar .se-fmt button.se-sw{width:17px;height:17px;padding:0;border-radius:5px;
       border:1px solid rgba(0,0,0,.45);box-shadow:0 0 0 1px rgba(235,225,210,.25)}
+    .se-savebar .se-fmt button.se-sw.on{box-shadow:0 0 0 2px #e0b48b}
     .se-fmt input[type="color"]{width:28px;height:24px;padding:0;cursor:pointer;background:none;
       border:1px solid rgba(235,225,210,.25);border-radius:7px}
     .se-fmt input[type="color"].on{border-color:#e0b48b}
