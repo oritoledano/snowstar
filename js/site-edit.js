@@ -113,21 +113,100 @@
   const LAYOUT_KEY = 'layout.' + PAGE;
   const FS_STEPS = [70, 80, 90, 100, 110, 125, 150, 175, 200];
   const SP_STEPS = [0, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 4];
-  let layout = {};          // data-txt key -> { t, b } em of added air
+  let layout = {};          // data-txt key -> { t, b, c, f }: air, colour, font
   let layout0 = '';         // what the server last said, for Discard
   const spStep = (n) => (SP_STEPS.includes(+n) ? +n : null);
   const touched = new Set();
+
+  /* ── colour and font, asked for on 2026-11-17 ───────────────────────────────
+     Both live in the same layout row as the air, and NOT in the block's saved
+     HTML. Three reasons, and the first is the one that decides it:
+
+     1. A block's `style` attribute is not part of its own innerHTML, which is
+        all that /api/texts stores — so a colour set on the block itself could
+        never be saved. The alternative is a wrapper <span> like the one Size
+        uses, and then Size's span and this one have to agree about which wraps
+        which on every re-wrap. One row, keyed the same way as the air, has no
+        such order to get wrong.
+     2. It works on a block that contains other blocks. Size is refused there
+        (a span cannot wrap block-level children) but colour and font simply
+        inherit, so a whole section can be recoloured in one click.
+     3. Nothing is ever written into the text, so a colour change cannot make
+        the dirty-compare think the words changed.
+
+     What is stored is validated both ways: a colour is six hex digits or it is
+     nothing, and a font is an ID FROM THE TABLE BELOW or it is nothing. The
+     font's stack and its stylesheet URL are only ever read from this table, so
+     no stored string ever reaches a `style` property or a URL. */
+  const COLOR_RE = /^#[0-9a-f]{6}$/;
+  const cStep = (v) => (typeof v === 'string' && COLOR_RE.test(v.toLowerCase()) ? v.toLowerCase() : null);
+
+  /* The site's own library — every family already used somewhere on
+     snowstar.company, so a block can only ever be set in a face the site
+     already owns. `g` is the Google Fonts query; Commit Mono is self-hosted
+     (assets/fonts/commit-mono.woff2, MIT) and carries `face` instead. */
+  const FONTS = [
+    { id: 'inter',     label: 'Inter',            stack: '"Inter",system-ui,sans-serif',               g: 'Inter:wght@400;500;600;700' },
+    { id: 'sora',      label: 'Sora',             stack: '"Sora",system-ui,sans-serif',                g: 'Sora:wght@400;500;600;700;800' },
+    { id: 'anton',     label: 'Anton',            stack: '"Anton",Impact,sans-serif',                  g: 'Anton' },
+    { id: 'fraunces',  label: 'Fraunces',         stack: '"Fraunces",Georgia,serif',                   g: 'Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500' },
+    { id: 'grotesk',   label: 'Space Grotesk',    stack: '"Space Grotesk",system-ui,sans-serif',       g: 'Space+Grotesk:wght@400;500;600;700' },
+    { id: 'unbounded', label: 'Unbounded',        stack: '"Unbounded",system-ui,sans-serif',           g: 'Unbounded:wght@500;700;800' },
+    { id: 'oswald',    label: 'Oswald',           stack: '"Oswald",Impact,sans-serif',                 g: 'Oswald:wght@400;500;600' },
+    { id: 'barlow',    label: 'Barlow Condensed', stack: '"Barlow Condensed",Impact,sans-serif',       g: 'Barlow+Condensed:wght@500;600;700' },
+    { id: 'marker',    label: 'Permanent Marker', stack: '"Permanent Marker",cursive',                 g: 'Permanent+Marker' },
+    { id: 'plex',      label: 'IBM Plex Mono',    stack: '"IBM Plex Mono",ui-monospace,monospace',     g: 'IBM+Plex+Mono:wght@400;500' },
+    { id: 'commit',    label: 'Commit Mono',      stack: '"Commit Mono",ui-monospace,monospace',       face: '/assets/fonts/commit-mono.woff2' },
+  ];
+  const fontOf = (id) => FONTS.find((f) => f.id === id) || null;
+  /* The five colours of the design system, so the common case is one click and
+     on-brand. The full picker and the eyedropper are beside them. */
+  const SWATCH = ['#eef3fb', '#93a0b8', '#e0b48b', '#d9744a', '#efe7d8'];
+
+  /* A page loads only the fonts its own markup needs, so a block set in a face
+     that page never asked for would quietly fall back to the stack's second
+     name. This adds the stylesheet the moment the face is actually used — on
+     hydration for every visitor, and in the editor as soon as it is picked. */
+  const fontsOn = new Set();
+  function ensureFont(id) {
+    const f = fontOf(id);
+    if (!f || fontsOn.has(id)) return;
+    fontsOn.add(id);
+    if (f.g) {
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = 'https://fonts.googleapis.com/css2?family=' + f.g + '&display=swap';
+      document.head.appendChild(l);
+    } else if (f.face) {
+      const st = document.createElement('style');
+      st.textContent = '@font-face{font-family:"' + f.label + '";src:url("' + f.face +
+        '") format("woff2");font-weight:400;font-style:normal;font-display:swap}';
+      document.head.appendChild(st);
+    }
+  }
+
+  /** The whole of a block's stored look, in one place: air, colour, font. Every
+   *  value goes through its own validator, so a row that was stored wrong — or
+   *  truncated — can only ever mean "no override", never a broken style. */
+  function paintLook(el, row) {
+    const r = row || {};
+    touched.add(el);
+    const t = spStep(r.t), b = spStep(r.b);
+    el.style.paddingTop = t ? t + 'em' : '';
+    el.style.paddingBottom = b ? b + 'em' : '';
+    const c = cStep(r.c);
+    el.style.color = c || '';
+    const f = fontOf(r.f);
+    el.style.fontFamily = f ? f.stack : '';
+    if (f) ensureFont(f.id);
+  }
 
   /** Applied on hydration for everyone, and again on every step in the editor. */
   function applyLayout(map) {
     for (const [key, v] of Object.entries(map || {})) {
       let el = null;
       try { el = document.querySelector(`[data-txt="${key}"]`); } catch { continue }
-      if (!el) continue;
-      touched.add(el);
-      const t = spStep(v && v.t), b = spStep(v && v.b);
-      el.style.paddingTop = t ? t + 'em' : '';
-      el.style.paddingBottom = b ? b + 'em' : '';
+      if (el) paintLook(el, v);
     }
   }
 
@@ -804,16 +883,38 @@
         <button data-sp="t-" title="Less room above">&minus;</button><i data-v="t">0</i><button data-sp="t+" title="More room above">+</button>
         <b>Air &darr;</b>
         <button data-sp="b-" title="Less room below">&minus;</button><i data-v="b">0</i><button data-sp="b+" title="More room below">+</button>
+        <b>Font</b>
+        <select data-ff title="The site's own fonts">${fontOpts()}</select>
+        <b>Colour</b>
+        ${SWATCH.map((c) => `<button class="se-sw" data-sw="${c}" style="background:${c}" title="${c}"></button>`).join('')}
+        <input type="color" data-fc title="Any colour" value="#e0b48b">
+        <button data-eye title="Pick a colour from anywhere on the screen" hidden>&#9673;</button>
+        <button data-fcx title="Back to the page's own colour">&times;</button>
       </span>
       <button class="se-primary" id="seSave" disabled>Save changes</button>
       <button id="seDiscard">Discard</button>`;
     document.body.appendChild(saveBar);
     saveBar.querySelector('#seSave').addEventListener('click', saveTexts);
     saveBar.querySelector('#seDiscard').addEventListener('click', exitText);
-    saveBar.querySelector('.se-fmt').addEventListener('mousedown', (e) => e.preventDefault());
-    saveBar.querySelector('.se-fmt').addEventListener('click', onFmt);
+    /* The caret must stay in the block while a button is clicked, so the default
+       is swallowed — but doing that over the <select> stops it opening and over
+       <input type="color"> stops the picker, so those two are exempt. Losing the
+       caret to them costs nothing: `cur` is only ever reassigned by a focusin on
+       another keyed block. */
+    const fmtEl = saveBar.querySelector('.se-fmt');
+    fmtEl.addEventListener('mousedown', (e) => { if (!e.target.closest('select,input')) e.preventDefault(); });
+    fmtEl.addEventListener('click', onFmt);
+    fmtEl.querySelector('[data-ff]').addEventListener('change', onFont);
+    fmtEl.querySelector('[data-fc]').addEventListener('input', (e) => putColor(e.target.value));
+    if (window.EyeDropper) fmtEl.querySelector('[data-eye]').hidden = false;
+    /* Admin only, and only once the editor is open: load every family in the
+       library so the dropdown shows each name in its own face. */
+    FONTS.forEach((f) => ensureFont(f.id));
     cur = null;
   }
+
+  const fontOpts = () => '<option value="">Page default</option>' + FONTS.map((f) =>
+    `<option value="${f.id}" style="font-family:${f.stack.replace(/"/g, '&quot;')}">${f.label}</option>`).join('');
 
   /* ── size and air, on whichever block has the caret ─────────────────────── */
   /* The INNERMOST keyed block, from the event's target — not e.currentTarget. focusin
@@ -834,6 +935,27 @@
     return list[Math.min(list.length - 1, Math.max(0, i + dir))];
   };
 
+  /** Writes one property of the current block's row, drops the row when nothing
+   *  is left in it, repaints the block and marks the bar dirty. */
+  function putLook(patch) {
+    if (!cur) return;
+    const key = cur.dataset.txt;
+    const row = layout[key] || (layout[key] = {});
+    Object.assign(row, patch);
+    for (const k of ['t', 'b', 'c', 'f']) if (!row[k]) delete row[k];
+    if (!Object.keys(row).length) delete layout[key];
+    paintLook(cur, layout[key]);
+    layoutDirty = true;
+    markDirty();
+    syncFmt();
+  }
+  const putColor = (hex) => { if (cStep(hex) && canColor(cur)) putLook({ c: cStep(hex) }); };
+  function onFont(e) {
+    const f = fontOf(e.target.value);
+    if (f) ensureFont(f.id);
+    putLook({ f: f ? f.id : '' });
+  }
+
   function onFmt(e) {
     const b = e.target.closest('button');
     if (!b || !cur || !saveBar) return;
@@ -841,21 +963,47 @@
       if (!canSize(cur)) return;
       setSize(cur, stepped(FS_STEPS, sizeOf(cur), b.dataset.fs === '+' ? 1 : -1));
       markDirty();
+      syncFmt();
     } else if (b.dataset.sp) {
       if (!canAir(cur)) return;
       const side = b.dataset.sp[0];
-      const key = cur.dataset.txt;
-      const row = layout[key] || (layout[key] = {});
-      row[side] = stepped(SP_STEPS, spStep(row[side]) || 0, b.dataset.sp[1] === '+' ? 1 : -1);
-      if (!row.t && !row.b) delete layout[key];
-      touched.add(cur);
-      cur.style.paddingTop = row.t ? row.t + 'em' : '';
-      cur.style.paddingBottom = row.b ? row.b + 'em' : '';
-      layoutDirty = true;
-      markDirty();
+      const row = layout[cur.dataset.txt] || {};
+      putLook({ [side]: stepped(SP_STEPS, spStep(row[side]) || 0, b.dataset.sp[1] === '+' ? 1 : -1) });
+    } else if (b.dataset.sw) {
+      putColor(b.dataset.sw);
+    } else if (b.hasAttribute('data-fcx')) {
+      putLook({ c: '' });
+    } else if (b.hasAttribute('data-eye') && window.EyeDropper) {
+      /* The native eyedropper reads a pixel from anywhere on the screen, so a
+         colour can be lifted off a photo, a logo, another tab. Chrome and Edge
+         have it; where it is missing the button never shows and the colour
+         input's own panel (which carries the OS magnifier on a Mac) is the way in. */
+      new window.EyeDropper().open()
+        .then((r) => putColor(r && r.sRGBHex))
+        .catch(() => {});
     }
-    syncFmt();
   }
+
+  /* The one place a colour cannot work: a heading painted by the brand gradient
+     (background-clip:text over a transparent colour — .grad and .grad-text)
+     ignores `color` entirely, because there is no colour being painted. The
+     control greys out there and says why, as Air does on an inline block,
+     rather than looking like it worked. */
+  const canColor = (el) => {
+    if (!el) return false;
+    try {
+      const cs = getComputedStyle(el);
+      return (cs.webkitBackgroundClip || cs.backgroundClip) !== 'text';
+    } catch { return true }
+  };
+  /** The colour the stylesheet is painting right now, as hex, so the picker opens
+   *  on the block's real colour instead of an arbitrary default. */
+  const hexNow = (el) => {
+    try {
+      const m = getComputedStyle(el).color.match(/[\d.]+/g);
+      return m ? '#' + m.slice(0, 3).map((n) => Math.round(+n).toString(16).padStart(2, '0')).join('') : '#eef3fb';
+    } catch { return '#eef3fb' }
+  };
 
   function syncFmt() {
     if (!saveBar) return;
@@ -873,6 +1021,18 @@
       btn.title = air ? btn.title.replace(/ — .*$/, '') : 'This block is inline — vertical padding adds no space';
     });
     if (!air) { fmt.querySelector('[data-v="t"]').textContent = '–'; fmt.querySelector('[data-v="b"]').textContent = '–'; }
+    fmt.querySelector('[data-ff]').value = fontOf(row.f) ? row.f : '';
+    const ok = canColor(cur);
+    const fc = fmt.querySelector('[data-fc]');
+    /* `input` fires on every drag inside the native picker, so syncFmt runs with
+       the panel open — writing .value back into the control it is being driven
+       from is how a picker loses its grip. Leave it alone while it has focus. */
+    if (document.activeElement !== fc) fc.value = cStep(row.c) || hexNow(cur);
+    fc.classList.toggle('on', !!cStep(row.c));
+    fmt.querySelectorAll('[data-fc],[data-sw],[data-eye],[data-fcx]').forEach((n) => { n.disabled = !ok; });
+    fmt.querySelector('[data-fcx]').title = ok
+      ? "Back to the page's own colour"
+      : 'This block is painted by the brand gradient — a colour has no effect on it';
   }
 
   function markDirty() {
@@ -888,13 +1048,18 @@
       for (const [el] of dirty) {
         await api('/texts', { key: el.dataset.txt, html: cleanOf(el) });
       }
-      const air = layoutDirty;
-      if (air) {
+      const look = layoutDirty;
+      if (look) {
         const body = Object.keys(layout).length ? JSON.stringify(layout) : '';
+        /* One row carries every block's look on this page, and saveText truncates
+           at 20 000 characters — which would leave invalid JSON and lose every
+           override on the page at the next load, silently. Refuse before the
+           write instead. A row is ~55 characters, so this is ~340 blocks. */
+        if (body.length > 19000) throw new Error('too many look overrides on this page to store in one row');
         await api('/texts', { key: LAYOUT_KEY, html: body });
         layout0 = body; layoutDirty = false;
       }
-      toast(`Saved ${dirty.length} text${dirty.length === 1 ? '' : 's'}${air ? ' and the spacing' : ''} — live now`);
+      toast(`Saved ${dirty.length} text${dirty.length === 1 ? '' : 's'}${look ? ' and the look' : ''} — live now`);
       // keep the new text in place; just leave edit mode
       originals.clear();
       teardownText();
@@ -908,7 +1073,10 @@
     // revert anything unsaved — the text, and the air
     originals.forEach((html, el) => { if (cleanOf(el) !== html) el.innerHTML = html; });
     if (layoutDirty) {
-      touched.forEach((el) => { el.style.paddingTop = ''; el.style.paddingBottom = ''; });
+      touched.forEach((el) => {
+        el.style.paddingTop = ''; el.style.paddingBottom = '';
+        el.style.color = ''; el.style.fontFamily = '';
+      });
       try { layout = JSON.parse(layout0 || '{}') || {}; } catch { layout = {}; }
       applyLayout(layout);
       layoutDirty = false;
@@ -1328,8 +1496,14 @@
       font:600 .72rem/1 system-ui,sans-serif;padding:7px 12px;border-radius:8px;cursor:pointer}
     .se-rowbar button:disabled{opacity:.4;cursor:default}
     .se-rowbar .se-primary{background:#ff3d8b;color:#fff}
+    /* width:max-content, because a fixed box with left:50% and no width gets
+       shrink-to-fit over the space LEFT of its left edge — half the viewport.
+       At 375 that made the bar 188px wide and 251px tall before today's two new
+       controls were in it, which is half a phone screen of toolbar. max-content
+       clamped by max-width gives it the real 96vw: 360 x 140 as it was, 360 x 171
+       with the font and colour groups. */
     .se-savebar{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;z-index:95;display:flex;
-      flex-wrap:wrap;justify-content:center;max-width:min(96vw,1000px);
+      flex-wrap:wrap;justify-content:center;width:max-content;max-width:min(96vw,1000px);
       gap:10px;align-items:center;padding:10px 16px;border-radius:14px;border:1px solid rgba(235,225,210,.25);
       background:rgba(8,11,20,.95);color:#a8a29a;font:500 .82rem system-ui,sans-serif;box-shadow:0 12px 34px rgba(0,0,0,.5)}
     .se-savebar button{border:1px solid rgba(235,225,210,.25);background:none;color:#f2ede4;font:600 .78rem system-ui;
@@ -1342,6 +1516,19 @@
     .se-fmt b:first-child{margin-left:0}
     .se-fmt i{min-width:36px;text-align:center;font:600 .74rem/1 system-ui,sans-serif;font-style:normal;color:#f2ede4}
     .se-savebar .se-fmt button{padding:5px 9px;font-size:.72rem;line-height:1}
+    .se-fmt select{background:#161617;color:#f2ede4;border:1px solid rgba(235,225,210,.25);
+      border-radius:8px;padding:5px 7px;font:600 .72rem system-ui,sans-serif;max-width:132px}
+    .se-savebar .se-fmt button.se-sw{width:17px;height:17px;padding:0;border-radius:5px;
+      border:1px solid rgba(0,0,0,.45);box-shadow:0 0 0 1px rgba(235,225,210,.25)}
+    .se-fmt input[type="color"]{width:28px;height:24px;padding:0;cursor:pointer;background:none;
+      border:1px solid rgba(235,225,210,.25);border-radius:7px}
+    .se-fmt input[type="color"].on{border-color:#e0b48b}
+    .se-fmt input[type="color"]:disabled{opacity:.4;cursor:default}
+    .se-fmt input[type="color"]::-webkit-color-swatch-wrapper{padding:2px}
+    .se-fmt input[type="color"]::-webkit-color-swatch{border:0;border-radius:4px}
+    /* the quick swatches are the first thing to go when the bar has to wrap on a phone;
+       the full picker beside them does everything they do */
+    @media (max-width:640px){.se-fmt .se-sw{display:none}}
     .se-primary{background:linear-gradient(100deg,#efe7d8,#e0b48b,#d9744a)!important;color:#121110!important;border-color:transparent!important}
     .se-overlay{position:absolute;top:0;left:0;z-index:85;cursor:crosshair}
     .se-overlay canvas{display:block;touch-action:none}

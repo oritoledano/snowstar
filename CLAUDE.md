@@ -47,10 +47,10 @@ lost the wiring or pinned an older `site-edit.js?v=`. Both are red today and bot
 belong to those repos' own sessions. That check also fails if the pages disagree with each
 other about `site-edit.js?v=`, which is the "bump `?v=` everywhere" trap made automatic.
 
-### Size and air are relative, never pixels
+### Size, air, colour and font — relative, never pixels
 
-The editor also sets a block's text size and the room around it. Both are stored relative
-on purpose — this is the part that is easy to get wrong:
+The editor also sets a block's text size, the room around it, its colour and its face.
+Size and air are stored relative on purpose — this is the part that is easy to get wrong:
 
 - **Size** is a percentage on a `<span class="se-fs">` wrapped round the block's own
   contents, so it rides in the saved HTML with the text and needs no stylesheet (the
@@ -73,6 +73,39 @@ another block, because the span would have to wrap block-level children — inva
 would drag their own sizes with it. Air is refused on a `display:inline` block, because
 vertical padding on one paints but adds no layout space; the control greys out and shows
 `–` rather than letting you click it to no effect.
+
+**Colour and font (2026-11-17) ride in the same `layout.<page>` row as the air**, as
+`c` and `f` beside `t` and `b` — not in the block's saved HTML, and not in a wrapper span
+like Size's. The reason is not taste: a block's `style` attribute is **not part of its own
+`innerHTML`**, which is all `/api/texts` stores, so a colour set on the block itself could
+never be saved at all. The row buys three things the span could not:
+
+- it works on a block that **contains** other blocks, where Size is refused — colour and
+  font simply inherit, so a whole section recolours in one click;
+- nothing is written into the text, so a colour change can never make the dirty-compare
+  think the words changed;
+- there is no second wrapper that has to agree with `se-fs` about which one wraps which.
+
+Both are validated on the way in and on the way out. A colour is six hex digits or it is
+nothing. A font is an **id from the `FONTS` table** in `js/site-edit.js` — Inter, Sora,
+Anton, Fraunces, Space Grotesk, Unbounded, Oswald, Barlow Condensed, Permanent Marker,
+IBM Plex Mono, Commit Mono: every face already used somewhere on this site. The stack and
+the stylesheet URL are only ever read from that table, so **no stored string ever reaches
+a `style` property or a URL**. Adding a face to the picker means adding a row there.
+
+A page loads only the fonts its own markup asks for, so `ensureFont()` appends the Google
+Fonts link (or Commit Mono's self-hosted `@font-face`) **the moment a face is actually
+used** — on hydration for every visitor, and for the whole table when an admin opens the
+editor, which is what makes each name in the dropdown render in its own face.
+
+Colour is refused on one kind of block: a heading painted by the brand gradient
+(`background-clip:text` over a transparent colour — `.grad`, `.grad-text`), which ignores
+`color` entirely. The control greys out and says why, as Air does on an inline block.
+
+One row holds every block's look on a page and `saveText` truncates at 20 000 characters,
+which would leave invalid JSON and lose **every** override on that page at the next load.
+A save over 19 000 is refused before the write. A row is ~55 characters, so that is ~340
+blocks on one page.
 
 ### Keyed blocks nest, and that decides three things
 
