@@ -581,3 +581,14 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
   .reels-arrows{display:none}
   .reels .reels-note{margin-top:0}
 }
+
+/* ── Advanced Tools (2026-11-19): the app's own window, one card per tool; Expert across the row ── */
+#advanced{scroll-margin-top:64px}
+.tools{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tools li{display:flex;flex-direction:column;padding:18px 18px 16px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,var(--card),var(--bg-2))}
+.tools li.wide{grid-column:1/-1}
+.tools h3{font:600 21px/1.15 var(--serif);letter-spacing:-.01em}
+.tools p{margin-top:6px;color:var(--ink-2);font-size:14.5px;line-height:1.5;flex:1}
+.tools img{display:block;width:100%;height:auto;aspect-ratio:32/15;margin-top:14px;border-radius:12px;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 16px 30px -18px rgba(0,0,0,.9)}
+.tools-sec h2{text-wrap:balance}
+@media (max-width:760px){.tools{grid-template-columns:1fr}}
