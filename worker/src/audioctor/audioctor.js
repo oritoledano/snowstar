@@ -28,6 +28,10 @@ const BASE = 'https://pay.hyp.co.il/cgi-bin/yaadpay/yaadpay3ds.pl';
 const SITE = 'https://snowstar.company';
 const PRODUCT = 'audioctor';
 const ASSET = 'audioctor-macos';
+// Windows (2026-11-21, Ori on a PC got the Mac .pkg): the installer is its own asset. A download asks with ?os=win (as
+// StreamDAW's), the app's update check with &platform=windows; anything else is the Mac.
+const ASSET_WIN = 'audioctor-windows';
+const assetFor = (sp) => (sp.get('os') === 'win' || sp.get('platform') === 'windows' ? ASSET_WIN : ASSET);
 const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 days
 const PAGE = `${SITE}/apps/audioctor.html`;
 
@@ -509,7 +513,7 @@ export async function audioctorDownload(req, env) {
 
   const rel = await env.DB.prepare(
     'SELECT * FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
-  ).bind(ASSET).first();
+  ).bind(assetFor(url.searchParams)).first();
   if (!rel) return json({ error: 'no_release' }, 404);
   const obj = await env.APPS.get(rel.r2_key);
   if (!obj) return json({ error: 'file_missing' }, 404);
@@ -535,16 +539,21 @@ const FREE_SIGNUP_URL = `${PAGE}?get=free`;
 /** Public (2026-11-12): the latest Audioctor on the site, for the app's Update button. The app (0.1.6+, site copy only)
  *  asks once a day and shows the button when this is newer than itself; the url opens in the browser. No user data. */
 export async function audioctorLatest(req, env) {
+  const sp = new URL(req.url).searchParams;
+  const win = assetFor(sp) === ASSET_WIN;
   const rel = await env.DB.prepare(
     'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
-  ).bind(ASSET).first();
+  ).bind(win ? ASSET_WIN : ASSET).first();
   if (!rel || !rel.version) return json({ error: 'no_release' }, 404);
   // The app's Update button opens what is new since the version it runs, with the download on top (2026-11-13, Ori:
   // "an update has to say what is new"). The page is made from the app's CHANGELOG.md (app/changelog-site.mjs).
-  const sp = new URL(req.url).searchParams;
+  // Windows (2026-11-21): the app only takes an answer that says platform "windows", and its Update opens the sale page,
+  // which starts the Windows installer (?get=free&os=win), until the What's new page offers a Windows download too.
   const app = sp.get('app') || '';
   const from = /^\d+\.\d+\.\d+$/.test(app) ? `?from=${app}` : '';
-  await countInstall(env, req, sp, app).catch(() => {});
+  // Windows PCs are not counted yet: audioctor_installs has no platform column, and a PC would read as a Mac.
+  if (!win) await countInstall(env, req, sp, app).catch(() => {});
+  if (win) return json({ version: rel.version, platform: 'windows', url: `${PAGE}?get=free&os=win` }, 200, { 'cache-control': 'public, max-age=600' });
   return json({ version: rel.version, url: `${SITE}/apps/audioctor-changes.html${from}` }, 200, { 'cache-control': 'public, max-age=600' });
 }
 
@@ -583,14 +592,16 @@ async function installsFor(env) {
 }
 
 export async function audioctorDownloadFree(req, env) {
+  const asset = assetFor(new URL(req.url).searchParams);
   const user = await currentUser(req, env).catch(() => null);
   if (!user) {
-    if (/application\/json/.test(req.headers.get('accept') || '')) return json({ error: 'sign_in_required', signup: FREE_SIGNUP_URL }, 401);
-    return new Response(null, { status: 302, headers: { location: FREE_SIGNUP_URL, 'cache-control': 'no-store' } });
+    const signup = FREE_SIGNUP_URL + (asset === ASSET_WIN ? '&os=win' : '');
+    if (/application\/json/.test(req.headers.get('accept') || '')) return json({ error: 'sign_in_required', signup }, 401);
+    return new Response(null, { status: 302, headers: { location: signup, 'cache-control': 'no-store' } });
   }
   const rel = await env.DB.prepare(
     'SELECT * FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
-  ).bind(ASSET).first();
+  ).bind(asset).first();
   if (!rel) return json({ error: 'no_release' }, 404);
   const obj = await env.APPS.get(rel.r2_key);
   if (!obj) return json({ error: 'file_missing' }, 404);

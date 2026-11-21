@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=27">
+<link rel="stylesheet" href="audioctor.css?v=29">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -32,7 +32,7 @@
 <meta name="twitter:description" content="Take the echo and noise out of any video, or split any song into vocal, drums, bass and more, on your Mac. Your first 3 exports free, then from $5 a month.">
 <meta name="twitter:image" content="https://snowstar.company/assets/og-audioctor.jpg?v=2">
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Audioctor", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 14 or later (Apple silicon or Intel)", "description": "Fixes the sound of a video and splits any song into its parts, on your Mac: room echo and noise out of speech, music under the talk turned down, the same video back in sync; vocal, drums, bass, guitars and keys on their own faders, each exported as its own file.", "offers": [{"@type": "Offer", "name": "Audioctor Free", "description": "Every tool; the first 3 exports up to 6 minutes a clip, then clips up to 30 seconds, 3 exports a day", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Audioctor Yearly", "description": "Any length, no daily limit, billed yearly, cancel any time", "price": "60", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Audioctor Monthly", "description": "Any length, no daily limit, cancel any time", "price": "7", "priceCurrency": "USD"}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/audioctor.html"}
+{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Audioctor", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 14 or later (Apple silicon or Intel), Windows 10 or 11 (64-bit)", "description": "Fixes the sound of a video and splits any song into its parts, on your Mac: room echo and noise out of speech, music under the talk turned down, the same video back in sync; vocal, drums, bass, guitars and keys on their own faders, each exported as its own file.", "offers": [{"@type": "Offer", "name": "Audioctor Free", "description": "Every tool; the first 3 exports up to 6 minutes a clip, then clips up to 30 seconds, 3 exports a day", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Audioctor Yearly", "description": "Any length, no daily limit, billed yearly, cancel any time", "price": "60", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Audioctor Monthly", "description": "Any length, no daily limit, cancel any time", "price": "7", "priceCurrency": "USD"}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/audioctor.html"}
 </script>
 <script type="application/ld+json">
 {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does my audio leave my Mac?", "acceptedAnswer": {"@type": "Answer", "text": "No. Everything runs on your Mac, and Audioctor works offline."}}, {"@type": "Question", "name": "Is there a plug-in?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet. One that cleans the track it sits on is on its way. Until then, export from Audioctor and drop the files into your DAW."}}, {"@type": "Question", "name": "My DJ software already splits stems. Why this?", "acceptedAnswer": {"@type": "Answer", "text": "Your DJ software splits them live, inside the set. Audioctor gives you each part as a file: a clean acapella, an instrumental, a drum loop, ready to edit, loop and EQ in your DAW."}}, {"@type": "Question", "name": "Can I split any song?", "acceptedAnswer": {"@type": "Answer", "text": "On your own Mac, yes. Releasing someone else's song, or a part of it, needs the rights holder's permission, as it would with any other tool."}}, {"@type": "Question", "name": "How fast is it?", "acceptedAnswer": {"@type": "Answer", "text": "On an M1 Max, about 15 seconds for each minute of speech, and about a minute to take a 3-minute song apart. Intel Macs take longer."}}, {"@type": "Question", "name": "What's free?", "acceptedAnswer": {"@type": "Answer", "text": "Every tool, with no watermark. Your first 3 exports take clips up to 6 minutes each; after that, clips up to 30 seconds, 3 exports a day. Longer clips open, process and play for free; exporting them needs a plan."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Any time, in your account or on the cancel page. Nothing more is charged, and what you paid for runs to its end. Then you're back on the free plan with all your files."}}]}
@@ -77,7 +77,7 @@
       <svg class="pw" viewBox="0 0 1440 160" preserveAspectRatio="none"><path class="w1" d="M0 70Q180 30 360 70T720 70T1080 70T1440 70V160H0z"/><path class="w2" d="M0 96Q180 128 360 96T720 96T1080 96T1440 96V160H0z"/><path class="w3" d="M0 122Q180 100 360 122T720 122T1080 122T1440 122V160H0z"/></svg></div>
     <div class="wrap">
       <div class="duo-copy">
-        <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">Audioctor for Mac</p>
+        <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">Audioctor for Mac and Windows</p>
         <h1 id="heroTitle" data-txt="audioctor.h1">Try it on your worst recording.<br><em>Or your favorite track.</em></h1>
         <p class="lead" data-txt="audioctor.h1.lead"><span style="font-size: 19.8px;">Exceptional audio separator and mind blowing voice Healer.</span></p>
         <div class="cta">
@@ -460,7 +460,12 @@
             <li>Then 30-second clips, 3 a day</li>
             <li>Longer files open and play</li>
           </ul>
-          <a class="btn ghost" href="/api/audioctor/download/free" data-free-dl>Download free</a>
+          <!-- Both files, side by side (2026-11-21, Ori on a PC got the Mac .pkg): js/audioctor-free.js makes the one
+               this computer wants come first; the unlabelled Download buttons elsewhere follow the browser. -->
+          <div class="os-dl">
+            <a class="btn ghost" href="/api/audioctor/download/free" data-free-dl data-os="mac"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Download for Mac</a>
+            <a class="btn ghost" href="/api/audioctor/download/free?os=win" data-free-dl data-os="win"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8.5v8.5H3zM12.5 3H21v8.5h-8.5zM3 12.5h8.5V21H3zM12.5 12.5H21V21h-8.5z"/></svg>Download for Windows</a>
+          </div>
         </div>
         <div class="plan hot">
           <span class="badge">Best value</span>
@@ -488,7 +493,7 @@
       </div>
       <p class="planmsg" id="planMsg" role="status" hidden></p>
       <p class="anchor" hidden>Adobe sells Podcast Premium inside Firefly Pro, at <b><span data-usd="19.99" data-dp="2">$19.99</span> a month</b>. Audioctor cleans the voice and splits the stems on your Mac, from a quarter of that.</p>
-      <p class="reqs"><b>Mac</b>&nbsp;<b>macOS 14</b> or later.&nbsp;</p>
+      <p class="reqs"><b>Mac</b>&nbsp;<b>macOS 14</b> or later. <b>PC</b>&nbsp;<b>Windows 10 or 11</b>, 64-bit.</p>
     </div>
   </section>
 
@@ -511,7 +516,10 @@
     <div class="wrap">
       <h2 data-txt="audioctor.last.title">Try it on your worst recording.<br><em>Or your favorite track.</em></h2>
       <div class="cta">
-        <a class="btn lime" href="/api/audioctor/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>Download free</a>
+        <div class="os-dl">
+          <a class="btn lime" href="/api/audioctor/download/free" data-free-dl data-os="mac"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Download for Mac</a>
+          <a class="btn ghost" href="/api/audioctor/download/free?os=win" data-free-dl data-os="win"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8.5v8.5H3zM12.5 3H21v8.5h-8.5zM3 12.5h8.5V21H3zM12.5 12.5H21V21h-8.5z"/></svg>Download for Windows</a>
+        </div>
         <a class="btn ghost" href="#pricing">Unlimited from <span data-usd="5" data-dp="0">$5</span> a month</a>
       </div>
     </div>
@@ -644,17 +652,18 @@
 <!-- After the free download starts (js/audioctor-free.js): what to do when it lands. -->
 <div class="dl-hint" id="dlHint" role="status" hidden>
   <img class="dl-ic" src="audioctor-icon-128.png" width="40" height="40" alt="">
-  <p><b>Audioctor is downloading.</b> Open it, press Continue, then open Audioctor from Applications. The first launch fetches its sound models (2.3 GB, once).</p>
+  <p data-hint-os="mac"><b>Audioctor is downloading.</b> Open it, press Continue, then open Audioctor from Applications. The first launch fetches its sound models (2.3 GB, once).</p>
+  <p data-hint-os="win" hidden><b>Audioctor is downloading.</b> Open it. If Windows says it protected your PC, click More info, then Run anyway. The first launch fetches its sound models (1.7 GB, once).</p>
   <button type="button" id="dlHintX" aria-label="Close">×</button>
 </div>
 
 <!-- shared Snowstar account: state (account.js) + the sign-in lightbox (account-ui.js) -->
 <script src="../js/money.js?v=4"></script>
 <script src="../js/account.js?v=3"></script>
-<script src="../js/account-ui.js?v=32"></script>
+<script src="../js/account-ui.js?v=33"></script>
 <script src="../js/site-edit.js?v=29"></script>
 <script src="../js/audioctor-plans.js?v=3"></script>
-<script src="../js/audioctor-free.js?v=1"></script>
+<script src="../js/audioctor-free.js?v=2"></script>
 <script src="../js/audioctor-ab.js?v=10"></script>
 <script src="../js/consent.js?v=1"></script>
 <!-- visit tracking, after consent.js so snowConsent exists when it reads it -->
