@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=29">
+<link rel="stylesheet" href="audioctor.css?v=30">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -78,8 +78,16 @@
     <div class="wrap">
       <div class="duo-copy">
         <p class="kicker"><img src="audioctor-icon-128.png" width="26" height="26" alt="">Audioctor for Mac and Windows</p>
-        <h1 id="heroTitle" data-txt="audioctor.h1">Try it on your worst recording.<br><em>Or your favorite track.</em></h1>
-        <p class="lead" data-txt="audioctor.h1.lead"><span style="font-size: 19.8px;">Exceptional audio separator and mind blowing voice Healer.</span></p>
+        <!-- The one row that cannot be written in as stored. /api/texts holds audioctor.h1 as four <h2>
+             plus a <font>: innerHTML accepts that, but the document parser does not — an <h2> start tag
+             closes an open <h1>, so pasting it would leave this h1 EMPTY and the words outside it, which
+             is a worse flash than the one being fixed (and would empty aria-labelledby="heroTitle"). The
+             row's rendered TEXT is here instead, and .duo-copy h1 h2 in apps/audioctor.css gives the h2s
+             the editor re-injects on every load this line's own font, size and colour, so the swap does
+             not show. The row's colour (#eef3fb) is in that stylesheet for the same reason. -->
+        <h1 id="heroTitle" data-txt="audioctor.h1">Audio splitter |&nbsp;Voice enhancer</h1>
+        <!-- /api/texts row "audioctor.h1.lead" wins on every load; this is that row, so first paint already matches it. -->
+        <p class="lead" data-txt="audioctor.h1.lead"><span style="font-size: 19.8px;">A must-have tool for content creators and music producers.</span></p>
         <div class="cta">
           <a class="btn lime" href="#video" data-txt="audioctor.hero.go.video">Content Creators</a>
           <a class="btn ghost" href="#djs" data-txt="audioctor.hero.go.advanced">Advanced Users</a>
@@ -108,7 +116,12 @@
   <!-- ── creators: three reels on three phones, each its own Before / After (js/audioctor-ab.js); one plays at a time.
        Left to right (2026-11-16/17, Ori): Shahak, Dalit, KAYMA – ONSITELOVER, Matan Hakimi, KAYMA on i24, Roy Rieck (both approved, 2026-11-17), Justin Brown of Primal Video (approved, 2026-11-17).
        On a phone they swipe, Dalit first, and the words come after them, so the opening keeps one headline. Under them
-       the four situations, drawn (amber is the noise, as Before is). ── -->
+       the four situations, drawn (amber is the noise, as Before is).
+       The status-bar clocks each carry an id, which is what keeps autoKeys off them (js/site-edit.js skips
+       any [id]). They read 9:41, 9:42, 9:43 because Ori typed those in the editor and a
+       stored row wins on every load — but an auto key is a hash of the block's own words and its -N suffix
+       is positional among blocks that share them, so writing the digits in while they were still auto-keyed
+       would have renumbered the rows onto the wrong two phones. The id retires both rows instead. ── -->
   <section id="video" class="reels" aria-labelledby="videoTitle">
     <div class="wrap">
       <div class="reels-wrap">
@@ -118,7 +131,7 @@
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Shahak Shapira: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <div class="sbar" aria-hidden="true"><b id="sbarClock1">9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
               <span class="abp-tag" id="abTag-reel">After · Audioctor</span>
               <button type="button" class="abp-play" aria-label="Play Shahak Shapira with sound">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
@@ -147,7 +160,7 @@
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Dalit Nemirovsky: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <div class="sbar" aria-hidden="true"><b id="sbarClock2">9:42</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
               <span class="abp-tag" id="abTag-lecture">After · Audioctor</span>
               <button type="button" class="abp-play" aria-label="Play Dalit Nemirovsky with sound">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
@@ -176,7 +189,7 @@
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="KAYMA – ONSITELOVER, live: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <div class="sbar" aria-hidden="true"><b id="sbarClock3">9:43</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
               <span class="abp-tag" id="abTag-onsite">After · Audioctor</span>
               <button type="button" class="abp-play" aria-label="Play KAYMA – ONSITELOVER, live with sound">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
@@ -205,7 +218,7 @@
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Matan Hakimi: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <div class="sbar" aria-hidden="true"><b id="sbarClock4">9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
               <span class="abp-tag" id="abTag-matan">After · Audioctor</span>
               <button type="button" class="abp-play" aria-label="Play Matan Hakimi with sound">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
@@ -234,7 +247,7 @@
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="KAYMA on i24 News: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <div class="sbar" aria-hidden="true"><b id="sbarClock5">9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
               <span class="abp-tag" id="abTag-i24">After · Audioctor</span>
               <button type="button" class="abp-play" aria-label="Play KAYMA on i24 News with sound">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
@@ -263,7 +276,7 @@
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Roy Rieck: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <div class="sbar" aria-hidden="true"><b id="sbarClock6">9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
               <span class="abp-tag" id="abTag-roy">After · Audioctor</span>
               <button type="button" class="abp-play" aria-label="Play Roy Rieck with sound">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
@@ -292,7 +305,7 @@
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Justin Brown, Primal Video: the video; its sound plays Before or After"></video>
-              <div class="sbar" aria-hidden="true"><b>9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
+              <div class="sbar" aria-hidden="true"><b id="sbarClock7">9:41</b><i class="island"></i><svg viewBox="0 0 54 12"><path fill="currentColor" d="M1 9h2v2H1zM5 7h2v4H5zM9 5h2v6H9zM13 3h2v8h-2zM24 4.6a7 7 0 0 1 9 0l-1.2 1.3a5.3 5.3 0 0 0-6.6 0zM26.2 7a3.8 3.8 0 0 1 4.6 0L28.5 9.5z"/><rect x="37.5" y="2" width="14" height="8" rx="2.2" fill="none" stroke="currentColor" opacity=".55"/><rect x="39" y="3.5" width="9.5" height="5" rx="1" fill="currentColor"/></svg></div>
               <span class="abp-tag" id="abTag-primal">After · Audioctor</span>
               <button type="button" class="abp-play" aria-label="Play Justin Brown, Primal Video with sound">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
@@ -322,8 +335,10 @@
           <p class="reels-note"><br></p>
         </div>
         <div class="reels-copy">
-          <h2 id="videoTitle" data-txt="audioctor.creators.h2">Designed for <em>Content Creators.</em></h2>
-          <p class="reels-sub" data-txt="audioctor.creators.sub">Sound like you wore a mic,&nbsp;<div>or enhance the one you wore.</div></p>
+          <!-- /api/texts row "audioctor.creators.h2" wins on every load; this is that row, so first paint already matches it. -->
+          <h2 id="videoTitle" data-txt="audioctor.creators.h2"><span class="se-fs" style="font-size: 125%;">Designed for <em>Content Creators.</em></span></h2>
+          <!-- /api/texts row "audioctor.creators.sub" wins on every load; this is that row, so first paint already matches it. -->
+          <p class="reels-sub" data-txt="audioctor.creators.sub"><span class="se-fs" style="font-size: 110%;">Sound like you wore a mic, or enhance the one you wore.</span></p>
         </div>
       </div>
       <div class="pains" hidden>
@@ -347,61 +362,59 @@
         </figure>
         </div>
       </div>
-      <!-- the four steps (2026-11-17, Ori: "four points instead of a long paragraph, a small close-up of each on the app");
-           the close-ups are crops of ui/index.html?scene=creator at 2x. An <ol>, not a <div>: Ori's removed-rows rule counts
-           this section's divs. -->
+      <!-- the four steps (2026-11-17, Ori: "four points instead of a long paragraph, a small close-up of each on the app").
+           The close-ups are GONE: Ori removed all four in the editor, and the stored row
+           rows.removed./apps/audioctor.html still holds #video>div>ol>li:nth-of-type(1..4)>img, so they were
+           being deleted on every load after first paint. They are deleted here instead, which is what stops
+           the flash — but the selectors live on in D1 and nothing in this file can clear them. So an <img>
+           put back into any of these four <li> is deleted again for every visitor, with no error anywhere;
+           it only looks like the picture flashes in and vanishes. Clear the row from the editor first
+           (Remove rows → restore). The jpgs themselves are untouched in media/audioctor/steps/.
+           An <ol>, not a <div>: Ori's removed-rows rule counts this section's divs. -->
       <ol class="steps">
           <li>
             <b class="n">1</b>
             <h3 data-txt="audioctor.steps.1.t">Drop a video</h3>
             <p data-txt="audioctor.steps.1.b">Watch how Audioctor separates your soundtrack.</p>
-            <img src="../media/audioctor/steps/1-split.jpg?v=1" width="720" height="540" loading="lazy" alt="Audioctor taking a video apart: the original in its flask, the voice and the music in their own cylinders">
           </li>
           <li>
             <b class="n">2</b>
             <h3 data-txt="audioctor.steps.2.t">Try Cure Voice</h3>
             <p data-txt="audioctor.steps.2.b">Eliminate room reverb and create a crystal clear recording.</p>
-            <img src="../media/audioctor/steps/2-cure.jpg?v=1" width="720" height="540" loading="lazy" alt="The Process keys: Separate, Clean voice, and Cure Voice on">
           </li>
           <li>
             <b class="n">3</b>
             <h3 data-txt="audioctor.steps.3.t">Fine tune</h3>
             <p data-txt="audioctor.steps.3.b">Adjust volume, EQ and mono or stereo for each track.</p>
-            <img src="../media/audioctor/steps/3-tune.jpg?v=1" width="720" height="540" loading="lazy" alt="The voice's cylinder and its keys: on, solo, mono, EQ">
           </li>
           <li>
             <b class="n">4</b>
             <h3 data-txt="audioctor.steps.4.t">Blend and export</h3>
             <p data-txt="audioctor.steps.4.b">Blend the original back "in mix", then export your video with the new audio, instantly.</p>
-            <img src="../media/audioctor/steps/4-blend-export.jpg?v=1" width="720" height="540" loading="lazy" alt="The original at 24% in the mix, and the Export key">
           </li>
       </ol>
     </div>
   </section>
 
   <!-- ── musicians: the app's own window taking KAYMA – Bad Blood apart (app/art/capture.js scene=remix, filmed frame by
-       frame; its sound the app's real stems of the founder's track). The beats carry an id so the editor's auto keys
-       leave them to the films script. ── -->
+       frame; its sound the app's real stems of the founder's track).
+       The beats caption that used to sit under this film — <figcaption class="beats" id="remixBeats"> with its
+       eight <b data-at> cues — is GONE: Ori removed it in the editor, and the stored selector #remixBeats in
+       rows.removed./apps/audioctor.html was deleting it on every load after first paint. Same warning as the
+       step close-ups above: the selector is still in D1, so anything given that id here is deleted again for
+       every visitor. .beats in apps/audioctor.css is now unreachable and is kept only for that restore. ── -->
   <section id="djs" class="music" aria-labelledby="musicTitle">
     <div class="wrap">
       <div class="sec-head center"><p class="kicker" style="justify-content:center">For DJs, producers and remixers</p>
-        <h2 id="musicTitle" data-txt="audioctor.music.h2">The best stem splitter online<br>(<em>That works locally)</em></h2>
-        <p data-txt="audioctor.card.djs.body">Your acapella in a minute. Drop a finished track: vocal, drums, bass, guitars and keys each get a fader. Solo, loop and EQ, then export every part as its own file.</p></div>
+        <!-- /api/texts row "audioctor.music.h2" wins on every load; this is that row, so first paint already matches it. -->
+        <h2 id="musicTitle" data-txt="audioctor.music.h2">The best stem splitter online,<br><em>that works locally.</em></h2>
+        <!-- /api/texts row "audioctor.card.djs.body" wins on every load; this is that row, so first paint already matches it. -->
+        <p data-txt="audioctor.card.djs.body">Split any song into individual stems with the desktop app.&nbsp;<br></p></div>
       <figure class="mac film" data-sound-at="5.2">
         <div class="bar"><i></i><i></i><i></i><b>Audioctor</b>
           <button class="sound" type="button" aria-pressed="false" title="Play this film with sound"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.6L12 5.5v13L7.6 14.5H4z"/><path class="w" d="M15.8 9.3a3.8 3.8 0 0 1 0 5.4"/><path class="w" d="M18.6 6.5a7.8 7.8 0 0 1 0 11"/><path class="x" d="M16.2 9.8l4.6 4.4m0-4.4l-4.6 4.4"/></svg><span>Hear it</span></button>
         </div>
         <video src="../media/audioctor/remix.mp4?v=2" poster="../media/audioctor/remix.jpg?v=2" muted loop playsinline autoplay preload="none" width="1280" height="568" aria-label="KAYMA – Bad Blood taken apart in Audioctor: drums solo, vocal solo, the vocal down, a loop on the chorus, a high shelf on the vocal, export"></video>
-        <figcaption class="beats" id="remixBeats">
-          <b class="on" data-at="0">Drop a finished track</b>
-          <b data-at="2">Every part apart, about a minute</b>
-          <b data-at="9.2">Solo the drums</b>
-          <b data-at="13.2">Solo the vocal</b>
-          <b data-at="17.2">The vocal down, the drums up front</b>
-          <b data-at="21.6">Loop the chorus</b>
-          <b data-at="27.6">A high shelf on the vocal</b>
-          <b data-at="33.6">Export every part</b>
-        </figcaption>
       </figure>
       <p class="fine" style="text-align:center"><br></p>
     </div>
@@ -448,7 +461,7 @@
   <!-- ── pricing (2026-11-16): Free as a plan of its own, left of the year (Ori: "people don't know it's free"). ── -->
   <section id="pricing" aria-labelledby="pricingTitle">
     <div class="wrap">
-      <div class="sec-head center"><p class="kicker" style="justify-content:center">Pricing</p><h2 id="pricingTitle" data-txt="audioctor.pricing.h2">3 tracks everyday -&nbsp;<span style="font-size: clamp(32px, 4.6vw, 58px); letter-spacing: -0.02em; text-wrap-mode: initial;">free</span><span style="font-size: clamp(32px, 4.6vw, 58px); letter-spacing: -0.02em; text-wrap-mode: initial;">.</span><br><em>Unlimited - lowest price online.</em></h2>
+      <div class="sec-head center"><p class="kicker" style="justify-content:center">Pricing</p><!-- /api/texts row "audioctor.pricing.h2" wins on every load; this is that row, so first paint already matches it. --> <h2 id="pricingTitle" data-txt="audioctor.pricing.h2">3 tracks everyday - <em>Free.</em></h2>
         <p data-txt="audioctor.pricing.sub" hidden>Every tool on every plan. No watermark, ever.</p></div>
       <div class="plans">
         <div class="plan free">
@@ -499,7 +512,7 @@
 
   <section id="faq" aria-labelledby="faqTitle">
     <div class="wrap">
-      <div class="sec-head center"><h2 id="faqTitle" data-txt="audioctor.faq.title">Questions.</h2></div>
+      <div class="sec-head center"><!-- /api/texts row "audioctor.faq.title" wins on every load; this is that row, so first paint already matches it. --> <h2 id="faqTitle" data-txt="audioctor.faq.title">Good To Know</h2></div>
       <div class="faq">
         <details><summary>Does my audio leave my Mac?</summary><p>No. Everything runs on your Mac, and Audioctor works offline.</p></details>
         <details><summary>Is there a plug-in?</summary><p>Not yet. One that cleans the track it sits on is on its way. Until then, export from Audioctor and drop the files into your DAW.</p></details>

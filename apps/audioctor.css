@@ -561,6 +561,13 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 .hero-duo[data-hero="blend"] .lab-shot .mac{box-shadow:0 0 0 1px rgba(255,255,255,.1),0 50px 100px -30px rgba(0,0,0,.95),0 0 140px -30px rgba(255,92,138,.35)}
 /* the hero's headline as the editor stores it holds two <h2>s pasted into the <h1> (2026-11-17): they read as the h1 */
 .duo-copy h1 h2{font:inherit;letter-spacing:inherit;line-height:inherit;color:inherit;margin:0}
+/* …and the editor's layout row for audioctor.h1 paints it #eef3fb, as [data-txt="audioctor.h1"][data-txt]
+   in <style id="se-look"> — written there by site-edit.js AFTER first paint, so without this line the
+   biggest text on the page went warm (--ink #f3eddc) to cool on every load. It belongs in the stylesheet
+   and not on the element: this file is night-only (no light skin), so an absolute hex is safe, while an
+   inline style would sit on an element whose innerHTML the row replaces on every load. .duo-copy is on
+   this page's hero alone — the other pages that load this file use .ab-copy — and the h2s above inherit it. */
+.duo-copy h1{color:#eef3fb}
 #video,#djs{scroll-margin-top:64px}
 
 /* the four steps for creators (2026-11-17): a number, a line, and a close-up of the app under it */
