@@ -8,11 +8,17 @@
    Mac or PC (2026-11-21, Ori on a PC got the Mac .pkg): a labelled button says which file it is (data-os="mac" | "win");
    an unlabelled one follows the browser, so nobody on a PC lands on the Mac installer. Whichever this computer wants is
    the solid button. The wish survives a Google sign-in's reload beside the wish itself; ?os=win on the URL asks for
-   Windows (the Worker's sign-up redirect, and the Windows app's Update button). */
+   Windows (the Worker's sign-up redirect, and the Windows app's Update button).
+   A phone or a tablet (2026-11-21, Ori): the stores instead of the two files ([data-for="mobile"]), the device's own
+   first. An unlabelled Download button there opens the App Store on an iPhone or iPad, and the stores on Android. */
 (function () {
   'use strict';
   const FREE_DL = '/api/audioctor/download/free', KEY = 'ad_free_dl', FROM = 'ad_free_from', OS = 'ad_free_os', FOR = 15 * 60 * 1000;
   const q = new URLSearchParams(location.search);
+  const APP_STORE = 'https://apps.apple.com/app/audioctor/id6833722693';
+  // an iPad asks for the desktop site and says "Macintosh", but a Mac has no touch screen
+  const device = () => { const ua = navigator.userAgent || ''; if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return 'ios'; return /Android/i.test(ua) ? 'android' : ''; };
+  const dev = device();
   const winUA = () => { try { const d = navigator.userAgentData; return d ? /win/i.test(d.platform || '') : /Windows|Win64|WOW64/i.test(navigator.userAgent || ''); } catch (e) { return false; } };
   const osFor = (a) => { const o = a && a.dataset ? a.dataset.os : ''; return o === 'win' || o === 'mac' ? o : (winUA() ? 'win' : 'mac'); };
   const osWish = () => { try { const o = sessionStorage.getItem(OS); return o === 'win' || o === 'mac' ? o : (winUA() ? 'win' : 'mac'); } catch (e) { return winUA() ? 'win' : 'mac'; } };
@@ -66,8 +72,17 @@
     await ready();
     if (signedIn()) start(src, os); else ask(src, os);
   }
+  (function () {   // a phone or a tablet: the stores, and this device's store first
+    if (!dev) return;
+    document.querySelectorAll('.os-dl[data-for="desktop"]').forEach((g) => { g.hidden = true; });
+    document.querySelectorAll('.os-dl[data-for="mobile"]').forEach((g) => {
+      g.hidden = false;
+      const i = g.querySelector('[data-store="ios"]'), a = g.querySelector('[data-store="android"]');
+      if (dev === 'android' && i && a) { g.insertBefore(a, i); i.classList.replace('lime', 'ghost'); }
+    });
+  })();
   (function () {   // the solid button is the file this computer wants; the other stays an outline
-    if (!winUA()) return;
+    if (dev || !winUA()) return;
     document.querySelectorAll('.os-dl').forEach((g) => {
       const m = g.querySelector('[data-os="mac"]'), w = g.querySelector('[data-os="win"]');
       if (!m || !w) return;
@@ -78,9 +93,14 @@
     });
   })();
 
+  function toStores() {
+    if (dev === 'ios') { location.href = APP_STORE; return; }
+    const t = $('download'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
   document.querySelectorAll('[data-free-dl]').forEach((a) => a.addEventListener('click', (e) => {
     e.preventDefault();
     const d = a.closest('dialog'); if (d && d.open) d.close();   // the waitlist card's link: the sign-up can't open under a modal
+    if (dev) { toStores(); return; }
     go('page', osFor(a));
   }));
   document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => keep(false)));
@@ -92,6 +112,7 @@
       history.replaceState(null, '', u.pathname + (u.searchParams.toString() ? '?' + u.searchParams : '') + u.hash);
     }
     if (!wants()) return;
+    if (dev) { keep(false); if (direct) toStores(); return; }   // a phone can't run the Mac or Windows file
     await ready();
     const M = acct(); if (M && M.onChange) M.onChange(ifWanted);   // e.g. back from Google
     if (signedIn()) start(); else if (direct) ask();

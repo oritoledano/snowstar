@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=30">
+<link rel="stylesheet" href="audioctor.css?v=32">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -458,16 +458,21 @@
     </div>
   </section>
 
-  <!-- ── the download, Mac and Windows (2026-11-21, Ori: before the prices, not after the questions) ── -->
-  <section class="last">
+  <!-- ── the download, Mac and Windows (2026-11-21, Ori: before the prices, not after the questions). On a phone or
+       a tablet js/audioctor-free.js shows the stores instead (Ori, 2026-11-21): the App Store's Audioctor is live; Google
+       Play has no Audioctor yet, so its button says Soon and goes nowhere. ── -->
+  <section class="last" id="download">
     <div class="wrap">
       <h2 data-txt="audioctor.last.title">Try it on your worst recording.<br><em>Or your favorite track.</em></h2>
       <div class="cta">
-        <div class="os-dl">
+        <div class="os-dl" data-for="desktop">
           <a class="btn lime" href="/api/audioctor/download/free" data-free-dl data-os="mac"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Download for Mac</a>
           <a class="btn ghost" href="/api/audioctor/download/free?os=win" data-free-dl data-os="win"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8.5v8.5H3zM12.5 3H21v8.5h-8.5zM3 12.5h8.5V21H3zM12.5 12.5H21V21h-8.5z"/></svg>Download for Windows</a>
         </div>
-        <a class="btn ghost" href="#pricing">Unlimited from <span data-usd="5" data-dp="0">$5</span> a month</a>
+        <div class="os-dl" data-for="mobile" hidden>
+          <a class="btn lime" href="https://apps.apple.com/app/audioctor/id6833722693" data-store="ios" target="_blank" rel="noopener"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Download from App Store</a>
+          <span class="btn ghost store-soon" data-store="android" aria-disabled="true"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z"/></svg>Download from Google Play<small>Soon</small></span>
+        </div>
       </div>
     </div>
   </section>
@@ -489,9 +494,13 @@
           </ul>
           <!-- Both files, side by side (2026-11-21, Ori on a PC got the Mac .pkg): js/audioctor-free.js makes the one
                this computer wants come first; the unlabelled Download buttons elsewhere follow the browser. -->
-          <div class="os-dl">
+          <div class="os-dl" data-for="desktop">
             <a class="btn ghost" href="/api/audioctor/download/free" data-free-dl data-os="mac"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Download for Mac</a>
             <a class="btn ghost" href="/api/audioctor/download/free?os=win" data-free-dl data-os="win"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8.5v8.5H3zM12.5 3H21v8.5h-8.5zM3 12.5h8.5V21H3zM12.5 12.5H21V21h-8.5z"/></svg>Download for Windows</a>
+          </div>
+          <div class="os-dl" data-for="mobile" hidden>
+            <a class="btn ghost" href="https://apps.apple.com/app/audioctor/id6833722693" data-store="ios" target="_blank" rel="noopener"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Download from App Store</a>
+            <span class="btn ghost store-soon" data-store="android" aria-disabled="true"><svg class="os-ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z"/></svg>Download from Google Play<small>Soon</small></span>
           </div>
         </div>
         <div class="plan hot">
@@ -677,7 +686,7 @@
 <script src="../js/account-ui.js?v=33"></script>
 <script src="../js/site-edit.js?v=29"></script>
 <script src="../js/audioctor-plans.js?v=3"></script>
-<script src="../js/audioctor-free.js?v=2"></script>
+<script src="../js/audioctor-free.js?v=3"></script>
 <script src="../js/audioctor-ab.js?v=10"></script>
 <script src="../js/consent.js?v=1"></script>
 <!-- visit tracking, after consent.js so snowConsent exists when it reads it -->
