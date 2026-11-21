@@ -923,3 +923,231 @@ body.menu-open .menu-foot{opacity:1;transform:none}
 /* The marks are pure white with clean alpha, so inverting gives true black —
    the same trick .nav-word already uses when the overlay turns light. */
 [data-theme="light"] .menu-word{filter:invert(1)}
+
+/* ————— Audioctor teaser: the app's own warm night —————————————————————————
+   apps/audioctor.css is bone (#f3eddc) on #0b0a08 with lime #c8f23a; this block
+   borrows that palette literally, so the cut-away reads as the app rather than as
+   the studio. Fixed colours like the two blocks above it: it stays night in every
+   skin and in light mode, because the visitor owns the toggle and the app does not
+   change colour when they use it. It follows the StreamDAW block, which is paper —
+   so the page goes paper → night here, the same alternation Snowstash → StreamDAW
+   already makes one section up.
+
+   The shape is the landing page's hero, not an invention of this file: centred copy,
+   then the app's window under it at 900px (apps/audioctor.css:369 and :504). The
+   buttons are .btn.lime and .btn.ghost from that file (:46-:51) down to the gradient,
+   the glow and the 1.5px inset line, so the pair a visitor taps here is the pair they
+   meet again at the top of the page they land on.
+
+   The wordmark PNG is pure white with clean alpha, which is why there is no
+   filter:invert(1) on .ax-mark the way .sdaw-mark needs one over its paper.
+   Barlow Condensed is NOT loaded on this page; the kicker's stack falls through to
+   Oswald, which is (index.html:28). Do not add a font link for one caption. */
+.ax-teaser{position:relative;overflow:hidden;background:#0b0a08;
+  border-top:1px solid rgba(243,237,220,.12);border-bottom:1px solid rgba(243,237,220,.12);
+  padding:clamp(56px,7.5vw,100px) clamp(20px,4vw,48px)}
+.ax-teaser::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background:radial-gradient(120% 90% at 78% 16%,rgba(200,242,58,.10) 0%,transparent 58%),
+             radial-gradient(90% 80% at 10% 88%,rgba(255,92,138,.07) 0%,transparent 60%)}
+.ax-inner{position:relative;max-width:1100px;margin:0 auto}
+/* z-index 3 keeps the words over the steam, exactly as .duo-copy does in the
+   hero (apps/audioctor.css:543). The puffs rise 34cqw and would otherwise
+   drift across the fine print and the buttons. */
+.ax-copy{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+/* The kicker is apps/audioctor.css:35 — Barlow Condensed 700, .22em, lime. That face
+   is the one thing this block adds to index.html:28's font request; it sits beside the
+   Audioctor wordmark, where Oswald standing in for it is visible. */
+.ax-kicker{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:0 0 18px}
+.ax-mark{height:20px;width:auto;max-width:none;display:block}
+.ax-kicker span{font-family:"Barlow Condensed","Oswald",sans-serif;font-weight:700;
+  text-transform:uppercase;letter-spacing:.22em;font-size:13px;line-height:1;color:#c8f23a}
+/* apps/audioctor.css:31-34 and :371 verbatim: Fraunces 600 at -.02em/1.04, the hero's
+   own size, and the <em> italic 500 in --ink-2.
+   text-transform:none is not a preference — style.css has a blanket `h2{text-transform:
+   uppercase}` for the studio's own voice, and this headline is the app's. Left to shout,
+   "OR YOUR FAVORITE TRACK." also runs past the 1100px column at 1280.
+   Dropping the gradient <em> this block used to carry has a second effect worth keeping:
+   a background-clip:text heading ignores `color`, so the editor must refuse Colour on it.
+   This one takes a colour like any other block. */
+.ax-h{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.04;letter-spacing:-.02em;
+  text-transform:none;font-size:clamp(40px,4.8vw,66px);color:#f3eddc;margin:0;text-wrap:balance}
+.ax-h em{font-style:italic;font-weight:500;color:rgba(243,237,220,.78)}
+.ax-p{color:rgba(243,237,220,.78);max-width:700px;margin:14px 0 0;font-size:1.06rem;line-height:1.6}
+
+.ax-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:24px}
+/* .btn.lime and .btn.ghost from apps/audioctor.css:46-51, copied rather than referenced:
+   that stylesheet is never loaded here. Keep the two in step by hand if it changes. */
+.ax-cta,.ax-alt{display:inline-flex;align-items:center;gap:9px;border-radius:999px;
+  padding:14px 24px;font:600 15.5px/1 "Inter",system-ui,-apple-system,sans-serif;
+  transition:transform .15s ease,box-shadow .15s ease}
+.ax-cta{background:linear-gradient(#d6f55c,#b9df2f);color:#1d2a00;
+  box-shadow:0 0 22px rgba(200,242,58,.28)}
+.ax-cta:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(200,242,58,.42)}
+.ax-alt{background:transparent;color:#f3eddc;box-shadow:inset 0 0 0 1.5px rgba(243,237,220,.24)}
+.ax-alt:hover{box-shadow:inset 0 0 0 1.5px #f3eddc}
+
+.ax-fine{margin:18px 0 0;font-size:.84rem;line-height:1.7;color:rgba(243,237,220,.46);max-width:640px}
+.ax-price{color:rgba(243,237,220,.62);border-bottom:1px solid rgba(243,237,220,.22);
+  transition:color .2s ease,border-color .2s ease;white-space:nowrap}
+.ax-price b{color:#f3eddc;font-weight:700}
+.ax-price:hover{color:#f3eddc;border-color:rgba(243,237,220,.6)}
+
+/* ── the stage: ONE scene, two devices ──────────────────────────────────────
+   Before this pass the Mac and the phone were two flex items side by side and
+   they read as two pictures pasted next to each other, which is what they were.
+   Four things make them one object, and each is load-bearing:
+
+   1. The phone is ABSOLUTE over the window's lower right, not a flex item. The
+      earlier build avoided this on purpose, because a flex phone makes the 560px
+      rule able to turn the row into a column. That is still true — the 560px rule
+      below now switches .ax-shot to flex and the phone back to `position:static`,
+      which buys the same stacking without keeping the phone in flow at every width.
+   2. It hangs 3.2cqw BELOW the window and starts ~60px below its top edge, so the
+      two overlap on BOTH axes. Overlapping on one axis only is what reads as a
+      sticker — that was the whole fault of the build before this one.
+   3. One light, not two. The old build gave the window a pink glow and the phone
+      its own lime one, lighting them from different rooms. ::before is now a
+      single wash — pink over the window, lime round the phone — behind both.
+   4. A real bezel. A bare rounded crop of a screenshot is not a phone; 0.62cqw of
+      dark frame with a bone hairline and a 4.5° tilt is.
+
+   THE TILT IS NOT DECORATION — it is what buys the overlap. hero-lab.jpg puts the
+   app's big lime EXPORT button at the window's bottom right, from 90% to 99% of
+   the image width, and the BACKGROUND cylinder straight above it: the right edge
+   is the most expensive part of that shot to cover, and there is no vertical
+   gutter to hide behind. Rotating -4.5deg about an origin near the phone's FOOT
+   (50% 96%) swings its top left and leaves its foot where it is, so the overlap
+   is 39px at the phone's top — over the cheap EXPERT corner — and 13px at its
+   bottom. Measured at a 920px figure: 4.9px of the 70px EXPORT button, 7%, a
+   sliver of its right edge. Straighten the phone or move the origin to its middle
+   and that goes to a third of the button.
+
+   container-type:inline-size is what makes every one of those numbers a cqw, so
+   the scene scales as one piece instead of drifting apart between breakpoints.
+   It brings contain:layout with it, which is wanted (the phone positions against
+   this figure) and does NOT clip — only contain:paint would, and the puffs and the
+   hanging phone both paint outside these bounds. */
+.ax-shot{position:relative;z-index:1;max-width:980px;container-type:inline-size;
+  margin:clamp(30px,3.6vw,46px) auto 0}
+/* The one light source. Pink sits over the window (the hero's own glow colour,
+   apps/audioctor.css:554) and lime round the phone, as one continuous wash rather
+   than two box-shadows pointing at each other.
+   The inset stays inside -10% bottom (~41px at every width, because .ax-mac's
+   height is capped by the 980px max-width): .ax-teaser has overflow:hidden and a
+   padding-bottom of at least 56px, so a blur clipped by the section edge — a hard
+   line across the glow — cannot happen. */
+.ax-shot::before{content:"";position:absolute;z-index:0;pointer-events:none;
+  inset:-8% -5% -10% -5%;filter:blur(26px);
+  background:radial-gradient(58% 66% at 30% 52%,rgba(255,92,138,.20),transparent 70%),
+             radial-gradient(44% 58% at 88% 76%,rgba(200,242,58,.22),transparent 70%)}
+
+/* The app's window, the same chrome apps/audioctor.css:113-119 draws round the hero
+   film, and its blend-state shadow from :554 verbatim. aspect-ratio on the <img>
+   holds the height before the JPEG lands, so nothing below this section moves on
+   load. 85% leaves the right-hand sixth to the phone. */
+.ax-mac{position:relative;z-index:1;width:85%;
+  border-radius:14px;overflow:hidden;background:#000;
+  box-shadow:0 0 0 1px rgba(255,255,255,.1),
+             0 50px 100px -30px rgba(0,0,0,.95),
+             0 0 140px -30px rgba(255,92,138,.35)}
+.ax-bar{height:30px;display:flex;align-items:center;gap:8px;padding:0 14px;
+  background:linear-gradient(#2a2925,#1f1e1b);border-bottom:1px solid #000}
+.ax-bar i{width:12px;height:12px;border-radius:50%;background:#ff5f57}
+.ax-bar i:nth-child(2){background:#febc2e}
+.ax-bar i:nth-child(3){background:#28c840}
+.ax-bar b{margin-left:10px;font:600 13px "Inter",system-ui,sans-serif;color:rgba(243,237,220,.6)}
+.ax-mac img{display:block;width:100%;height:auto;aspect-ratio:1280/568;
+  object-fit:cover;background:#0b0a08}
+
+/* ── the hero's own steam ───────────────────────────────────────────────────
+   apps/audioctor.css:507-520 and :543-546, carried over under ax- names: the lab
+   puffs that rise out of the flask in that page's hero. This is the block's one
+   borrowed motion and the thing that makes the banner read as Audioctor's world
+   rather than a product shot.
+   Three numbers had to be re-derived, not copied. The hero's .brew spans .lab-shot,
+   which IS its window, so the flask sits at left:28.9% of it. Here the window is
+   85% of the figure, so the same flask is at .289 x .85 = 24.6%. top:15.5% carries
+   over unchanged, because this figure's height is still exactly the window's.
+   And the rise is cut from the hero's 34cqw to 24cqw (its scale 3.4 to 2.9): the
+   hero has open air above its window, this block has the fine print, the buttons
+   and the headline, and a puff that climbs the hero's full height crosses all
+   three and reads as a lens flare rather than steam. 24cqw stops it just over the
+   window's top edge.
+   cqw resolves against this figure (980px) where the hero's resolves against its
+   900px .lab-shot, so the puffs run ~9% larger here. That is the rest of it.
+   z-index 2 puts them over the window and under the phone, and .ax-copy's z-index 3
+   keeps them behind the words the way .duo-copy does in the hero. */
+.ax-brew{position:absolute;left:0;right:0;top:30px;bottom:0;z-index:2;
+  pointer-events:none;overflow:visible}
+.ax-puff{position:absolute;left:24.6%;top:15.5%;width:7cqw;height:7cqw;
+  margin:-3.5cqw 0 0 -3.5cqw;border-radius:50%;filter:blur(1.1cqw);opacity:0;
+  animation:axPuff var(--d) ease-out infinite}
+.ax-puff.p0{background:radial-gradient(circle,rgba(255,92,138,.75),rgba(255,92,138,0) 68%)}
+.ax-puff.p1{background:radial-gradient(circle,rgba(255,211,138,.70),rgba(255,211,138,0) 68%)}
+.ax-puff.p2{background:radial-gradient(circle,rgba(155,123,255,.75),rgba(155,123,255,0) 68%)}
+.ax-puff.p3{background:radial-gradient(circle,rgba(243,237,220,.60),rgba(243,237,220,0) 68%)}
+@keyframes axPuff{
+  0%{transform:translate(0,1cqw) scale(.25) rotate(0);opacity:0}
+  14%{opacity:.8}
+  55%{opacity:.45}
+  100%{transform:translate(var(--dx),-24cqw) scale(2.9) rotate(var(--r));opacity:0}}
+
+/* ── the phone ──────────────────────────────────────────────────────────────
+   transform-origin at 50% 96% so the 4.5° tilt pivots at the phone's foot, not its
+   middle: that is what keeps its lower left corner off the EXPORT button (see the
+   note on .ax-shot above) and is also the difference between leaning and skewed.
+   right:-1% lets it stand 1% proud of the figure. The figure caps at 980 inside a
+   1100 .ax-inner, so there are ~60px of slack each side at desktop widths, and at
+   narrow ones 1% of the inner is always less than the section's own side padding —
+   the page never gains a horizontal scrollbar for it.
+   No notch or island is drawn: the shot's own top row is the app's burger and
+   wordmark, and a simulated island would sit straight on top of them. */
+.ax-phone{position:absolute;z-index:3;right:-1%;bottom:-3.2cqw;width:17.5%;
+  transform:rotate(-4.5deg);transform-origin:50% 96%;
+  padding:.75cqw .62cqw 1cqw;border-radius:2.6cqw;
+  background:linear-gradient(158deg,#2d2c27,#131210 44%,#1d1c19);
+  box-shadow:0 0 0 1px rgba(243,237,220,.2),
+             0 34px 60px -22px rgba(0,0,0,.95),
+             inset 0 1px 0 rgba(243,237,220,.16)}
+.ax-phone img{display:block;width:100%;height:auto;aspect-ratio:540/1173;
+  border-radius:1.9cqw;background:#0b0a08}
+/* Says what the phone is. The Mac ships; the iPhone build does not yet, and the
+   page this block links to says "macOS 14 or later" in its own fine print — so an
+   iPhone shown without this line contradicts its own destination in one click.
+   Keyed, so it goes away in the editor the day the app is out. */
+.ax-soon{position:absolute;left:50%;bottom:-.2cqw;transform:translateX(-50%);
+  display:inline-flex;align-items:center;white-space:nowrap;
+  padding:.42cqw 1cqw;border-radius:99px;
+  font-family:"Inter",system-ui,-apple-system,sans-serif;font-weight:700;
+  font-size:clamp(8px,.95cqw,11px);letter-spacing:.12em;text-transform:uppercase;
+  color:#1d2a00;background:#c8f23a;box-shadow:0 6px 16px -6px rgba(0,0,0,.9)}
+
+@media (prefers-reduced-motion:reduce){
+  .ax-cta:hover{transform:none}
+  .ax-puff{animation:none!important;display:none}}
+
+@media (max-width:560px){
+  .ax-h{font-size:8.4vw}  /* apps/audioctor.css:424 */
+  .ax-bar{height:24px}
+  .ax-bar i{width:10px;height:10px}
+  .ax-bar b{font-size:11px}
+  /* Side by side stops working long before the window gets narrow: the phone is
+     540/1173, so at any width that leaves the Mac readable it is taller than the
+     window and the scene turns into a column of its own accord. Stack it, and put
+     the phone back in flow so the column has a height.
+     The steam goes with it: .ax-brew is anchored top:30px/bottom:0 against a figure
+     that is now window PLUS phone tall, so its 15.5% no longer lands on the flask —
+     it would smudge the middle of the phone instead. */
+  .ax-shot{display:flex;flex-direction:column;align-items:center}
+  .ax-mac{width:100%}
+  .ax-brew{display:none}
+  .ax-phone{position:static;width:min(168px,46vw);margin:18px 0 0;
+    transform:rotate(-2deg);padding:5px 4px 7px;border-radius:20px}
+  .ax-phone img{border-radius:15px}
+  .ax-soon{bottom:-9px;font-size:8px;padding:4px 9px}
+  .ax-shot::before{inset:-6% -4% -7% -4%}}
+
+@media (max-width:420px){
+  .ax-actions{gap:8px}
+  .ax-cta,.ax-alt{width:100%;justify-content:center}}

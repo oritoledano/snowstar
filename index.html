@@ -25,10 +25,10 @@
 <meta name="theme-color" content="#0c0c0d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,900&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,500&family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="js/mutra-skin.js?v=4"></script>
 <link rel="stylesheet" href="css/account.css?v=12">
-<link rel="stylesheet" href="css/style.css?v=66">
+<link rel="stylesheet" href="css/style.css?v=70">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Snowstar.Company",
 "description":"Audio experience agency — original music, sound design and audio branding for advertising, TV, film and gaming.",
@@ -265,6 +265,125 @@
              loading="lazy">
         <img class="sdaw-ph" src="apps/sdaw-v2-phone.jpg?v=3" width="1170" height="2280"
              alt="A listener’s phone: playing live, in-ear mode, in time" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <!-- AUDIOCTOR teaser → app page. Audioctor was the one product with no block
+       here at all: Mutra, Snowstash and StreamDAW each had a section and the app
+       showed up only in the menu and in a footer cancel link.
+       It wears its own palette (apps/audioctor.css: bone on #0b0a08, lime) and so
+       lands as night right after StreamDAW's paper — the same cut the Snowstash
+       block makes one section up.
+       The picture was drawn in CSS at first, while the app's UI was mid-redraw; it is
+       a real window now (see the next comment) and media/audioctor/hero-lab.jpg is the
+       shot that page itself leads with. -->
+  <!-- AUDIOCTOR — a mirror of apps/audioctor.html, not a second piece of writing about it.
+       Its headline, its lead and its two hero buttons are that page's own words, and the
+       picture is the app's own window (media/audioctor/hero-lab.jpg, the poster frame of
+       the film in that page's hero) rather than a drawn stand-in. The shape is the landing
+       hero's: centred copy, then the window under it at 900px — apps/audioctor.css:369 and
+       :504.
+       "That page's own words" means what it SHOWS, not what its .html said: audioctor.h1
+       and audioctor.h1.lead both carry stored editor rows, and a stored row wins over the
+       file on every load. This block was first written off the file and so mirrored text
+       nobody had seen on that page for weeks — "Try it on your worst recording." against
+       the live "Audio splitter | Voice enhancer". The same change that fixed it baked the
+       live words back into apps/audioctor.html, so file and live agree again today; the
+       rows are still there and still win, so they can diverge again the moment Ori edits
+       that page. Read the rendered page, never the .html, before touching these two lines.
+       The pipe becomes the line break here, where the headline has two lines to use.
+       The palette is that file's :root verbatim (#0b0a08, #f3eddc, #c8f23a, #1d2a00), so
+       this block stays night in every skin and in light mode, like the two above it.
+       The buttons point where the landing page's own hero points: "Content Creators" at
+       #video and "Advanced Users" at #djs (the .cta in that page's hero). #djs, not #advanced
+       — that is the anchor that page's own "Advanced Users" button uses.
+       The wordmark PNG is pure white with clean alpha, hence no filter:invert(1). -->
+  <section class="ax-teaser" id="audioctor">
+    <div class="ax-inner reveal">
+      <div class="ax-copy">
+        <p class="ax-kicker">
+          <!-- Intrinsic pixels (522x99), not the rendered size: the attributes exist to
+               give the browser the aspect ratio, and CSS height:20px;width:auto then lands
+               on 105.45px with no reflow. Hand-written display numbers were 118x20, a ratio
+               of 5.90 against the file's real 5.27, and the row jumped when the PNG loaded. -->
+          <img class="ax-mark" src="assets/audioctor-word-trim.png?v=1" alt="Audioctor"
+               width="522" height="99" loading="lazy" decoding="async">
+          <span data-txt="home.audioctor.kicker">for Mac</span>
+        </p>
+        <h2 class="ax-h" data-txt="home.audioctor.title">Audio splitter<br><em>Voice enhancer</em></h2>
+        <p class="ax-p" data-txt="home.audioctor.note">A must-have tool for content creators and music producers.</p>
+        <!-- Both keys sit on the <a> itself, never on a <span> inside it: a keyed span
+             inside a link leaves the anchor as the click target, so an admin tapping the
+             label to edit it leaves the home page and loses every unsaved edit. That is
+             also how .stash-cta and .mutra .cta are built. -->
+        <div class="ax-actions">
+          <a class="ax-cta" href="apps/audioctor.html#video" data-txt="home.audioctor.cta">Content Creators</a>
+          <a class="ax-alt" href="apps/audioctor.html#djs" data-txt="home.audioctor.cta2">Advanced Users</a>
+        </div>
+        <!-- The free tier verbatim from that page's own plan card (the <li>s of .plan.free):
+             three exports up to 6 minutes, then 30-second clips, 3 a day. The CTA one line
+             above lands on that very page, so a looser claim here contradicts itself in one
+             click — which is exactly what "run full length" did before today.
+             The price is deliberately OUTSIDE the keyed span: js/money.js rewrites
+             [data-usd] per the visitor's currency, and a stored text row would freeze
+             whatever figure happened to be on screen when an admin saved it. -->
+        <p class="ax-fine">
+          <span data-txt="home.audioctor.fine">Every tool, no watermark. Your first 3 exports up to 6 minutes
+          each, then 30-second clips, 3 a day. macOS 14 or later.</span>
+          <a class="ax-price" href="apps/audioctor.html#pricing">Unlimited from
+            <b><span data-usd="5" data-dp="0">$5</span></b> a month</a>
+        </p>
+      </div>
+
+      <!-- ONE scene, two devices — not two pictures side by side, which is what this
+           was until today. The CSS comment on .ax-shot in css/style.css has the four
+           things that make it read as one object; the markup's share is the order:
+           window, then steam, then phone, so the steam paints over the window and
+           behind the phone without a z-index having to argue about it.
+
+           Both shots are the real UI, and both are the current build.
+           The Mac is apps/audioctor.html's own hero poster (media/audioctor/hero-lab.jpg,
+           7 cylinders, CURE VOICE, SPLIT MORE) — the same file that page shows, so the
+           banner can never drift from the page it links to.
+           The phone is the iPhone app's own App Store shot, resized from
+           audioctor/mobile/store/screenshots/iphone-6.9/1-ready.png (1320x2868) and
+           written here as media/audioctor/app-iphone.jpg at 540x1173. Do NOT take it
+           from marketing/app-store/*.png — those are the OLDER Mac UI (6 cylinders,
+           STUDIO VOICE) under a baked-on marketing headline.
+           aspect-ratio on each <img> matches its file, so both reserve their height
+           before the JPEG arrives and nothing below this section moves on load. -->
+      <figure class="ax-shot">
+        <div class="ax-mac">
+          <div class="ax-bar" aria-hidden="true"><i></i><i></i><i></i><b>Audioctor</b></div>
+          <img src="media/audioctor/hero-lab.jpg?v=3" width="1280" height="568"
+               loading="lazy" decoding="async"
+               alt="Audioctor's window: one song on the bench, its parts rising in their own cylinders — voice, drums, bass, other, guitars, keys and background — each with its own level and keys">
+        </div>
+
+        <!-- The hero's own lab steam, rising out of the flask in the window below it.
+             The eight are apps/audioctor.html's hero .brew verbatim — same drift, same
+             rotation, same durations, same negative delays, so the loop is already in
+             motion on the first frame instead of all eight starting together. -->
+        <div class="ax-brew" aria-hidden="true">
+          <i class="ax-puff p0" style="--dx:-56%;--r:-4deg;--d:7.0s;animation-delay:-0.00s"></i>
+          <i class="ax-puff p1" style="--dx:-52%;--r:-1deg;--d:5.6s;animation-delay:-0.85s"></i>
+          <i class="ax-puff p2" style="--dx:10%;--r:13deg;--d:6.6s;animation-delay:-1.70s"></i>
+          <i class="ax-puff p3" style="--dx:35%;--r:-9deg;--d:6.9s;animation-delay:-2.55s"></i>
+          <i class="ax-puff p0" style="--dx:1%;--r:4deg;--d:6.4s;animation-delay:-3.40s"></i>
+          <i class="ax-puff p1" style="--dx:31%;--r:22deg;--d:6.4s;animation-delay:-4.25s"></i>
+          <i class="ax-puff p2" style="--dx:10%;--r:-22deg;--d:6.9s;animation-delay:-5.10s"></i>
+          <i class="ax-puff p3" style="--dx:8%;--r:25deg;--d:7.1s;animation-delay:-5.95s"></i>
+        </div>
+
+        <div class="ax-phone">
+          <img src="media/audioctor/app-iphone.jpg?v=1" width="540" height="1173"
+               loading="lazy" decoding="async"
+               alt="Audioctor on iPhone: a filmed talk open in the app, one slider from Original to Treated, and Export">
+          <!-- Keyed: the day the iPhone build ships, this line comes off in the editor
+               and the kicker one block up goes back to "for Mac &amp; iPhone". -->
+          <span class="ax-soon" data-txt="home.audioctor.soon">Soon on iPhone</span>
+        </div>
       </figure>
     </div>
   </section>
