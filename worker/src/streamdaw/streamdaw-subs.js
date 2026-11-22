@@ -659,8 +659,8 @@ function mail(env, to, { subject, title, intro, steps, lines, key, footer, butto
 export async function mailWelcome(env, s, { link, machine, ref }) {
   const soon = env.MINTER_TOKEN ? 'usually within minutes' : 'usually within a day';
   const keyLine = machine
-    ? `Your key for this Mac (${machine}) arrives in a second email, ${soon}. Copy everything in its box, the key and its Renewal line, into StreamDAW › Settings › Licence and press Unlock.`
-    : `Get the key for your Mac on ${SD.UNLOCK_URL} (sign in with this email).`;
+    ? `Your key for this computer (${machine}) arrives in a second email, ${soon}. Copy everything in its box, the key and its Renewal line, into StreamDAW › Settings › Licence and press Unlock.`
+    : `Get the key for your computer on ${SD.UNLOCK_URL} (sign in with this email).`;
   return mail(env, s.email, {
     subject: 'Welcome to StreamDAW Pro Monthly: receipt and download',
     title: 'Welcome to StreamDAW Pro Monthly',
@@ -692,7 +692,7 @@ async function mailRenewed(env, s, { ref, from, to }) {
     title: 'Pro Monthly renewed',
     intro: `We charged <b>${ils(s.amount)}</b> (VAT included)${s.card_last4 ? ` to your card ending ${s.card_last4}` : ''} for StreamDAW Pro Monthly, ${day(from)} to ${day(to)}.`,
     steps: [
-      `Nothing to do: your Mac picks up its new key by itself while it is online (StreamDAW ${RENEW_APP} or newer).`,
+      `Nothing to do: your computer picks up its new key by itself while it is online (StreamDAW ${RENEW_APP} or newer).`,
       `Older version, or offline for a while? Sign in on <a href="${SD.UNLOCK_URL}">the unlock page</a> and copy the new key into StreamDAW › Settings › Licence.`,
     ],
     lines: [`Charge: ${ref}`, `Paid: ${ils(s.amount)} incl. VAT`, s.status === 'active' ? `Next charge: ${ils(s.amount)} on ${day(s.next_charge_at)}` : `No further charges (cancelled): Pro until ${day(s.paid_through)}`,

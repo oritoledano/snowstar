@@ -39,7 +39,7 @@
     'Camera, up to three screens (a window or an app) and talkback',
     'Record up to 16 people into your DAW, in time',
     'Any app or input into the stream',
-    'Presets, sign-in-only sessions, and your Mac’s speakers in time with the phones',
+    'Presets, sign-in-only sessions, and your computer’s speakers in time with the phones',
     'No 60-minute limit',
   ];
 

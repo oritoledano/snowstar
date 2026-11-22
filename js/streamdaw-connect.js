@@ -31,7 +31,7 @@
         headers: { 'content-type': 'application/json' }, body: JSON.stringify({ machine, app }) });
       if (r.status === 401) { last = null; show('cnAnon'); return; }
       const d = await r.json().catch(() => ({}));
-      if (!r.ok || !d.ok) { $('cnBadText').textContent = 'Could not connect this Mac (' + (d.error || r.status) + '). Reload the page to try again.'; show('cnBad'); return; }
+      if (!r.ok || !d.ok) { $('cnBadText').textContent = 'Could not connect this computer (' + (d.error || r.status) + '). Reload the page to try again.'; show('cnBad'); return; }
       $('cnWho').textContent = d.name || user.name || user.email || '';
       show('cnDone');
       try { history.replaceState(null, '', location.pathname); } catch (e) {}   // the machine ID leaves the address bar

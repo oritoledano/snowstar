@@ -60,7 +60,7 @@
     const here = mac && acts.find((a) => a.machine_id === mac && a.status === 'issued' && a.key_text);
     if (here) showKey(here.key_text, here.machine_id);
     else if (mac && acts.some((a) => a.machine_id === mac && a.status === 'pending'))
-      licMsg('Your request for this Mac is in. The key arrives by email and appears here.');
+      licMsg('Your request for this computer is in. The key arrives by email and appears here.');
   }
 
   function when(t) { if (!t) return ''; const d = new Date(Number(t) * 1000); return isNaN(d) ? '' : d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }); }
@@ -71,7 +71,7 @@
     list.innerHTML = acts.map((a, i) => {
       const st = a.status === 'issued' ? 'Key issued' + (a.issued_at ? ' ' + when(a.issued_at) : '')
         : a.status === 'pending' ? 'Key being made'
-        : a.status === 'limit' ? 'Over the 2-Mac limit'
+        : a.status === 'limit' ? 'Over the 2-computer limit'
         : a.status === 'deactivated' ? 'Deactivated' : esc(a.status || '');
       return '<li><code>' + esc(a.machine_id) + '</code><span class="st ' + esc(a.status) + '">' + st + '</span>'
         + (a.status === 'issued' && a.key_text ? '<button class="btn ghost sm" type="button" data-show="' + i + '">Show key</button>' : '')
@@ -87,15 +87,15 @@
   document.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-off]'); if (!b) return;
     const a = acts[Number(b.dataset.off)]; if (!a) return;
-    if (!confirm('Deactivate ' + a.machine_id + '?\n\nThis frees its place, so another Mac can have a key. '
-      + 'StreamDAW on that Mac keeps the key it has: remove it there in Settings › Licence. A key with an end is not renewed.')) return;
+    if (!confirm('Deactivate ' + a.machine_id + '?\n\nThis frees its place, so another computer can have a key. '
+      + 'StreamDAW on that computer keeps the key it has: remove it there in Settings › Licence. A key with an end is not renewed.')) return;
     b.disabled = true;
     try {
       const r = await fetch('/api/streamdaw/deactivate', { method: 'POST', credentials: 'include',
         headers: { 'content-type': 'application/json' }, body: JSON.stringify({ machineId: a.machine_id }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) { licMsg(d.error || 'That did not go through.', 'bad'); b.disabled = false; return; }
-      licMsg(a.machine_id + ' is deactivated: its place is free for another Mac.', 'ok');
+      licMsg(a.machine_id + ' is deactivated: its place is free for another computer.', 'ok');
       refresh();
     } catch (err) { licMsg('Network trouble. Try again.', 'bad'); b.disabled = false; }
   });
@@ -138,7 +138,7 @@
       if (!r.ok) { licMsg(d.error || 'That did not go through.', 'bad'); btn.disabled = false; return; }
       try { sessionStorage.setItem('sd_machine', machine); } catch (e) {}
       if (d.status === 'issued' && d.key) { btn.disabled = false; showKey(d.key, machine); refresh(); return; }
-      if (d.status === 'limit') { licMsg(d.error || 'Deactivate one of your Macs first, then ask again.', 'bad'); btn.disabled = false; refresh(); return; }
+      if (d.status === 'limit') { licMsg(d.error || 'Deactivate one of your computers first, then ask again.', 'bad'); btn.disabled = false; refresh(); return; }
       if (d.soon) { licMsg('Got it. Your key is being made: it appears here and arrives by email, usually within a minute.', 'ok'); licWait(Date.now(), machine); }
       else licMsg('Got it: we emailed you a confirmation. Your key arrives in a second email, usually within a day, and appears here.', 'ok');
       btn.disabled = false; refresh();

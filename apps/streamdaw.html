@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as Mutra + the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="../css/streamdaw.css?v=16">
+<link rel="stylesheet" href="../css/streamdaw.css?v=17">
 <link rel="stylesheet" href="../css/streamdaw-products.css?v=1">
 <!-- mirrors the questions at the bottom of the page: change one, change the other -->
 <script type="application/ld+json">
@@ -37,7 +37,7 @@
 "name": "How many people can listen?",
 "acceptedAnswer": {
 "@type": "Answer",
-"text": "Each listener gets their own stream from your Mac, so your upload sets the limit. At 44.1 or 48 kHz, a listener on the full mix takes about 1.6 Mbit/s, so a 20 Mbit/s upload carries about 10 with room to spare. Outside sync mode, a listener on the track mixer takes about 1.5 Mbit/s for every stem you send. With 8 stems, that is about 12 Mbit/s for one person. In sync mode a phone takes about 0.15 Mbit/s, or about 1.5 on an iPhone with iOS 18 or older. Up to 6 guests on camera."
+"text": "Each listener gets their own stream from your computer, so your upload sets the limit. At 44.1 or 48 kHz, a listener on the full mix takes about 1.6 Mbit/s, so a 20 Mbit/s upload carries about 10 with room to spare. Outside sync mode, a listener on the track mixer takes about 1.5 Mbit/s for every stem you send. With 8 stems, that is about 12 Mbit/s for one person. In sync mode a phone takes about 0.15 Mbit/s, or about 1.5 on an iPhone with iOS 18 or older. Up to 6 guests on camera."
 }
 },
  {
@@ -154,6 +154,8 @@
         <a class="btn ink" href="/api/streamdaw/download/free" data-free-dl><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg><span data-txt="streamdaw.hero.cta-trial">Try it free for 7 days</span></a>
         <a class="btn ghost" href="#products" data-txt="streamdaw.hero.cta-more">See the products</a>
       </div>
+      <!-- Both files named under the button (2026-11-22, the founder: the page shows the Mac and the PC install). -->
+      <p class="os-pick"><a href="/api/streamdaw/download/free" data-free-dl data-os="mac" data-txt="streamdaw.hero.os-mac">Download for Mac</a><span aria-hidden="true"> · </span><a href="/api/streamdaw/download/free?os=win" data-free-dl data-os="win" data-txt="streamdaw.hero.os-win">Download for Windows</a></p>
     </div>
   </section>
 
@@ -368,7 +370,7 @@
         <details><summary><span data-txt="streamdaw.faq.q1">How good is the sound?</span></summary>
           <p data-txt="streamdaw.faq.a1">Lossless by default: uncompressed 16-bit at your session's sample rate, about 1.6 Mbit/s a listener for the full mix at 44.1 or 48 kHz, twice that at 88.2 or 96. In sync mode, or when a listener's connection can't keep up, that listener gets Opus at 128 kbit/s. iPhones on iOS 18 or older can't play Opus, so they stay uncompressed.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q2">How many people can listen?</span></summary>
-          <p data-txt="streamdaw.faq.a2">Each listener gets their own stream from your Mac, so your upload sets the limit. At 44.1 or 48 kHz, a listener on the full mix takes about 1.6 Mbit/s, so a 20 Mbit/s upload carries about 10 with room to spare. Outside sync mode, a listener on the track mixer takes about 1.5 Mbit/s for every stem you send. With 8 stems, that is about 12 Mbit/s for one person. In sync mode a phone takes about 0.15 Mbit/s, or about 1.5 on an iPhone with iOS 18 or older. Up to 6 guests on camera.</p></details>
+          <p data-txt="streamdaw.faq.a2">Each listener gets their own stream from your computer, so your upload sets the limit. At 44.1 or 48 kHz, a listener on the full mix takes about 1.6 Mbit/s, so a 20 Mbit/s upload carries about 10 with room to spare. Outside sync mode, a listener on the track mixer takes about 1.5 Mbit/s for every stem you send. With 8 stems, that is about 12 Mbit/s for one person. In sync mode a phone takes about 0.15 Mbit/s, or about 1.5 on an iPhone with iOS 18 or older. Up to 6 guests on camera.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q3">Is everyone really in time?</span></summary>
           <p data-txt="streamdaw.faq.a3">Yes. In sync mode every phone plays the same instant, half a second behind your DAW, and a few short beeps line up the room's speakers too. Wired in-ears keep a band tightest; Bluetooth adds its own delay.</p></details>
         <details><summary><span data-txt="streamdaw.faq.q4">Which DAWs does it work with?</span></summary>
@@ -453,7 +455,7 @@
 <script src="../js/account.js?v=3"></script>
 <script src="../js/account-ui.js?v=31"></script>
 <script src="../js/site-edit.js?v=29"></script>
-<script src="../js/streamdaw-page.js?v=20261113a"></script>
+<script src="../js/streamdaw-page.js?v=20261122a"></script>
 <script src="../js/streamdaw-plans.js?v=5"></script>
 <script src="../js/consent.js?v=1"></script>
 <!-- visit tracking, after consent.js so snowConsent exists when it reads it -->

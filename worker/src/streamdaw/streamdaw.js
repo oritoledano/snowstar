@@ -764,10 +764,10 @@ const ACCOUNT_URL = `${SITE}/account.html`;
 const TERMS_URL = `${SITE}/apps/streamdaw-terms.html`;
 const HELP_MAIL = 'hello@snowstar.company';
 const mailLinksHtml = () =>
-  `<a href="${UNLOCK_URL}" style="color:#16140f">Get a key for a Mac</a> · <a href="${ACCOUNT_URL}" style="color:#16140f">Your account and downloads</a>`
+  `<a href="${UNLOCK_URL}" style="color:#16140f">Get a key for a computer</a> · <a href="${ACCOUNT_URL}" style="color:#16140f">Your account and downloads</a>`
   + ` · <a href="mailto:${HELP_MAIL}" style="color:#16140f">Help</a> · <a href="${TERMS_URL}" style="color:#16140f">Terms</a>`;
 const mailLinksText = () =>
-  `Get a key for a Mac: ${UNLOCK_URL}\nYour account and downloads: ${ACCOUNT_URL}\nHelp: ${HELP_MAIL}\nTerms: ${TERMS_URL}`;
+  `Get a key for a computer: ${UNLOCK_URL}\nYour account and downloads: ${ACCOUNT_URL}\nHelp: ${HELP_MAIL}\nTerms: ${TERMS_URL}`;
 function licenceMail({ title, intro, steps, key, footer, button }) {
   const html =
 `<div style="font-family:Inter,system-ui,-apple-system,sans-serif;max-width:560px;margin:0 auto;color:#16140f;line-height:1.5">
@@ -881,7 +881,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
             + `To let it through anyway: ${SITE}/dashboard (StreamDAW › Keys), "Sign here" on this row.`,
       });
     } catch {}
-    return { status: 'limit', macs: others, error: `This purchase already has keys for ${others} Macs. Deactivate one of your Macs first, then ask again.` };
+    return { status: 'limit', macs: others, error: `This purchase already has keys for ${others} computers. Deactivate one of your computers first, then ask again.` };
   }
 
   // Signed here, now, with the Worker's pair: the key is in this answer and in the buyer's email.
@@ -923,7 +923,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
       await sendMail(env, {
         to: email,
         subject: 'We got your StreamDAW key request',
-        text: `${hi ? `Hi ${hi},\n\n` : ''}We got your request for a StreamDAW Pro key for this Mac:\n${machine}\n\n`
+        text: `${hi ? `Hi ${hi},\n\n` : ''}We got your request for a StreamDAW Pro key for this computer:\n${machine}\n\n`
             + `What happens next:\n`
             + `1. We make your key, ${auto ? 'usually within minutes' : 'usually within a day'}.\n`
             + `2. It arrives in a second email, "Your StreamDAW Pro key", and on ${UNLOCK_URL} when you are signed in.\n`
@@ -931,7 +931,7 @@ async function requestKey(env, { entId, email, machine, name, via }) {
             + `Nothing to do until then. StreamDAW keeps working in the meantime.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
         html: licenceMail({
           title: 'Your key is on its way',
-          intro: `${hi ? `Hi ${escHtml(hi)}, we` : 'We'} got your request for a StreamDAW Pro key for this Mac: <code>${escHtml(machine)}</code>`,
+          intro: `${hi ? `Hi ${escHtml(hi)}, we` : 'We'} got your request for a StreamDAW Pro key for this computer: <code>${escHtml(machine)}</code>`,
           steps: [
             `We make your key, ${auto ? 'usually within minutes' : 'usually within a day'}.`,
             `It arrives in a second email, <b>Your StreamDAW Pro key</b>, and on <a href="${UNLOCK_URL}">your unlock page</a> when you are signed in.`,
@@ -1067,9 +1067,9 @@ async function issueKey(env, row, key, onlyPending) {
   const minApp = listed ? P.PRODUCTS_MIN_APP : until ? PASS_MIN_APP : MIN_APP;
   const copy = monthly ? `Copy everything in the box below (all ${n} lines: the key and its Renewal line) and paste it into the box.`
                        : `Copy the key below (all ${n} lines) and paste it into the box.`;
-  const renewText = listed ? `This key gives ${listed}. A product bought later comes with a new key for every Mac.\n` : monthly ? `Pro Monthly: this key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
+  const renewText = listed ? `This key gives ${listed}. A product bought later comes with a new key for every computer.\n` : monthly ? `Pro Monthly: this key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online (that is what the Renewal line is for). Manage or cancel: ${subs.MANAGE_URL}\n`
     : until ? `Every Pro feature until ${until}; then StreamDAW goes back to Free.\n` : '';
-  const renewHtml = listed ? `This key gives ${escHtml(listed)}. A product bought later comes with a new key for every Mac.<br>` : monthly ? `This key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
+  const renewHtml = listed ? `This key gives ${escHtml(listed)}. A product bought later comes with a new key for every computer.<br>` : monthly ? `This key runs to ${until}, 3 days past the month you paid for. StreamDAW ${subs.RENEW_APP} or newer fetches the next one by itself every month while it is online: that is what the Renewal line is for. <a href="${subs.MANAGE_URL}">Manage or cancel</a>.<br>`
     : until ? `After ${until} StreamDAW goes back to Free.<br>` : '';
   try {
     await sendMail(env, {
@@ -1082,10 +1082,10 @@ async function issueKey(env, row, key, onlyPending) {
           + `${box}\n\n`
           + `Registered to: ${row.owner_name || row.email} · ${row.email}\n`
           + (serial ? `Serial: ${serial}\n` : '')
-          + `Works on this Mac only: ${row.machine_id}\n`
+          + `Works on this computer only: ${row.machine_id}\n`
           + renewText
           + `Needs StreamDAW ${minApp} or newer. Older copy? Download the latest from your account first: ${ACCOUNT_URL}\n`
-          + `Another Mac? Get a key for it here: ${UNLOCK_URL}\n`
+          + `Another computer? Get a key for it here: ${UNLOCK_URL}\n`
           + `Keep this email: it is your licence. Lost it? The same page shows your keys when you sign in.\n\n${mailLinksText()}\n\n— Snowstar.Company`,
       html: licenceMail({
         title: listed ? 'Your StreamDAW key' : monthly ? 'Your Pro Monthly key' : 'Your StreamDAW Pro key',
@@ -1099,10 +1099,10 @@ async function issueKey(env, row, key, onlyPending) {
         key: box,
         footer: `Registered to <b>${escHtml(row.owner_name || row.email)}</b> · ${escHtml(row.email)}<br>`
           + (serial ? `Serial <code>${escHtml(serial)}</code><br>` : '')
-          + `Works on this Mac only: <code>${escHtml(row.machine_id)}</code><br>`
+          + `Works on this computer only: <code>${escHtml(row.machine_id)}</code><br>`
           + renewHtml
           + `Needs StreamDAW ${minApp} or newer. Older copy? <a href="${ACCOUNT_URL}">Download the latest</a> from your account first.<br>`
-          + `Another Mac? <a href="${UNLOCK_URL}">Get a key for it</a>.<br>`
+          + `Another computer? <a href="${UNLOCK_URL}">Get a key for it</a>.<br>`
           + `Keep this email: it is your licence. Lost it? <a href="${UNLOCK_URL}">Sign in</a> to see your keys.`,
       }),
     });
@@ -1187,7 +1187,7 @@ export async function streamdawDeactivate(req, env, user) {
     if (!/no column|no such column|has no column/i.test(String(e && e.message))) throw e;
     res = await env.DB.prepare(sql(false)).bind(machine, PRODUCT, user.id, lc(user.email)).run();
   }
-  if (!(res.meta && res.meta.changes)) return json({ error: 'That Mac has no key on this account.' }, 404);
+  if (!(res.meta && res.meta.changes)) return json({ error: 'That computer has no key on this account.' }, 404);
   return json({ ok: true, status: 'deactivated' });
 }
 
@@ -1384,8 +1384,8 @@ function emailReceipt(env, to, link, machine, order) {
   ].filter(Boolean);
   const keyWord = product ? 'key' : 'Pro key';
   const keyLine = machine
-    ? `Your ${keyWord} for this Mac (${machine}) is being made now. It arrives in a second email, ${soon}: paste it into StreamDAW › Settings › Licence and press Unlock.`
-    : `Get your ${keyWord} for each Mac you use on ${UNLOCK_URL} (sign in with this email).`;
+    ? `Your ${keyWord} for this computer (${machine}) is being made now. It arrives in a second email, ${soon}: paste it into StreamDAW › Settings › Licence and press Unlock.`
+    : `Get your ${keyWord} for each computer you use on ${UNLOCK_URL} (sign in with this email).`;
   const upgrade = '';
   const text =
 `Thanks for getting ${product ? productName : pass ? 'StreamDAW Pro for 7 days' : 'StreamDAW Pro'}.

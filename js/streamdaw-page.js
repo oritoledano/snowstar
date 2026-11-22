@@ -637,8 +637,8 @@
   // wants is the solid button; the other stays an outline, so a visitor on either platform
   // can see that the other exists and still take it.
   (function () {
-    const m = document.querySelector('[data-free-dl][data-os="mac"]');
-    const w = document.querySelector('[data-free-dl][data-os="win"]');
+    const m = document.querySelector('.os-dl [data-free-dl][data-os="mac"]');
+    const w = document.querySelector('.os-dl [data-free-dl][data-os="win"]');
     if (m && w && winUA()) { m.classList.replace('ink', 'ghost'); w.classList.replace('ghost', 'ink'); }
   })();
   document.querySelectorAll('[data-free-dl]').forEach((a) => a.addEventListener('click', (e) => {

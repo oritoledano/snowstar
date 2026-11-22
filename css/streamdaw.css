@@ -151,6 +151,8 @@ body.sd-menu-open .sd-menu{clip-path:inset(0 0 0 0)}
 .hero h1 .nb{white-space:nowrap}
 .hero .lead{font-size:clamp(18px,1.7vw,22px);line-height:1.5;color:var(--ink-2);max-width:31em;margin:26px auto 0}
 .hero .cta{justify-content:center;margin:34px 0 14px}
+.hero .os-pick{font-size:14px;color:var(--muted);margin:0 0 6px}
+.hero .os-pick a{color:var(--ink-2);text-decoration:underline;text-underline-offset:3px}
 /* The use cases, typed one by one (2026-10-29): js/streamdaw-page.js. The drawing beside each line is Booth's:
    lime lines on a dark tile. The box keeps two lines' height so nothing under it jumps as lines come and go. */
 .tw{display:flex;align-items:center;justify-content:center;gap:.5em;font-family:var(--serif,"Fraunces"),Georgia,serif;font-weight:500;
