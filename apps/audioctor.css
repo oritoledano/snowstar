@@ -446,7 +446,7 @@ main > section + section{padding-top:0}
 .reels-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(32px,4vw,60px);align-items:center}
 .reels-row{display:grid;grid-template-columns:repeat(3,260px);gap:18px}
 .reels .abp{margin:0;padding:0;background:none;box-shadow:none;min-width:0}
-.reels .abp-switch{margin-top:12px}
+.reels .abp-switch{margin:0 0 12px}   /* over the phone (2026-11-22, Ori: "the before and after buttons on top") */
 .reels-note{text-align:center;margin-top:14px;font-size:13px;color:var(--muted)}
 .reels-col{min-width:0}
 .reels-copy{max-width:440px}

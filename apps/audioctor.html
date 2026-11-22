@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=32">
+<link rel="stylesheet" href="audioctor.css?v=33">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -35,7 +35,7 @@
 {"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Audioctor", "applicationCategory": "MultimediaApplication", "operatingSystem": "macOS 14 or later (Apple silicon or Intel), Windows 10 or 11 (64-bit)", "description": "Fixes the sound of a video and splits any song into its parts, on your Mac: room echo and noise out of speech, music under the talk turned down, the same video back in sync; vocal, drums, bass, guitars and keys on their own faders, each exported as its own file.", "offers": [{"@type": "Offer", "name": "Audioctor Free", "description": "Every tool; the first 3 exports up to 6 minutes a clip, then clips up to 30 seconds, 3 exports a day", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Audioctor Yearly", "description": "Any length, no daily limit, billed yearly, cancel any time", "price": "60", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Audioctor Monthly", "description": "Any length, no daily limit, cancel any time", "price": "7", "priceCurrency": "USD"}], "publisher": {"@type": "Organization", "name": "Snowstar.Company", "url": "https://snowstar.company"}, "url": "https://snowstar.company/apps/audioctor.html"}
 </script>
 <script type="application/ld+json">
-{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does my audio leave my Mac?", "acceptedAnswer": {"@type": "Answer", "text": "No. Everything runs on your Mac, and Audioctor works offline."}}, {"@type": "Question", "name": "Is there a plug-in?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet. One that cleans the track it sits on is on its way. Until then, export from Audioctor and drop the files into your DAW."}}, {"@type": "Question", "name": "My DJ software already splits stems. Why this?", "acceptedAnswer": {"@type": "Answer", "text": "Your DJ software splits them live, inside the set. Audioctor gives you each part as a file: a clean acapella, an instrumental, a drum loop, ready to edit, loop and EQ in your DAW."}}, {"@type": "Question", "name": "Can I split any song?", "acceptedAnswer": {"@type": "Answer", "text": "On your own Mac, yes. Releasing someone else's song, or a part of it, needs the rights holder's permission, as it would with any other tool."}}, {"@type": "Question", "name": "How fast is it?", "acceptedAnswer": {"@type": "Answer", "text": "On an M1 Max, about 15 seconds for each minute of speech, and about a minute to take a 3-minute song apart. Intel Macs take longer."}}, {"@type": "Question", "name": "What's free?", "acceptedAnswer": {"@type": "Answer", "text": "Every tool, with no watermark. Your first 3 exports take clips up to 6 minutes each; after that, clips up to 30 seconds, 3 exports a day. Longer clips open, process and play for free; exporting them needs a plan."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Any time, in your account or on the cancel page. Nothing more is charged, and what you paid for runs to its end. Then you're back on the free plan with all your files."}}]}
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does my audio leave my Mac?", "acceptedAnswer": {"@type": "Answer", "text": "No. Everything runs on your Mac, and Audioctor works offline."}}, {"@type": "Question", "name": "My DJ software already splits stems. Why this?", "acceptedAnswer": {"@type": "Answer", "text": "Your DJ software splits them live, inside the set. Audioctor gives you each part as a file: a clean acapella, an instrumental, a drum loop, ready to edit, loop and EQ in your DAW."}}, {"@type": "Question", "name": "Can I split any song?", "acceptedAnswer": {"@type": "Answer", "text": "On your own Mac, yes. Releasing someone else's song, or a part of it, needs the rights holder's permission, as it would with any other tool."}}, {"@type": "Question", "name": "How fast is it?", "acceptedAnswer": {"@type": "Answer", "text": "On an M1 Max, about 15 seconds for each minute of speech, and about a minute to take a 3-minute song apart. Intel Macs take longer."}}, {"@type": "Question", "name": "What's free?", "acceptedAnswer": {"@type": "Answer", "text": "Every tool, with no watermark. Your first 3 exports take clips up to 6 minutes each; after that, clips up to 30 seconds, 3 exports a day. Longer clips open, process and play for free; exporting them needs a plan."}}, {"@type": "Question", "name": "Can I cancel?", "acceptedAnswer": {"@type": "Answer", "text": "Any time, in your account or on the cancel page. Nothing more is charged, and what you paid for runs to its end. Then you're back on the free plan with all your files."}}]}
 </script>
 </head>
 <body>
@@ -128,6 +128,10 @@
         <div class="reels-col">
           <div class="reels-row">
         <figure class="abp" data-ex="reel" aria-label="Shahak Shapira">
+          <div class="abp-switch" role="group" aria-label="Shahak Shapira: hear it before or after">
+            <button type="button" data-side="before" aria-pressed="false">Before</button>
+            <button type="button" data-side="after" aria-pressed="true">After</button>
+          </div>
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Shahak Shapira: the video; its sound plays Before or After"></video>
@@ -151,12 +155,12 @@
               <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
             </div>
           </div>
-          <div class="abp-switch" role="group" aria-label="Shahak Shapira: hear it before or after">
+        </figure>
+        <figure class="abp" data-ex="lecture" aria-label="Dalit Nemirovsky">
+          <div class="abp-switch" role="group" aria-label="Dalit Nemirovsky: hear it before or after">
             <button type="button" data-side="before" aria-pressed="false">Before</button>
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
-        </figure>
-        <figure class="abp" data-ex="lecture" aria-label="Dalit Nemirovsky">
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Dalit Nemirovsky: the video; its sound plays Before or After"></video>
@@ -180,12 +184,12 @@
               <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
             </div>
           </div>
-          <div class="abp-switch" role="group" aria-label="Dalit Nemirovsky: hear it before or after">
+        </figure>
+        <figure class="abp" data-ex="onsite" aria-label="KAYMA – ONSITELOVER, live">
+          <div class="abp-switch" role="group" aria-label="KAYMA – ONSITELOVER, live: hear it before or after">
             <button type="button" data-side="before" aria-pressed="false">Before</button>
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
-        </figure>
-        <figure class="abp" data-ex="onsite" aria-label="KAYMA – ONSITELOVER, live">
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="KAYMA – ONSITELOVER, live: the video; its sound plays Before or After"></video>
@@ -209,12 +213,12 @@
               <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
             </div>
           </div>
-          <div class="abp-switch" role="group" aria-label="KAYMA – ONSITELOVER, live: hear it before or after">
+        </figure>
+        <figure class="abp" data-ex="matan" aria-label="Matan Hakimi">
+          <div class="abp-switch" role="group" aria-label="Matan Hakimi: hear it before or after">
             <button type="button" data-side="before" aria-pressed="false">Before</button>
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
-        </figure>
-        <figure class="abp" data-ex="matan" aria-label="Matan Hakimi">
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Matan Hakimi: the video; its sound plays Before or After"></video>
@@ -238,12 +242,12 @@
               <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
             </div>
           </div>
-          <div class="abp-switch" role="group" aria-label="Matan Hakimi: hear it before or after">
+        </figure>
+        <figure class="abp" data-ex="i24" aria-label="KAYMA on i24 News">
+          <div class="abp-switch" role="group" aria-label="KAYMA on i24 News: hear it before or after">
             <button type="button" data-side="before" aria-pressed="false">Before</button>
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
-        </figure>
-        <figure class="abp" data-ex="i24" aria-label="KAYMA on i24 News">
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="KAYMA on i24 News: the video; its sound plays Before or After"></video>
@@ -267,12 +271,12 @@
               <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
             </div>
           </div>
-          <div class="abp-switch" role="group" aria-label="KAYMA on i24 News: hear it before or after">
+        </figure>
+        <figure class="abp" data-ex="roy" aria-label="Roy Rieck">
+          <div class="abp-switch" role="group" aria-label="Roy Rieck: hear it before or after">
             <button type="button" data-side="before" aria-pressed="false">Before</button>
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
-        </figure>
-        <figure class="abp" data-ex="roy" aria-label="Roy Rieck">
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Roy Rieck: the video; its sound plays Before or After"></video>
@@ -296,12 +300,12 @@
               <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
             </div>
           </div>
-          <div class="abp-switch" role="group" aria-label="Roy Rieck: hear it before or after">
+        </figure>
+        <figure class="abp" data-ex="primal" aria-label="Justin Brown, Primal Video">
+          <div class="abp-switch" role="group" aria-label="Justin Brown, Primal Video: hear it before or after">
             <button type="button" data-side="before" aria-pressed="false">Before</button>
             <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
-        </figure>
-        <figure class="abp" data-ex="primal" aria-label="Justin Brown, Primal Video">
           <div class="phone">
             <div class="phone-screen abp-stage">
               <video muted playsinline loop preload="none" aria-label="Justin Brown, Primal Video: the video; its sound plays Before or After"></video>
@@ -324,10 +328,6 @@
               <canvas class="abp-wave" width="560" height="56" aria-label="Justin Brown, Primal Video: the sound's waveform; click to move through it"></canvas>
               <div class="reel-nav" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5.5v-5.5h-5V20H4z"/></svg><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M4 9h16M9 4l2.5 5M14 4l2.5 5M10.5 12.2v4.6l4-2.3z"/></svg><i></i></div>
             </div>
-          </div>
-          <div class="abp-switch" role="group" aria-label="Justin Brown, Primal Video: hear it before or after">
-            <button type="button" data-side="before" aria-pressed="false">Before</button>
-            <button type="button" data-side="after" aria-pressed="true">After</button>
           </div>
         </figure>
           </div>
@@ -538,7 +538,6 @@
       <div class="sec-head center"><!-- /api/texts row "audioctor.faq.title" wins on every load; this is that row, so first paint already matches it. --> <h2 id="faqTitle" data-txt="audioctor.faq.title">Good To Know</h2></div>
       <div class="faq">
         <details><summary>Does my audio leave my Mac?</summary><p>No. Everything runs on your Mac, and Audioctor works offline.</p></details>
-        <details><summary>Is there a plug-in?</summary><p>Not yet. One that cleans the track it sits on is on its way. Until then, export from Audioctor and drop the files into your DAW.</p></details>
         <details><summary>My DJ software already splits stems. Why this?</summary><p>Your DJ software splits them live, inside the set. Audioctor gives you each part as a file: a clean acapella, an instrumental, a drum loop, ready to edit, loop and EQ in your DAW.</p></details>
         <details><summary>Can I split any song?</summary><p>On your own Mac, yes. Releasing someone else's song, or a part of it, needs the rights holder's permission, as it would with any other tool.</p></details>
         <details><summary>How fast is it?</summary><p>On an M1 Max, about 15 seconds for each minute of speech, and about a minute to take a 3-minute song apart. Intel Macs take longer.</p></details>
