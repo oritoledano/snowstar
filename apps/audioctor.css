@@ -612,3 +612,22 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 .tools img{display:block;width:100%;height:auto;aspect-ratio:32/15;margin-top:14px;border-radius:12px;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 16px 30px -18px rgba(0,0,0,.9)}
 .tools-sec h2{text-wrap:balance}
 @media (max-width:760px){.tools{grid-template-columns:1fr}}
+
+/* The Mac and the iPhone as one scene in the hero (2026-11-22, Ori: the home page banner's picture here too). The same
+   scene as css/style.css .ax-shot / .ax-phone: the window at 85% of the figure, which widens to 980px so the window keeps
+   about its size; the steam spans the window only (right:15%), so the flask's 28.9% still lands on the flask; the phone
+   at the window's right foot, tilted -4.5deg about its own foot so it stays off the window's EXPORT button. Under 560px
+   the two stack, the phone in flow, as on the home page. */
+.lab-shot.with-phone{max-width:980px}
+.lab-shot.with-phone .mac{width:85%}
+.lab-shot.with-phone .brew{right:15%}
+.lab-phone{position:absolute;z-index:3;right:-1%;bottom:-3.2cqw;width:17.5%;transform:rotate(-4.5deg);transform-origin:50% 96%;
+  padding:.75cqw .62cqw 1cqw;border-radius:2.6cqw;background:linear-gradient(158deg,#2d2c27,#131210 44%,#1d1c19);
+  box-shadow:0 0 0 1px rgba(243,237,220,.2),0 34px 60px -22px rgba(0,0,0,.95),inset 0 1px 0 rgba(243,237,220,.16)}
+.lab-phone img{display:block;width:100%;height:auto;aspect-ratio:540/1173;border-radius:1.9cqw;background:#0b0a08}
+@media (max-width:560px){
+  .lab-shot.with-phone{display:flex;flex-direction:column;align-items:center}
+  .lab-shot.with-phone .mac{width:100%}
+  .lab-shot.with-phone .brew{display:none}
+  .lab-phone{position:static;width:min(168px,46vw);margin:18px 0 0;transform:rotate(-2deg);padding:5px 4px 7px;border-radius:20px}
+  .lab-phone img{border-radius:15px}}

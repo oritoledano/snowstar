@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=34">
+<link rel="stylesheet" href="audioctor.css?v=35">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -94,7 +94,10 @@
           <a class="btn ghost ab-phone" id="abMail" data-txt="audioctor.hero.phone" href="mailto:?subject=Audioctor%20for%20my%20Mac&amp;body=https%3A%2F%2Fsnowstar.company%2Fapps%2Faudioctor.html">On your phone? Send it to your Mac</a>
         </div>
       </div>
-      <figure class="lab-shot" aria-label="Audioctor's own window: a song taken apart, every part on its own cylinder, the meters playing">
+      <!-- The Mac and the iPhone as one scene (2026-11-22, Ori: the home page banner's picture here too, "so the app is
+           seen next to the software"). The phone is the same file as that banner's (media/audioctor/app-iphone.jpg, the
+           iPhone app's own screen); the window is this hero's own film. apps/audioctor.css .with-phone has the layout. -->
+      <figure class="lab-shot with-phone" aria-label="Audioctor's own window, a song taken apart with every part on its own cylinder, and Audioctor on iPhone beside it">
         <div class="mac">
           <div class="bar"><i></i><i></i><i></i><b>Audioctor</b></div>
           <video src="../media/audioctor/hero-lab.mp4?v=3" poster="../media/audioctor/hero-lab.jpg?v=3" muted loop playsinline autoplay preload="auto" width="1280" height="568"></video>
@@ -108,6 +111,10 @@
           <i class="puff p1" style="--dx:31%;--r:22deg;--d:6.4s;animation-delay:-4.25s"></i>
           <i class="puff p2" style="--dx:10%;--r:-22deg;--d:6.9s;animation-delay:-5.10s"></i>
           <i class="puff p3" style="--dx:8%;--r:25deg;--d:7.1s;animation-delay:-5.95s"></i>
+        </div>
+        <div class="lab-phone">
+          <img src="../media/audioctor/app-iphone.jpg?v=2" width="540" height="1173" decoding="async"
+               alt="Audioctor on iPhone: a filmed talk open in the app, one slider from Original to Cure, and Export">
         </div>
       </figure>
     </div>
