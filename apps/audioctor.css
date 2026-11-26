@@ -631,3 +631,27 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
   .lab-shot.with-phone .brew{display:none}
   .lab-phone{position:static;width:min(168px,46vw);margin:18px 0 0;transform:rotate(-2deg);padding:5px 4px 7px;border-radius:20px}
   .lab-phone img{border-radius:15px}}
+
+/* ── Android, the site's free beta (2026-11-26): the download, then four cards two by two, then the file's checksum
+   and certificate folded away. Until Google Play has Audioctor. ── */
+.droid .droid-cta{justify-content:center;margin-top:0}
+.droid-file{text-align:center;margin-top:12px}
+.droid-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:980px;margin:clamp(28px,4vw,44px) auto 0}
+@media (max-width:720px){.droid-grid{grid-template-columns:1fr}}
+.droid .link h3{margin:0 0 10px}
+.droid .link ul,.droid .link ol{display:grid;gap:8px;padding-left:20px;font-size:14.5px;color:var(--ink-2)}
+.droid .link li::marker{color:var(--lime);font-weight:600}
+.droid .link p + p{margin-top:10px}
+.droid-check{max-width:980px;margin:14px auto 0;border:1px solid var(--line);border-radius:16px;padding:16px 20px;background:var(--bg-2)}
+.droid-check summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;
+  font:700 13px/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-2)}
+.droid-check summary::-webkit-details-marker{display:none}
+.droid-check summary::after{content:"+";color:var(--lime);font:400 22px/1 var(--sans);letter-spacing:0}
+.droid-check[open] summary::after{content:"–"}
+.droid-check dl{margin-top:8px}
+.droid-check dt{font-size:13px;color:var(--muted);margin-top:12px}
+.droid-check dd{font-size:14px;color:var(--ink);margin-top:2px}
+.droid-check code{font:500 13px/1.55 ui-monospace,"SF Mono",Menlo,Consolas,monospace;overflow-wrap:anywhere;word-break:break-all}
+.droid-check p{font-size:13.5px;color:var(--muted);margin-top:16px}
+.droid-note{text-align:center;margin-top:22px}
+.droid-note a,.reqs a{text-decoration:underline}

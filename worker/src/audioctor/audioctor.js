@@ -31,7 +31,13 @@ const ASSET = 'audioctor-macos';
 // Windows (2026-11-21, Ori on a PC got the Mac .pkg): the installer is its own asset. A download asks with ?os=win (as
 // StreamDAW's), the app's update check with &platform=windows; anything else is the Mac.
 const ASSET_WIN = 'audioctor-windows';
-const assetFor = (sp) => (sp.get('os') === 'win' || sp.get('platform') === 'windows' ? ASSET_WIN : ASSET);
+// Android (2026-11-26, Ori: "Yes, free beta"): the site's own APK, the Free rule only, before Google Play has it.
+// ?os=android on a download, &platform=android on an update check.
+const ASSET_ANDROID = 'audioctor-android';
+const assetFor = (sp) => (sp.get('os') === 'android' || sp.get('platform') === 'android' ? ASSET_ANDROID
+  : sp.get('os') === 'win' || sp.get('platform') === 'windows' ? ASSET_WIN : ASSET);
+// A phone installs an APK only when it is served as one; the .pkg and the .exe stay octet-stream.
+const fileType = (asset) => (asset === ASSET_ANDROID ? 'application/vnd.android.package-archive' : 'application/octet-stream');
 const TOKEN_TTL = 7 * 24 * 3600;         // emailed download link good for 7 days
 const PAGE = `${SITE}/apps/audioctor.html`;
 
@@ -520,7 +526,7 @@ export async function audioctorDownload(req, env) {
 
   return new Response(obj.body, {
     headers: {
-      'content-type': 'application/octet-stream',
+      'content-type': fileType(rel.asset),
       'content-disposition': `attachment; filename="${rel.filename}"`,
       'content-length': String(rel.bytes || obj.size || ''),
       'cache-control': 'private, no-store',
@@ -540,11 +546,14 @@ const FREE_SIGNUP_URL = `${PAGE}?get=free`;
  *  asks once a day and shows the button when this is newer than itself; the url opens in the browser. No user data. */
 export async function audioctorLatest(req, env) {
   const sp = new URL(req.url).searchParams;
-  const win = assetFor(sp) === ASSET_WIN;
+  const asset = assetFor(sp);
+  const win = asset === ASSET_WIN;
   const rel = await env.DB.prepare(
     'SELECT version FROM app_releases WHERE asset = ? AND is_latest = 1 ORDER BY created_at DESC LIMIT 1'
-  ).bind(win ? ASSET_WIN : ASSET).first();
+  ).bind(asset).first();
   if (!rel || !rel.version) return json({ error: 'no_release' }, 404);
+  // Android (2026-11-26): the beta does not ask yet; when it does, it gets its version and the page's Android section.
+  if (asset === ASSET_ANDROID) return json({ version: rel.version, platform: 'android', url: `${PAGE}#android` }, 200, { 'cache-control': 'public, max-age=600' });
   // The app's Update button opens what is new since the version it runs, with the download on top (2026-11-13, Ori:
   // "an update has to say what is new"). The page is made from the app's CHANGELOG.md (app/changelog-site.mjs).
   // Windows (2026-11-21): the app only takes an answer that says platform "windows", and its Update opens the sale page,
@@ -595,7 +604,7 @@ export async function audioctorDownloadFree(req, env) {
   const asset = assetFor(new URL(req.url).searchParams);
   const user = await currentUser(req, env).catch(() => null);
   if (!user) {
-    const signup = FREE_SIGNUP_URL + (asset === ASSET_WIN ? '&os=win' : '');
+    const signup = FREE_SIGNUP_URL + (asset === ASSET_WIN ? '&os=win' : asset === ASSET_ANDROID ? '&os=android' : '');
     if (/application\/json/.test(req.headers.get('accept') || '')) return json({ error: 'sign_in_required', signup }, 401);
     return new Response(null, { status: 302, headers: { location: signup, 'cache-control': 'no-store' } });
   }
@@ -612,7 +621,7 @@ export async function audioctorDownloadFree(req, env) {
   }
   return new Response(req.method === 'HEAD' ? null : obj.body, {
     headers: {
-      'content-type': 'application/octet-stream',
+      'content-type': fileType(asset),
       'content-disposition': `attachment; filename="${rel.filename}"`,
       'content-length': String(rel.bytes || obj.size || ''),
       // one person's download now, not a public file: no shared cache may keep it

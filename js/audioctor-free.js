@@ -10,7 +10,10 @@
    the solid button. The wish survives a Google sign-in's reload beside the wish itself; ?os=win on the URL asks for
    Windows (the Worker's sign-up redirect, and the Windows app's Update button).
    A phone or a tablet (2026-11-21, Ori): the stores instead of the two files ([data-for="mobile"]), the device's own
-   first. An unlabelled Download button there opens the App Store on an iPhone or iPad, and the stores on Android. */
+   first. An unlabelled Download button there opens the App Store on an iPhone or iPad, and the stores on Android.
+   Android (2026-11-26, Ori: "Yes, free beta"): until Google Play has it, the site's APK (data-os="android", ?os=android),
+   the same free account first. On an Android phone the unlabelled buttons lead to its section (#android), where the
+   install steps are; the APK itself is not for a computer to run, but a computer may take it to pass on. */
 (function () {
   'use strict';
   const FREE_DL = '/api/audioctor/download/free', KEY = 'ad_free_dl', FROM = 'ad_free_from', OS = 'ad_free_os', FOR = 15 * 60 * 1000;
@@ -20,8 +23,11 @@
   const device = () => { const ua = navigator.userAgent || ''; if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return 'ios'; return /Android/i.test(ua) ? 'android' : ''; };
   const dev = device();
   const winUA = () => { try { const d = navigator.userAgentData; return d ? /win/i.test(d.platform || '') : /Windows|Win64|WOW64/i.test(navigator.userAgent || ''); } catch (e) { return false; } };
-  const osFor = (a) => { const o = a && a.dataset ? a.dataset.os : ''; return o === 'win' || o === 'mac' ? o : (winUA() ? 'win' : 'mac'); };
-  const osWish = () => { try { const o = sessionStorage.getItem(OS); return o === 'win' || o === 'mac' ? o : (winUA() ? 'win' : 'mac'); } catch (e) { return winUA() ? 'win' : 'mac'; } };
+  const OSES = ['win', 'mac', 'android'];
+  const osOk = (o) => OSES.includes(o);
+  const osFor = (a) => { const o = a && a.dataset ? a.dataset.os : ''; return osOk(o) ? o : (winUA() ? 'win' : 'mac'); };
+  const osWish = () => { try { const o = sessionStorage.getItem(OS); return osOk(o) ? o : (winUA() ? 'win' : 'mac'); } catch (e) { return winUA() ? 'win' : 'mac'; } };
+  const query = (o) => (o === 'win' || o === 'android' ? '?os=' + o : '');
   const $ = (id) => document.getElementById(id);
   const acct = () => window.SnowstarAccount;
   const signedIn = () => { const M = acct(); return !!(M && M.user); };
@@ -34,7 +40,7 @@
   const from = () => { try { return clean(sessionStorage.getItem(FROM)); } catch (e) { return ''; } };
   function keep(on, src, os) {
     try {
-      if (on) { sessionStorage.setItem(KEY, String(Date.now())); sessionStorage.setItem(FROM, clean(src) || 'page'); sessionStorage.setItem(OS, os === 'win' ? 'win' : 'mac'); }
+      if (on) { sessionStorage.setItem(KEY, String(Date.now())); sessionStorage.setItem(FROM, clean(src) || 'page'); sessionStorage.setItem(OS, osOk(os) ? os : 'mac'); }
       else { sessionStorage.removeItem(KEY); sessionStorage.removeItem(FROM); sessionStorage.removeItem(OS); }
     } catch (e) {}
   }
@@ -44,10 +50,10 @@
   function start(src, os) {
     if (started) return;
     started = true;
-    const o = os === 'win' || os === 'mac' ? os : osWish();
+    const o = osOk(os) ? os : osWish();
     track('free_download', { from: clean(src) || from() || 'page', os: o });
     keep(false);
-    location.href = FREE_DL + (o === 'win' ? '?os=win' : '');
+    location.href = FREE_DL + query(o);
     hint(o);
   }
   function hint(os) {
@@ -78,7 +84,7 @@
     document.querySelectorAll('.os-dl[data-for="mobile"]').forEach((g) => {
       g.hidden = false;
       const i = g.querySelector('[data-store="ios"]'), a = g.querySelector('[data-store="android"]');
-      if (dev === 'android' && i && a) { g.insertBefore(a, i); i.classList.replace('lime', 'ghost'); }
+      if (dev === 'android' && i && a) { g.insertBefore(a, i); if (i.classList.replace('lime', 'ghost')) a.classList.replace('ghost', 'lime'); }
     });
   })();
   (function () {   // the solid button is the file this computer wants; the other stays an outline
@@ -95,24 +101,26 @@
 
   function toStores() {
     if (dev === 'ios') { location.href = APP_STORE; return; }
-    const t = $('download'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const d = $('android'), t = dev === 'android' && d ? d : $('download');
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: t === d ? 'start' : 'center' });
   }
   document.querySelectorAll('[data-free-dl]').forEach((a) => a.addEventListener('click', (e) => {
     e.preventDefault();
     const d = a.closest('dialog'); if (d && d.open) d.close();   // the waitlist card's link: the sign-up can't open under a modal
-    if (dev) { toStores(); return; }
-    go('page', osFor(a));
+    const os = osFor(a);
+    if (dev && os !== 'android') { toStores(); return; }   // a phone can't run the Mac or Windows file
+    go('page', os);
   }));
   document.querySelectorAll('[data-plan]').forEach((b) => b.addEventListener('click', () => keep(false)));
   (async function () {
     const direct = q.get('get') === 'free';
     if (direct) {                                       // tidy the address; the wish is kept above
-      keep(true, q.get('from') || 'link', q.get('os') === 'win' ? 'win' : q.get('os') === 'mac' ? 'mac' : (winUA() ? 'win' : 'mac'));
+      keep(true, q.get('from') || 'link', osOk(q.get('os')) ? q.get('os') : (winUA() ? 'win' : 'mac'));
       const u = new URL(location.href); u.searchParams.delete('get'); u.searchParams.delete('from'); u.searchParams.delete('os');
       history.replaceState(null, '', u.pathname + (u.searchParams.toString() ? '?' + u.searchParams : '') + u.hash);
     }
     if (!wants()) return;
-    if (dev) { keep(false); if (direct) toStores(); return; }   // a phone can't run the Mac or Windows file
+    if (dev && osWish() !== 'android') { keep(false); if (direct) toStores(); return; }   // a phone can't run the Mac or Windows file
     await ready();
     const M = acct(); if (M && M.onChange) M.onChange(ifWanted);   // e.g. back from Google
     if (signedIn()) start(); else if (direct) ask();
