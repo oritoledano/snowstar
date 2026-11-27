@@ -58,6 +58,7 @@
     ] },
     { key: 'audioctor', label: 'Audioctor', pages: [
       { key: 'ad', label: 'App', tabs: ['subscribers', 'people', 'keys', 'reports', 'orders', 'codes', 'releases'] },
+      { key: 'flow', label: 'Releases' },
       { key: 'map', label: 'Map 3D' },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
@@ -80,6 +81,10 @@
   }
   /* The same copy, drawn as the operation in 3D: platforms, the chain behind each, teams,
      money (js/dashboard-map.js). mount() starts the canvas once the page is in the DOM. */
+  /* And as lines: each version on its way from built to the site (js/dashboard-flow.js). */
+  async function paintFlow() {
+    paint(window.SnowstarFlow.html(await get('/ops/ledger')));
+  }
   async function paintMap() {
     const d = await get('/ops/ledger');
     paint(window.SnowstarMap.html(d));
@@ -272,6 +277,7 @@
     'general/visits':              () => paintVisits(),
     'general/money':               () => paintMoney(),
     'general/owed':                () => paintOwed(),
+    'audioctor/flow':              () => paintFlow(),
     'audioctor/map':               () => paintMap(),
     'general/overview/today':      () => paintOverview(),
     'general/overview/traffic':    () => paintStats(),
