@@ -66,6 +66,7 @@
   }
 
   function html(d) {
+    d = (d && d.ledger) || d || {};   /* the route wraps the document: { ledger, pushedAt } */
     const out = (d.verticals || []).filter((v) => (v.releases || []).length).map((v) => {
       const lanes = [];
       for (const r of v.releases) {
