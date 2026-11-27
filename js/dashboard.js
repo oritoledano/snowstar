@@ -58,6 +58,7 @@
     ] },
     { key: 'audioctor', label: 'Audioctor', pages: [
       { key: 'ad', label: 'App', tabs: ['subscribers', 'people', 'keys', 'reports', 'orders', 'codes', 'releases'] },
+      { key: 'map', label: 'Map 3D' },
     ] },
     { key: 'streamdaw', label: 'StreamDAW', pages: [
       { key: 'sdaw', label: 'App', tabs: ['orders', 'subscriptions', 'health', 'people', 'keys', 'reports', 'codes', 'releases', 'updates'] },
@@ -76,6 +77,13 @@
      the Worker's shared/ledger.js hands over the copy contracts/push.sh sent). */
   async function paintOwed() {
     paint(window.SnowstarLedger.html(await get('/ops/ledger')));
+  }
+  /* The same copy, drawn as the operation in 3D: platforms, the chain behind each, teams,
+     money (js/dashboard-map.js). mount() starts the canvas once the page is in the DOM. */
+  async function paintMap() {
+    const d = await get('/ops/ledger');
+    paint(window.SnowstarMap.html(d));
+    window.SnowstarMap.mount(document.getElementById('sm-root'), d);
   }
 
   /* Old single-word hashes still work. Every bookmark, every `data-go` card on
@@ -264,6 +272,7 @@
     'general/visits':              () => paintVisits(),
     'general/money':               () => paintMoney(),
     'general/owed':                () => paintOwed(),
+    'audioctor/map':               () => paintMap(),
     'general/overview/today':      () => paintOverview(),
     'general/overview/traffic':    () => paintStats(),
     'general/overview/demand':     () => paintDemand(),
