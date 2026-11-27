@@ -89,6 +89,8 @@ import { listVisits } from './shared/visits.js';
 import { moneyAll } from './shared/money.js';
 // "this went wrong", from inside Audioctor (audioctor-reports.js)
 import { audioctorReport, audioctorReports } from './audioctor/audioctor-reports.js';
+// What every platform, store and page still owes, for the dashboard (shared/ledger.js)
+import { opsLedger } from './shared/ledger.js';
 // "Sign in" from inside Audioctor: the device sign-in that hands the app its key (audioctor-connect.js)
 import { connectStart as audioctorConnectStart, connectInfo as audioctorConnectInfo, connectApprove as audioctorConnectApprove,
          connectPoll as audioctorConnectPoll } from './audioctor/audioctor-connect.js';
@@ -573,6 +575,7 @@ async function handle(req, env, ctx) {
   if (path === '/appstore/notifications' && method === 'POST') return appstoreNotification(req, env);
   if (path === '/audioctor/report' && (method === 'POST' || method === 'OPTIONS')) return audioctorReport(req, env);
   if (path === '/audioctor/reports') return audioctorReports(req, env, await currentUser(req, env));
+  if (path === '/ops/ledger' && method === 'GET') return opsLedger(req, env, await currentUser(req, env));
   if (path === '/audioctor/admin' && method === 'GET') return audioctorAdmin(env, await currentUser(req, env));
   if (path === '/audioctor/reconcile' && method === 'POST') return audioctorReconcile(req, env, await currentUser(req, env));
   // Creem's server, signed (creem-signature, HMAC of the body with the webhook secret): no cookie, no Origin.

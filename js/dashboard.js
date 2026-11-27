@@ -41,6 +41,7 @@
       { key: 'overview',  label: 'Overview',  tabs: ['today', 'traffic', 'demand'] },
       { key: 'visits',    label: 'Visits' },
       { key: 'money',     label: 'Money' },
+      { key: 'owed',      label: 'Owed' },
       { key: 'inbox',     label: 'Inbox',     tabs: ['new', 'open', 'done'] },
       { key: 'people',    label: 'People' },
       { key: 'reset',     label: 'Clear tests' },
@@ -70,6 +71,12 @@
       { key: 'pipeline',  label: 'Pipeline' },
     ] },
   ];
+
+  /* What was put off, and where each feature has landed (js/dashboard-ledger.js draws it;
+     the Worker's shared/ledger.js hands over the copy contracts/push.sh sent). */
+  async function paintOwed() {
+    paint(window.SnowstarLedger.html(await get('/ops/ledger')));
+  }
 
   /* Old single-word hashes still work. Every bookmark, every `data-go` card on
      the overview, and every link in a sent email keeps resolving. */
@@ -256,6 +263,7 @@
     'general/ask':                 () => paintAsk(),
     'general/visits':              () => paintVisits(),
     'general/money':               () => paintMoney(),
+    'general/owed':                () => paintOwed(),
     'general/overview/today':      () => paintOverview(),
     'general/overview/traffic':    () => paintStats(),
     'general/overview/demand':     () => paintDemand(),
