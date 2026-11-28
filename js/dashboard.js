@@ -4427,9 +4427,16 @@
       ${sand.length ? `<h3 style="margin:16px 0 6px">Sandbox <span class="pill">${sand.length}</span></h3>${rows(sand)}` : ''}</div>`;
   }
 
-  /* Every Mac that runs Audioctor (0.1.13+, its daily update check: a one-way hash of the machine, never the ID). A Mac
-     is "known" when it has a key or signed in from the app; the rest came from a download, or from an installer passed
-     on by hand: more Macs than downloads is how the second shows. */
+  /* Every Mac that runs Audioctor (0.1.13+, its daily update check: a one-way hash of the machine, never the ID).
+     A Mac is counted here when it has a licence key (audioctor_activations) or pressed Sign in inside the app
+     (audioctor_connect.user_id) — worker/src/audioctor/audioctor.js builds the account map from those two tables only.
+     2026-11-26: the old wording said "known to an account" / "not signed in" and read as "this person never registered",
+     which sent Ori hunting a download leak that does not exist. A free user who signed up on the site, downloaded and
+     never pressed Sign in in the app matches NEITHER table, and there is no join key that could rescue them:
+     audioctor_free_downloads stores a user_id and no machine, and the daily check sends a machine hash and no account.
+     So "no key yet" is the only honest reading of a blank cell. The sentence that used to sit under the cards —
+     "Macs well past that mean an installer was passed on" — was deleted with it: it compared a LIMIT 100 list of download
+     EVENTS against a LIMIT 500 list of distinct machines, so it fired forever once there were 100 download rows. */
   function installsPanel(list, downloaders) {
     const week = Date.now() / 1000 - 7 * 86400;
     const known = list.filter((r) => r.account).length;
@@ -4437,11 +4444,11 @@
       <div class="db-cards"><div class="db-card"><b class="grad-text">${list.length}</b><span>Macs</span></div>
         <div class="db-card"><b class="grad-text">${list.filter((r) => r.first_seen > week).length}</b><span>New this week</span></div>
         <div class="db-card"><b class="grad-text">${list.filter((r) => r.last_seen > week).length}</b><span>Used this week</span></div>
-        <div class="db-card"><b class="grad-text">${known}</b><span>Known to an account</span></div></div>
-      <p class="db-empty" style="padding-top:0">${downloaders} downloads by signed-in people. Macs well past that mean an installer was passed on.</p>
+        <div class="db-card"><b class="grad-text">${known}</b><span>Has a key or signed in from the app</span></div></div>
+      <p class="db-empty" style="padding-top:0">${downloaders} download rows by signed-in people (capped at 100, so it is a sample, not a total).</p>
       ${list.length ? table(list, [
         { label: 'Mac', get: (r) => `<code>${esc(r.machine_hash.slice(0, 8))}</code>` },
-        { label: 'Account', get: (r) => r.account ? esc(r.account.name || r.account.email) : '<span class="pill">not signed in</span>' },
+        { label: 'Account', get: (r) => r.account ? esc(r.account.name || r.account.email) : '<span class="pill">no key yet</span>' },
         { label: 'Version', get: (r) => esc(r.app_version || '') },
         { label: 'Plan', get: (r) => esc(r.plan || '') },
         { label: 'Chip', get: (r) => r.arch === 'arm64' ? 'Apple' : r.arch === 'x86_64' ? 'Intel' : '' },
