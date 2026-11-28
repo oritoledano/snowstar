@@ -11,7 +11,7 @@
   const figs = [...document.querySelectorAll('.abp[data-ex]')];
   if (!figs.length) return;
   const M = '../media/audioctor/ab/';
-  const V = '?v=4';                                   // media version: a new reel's URL is never one the CDN already holds as a miss
+  const V = '?v=5';                                   // media version: a new reel's URL is never one the CDN already holds as a miss
   /* Each reel: its name and its caption. The rail shows the icons without counts (2026-11-16, Ori: no numbers); a
      reel's counts [likes, comments, reposts, shares] would go in `counts`. KAYMA – ONSITELOVER live at Jaffa Port is
      Ori's own: Before is the original from 19.681 s, After the app's export of the same 10.6 s, sample-aligned. */
@@ -23,6 +23,7 @@
     i24:     { name: 'KAYMA', av: 'K', cap: 'In the studio at i24 News', audio: 'Original audio', counts: null },
     roy:     { name: 'Roy Rieck', av: 'RR', cap: 'On the bike, by the sea', audio: 'Original audio', counts: null },
     primal:  { name: 'primalvideo', av: 'PV', cap: 'Fix Bad Audio! How to Remove Wind Noise!', audio: 'Original audio', counts: null },
+    nelly:   { name: 'Nelly Tagar', av: 'NT', cap: 'Stand-up, live on stage', audio: 'Original audio', counts: null },
   };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let ctx = null, peaks = null, current = null;
