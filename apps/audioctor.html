@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- the shared Snowstar account UI (same sign-in lightbox as StreamDAW, Mutra and the homepage) -->
 <link rel="stylesheet" href="../css/account.css?v=19">
-<link rel="stylesheet" href="audioctor.css?v=37">
+<link rel="stylesheet" href="audioctor.css?v=38">
 <link rel="canonical" href="https://snowstar.company/apps/audioctor.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Snowstar">
@@ -462,7 +462,23 @@
        A <ul>, not divs: Ori's removed-rows rule counts a section's divs. ── -->
   <section id="advanced" class="tools-sec" aria-labelledby="toolsTitle">
     <div class="wrap">
-      <div class="sec-head center"><p class="kicker" style="justify-content:center" data-txt="audioctor.tools.kicker">Advanced Tools</p>
+      <div class="sec-head center">
+        <!-- the Expert key's own atom, lifted from audioctor/app/ui/index.html (2026-11-28, Ori: "add the atom logo
+             from the expert button in the software above advanced tools"). Copied, not linked: the app is another
+             repo and the site cannot load from it. Its ids are renamed acAtG/acAtP so they cannot collide with
+             anything else on this page, and the orbits keep the app's own SMIL so no script is needed. -->
+        <svg class="ac-atom" viewBox="-20 -20 40 40" aria-hidden="true" focusable="false">
+          <defs><linearGradient id="acAtG" gradientUnits="userSpaceOnUse" x1="-18" y1="-18" x2="18" y2="18"><stop offset="0" stop-color="#bcd84a"/><stop offset=".33" stop-color="#f2bd5a"/><stop offset=".66" stop-color="#f186b8"/><stop offset="1" stop-color="#9f86f4"/>
+            <animateTransform attributeName="gradientTransform" type="rotate" from="0" to="360" dur="14s" repeatCount="indefinite"/></linearGradient>
+            <path id="acAtP" d="M17 0A17 6.4 0 1 1-17 0A17 6.4 0 1 1 17 0"/></defs>
+          <g class="spin">
+            <g><ellipse class="orb" rx="17" ry="6.4"/><circle r="2.5" fill="url(#acAtG)"><animateMotion dur="7s" repeatCount="indefinite"><mpath href="#acAtP"/></animateMotion></circle></g>
+            <g transform="rotate(60)"><ellipse class="orb" rx="17" ry="6.4"/><circle r="2.5" fill="url(#acAtG)"><animateMotion dur="9s" begin="-3s" repeatCount="indefinite"><mpath href="#acAtP"/></animateMotion></circle></g>
+            <g transform="rotate(120)"><ellipse class="orb" rx="17" ry="6.4"/><circle r="2.5" fill="url(#acAtG)"><animateMotion dur="11s" begin="-6s" repeatCount="indefinite"><mpath href="#acAtP"/></animateMotion></circle></g>
+          </g>
+          <circle class="nuc" r="3.8" fill="url(#acAtG)"/>
+        </svg>
+        <p class="kicker" style="justify-content:center" data-txt="audioctor.tools.kicker">Advanced Tools</p>
         <h2 id="toolsTitle" data-txt="audioctor.tools.h2">When one switch<br><em>isn't enough.</em></h2>
         <p data-txt="audioctor.tools.sub">Every part has its own EQ and compressor. Under them: a spectrum editor, a way to put back a lost word, and editing by the waveform.</p></div>
       <ul class="tools">

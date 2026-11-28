@@ -658,3 +658,15 @@ main > section{padding-bottom:clamp(52px,6.2vw,92px)}
 .droid-check p{font-size:13.5px;color:var(--muted);margin-top:16px}
 .droid-note{text-align:center;margin-top:22px}
 .droid-note a,.reqs a{text-decoration:underline}
+
+/* the Expert key's atom over Advanced Tools (2026-11-28, Ori). The app draws it at 38px inside a key; here it is the
+   section's mark, so it is bigger and centred. Same two animations as the app: the whole of it turns once in 40 s and
+   the nucleus breathes, both off under prefers-reduced-motion — the orbiting electrons are SMIL and stop with it. */
+.ac-atom { display: block; width: 72px; height: 72px; margin: 0 auto 14px; overflow: visible;
+  filter: drop-shadow(0 0 9px rgba(241, 134, 184, .32)); }
+.ac-atom .orb { fill: none; stroke: url(#acAtG); stroke-width: 2.3; }
+.ac-atom .spin { animation: acAtSpin 40s linear infinite; transform-origin: 0 0; }
+.ac-atom .nuc { animation: acAtBeat 3.2s ease-in-out infinite; transform-origin: 0 0; }
+@keyframes acAtSpin { to { transform: rotate(360deg); } }
+@keyframes acAtBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.14); } }
+@media (prefers-reduced-motion: reduce) { .ac-atom .spin, .ac-atom .nuc { animation: none; } }
