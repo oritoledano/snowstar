@@ -84,7 +84,9 @@
     document.querySelectorAll('.os-dl[data-for="mobile"]').forEach((g) => {
       g.hidden = false;
       const i = g.querySelector('[data-store="ios"]'), a = g.querySelector('[data-store="android"]');
-      if (dev === 'android' && i && a) { g.insertBefore(a, i); if (i.classList.replace('lime', 'ghost')) a.classList.replace('ghost', 'lime'); }
+      // !a.hidden (2026-11-28): while the Android button is hidden, promoting it would still demote the App
+      // Store button to an outline, leaving an Android phone with no solid button at all.
+      if (dev === 'android' && i && a && !a.hidden) { g.insertBefore(a, i); if (i.classList.replace('lime', 'ghost')) a.classList.replace('ghost', 'lime'); }
     });
   })();
   (function () {   // the solid button is the file this computer wants; the other stays an outline
